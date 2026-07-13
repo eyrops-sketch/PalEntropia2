@@ -32,6 +32,24 @@ header{
     border-radius:20px;
 }
 
+.card img{
+    width:60px;
+    border-radius:8px;
+    margin-bottom:10px;
+}
+
+.codigo{
+    margin:0;
+    font-size:0.9em;
+    color:#bbbbbb;
+}
+
+.nombre{
+    margin:8px 0 15px 0;
+    font-size:1.5em;
+    font-weight:bold;
+}
+
 button{
     background:#8a2be2;
     color:white;
@@ -60,13 +78,12 @@ button:hover{
 </header>
 
 <div class="card">
-    
-<img src="001_01_gastornis/Gastornis_i0.png"
-style="width:120px;border-radius:10px;margin-bottom:10px;">
-    
-<h2>001_01</h2>
 
-<p><strong>Gastornis</strong></p>
+<img src="001_01_gastornis/Gastornis_i0.png">
+
+<p class="codigo">001_01</p>
+
+<h2 class="nombre">Gastornis</h2>
 
 <a href="001_01_gastornis/">
 <button>Ver Paleoficha</button>
@@ -76,19 +93,9 @@ style="width:120px;border-radius:10px;margin-bottom:10px;">
 
 <div class="card">
 
-<h2>001_02</h2>
+<p class="codigo">001_02</p>
 
-<p>Próximamente</p>
-
-<button disabled>En desarrollo</button>
-
-</div>
-
-<div class="card">
-
-<h2>001_03</h2>
-
-<p>Próximamente</p>
+<h2 class="nombre">Próximamente</h2>
 
 <button disabled>En desarrollo</button>
 
@@ -96,9 +103,19 @@ style="width:120px;border-radius:10px;margin-bottom:10px;">
 
 <div class="card">
 
-<h2>001_04 - 001_10</h2>
+<p class="codigo">001_03</p>
 
-<p>Próximamente</p>
+<h2 class="nombre">Próximamente</h2>
+
+<button disabled>En desarrollo</button>
+
+</div>
+
+<div class="card">
+
+<p class="codigo">001_04 - 001_10</p>
+
+<h2 class="nombre">Próximamente</h2>
 
 <button disabled>En desarrollo</button>
 
