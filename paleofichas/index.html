@@ -20,7 +20,25 @@ body{
 
 header{
     background:linear-gradient(90deg,#6a0dad,#a020f0);
-    padding:35px;
+    padding:40px 20px;
+}
+
+header h1{
+    margin:0;
+    font-size:45px;
+}
+
+header p{
+    color:#ddd;
+    font-size:20px;
+    margin:15px 0 25px 0;
+}
+
+header img{
+    width:700px;
+    max-width:95%;
+    border-radius:20px;
+    box-shadow:0 8px 22px rgba(0,0,0,.5);
 }
 
 .card{
@@ -30,6 +48,13 @@ header{
     padding:20px;
     background:#222;
     border-radius:20px;
+    box-shadow:0 0 15px rgba(184,76,255,.35);
+    transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 0 20px rgba(184,76,255,.6);
 }
 
 .card img{
@@ -43,13 +68,15 @@ button{
     background:#8a2be2;
     color:white;
     border:none;
-    padding:12px 25px;
-    border-radius:10px;
+    padding:14px 25px;
+    border-radius:12px;
+    font-size:16px;
     cursor:pointer;
+    transition:background .2s ease;
 }
 
 button:hover{
-    background:#9b4dff;
+    background:#b84cff;
 }
 
 </style>
@@ -63,6 +90,8 @@ button:hover{
 <h1>📚 Paleofichas</h1>
 
 <p>Colección de especies prehistóricas</p>
+
+<img src="Paleofichas00.png" alt="Cabecera de Paleofichas">
 
 </header>
 
@@ -139,9 +168,7 @@ button:hover{
 <br><br>
 
 <a href="../index.html">
-
 <button>⬅ Volver al menú principal</button>
-
 </a>
 
 </body>
