@@ -1,4 +1,4 @@
-<!DOCTYPE html>6
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -31,6 +31,14 @@ header h1{
 header p{
     color:#ddd;
     font-size:20px;
+    margin:15px 0 25px 0;
+}
+
+header img{
+    width:700px;
+    max-width:95%;
+    border-radius:20px;
+    box-shadow:0 8px 22px rgba(0,0,0,.5);
 }
 
 .menu{
@@ -48,10 +56,17 @@ header p{
     padding:25px;
     border-radius:20px;
     box-shadow:0 0 15px rgba(184,76,255,.35);
+    transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 0 20px rgba(184,76,255,.6);
 }
 
 .card h2{
     color:#fff;
+    margin-top:0;
 }
 
 .card p{
@@ -67,6 +82,7 @@ button{
     border-radius:12px;
     font-size:16px;
     cursor:pointer;
+    transition:background .2s ease;
 }
 
 button:hover{
@@ -76,15 +92,14 @@ button:hover{
 footer{
     margin:50px 20px;
     color:#777;
+    font-size:14px;
 }
 
 </style>
 
 </head>
 
-
 <body>
-
 
 <header>
 
@@ -92,11 +107,11 @@ footer{
 
 <p>Simulaciones experimentales de Paleontología</p>
 
+<img src="Cabecera00.jpg" alt="Cabecera de PalEntropía">
+
 </header>
 
-
 <div class="menu">
-
 
 <div class="card">
 
@@ -105,14 +120,10 @@ footer{
 <p>Catálogo de especies prehistóricas.</p>
 
 <a href="paleofichas/index.html">
-
 <button>Entrar</button>
-
 </a>
 
 </div>
-
-
 
 <div class="card">
 
@@ -124,8 +135,6 @@ footer{
 
 </div>
 
-
-
 <div class="card">
 
 <h2>🌍 Paleopaisajes</h2>
@@ -136,8 +145,6 @@ footer{
 
 </div>
 
-
-
 <div class="card">
 
 <h2>🌿 Paleoflora</h2>
@@ -147,8 +154,6 @@ footer{
 <button>Próximamente</button>
 
 </div>
-
-
 
 <div class="card">
 
@@ -168,8 +173,7 @@ footer{
 
 <button>Próximamente</button>
 
-</div>    
-
+</div>
 
 <div class="card">
 
@@ -181,16 +185,13 @@ footer{
 
 </div>
 
-
 </div>
-
 
 <footer>
 
 © 2026 PalEntropía
 
 </footer>
-
 
 </body>
 
