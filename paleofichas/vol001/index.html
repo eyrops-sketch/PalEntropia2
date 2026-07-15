@@ -20,16 +20,41 @@ body{
 
 header{
     background:linear-gradient(90deg,#6a0dad,#a020f0);
-    padding:35px;
+    padding:40px 20px;
+}
+
+header h1{
+    margin:0;
+    font-size:45px;
+}
+
+header p{
+    color:#ddd;
+    font-size:20px;
+    margin:15px 0 25px 0;
+}
+
+header img{
+    width:700px;
+    max-width:95%;
+    border-radius:20px;
+    box-shadow:0 8px 22px rgba(0,0,0,.5);
 }
 
 .card{
     display:inline-block;
     width:280px;
-    margin:20px;
+    margin:25px;
     padding:20px;
     background:#222;
     border-radius:20px;
+    box-shadow:0 0 15px rgba(184,76,255,.35);
+    transition:transform .25s ease, box-shadow .25s ease;
+}
+
+.card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 0 22px rgba(184,76,255,.65);
 }
 
 .card img{
@@ -40,7 +65,7 @@ header{
 
 .codigo{
     margin:0;
-    font-size:0.9em;
+    font-size:.9em;
     color:#bbbbbb;
 }
 
@@ -54,13 +79,15 @@ button{
     background:#8a2be2;
     color:white;
     border:none;
-    padding:12px 25px;
-    border-radius:10px;
+    padding:14px 25px;
+    border-radius:12px;
+    font-size:16px;
     cursor:pointer;
+    transition:background .25s ease;
 }
 
 button:hover{
-    background:#9b4dff;
+    background:#b84cff;
 }
 
 </style>
@@ -73,7 +100,9 @@ button:hover{
 
 <h1>📚 Volumen 001</h1>
 
-<p>Colección Oficial de Paleofichas de PalEntropía</p>
+<p>Colección digital de Paleofichas.</p>
+
+<img src="Cabeceravol01.png" alt="Cabecera Volumen 001">
 
 </header>
 
@@ -133,7 +162,6 @@ button:hover{
 
 </div>
 
-
 <div class="card">
 
 <img src="001_05_ichthyostega/Ichthyostega_i0.png">
@@ -147,7 +175,6 @@ button:hover{
 </a>
 
 </div>
-
 <div class="card">
 
 <img src="001_06_ditomopyge/Ditomopyge_i0.png">
@@ -162,7 +189,7 @@ button:hover{
 
 </div>
 
- <div class="card">
+<div class="card">
 
 <img src="001_07_deinogalerix/Deinogalerix_i0.png">
 
@@ -174,7 +201,7 @@ button:hover{
 <button>Ver Paleoficha</button>
 </a>
 
- </div>   
+</div>
 
 <div class="card">
 
@@ -204,7 +231,6 @@ button:hover{
 
 </div>
 
-
 <div class="card">
 
 <img src="001_10_castoroides/Castoroides_i0.png">
@@ -217,10 +243,7 @@ button:hover{
 <button>Ver Paleoficha</button>
 </a>
 
-  </div>  
-    
-
-    
+</div>
 
 <br><br>
 
@@ -229,4 +252,5 @@ button:hover{
 </a>
 
 </body>
+
 </html>
