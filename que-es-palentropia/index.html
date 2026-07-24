@@ -49,7 +49,7 @@ main{
 }
 
 section{
-    margin-bottom:60px;
+    margin-bottom:70px;
 }
 
 h2{
@@ -60,6 +60,60 @@ p{
     color:#ddd;
     line-height:1.7;
     font-size:18px;
+}
+
+/* ========================= */
+/* Vídeo destacado */
+/* ========================= */
+
+.video-card{
+    display:inline-block;
+    position:relative;
+    margin-top:20px;
+}
+
+.video-card img{
+    width:800px;
+    max-width:95%;
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,.5);
+    transition:.3s;
+}
+
+.video-card img:hover{
+    transform:scale(1.02);
+}
+
+.play-button{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:rgba(0,0,0,.65);
+    color:white;
+    font-size:42px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.youtube-button{
+    display:inline-block;
+    margin-top:25px;
+    padding:15px 28px;
+    background:#ff0033;
+    color:white;
+    text-decoration:none;
+    border-radius:12px;
+    font-size:17px;
+    font-weight:bold;
+}
+
+.youtube-button:hover{
+    background:#d4002d;
 }
 
 button{
@@ -111,15 +165,44 @@ PalEntropía es un proyecto dedicado a la divulgación de la paleontología medi
 
 </section>
 
+<!-- ===================================== -->
+<!-- VÍDEO DESTACADO -->
+<!-- ===================================== -->
+
 <section>
 
-<h2>🎥 Próximamente</h2>
+<h2>🎬 Vídeo destacado</h2>
 
 <p>
 
-Aquí aparecerán una selección de los mejores vídeos del proyecto.
+Descubre el universo de PalEntropía mediante este vídeo de presentación y conoce la filosofía del proyecto.
 
 </p>
+
+<a class="video-card"
+href="https://youtu.be/ErD6ENhfI6k"
+target="_blank">
+
+<img src="pal00.jpg"
+alt="Vídeo destacado de PalEntropía">
+
+<div class="play-button">
+
+▶
+
+</div>
+
+</a>
+
+<br>
+
+<a class="youtube-button"
+href="https://youtu.be/ErD6ENhfI6k"
+target="_blank">
+
+▶ Ver en YouTube
+
+</a>
 
 </section>
 
@@ -129,7 +212,7 @@ Aquí aparecerán una selección de los mejores vídeos del proyecto.
 
 <p>
 
-En esta sección podrás acceder a las distintas recopilaciones de Paleofichas y otras series de vídeos cortos.
+En esta sección podrás acceder próximamente a las recopilaciones de Paleofichas, Animales Extraños, Paleoarte y otras series de vídeos cortos del proyecto.
 
 </p>
 
