@@ -62,9 +62,9 @@ p{
     font-size:18px;
 }
 
-/* ========================= */
-/* Vídeo destacado */
-/* ========================= */
+/*======================================
+  VÍDEO DESTACADO
+======================================*/
 
 .video-card{
     display:inline-block;
@@ -76,10 +76,10 @@ p{
 .video-card img{
     width:800px;
     max-width:95%;
+    display:block;
     border-radius:20px;
     box-shadow:0 8px 20px rgba(0,0,0,.5);
     transition:.3s;
-    display:block;
 }
 
 .video-card:hover img{
@@ -102,6 +102,45 @@ p{
     align-items:center;
 }
 
+/*======================================
+  SHORTS
+======================================*/
+
+.shorts-grid{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    flex-wrap:wrap;
+    margin-top:30px;
+}
+
+.short-card{
+    display:block;
+    text-decoration:none;
+    transition:.3s;
+}
+
+.short-card img{
+    width:220px;
+    border-radius:18px;
+    box-shadow:0 8px 20px rgba(0,0,0,.5);
+    transition:.3s;
+}
+
+.short-card:hover img{
+    transform:scale(1.05);
+}
+
+.short-card p{
+    margin-top:12px;
+    color:#ddd;
+    font-size:16px;
+}
+
+/*======================================
+  BOTÓN
+======================================*/
+
 button{
     background:#8a2be2;
     color:white;
@@ -110,6 +149,7 @@ button{
     border-radius:12px;
     font-size:16px;
     cursor:pointer;
+    transition:.3s;
 }
 
 button:hover{
@@ -131,9 +171,13 @@ footer{
 
 <h1>🌌 ¿Qué es PalEntropía?</h1>
 
-<p>Un proyecto de divulgación sobre la historia de la vida en la Tierra.</p>
+<p>
 
-<img src="cabecera.png" alt="PalEntropía">
+Un proyecto de divulgación sobre la historia de la vida en la Tierra.
+
+</p>
+
+<img src="cabecera.png" alt="Cabecera PalEntropía">
 
 </header>
 
@@ -151,9 +195,9 @@ PalEntropía es un proyecto dedicado a la divulgación de la paleontología medi
 
 </section>
 
-<!-- ===================================== -->
+<!-- ====================================== -->
 <!-- VÍDEO DESTACADO -->
-<!-- ===================================== -->
+<!-- ====================================== -->
 
 <section>
 
@@ -169,24 +213,61 @@ Descubre el universo de PalEntropía mediante este vídeo de presentación y con
 href="https://youtu.be/ErD6ENhfI6k"
 target="_blank">
 
-<img src="pal00.jpg"
+<img
+src="pal00.jpg"
 alt="Vídeo destacado de PalEntropía">
 
-<div class="play-button">▶</div>
+<div class="play-button">
+
+▶
+
+</div>
 
 </a>
 
 </section>
 
+<!-- ====================================== -->
+<!-- SHORTS DESTACADOS -->
+<!-- ====================================== -->
+
 <section>
 
-<h2>📱 Recopilaciones de Shorts</h2>
+<h2>📱 Shorts destacados</h2>
 
 <p>
 
-En esta sección podrás acceder próximamente a las recopilaciones de Paleofichas, Animales Extraños, Paleoarte y otras series de vídeos cortos del proyecto.
+Descubre algunas de las Paleofichas en formato Shorts y explora especies fascinantes de todas las eras geológicas.
 
 </p>
+
+<div class="shorts-grid">
+
+<a class="short-card"
+href="https://youtube.com/shorts/iVMkkuSwwd4?feature=share"
+target="_blank">
+
+<img
+src="paleofi00.png"
+alt="Short Paleoficha 1">
+
+<p>Paleoficha destacada #1</p>
+
+</a>
+
+<a class="short-card"
+href="https://youtube.com/shorts/XgUzQh6hjsM?feature=share"
+target="_blank">
+
+<img
+src="paleofi01.png"
+alt="Short Paleoficha 2">
+
+<p>Paleoficha destacada #2</p>
+
+</a>
+
+</div>
 
 </section>
 
@@ -200,11 +281,19 @@ En esta sección podrás acceder próximamente a las recopilaciones de Paleofich
 
 <footer>
 
-© 2026 PalEntropía
+© 2026 <strong>PalEntropía</strong><br><br>
+
+Un proyecto de divulgación sobre la historia de la vida en la Tierra.
 
 </footer>
 
 </body>
 
 </html>
+
+    
+
+
+
+
 
