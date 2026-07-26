@@ -1,109 +1,208 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Mundo Vegetal | PalEntropía</title>
-<meta name="description" content="Mundo Vegetal de PalEntropía. Descubre las principales plantas prehistóricas que formaron los ecosistemas del Fanerozoico.">
+
+<meta name="description" content="Mundo Vegetal de PalEntropía. Descubre las plantas que dieron forma a los ecosistemas prehistóricos del Fanerozoico.">
 
 <link rel="stylesheet" href="../style.css">
 <link rel="icon" href="../favicon.ico">
 
 <style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
-    margin:0;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#111;
-    color:#fff;
+font-family:Arial,Helvetica,sans-serif;
+background:#111;
+color:#fff;
 }
 
 header img{
-    width:100%;
-    display:block;
+width:100%;
+height:180px;
+object-fit:cover;
+display:block;
 }
 
 main{
-    max-width:1000px;
-    margin:auto;
-    padding:25px;
+max-width:1200px;
+margin:auto;
+padding:35px 20px;
 }
 
 h1{
-    text-align:center;
-    margin-bottom:30px;
+text-align:center;
+font-size:2.3em;
+margin-bottom:35px;
 }
 
 .lista{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:30px;
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:30px;
 }
 
 .elemento{
-    width:320px;
-    background:#1c1c1c;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 0 12px rgba(0,0,0,.4);
-    transition:.25s;
+
+width:260px;
+
+background:#1c1c1c;
+
+border:3px solid #2f7f43;
+
+border-radius:14px;
+
+overflow:hidden;
+
+box-shadow:0 0 12px rgba(0,0,0,.45);
+
+transition:all .25s ease;
+
 }
 
 .elemento:hover{
-    transform:translateY(-4px);
+
+transform:translateY(-5px);
+
+border-color:#63d76a;
+
+box-shadow:0 0 20px rgba(99,215,106,.55);
+
+}
+
+.elemento a{
+
+display:block;
+
 }
 
 .elemento img{
-    width:100%;
-    display:block;
+
+width:100%;
+
+height:340px;
+
+object-fit:cover;
+
+display:block;
+
+transition:.25s;
+
+}
+
+.elemento img:hover{
+
+opacity:.95;
+
 }
 
 .elemento h2{
-    text-align:center;
-    margin:15px 0 10px;
+
+text-align:center;
+
+margin:18px 10px 10px;
+
+font-size:1.35em;
+
 }
 
-.enlace{
-    text-align:center;
-    padding:0 15px 20px;
-    font-size:.95em;
-}
+.info{
 
-.enlace a{
-    color:#7bd67b;
-    text-decoration:none;
-    font-weight:bold;
-}
+padding:0 15px 20px;
 
-.enlace a:hover{
-    text-decoration:underline;
+text-align:center;
+
+font-size:.92em;
+
+color:#d0d0d0;
+
+line-height:1.45;
+
 }
 
 .volver{
-    text-align:center;
-    margin:40px 0;
+
+text-align:center;
+
+margin-top:45px;
+
 }
 
 .volver a{
-    display:inline-block;
-    padding:12px 22px;
-    background:#2c7a3f;
-    color:white;
-    border-radius:8px;
-    text-decoration:none;
+
+display:inline-block;
+
+padding:12px 24px;
+
+background:#2f7f43;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:8px;
+
+transition:.25s;
+
 }
 
 .volver a:hover{
-    background:#399b51;
+
+background:#45a85a;
+
 }
 
 footer{
-    text-align:center;
-    padding:25px;
-    color:#aaa;
-    border-top:1px solid #333;
+
+margin-top:50px;
+
+padding:25px;
+
+text-align:center;
+
+border-top:1px solid #333;
+
+color:#aaa;
+
+}
+
+@media (max-width:600px){
+
+header img{
+
+height:150px;
+
+}
+
+h1{
+
+font-size:2em;
+
+}
+
+.elemento{
+
+width:240px;
+
+}
+
+.elemento img{
+
+height:315px;
+
+}
+
 }
 
 </style>
@@ -113,7 +212,9 @@ footer{
 <body>
 
 <header>
-<img src="cabeceramv.png" alt="Mundo Vegetal - PalEntropía">
+
+<img src="cabeceramv.png" alt="Mundo Vegetal">
+
 </header>
 
 <main>
@@ -125,13 +226,17 @@ footer{
 <div class="elemento">
 
 <a href="https://youtube.com/shorts/j6gUzl7zHyg?feature=share" target="_blank">
+
 <img src="Walchia_i0.png" alt="Walchia">
+
 </a>
 
 <h2>Walchia</h2>
 
-<div class="enlace">
+<div class="info">
+
 Pulsa sobre la imagen para ver el Short de YouTube.
+
 </div>
 
 </div>
@@ -139,20 +244,35 @@ Pulsa sobre la imagen para ver el Short de YouTube.
 </div>
 
 <div class="volver">
-<a href="../index.html">← Volver al Inicio</a>
+
+<a href="../index.html">
+
+← Volver al Inicio
+
+</a>
+
 </div>
 
 </main>
 
 <footer>
 
-<p>© 2026 <strong>PalEntropía</strong></p>
+<p>
 
-<p>Un proyecto de divulgación sobre la historia de la vida en la Tierra.</p>
+© 2026 <strong>PalEntropía</strong>
+
+</p>
+
+<p>
+
+Un proyecto de divulgación sobre la historia de la vida en la Tierra.
+
+</p>
 
 </footer>
 
 </body>
+
 </html>
 
 
