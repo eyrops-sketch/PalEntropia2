@@ -19,7 +19,7 @@ jobs:
       - name: Generate sitemap
         uses: cicirello/generate-sitemap@v1
         with:
-          base-url-path: https://eyrops-sketch.github.io/PalEntropia2
+          base-url-path: https://palentropia.es
 
       - name: Commit sitemap
         run: |
