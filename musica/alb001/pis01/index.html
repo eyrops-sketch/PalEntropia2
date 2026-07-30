@@ -268,14 +268,31 @@ analyser.fftSize = 256;
 
 const datos = new Uint8Array(analyser.frequencyBinCount);
 
+const suavizado = new Uint8Array(analyser.frequencyBinCount);
+  
+
+
+  
 
 function dibujar(){
 
 requestAnimationFrame(dibujar);
 
 
+
+  
+
 analyser.getByteFrequencyData(datos);
 
+for(let i=0;i<datos.length;i++){
+
+suavizado[i] = suavizado[i] * 0.8 + datos[i] * 0.2;
+
+}
+
+
+
+  
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -283,7 +300,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 let x=0;
 
 
-datos.forEach(valor=>{
+suavizado.forEach(valor=>{
 
 
 let altura = valor / 2;
