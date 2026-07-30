@@ -12,7 +12,7 @@
 
 
 <meta name="description"
-content="A Billion Winters. Primera pista del Álbum 001 Ecos del Sílice. Música Synthwave oficial de PalEntropía.">
+content="A Billion Winters. Pista 01 del álbum Ecos del Sílice. Banda sonora Synthwave oficial de PalEntropía asociada a su Paleoficha audiovisual.">
 
 
 <link rel="icon" href="../../../favicon.ico" type="image/x-icon">
@@ -20,9 +20,11 @@ content="A Billion Winters. Primera pista del Álbum 001 Ecos del Sílice. Músi
 
 <style>
 
+
 body{
 
 margin:0;
+
 padding:20px;
 
 background:#111;
@@ -34,6 +36,7 @@ font-family:Arial, Helvetica, sans-serif;
 text-align:center;
 
 }
+
 
 
 header{
@@ -51,6 +54,7 @@ box-shadow:0 0 20px rgba(184,76,255,.45);
 }
 
 
+
 header img{
 
 width:500px;
@@ -59,9 +63,20 @@ max-width:95%;
 
 border-radius:20px;
 
-box-shadow:0 8px 22px rgba(0,0,0,.5);
+box-shadow:0 0 25px rgba(184,76,255,.55);
+
+transition:.3s;
 
 }
+
+
+
+header img:hover{
+
+transform:scale(1.03);
+
+}
+
 
 
 h1{
@@ -73,18 +88,22 @@ margin:20px 0 10px;
 }
 
 
+
 p{
 
 font-size:18px;
 
 color:#ddd;
 
+line-height:1.6;
+
 }
+
 
 
 .reproductor{
 
-max-width:700px;
+max-width:750px;
 
 margin:auto;
 
@@ -94,9 +113,10 @@ padding:25px;
 
 border-radius:20px;
 
-box-shadow:0 0 15px rgba(184,76,255,.35);
+box-shadow:0 0 20px rgba(184,76,255,.35);
 
 }
+
 
 
 audio{
@@ -106,17 +126,16 @@ width:100%;
 }
 
 
+
 #visualizador{
 
 width:100%;
 
-max-width:700px;
+height:200px;
 
-height:180px;
+margin-top:30px;
 
-margin:30px auto;
-
-background:#111;
+background:#080808;
 
 border:2px solid #8a2be2;
 
@@ -125,6 +144,7 @@ border-radius:15px;
 display:block;
 
 }
+
 
 
 button{
@@ -146,13 +166,15 @@ cursor:pointer;
 }
 
 
+
 button:hover{
 
 background:#b84cff;
 
-box-shadow:0 0 14px #b84cff;
+box-shadow:0 0 15px #b84cff;
 
 }
+
 
 
 a{
@@ -162,6 +184,7 @@ text-decoration:none;
 color:white;
 
 }
+
 
 
 footer{
@@ -175,7 +198,6 @@ color:#aaa;
 
 </style>
 
-
 </head>
 
 
@@ -183,8 +205,16 @@ color:#aaa;
 
 <header>
 
+
+<a href="https://youtube.com/shorts/jluRhdf4YLM?feature=share"
+target="_blank">
+
+
 <img src="a_billion_winters.png"
-alt="A Billion Winters">
+alt="A Billion Winters - Paleoficha PalEntropía">
+
+
+</a>
 
 
 <h1>
@@ -207,6 +237,13 @@ Discografía Synthwave oficial de PalEntropía.
 </p>
 
 
+<p>
+
+▶️ Pulsa sobre la imagen para ver la Paleoficha original en YouTube
+
+</p>
+
+
 </header>
 
 
@@ -221,12 +258,16 @@ Discografía Synthwave oficial de PalEntropía.
 
 <audio id="audio" controls>
 
+
 <source src="a_billion_winters.mp3"
 type="audio/mpeg">
 
+
 Tu navegador no soporta audio HTML5.
 
+
 </audio>
+
 
 
 <canvas id="visualizador"></canvas>
@@ -243,7 +284,9 @@ const canvas = document.getElementById("visualizador");
 const ctx = canvas.getContext("2d");
 
 
+
 const audioContext = new AudioContext();
+
 
 const analyser = audioContext.createAnalyser();
 
@@ -256,12 +299,17 @@ source.connect(analyser);
 analyser.connect(audioContext.destination);
 
 
+
 analyser.fftSize = 256;
+
 
 
 const datos = new Uint8Array(analyser.frequencyBinCount);
 
 const suavizado = new Uint8Array(analyser.frequencyBinCount);
+
+const onda = new Uint8Array(analyser.fftSize);
+
 
 
 
@@ -293,8 +341,10 @@ canvas.height
 
 
 
-let x = 0;
+// BARRAS DE FRECUENCIA
 
+
+let x = 0;
 
 
 suavizado.forEach(valor=>{
@@ -310,7 +360,6 @@ ctx.fillStyle="#b84cff";
 ctx.shadowBlur=15;
 
 ctx.shadowColor="#b84cff";
-
 
 
 ctx.fillRect(
@@ -335,7 +384,57 @@ x+=4;
 
 
 
+// ONDA DE AUDIO
+
+
+analyser.getByteTimeDomainData(onda);
+
+
+
+ctx.beginPath();
+
+ctx.strokeStyle="#ffffff";
+
+ctx.lineWidth=2;
+
+
+
+let posicionX=0;
+
+
+
+for(let i=0;i<onda.length;i++){
+
+
+let y=(onda[i]/128.0)*canvas.height/2;
+
+
+
+if(i===0){
+
+ctx.moveTo(posicionX,y);
+
+}else{
+
+ctx.lineTo(posicionX,y);
+
 }
+
+
+
+posicionX += canvas.width/onda.length;
+
+
+}
+
+
+
+ctx.stroke();
+
+
+
+}
+
 
 
 
@@ -350,6 +449,7 @@ audioContext.resume();
 dibujar();
 
 
+
 </script>
 
 
@@ -359,11 +459,13 @@ dibujar();
 
 <a href="../index.html">
 
+
 <button>
 
 ⬅ Volver al álbum
 
 </button>
+
 
 </a>
 
@@ -371,13 +473,16 @@ dibujar();
 
 <footer>
 
+
 <p>
 © 2026 PalEntropía
 </p>
 
+
 <p>
 Álbum 001 · Ecos del Sílice
 </p>
+
 
 </footer>
 
@@ -387,9 +492,7 @@ dibujar();
 
 </html>
   
-
   
-
 
 
 
