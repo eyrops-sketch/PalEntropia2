@@ -295,7 +295,17 @@ suavizado[i] = suavizado[i] * 0.8 + datos[i] * 0.2;
   
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.strokeStyle = "#8a2be2";
 
+ctx.lineWidth = 2;
+
+ctx.beginPath();
+
+ctx.moveTo(0, canvas.height/2);
+
+ctx.lineTo(canvas.width, canvas.height/2);
+
+ctx.stroke();
 
 let x=0;
 
