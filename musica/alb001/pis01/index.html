@@ -253,6 +253,96 @@ Música Synthwave · Ecos del Sílice
 
 </footer>
 
+<script>
+
+const audio = document.querySelector("audio");
+
+const canvas = document.getElementById("visualizador");
+
+const ctx = canvas.getContext("2d");
+
+
+const audioContext = new AudioContext();
+
+const analyser = audioContext.createAnalyser();
+
+
+const source = audioContext.createMediaElementSource(audio);
+
+
+source.connect(analyser);
+
+analyser.connect(audioContext.destination);
+
+
+analyser.fftSize = 256;
+
+
+const datos = new Uint8Array(analyser.frequencyBinCount);
+
+
+function dibujar(){
+
+requestAnimationFrame(dibujar);
+
+
+analyser.getByteFrequencyData(datos);
+
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+
+let x=0;
+
+
+datos.forEach(valor=>{
+
+
+let altura = valor / 2;
+
+
+ctx.fillRect(
+
+x,
+
+canvas.height - altura,
+
+3,
+
+altura
+
+);
+
+
+x += 4;
+
+
+});
+
+
+}
+
+
+audio.addEventListener("play",()=>{
+
+audioContext.resume();
+
+});
+
+
+dibujar();
+
+
+</script>
+
+
+
+  
+
+  
+
+
+  
 </body>
 
 </html>
