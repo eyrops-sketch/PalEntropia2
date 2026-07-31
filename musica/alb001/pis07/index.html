@@ -1,1 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bone and Copper | PalEntropía</title>
+
+<meta name="description"
+content="Bone and Copper. Pista musical de PalEntropía asociada a su Paleoficha audiovisual.">
+
+<link rel="icon" href="../../../favicon.ico" type="image/x-icon">
+
+<style>
+
+body{
+
+margin:0;
+
+padding:20px;
+
+background:#111;
+
+color:white;
+
+font-family:Arial, Helvetica, sans-serif;
+
+text-align:center;
+
+}
+
+header{
+
+background:linear-gradient(90deg,#6a0dad,#a020f0);
+
+padding:30px 20px;
+
+border-radius:20px;
+
+margin-bottom:40px;
+
+box-shadow:0 0 20px rgba(184,76,255,.45);
+
+}
+
+header img{
+
+width:500px;
+
+max-width:95%;
+
+border-radius:20px;
+
+box-shadow:0 0 25px rgba(184,76,255,.55);
+
+transition:.3s;
+
+}
+
+header img:hover{
+
+transform:scale(1.03);
+
+}
+
+h1{
+
+font-size:38px;
+
+margin:20px 0 10px;
+
+}
+
+.reproductor{
+
+max-width:750px;
+
+margin:auto;
+
+background:#222;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:0 0 20px rgba(184,76,255,.35);
+
+}
+
+audio{
+
+width:100%;
+
+}
+
+#visualizador{
+
+width:100%;
+
+height:200px;
+
+margin-top:30px;
+
+background:#080808;
+
+border:2px solid #8a2be2;
+
+border-radius:15px;
+
+display:block;
+
+}
+
+button{
+
+background:#8a2be2;
+
+color:white;
+
+border:none;
+
+padding:14px 25px;
+
+border-radius:12px;
+
+font-size:16px;
+
+cursor:pointer;
+
+}
+
+button:hover{
+
+background:#b84cff;
+
+box-shadow:0 0 15px #b84cff;
+
+}
+
+a{
+
+text-decoration:none;
+
+color:white;
+
+}
+
+footer{
+
+margin-top:50px;
+
+color:#aaa;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<a href="https://youtube.com/shorts/eSl98sGVFUE?feature=share"
+target="_blank">
+
+<img src="bone_and_copper.png"
+alt="Bone and Copper - Paleoficha PalEntropía">
+
+</a>
+
+<p style="color:#b84cff;font-weight:bold;font-size:17px;">
+
+▶️ Pulsa la imagen
+
+</p>
+
+<h1>
+
+🎵 Bone and Copper
+
+</h1>
+
+</header>
+
+
+
+<section class="reproductor">
+
+<h2>
+
+🎧 Reproductor
+
+</h2>
+
+<audio id="audio" controls>
+
+<source src="bone_and_copper.mp3"
+type="audio/mpeg">
+
+Tu navegador no soporta audio HTML5.
+
+</audio>
+
+<canvas id="visualizador"></canvas>
+
+</section>
+
+<script>
+
+const audio = document.getElementById("audio");
+
+const canvas = document.getElementById("visualizador");
+
+const ctx = canvas.getContext("2d");
+
+const audioContext = new AudioContext();
+
+const analyser = audioContext.createAnalyser();
+
+const source = audioContext.createMediaElementSource(audio);
+
+source.connect(analyser);
+
+analyser.connect(audioContext.destination);
+
+analyser.fftSize = 256;
+
+const datos = new Uint8Array(analyser.frequencyBinCount);
+
+const suavizado = new Uint8Array(analyser.frequencyBinCount);
+
+const onda = new Uint8Array(analyser.fftSize);
+
+function dibujar(){
+
+requestAnimationFrame(dibujar);
+
+analyser.getByteFrequencyData(datos);
+
+for(let i=0;i<datos.length;i++){
+
+suavizado[i]=suavizado[i]*0.8+datos[i]*0.2;
+
+}
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+// Barras
+
+let x=0;
+
+suavizado.forEach(valor=>{
+
+let altura=valor/2;
+
+ctx.fillStyle="#b84cff";
+
+ctx.shadowBlur=15;
+
+ctx.shadowColor="#b84cff";
+
+ctx.fillRect(
+
+x,
+
+canvas.height-altura,
+
+3,
+
+altura
+
+);
+
+x+=4;
+
+});
+
+// Onda
+
+analyser.getByteTimeDomainData(onda);
+
+ctx.beginPath();
+
+ctx.strokeStyle="#ffffff";
+
+ctx.lineWidth=2;
+
+let posicionX=0;
+
+for(let i=0;i<onda.length;i++){
+
+let y=(onda[i]/128.0)*canvas.height/2;
+
+if(i===0){
+
+ctx.moveTo(posicionX,y);
+
+}else{
+
+ctx.lineTo(posicionX,y);
+
+}
+
+posicionX+=canvas.width/onda.length;
+
+}
+
+ctx.stroke();
+
+}
+
+audio.addEventListener("play",()=>{
+
+audioContext.resume();
+
+});
+
+dibujar();
+
+</script>
+
+<br><br>
+
+<a href="../index.html">
+
+<button>
+
+⬅ Volver al álbum
+
+</button>
+
+</a>
+
+<footer>
+
+<p>
+
+© 2026 PalEntropía
+
+</p>
+
+<p>
+
+Álbum · Ecos del Sílice
+
+<br>
+
+Pista 07 · Bone and Copper
+
+</p>
+
+</footer>
+
+</body>
+
+</html>
+
+
+
+
+
 
