@@ -916,19 +916,244 @@ inteligencia:6
 
 
 
+"005_01": {
+nombre:"Suminia",
+adaptabilidad:8,
+resistencia:6,
+sociabilidad:5,
+reproduccion:7,
+ofensiva:4,
+defensa:5,
+movilidad:8,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:7,
+inteligencia:6
+},
 
+"005_02": {
+nombre:"Opabinia",
+adaptabilidad:9,
+resistencia:4,
+sociabilidad:4,
+reproduccion:8,
+ofensiva:5,
+defensa:3,
+movilidad:8,
+plasticidad_ecologica:9,
+tamano:1,
+velocidad:7,
+inteligencia:5
+},
+
+"005_03": {
+nombre:"Rhinopteraspis",
+adaptabilidad:8,
+resistencia:5,
+sociabilidad:5,
+reproduccion:8,
+ofensiva:2,
+defensa:6,
+movilidad:6,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:5,
+inteligencia:3
+},
+
+"005_04": {
+nombre:"Euparkeria",
+adaptabilidad:8,
+resistencia:6,
+sociabilidad:5,
+reproduccion:7,
+ofensiva:5,
+defensa:5,
+movilidad:8,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:8,
+inteligencia:7
+},
+
+"005_05": {
+nombre:"Crassigyrinus",
+adaptabilidad:8,
+resistencia:7,
+sociabilidad:3,
+reproduccion:7,
+ofensiva:7,
+defensa:5,
+movilidad:6,
+plasticidad_ecologica:8,
+tamano:5,
+velocidad:5,
+inteligencia:4
+},
+
+"005_06": {
+nombre:"Drepanosaurus",
+adaptabilidad:8,
+resistencia:5,
+sociabilidad:3,
+reproduccion:6,
+ofensiva:5,
+defensa:4,
+movilidad:8,
+plasticidad_ecologica:7,
+tamano:2,
+velocidad:7,
+inteligencia:6
+},
+
+"005_07": {
+nombre:"Epidexipteryx",
+adaptabilidad:7,
+resistencia:4,
+sociabilidad:5,
+reproduccion:6,
+ofensiva:3,
+defensa:3,
+movilidad:9,
+plasticidad_ecologica:7,
+tamano:2,
+velocidad:8,
+inteligencia:7
+},
+
+"005_08": {
+nombre:"Deinocheirus",
+adaptabilidad:8,
+resistencia:9,
+sociabilidad:7,
+reproduccion:5,
+ofensiva:6,
+defensa:7,
+movilidad:5,
+plasticidad_ecologica:8,
+tamano:10,
+velocidad:4,
+inteligencia:8
+},
+
+"005_09": {
+nombre:"Uintatherium",
+adaptabilidad:7,
+resistencia:9,
+sociabilidad:5,
+reproduccion:4,
+ofensiva:7,
+defensa:8,
+movilidad:4,
+plasticidad_ecologica:6,
+tamano:8,
+velocidad:3,
+inteligencia:5
+},
+
+"005_10": {
+nombre:"Dimetrodon",
+adaptabilidad:8,
+resistencia:8,
+sociabilidad:3,
+reproduccion:5,
+ofensiva:9,
+defensa:6,
+movilidad:6,
+plasticidad_ecologica:7,
+tamano:7,
+velocidad:6,
+inteligencia:7
+},
+
+"005_11": {
+nombre:"Beelzebufo",
+adaptabilidad:8,
+resistencia:7,
+sociabilidad:3,
+reproduccion:8,
+ofensiva:6,
+defensa:6,
+movilidad:5,
+plasticidad_ecologica:8,
+tamano:4,
+velocidad:4,
+inteligencia:4
+},
+
+"005_12": {
+nombre:"Atopodentatus",
+adaptabilidad:9,
+resistencia:6,
+sociabilidad:5,
+reproduccion:7,
+ofensiva:2,
+defensa:5,
+movilidad:6,
+plasticidad_ecologica:9,
+tamano:5,
+velocidad:5,
+inteligencia:4
+},
+
+"005_13": {
+nombre:"Astrapotherium",
+adaptabilidad:7,
+resistencia:8,
+sociabilidad:6,
+reproduccion:4,
+ofensiva:6,
+defensa:7,
+movilidad:5,
+plasticidad_ecologica:7,
+tamano:8,
+velocidad:4,
+inteligencia:5
+},
+
+"005_14": {
+nombre:"Iberospondylus",
+adaptabilidad:8,
+resistencia:6,
+sociabilidad:4,
+reproduccion:7,
+ofensiva:4,
+defensa:5,
+movilidad:6,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:5,
+inteligencia:4
+},
+
+"005_15": {
+nombre:"Longisquama",
+adaptabilidad:8,
+resistencia:4,
+sociabilidad:4,
+reproduccion:6,
+ofensiva:3,
+defensa:3,
+movilidad:9,
+plasticidad_ecologica:8,
+tamano:2,
+velocidad:8,
+inteligencia:6
+},
+
+
+
+  
   
 
 
 
 
   
-
-
-
-
 
 
   
 };
+
+
 
