@@ -1,1 +1,93 @@
+[
+  {
+    "codigo": "001_01",
+    "nombre": "Gastornis",
+    "volumen": "vol001",
+    "carpeta": "001_01_gastornis",
+    "imagen": "Gastornis_i0.png",
+    "stats": {
+      "adaptabilidad": 7,
+      "sociabilidad": 4,
+      "resistencia": 8,
+      "reproduccion": 5,
+      "ofensiva": 8,
+      "defensa": 6,
+      "movilidad": 5,
+      "plasticidad_ecologica": 6
+    }
+  },
+  {
+    "codigo": "001_02",
+    "nombre": "Goniatites",
+    "volumen": "vol001",
+    "carpeta": "001_02_goniatites",
+    "imagen": "Goniatites_i0.png",
+    "stats": {
+      "adaptabilidad": 8,
+      "sociabilidad": 3,
+      "resistencia": 5,
+      "reproduccion": 9,
+      "ofensiva": 2,
+      "defensa": 4,
+      "movilidad": 6,
+      "plasticidad_ecologica": 8
+    }
+  },
+  {
+    "codigo": "001_03",
+    "nombre": "Aulacephalodon",
+    "volumen": "vol001",
+    "carpeta": "001_03_aulacephalodon",
+    "imagen": "Aulacephalodon_i0.png",
+    "stats": {
+      "adaptabilidad": 6,
+      "sociabilidad": 5,
+      "resistencia": 8,
+      "reproduccion": 6,
+      "ofensiva": 6,
+      "defensa": 7,
+      "movilidad": 5,
+      "plasticidad_ecologica": 6
+    }
+  },
+  {
+    "codigo": "001_04",
+    "nombre": "Andrewsarchus",
+    "volumen": "vol001",
+    "carpeta": "001_04_andrewsarchus",
+    "imagen": "Andrewsarchus_i0.png",
+    "stats": {
+      "adaptabilidad": 7,
+      "sociabilidad": 2,
+      "resistencia": 9,
+      "reproduccion": 3,
+      "ofensiva": 10,
+      "defensa": 7,
+      "movilidad": 7,
+      "plasticidad_ecologica": 6
+    }
+  },
+  {
+    "codigo": "001_05",
+    "nombre": "Ichthyostega",
+    "volumen": "vol001",
+    "carpeta": "001_05_ichthyostega",
+    "imagen": "Ichthyostega_i0.png",
+    "stats": {
+      "adaptabilidad": 8,
+      "sociabilidad": 4,
+      "resistencia": 6,
+      "reproduccion": 7,
+      "ofensiva": 4,
+      "defensa": 5,
+      "movilidad": 6,
+      "plasticidad_ecologica": 8
+    }
+  }
+]
+
+
+
+
+
 
