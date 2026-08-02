@@ -1,63 +1,64 @@
-/*
-========================================================
-PALSTATS TEST v1.0
-Estadísticas Arena PalEntropía
-Escala: 0 - 10
-========================================================
-*/
-
 const PALSTATS = {
 
-
-"001_01":{
+"001_01": {
 nombre:"Gastornis",
-
 adaptabilidad:7,
+resistencia:8,
 sociabilidad:4,
-resistencia:8,
-reproduccion:3
+reproduccion:5,
+ofensiva:8,
+defensa:6,
+movilidad:5,
+plasticidad_ecologica:6
 },
 
-
-"001_02":{
+"001_02": {
 nombre:"Goniatites",
-
 adaptabilidad:8,
-sociabilidad:6,
 resistencia:5,
-reproduccion:9
+sociabilidad:3,
+reproduccion:9,
+ofensiva:2,
+defensa:4,
+movilidad:6,
+plasticidad_ecologica:8
 },
 
-
-"001_03":{
+"001_03": {
 nombre:"Aulacephalodon",
-
 adaptabilidad:6,
-sociabilidad:5,
 resistencia:8,
-reproduccion:6
-},
-
-
-"001_04":{
-nombre:"Andrewsarchus",
-
-adaptabilidad:7,
-sociabilidad:2,
-resistencia:9,
-reproduccion:4
-},
-
-
-"001_05":{
-nombre:"Ichthyostega",
-
-adaptabilidad:9,
 sociabilidad:5,
-resistencia:6,
-reproduccion:7
-}
+reproduccion:6,
+ofensiva:6,
+defensa:7,
+movilidad:5,
+plasticidad_ecologica:6
+},
 
+"001_04": {
+nombre:"Andrewsarchus",
+adaptabilidad:7,
+resistencia:9,
+sociabilidad:2,
+reproduccion:3,
+ofensiva:10,
+defensa:7,
+movilidad:7,
+plasticidad_ecologica:6
+},
+
+"001_05": {
+nombre:"Ichthyostega",
+adaptabilidad:8,
+resistencia:6,
+sociabilidad:4,
+reproduccion:7,
+ofensiva:4,
+defensa:5,
+movilidad:6,
+plasticidad_ecologica:8
+}
 
 };
 
