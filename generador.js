@@ -5,7 +5,6 @@ Prueba lectura paleofichas.json
 ========================================================
 */
 
-
 fetch("datos/paleofichas.json")
 
 .then(respuesta => respuesta.json())
@@ -13,29 +12,32 @@ fetch("datos/paleofichas.json")
 .then(datos => {
 
 
-console.log("Fichas cargadas:", datos.length);
+let salida = "";
+
+salida += "<h2>Fichas cargadas: " + datos.length + "</h2>";
 
 
 datos.forEach(ficha => {
 
-console.log(
-ficha.codigo,
-"-",
-ficha.nombre
-);
-
+salida += `
+<p>
+${ficha.codigo} - ${ficha.nombre}
+</p>
+`;
 
 });
 
 
+document.body.innerHTML += salida;
+
+
 })
+
 
 .catch(error => {
 
-console.log(
-"Error cargando JSON:",
-error
-);
+document.body.innerHTML +=
+"<p>Error cargando JSON: " + error + "</p>";
 
 });
 
