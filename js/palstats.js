@@ -689,7 +689,230 @@ inteligencia:8
 
 
 
-  
+  "004_01": {
+nombre:"Rolfosteus",
+adaptabilidad:7,
+resistencia:6,
+sociabilidad:4,
+reproduccion:7,
+ofensiva:5,
+defensa:6,
+movilidad:8,
+plasticidad_ecologica:7,
+tamano:4,
+velocidad:7,
+inteligencia:4
+},
+
+"004_02": {
+nombre:"Phlegethontia",
+adaptabilidad:8,
+resistencia:5,
+sociabilidad:3,
+reproduccion:7,
+ofensiva:3,
+defensa:4,
+movilidad:7,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:6,
+inteligencia:5
+},
+
+"004_03": {
+nombre:"Hallucigenia",
+adaptabilidad:9,
+resistencia:4,
+sociabilidad:5,
+reproduccion:9,
+ofensiva:4,
+defensa:5,
+movilidad:6,
+plasticidad_ecologica:9,
+tamano:1,
+velocidad:4,
+inteligencia:3
+},
+
+"004_04": {
+nombre:"Colossochelys",
+adaptabilidad:6,
+resistencia:10,
+sociabilidad:5,
+reproduccion:4,
+ofensiva:3,
+defensa:10,
+movilidad:3,
+plasticidad_ecologica:5,
+tamano:10,
+velocidad:2,
+inteligencia:4
+},
+
+"004_05": {
+nombre:"Sacabambaspis",
+adaptabilidad:8,
+resistencia:5,
+sociabilidad:6,
+reproduccion:9,
+ofensiva:2,
+defensa:4,
+movilidad:6,
+plasticidad_ecologica:8,
+tamano:2,
+velocidad:5,
+inteligencia:3
+},
+
+"004_06": {
+nombre:"Mierasaurus",
+adaptabilidad:7,
+resistencia:8,
+sociabilidad:6,
+reproduccion:5,
+ofensiva:4,
+defensa:8,
+movilidad:4,
+plasticidad_ecologica:6,
+tamano:8,
+velocidad:3,
+inteligencia:5
+},
+
+"004_07": {
+nombre:"Tullimonstrum",
+adaptabilidad:8,
+resistencia:4,
+sociabilidad:3,
+reproduccion:8,
+ofensiva:5,
+defensa:3,
+movilidad:7,
+plasticidad_ecologica:9,
+tamano:2,
+velocidad:6,
+inteligencia:5
+},
+
+"004_08": {
+nombre:"Edaphosaurus",
+adaptabilidad:7,
+resistencia:8,
+sociabilidad:5,
+reproduccion:6,
+ofensiva:3,
+defensa:7,
+movilidad:5,
+plasticidad_ecologica:7,
+tamano:7,
+velocidad:4,
+inteligencia:5
+},
+
+"004_09": {
+nombre:"Eryops",
+adaptabilidad:8,
+resistencia:8,
+sociabilidad:4,
+reproduccion:7,
+ofensiva:7,
+defensa:7,
+movilidad:5,
+plasticidad_ecologica:8,
+tamano:7,
+velocidad:4,
+inteligencia:5
+},
+
+"004_10": {
+nombre:"Seymouria",
+adaptabilidad:8,
+resistencia:6,
+sociabilidad:4,
+reproduccion:7,
+ofensiva:4,
+defensa:5,
+movilidad:6,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:5,
+inteligencia:6
+},
+
+"004_11": {
+nombre:"Odaraia",
+adaptabilidad:8,
+resistencia:5,
+sociabilidad:4,
+reproduccion:8,
+ofensiva:5,
+defensa:4,
+movilidad:8,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:7,
+inteligencia:4
+},
+
+"004_12": {
+nombre:"Arthropleura",
+adaptabilidad:8,
+resistencia:10,
+sociabilidad:5,
+reproduccion:7,
+ofensiva:5,
+defensa:9,
+movilidad:4,
+plasticidad_ecologica:7,
+tamano:9,
+velocidad:3,
+inteligencia:4
+},
+
+"004_13": {
+nombre:"Rhamphorhynchus",
+adaptabilidad:8,
+resistencia:5,
+sociabilidad:6,
+reproduccion:7,
+ofensiva:4,
+defensa:3,
+movilidad:10,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:9,
+inteligencia:6
+},
+
+"004_14": {
+nombre:"Albertonectes vanderveldei",
+adaptabilidad:7,
+resistencia:8,
+sociabilidad:5,
+reproduccion:5,
+ofensiva:6,
+defensa:7,
+movilidad:5,
+plasticidad_ecologica:7,
+tamano:10,
+velocidad:4,
+inteligencia:5
+},
+
+"004_15": {
+nombre:"Diprotodon",
+adaptabilidad:8,
+resistencia:10,
+sociabilidad:7,
+reproduccion:4,
+ofensiva:5,
+defensa:9,
+movilidad:4,
+plasticidad_ecologica:7,
+tamano:10,
+velocidad:3,
+inteligencia:6
+},
 
 
 
