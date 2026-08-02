@@ -460,7 +460,236 @@ inteligencia:3
 },
   
 
+"003_01": {
+nombre:"Chalicotherium",
+adaptabilidad:7,
+resistencia:8,
+sociabilidad:5,
+reproduccion:5,
+ofensiva:5,
+defensa:8,
+movilidad:5,
+plasticidad_ecologica:6,
+tamano:9,
+velocidad:4,
+inteligencia:6
+},
 
+"003_02": {
+nombre:"Bothriolepis",
+adaptabilidad:8,
+resistencia:6,
+sociabilidad:5,
+reproduccion:8,
+ofensiva:3,
+defensa:7,
+movilidad:5,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:4,
+inteligencia:3
+},
+
+"003_03": {
+nombre:"Ticinosuchus",
+adaptabilidad:7,
+resistencia:7,
+sociabilidad:3,
+reproduccion:6,
+ofensiva:7,
+defensa:6,
+movilidad:8,
+plasticidad_ecologica:6,
+tamano:5,
+velocidad:7,
+inteligencia:5
+},
+
+"003_04": {
+nombre:"Kritosaurus",
+adaptabilidad:8,
+resistencia:7,
+sociabilidad:8,
+reproduccion:6,
+ofensiva:4,
+defensa:6,
+movilidad:6,
+plasticidad_ecologica:8,
+tamano:7,
+velocidad:5,
+inteligencia:5
+},
+
+"003_05": {
+nombre:"Anomalocaris",
+adaptabilidad:9,
+resistencia:5,
+sociabilidad:4,
+reproduccion:8,
+ofensiva:9,
+defensa:3,
+movilidad:8,
+plasticidad_ecologica:9,
+tamano:5,
+velocidad:8,
+inteligencia:5
+},
+
+"003_06": {
+nombre:"Tiktaalik",
+adaptabilidad:9,
+resistencia:6,
+sociabilidad:4,
+reproduccion:7,
+ofensiva:4,
+defensa:5,
+movilidad:7,
+plasticidad_ecologica:9,
+tamano:5,
+velocidad:6,
+inteligencia:6
+},
+
+"003_07": {
+nombre:"Pterodaustro",
+adaptabilidad:8,
+resistencia:5,
+sociabilidad:6,
+reproduccion:7,
+ofensiva:3,
+defensa:4,
+movilidad:9,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:8,
+inteligencia:6
+},
+
+"003_08": {
+nombre:"Thylacosmilus",
+adaptabilidad:7,
+resistencia:7,
+sociabilidad:3,
+reproduccion:4,
+ofensiva:9,
+defensa:6,
+movilidad:8,
+plasticidad_ecologica:6,
+tamano:6,
+velocidad:8,
+inteligencia:7
+},
+
+"003_09": {
+nombre:"Stethacanthus",
+adaptabilidad:8,
+resistencia:5,
+sociabilidad:4,
+reproduccion:8,
+ofensiva:5,
+defensa:3,
+movilidad:8,
+plasticidad_ecologica:8,
+tamano:3,
+velocidad:7,
+inteligencia:4
+},
+
+"003_10": {
+nombre:"Lycaenops",
+adaptabilidad:7,
+resistencia:7,
+sociabilidad:5,
+reproduccion:5,
+ofensiva:8,
+defensa:6,
+movilidad:7,
+plasticidad_ecologica:6,
+tamano:5,
+velocidad:7,
+inteligencia:7
+},
+
+"003_11": {
+nombre:"Greererpeton",
+adaptabilidad:8,
+resistencia:6,
+sociabilidad:4,
+reproduccion:8,
+ofensiva:3,
+defensa:5,
+movilidad:7,
+plasticidad_ecologica:8,
+tamano:4,
+velocidad:5,
+inteligencia:4
+},
+
+"003_12": {
+nombre:"Helicoprion",
+adaptabilidad:8,
+resistencia:8,
+sociabilidad:3,
+reproduccion:7,
+ofensiva:9,
+defensa:4,
+movilidad:8,
+plasticidad_ecologica:7,
+tamano:7,
+velocidad:7,
+inteligencia:5
+},
+
+"003_13": {
+nombre:"Megatherium",
+adaptabilidad:7,
+resistencia:10,
+sociabilidad:4,
+reproduccion:4,
+ofensiva:6,
+defensa:9,
+movilidad:3,
+plasticidad_ecologica:6,
+tamano:10,
+velocidad:2,
+inteligencia:6
+},
+
+"003_14": {
+nombre:"Cacops aspidephorus",
+adaptabilidad:8,
+resistencia:7,
+sociabilidad:4,
+reproduccion:7,
+ofensiva:5,
+defensa:8,
+movilidad:5,
+plasticidad_ecologica:7,
+tamano:3,
+velocidad:4,
+inteligencia:4
+},
+
+"003_15": {
+nombre:"Hyaenodon",
+adaptabilidad:8,
+resistencia:9,
+sociabilidad:3,
+reproduccion:4,
+ofensiva:10,
+defensa:7,
+movilidad:8,
+plasticidad_ecologica:7,
+tamano:8,
+velocidad:7,
+inteligencia:8
+},
+
+
+
+
+
+  
 
 
 
