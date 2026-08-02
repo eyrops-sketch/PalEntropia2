@@ -2,13 +2,46 @@
 <html lang="es">
 
 <head>
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Test JSON PalEntropía</title>
+
+<style>
+
+body{
+    background:#111;
+    color:white;
+    font-family:Arial, Helvetica, sans-serif;
+    text-align:center;
+}
+
+.card{
+    background:#222;
+    margin:20px auto;
+    padding:20px;
+    border-radius:15px;
+    max-width:400px;
+}
+
+img{
+    width:150px;
+    border-radius:10px;
+}
+
+hr{
+    margin:30px;
+}
+
+</style>
+
 </head>
+
 
 <body>
 
-<h1>Test Base JSON</h1>
+<h1>🧬 Test Base JSON</h1>
 
 <div id="resultado"></div>
 
@@ -21,20 +54,50 @@ fetch("datos/paleofichas.json")
 
 .then(datos => {
 
+
 let html = "";
+
 
 datos.forEach(ficha => {
 
+
 html += `
+
+<div class="card">
+
+
 <h2>${ficha.nombre}</h2>
+
+<img src="paleofichas/${ficha.volumen}/${ficha.carpeta}/${ficha.imagen}">
+
 
 <p>Código: ${ficha.codigo}</p>
 
+<p>Carpeta: ${ficha.carpeta}</p>
+
+
+<h3>Stats Arena</h3>
+
+
 <p>Adaptabilidad: ${ficha.stats.adaptabilidad}/10</p>
+
+<p>Sociabilidad: ${ficha.stats.sociabilidad}/10</p>
 
 <p>Resistencia: ${ficha.stats.resistencia}/10</p>
 
-<hr>
+<p>Reproducción: ${ficha.stats.reproduccion}/10</p>
+
+<p>Ofensiva: ${ficha.stats.ofensiva}/10</p>
+
+<p>Defensa: ${ficha.stats.defensa}/10</p>
+
+<p>Movilidad: ${ficha.stats.movilidad}/10</p>
+
+<p>Plasticidad ecológica: ${ficha.stats.plasticidad_ecologica}/10</p>
+
+
+</div>
+
 `;
 
 });
@@ -43,16 +106,23 @@ html += `
 document.getElementById("resultado").innerHTML = html;
 
 
+})
+
+
+.catch(error => {
+
+document.getElementById("resultado").innerHTML =
+"Error cargando JSON: " + error;
+
 });
 
 
 </script>
 
+
 </body>
 
 </html>
-
-
 
 
 
