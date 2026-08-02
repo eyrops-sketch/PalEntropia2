@@ -1,113 +1,365 @@
 /*
 ========================================================
-GENERADOR PALENTROPÍA v1.2
-Generador PALDB + PALSTATS prueba
+GENERADOR PALENTROPÍA v2.0
+Lector ZONA TEMP prueba
+
+Carga:
+- paleofichas.json
+- paldb.js
+- palstats.js
+
+Genera:
+- Datos biológicos
+- Stats
+- Recursos visuales
 ========================================================
 */
 
 
-fetch("datos/paleofichas.json")
+document.body.innerHTML = `
 
-.then(respuesta => respuesta.json())
+<h1>
+Generador PalEntropía
+</h1>
 
-.then(datos => {
+<label>
+Código especie:
+</label>
 
+<input 
+id="codigoInput"
+value="001_01"
+>
 
-let salida = "";
+<button onclick="cargarEspecie()">
+Cargar
+</button>
 
+<hr>
 
-/* =========================
-   GENERAR PALDB
-========================= */
+<div id="resultado"></div>
 
-
-salida += "<h2>PALDB GENERADO</h2>";
-
-salida += "<pre>";
-
-salida += "const PALDB = [\n\n";
-
-
-datos.forEach(ficha => {
-
-
-salida += 
-`{
-codigo:"${ficha.codigo}",
-nombre:"${ficha.nombre}",
-
-volumen:"${ficha.volumen}",
-carpeta:"${ficha.carpeta}",
-
-imagen:"${ficha.imagen}"
-
-},\n\n`;
-
-
-});
-
-
-salida += "];\n\n";
-
-salida += "</pre>";
+`;
 
 
 
-/* =========================
-   GENERAR PALSTATS
-========================= */
+async function cargarEspecie(){
 
 
-salida += "<h2>PALSTATS GENERADO</h2>";
-
-salida += "<pre>";
-
-salida += "const PALSTATS = {\n\n";
-
-
-datos.forEach(ficha => {
-
-
-salida += 
-`"${ficha.codigo}": {
-nombre:"${ficha.nombre}",
-
-adaptabilidad:${ficha.stats.adaptabilidad},
-sociabilidad:${ficha.stats.sociabilidad},
-resistencia:${ficha.stats.resistencia},
-reproduccion:${ficha.stats.reproduccion},
-ofensiva:${ficha.stats.ofensiva},
-defensa:${ficha.stats.defensa},
-movilidad:${ficha.stats.movilidad},
-plasticidad_ecologica:${ficha.stats.plasticidad_ecologica}
-
-},\n\n`;
+let codigo = 
+document
+.getElementById("codigoInput")
+.value
+.trim();
 
 
 
-});
+try{
 
 
-salida += "};";
+/*
+========================================================
+PALEOFICHAS JSON
+========================================================
+*/
 
 
-salida += "</pre>";
+let respuesta = 
+await fetch("datos/paleofichas.json");
+
+
+let paleofichas = 
+await respuesta.json();
 
 
 
-document.body.innerHTML += salida;
+let ficha = 
+paleofichas.find(
+x => x.codigo === codigo
+);
 
 
 
-})
+if(!ficha){
+
+throw "No existe en paleofichas.json";
+
+}
 
 
-.catch(error => {
 
-document.body.innerHTML +=
-"Error: " + error;
+/*
+========================================================
+PALDB
+========================================================
+*/
 
-});
+
+let db = 
+PALDB.find(
+x => x.codigo === codigo
+);
+
+
+
+if(!db){
+
+throw "No existe en PALDB";
+
+}
+
+
+
+/*
+========================================================
+PALSTATS
+========================================================
+*/
+
+
+let stats =
+PALSTATS[codigo];
+
+
+
+if(!stats){
+
+throw "No existe en PALSTATS";
+
+}
+
+
+
+/*
+========================================================
+ZONA TEMP
+========================================================
+*/
+
+
+let zonaTemp = {
+
+
+taxon:{
+
+codigo:ficha.codigo,
+nombre:ficha.nombre
+
+},
+
+
+tiempo:{
+
+periodo:ficha.periodo
+
+},
+
+
+ecologia:{
+
+medio:ficha.medio,
+habitat:ficha.habitat_principal,
+dieta:ficha.dieta
+
+},
+
+
+anatomia:
+ficha.anatomia,
+
+
+stats:stats,
+
+
+recursos:db
+
+
+};
+
+
+
+
+/*
+========================================================
+IMAGENES
+========================================================
+*/
+
+
+let rutaImagen =
+
+"paleofichas/vol" +
+
+db.volumen
+.toString()
+.padStart(3,"0")
+
++
+
+"/"
+
++
+
+db.carpeta
+
++
+
+"/";
+
+
+
+
+
+let html = `
+
+
+<h2>
+${ficha.nombre}
+</h2>
+
+
+<h3>
+ZONA TEMP
+</h3>
+
+
+<pre>
+${JSON.stringify(
+zonaTemp,
+null,
+2
+)}
+</pre>
+
+
+
+<h3>
+Imágenes
+</h3>
+
+
+<div style="
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+">
+
+`;
+
+
+
+
+for(let i=0;i<4;i++){
+
+
+html += `
+
+
+<div>
+
+<img
+
+src="${rutaImagen}${db.imagenes["i"+i]}"
+
+width="180"
+
+loading="lazy"
+
+onerror="
+this.outerHTML='<p>Error imagen ${i}</p>'
+"
+
+>
+
+<p>
+i${i}
+</p>
+
+
+</div>
+
+
+`;
+
+}
+
+
+
+html += `
+
+</div>
+
+
+
+<h3>
+PALDB
+</h3>
+
+
+<pre>
+${JSON.stringify(
+db,
+null,
+2
+)}
+</pre>
+
+
+
+<h3>
+PALSTATS
+</h3>
+
+
+<pre>
+${JSON.stringify(
+stats,
+null,
+2
+)}
+</pre>
+
+
+`;
+
+
+
+document
+.getElementById("resultado")
+.innerHTML =
+html;
+
+
+
+}
+
+
+
+catch(error){
+
+
+document
+.getElementById("resultado")
+.innerHTML =
+
+`
+
+<h2>
+Error
+</h2>
+
+<p>
+${error}
+</p>
+
+`;
+
+}
+
+
+
+}
+
 
 
 
