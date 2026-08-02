@@ -2,15 +2,30 @@
 <html lang="es">
 
 <head>
+
 <meta charset="UTF-8">
-<title>Test Arena PalEntropía</title>
+<title>Arena PalEntropía - Test</title>
+
 </head>
+
 
 <body>
 
-<h1>Prueba Base Arena</h1>
+<h1>⚔️ Arena PalEntropía</h1>
+
+<p>
+Introduce código de Paleoficha:
+</p>
+
+<input id="codigo" value="001_04">
+
+<button onclick="cargarFicha()">
+Cargar
+</button>
+
 
 <div id="resultado"></div>
+
 
 
 <script src="js/paldb.js"></script>
@@ -19,18 +34,33 @@
 
 <script>
 
-let codigo = "001_04";
+function cargarFicha(){
+
+
+let codigo = document.getElementById("codigo").value;
 
 
 let ficha = PALDB.find(
-    x => x.codigo === codigo
+x => x.codigo === codigo
 );
 
 
 let stats = PALSTATS[codigo];
 
 
+if(!ficha){
+
+document.getElementById("resultado").innerHTML =
+"<h2>Paleoficha no encontrada</h2>";
+
+return;
+
+}
+
+
+
 document.getElementById("resultado").innerHTML = `
+
 
 <h2>${ficha.nombre}</h2>
 
@@ -38,21 +68,31 @@ document.getElementById("resultado").innerHTML = `
 
 <p>Carpeta: ${ficha.carpeta}</p>
 
+
 <hr>
+
 
 <h3>Stats Arena</h3>
 
 <p>Adaptabilidad: ${stats.adaptabilidad}/10</p>
+
 <p>Sociabilidad: ${stats.sociabilidad}/10</p>
+
 <p>Resistencia: ${stats.resistencia}/10</p>
+
 <p>Reproducción: ${stats.reproduccion}/10</p>
 
+
 `;
+
+}
+
 
 </script>
 
 
 </body>
+
 </html>
 
 
