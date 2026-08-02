@@ -1,9 +1,10 @@
 /*
 ========================================================
-GENERADOR PALEONTROPÍA v1.0
-Prueba lectura paleofichas.json
+GENERADOR PALENTROPÍA v1.1
+Generador PALDB prueba
 ========================================================
 */
+
 
 fetch("datos/paleofichas.json")
 
@@ -14,18 +15,36 @@ fetch("datos/paleofichas.json")
 
 let salida = "";
 
-salida += "<h2>Fichas cargadas: " + datos.length + "</h2>";
+salida += "<h2>PALDB GENERADO</h2>";
+
+salida += "<pre>";
+
+salida += "const PALDB = [\n\n";
 
 
 datos.forEach(ficha => {
 
-salida += `
-<p>
-${ficha.codigo} - ${ficha.nombre}
-</p>
-`;
+
+salida += 
+`{
+codigo:"${ficha.codigo}",
+nombre:"${ficha.nombre}",
+
+volumen:"${ficha.volumen}",
+carpeta:"${ficha.carpeta}",
+
+imagen:"${ficha.imagen}"
+
+},\n\n`;
+
 
 });
+
+
+salida += "];";
+
+
+salida += "</pre>";
 
 
 document.body.innerHTML += salida;
@@ -33,11 +52,10 @@ document.body.innerHTML += salida;
 
 })
 
-
 .catch(error => {
 
 document.body.innerHTML +=
-"<p>Error cargando JSON: " + error + "</p>";
+"Error: " + error;
 
 });
 
