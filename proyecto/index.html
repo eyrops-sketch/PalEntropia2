@@ -10,33 +10,36 @@
 <title>Proyecto PalEntropía | Filosofía, divulgación y evolución de un universo prehistórico</title>
 
 <meta name="description"
-content="Conoce el Proyecto PalEntropía: una iniciativa independiente de divulgación científica que combina paleontología, paleoarte, inteligencia artificial y creatividad para explorar la historia de la vida en la Tierra.">
+content="Conoce el Proyecto PalEntropía, una iniciativa independiente de divulgación sobre paleontología, paleoarte, evolución e inteligencia artificial inspirada en la historia de la vida en la Tierra.">
 
 <meta name="keywords"
-content="PalEntropía, PalEntropia, palentropía, palentropia, proyecto PalEntropía, paleontología, paleoarte, divulgación científica, fósiles, evolución, historia de la vida, paleoecología, paleobiología, Fanerozoico, Paleozoico, Mesozoico, Cenozoico, inteligencia artificial, reconstrucciones prehistóricas">
+content="PalEntropía, PalEntropia, palentropía, palentropia, proyecto PalEntropía, paleontología, paleoarte, evolución, fósiles, paleoecología, paleobiología, divulgación científica, inteligencia artificial, Fanerozoico, Paleozoico, Mesozoico, Cenozoico, historia de la vida">
 
-<meta name="robots" content="index, follow">
+<meta name="robots"
+content="index, follow">
 
-<meta name="author" content="PalEntropía">
+<meta name="author"
+content="PalEntropía">
 
 <link rel="canonical"
 href="https://palentropia.es/proyecto/">
 
 <!-- Open Graph -->
 
-<meta property="og:type" content="website">
+<meta property="og:type"
+content="website">
 
 <meta property="og:title"
 content="Proyecto PalEntropía">
 
 <meta property="og:description"
-content="Descubre la filosofía, la historia y los objetivos de PalEntropía, un proyecto dedicado a divulgar la historia de la vida mediante ciencia, creatividad e inteligencia artificial.">
+content="Descubre la filosofía, la historia y la evolución de PalEntropía, un proyecto independiente que une paleontología, creatividad e inteligencia artificial.">
 
 <meta property="og:url"
 content="https://palentropia.es/proyecto/">
 
 <meta property="og:image"
-content="https://palentropia.es/proyecto/Cabecera00.jpg">
+content="https://palentropia.es/proyecto/CabeceraProyecto.png">
 
 <meta property="og:site_name"
 content="PalEntropía">
@@ -44,7 +47,7 @@ content="PalEntropía">
 <meta property="og:locale"
 content="es_ES">
 
-<!-- Twitter -->
+<!-- Twitter Cards -->
 
 <meta name="twitter:card"
 content="summary_large_image">
@@ -56,7 +59,7 @@ content="Proyecto PalEntropía">
 content="Filosofía, historia y evolución del universo PalEntropía.">
 
 <meta name="twitter:image"
-content="https://palentropia.es/proyecto/Cabecera00.jpg">
+content="https://palentropia.es/proyecto/CabeceraProyecto.png">
 
 <!-- FAVICONS OFICIALES -->
 
@@ -75,9 +78,11 @@ content="https://palentropia.es/proyecto/Cabecera00.jpg">
 <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest"
+href="/manifest.json">
 
-<meta name="theme-color" content="#111111">
+<meta name="theme-color"
+content="#111111">
 
 <!-- Datos estructurados -->
 
@@ -87,7 +92,7 @@ content="https://palentropia.es/proyecto/Cabecera00.jpg">
 "@type":"WebPage",
 "name":"Proyecto PalEntropía",
 "url":"https://palentropia.es/proyecto/",
-"description":"Página oficial del Proyecto PalEntropía. Filosofía, historia, divulgación científica y evolución del proyecto.",
+"description":"Página oficial del Proyecto PalEntropía.",
 "isPartOf":{
 "@type":"WebSite",
 "name":"PalEntropía",
@@ -111,8 +116,8 @@ body{
 margin:0;
 font-family:Arial,Helvetica,sans-serif;
 background:#111;
-color:white;
-line-height:1.8;
+color:#fff;
+line-height:1.9;
 
 }
 
@@ -133,19 +138,19 @@ font-size:46px;
 
 header p{
 
-color:#ddd;
+max-width:950px;
+margin:20px auto;
 font-size:21px;
-margin:18px auto;
-max-width:900px;
+color:#ddd;
 
 }
 
 header img{
 
-width:700px;
+width:720px;
 max-width:95%;
 border-radius:20px;
-box-shadow:0 8px 22px rgba(0,0,0,.5);
+box-shadow:0 8px 24px rgba(0,0,0,.55);
 
 }
 
@@ -153,45 +158,88 @@ main{
 
 max-width:1100px;
 margin:auto;
-padding:40px 25px;
+padding:45px 25px;
 
 }
 
 section{
 
 background:#1d1d1d;
-margin-bottom:35px;
-padding:35px;
+
+border:2px solid #8a2be2;
+
 border-radius:18px;
-box-shadow:0 0 18px rgba(184,76,255,.18);
+
+padding:35px;
+
+margin-bottom:35px;
+
+box-shadow:0 0 18px rgba(184,76,255,.30);
+
+transition:.30s;
+
+}
+
+section:hover{
+
+border-color:#d79cff;
+
+box-shadow:0 0 30px rgba(184,76,255,.75);
+
+transform:translateY(-3px);
+
+}
+
+section:focus-within{
+
+border-color:#ffffff;
+
+box-shadow:0 0 34px rgba(184,76,255,.95);
+
+outline:none;
 
 }
 
 section h2{
 
-color:#d79cff;
-font-size:34px;
 margin-top:0;
+
+font-size:34px;
+
+color:#d79cff;
 
 }
 
 section p{
 
 font-size:18px;
+
 color:#ddd;
+
 text-align:justify;
+
+}
+
+ul{
+
+color:#ddd;
+
+font-size:18px;
+
+line-height:1.9;
 
 }
 
 strong{
 
-color:white;
+color:#fff;
 
 }
 
 a{
 
 color:#d79cff;
+
 text-decoration:none;
 
 }
@@ -202,21 +250,12 @@ text-decoration:underline;
 
 }
 
-footer{
-
-margin:60px 20px;
-text-align:center;
-color:#888;
-font-size:14px;
-
-}
-
 button{
 
 background:#8a2be2;
 color:white;
 border:none;
-padding:14px 28px;
+padding:15px 30px;
 border-radius:12px;
 font-size:16px;
 cursor:pointer;
@@ -230,11 +269,26 @@ background:#b84cff;
 
 }
 
+footer{
+
+margin:60px 20px;
+text-align:center;
+color:#888;
+font-size:14px;
+
+}
+
 @media(max-width:768px){
 
 header h1{
 
 font-size:34px;
+
+}
+
+header p{
+
+font-size:18px;
 
 }
 
@@ -250,7 +304,8 @@ font-size:28px;
 
 }
 
-section p{
+section p,
+ul{
 
 font-size:17px;
 
@@ -269,11 +324,13 @@ font-size:17px;
 <h1>🌍 Proyecto PalEntropía</h1>
 
 <p>
-Una iniciativa independiente donde paleontología, divulgación científica, creatividad e inteligencia artificial convergen para explorar la historia de la vida en la Tierra.
+
+Un proyecto independiente de divulgación que une paleontología, creatividad e inteligencia artificial para explorar y compartir la extraordinaria historia de la vida en la Tierra.
+
 </p>
 
-<img src="Cabecera00.jpg"
-alt="Cabecera oficial del Proyecto PalEntropía"
+<img src="CabeceraProyecto.png"
+alt="Cabecera del Proyecto PalEntropía"
 loading="lazy">
 
 </header>
@@ -286,49 +343,25 @@ loading="lazy">
 
 <p>
 
-<strong>PalEntropía</strong> es un proyecto independiente de divulgación científica y creación artística dedicado a la historia de la vida en la Tierra. Nace con el propósito de acercar la paleontología al público mediante una combinación de documentación científica, ilustración digital, animación, música y nuevas herramientas de inteligencia artificial.
+<strong>PalEntropía</strong> es un proyecto independiente de divulgación dedicado a la paleontología, el paleoarte y la historia de la vida en la Tierra. Surge del deseo de compartir la fascinación por los organismos prehistóricos mediante una combinación de documentación, creatividad, ilustración digital, animación, música y herramientas de inteligencia artificial.
 
 </p>
 
 <p>
 
-La evolución de la vida constituye uno de los relatos más extraordinarios de nuestro planeta. Durante más de 540 millones de años, millones de especies han aparecido, evolucionado y desaparecido, dejando tras de sí un inmenso registro fósil que nos permite reconstruir, aunque sea de forma parcial, aquel mundo perdido.
+La historia de la vida constituye uno de los relatos más extraordinarios de nuestro planeta. Durante miles de millones de años, innumerables especies han aparecido, evolucionado y desaparecido, dejando tras de sí un registro fósil que nos permite reconstruir una pequeña parte de aquel inmenso pasado.
 
 </p>
 
 <p>
 
-PalEntropía intenta transformar ese conocimiento científico en una experiencia visual accesible para cualquier persona, independientemente de sus conocimientos previos. Cada paleoficha, cada ilustración, cada vídeo y cada composición musical forman parte de un mismo universo dedicado a despertar la curiosidad por el pasado de nuestro planeta.
+PalEntropía intenta acercar ese conocimiento al mayor número posible de personas mediante un lenguaje visual moderno, accesible y atractivo. Cada Paleoficha, cada ilustración, cada vídeo y cada composición musical forman parte de un mismo universo cuyo propósito es despertar la curiosidad por la evolución y por los seres vivos que habitaron nuestro planeta mucho antes de nuestra aparición.
 
 </p>
 
 <p>
 
-Lejos de limitarse a un simple catálogo de especies, el proyecto busca mostrar la enorme diversidad biológica que ha existido a lo largo del Fanerozoico, desde los primeros organismos complejos hasta los ecosistemas más recientes del Cenozoico.
-
-</p>
-
-</section>
-
-<section>
-
-<h2>🧬 Ciencia como punto de partida</h2>
-
-<p>
-
-Toda creación publicada en PalEntropía comienza con una fase de documentación basada en el conocimiento paleontológico disponible. Antes de generar una reconstrucción se recopila información sobre la anatomía del organismo, su edad geológica, su distribución, el ambiente donde vivía y las hipótesis científicas aceptadas por la comunidad investigadora.
-
-</p>
-
-<p>
-
-El objetivo no es sustituir el trabajo científico, sino utilizarlo como fundamento para construir una representación visual rigurosa y comprensible. Cada nueva publicación constituye una oportunidad para divulgar conceptos relacionados con la evolución, la paleoecología, la paleobiología, la geología y la historia de la Tierra.
-
-</p>
-
-<p>
-
-La ciencia marca siempre el punto de partida. A partir de ella comienza un proceso creativo cuyo propósito es acercar ese conocimiento al mayor número posible de personas mediante formatos modernos y atractivos.
+Más que un simple catálogo de especies, PalEntropía pretende convertirse en una biblioteca digital en constante crecimiento donde ciencia, divulgación y creatividad conviven para hacer que el pasado resulte más cercano y comprensible.
 
 </p>
 
@@ -336,23 +369,59 @@ La ciencia marca siempre el punto de partida. A partir de ella comienza un proce
 
 <section>
 
-<h2>🎨 Creatividad al servicio de la divulgación</h2>
+<h2>🧬 La ciencia como punto de partida</h2>
 
 <p>
 
-La divulgación científica no tiene por qué limitarse a textos académicos o ilustraciones tradicionales. En PalEntropía la creatividad actúa como una herramienta para comunicar mejor la ciencia y despertar el interés por organismos que desaparecieron hace millones de años.
+Toda creación publicada en PalEntropía comienza con una fase de documentación basada en el conocimiento paleontológico disponible. Antes de desarrollar una reconstrucción se recopila información sobre la anatomía del organismo, su antigüedad, el ambiente donde vivía, su distribución geográfica y las hipótesis científicas aceptadas en cada momento.
 
 </p>
 
 <p>
 
-Las composiciones visuales, la música Synthwave, la edición de vídeo y las decisiones artísticas ayudan a construir una identidad propia que hace reconocible el proyecto sin perder el respeto por el conocimiento paleontológico.
+La paleontología constituye el punto de partida de todo el proceso creativo. Sin embargo, el objetivo del proyecto no consiste en afirmar que todas sus reconstrucciones representan exactamente cómo fueron estos organismos, sino en utilizar ese conocimiento para crear representaciones plausibles que permitan imaginar cómo pudieron haber sido.
 
 </p>
 
 <p>
 
-El objetivo nunca es reemplazar la realidad científica, sino crear un lenguaje visual que permita contemplar el pasado desde una perspectiva diferente, combinando precisión, imaginación y capacidad de divulgación.
+La ciencia aporta los cimientos. La creatividad, el paleoarte y la inteligencia artificial exploran las posibilidades que todavía permanecen abiertas allí donde el registro fósil no puede ofrecernos todas las respuestas.
+
+</p>
+
+<p>
+
+Si una ilustración consigue transmitir la sensación de que aquel organismo <strong>podría haber existido de esa manera</strong>, respetando el conocimiento paleontológico disponible y manteniendo una coherencia biológica, entonces habrá cumplido plenamente su propósito divulgativo y artístico.
+
+</p>
+
+</section>
+
+<section>
+
+<h2>🎨 Ciencia, creatividad e inteligencia artificial</h2>
+
+<p>
+
+La inteligencia artificial no sustituye al conocimiento científico ni pretende convertirse en una fuente de verdad. En PalEntropía se utiliza como una herramienta creativa que permite generar imágenes, animaciones y composiciones inspiradas en el pasado de nuestro planeta.
+
+</p>
+
+<p>
+
+Cada obra es el resultado de numerosas decisiones humanas: documentación, selección de referencias, elaboración de instrucciones, revisión, corrección y edición posterior. La inteligencia artificial forma parte del proceso, pero nunca reemplaza la curiosidad, el aprendizaje ni la capacidad de interpretación.
+
+</p>
+
+<p>
+
+La combinación de paleontología, creatividad y nuevas tecnologías permite desarrollar un lenguaje visual propio cuyo objetivo es acercar la evolución de la vida a personas de todas las edades.
+
+</p>
+
+<p>
+
+PalEntropía entiende la divulgación como una invitación a seguir aprendiendo. Cada nueva publicación pretende despertar preguntas, incentivar la curiosidad y animar al visitante a profundizar en el extraordinario mundo de la paleontología.
 
 </p>
 
@@ -364,50 +433,61 @@ El objetivo nunca es reemplazar la realidad científica, sino crear un lenguaje 
 
 <p>
 
-El nombre <strong>PalEntropía</strong> surge de la unión entre las palabras <strong>Paleo</strong> y <strong>Entropía</strong>. Representa la convivencia entre el conocimiento científico y la transformación creativa que aparece durante el proceso de producción de cada obra.
+El nombre <strong>PalEntropía</strong> nace de la unión entre las palabras <strong>Paleo</strong> y <strong>Entropía</strong>. Representa el encuentro entre el conocimiento del pasado y la transformación creativa que surge durante el proceso de construir una obra inspirada en la historia de la vida.
 
 </p>
 
 <p>
 
-Dentro del proyecto existen dos formas complementarias de entropía. La primera es una <strong>entropía espontánea</strong>, originada por las propias herramientas de inteligencia artificial. En ocasiones aparecen pequeñas anomalías, detalles inesperados o soluciones visuales que ningún artista habría diseñado deliberadamente. Cuando estas aportan valor artístico o narrativo, pasan a formar parte del universo de PalEntropía.
+En este proyecto, la entropía no se entiende como desorden, sino como la aparición de nuevas posibilidades. Es el espacio donde la ciencia ofrece una base sólida y la creatividad permite imaginar aquello que el registro fósil todavía no puede mostrarnos con total claridad.
 
 </p>
 
 <p>
 
-La segunda es una <strong>entropía creativa</strong>, introducida de manera consciente. En ella intervienen influencias procedentes de la pintura, la escultura, la fotografía, la naturaleza, la música, el cine y numerosos estilos artísticos que enriquecen el resultado final sin perder de vista la base científica.
+Dentro de PalEntropía conviven dos formas de entropía que definen la identidad del proyecto.
 
 </p>
 
 <p>
 
-La identidad de PalEntropía nace precisamente del equilibrio entre ambos mundos: el rigor de la paleontología y la libertad de la creación artística. Esa combinación constituye la filosofía que da sentido a todo el proyecto.
+<strong>Entropía espontánea.</strong> Surge de forma inesperada durante los procesos de generación mediante inteligencia artificial. En ocasiones aparecen pequeñas variaciones, detalles o soluciones visuales que no habían sido previstas. Cuando esas aportaciones enriquecen la obra y mantienen una apariencia coherente y plausible, pasan a formar parte del resultado final.
+
+</p>
+
+<p>
+
+<strong>Entropía creativa.</strong> Es la intervención consciente del autor. Se inspira en el paleoarte, la pintura, la fotografía, la naturaleza, la música, el cine y otras disciplinas artísticas para construir una identidad visual propia sin perder de vista el conocimiento paleontológico disponible.
+
+</p>
+
+<p>
+
+El equilibrio entre ambas es la esencia de PalEntropía. La ciencia orienta el camino; la creatividad explora las posibilidades.
 
 </p>
 
 </section>
 
-
-  <section>
+<section>
 
 <h2>🦖 Un universo en constante evolución</h2>
 
 <p>
 
-PalEntropía no es una colección aislada de ilustraciones ni un simple canal de vídeos. Es un universo en permanente crecimiento donde cada nuevo contenido amplía una biblioteca digital dedicada a la historia de la vida en la Tierra.
+PalEntropía comenzó como una afición personal y, con el tiempo, ha ido creciendo hasta convertirse en un proyecto de divulgación formado por múltiples iniciativas conectadas entre sí.
 
 </p>
 
 <p>
 
-Con el paso del tiempo, el proyecto ha evolucionado incorporando nuevas secciones que permiten explorar el pasado desde diferentes perspectivas. Todas ellas comparten un mismo objetivo: divulgar la paleontología mediante un lenguaje visual atractivo, accesible y científicamente fundamentado.
+Cada nueva publicación amplía una biblioteca digital dedicada a la historia de la vida en la Tierra. Las Paleofichas, la Galería, los Ensayos Antediluvianos, Mundo Vegetal y la música original forman parte de un mismo universo cuyo crecimiento continúa de manera constante.
 
 </p>
 
 <p>
 
-Cada publicación enriquece el conjunto y establece conexiones con el resto del proyecto, formando una red de contenidos que continuará creciendo durante los próximos años.
+Lejos de ser un proyecto terminado, PalEntropía evoluciona con cada nueva especie publicada, con cada descubrimiento científico y con cada nueva herramienta que permite seguir explorando el pasado desde perspectivas diferentes.
 
 </p>
 
@@ -419,51 +499,25 @@ Cada publicación enriquece el conjunto y establece conexiones con el resto del 
 
 <p>
 
-Actualmente el proyecto se organiza en distintas áreas, cada una dedicada a un aspecto concreto de la divulgación paleontológica.
+Actualmente el proyecto se estructura en diferentes áreas que, aunque independientes entre sí, comparten una misma filosofía divulgativa.
 
 </p>
 
-<p>
+<ul>
 
-<strong>📖 Paleofichas</strong><br>
-El núcleo principal del proyecto. Un catálogo organizado por volúmenes donde cada especie dispone de su propia ficha con información científica, ilustraciones y contenido audiovisual.
+<li><strong>📖 Paleofichas.</strong> Catálogo de especies prehistóricas organizado por volúmenes, acompañado de ilustraciones, vídeos e información divulgativa.</li>
 
-</p>
+<li><strong>🖼️ Galería.</strong> Colección de paleoarte e ilustraciones inspiradas en organismos, paisajes y escenas del pasado.</li>
 
-<p>
+<li><strong>🌿 Mundo Vegetal.</strong> Espacio dedicado a las plantas prehistóricas y a la evolución de los ecosistemas vegetales.</li>
 
-<strong>🖼️ Galería</strong><br>
-Archivo gráfico que reúne reconstrucciones, ilustraciones y paleoarte generado para el proyecto. Constituye una colección visual en continua expansión.
+<li><strong>📜 Ensayos Antediluvianos.</strong> Artículos originales sobre paleontología, evolución, paleoecología y otros temas relacionados con la historia natural.</li>
 
-</p>
+<li><strong>🎵 Synthwave.</strong> Banda sonora original que acompaña el universo visual de PalEntropía y aporta una identidad musical propia.</li>
 
-<p>
+<li><strong>🏟️ Arena.</strong> Futuro espacio destinado a simulaciones, experimentos y nuevos formatos de divulgación.</li>
 
-<strong>🌿 Mundo Vegetal</strong><br>
-Espacio dedicado a las plantas prehistóricas y a los ecosistemas vegetales que modelaron la evolución de la vida durante cientos de millones de años.
-
-</p>
-
-<p>
-
-<strong>📜 Ensayos Antediluvianos</strong><br>
-Artículos originales sobre evolución, paleontología, paleoecología, paleobiología y otros temas relacionados con la historia natural.
-
-</p>
-
-<p>
-
-<strong>🎵 Synthwave</strong><br>
-Composiciones musicales originales que acompañan el universo visual de PalEntropía y aportan una identidad sonora propia al proyecto.
-
-</p>
-
-<p>
-
-<strong>🏟️ Arena</strong><br>
-Una futura sección destinada a simulaciones, experimentos, comparativas y nuevos formatos de divulgación relacionados con el mundo prehistórico.
-
-</p>
+</ul>
 
 </section>
 
@@ -473,25 +527,62 @@ Una futura sección destinada a simulaciones, experimentos, comparativas y nuevo
 
 <p>
 
-Desde su creación, PalEntropía persigue una serie de objetivos que orientan el desarrollo de todas sus publicaciones.
+Desde su creación, PalEntropía persigue una serie de objetivos que orientan su desarrollo y sirven como guía para todas sus publicaciones.
 
 </p>
 
 <ul>
 
-<li>Divulgar la paleontología de una forma rigurosa, accesible y visual.</li>
+<li>Acercar la paleontología al mayor número posible de personas mediante un lenguaje visual atractivo y accesible.</li>
 
-<li>Fomentar la curiosidad por la evolución y la historia de la vida.</li>
+<li>Despertar la curiosidad por la evolución y la historia de la vida en la Tierra.</li>
 
-<li>Crear una biblioteca digital que reúna cientos de especies prehistóricas.</li>
+<li>Crear una biblioteca digital que continúe creciendo con nuevas especies, ilustraciones y contenidos divulgativos.</li>
 
-<li>Explorar nuevas formas de comunicación científica mediante herramientas digitales.</li>
+<li>Explorar el potencial creativo de la inteligencia artificial sin perder de vista la inspiración científica.</li>
 
-<li>Combinar ciencia, creatividad y tecnología sin perder el respeto por el conocimiento paleontológico.</li>
+<li>Compartir una visión del pasado basada en la plausibilidad, la creatividad y el respeto hacia el conocimiento paleontológico.</li>
 
-<li>Construir un proyecto abierto y en constante evolución que pueda seguir creciendo durante muchos años.</li>
+<li>Construir un proyecto abierto, vivo y en constante evolución que siga ampliándose durante los próximos años.</li>
 
 </ul>
+
+</section>
+
+
+<section>
+
+<h2>❤️ Un proyecto de un aficionado para otros aficionados</h2>
+
+<p>
+
+PalEntropía no pertenece a ninguna universidad, museo, institución científica ni equipo profesional de investigación. Es un proyecto personal desarrollado por un simple aficionado a la paleontología que disfruta aprendiendo, creando y compartiendo la extraordinaria historia de la vida en la Tierra.
+
+</p>
+
+<p>
+
+Precisamente por ese carácter independiente, este proyecto no pretende presentarse como una fuente científica oficial ni sustituir el trabajo de investigadores, paleontólogos, ilustradores científicos o museos. Todo lo contrario: PalEntropía nace gracias a la enorme labor desarrollada por la comunidad científica, cuya investigación constituye la inspiración de todas las publicaciones.
+
+</p>
+
+<p>
+
+Cada Paleoficha, ilustración o vídeo representa un intento de acercar ese conocimiento al público mediante un lenguaje visual moderno. Sin embargo, es importante recordar que muchas especies solo se conocen a partir de restos fósiles incompletos y que la propia paleontología evoluciona continuamente con nuevos descubrimientos.
+
+</p>
+
+<p>
+
+Por ese motivo, algunas reconstrucciones pueden contener interpretaciones artísticas, simplificaciones o pequeñas inexactitudes. Si encuentras algún error, una información desactualizada o una representación mejorable, te pido disculpas de antemano. Nunca existe intención de desinformar; al contrario, cualquier observación fundamentada será siempre una oportunidad para aprender y seguir mejorando el proyecto.
+
+</p>
+
+<p>
+
+PalEntropía mantiene el máximo respeto y admiración por la paleontología como disciplina científica y por todas las personas que dedican su vida a investigar, conservar y divulgar nuestro patrimonio fósil. Este proyecto simplemente aspira a contribuir, desde la humildad y la pasión de un aficionado, a despertar la curiosidad por ese fascinante pasado.
+
+</p>
 
 </section>
 
@@ -501,47 +592,48 @@ Desde su creación, PalEntropía persigue una serie de objetivos que orientan el
 
 <p>
 
-PalEntropía es un proyecto vivo. Cada nueva paleoficha, cada ilustración, cada ensayo y cada composición musical representan un paso más dentro de un universo que continúa expandiéndose.
+PalEntropía es un proyecto vivo. Cada nueva especie publicada, cada ilustración, cada ensayo y cada composición musical representan un paso más dentro de un universo que continúa creciendo con el tiempo.
 
 </p>
 
 <p>
 
-Entre los objetivos futuros se encuentran la incorporación de nuevas especies, la ampliación de las galerías de paleoarte, el desarrollo de nuevos ensayos, la creación de simulaciones y la mejora continua de la experiencia ofrecida a través de la página web.
+Entre los objetivos futuros se encuentran ampliar el catálogo de Paleofichas, seguir desarrollando la Galería de paleoarte, incorporar nuevos ensayos divulgativos, crear simulaciones, explorar nuevos formatos audiovisuales y continuar mejorando la experiencia de la página web.
 
 </p>
 
 <p>
 
-La paleontología es una ciencia en constante cambio. Cada nuevo descubrimiento modifica nuestra visión del pasado, y PalEntropía evolucionará junto a ese conocimiento para seguir ofreciendo contenidos cada vez más completos, rigurosos y atractivos.
+La historia de la vida aún guarda innumerables secretos. Mientras sigan apareciendo nuevos fósiles, nuevas hipótesis y nuevas herramientas para interpretarlos, PalEntropía continuará evolucionando junto a ellas.
 
 </p>
 
 <p>
 
-Este proyecto no pretende alcanzar un punto final. Su verdadera naturaleza consiste en seguir creciendo, aprendiendo y explorando, del mismo modo que la propia historia de la vida nunca deja de sorprendernos.
+Más que alcanzar una meta concreta, este proyecto pretende disfrutar del viaje: aprender un poco más con cada especie, compartir ese aprendizaje con otras personas y seguir construyendo, paso a paso, un universo dedicado a la fascinante historia de la vida en la Tierra.
 
 </p>
 
 </section>
 
-
 <section>
 
-<h2>🌍 Enlaces oficiales</h2>
+<h2>🌐 Enlaces oficiales</h2>
 
 <p>
 
-PalEntropía continúa creciendo gracias a la publicación constante de nuevos contenidos. Puedes seguir el proyecto a través de sus plataformas oficiales.
+Si deseas seguir la evolución de PalEntropía o explorar el resto del proyecto, puedes hacerlo a través de sus canales oficiales.
 
 </p>
 
 <p>
 
-<strong>🌐 Página web oficial</strong><br>
+<strong>🌍 Página web oficial</strong><br>
 
 <a href="https://palentropia.es/" target="_blank" rel="noopener">
+
 https://palentropia.es/
+
 </a>
 
 </p>
@@ -550,9 +642,7 @@ https://palentropia.es/
 
 <strong>📺 Canal de YouTube</strong><br>
 
-<a href="https://www.youtube.com/@seymouriajgr"
-target="_blank"
-rel="noopener">
+<a href="https://www.youtube.com/@seymouriajgr" target="_blank" rel="noopener">
 
 https://www.youtube.com/@seymouriajgr
 
@@ -564,9 +654,7 @@ https://www.youtube.com/@seymouriajgr
 
 <strong>👽 Comunidad de Reddit</strong><br>
 
-<a href="https://www.reddit.com/r/PalEntropia/"
-target="_blank"
-rel="noopener">
+<a href="https://www.reddit.com/r/PalEntropia/" target="_blank" rel="noopener">
 
 https://www.reddit.com/r/PalEntropia/
 
@@ -576,7 +664,7 @@ https://www.reddit.com/r/PalEntropia/
 
 <p>
 
-Todas las novedades del proyecto se publican primero en estas plataformas. Desde ellas podrás acceder a las Paleofichas, la Galería, los Ensayos Antediluvianos, la música original Synthwave y los futuros desarrollos de PalEntropía.
+Todos los contenidos publicados en estas plataformas forman parte del mismo universo y continúan ampliándose con nuevas especies, ilustraciones, vídeos, música y proyectos divulgativos.
 
 </p>
 
@@ -584,27 +672,33 @@ Todas las novedades del proyecto se publican primero en estas plataformas. Desde
 
 <section>
 
-<h2>🦖 Una invitación a explorar el pasado</h2>
+<h2>🦕 Gracias por formar parte de PalEntropía</h2>
 
 <p>
 
-La historia de la vida en la Tierra es una narración extraordinaria escrita durante más de 3.500 millones de años. Cada fósil descubierto representa una pequeña ventana hacia ese inmenso pasado y nos recuerda que nuestro planeta ha cambiado de forma constante a lo largo del tiempo.
+La historia de la vida en la Tierra es una de las aventuras más extraordinarias que existen. Durante miles de millones de años nuestro planeta ha sido escenario de innumerables formas de vida, grandes extinciones, procesos evolutivos y ecosistemas que hoy solo podemos conocer gracias al registro fósil.
 
 </p>
 
 <p>
 
-PalEntropía nace del deseo de compartir esa historia con cualquier persona que sienta curiosidad por la evolución, la paleontología y los organismos que poblaron nuestro mundo mucho antes de nuestra aparición.
+PalEntropía nace con la ilusión de acercar ese inmenso pasado a cualquier persona que sienta curiosidad por comprender cómo era el mundo antes de nuestra existencia. Si alguna Paleoficha, una ilustración, un vídeo, un ensayo o una composición musical consigue despertar esa curiosidad o anima a seguir aprendiendo sobre paleontología, entonces este proyecto habrá cumplido su objetivo.
 
 </p>
 
 <p>
 
-Gracias por visitar este proyecto y formar parte de esta aventura científica y creativa. Aún quedan cientos de especies por descubrir y millones de años de historia por recorrer.
+El conocimiento científico continúa creciendo cada año y, con él, también evolucionará PalEntropía. Nuevas especies, nuevos descubrimientos y nuevas ideas seguirán ampliando este universo divulgativo durante mucho tiempo.
 
 </p>
 
-<div style="text-align:center; margin-top:35px;">
+<p>
+
+Gracias por dedicar parte de tu tiempo a visitar esta página y acompañarme en este viaje por la historia de la vida. Espero que disfrutes explorando PalEntropía tanto como yo disfruto construyéndola.
+
+</p>
+
+<div style="text-align:center; margin-top:40px;">
 
 <a href="../index.html">
 
@@ -632,13 +726,13 @@ Gracias por visitar este proyecto y formar parte de esta aventura científica y 
 
 <p>
 
-Proyecto independiente de divulgación científica dedicado a la paleontología, la paleoecología, la paleobiología, el paleoarte y la historia de la vida en la Tierra.
+Proyecto independiente de divulgación sobre paleontología, paleoarte, paleoecología, paleobiología y la historia de la vida en la Tierra.
 
 </p>
 
 <p>
 
-<strong>PalEntropía</strong> combina ciencia, creatividad e inteligencia artificial para acercar el pasado de nuestro planeta a cualquier persona interesada en la evolución y el registro fósil.
+PalEntropía combina documentación, creatividad e inteligencia artificial para crear representaciones plausibles inspiradas en el conocimiento paleontológico disponible, con el máximo respeto hacia la comunidad científica y hacia el patrimonio fósil.
 
 </p>
 
@@ -653,6 +747,16 @@ Proyecto independiente de divulgación científica dedicado a la paleontología,
 </body>
 
 </html>
+
+  
+
+
+  
+
+
+
+  
+
   
 
 
