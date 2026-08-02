@@ -1,1 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<title>Test JSON PalEntropía</title>
+</head>
+
+<body>
+
+<h1>Test Base JSON</h1>
+
+<div id="resultado"></div>
+
+
+<script>
+
+fetch("datos/paleofichas.json")
+
+.then(respuesta => respuesta.json())
+
+.then(datos => {
+
+let html = "";
+
+datos.forEach(ficha => {
+
+html += `
+<h2>${ficha.nombre}</h2>
+
+<p>Código: ${ficha.codigo}</p>
+
+<p>Adaptabilidad: ${ficha.stats.adaptabilidad}/10</p>
+
+<p>Resistencia: ${ficha.stats.resistencia}/10</p>
+
+<hr>
+`;
+
+});
+
+
+document.getElementById("resultado").innerHTML = html;
+
+
+});
+
+
+</script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
 
