@@ -2,8 +2,20 @@
 ========================================================
 PALGEO v1.0 LTS
 Base Cronoestratigráfica Oficial de PalEntropía
+Sistema Temporal Oficial de PalEntropía
+Basado en la Escala Cronoestratigráfica Internacional (ICS)
+
+Codificación de Eones
+
+01 = Hádico (reservado)
+02 = Arcaico
+03 = Proterozoico
+04 = Fanerozoico
+
 ========================================================
 */
+
+window.PALGEO_VERSION = "1.0 LTS";
 
 window.PALGEO = [
 
@@ -1085,6 +1097,19 @@ inicio_ma:0.0042,
 fin_ma:0.0
 }
 
+
+/*
+========================================================
+Fin de la Base Cronoestratigráfica Oficial
+PALGEO v1.0 LTS
+========================================================
+*/
+
+
+
+
+
+  
 ];
 
 
