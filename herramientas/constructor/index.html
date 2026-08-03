@@ -79,6 +79,34 @@ estado.innerHTML=`
 
 </script>
 
+<script>
+fetch("paleofichas.json")
+.then(r => r.json())
+.then(datos => {
+
+    console.log(datos);
+
+    const p=document.createElement("p");
+    p.style.color="lime";
+    p.textContent="✔ paleofichas.json cargado: "+datos.length+" registros";
+    document.body.appendChild(p);
+
+})
+.catch(error=>{
+
+    const p=document.createElement("p");
+    p.style.color="red";
+    p.textContent="✖ Error cargando paleofichas.json";
+    document.body.appendChild(p);
+
+    console.error(error);
+
+});
+</script>
+
+
+
+  
 </body>
 
 </html>
