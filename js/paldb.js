@@ -343,10 +343,10 @@ posicion:4,
 carpeta:"002_04_thyestes_verrucosus",
 
 imagenes:{
-i0:"Thyestes_verrucosus_i0.jpeg",
-i1:"Thyestes_verrucosus_i1.jpeg",
-i2:"Thyestes_verrucosus_i2.jpeg",
-i3:"Thyestes_verrucosus_i3.jpeg"
+i0:"Thyestes_verrucosus_i0.png",
+i1:"Thyestes_verrucosus_i1.png",
+i2:"Thyestes_verrucosus_i2.png",
+i3:"Thyestes_verrucosus_i3.png"
 }
 
 },
