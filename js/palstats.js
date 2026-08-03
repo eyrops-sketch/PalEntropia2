@@ -1,4 +1,4 @@
-const PALSTATS = {
+window.PALSTATS = {
 
 "001_01": {
 nombre:"Gastornis",
