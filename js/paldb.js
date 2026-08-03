@@ -5,7 +5,7 @@ Base de datos PalEntropía
 ========================================================
 */
 
-const PALDB = [
+window.PALDB = [
 
 {
 codigo:"001_01",
