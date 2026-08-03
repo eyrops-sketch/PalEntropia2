@@ -110,7 +110,7 @@ imagenes:{
 i0:"Ditomopyge_i0.png",
 i1:"Ditomopyge_i1.png",
 i2:"Ditomopyge_i2.png",
-i3:"Ditomopyge_i3.png"
+i3:"Ditomopyge_i3.jpg"
 }
 
 },
@@ -126,7 +126,7 @@ carpeta:"001_07_deinogalerix",
 
 imagenes:{
 i0:"Deinogalerix_i0.png",
-i1:"Deinogalerix_i1.png",
+i1:"Deinogalerix_i1.jpg",
 i2:"Deinogalerix_i2.png",
 i3:"Deinogalerix_i3.png"
 }
@@ -197,7 +197,7 @@ posicion:11,
 carpeta:"001_11_graciliceratops",
 
 imagenes:{
-i0:"Graciliceratops_i0.png",
+i0:"Graciliceratops_i0.jpg",
 i1:"Graciliceratops_i1.png",
 i2:"Graciliceratops_i2.png",
 i3:"Graciliceratops_i3.png"
@@ -415,10 +415,10 @@ posicion:8,
 carpeta:"002_08_eldonia",
 
 imagenes:{
-i0:"Eldonia_i0.png",
-i1:"Eldonia_i1.png",
-i2:"Eldonia_i2.png",
-i3:"Eldonia_i3.png"
+i0:"Eldonia_i0.jpeg",
+i1:"Eldonia_i1.jpeg",
+i2:"Eldonia_i2.jpeg",
+i3:"Eldonia_i3.jpeg"
 }
 
 },
@@ -471,8 +471,8 @@ carpeta:"002_11_buitreraptor",
 imagenes:{
 i0:"Buitreraptor_i0.png",
 i1:"Buitreraptor_i1.png",
-i2:"Buitreraptor_i2.png",
-i3:"Buitreraptor_i3.png"
+i2:"Buitreraptor_i2.jpeg",
+i3:"Buitreraptor_i3.jpeg"
 }
 
 },
@@ -506,7 +506,7 @@ carpeta:"002_13_plateosaurus",
 
 imagenes:{
 i0:"Plateosaurus_i0.png",
-i1:"Plateosaurus_i1.png",
+i1:"Plateosaurus_i1.jpg",
 i2:"Plateosaurus_i2.png",
 i3:"Plateosaurus_i3.png"
 }
