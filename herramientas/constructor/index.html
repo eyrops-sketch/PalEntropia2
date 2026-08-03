@@ -8,6 +8,36 @@
 
 <title>Constructor | PalEntropía</title>
 
+<style>
+
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:#111;
+color:#eee;
+padding:40px;
+}
+
+h1{
+color:#6cf;
+}
+
+#estado{
+margin-top:20px;
+padding:20px;
+background:#222;
+border-radius:10px;
+}
+
+.ok{
+color:#7CFC00;
+}
+
+.error{
+color:#ff6666;
+}
+
+</style>
+
 </head>
 
 <body>
@@ -16,6 +46,10 @@
 
 <p>Comprobando carga de archivos...</p>
 
+<div id="estado">
+Cargando...
+</div>
+
 <script src="paldb.js"></script>
 <script src="palstats.js"></script>
 <script src="palhab.js"></script>
@@ -23,13 +57,25 @@
 
 <script>
 
-console.log("PALDB:", PALDB);
+const estado=document.getElementById("estado");
 
-console.log("PALSTATS:", PALSTATS);
+try{
 
-console.log("PALHAB:", PALHAB);
+estado.innerHTML=`
+<p class="ok">✔ PALDB cargado: ${PALDB.length} registros</p>
+<p class="ok">✔ PALSTATS cargado: ${Object.keys(PALSTATS).length} registros</p>
+<p class="ok">✔ PALHAB cargado: ${Object.keys(PALHAB).length} registros</p>
+<p class="ok">✔ PALGEO cargado: ${Object.keys(PALGEO).length} registros</p>
+`;
 
-console.log("PALGEO:", PALGEO);
+}catch(e){
+
+estado.innerHTML=`
+<p class="error">Error cargando archivos.</p>
+<pre>${e}</pre>
+`;
+
+}
 
 </script>
 
