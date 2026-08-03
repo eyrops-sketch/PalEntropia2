@@ -197,7 +197,7 @@ posicion:11,
 carpeta:"001_11_graciliceratops",
 
 imagenes:{
-i0:"Graciliceratops_i0.jpg",
+i0:"Graciliceratops_i0.jpeg",
 i1:"Graciliceratops_i1.png",
 i2:"Graciliceratops_i2.png",
 i3:"Graciliceratops_i3.png"
@@ -343,10 +343,10 @@ posicion:4,
 carpeta:"002_04_thyestes_verrucosus",
 
 imagenes:{
-i0:"Thyestes_verrucosus_i0.png",
-i1:"Thyestes_verrucosus_i1.png",
-i2:"Thyestes_verrucosus_i2.png",
-i3:"Thyestes_verrucosus_i3.png"
+i0:"Thyestes_verrucosus_i0.jpeg",
+i1:"Thyestes_verrucosus_i1.jpeg",
+i2:"Thyestes_verrucosus_i2.jpeg",
+i3:"Thyestes_verrucosus_i3.jpeg"
 }
 
 },
