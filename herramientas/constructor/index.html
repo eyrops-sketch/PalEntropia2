@@ -1,1 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Constructor | PalEntropía</title>
+
+<meta name="description"
+content="Constructor y decodificador oficial de Paleofichas de PalEntropía. Genera y decodifica los códigos HP, HS y cronología del sistema PalEntropía.">
+
+<link rel="icon" href="../favicon.ico" type="image/x-icon">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>
+Constructor de Paleofichas
+</h1>
+
+<p>
+Sistema oficial de codificación y decodificación de PalEntropía
+</p>
+
+</header>
+
+<main>
+
+<section class="busqueda">
+
+<h2>
+Buscar especie
+</h2>
+
+<input
+type="text"
+id="buscarCodigo"
+placeholder="Ejemplo: 001_01">
+
+<button id="btnBuscar">
+Buscar
+</button>
+
+</section>
+
+<section class="datos">
+
+<h2>
+Datos generales
+</h2>
+
+<label>Código</label>
+<input type="text" id="codigo">
+
+<label>Nombre</label>
+<input type="text" id="nombre">
+
+<label>Cronología</label>
+<input type="text" id="cronologia">
+
+<label>Medio</label>
+<input type="text" id="medio">
+
+<label>Dieta</label>
+<input type="text" id="dieta">
+
+<label>Anatomía</label>
+<textarea
+id="anatomia"
+rows="5">
+</textarea>
+
+</section>
+
+<section class="habitats">
+
+<h2>
+Hábitat Principal (HP)
+</h2>
+
+<label>
+Código HP
+</label>
+
+<input
+type="text"
+id="HP"
+readonly>
+
+<div
+id="listaHP"
+class="listaHabitats">
+
+</div>
+
+</section>
+
+<section class="habitats">
+
+<h2>
+Hábitat Secundario (HS)
+</h2>
+
+<label>
+Código HS
+</label>
+
+<input
+type="text"
+id="HS"
+readonly>
+
+<div
+id="listaHS"
+class="listaHabitats">
+
+</div>
+
+</section>
+
+<section class="cronologia">
+
+<h2>
+Cronología decodificada
+</h2>
+
+<div id="cronologiaDecodificada">
+
+<p>
+
+<strong>Eón:</strong>
+
+<span id="eon">
+-
+</span>
+
+</p>
+
+<p>
+
+<strong>Era:</strong>
+
+<span id="era">
+-
+</span>
+
+</p>
+
+<p>
+
+<strong>Período:</strong>
+
+<span id="periodo">
+-
+</span>
+
+</p>
+
+<p>
+
+<strong>Época:</strong>
+
+<span id="epoca">
+-
+</span>
+
+</p>
+
+<p>
+
+<strong>Edad:</strong>
+
+<span id="edad">
+-
+</span>
+
+</p>
+
+</div>
+
+</section>
+
+<section class="imagen">
+
+<h2>
+Vista previa
+</h2>
+
+<img
+id="imagenPrincipal"
+src=""
+alt="Imagen principal">
+
+</section>
+
+<section class="acciones">
+
+<h2>
+Herramientas
+</h2>
+
+<div class="botonera">
+
+<button id="btnDecodificar">
+Decodificar
+</button>
+
+<button id="btnGenerar">
+Generar códigos
+</button>
+
+<button id="btnExportar">
+Exportar JSON
+</button>
+
+<button id="btnLimpiar">
+Limpiar
+</button>
+
+</div>
+
+</section>
+
+<section class="salida">
+
+<h2>
+Salida JSON
+</h2>
+
+<textarea
+id="salidaJSON"
+rows="15"
+readonly>
+</textarea>
+
+</section>
+
+</main>
+
+<footer>
+
+<p>
+
+PalEntropía · Constructor de Paleofichas · v1.0
+
+</p>
+
+</footer>
+
+<script src="../js/palgeo.js"></script>
+<script src="../js/palhab.js"></script>
+<script src="../js/paldb.js"></script>
+
+<script>
+
+let PALEOFICHAS=[];
+
+fetch("../json/paleoficha.json")
+.then(res=>res.json())
+.then(data=>{
+
+PALEOFICHAS=data;
+
+});
+
+</script>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
+  
+
+
+
+
+
 
