@@ -561,8 +561,8 @@ carpeta:"003_01_chalicotherium",
 
 imagenes:{
 i0:"Chalicotherium_i0.png",
-i1:"Chalicotherium_i1.png",
-i2:"Chalicotherium_i2.png",
+i1:"Chalicotherium_i1.jpg",
+i2:"Chalicotherium_i2.jpg",
 i3:"Chalicotherium_i3.png"
 }
 
@@ -578,8 +578,8 @@ posicion:2,
 carpeta:"003_02_bothriolepis",
 
 imagenes:{
-i0:"Bothriolepis_i0.png",
-i1:"Bothriolepis_i1.png",
+i0:"Bothriolepis_i0.jpg",
+i1:"Bothriolepis_i1.jpg",
 i2:"Bothriolepis_i2.png",
 i3:"Bothriolepis_i3.png"
 }
@@ -596,7 +596,7 @@ posicion:3,
 carpeta:"003_03_ticinosuchus",
 
 imagenes:{
-i0:"Ticinosuchus_i0.png",
+i0:"Ticinosuchus_i0.jpg",
 i1:"Ticinosuchus_i1.png",
 i2:"Ticinosuchus_i2.png",
 i3:"Ticinosuchus_i3.png"
@@ -906,7 +906,7 @@ imagenes:{
 i0:"Sacabambaspis_i0.png",
 i1:"Sacabambaspis_i1.png",
 i2:"Sacabambaspis_i2.png",
-i3:"Sacabambaspis_i3.png"
+i3:"Sacabambaspis_i3.jpg"
 }
 
 },
