@@ -483,14 +483,12 @@ decodeGeoCode(codigo,resultado){
 /* ======================================================
    FORMATO DE EDAD PARA PRESENTACIÓN
 ====================================================== */
-
-
 formatearRango(inicio,fin){
 
     function formato(valor){
 
         if(valor===0){
-            return "0 a";
+            return "Actualidad";
         }
 
         if(valor<0.001){
@@ -514,8 +512,6 @@ formatearRango(inicio,fin){
     return formato(inicio)+" - "+formato(fin);
 
 },
-
-
 
 
 /* ======================================================
