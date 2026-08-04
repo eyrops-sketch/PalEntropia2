@@ -395,13 +395,29 @@ PALSTATS[codigo];
 
 
 
-if(!ficha || !db || !stats){
+if(!ficha){
 
-
-alert("Código no encontrado.");
-
+alert("Falta ficha JSON");
 
 return;
+
+}
+
+if(!db){
+
+alert("Falta PALDB");
+
+return;
+
+}
+
+if(!stats){
+
+alert("Falta PALSTATS");
+
+return;
+
+}
 
 
 }
