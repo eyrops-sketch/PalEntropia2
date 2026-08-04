@@ -1057,18 +1057,18 @@ i3:"Rhamphorhynchus_i3.png"
 
 {
 codigo:"004_14",
-nombre:"Albertonectes vanderveldei",
+nombre:"Albertonectes",
 
 volumen:4,
 posicion:14,
 
-carpeta:"004_14_albertonectes_vanderveldei",
+carpeta:"004_14_albertonectes",
 
 imagenes:{
-i0:"Albertonectes_vanderveldei_i0.png",
-i1:"Albertonectes_vanderveldei_i1.png",
-i2:"Albertonectes_vanderveldei_i2.png",
-i3:"Albertonectes_vanderveldei_i3.png"
+i0:"Albertonectes_i0.png",
+i1:"Albertonectes_i1.png",
+i2:"Albertonectes_i2.png",
+i3:"Albertonectes_i3.png"
 }
 
 },
