@@ -496,7 +496,7 @@ formatearRango(inicio,fin){
         }
 
         if(valor<1){
-            return Math.round(valor*1000)+" mil a";
+    return (valor*1000000).toLocaleString("es-ES")+" a";
         }
 
         let texto=valor.toFixed(4);
