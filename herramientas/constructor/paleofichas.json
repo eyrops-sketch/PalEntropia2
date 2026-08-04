@@ -239,86 +239,113 @@
     "dieta": "Herbívoro",
     "anatomia": "Tetrápodo robusto de cuerpo pesado, cráneo macizo y dentición adaptada al consumo vegetal"
   },
-  {
-    "codigo": "002_10",
-    "nombre": "Tanystropheus",
+{
+  "codigo": "002_10",
+  "nombre": "Tanystropheus",
 
-    "cronologia": "0247.2000-0237.0000",
-    "medio": "Semiacuático",
-    "habitat_principal": "Costas cálidas, lagunas y ambientes marinos someros",
-    "dieta": "Carnívoro piscívoro",
-    "anatomia": "Reptil alargado con cuello extremadamente largo, cuerpo compacto y extremidades adaptadas a la vida costera"
-  },
-  {
-    "codigo": "002_11",
-    "nombre": "Buitreraptor",
+  "cronologia": "0247.2000-0237.0000",
+  "medio": "Semiacuático",
 
-    "cronologia": "0094.0000-0089.8000",
-    "medio": "Terrestre",
-    "habitat_principal": "Ambientes áridos y bosques abiertos de Gondwana",
-    "dieta": "Carnívoro",
-    "anatomia": "Dromeosáurido ligero con hocico alargado, plumas y extremidades posteriores adaptadas para la caza"
-  },
-  {
-    "codigo": "002_12",
-    "nombre": "Titanoides",
+  "HP":"HP010007000000000",
+  "HS":"HS011008000000000",
 
-    "cronologia": "0059.2000-0056.0000",
-    "medio": "Terrestre",
-    "habitat_principal": "Bosques subtropicales y zonas húmedas",
-    "dieta": "Herbívoro",
-    "anatomia": "Mamífero pantodonte de cuerpo robusto con extremidades fuertes y gran capacidad de consumo vegetal"
-  },
-  {
-    "codigo": "002_13",
-    "nombre": "Plateosaurus",
+  "dieta": "Carnívoro",
 
-    "cronologia": "0227.0000-0208.5000",
-    "medio": "Terrestre",
-    "habitat_principal": "Llanuras semiáridas con vegetación estacional",
-    "dieta": "Herbívoro",
-    "anatomia": "Sauropodomorfo grande con cuello y cola largos, manos prensiles y locomoción principalmente bípeda"
-  },
-  {
-    "codigo": "002_14",
-    "nombre": "Mimetaster",
+  "anatomia": "Reptil arcosauromorfo de cuello extremadamente largo, adaptado a capturar presas en ambientes costeros y lagunares"
+}, 
+{
+  "codigo": "002_11",
+  "nombre": "Buitreraptor",
 
-    "cronologia": "0410.8000-0393.3000",
-    "medio": "Marino",
-    "habitat_principal": "Fondos marinos de arrecifes y plataformas",
-    "dieta": "Carnívoro oportunista",
-    "anatomia": "Artrópodo marino anomalocarídido con cuerpo segmentado y apéndices especializados para captura"
-  },
-  {
-    "codigo": "002_15",
-    "nombre": "Conodonto",
+  "cronologia": "0094.0000-0089.8000",
+  "medio": "Terrestre",
 
-    "cronologia": "0521.0000-0201.3000",
-    "medio": "Marino",
-    "habitat_principal": "Mares abiertos y plataformas continentales",
-    "dieta": "Carnívoro o filtrador según especie",
-    "anatomia": "Vertebrado primitivo de cuerpo alargado con aparato conodontal formado por elementos denticulares"
-  },
-  {
-    "codigo": "003_01",
-    "nombre": "Chalicotherium",
+  "HP":"HP145125000000000",
+  "HS":"HS147223000000000",
 
-    "cronologia": "0023.0300-0005.3300",
-    "medio": "Terrestre",
-    "habitat_principal": "Bosques abiertos y sabanas húmedas",
-    "dieta": "Herbívoro",
-    "anatomia": "Mamífero perisodáctilo con extremidades alargadas, garras desarrolladas y cuerpo adaptado para alcanzar vegetación alta"
-  },
-  {
-    "codigo": "003_02",
-    "nombre": "Bothriolepis",
+  "dieta": "Carnívoro",
+  "anatomia": "Dromeosáurido ligero con hocico alargado, plumas y extremidades posteriores adaptadas para la caza"
+},
+{
+  "codigo": "002_12",
+  "nombre": "Titanoides",
 
-    "cronologia": "0382.7000-0358.9000",
-    "medio": "Dulceacuícola",
-    "habitat_principal": "Ríos, lagos y sistemas acuáticos continentales",
-    "dieta": "Detritívoro y oportunista",
-    "anatomia": "Pez placodermo acorazado con placas dérmicas protectoras, cuerpo aplanado y adaptación al fondo acuático"
-  },
+  "cronologia": "0059.2000-0056.0000",
+  "medio": "Terrestre",
+
+  "HP":"HP020097000000000",
+  "HS":"HS147019000000000",
+
+  "dieta": "Herbívoro",
+  "anatomia": "Mamífero pantodonte de cuerpo robusto con extremidades fuertes y gran capacidad de consumo vegetal"
+},
+{
+  "codigo": "002_13",
+  "nombre": "Plateosaurus",
+
+  "cronologia": "0227.0000-0208.5000",
+  "medio": "Terrestre",
+
+  "HP":"HP125025000000000",
+  "HS":"HS147097000000000",
+
+  "dieta": "Herbívoro",
+  "anatomia": "Sauropodomorfo grande con cuello y cola largos, manos prensiles y locomoción principalmente bípeda"
+},
+{
+  "codigo": "002_14",
+  "nombre": "Mimetaster",
+
+  "cronologia": "0410.8000-0393.3000",
+  "medio": "Marino",
+
+  "HP":"HP006002000000000",
+  "HS":"HS005001000000000",
+
+  "dieta": "Carnívoro oportunista",
+  "anatomia": "Artrópodo marino anomalocarídido con cuerpo segmentado y apéndices especializados para captura"
+},
+{
+  "codigo": "002_15",
+  "nombre": "Conodonto",
+
+  "cronologia": "0521.0000-0201.3000",
+  "medio": "Marino",
+
+  "HP":"HP001002000000000",
+  "HS":"HS004005000000000",
+
+  "dieta": "Carnívoro o filtrador según especie",
+  "anatomia": "Vertebrado primitivo de cuerpo alargado con aparato conodontal formado por elementos denticulares"
+},
+{
+  "codigo": "003_01",
+  "nombre": "Chalicotherium",
+
+  "cronologia": "0023.0300-0005.3300",
+  "medio": "Terrestre",
+
+  "HP":"HP020147000000000",
+  "HS":"HS223097000000000",
+
+  "dieta": "Herbívoro",
+  "anatomia": "Mamífero perisodáctilo con extremidades alargadas, garras desarrolladas y cuerpo adaptado para alcanzar vegetación alta"
+},
+{
+  "codigo": "003_02",
+  "nombre": "Bothriolepis",
+
+  "cronologia": "0382.7000-0358.9000",
+  "medio": "Dulceacuícola",
+
+  "HP":"HP011013000000000",
+  "HS":"HS017015000000000",
+
+  "dieta": "Detritívoro y oportunista",
+  "anatomia": "Pez placodermo acorazado con placas dérmicas protectoras, cuerpo aplanado y adaptación al fondo acuático"
+},
+  
+
   {
     "codigo": "003_03",
     "nombre": "Ticinosuchus",
