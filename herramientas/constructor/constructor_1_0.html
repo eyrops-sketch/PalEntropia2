@@ -1,1 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Constructor | PalEntropía</title>
+
+<style>
+
+body{
+
+background:#111;
+color:#eee;
+font-family:Arial,Helvetica,sans-serif;
+
+margin:0;
+padding:30px;
+
+}
+
+h1{
+
+text-align:center;
+color:#62d6ff;
+
+}
+
+#buscador{
+
+text-align:center;
+margin:30px;
+
+}
+
+input{
+
+width:180px;
+padding:10px;
+font-size:18px;
+text-align:center;
+
+}
+
+button{
+
+padding:10px 20px;
+font-size:18px;
+margin-left:10px;
+cursor:pointer;
+
+}
+
+#ficha{
+
+display:none;
+
+max-width:1000px;
+
+margin:auto;
+
+background:#1b1b1b;
+
+border-radius:12px;
+
+padding:25px;
+
+box-shadow:0 0 15px #000;
+
+}
+
+#titulo{
+
+text-align:center;
+
+font-size:40px;
+
+color:#6fd7ff;
+
+margin-bottom:5px;
+
+}
+
+#cronologia{
+
+text-align:center;
+
+font-size:22px;
+
+color:#aaa;
+
+margin-bottom:25px;
+
+}
+
+#imagenPrincipal{
+
+width:100%;
+
+max-width:700px;
+
+display:block;
+
+margin:auto;
+
+border-radius:10px;
+
+}
+
+#bloqueInfo{
+
+margin-top:25px;
+
+font-size:20px;
+line-height:1.7;
+
+}
+
+#galeria{
+
+margin-top:30px;
+
+display:flex;
+
+justify-content:center;
+
+gap:25px;
+
+flex-wrap:wrap;
+
+}
+
+#galeria img{
+
+width:300px;
+
+border-radius:10px;
+
+}
+
+h2{
+
+color:#62d6ff;
+
+margin-top:35px;
+
+}
+
+.stats{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:8px;
+
+font-size:18px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Constructor PalEntropía</h1>
+
+<div id="buscador">
+
+<input
+id="codigo"
+type="text"
+placeholder="Ej: 004_09">
+
+<button onclick="buscarFicha()">
+
+Buscar
+
+</button>
+
+</div>
+
+<div id="ficha">
+
+<div id="titulo"></div>
+
+<div id="cronologia"></div>
+
+<img
+id="imagenPrincipal"
+src="">
+
+<div id="bloqueInfo"></div>
+
+<div id="galeria">
+
+<img id="img2" src="">
+<img id="img3" src="">
+
+</div>
+
+<h2>Estadísticas</h2>
+
+<div
+id="estadisticas"
+class="stats">
+
+</div>
+
+</div>
+  <script src="paldb.js"></script>
+<script src="palstats.js"></script>
+<script src="palhab.js"></script>
+<script src="palgeo.js"></script>
+
+<script>
+
+let paleofichas=[];
+
+fetch("paleofichas.json")
+.then(r=>r.json())
+.then(datos=>{
+
+    paleofichas=datos;
+
+});
+
+function buscarFicha(){
+
+const codigo=document.getElementById("codigo").value.trim();
+
+const ficha=paleofichas.find(f=>f.codigo===codigo);
+
+const db=PALDB.find(f=>f.codigo===codigo);
+
+const stats=PALSTATS[codigo];
+
+if(!ficha || !db || !stats){
+
+alert("Código no encontrado.");
+
+return;
+
+}
+
+document.getElementById("ficha").style.display="block";
+
+document.getElementById("titulo").innerHTML=ficha.nombre;
+
+document.getElementById("cronologia").innerHTML=ficha.cronologia;
+
+document.getElementById("imagenPrincipal").src=
+db.carpeta+"/i0.jpg";
+
+document.getElementById("img2").src=
+db.carpeta+"/i2.jpg";
+
+document.getElementById("img3").src=
+db.carpeta+"/i3.jpg";
+
+document.getElementById("bloqueInfo").innerHTML=
+
+"<b>Código:</b> "+ficha.codigo+
+
+"<br><b>Medio:</b> "+ficha.medio+
+
+"<br><b>Dieta:</b> "+ficha.dieta+
+
+"<br><br><b>Anatomía</b><br>"+ficha.anatomia+
+
+"<br><br><b>HP</b>: "+ficha.HP+
+
+"<br><b>HS</b>: "+ficha.HS;
+
+document.getElementById("estadisticas").innerHTML=
+
+"<div>Adaptabilidad: "+stats.adaptabilidad+"</div>"+
+
+"<div>Resistencia: "+stats.resistencia+"</div>"+
+
+"<div>Sociabilidad: "+stats.sociabilidad+"</div>"+
+
+"<div>Reproducción: "+stats.reproduccion+"</div>"+
+
+"<div>Ofensiva: "+stats.ofensiva+"</div>"+
+
+"<div>Defensa: "+stats.defensa+"</div>"+
+
+"<div>Movilidad: "+stats.movilidad+"</div>"+
+
+"<div>Plasticidad ecológica: "+stats.plasticidad_ecologica+"</div>"+
+
+"<div>Tamaño: "+stats.tamano+"</div>"+
+
+"<div>Velocidad: "+stats.velocidad+"</div>"+
+
+"<div>Inteligencia: "+stats.inteligencia+"</div>";
+
+}
+
+</script>
+
+</body>
+</html>
+
+
+
 
