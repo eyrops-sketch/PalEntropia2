@@ -254,19 +254,31 @@ document.getElementById("cronologia").innerHTML=ficha.cronologia;
 
 
 
-  
+const especie = db.carpeta
+.split("_")
+.slice(2)
+.join("_");
 
-const ruta="../../paleofichas/vol"+
+const nombreArchivo =
+especie.charAt(0).toUpperCase()+
+especie.slice(1);
+
+const ruta =
+"../../paleofichas/vol"+
 String(db.volumen).padStart(3,"0")+
 "/"+
 db.carpeta+
 "/";
 
-document.getElementById("imagenPrincipal").src=ruta+"i0.jpg";
+document.getElementById("imagenPrincipal").src =
+ruta+nombreArchivo+"_i0.png";
 
-document.getElementById("img2").src=ruta+"i2.jpg";
+document.getElementById("img2").src =
+ruta+nombreArchivo+"_i2.png";
 
-document.getElementById("img3").src=ruta+"i3.jpg";
+document.getElementById("img3").src =
+ruta+nombreArchivo+"_i3.png";
+
 
 
   
