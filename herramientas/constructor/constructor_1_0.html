@@ -134,15 +134,24 @@ ficha.nombre;
 
 
 
+    
 const geo = PALDECODER.decodeCronologia(ficha.cronologia);
 
-document.getElementById("cronologia").innerHTML = `
-<div>${geo.rango}</div>
-<div><strong>Período:</strong> ${geo.periodo_texto}</div>
-<div><strong>Subperíodo:</strong> ${geo.subperiodo_texto}</div>
-`;
+let htmlGeo = `<div>${geo.rango}</div>`;
+
+if (geo.periodo_texto) {
+    htmlGeo += `<div><strong>Período:</strong> ${geo.periodo_texto}</div>`;
+}
+
+if (geo.subperiodo_texto) {
+    htmlGeo += `<div><strong>Subperíodo:</strong> ${geo.subperiodo_texto}</div>`;
+}
+
+document.getElementById("cronologia").innerHTML = htmlGeo;
 
 
+
+    
 const hab = PALDECODER.decodeHabitats(ficha.HP,ficha.HS);
 
 let habitats = "";
