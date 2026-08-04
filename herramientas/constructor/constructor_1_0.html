@@ -270,21 +270,9 @@ ficha.nombre;
 
 
 
-let tiempo="";
+const geo = PALDECODER.decodeCronologia(ficha.cronologia);
 
-
-
-if(typeof decodificarCronologia==="function"){
-
-tiempo=decodificarCronologia(ficha.cronologia);
-
-}
-
-else{
-
-tiempo=ficha.cronologia;
-
-}
+let tiempo = geo.rango;
 
 
 
@@ -294,28 +282,27 @@ tiempo;
 
 
 
-let habitats="";
+const hab = PALDECODER.decodeHabitats(ficha.HP,ficha.HS);
 
+let habitats = "";
 
+if(hab.principales.length){
 
-if(typeof decodificarHabitats==="function"){
+    habitats += "<b>Principales</b><br>";
 
-habitats=decodificarHabitats(
-
-ficha.HP,
-
-ficha.HS
-
-);
+    hab.principales.forEach(h=>{
+        habitats += "• " + h.nombre + "<br>";
+    });
 
 }
 
-else{
+if(hab.secundarios.length){
 
-habitats=
+    habitats += "<br><b>Secundarios</b><br>";
 
-"HP: "+ficha.HP+
-"<br>HS: "+ficha.HS;
+    hab.secundarios.forEach(h=>{
+        habitats += "• " + h.nombre + "<br>";
+    });
 
 }
 
