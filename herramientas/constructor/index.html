@@ -21,19 +21,30 @@ h1{
 color:#6cf;
 }
 
-#estado{
-margin-top:20px;
+input{
+padding:10px;
+font-size:18px;
+width:180px;
+}
+
+button{
+padding:10px 20px;
+font-size:18px;
+cursor:pointer;
+margin-left:10px;
+}
+
+#resultado{
+
+margin-top:30px;
 padding:20px;
+
 background:#222;
+
 border-radius:10px;
-}
 
-.ok{
-color:#7CFC00;
-}
+white-space:pre-line;
 
-.error{
-color:#ff6666;
 }
 
 </style>
@@ -44,10 +55,19 @@ color:#ff6666;
 
 <h1>Constructor PalEntropía</h1>
 
-<p>Comprobando carga de archivos...</p>
+<p>Introduce un código de Paleoficha.</p>
 
-<div id="estado">
-Cargando...
+<input
+id="codigo"
+type="text"
+placeholder="Ej: 004_12">
+
+<button onclick="buscarFicha()">
+Buscar
+</button>
+
+<div id="resultado">
+Esperando búsqueda...
 </div>
 
 <script src="paldb.js"></script>
@@ -57,59 +77,91 @@ Cargando...
 
 <script>
 
-const estado=document.getElementById("estado");
+let paleofichas=[];
 
-try{
+fetch("paleofichas.json")
+.then(r=>r.json())
+.then(datos=>{
 
-estado.innerHTML=`
-<p class="ok">✔ PALDB cargado: ${PALDB.length} registros</p>
-<p class="ok">✔ PALSTATS cargado: ${Object.keys(PALSTATS).length} registros</p>
-<p class="ok">✔ PALHAB cargado: ${Object.keys(PALHAB).length} registros</p>
-<p class="ok">✔ PALGEO cargado: ${Object.keys(PALGEO).length} registros</p>
-`;
+paleofichas=datos;
 
-}catch(e){
+});
 
-estado.innerHTML=`
-<p class="error">Error cargando archivos.</p>
-<pre>${e}</pre>
-`;
+function buscarFicha(){
+
+const codigo=document.getElementById("codigo").value.trim();
+
+const ficha=paleofichas.find(f=>f.codigo===codigo);
+
+const db=PALDB.find(f=>f.codigo===codigo);
+
+const stats=PALSTATS[codigo];
+
+const salida=document.getElementById("resultado");
+
+if(!ficha){
+
+salida.innerHTML="Código no encontrado.";
+
+return;
+
+}
+
+salida.innerHTML=
+
+"Nombre: "+ficha.nombre+
+
+"\n\nCódigo: "+ficha.codigo+
+
+"\nCronología: "+ficha.cronologia+
+
+"\nMedio: "+ficha.medio+
+
+"\n\nHP: "+ficha.HP+
+
+"\nHS: "+ficha.HS+
+
+"\n\nDieta: "+ficha.dieta+
+
+"\n\nAnatomía: "+ficha.anatomia+
+
+"\n\nCarpeta: "+db.carpeta+
+
+"\nVolumen: "+db.volumen+
+
+"\nPosición: "+db.posicion+
+
+"\n\nAdaptabilidad: "+stats.adaptabilidad+
+
+"\nResistencia: "+stats.resistencia+
+
+"\nSociabilidad: "+stats.sociabilidad+
+
+"\nReproducción: "+stats.reproduccion+
+
+"\nOfensiva: "+stats.ofensiva+
+
+"\nDefensa: "+stats.defensa+
+
+"\nMovilidad: "+stats.movilidad+
+
+"\nPlasticidad ecológica: "+stats.plasticidad_ecologica+
+
+"\nTamaño: "+stats.tamano+
+
+"\nVelocidad: "+stats.velocidad+
+
+"\nInteligencia: "+stats.inteligencia;
 
 }
 
 </script>
 
-<script>
-fetch("paleofichas.json")
-.then(r => r.json())
-.then(datos => {
-
-    console.log(datos);
-
-    const p=document.createElement("p");
-    p.style.color="lime";
-    p.textContent="✔ paleofichas.json cargado: "+datos.length+" registros";
-    document.body.appendChild(p);
-
-})
-.catch(error=>{
-
-    const p=document.createElement("p");
-    p.style.color="red";
-    p.textContent="✖ Error cargando paleofichas.json";
-    document.body.appendChild(p);
-
-    console.error(error);
-
-});
-</script>
-
-
-
-  
 </body>
 
 </html>
+
+
 
 
 
