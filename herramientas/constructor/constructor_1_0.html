@@ -254,6 +254,8 @@ document.getElementById("cronologia").innerHTML=ficha.cronologia;
 
 
 
+  
+
 const especie = db.carpeta
 .split("_")
 .slice(2)
@@ -270,15 +272,57 @@ String(db.volumen).padStart(3,"0")+
 db.carpeta+
 "/";
 
-document.getElementById("imagenPrincipal").src =
-ruta+nombreArchivo+"_i0.png";
+function cargarImagen(elemento, base){
+    const img = document.getElementById(elemento);
 
-document.getElementById("img2").src =
-ruta+nombreArchivo+"_i2.png";
+    const extensiones = [
+        ".png",
+        ".jpg",
+        ".jpeg"
+    ];
 
-document.getElementById("img3").src =
-ruta+nombreArchivo+"_i3.png";
+    let i = 0;
 
+    function probar(){
+        if(i >= extensiones.length){
+            console.warn("Imagen no encontrada:", base);
+            return;
+        }
+
+        const url = ruta + base + extensiones[i];
+
+        const prueba = new Image();
+
+        prueba.onload = function(){
+            img.src = url;
+        };
+
+        prueba.onerror = function(){
+            i++;
+            probar();
+        };
+
+        prueba.src = url;
+    }
+
+    probar();
+}
+
+
+cargarImagen(
+"imagenPrincipal",
+nombreArchivo+"_i0"
+);
+
+cargarImagen(
+"img2",
+nombreArchivo+"_i2"
+);
+
+cargarImagen(
+"img3",
+nombreArchivo+"_i3"
+);
 
 
   
