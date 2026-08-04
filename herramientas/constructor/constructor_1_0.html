@@ -252,15 +252,27 @@ document.getElementById("titulo").innerHTML=ficha.nombre;
 
 document.getElementById("cronologia").innerHTML=ficha.cronologia;
 
-document.getElementById("imagenPrincipal").src=
-db.carpeta+"/i0.jpg";
 
-document.getElementById("img2").src=
-db.carpeta+"/i2.jpg";
 
-document.getElementById("img3").src=
-db.carpeta+"/i3.jpg";
+  
 
+const ruta="../../paleofichas/vol"+
+String(db.volumen).padStart(3,"0")+
+"/"+
+db.carpeta+
+"/";
+
+document.getElementById("imagenPrincipal").src=ruta+"i0.jpg";
+
+document.getElementById("img2").src=ruta+"i2.jpg";
+
+document.getElementById("img3").src=ruta+"i3.jpg";
+
+
+  
+
+
+  
 document.getElementById("bloqueInfo").innerHTML=
 
 "<b>Código:</b> "+ficha.codigo+
