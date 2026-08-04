@@ -136,14 +136,11 @@ ficha.nombre;
 
 const geo = PALDECODER.decodeCronologia(ficha.cronologia);
 
-let tiempo = geo.rango;
-
-
-
-document.getElementById("cronologia").innerHTML=
-
-tiempo;
-
+document.getElementById("cronologia").innerHTML = `
+<div>${geo.rango}</div>
+<div><strong>Período:</strong> ${geo.periodo_texto}</div>
+<div><strong>Subperíodo:</strong> ${geo.subperiodo_texto}</div>
+`;
 
 
 const hab = PALDECODER.decodeHabitats(ficha.HP,ficha.HS);
