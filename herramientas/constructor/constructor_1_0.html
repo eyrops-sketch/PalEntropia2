@@ -4,9 +4,12 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+
 <title>Constructor | PalEntropía</title>
+
 
 <style>
 
@@ -21,6 +24,7 @@ padding:30px;
 
 }
 
+
 h1{
 
 text-align:center;
@@ -28,12 +32,14 @@ color:#62d6ff;
 
 }
 
+
 #buscador{
 
 text-align:center;
 margin:30px;
 
 }
+
 
 input{
 
@@ -44,6 +50,7 @@ text-align:center;
 
 }
 
+
 button{
 
 padding:10px 20px;
@@ -52,6 +59,7 @@ margin-left:10px;
 cursor:pointer;
 
 }
+
 
 #ficha{
 
@@ -71,6 +79,7 @@ box-shadow:0 0 15px #000;
 
 }
 
+
 #titulo{
 
 text-align:center;
@@ -83,6 +92,7 @@ margin-bottom:5px;
 
 }
 
+
 #cronologia{
 
 text-align:center;
@@ -94,6 +104,7 @@ color:#aaa;
 margin-bottom:25px;
 
 }
+
 
 #imagenPrincipal{
 
@@ -109,14 +120,17 @@ border-radius:10px;
 
 }
 
+
 #bloqueInfo{
 
 margin-top:25px;
 
 font-size:20px;
+
 line-height:1.7;
 
 }
+
 
 #galeria{
 
@@ -132,6 +146,7 @@ flex-wrap:wrap;
 
 }
 
+
 #galeria img{
 
 width:300px;
@@ -140,6 +155,7 @@ border-radius:10px;
 
 }
 
+
 h2{
 
 color:#62d6ff;
@@ -147,6 +163,7 @@ color:#62d6ff;
 margin-top:35px;
 
 }
+
 
 .stats{
 
@@ -160,20 +177,48 @@ font-size:18px;
 
 }
 
+
+.bloque{
+
+background:#222;
+
+padding:15px;
+
+border-radius:10px;
+
+margin-top:20px;
+
+}
+
+
+.etiqueta{
+
+color:#62d6ff;
+font-weight:bold;
+
+}
+
+
 </style>
 
 </head>
 
+
 <body>
+
 
 <h1>Constructor PalEntropía</h1>
 
+
 <div id="buscador">
+
 
 <input
 id="codigo"
 type="text"
-placeholder="Ej: 004_09">
+placeholder="Ej: 004_09"
+>
+
 
 <button onclick="buscarFicha()">
 
@@ -181,62 +226,115 @@ Buscar
 
 </button>
 
+
 </div>
+
 
 <div id="ficha">
 
+
 <div id="titulo"></div>
+
 
 <div id="cronologia"></div>
 
+
 <img
 id="imagenPrincipal"
-src="">
+src=""
+>
+
 
 <div id="bloqueInfo"></div>
 
+
 <div id="galeria">
 
+
 <img id="img2" src="">
+
 <img id="img3" src="">
+
 
 </div>
 
+
 <h2>Estadísticas</h2>
+
 
 <div
 id="estadisticas"
 class="stats">
 
-</div>
 
 </div>
+
+
+</div>
+
   <script src="paldb.js"></script>
 <script src="palstats.js"></script>
 <script src="palhab.js"></script>
 <script src="palgeo.js"></script>
+<script src="paldecoder.js"></script>
+
 
 <script>
 
 let paleofichas=[];
 
+
+/*
+========================================================
+Carga principal de Paleofichas
+========================================================
+*/
+
 fetch("paleofichas.json")
+
 .then(r=>r.json())
+
 .then(datos=>{
 
     paleofichas=datos;
 
 });
 
+
+/*
+========================================================
+Búsqueda de ficha
+========================================================
+*/
+
 function buscarFicha(){
 
-const codigo=document.getElementById("codigo").value.trim();
 
-const ficha=paleofichas.find(f=>f.codigo===codigo);
+const codigo=
+document.getElementById("codigo")
+.value
+.trim();
 
-const db=PALDB.find(f=>f.codigo===codigo);
 
-const stats=PALSTATS[codigo];
+
+const ficha=
+paleofichas.find(
+f=>f.codigo===codigo
+);
+
+
+
+const db=
+PALDB.find(
+f=>f.codigo===codigo
+);
+
+
+
+const stats=
+PALSTATS[codigo];
+
+
 
 if(!ficha || !db || !stats){
 
@@ -246,90 +344,95 @@ return;
 
 }
 
-document.getElementById("ficha").style.display="block";
-
-document.getElementById("titulo").innerHTML=ficha.nombre;
-
-document.getElementById("cronologia").innerHTML=ficha.cronologia;
 
 
-
-  
-
-const especie = db.carpeta
-.split("_")
-.slice(2)
-.join("_");
-
-const nombreArchivo =
-especie.charAt(0).toUpperCase()+
-especie.slice(1);
-
-const ruta =
-"../../paleofichas/vol"+
-String(db.volumen).padStart(3,"0")+
-"/"+
-db.carpeta+
-"/";
-
-function cargarImagen(elemento, base){
-    const img = document.getElementById(elemento);
-
-    const extensiones = [
-        ".png",
-        ".jpg",
-        ".jpeg"
-    ];
-
-    let i = 0;
-
-    function probar(){
-        if(i >= extensiones.length){
-            console.warn("Imagen no encontrada:", base);
-            return;
-        }
-
-        const url = ruta + base + extensiones[i];
-
-        const prueba = new Image();
-
-        prueba.onload = function(){
-            img.src = url;
-        };
-
-        prueba.onerror = function(){
-            i++;
-            probar();
-        };
-
-        prueba.src = url;
-    }
-
-    probar();
-}
+document.getElementById("ficha")
+.style.display="block";
 
 
-cargarImagen(
-"imagenPrincipal",
-nombreArchivo+"_i0"
-);
 
-cargarImagen(
-"img2",
-nombreArchivo+"_i2"
-);
+/*
+========================================================
+Datos básicos
+========================================================
+*/
 
-cargarImagen(
-"img3",
-nombreArchivo+"_i3"
+
+document.getElementById("titulo")
+.innerHTML=
+ficha.nombre;
+
+
+
+/*
+========================================================
+DECODIFICACIÓN CRONOLÓGICA
+========================================================
+*/
+
+
+const geo=
+PALDECODER.cronologia(
+ficha.cronologia
 );
 
 
-  
+
+document.getElementById("cronologia")
+.innerHTML=
+
+geo.texto;
+
+<!-- ========================================================
+     PARTE 3
+     DECODIFICACIÓN Y PRESENTACIÓN DE DATOS
+======================================================== -->
 
 
-  
-document.getElementById("bloqueInfo").innerHTML=
+/*
+========================================================
+DECODIFICACIÓN CRONOLÓGICA
+========================================================
+*/
+
+
+const geo = 
+PALDECODER.cronologia(
+    ficha.cronologia
+);
+
+
+
+document.getElementById("cronologia")
+.innerHTML =
+geo.texto;
+
+
+
+/*
+========================================================
+DECODIFICACIÓN DE HÁBITATS
+========================================================
+*/
+
+
+const habitats = 
+PALDECODER.habitats(
+    ficha.HP,
+    ficha.HS
+);
+
+
+
+/*
+========================================================
+INFORMACIÓN GENERAL
+========================================================
+*/
+
+
+document.getElementById("bloqueInfo").innerHTML =
+
 
 "<b>Código:</b> "+ficha.codigo+
 
@@ -337,13 +440,31 @@ document.getElementById("bloqueInfo").innerHTML=
 
 "<br><b>Dieta:</b> "+ficha.dieta+
 
-"<br><br><b>Anatomía</b><br>"+ficha.anatomia+
+"<br><br><b>Anatomía</b><br>"+
 
-"<br><br><b>HP</b>: "+ficha.HP+
+ficha.anatomia+
 
-"<br><b>HS</b>: "+ficha.HS;
 
-document.getElementById("estadisticas").innerHTML=
+"<br><br><b>Hábitats principales:</b><br>"+
+
+habitats.HP+
+
+
+"<br><br><b>Hábitats secundarios:</b><br>"+
+
+habitats.HS;
+
+
+
+/*
+========================================================
+ESTADÍSTICAS
+========================================================
+*/
+
+
+document.getElementById("estadisticas").innerHTML =
+
 
 "<div>Adaptabilidad: "+stats.adaptabilidad+"</div>"+
 
@@ -367,12 +488,185 @@ document.getElementById("estadisticas").innerHTML=
 
 "<div>Inteligencia: "+stats.inteligencia+"</div>";
 
+
+
+  }
+
+
+/*
+========================================================
+PARTE 4
+SISTEMA DE CARGA DE IMÁGENES
+Mismo sistema del constructor original
+========================================================
+*/
+
+
+const especie = db.carpeta
+.split("_")
+.slice(2)
+.join("_");
+
+
+const nombreArchivo =
+
+especie.charAt(0).toUpperCase()+
+
+especie.slice(1);
+
+
+
+const ruta =
+
+"../../paleofichas/vol"+
+
+String(db.volumen).padStart(3,"0")+
+
+"/"+
+
+db.carpeta+
+
+"/";
+
+
+
+function cargarImagen(elemento, base){
+
+
+const img =
+document.getElementById(elemento);
+
+
+
+const extensiones = [
+
+".png",
+
+".jpg",
+
+".jpeg"
+
+];
+
+
+
+let i = 0;
+
+
+
+function probar(){
+
+
+if(i >= extensiones.length){
+
+
+console.warn(
+"Imagen no encontrada:",
+base
+);
+
+
+return;
+
 }
+
+
+
+const url =
+ruta+
+base+
+extensiones[i];
+
+
+
+const prueba =
+new Image();
+
+
+
+prueba.onload=function(){
+
+
+img.src=url;
+
+
+};
+
+
+
+prueba.onerror=function(){
+
+
+i++;
+
+probar();
+
+
+};
+
+
+
+prueba.src=url;
+
+
+}
+
+
+
+probar();
+
+
+}
+
+
+
+/*
+========================================================
+Carga de imágenes
+========================================================
+*/
+
+
+cargarImagen(
+
+"imagenPrincipal",
+
+nombreArchivo+"_i0"
+
+);
+
+
+
+cargarImagen(
+
+"img2",
+
+nombreArchivo+"_i2"
+
+);
+
+
+
+cargarImagen(
+
+"img3",
+
+nombreArchivo+"_i3"
+
+);
+
+
 
 </script>
 
+
 </body>
+
 </html>
+  
+  
+
+
 
 
 
