@@ -284,9 +284,9 @@ decodeCronologia(cronologia){
 
         let compatible = (
 
-            inicio > intervalo.fin_ma &&
+            inicio >= intervalo.fin_ma &&
 
-            fin < intervalo.inicio_ma
+            fin <= intervalo.inicio_ma
 
         );
 
