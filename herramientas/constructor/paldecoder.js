@@ -487,6 +487,34 @@ decodeGeoCode(codigo,resultado){
 
 formatearRango(inicio,fin){
 
+    function formato(valor){
+
+        if(valor===0){
+            return "0 a";
+        }
+
+        if(valor<0.001){
+            return Math.round(valor*1000000)+" a";
+        }
+
+        if(valor<1){
+            return Math.round(valor*1000)+" mil a";
+        }
+
+        let texto=valor.toFixed(4);
+
+        texto=texto
+            .replace(/\.?0+$/,"")
+            .replace(".",",");
+
+        return texto+" Ma";
+
+    }
+
+    return formato(inicio)+" - "+formato(fin);
+
+},
+
 
     function formato(valor){
 
