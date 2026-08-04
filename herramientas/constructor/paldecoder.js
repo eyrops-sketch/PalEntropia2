@@ -516,31 +516,6 @@ formatearRango(inicio,fin){
 },
 
 
-    function formato(valor){
-
-
-        if(valor===0){
-
-            return "Actualidad";
-
-        }
-
-
-        return valor
-        .toFixed(4)
-        .replace(".",",");
-
-    }
-
-
-
-    return formato(inicio)
-    +" - "
-    +formato(fin)
-    +" Ma";
-
-
-},
 
 
 /* ======================================================
