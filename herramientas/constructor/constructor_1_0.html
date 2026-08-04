@@ -4,233 +4,161 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 
 <title>Constructor | PalEntropía</title>
 
-
 <style>
-
 
 body{
 
 background:#111;
-
 color:#eee;
-
 font-family:Arial,Helvetica,sans-serif;
-
 margin:0;
-
 padding:30px;
 
 }
 
-
-
 h1{
 
 text-align:center;
-
 color:#62d6ff;
 
 }
-
 
 
 #buscador{
 
 text-align:center;
-
 margin:30px;
 
 }
 
 
-
 input{
 
 width:180px;
-
 padding:10px;
-
 font-size:18px;
-
 text-align:center;
 
 }
-
 
 
 button{
 
 padding:10px 20px;
-
 font-size:18px;
-
 margin-left:10px;
-
 cursor:pointer;
 
 }
 
 
-
 #ficha{
 
 display:none;
-
 max-width:1000px;
-
 margin:auto;
-
 background:#1b1b1b;
-
 border-radius:12px;
-
 padding:25px;
-
 box-shadow:0 0 15px #000;
 
 }
 
 
-
 #titulo{
 
 text-align:center;
-
 font-size:40px;
-
 color:#6fd7ff;
-
 margin-bottom:5px;
 
 }
 
 
-
 #cronologia{
 
 text-align:center;
-
 font-size:22px;
-
 color:#aaa;
-
 margin-bottom:25px;
 
 }
 
 
-
 #imagenPrincipal{
 
 width:100%;
-
 max-width:700px;
-
 display:block;
-
 margin:auto;
-
 border-radius:10px;
 
 }
-
 
 
 #bloqueInfo{
 
 margin-top:25px;
-
 font-size:20px;
-
 line-height:1.7;
 
 }
 
 
-
 #galeria{
 
 margin-top:30px;
-
 display:flex;
-
 justify-content:center;
-
 gap:25px;
-
 flex-wrap:wrap;
 
 }
 
 
-
 #galeria img{
 
 width:300px;
-
 border-radius:10px;
 
 }
 
 
-
 h2{
 
 color:#62d6ff;
-
 margin-top:35px;
 
 }
 
 
-
 .stats{
 
 display:grid;
-
 grid-template-columns:1fr 1fr;
-
 gap:8px;
-
 font-size:18px;
 
 }
-
 
 </style>
 
 </head>
 
 
-
 <body>
 
 
-<h1>
-
-Constructor PalEntropía
-
-</h1>
-
+<h1>Constructor PalEntropía</h1>
 
 
 <div id="buscador">
 
-
-<input
-
-id="codigo"
-
-type="text"
-
-placeholder="Ej: 004_09">
-
+<input id="codigo" type="text" placeholder="Ej: 005_12">
 
 <button onclick="buscarFicha()">
 
@@ -238,10 +166,7 @@ Buscar
 
 </button>
 
-
 </div>
-
-
 
 
 <div id="ficha">
@@ -249,67 +174,35 @@ Buscar
 
 <div id="titulo"></div>
 
-
 <div id="cronologia"></div>
 
 
-
-<img
-
-id="imagenPrincipal"
-
-src="">
-
+<img id="imagenPrincipal" src="">
 
 
 <div id="bloqueInfo"></div>
 
 
-
 <div id="galeria">
 
-
 <img id="img2" src="">
-
-
 <img id="img3" src="">
 
-
 </div>
 
 
-
-<h2>
-
-Estadísticas
-
-</h2>
+<h2>Estadísticas</h2>
 
 
-
-<div
-
-id="estadisticas"
-
-class="stats">
+<div id="estadisticas" class="stats"></div>
 
 
 </div>
-
-
-
-</div>
-
-  <script src="paldb.js"></script>
-
+<script src="paldb.js"></script>
 <script src="palstats.js"></script>
-
 <script src="palhab.js"></script>
-
 <script src="palgeo.js"></script>
-
 <script src="paldecoder.js"></script>
-
 
 
 <script>
@@ -318,255 +211,138 @@ class="stats">
 let paleofichas=[];
 
 
-
-/*
-========================================================
-Carga de base de datos Paleofichas
-========================================================
-*/
-
-
 fetch("paleofichas.json")
 
 .then(r=>r.json())
 
 .then(datos=>{
 
-
-    paleofichas=datos;
-
+paleofichas=datos;
 
 });
 
 
 
-
-/*
-========================================================
-Buscador principal
-========================================================
-*/
-
-
 function buscarFicha(){
 
 
+const codigo=
 
-const codigo =
-
-document
-
-.getElementById("codigo")
-
-.value
-
-.trim();
+document.getElementById("codigo").value.trim();
 
 
 
+const ficha=
 
-const ficha =
-
-paleofichas.find(
-
-f=>f.codigo===codigo
-
-);
+paleofichas.find(f=>f.codigo===codigo);
 
 
 
+const db=
 
-const db =
-
-PALDB.find(
-
-f=>f.codigo===codigo
-
-);
+PALDB.find(f=>f.codigo===codigo);
 
 
 
-
-const stats =
+const stats=
 
 PALSTATS[codigo];
 
 
 
+if(!ficha || !db || !stats){
 
-
-if(!ficha){
-
-alert("Falta ficha JSON");
-
-return;
-
-}
-
-if(!db){
-
-alert("Falta PALDB");
-
-return;
-
-}
-
-if(!stats){
-
-alert("Falta PALSTATS");
+alert("Código no encontrado.");
 
 return;
 
 }
 
 
-}
+
+document.getElementById("ficha").style.display="block";
 
 
 
-
-
-document
-
-.getElementById("ficha")
-
-.style.display="block";
-
-
-
-
-
-/*
-========================================================
-Título
-========================================================
-*/
-
-
-document
-
-.getElementById("titulo")
-
-.innerHTML =
+document.getElementById("titulo").innerHTML=
 
 ficha.nombre;
 
-   /*
-========================================================
-Decodificación cronológica
-========================================================
-*/
 
 
-const tiempo =
-
-PALDECODER.cronologia(
-
-    ficha.cronologia
-
-);
+let tiempo="";
 
 
 
+if(typeof decodificarCronologia==="function"){
 
-document
+tiempo=decodificarCronologia(ficha.cronologia);
 
-.getElementById("cronologia")
+}
 
-.innerHTML =
+else{
 
-tiempo.texto;
+tiempo=ficha.cronologia;
 
-
-
-
-
-/*
-========================================================
-Decodificación de hábitats
-========================================================
-*/
+}
 
 
-const habitats =
 
-PALDECODER.habitats(
+document.getElementById("cronologia").innerHTML=
 
-    ficha.HP,
+tiempo;
 
-    ficha.HS
+
+
+let habitats="";
+
+
+
+if(typeof decodificarHabitats==="function"){
+
+habitats=decodificarHabitats(
+
+ficha.HP,
+
+ficha.HS
 
 );
 
+}
+
+else{
+
+habitats=
+
+"HP: "+ficha.HP+
+"<br>HS: "+ficha.HS;
+
+}
 
 
 
-
-/*
-========================================================
-Información de la especie
-========================================================
-*/
+document.getElementById("bloqueInfo").innerHTML=
 
 
-document
+"<b>Código:</b> "+ficha.codigo+
 
-.getElementById("bloqueInfo")
+"<br><b>Medio:</b> "+ficha.medio+
 
-.innerHTML =
+"<br><b>Dieta:</b> "+ficha.dieta+
 
+"<br><br><b>Anatomía</b><br>"+ficha.anatomia+
 
+"<br><br><b>Hábitats</b><br>"+habitats;
 
-"<b>Código:</b> "+
+  const especie =
 
-ficha.codigo+
-
-
-
-"<br><b>Medio:</b> "+
-
-ficha.medio+
-
-
-
-"<br><b>Dieta:</b> "+
-
-ficha.dieta+
-
-
-
-"<br><br><b>Anatomía</b><br>"+
-
-ficha.anatomia+
-
-
-
-"<br><br><b>Hábitats principales:</b><br>"+
-
-habitats.HP+
-
-
-
-"<br><br><b>Hábitats secundarios:</b><br>"+
-
-habitats.HS;
-
-/*
-========================================================
-Sistema de carga de imágenes
-(Mismo sistema del constructor original)
-========================================================
-*/
-
-
-const especie = db.carpeta
+db.carpeta
 
 .split("_")
 
 .slice(2)
 
 .join("_");
-
 
 
 
@@ -577,8 +353,6 @@ especie.charAt(0).toUpperCase()
 +
 
 especie.slice(1);
-
-
 
 
 
@@ -605,19 +379,16 @@ db.carpeta
 
 
 
-
 function cargarImagen(elemento,base){
 
 
-
-const img =
+const img=
 
 document.getElementById(elemento);
 
 
 
-
-const extensiones = [
+const extensiones=[
 
 ".png",
 
@@ -629,86 +400,52 @@ const extensiones = [
 
 
 
-
 let i=0;
-
 
 
 
 function probar(){
 
 
-
 if(i>=extensiones.length){
 
-
-
-console.warn(
-
-"Imagen no encontrada:",
-
-base
-
-);
-
-
-
 return;
-
 
 }
 
 
 
+const url=
 
-const url =
+ruta+
 
-ruta
-
-+
-
-base
-
-+
+base+
 
 extensiones[i];
 
 
 
-
-
-const prueba =
+const prueba=
 
 new Image();
 
 
 
-
 prueba.onload=function(){
-
-
 
 img.src=url;
 
-
-
 };
-
 
 
 
 prueba.onerror=function(){
 
-
-
 i++;
 
 probar();
 
-
-
 };
-
 
 
 
@@ -728,8 +465,6 @@ probar();
 
 
 
-
-
 cargarImagen(
 
 "imagenPrincipal",
@@ -737,7 +472,6 @@ cargarImagen(
 nombreArchivo+"_i0"
 
 );
-
 
 
 
@@ -751,7 +485,6 @@ nombreArchivo+"_i2"
 
 
 
-
 cargarImagen(
 
 "img3",
@@ -760,25 +493,7 @@ nombreArchivo+"_i3"
 
 );
 
-
-
-
-
-
-
-/*
-========================================================
-Estadísticas
-========================================================
-*/
-
-
-document
-
-.getElementById("estadisticas")
-
-.innerHTML =
-
+document.getElementById("estadisticas").innerHTML=
 
 
 "<div>Adaptabilidad: "+stats.adaptabilidad+"</div>"+
@@ -805,15 +520,6 @@ document
 
 
 
-
-
-/*
-========================================================
-Fin buscarFicha()
-========================================================
-*/
-
-
 }
 
 
@@ -822,9 +528,8 @@ Fin buscarFicha()
 
 </body>
 
-
 </html>
-  
+
 
 
 
