@@ -352,7 +352,16 @@ decodeCronologia(cronologia){
 
     });
 
+   
 
+resultado.periodo_texto =
+resultado.periodo.join(" · ");
+
+resultado.subperiodo_texto =
+resultado.edad.join(" - ");
+
+
+   
 
     return resultado;
 
