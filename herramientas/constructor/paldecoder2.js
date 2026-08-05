@@ -1,174 +1,429 @@
 /*
 ========================================================
 PALDECODER2.js v1.0 LTS
-Decodificador Universal de Modo de Vida
+
+Decodificador Universal Biológico
 PalEntropía
---------------------------------------------------------
-Sistema de decodificación del campo:
 
-MVxxxxxxxxxxxx
+Responsabilidades:
 
-Cada bloque de 3 dígitos representa un código SM
-del catálogo PALMEDIO.
+1. Interpretar modo_vida (MVxxx)
+   usando PALMODO.js
 
-Estructura:
+2. Interpretar medio_compuesto
+   usando PALMEDIO.js
 
-Slot 1 → Modo de vida principal (obligatorio)
-Slot 2 → Modo de vida secundario (opcional)
-Slot 3 → Modo de vida secundario (opcional)
-Slot 4 → Modo de vida secundario (opcional)
-
-Ejemplo:
-
-MV010092066000
-
-→ SM010
-→ SM092
-→ SM066
-→ SM000 (vacío)
+No modifica:
+- PALDECODER.js (cronología LTS)
+- PALHAB.js
+- PALSTATS.js
 
 ========================================================
 */
 
+
 window.PALDECODER2 = {
 
-/* ======================================================
-   Función principal
-====================================================== */
+
+/*
+========================================================
+ decodeModoVida()
+
+ Entrada:
+
+ "MV001"
+
+ Proceso:
+
+ MV001
+   ↓
+ PALMODO
+   ↓
+ Registro interpretado
+
+ Salida:
+
+ {
+   codigo:"MV001",
+   nombre:"Terrestre"
+ }
+
+========================================================
+*/
+
 
 decodeModoVida(codigo){
 
+
     if(!codigo || typeof codigo !== "string"){
         return null;
     }
 
-    codigo = codigo.trim().toUpperCase();
 
-    if(!codigo.startsWith("MV") || codigo.length !== 14){
+    codigo = codigo
+    .trim()
+    .toUpperCase();
+
+
+
+    if(!codigo.startsWith("MV")){
         return null;
     }
 
-    const datos = codigo.substring(2);
 
-    const slot1 = datos.substring(0,3);
-    const slot2 = datos.substring(3,6);
-    const slot3 = datos.substring(6,9);
-    const slot4 = datos.substring(9,12);
 
-    return{
+    if(!window.PALMODO){
+        return null;
+    }
 
-        principal: this.leerSlot(slot1),
 
-        secundario1: this.leerSlot(slot2),
 
-        secundario2: this.leerSlot(slot3),
+    const modo = PALMODO[codigo];
 
-        secundario3: this.leerSlot(slot4)
+
+
+    if(!modo){
+        return null;
+    }
+
+
+
+    return modo;
+
+
+},
+
+
+
+/*
+========================================================
+
+Fin Parte 1
+
+========================================================
+*/
+
+
+};
+
+/*
+========================================================
+ decodeMedio()
+
+ Entrada:
+
+ "003003002003"
+
+ Estructura:
+
+ Slot 1 → SMxxx Medio ecológico
+ Slot 2 → Lxxx  Localización
+ Slot 3 → ESxxx Estrato ecológico
+ Slot 4 → Cxxx  Comportamiento espacial
+
+ Salida:
+
+ {
+   medio:{},
+   localizacion:{},
+   estrato:{},
+   comportamiento:{}
+ }
+
+========================================================
+*/
+
+
+decodeMedio(codigo){
+
+
+    if(!codigo || typeof codigo !== "string"){
+        return null;
+    }
+
+
+
+    codigo = codigo
+    .trim()
+    .toUpperCase();
+
+
+
+    if(codigo.length !== 12){
+        return null;
+    }
+
+
+
+    if(!window.PALMEDIO){
+        return null;
+    }
+
+
+
+    const sm = codigo.substring(0,3);
+    const l  = codigo.substring(3,6);
+    const es = codigo.substring(6,9);
+    const c  = codigo.substring(9,12);
+
+
+
+    return {
+
+
+        medio:
+            PALMEDIO["SM" + sm] || null,
+
+
+        localizacion:
+            PALMEDIO["L" + l] || null,
+
+
+        estrato:
+            PALMEDIO["ES" + es] || null,
+
+
+        comportamiento:
+            PALMEDIO["C" + c] || null
+
+
 
     };
 
-},
-
-/* ======================================================
-   Lee un slot individual
-====================================================== */
-
-leerSlot(slot){
-
-    if(!slot || slot === "000"){
-        return null;
-    }
-
-    const codigo = "SM" + slot;
-
-    if(!window.PALMEDIO || !PALMEDIO[codigo]){
-        return null;
-    }
-
-    return PALMEDIO[codigo];
 
 },
 
-/* ======================================================
-   Devuelve una lista limpia de modos de vida
-====================================================== */
+/*
+========================================================
+ obtenerModoVida()
 
-obtenerLista(codigo){
+ Devuelve una versión limpia del modo de vida
 
-    const mv = this.decodeModoVida(codigo);
+ Entrada:
 
-    if(!mv){
+ "MV001"
+
+ Salida:
+
+ {
+   codigo:"MV001",
+   nombre:"Terrestre"
+ }
+
+========================================================
+*/
+
+
+obtenerModoVida(codigo){
+
+
+    const modo = this.decodeModoVida(codigo);
+
+
+    if(!modo){
+        return null;
+    }
+
+
+    return {
+
+        codigo: modo.codigo,
+        nombre: modo.nombre,
+        descripcion: modo.descripcion
+
+    };
+
+
+},
+
+
+
+/*
+========================================================
+ obtenerMedio()
+
+ Devuelve una lista limpia del medio compuesto
+
+ Entrada:
+
+ "003003002003"
+
+ Salida:
+
+ Array con elementos válidos
+
+========================================================
+*/
+
+
+obtenerMedio(codigo){
+
+
+    const medio = this.decodeMedio(codigo);
+
+
+    if(!medio){
         return [];
     }
 
+
     return [
 
-        mv.principal,
-        mv.secundario1,
-        mv.secundario2,
-        mv.secundario3
+        medio.medio,
+        medio.localizacion,
+        medio.estrato,
+        medio.comportamiento
 
     ].filter(item => item !== null);
 
+
+
 },
 
-/* ======================================================
-   Valida un código de Modo de Vida
-====================================================== */
 
-esValido(codigo){
+
+/*
+========================================================
+ esValidoModoVida()
+
+ Comprueba que existe un código MV
+
+========================================================
+*/
+
+
+esValidoModoVida(codigo){
+
 
     if(!codigo || typeof codigo !== "string"){
         return false;
     }
 
+
     codigo = codigo.trim().toUpperCase();
 
-    if(!codigo.startsWith("MV") || codigo.length !== 14){
+
+    if(!codigo.startsWith("MV")){
         return false;
     }
 
-    const datos = codigo.substring(2);
 
-    for(let i = 0; i < 4; i++){
-
-        const slot = datos.substring(i * 3, i * 3 + 3);
-
-        if(slot === "000"){
-            continue;
-        }
-
-        if(!PALMEDIO["SM" + slot]){
-            return false;
-        }
-
+    if(!window.PALMODO){
+        return false;
     }
 
-    return true;
+
+    return !!PALMODO[codigo];
+
 
 },
 
-/* ==========================================================
-   API pública PALDECODER2 v1.0 LTS
 
-   decodeModoVida(codigo)
-      → Decodifica un campo MVxxxxxxxxxxxx y devuelve
-        los cuatro slots interpretados.
 
-   leerSlot(slot)
-      → Convierte un código SMxxx en su registro
-        correspondiente de PALMEDIO.
+/*
+========================================================
+ esValidoMedio()
 
-   obtenerLista(codigo)
-      → Devuelve un array limpio con todos los modos
-        de vida válidos, eliminando los slots vacíos.
+ Comprueba que el código compuesto
+ tiene estructura correcta
 
-   esValido(codigo)
-      → Comprueba que el código MV tenga un formato
-        correcto y que todos los códigos SM existan
-        dentro de PALMEDIO.
+========================================================
+*/
 
-========================================================== */
+
+esValidoMedio(codigo){
+
+
+    if(!codigo || typeof codigo !== "string"){
+        return false;
+    }
+
+
+    codigo = codigo.trim();
+
+
+
+    if(codigo.length !== 12){
+        return false;
+    }
+
+
+    return true;
+
+
+},
+
+/*
+========================================================
+ API PÚBLICA PALDECODER2 v1.0 LTS
+
+
+ decodeModoVida(codigo)
+
+    Interpreta un código MVxxx.
+
+    Ejemplo:
+
+    MV001
+
+    devuelve el registro correspondiente
+    de PALMODO.js.
+
+
+
+ decodeMedio(codigo)
+
+    Interpreta un campo medio_compuesto.
+
+    Ejemplo:
+
+    003003002003
+
+    divide los cuatro slots:
+
+    SMxxx
+    Lxxx
+    ESxxx
+    Cxxx
+
+    y consulta PALMEDIO.js.
+
+
+
+ obtenerModoVida(codigo)
+
+    Devuelve una versión limpia del modo
+    de vida para mostrar en interfaces.
+
+
+
+ obtenerMedio(codigo)
+
+    Devuelve una lista limpia de elementos
+    del medio compuesto.
+
+
+
+ esValidoModoVida(codigo)
+
+    Comprueba que un código MV exista
+    dentro de PALMODO.js.
+
+
+
+ esValidoMedio(codigo)
+
+    Comprueba la estructura básica
+    del código de medio compuesto.
+
+
+========================================================
+*/
+
 
 };
+
+
+
+
 
