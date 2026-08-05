@@ -1,0 +1,786 @@
+[
+  {
+    "codigo": "001_01",
+    "nombre": "Gastornis",
+    "cronologia": "0059.2000-0041.2000",
+    "medio": "Terrestre",
+    "HP": "HP100097147000000",
+    "HS": "HS090062000000000",
+    "dieta": "Omnívoro con tendencia carnívora",
+    "anatomia": "Ave gigante no voladora con cuerpo robusto, patas potentes y pico masivo adaptado para manipular alimento"
+  },
+  {
+    "codigo": "001_02",
+    "nombre": "Goniatites",
+    "cronologia": "0387.7000-0358.9000",
+    "medio": "Marino",
+    "HP": "HP016009036203000",
+    "HS": "HS035030039000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Cefalópodo con concha enrollada, cuerpo blando y tentáculos especializados para captura de presas"
+  },
+  {
+    "codigo": "001_03",
+    "nombre": "Aulacephalodon",
+    "cronologia": "0259.5100-0252.1700",
+    "medio": "Terrestre",
+    "HP": "HP124087221000000",
+    "HS": "HS090147000000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Dicinodonto cuadrúpedo de cuerpo robusto con pico córneo y extremidades adaptadas para excavar y desplazarse por tierra firme"
+  },
+  {
+    "codigo": "001_04",
+    "nombre": "Andrewsarchus",
+    "cronologia": "0048.6000-0037.8000",
+    "medio": "Terrestre",
+    "HP": "HP090147097222000",
+    "HS": "HS100221000000000",
+    "dieta": "Carnívoro y carroñero",
+    "anatomia": "Gran mamífero terrestre de cráneo enorme, mandíbulas potentes y cuerpo cursorial adaptado para la depredación"
+  },
+  {
+    "codigo": "001_05",
+    "nombre": "Ichthyostega",
+    "cronologia": "0367.9000-0359.3000",
+    "medio": "Anfibio",
+    "HP": "HP062060061064084",
+    "HS": "HS090124000000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Tetrápodo primitivo semiacuático con extremidades robustas, cola desarrollada y adaptación mixta entre agua y tierra"
+  },
+  {
+    "codigo": "001_06",
+    "nombre": "Ditomopyge",
+    "cronologia": "0298.9000-0252.1700",
+    "medio": "Marino",
+    "HP": "HP009036035031030",
+    "HS": "HS033034000000000",
+    "dieta": "Detritívoro y oportunista",
+    "anatomia": "Trilobite con exoesqueleto segmentado, cuerpo protegido por placas calcificadas y apéndices especializados para el fondo marino"
+  },
+  {
+    "codigo": "001_07",
+    "nombre": "Deinogalerix",
+    "cronologia": "0013.8200-0005.3300",
+    "medio": "Terrestre",
+    "HP": "HP115051219000000",
+    "HS": "HS147097000000000",
+    "dieta": "Omnívoro",
+    "anatomia": "Mamífero erinaceomorfo gigante con cuerpo compacto, extremidades cortas y cráneo alargado"
+  },
+  {
+    "codigo": "001_08",
+    "nombre": "Indricotherium",
+    "cronologia": "0034.0000-0023.0300",
+    "medio": "Terrestre",
+    "HP": "HP147099222000000",
+    "HS": "HS213215000000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Rinoceronte gigante sin cuernos con cuello largo, extremidades columnares y gran masa corporal"
+  },
+  {
+    "codigo": "001_09",
+    "nombre": "Archaeopteryx",
+    "cronologia": "0150.8000-0145.0000",
+    "medio": "Aéreo y terrestre",
+    "HP": "HP051100177000000",
+    "HS": "HS097147219000000",
+    "dieta": "Carnívoro oportunista",
+    "anatomia": "Dinosaurio aviano con plumas, alas primitivas, dientes y cola larga ósea"
+  },
+  {
+    "codigo": "001_10",
+    "nombre": "Castoroides",
+    "cronologia": "002.5800-0000.0117",
+    "medio": "Dulceacuícola y terrestre",
+    "HP": "HP062056084100000",
+    "HS": "HS053064147000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Roedor gigante semiacuático con incisivos desarrollados, cuerpo robusto y adaptación a la vida en agua dulce"
+  },
+  {
+    "codigo": "001_11",
+    "nombre": "Graciliceratops",
+    "cronologia": "0083.6000-0072.1000",
+    "medio": "Terrestre",
+    "HP": "HP087222221000000",
+    "HS": "HS147120000000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Pequeño ceratopsio bípedo-cuadrúpedo ligero con pico córneo y cráneo con gola reducida"
+  },
+  {
+    "codigo": "001_12",
+    "nombre": "Hippopotamus",
+    "cronologia": "0002.5800-0000.0000",
+    "medio": "Terrestre y dulceacuícola",
+    "HP": "HP053056062060084",
+    "HS": "HS064147000000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Mamífero semiacuático de cuerpo pesado, piel gruesa, grandes colmillos y extremidades cortas"
+  },
+  {
+    "codigo": "001_13",
+    "nombre": "Nectocaris",
+    "cronologia": "0521.0000-0509.0000",
+    "medio": "Marino",
+    "HP": "HP016036035203000",
+    "HS": "HS030031039000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Cefalópodo primitivo de cuerpo blando, ojos desarrollados y apéndices frontales para captura"
+  },
+  {
+    "codigo": "001_14",
+    "nombre": "Protosuchus",
+    "cronologia": "0201.3000-0194.7000",
+    "medio": "Terrestre",
+    "HP": "HP084100062000000",
+    "HS": "HS053090147000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Cocodrilomorfo primitivo pequeño y ágil con extremidades erguidas y capacidad terrestre"
+  },
+  {
+    "codigo": "001_15",
+    "nombre": "Spicomellus",
+    "cronologia": "0168.3000-0166.1000",
+    "medio": "Terrestre",
+    "HP": "HP100147221000000",
+    "HS": "HS097213000000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Anquilosaurio primitivo con armadura ósea dérmica y estructuras espinosas sobre el cuerpo"
+  },
+  {
+    "codigo": "002_01",
+    "nombre": "Gasosaurus",
+    "cronologia": "0168.3000-0163.5000",
+    "medio": "Terrestre",
+    "HP": "HP100147097000000",
+    "HS": "HS221222000000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Terópodo bípedo de cuerpo robusto, cráneo grande y extremidades posteriores adaptadas para la depredación"
+  },
+  {
+    "codigo": "002_02",
+    "nombre": "Diplocaulus",
+    "cronologia": "0298.9000-0272.3000",
+    "medio": "Anfibio",
+    "HP": "HP062056053084060",
+    "HS": "HS064061090000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Anfibio nectrideo acuático con cabeza en forma de boomerang, cuerpo alargado y cola adaptada para la natación"
+  },
+  {
+    "codigo": "002_03",
+    "nombre": "Haikouichthys",
+    "cronologia": "0521.0000-0518.0000",
+    "medio": "Marino",
+    "HP": "HP018036009038000",
+    "HS": "HS016203035000000",
+    "dieta": "Carnívoro oportunista",
+    "anatomia": "Vertebrado primitivo alargado con notocorda, aletas simples y cuerpo hidrodinámico"
+  },
+  {
+    "codigo": "002_04",
+    "nombre": "Thyestes verrucosus",
+    "cronologia": "0443.8000-0419.2000",
+    "medio": "Marino",
+    "HP": "HP009035036031000",
+    "HS": "HS030033034000000",
+    "dieta": "Detritívoro y oportunista",
+    "anatomia": "Pez acorazado primitivo con placas dérmicas protectoras y cuerpo adaptado al fondo marino"
+  },
+  {
+    "codigo": "002_05",
+    "nombre": "Sordes",
+    "cronologia": "0157.3000-0145.0000",
+    "medio": "Aéreo y terrestre",
+    "HP": "HP100084062000000",
+    "HS": "HS053097177000000",
+    "dieta": "Carnívoro insectívoro",
+    "anatomia": "Pterosaurio pequeño con alas membranosas, cola larga con timón y cuerpo ligero"
+  },
+  {
+    "codigo": "002_06",
+    "nombre": "Deinotherium",
+    "cronologia": "0020.4400-0005.3300",
+    "medio": "Terrestre",
+    "HP": "HP097223221000000",
+    "HS": "HS062147100000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Proboscídeo gigante con trompa, colmillos curvados hacia abajo y cuerpo de gran tamaño"
+  },
+  {
+    "codigo": "002_07",
+    "nombre": "Priacodon",
+    "cronologia": "0166.1000-0145.0000",
+    "medio": "Terrestre",
+    "HP": "HP100097147000000",
+    "HS": "HS084177000000000",
+    "dieta": "Carnívoro insectívoro",
+    "anatomia": "Mamífero mesozoico pequeño con dentición especializada y cuerpo ágil"
+  },
+  {
+    "codigo": "002_08",
+    "nombre": "Eldonia",
+    "cronologia": "0509.0000-0497.0000",
+    "medio": "Marino",
+    "HP": "HP031035036016000",
+    "HS": "HS030009203000000",
+    "dieta": "Detritívoro",
+    "anatomia": "Organismo marino de cuerpo blando con forma discoidal y simetría radial"
+  },
+  {
+    "codigo": "002_09",
+    "nombre": "Diadectes",
+    "cronologia": "0295.0000-0272.3000",
+    "medio": "Terrestre",
+    "HP": "HP090084062124000",
+    "HS": "HS060064147000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Tetrápodo robusto de cuerpo pesado, cráneo macizo y dentición adaptada al consumo vegetal"
+  },
+{
+  "codigo": "002_10",
+  "nombre": "Tanystropheus",
+
+  "cronologia": "0247.2000-0237.0000",
+  "medio": "Semiacuático",
+
+  "HP":"HP010007000000000",
+  "HS":"HS011008000000000",
+
+  "dieta": "Carnívoro",
+
+  "anatomia": "Reptil arcosauromorfo de cuello extremadamente largo, adaptado a capturar presas en ambientes costeros y lagunares"
+}, 
+{
+  "codigo": "002_11",
+  "nombre": "Buitreraptor",
+
+  "cronologia": "0094.0000-0089.8000",
+  "medio": "Terrestre",
+
+  "HP":"HP145125000000000",
+  "HS":"HS147223000000000",
+
+  "dieta": "Carnívoro",
+  "anatomia": "Dromeosáurido ligero con hocico alargado, plumas y extremidades posteriores adaptadas para la caza"
+},
+{
+  "codigo": "002_12",
+  "nombre": "Titanoides",
+
+  "cronologia": "0059.2000-0056.0000",
+  "medio": "Terrestre",
+
+  "HP":"HP020097000000000",
+  "HS":"HS147019000000000",
+
+  "dieta": "Herbívoro",
+  "anatomia": "Mamífero pantodonte de cuerpo robusto con extremidades fuertes y gran capacidad de consumo vegetal"
+},
+{
+  "codigo": "002_13",
+  "nombre": "Plateosaurus",
+
+  "cronologia": "0227.0000-0208.5000",
+  "medio": "Terrestre",
+
+  "HP":"HP125025000000000",
+  "HS":"HS147097000000000",
+
+  "dieta": "Herbívoro",
+  "anatomia": "Sauropodomorfo grande con cuello y cola largos, manos prensiles y locomoción principalmente bípeda"
+},
+{
+  "codigo": "002_14",
+  "nombre": "Mimetaster",
+
+  "cronologia": "0410.8000-0393.3000",
+  "medio": "Marino",
+
+  "HP":"HP006002000000000",
+  "HS":"HS005001000000000",
+
+  "dieta": "Carnívoro oportunista",
+  "anatomia": "Artrópodo marino anomalocarídido con cuerpo segmentado y apéndices especializados para captura"
+},
+{
+  "codigo": "002_15",
+  "nombre": "Conodonto",
+
+  "cronologia": "0521.0000-0201.3000",
+  "medio": "Marino",
+
+  "HP":"HP001002000000000",
+  "HS":"HS004005000000000",
+
+  "dieta": "Carnívoro o filtrador según especie",
+  "anatomia": "Vertebrado primitivo de cuerpo alargado con aparato conodontal formado por elementos denticulares"
+},
+{
+  "codigo": "003_01",
+  "nombre": "Chalicotherium",
+
+  "cronologia": "0023.0300-0005.3300",
+  "medio": "Terrestre",
+
+  "HP":"HP020147000000000",
+  "HS":"HS223097000000000",
+
+  "dieta": "Herbívoro",
+  "anatomia": "Mamífero perisodáctilo con extremidades alargadas, garras desarrolladas y cuerpo adaptado para alcanzar vegetación alta"
+},
+{
+  "codigo": "003_02",
+  "nombre": "Bothriolepis",
+
+  "cronologia": "0382.7000-0358.9000",
+  "medio": "Dulceacuícola",
+
+  "HP":"HP011013000000000",
+  "HS":"HS017015000000000",
+
+  "dieta": "Detritívoro y oportunista",
+  "anatomia": "Pez placodermo acorazado con placas dérmicas protectoras, cuerpo aplanado y adaptación al fondo acuático"
+},
+  
+
+  {
+    "codigo": "003_03",
+    "nombre": "Ticinosuchus",
+    "cronologia": "0247.2000-0242.0000",
+    "medio": "Terrestre",
+    "HP": "HP090084019124000",
+    "HS": "HS018062147000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Arcosaurio depredador con cuerpo ligero, extremidades erguidas y cráneo equipado para capturar presas"
+  },
+  {
+    "codigo": "003_04",
+    "nombre": "Kritosaurus",
+    "cronologia": "0083.6000-0072.1000",
+    "medio": "Terrestre",
+    "HP": "HP019090100147000",
+    "HS": "HS097221000000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Hadrosaurio de cuerpo voluminoso con pico córneo, locomoción bípeda-cuadrúpeda y aparato masticador complejo"
+  },
+  {
+    "codigo": "003_05",
+    "nombre": "Anomalocaris",
+    "cronologia": "0521.0000-0509.0000",
+    "medio": "Marino",
+    "HP": "HP016036035203038",
+    "HS": "HS009030039000000",
+    "dieta": "Depredador",
+    "anatomia": "Artrópodo primitivo con cuerpo segmentado, lóbulos laterales natatorios y apéndices frontales de captura"
+  },
+  {
+    "codigo": "003_06",
+    "nombre": "Tiktaalik",
+    "cronologia": "0375.0000-0374.0000",
+    "medio": "Acuático y terrestre",
+    "HP": "HP053027061060084",
+    "HS": "HS062090019000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Tetrápodo transicional con cuerpo de pez, cuello móvil y aletas robustas con estructuras óseas internas"
+  },
+  {
+    "codigo": "003_07",
+    "nombre": "Pterodaustro",
+    "cronologia": "0125.0000-0113.0000",
+    "medio": "Aéreo y acuático",
+    "HP": "HP056057025019000",
+    "HS": "HS027018191000000",
+    "dieta": "Filtrador",
+    "anatomia": "Pterosaurio con alas membranosas, pico especializado con dientes filamentosos y adaptación para filtrar alimento"
+  },
+  {
+    "codigo": "003_08",
+    "nombre": "Thylacosmilus",
+    "cronologia": "0009.0000-0003.3000",
+    "medio": "Terrestre",
+    "HP": "HP097223147000000",
+    "HS": "HS221100090000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Mamífero marsupial depredador con grandes colmillos alargados, cuerpo musculoso y extremidades fuertes"
+  },
+  {
+    "codigo": "003_09",
+    "nombre": "Stethacanthus",
+    "cronologia": "0382.7000-0323.2000",
+    "medio": "Marino",
+    "HP": "HP018009036203038",
+    "HS": "HS035030039000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Tiburón primitivo con cuerpo hidrodinámico y estructura dorsal especializada en forma de yunque"
+  },
+  {
+    "codigo": "003_10",
+    "nombre": "Lycaenops",
+    "cronologia": "0259.5100-0252.1700",
+    "medio": "Terrestre",
+    "HP": "HP087221222000000",
+    "HS": "HS090124147000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Terápsido depredador con cuerpo ágil, cráneo alargado y grandes dientes caniniformes"
+  },
+  {
+    "codigo": "003_11",
+    "nombre": "Greererpeton",
+    "cronologia": "0331.0000-0323.2000",
+    "medio": "Anfibio",
+    "HP": "HP060062056053084",
+    "HS": "HS064061090000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Anfibio alargado con cuerpo serpentiforme, numerosas vértebras y adaptación principalmente acuática"
+  },
+  {
+    "codigo": "003_12",
+    "nombre": "Helicoprion",
+    "cronologia": "0290.1000-0252.1700",
+    "medio": "Marino",
+    "HP": "HP001009036002000",
+    "HS": "HS003038203000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Pez cartilaginoso con mandíbula en espiral formada por dientes reemplazables y cuerpo hidrodinámico"
+  },
+  {
+    "codigo": "003_13",
+    "nombre": "Megatherium",
+    "cronologia": "002.5800-0000.0117",
+    "medio": "Terrestre",
+    "HP": "HP223097062147000",
+    "HS": "HS221100090000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Perezoso gigante terrestre con cuerpo masivo, grandes garras y extremidades adaptadas para alimentación elevada"
+  },
+  {
+    "codigo": "003_14",
+    "nombre": "Cacops aspidephorus",
+    "cronologia": "0295.0000-0272.3000",
+    "medio": "Terrestre",
+    "HP": "HP087084124090000",
+    "HS": "HS062060064000000",
+    "dieta": "Carnívoro insectívoro",
+    "anatomia": "Temnospóndilo acorazado con cuerpo compacto, cráneo robusto y placas protectoras dorsales"
+  },
+  {
+    "codigo": "003_15",
+    "nombre": "Hyaenodon",
+    "cronologia": "0041.3000-0015.9700",
+    "medio": "Terrestre",
+    "HP": "HP097222221000000",
+    "HS": "HS147100090000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Mamífero creodonto de gran tamaño con cráneo alargado, mandíbulas potentes y dentición especializada"
+  },
+  {
+    "codigo": "004_01",
+    "nombre": "Rolfosteus",
+    "cronologia": "0419.2000-0358.9000",
+    "medio": "Marino",
+    "HP": "HP018009036203038",
+    "HS": "HS035030039000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Pez placodermo primitivo con placas óseas protectoras y cuerpo adaptado a la natación marina"
+  },
+  {
+    "codigo": "004_02",
+    "nombre": "Phlegethontia",
+    "cronologia": "0307.0000-0290.1000",
+    "medio": "Terrestre",
+    "HP": "HP100062063255000",
+    "HS": "HS084060000000000",
+    "dieta": "Carnívoro insectívoro",
+    "anatomia": "Lepospondilo alargado sin extremidades funcionales, con cuerpo serpentiforme y adaptación a ambientes terrestres húmedos"
+  },
+  {
+    "codigo": "004_03",
+    "nombre": "Hallucigenia",
+    "cronologia": "0508.0000-0505.0000",
+    "medio": "Marino",
+    "HP": "HP031035202036000",
+    "HS": "HS030009016000000",
+    "dieta": "Detritívoro",
+    "anatomia": "Lobópodo primitivo con cuerpo alargado, espinas dorsales defensivas y apéndices blandos para desplazamiento"
+  },
+  {
+    "codigo": "004_04",
+    "nombre": "Colossochelys",
+    "cronologia": "002.5800-0000.0117",
+    "medio": "Terrestre",
+    "HP": "HP218220147000000",
+    "HS": "HS221097100000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Tortuga terrestre gigante con caparazón masivo, patas columnares y metabolismo adaptado a gran longevidad"
+  },
+  {
+    "codigo": "004_05",
+    "nombre": "Sacabambaspis",
+    "cronologia": "0458.4000-0443.8000",
+    "medio": "Marino",
+    "HP": "HP018036009038000",
+    "HS": "HS016203035000000",
+    "dieta": "Filtrador",
+    "anatomia": "Pez sin mandíbulas con escudo cefálico óseo, cuerpo alargado y adaptación a la filtración"
+  },
+  {
+    "codigo": "004_06",
+    "nombre": "Mierasaurus",
+    "cronologia": "0129.4000-0123.0000",
+    "medio": "Terrestre",
+    "HP": "HP090100212147000",
+    "HS": "HS084097221000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Sauropodomorfo cuadrúpedo de gran tamaño con cuello largo y cuerpo adaptado al consumo de vegetación alta"
+  },
+  {
+    "codigo": "004_07",
+    "nombre": "Tullimonstrum",
+    "cronologia": "0307.0000-0300.9000",
+    "medio": "Marino",
+    "HP": "HP022018036203000",
+    "HS": "HS025009035000000",
+    "dieta": "Carnívoro u oportunista",
+    "anatomia": "Organismo marino de cuerpo blando con probóscide extensible, ojos elevados y cola con aletas"
+  },
+  {
+    "codigo": "004_08",
+    "nombre": "Edaphosaurus",
+    "cronologia": "0299.0000-0272.3000",
+    "medio": "Terrestre",
+    "HP": "HP222100221000000",
+    "HS": "HS087147090000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Sinápsido herbívoro con vela dorsal, cuerpo robusto y dentición adaptada al procesamiento vegetal"
+  },
+  {
+    "codigo": "004_09",
+    "nombre": "Eryops",
+    "cronologia": "0295.0000-0272.3000",
+    "medio": "Anfibio",
+    "HP": "HP060053062084064",
+    "HS": "HS061090124000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Temnospóndilo gigante con cuerpo pesado, cráneo ancho y extremidades robustas para desplazamiento terrestre limitado"
+  },
+  {
+    "codigo": "004_10",
+    "nombre": "Seymouria",
+    "cronologia": "0299.0000-0272.3000",
+    "medio": "Terrestre",
+    "HP": "HP087090084000000",
+    "HS": "HS062060124000000",
+    "dieta": "Carnívoro insectívoro",
+    "anatomia": "Tetrápodo reptilomorfo con cuerpo compacto, extremidades fuertes y adaptación a vida terrestre"
+  },
+  {
+    "codigo": "004_11",
+    "nombre": "Odaraia",
+    "cronologia": "0508.0000-0505.0000",
+    "medio": "Marino",
+    "HP": "HP001018203038000",
+    "HS": "HS016036009000000",
+    "dieta": "Carnívoro oportunista",
+    "anatomia": "Artrópodo bivalvado con cuerpo segmentado, grandes ojos y cola especializada para natación"
+  },
+  {
+    "codigo": "004_12",
+    "nombre": "Arthropleura",
+    "cronologia": "0330.9000-0298.9000",
+    "medio": "Terrestre",
+    "HP": "HP100060062063000",
+    "HS": "HS255254084000000",
+    "dieta": "Herbívoro y detritívoro",
+    "anatomia": "Miriápodo gigante con exoesqueleto segmentado, numerosas patas y cuerpo aplanado protegido por placas"
+  },
+  {
+    "codigo": "004_13",
+    "nombre": "Rhamphorhynchus",
+    "cronologia": "0157.3000-0145.0000",
+    "medio": "Aéreo y acuático",
+    "HP": "HP019025017018000",
+    "HS": "HS036203177000000",
+    "dieta": "Piscívoro",
+    "anatomia": "Pterosaurio de cola larga con membrana alar, pico con dientes y adaptación al vuelo activo"
+  },
+    {
+    "codigo": "004_14",
+    "nombre": "Albertonectes",
+    "cronologia": "0073.2000-0070.6000",
+    "medio": "Marino",
+    "HP": "HP017018036203000",
+    "HS": "HS009038016000000",
+    "dieta": "Carnívoro piscívoro",
+    "anatomia": "Elasmosaurio con cuello extremadamente largo, cuerpo hidrodinámico y extremidades transformadas en aletas"
+  },
+  {
+    "codigo": "004_15",
+    "nombre": "Diprotodon",
+    "cronologia": "002.5800-0000.0460",
+    "medio": "Terrestre",
+    "HP": "HP097223062000000",
+    "HS": "HS221100084000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Marsupial gigante con cuerpo robusto, grandes incisivos y extremidades adaptadas para caminar largas distancias"
+  },
+  {
+    "codigo": "005_01",
+    "nombre": "Suminia",
+    "cronologia": "0259.5100-0252.1700",
+    "medio": "Terrestre",
+    "HP": "HP147220100000000",
+    "HS": "HS222255097000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Anomodontio pequeño con extremidades adaptadas para trepar, cuerpo ligero y dentición especializada"
+  },
+  {
+    "codigo": "005_02",
+    "nombre": "Opabinia",
+    "cronologia": "0508.0000-0505.0000",
+    "medio": "Marino",
+    "HP": "HP031035202036000",
+    "HS": "HS030009016000000",
+    "dieta": "Carnívoro oportunista",
+    "anatomia": "Artrópodo primitivo con cinco ojos, cuerpo segmentado y probóscide frontal flexible para capturar alimento"
+  },
+  {
+    "codigo": "005_03",
+    "nombre": "Rhinopteraspis",
+    "cronologia": "0419.2000-0393.3000",
+    "medio": "Marino",
+    "HP": "HP018009036038000",
+    "HS": "HS035203030000000",
+    "dieta": "Filtrador",
+    "anatomia": "Pez sin mandíbulas acorazado con escudo cefálico y cuerpo protegido por placas dérmicas"
+  },
+  {
+    "codigo": "005_04",
+    "nombre": "Euparkeria",
+    "cronologia": "0247.2000-0242.0000",
+    "medio": "Terrestre",
+    "HP": "HP087084090000000",
+    "HS": "HS062124147000000",
+    "dieta": "Carnívoro oportunista",
+    "anatomia": "Arcosauriforme pequeño y ágil con postura erguida, cola larga y cráneo ligero"
+  },
+  {
+    "codigo": "005_05",
+    "nombre": "Crassigyrinus",
+    "cronologia": "0335.0000-0323.2000",
+    "medio": "Acuático",
+    "HP": "HP060062056053000",
+    "HS": "HS064061084000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Tetrápodo acuático de cuerpo alargado, extremidades reducidas y cráneo grande con mandíbulas potentes"
+  },
+  {
+    "codigo": "005_06",
+    "nombre": "Drepanosaurus",
+    "cronologia": "0237.0000-0227.0000",
+    "medio": "Terrestre",
+    "HP": "HP100147255000000",
+    "HS": "HS062254084000000",
+    "dieta": "Insectívoro",
+    "anatomia": "Reptil arborícola con cola prensil, garras especializadas y adaptación para trepar"
+  },
+  {
+    "codigo": "005_07",
+    "nombre": "Epidexipteryx",
+    "cronologia": "0165.0000-0155.7000",
+    "medio": "Terrestre",
+    "HP": "HP100147255000000",
+    "HS": "HS177254097000000",
+    "dieta": "Insectívoro",
+    "anatomia": "Dinosaurio aviano pequeño con plumas ornamentales, brazos desarrollados y cuerpo ligero"
+  },
+  {
+    "codigo": "005_08",
+    "nombre": "Deinocheirus",
+    "cronologia": "0070.6000-0066.0000",
+    "medio": "Terrestre",
+    "HP": "HP090062060084000",
+    "HS": "HS053064097000000",
+    "dieta": "Omnívoro",
+    "anatomia": "Ornithomimosaurio gigante con brazos enormes, pico ancho, cuerpo voluminoso y adaptación semiacuática"
+  },
+  {
+    "codigo": "005_09",
+    "nombre": "Uintatherium",
+    "cronologia": "0056.0000-0037.2000",
+    "medio": "Terrestre",
+    "HP": "HP215090062000000",
+    "HS": "HS097221084000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Mamífero dinocerado de gran tamaño con colmillos, protuberancias craneales y cuerpo robusto"
+  },
+  {
+    "codigo": "005_10",
+    "nombre": "Dimetrodon",
+    "cronologia": "0295.0000-0272.3000",
+    "medio": "Terrestre",
+    "HP": "HP087084053000000",
+    "HS": "HS090062124000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Sinápsido depredador con gran vela dorsal, cráneo especializado y cuerpo adaptado a la caza"
+  },
+  {
+    "codigo": "005_11",
+    "nombre": "Beelzebufo",
+    "cronologia": "0070.6000-0066.0000",
+    "medio": "Terrestre",
+    "HP": "HP214062100000000",
+    "HS": "HS060084097000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Anuro gigante con cuerpo robusto, mandíbula poderosa y capacidad para capturar presas grandes"
+  },
+  {
+    "codigo": "005_12",
+    "nombre": "Atopodentatus",
+    "cronologia": "0247.2000-0242.0000",
+    "medio": "Marino",
+    "HP": "HP019025036000000",
+    "HS": "HS018009203000000",
+    "dieta": "Herbívoro filtrador",
+    "anatomia": "Reptil marino con hocico especializado en forma de peine para raspar vegetación y pequeños organismos"
+  },
+  {
+    "codigo": "005_13",
+    "nombre": "Astrapotherium",
+    "cronologia": "0023.0300-0015.9700",
+    "medio": "Terrestre",
+    "HP": "HP100090062000000",
+    "HS": "HS084097221000000",
+    "dieta": "Herbívoro",
+    "anatomia": "Mamífero sudamericano de gran tamaño con cuerpo pesado, trompa corta y grandes colmillos"
+  },
+  {
+    "codigo": "005_14",
+    "nombre": "Iberospondylus",
+    "cronologia": "0315.2000-0299.0000",
+    "medio": "Acuático",
+    "HP": "HP053057062000000",
+    "HS": "HS060084064000000",
+    "dieta": "Carnívoro",
+    "anatomia": "Tetrápodo primitivo con cuerpo adaptado al agua, cola desarrollada y extremidades funcionales"
+  },
+  {
+    "codigo": "005_15",
+    "nombre": "Longisquama",
+    "cronologia": "0237.0000-0227.0000",
+    "medio": "Terrestre y arborícola",
+    "HP": "HP100147255000000",
+    "HS": "HS097254084000000",
+    "dieta": "Insectívoro",
+    "anatomia": "Reptil pequeño con estructuras dorsales alargadas, cuerpo ligero y adaptación a desplazamiento entre árboles"
+  }
+]
+
+
+
+
+
+
+
