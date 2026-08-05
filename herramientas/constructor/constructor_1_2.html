@@ -215,9 +215,9 @@ function buscarFicha(){
 
     if(modo){
 
-        textoModo =
-        "<b>Modo de vida</b><br>" +
-        "• " + modo.nombre;
+     textoModo =
+"<span class='campo'>Modo de vida</span><br>" +
+"• " + modo.nombre;
 
     }
 
@@ -237,7 +237,7 @@ function buscarFicha(){
     if(medioCompuesto){
 
         textoMedio =
-        "<b>Medio ecológico</b><br>";
+"<span class='campo'>Medio ecológico</span><br>";
 
         if(medioCompuesto.medio){
 
@@ -287,32 +287,33 @@ function buscarFicha(){
       BLOQUE PRINCIPAL
     =========================================*/
 
-    document.getElementById("bloqueInfo").innerHTML =
+document.getElementById("bloqueInfo").innerHTML =
 
-    "<b>Código</b><br>" +
-    ficha.codigo +
+"<span class='campo'>Código</span><br>" +
+ficha.codigo +
 
-    "<br><br><b>Taxonomía</b><br>" +
-    arbolTaxonomia +
+"<br><br><span class='campo'>Taxonomía</span><br>" +
+arbolTaxonomia +
 
-    "<br><br><b>Clasificación</b><br>" +
-    taxon.ta2 +
+"<br><br><span class='campo'>Clasificación</span><br>" +
+taxon.ta2 +
 
-    "<br><br>" +
-    textoModo +
+"<br><br>" +
+textoModo +
 
-    "<br><br>" +
-    textoMedio +
+"<br><br>" +
+textoMedio +
 
-    "<br><br><b>Dieta</b><br>" +
-    ficha.dieta +
+"<br><br><span class='campo'>Dieta</span><br>" +
+ficha.dieta +
 
-    "<br><br><b>Anatomía</b><br>" +
-    ficha.anatomia +
+"<br><br><span class='campo'>Anatomía</span><br>" +
+ficha.anatomia +
 
-    "<br><br><b>Hábitats</b><br>" +
-    habitats;
+"<br><br><span class='campo'>Hábitats</span><br>" +
+habitats;
 
+    
 
 
     /*=========================================
