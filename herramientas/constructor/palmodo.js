@@ -38,10 +38,8 @@ MV003:{
     codigo:"MV003",
     nombre:"Aéreo",
     descripcion:"Organismos con adaptación principal al desplazamiento o actividad en el medio aéreo."
-}
+},
 
-
-};
 /*
 ----------------------------------------
  Modos de vida complementarios
@@ -88,7 +86,7 @@ MV009:{
     codigo:"MV009",
     nombre:"Subterráneo",
     descripcion:"Organismos adaptados a una vida principalmente bajo tierra o dentro de sedimentos."
-}
+},
 /*
 ----------------------------------------
  Modos de vida especializados generales
@@ -146,5 +144,5 @@ MV016:{
 
 
 
-
+};
 
