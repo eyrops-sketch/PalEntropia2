@@ -1,7 +1,7 @@
 /*=========================================================
 PalEntropía
 Constructor 1.2
-Style v2.0
+Style v2.1
 =========================================================*/
 
 body{
@@ -134,7 +134,7 @@ line-height:1.15;
 
 color:#62d6ff;
 
-margin-bottom:10px;
+margin-bottom:12px;
 
 overflow-wrap:break-word;
 
@@ -168,11 +168,11 @@ IMAGEN PRINCIPAL
 
 display:block;
 
-width:80%;
+width:78%;
 
-max-width:560px;
+max-width:540px;
 
-margin:auto;
+margin:0 auto 20px auto;
 
 border-radius:10px;
 
@@ -189,11 +189,11 @@ BLOQUE INFORMACIÓN
 
 #bloqueInfo{
 
-margin-top:25px;
+margin-top:30px;
 
 font-size:20px;
 
-line-height:1.7;
+line-height:1.8;
 
 }
 
@@ -217,7 +217,7 @@ GALERÍA
 
 #galeria{
 
-margin-top:30px;
+margin-top:35px;
 
 display:flex;
 
@@ -225,7 +225,7 @@ justify-content:center;
 
 align-items:center;
 
-gap:18px;
+gap:14px;
 
 flex-wrap:nowrap;
 
@@ -233,9 +233,9 @@ flex-wrap:nowrap;
 
 #galeria img{
 
-width:42%;
+width:40%;
 
-max-width:240px;
+max-width:220px;
 
 border-radius:10px;
 
@@ -258,6 +258,8 @@ color:#62d6ff;
 
 margin-top:35px;
 
+margin-bottom:20px;
+
 }
 
 .stats{
@@ -276,13 +278,15 @@ margin-top:20px;
 
 .stats div{
 
-padding:10px;
+padding:12px;
 
 background:#181818;
 
 border-left:4px solid #62d6ff;
 
 border-radius:8px;
+
+box-shadow:0 0 6px rgba(98,214,255,.10);
 
 }
 
@@ -321,6 +325,8 @@ font-size:18px;
 
 font-size:18px;
 
+line-height:1.7;
+
 }
 
 #imagenPrincipal{
@@ -333,13 +339,15 @@ max-width:520px;
 
 #galeria{
 
-gap:12px;
+gap:10px;
+
+flex-wrap:nowrap;
 
 }
 
 #galeria img{
 
-width:44%;
+width:43%;
 
 max-width:none;
 
@@ -362,9 +370,6 @@ margin-left:0;
 }
 
 }
-
-
-
 
 
 
