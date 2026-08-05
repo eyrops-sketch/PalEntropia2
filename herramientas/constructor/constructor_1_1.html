@@ -1,1 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Constructor 1.1 | PalEntropía</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+<h1>Constructor PalEntropía 1.1</h1>
+
+
+<div id="buscador">
+
+<input id="codigo" type="text" placeholder="Ej: 005_12">
+
+<button onclick="buscarFicha()">
+
+Buscar
+
+</button>
+
+</div>
+
+
+<div id="ficha">
+
+
+<div id="titulo"></div>
+
+<div id="cronologia"></div>
+
+
+<img id="imagenPrincipal" src="">
+
+
+<div id="bloqueInfo"></div>
+
+
+<div id="galeria">
+
+<img id="img2" src="">
+<img id="img3" src="">
+
+</div>
+
+
+<h2>Estadísticas</h2>
+
+
+<div id="estadisticas" class="stats"></div>
+
+
+</div>
+
+
+
+<script src="paldb.js"></script>
+<script src="palstats.js"></script>
+<script src="palhab.js"></script>
+<script src="palgeo.js"></script>
+<script src="palmodo.js"></script>
+<script src="palmedio.js"></script>
+<script src="paldecoder.js"></script>
+<script src="paldecoder2.js"></script>
+
+
+
+<script>
+
+
+let paleofichas=[];
+
+
+fetch("paleofichas.json")
+
+.then(r=>r.json())
+
+.then(datos=>{
+
+paleofichas=datos;
+
+});
+
+
+
+function buscarFicha(){
+
+
+const codigo =
+
+document.getElementById("codigo").value.trim();
+
+
+
+const ficha =
+
+paleofichas.find(f=>f.codigo===codigo);
+
+
+
+const db =
+
+PALDB.find(f=>f.codigo===codigo);
+
+
+
+const stats =
+
+PALSTATS[codigo];
+
+
+
+if(!ficha || !db || !stats){
+
+alert("Código no encontrado.");
+
+return;
+
+}
+
+
+
+document.getElementById("ficha").style.display="block";
+
+
+
+document.getElementById("titulo").innerHTML =
+
+ficha.nombre;
+
+
+
+const geo = PALDECODER.decodeCronologia(ficha.cronologia);
+
+
+let htmlGeo = `<div>${geo.rango}</div>`;
+
+
+if(geo.periodo_texto){
+
+htmlGeo +=
+
+`<div><strong>Período:</strong> ${geo.periodo_texto}</div>`;
+
+}
+
+
+if(geo.subperiodo_texto){
+
+htmlGeo +=
+
+`<div><strong>Subperíodo:</strong> ${geo.subperiodo_texto}</div>`;
+
+}
+
+
+document.getElementById("cronologia").innerHTML = htmlGeo;
+
+
+const hab = PALDECODER.decodeHabitats(
+    ficha.HP,
+    ficha.HS
+);
+
+
+let habitats = "";
+
+
+if(hab.principales.length){
+
+
+    habitats += "<b>Principales</b><br>";
+
+
+    hab.principales.forEach(h=>{
+
+        habitats += "• " + h.nombre + "<br>";
+
+    });
+
+
+}
+
+
+
+if(hab.secundarios.length){
+
+
+    habitats += "<br><b>Secundarios</b><br>";
+
+
+    hab.secundarios.forEach(h=>{
+
+        habitats += "• " + h.nombre + "<br>";
+
+    });
+
+
+}
+
+
+
+/*
+====================================================
+ NUEVO SISTEMA BIOECOLÓGICO 1.1
+
+ Ignora:
+
+ ficha.medio
+
+ Usa:
+
+ ficha.modo_vida
+ ficha.medio_compuesto
+
+====================================================
+*/
+
+
+const modo =
+
+PALDECODER2.decodeModoVida(
+    ficha.modo_vida
+);
+
+
+
+const medioCompuesto =
+
+PALDECODER2.decodeMedio(
+    ficha.medio_compuesto
+);
+
+
+
+let textoModo = "";
+
+
+
+if(modo){
+
+
+    textoModo =
+
+    "<br><br><b>Modo de vida:</b><br>" +
+
+    "• " + modo.nombre;
+
+
+}
+
+
+
+
+let textoMedio = "";
+
+
+
+if(medioCompuesto){
+
+
+    textoMedio =
+
+    "<br><br><b>Medio ecológico:</b><br>";
+
+
+
+    if(medioCompuesto.medio){
+
+        textoMedio +=
+
+        "• " +
+
+        medioCompuesto.medio.nombre +
+
+        "<br>";
+
+    }
+
+
+
+    if(medioCompuesto.localizacion){
+
+        textoMedio +=
+
+        "• " +
+
+        medioCompuesto.localizacion.nombre +
+
+        "<br>";
+
+    }
+
+
+
+    if(medioCompuesto.estrato){
+
+        textoMedio +=
+
+        "• " +
+
+        medioCompuesto.estrato.nombre +
+
+        "<br>";
+
+    }
+
+
+
+    if(medioCompuesto.comportamiento){
+
+        textoMedio +=
+
+        "• " +
+
+        medioCompuesto.comportamiento.nombre +
+
+        "<br>";
+
+    }
+
+
+}
+
+
+
+document.getElementById("bloqueInfo").innerHTML =
+
+
+"<b>Código:</b> " +
+
+ficha.codigo +
+
+
+textoModo +
+
+
+textoMedio +
+
+
+"<br><b>Dieta:</b> " +
+
+ficha.dieta +
+
+
+"<br><br><b>Anatomía</b><br>" +
+
+ficha.anatomia +
+
+
+"<br><br><b>Hábitats</b><br>" +
+
+habitats;
+
+
+const especie =
+
+db.carpeta
+
+.split("_")
+
+.slice(2)
+
+.join("_");
+
+
+
+const nombreArchivo =
+
+especie.charAt(0).toUpperCase()
+
++
+
+especie.slice(1);
+
+
+
+const ruta =
+
+
+"../../paleofichas/vol"
+
++
+
+String(db.volumen).padStart(3,"0")
+
++
+
+"/"
+
++
+
+db.carpeta
+
++
+
+"/";
+
+
+
+
+
+function cargarImagen(elemento,base){
+
+
+
+const img =
+
+document.getElementById(elemento);
+
+
+
+const extensiones = [
+
+
+".png",
+
+".jpg",
+
+".jpeg"
+
+
+];
+
+
+
+let i = 0;
+
+
+
+
+function probar(){
+
+
+
+if(i >= extensiones.length){
+
+return;
+
+}
+
+
+
+const url =
+
+ruta +
+
+base +
+
+extensiones[i];
+
+
+
+
+const prueba =
+
+new Image();
+
+
+
+
+prueba.onload = function(){
+
+
+img.src = url;
+
+
+};
+
+
+
+
+prueba.onerror = function(){
+
+
+i++;
+
+probar();
+
+
+};
+
+
+
+
+prueba.src = url;
+
+
+
+}
+
+
+
+probar();
+
+
+
+}
+
+
+
+
+cargarImagen(
+
+"imagenPrincipal",
+
+nombreArchivo+"_i0"
+
+);
+
+
+
+cargarImagen(
+
+"img2",
+
+nombreArchivo+"_i2"
+
+);
+
+
+
+cargarImagen(
+
+"img3",
+
+nombreArchivo+"_i3"
+
+);
+
+
+
+
+document.getElementById("estadisticas").innerHTML =
+
+
+
+"<div>Adaptabilidad: " +
+
+stats.adaptabilidad +
+
+"</div>" +
+
+
+
+"<div>Resistencia: " +
+
+stats.resistencia +
+
+"</div>" +
+
+
+
+"<div>Sociabilidad: " +
+
+stats.sociabilidad +
+
+"</div>" +
+
+
+
+"<div>Reproducción: " +
+
+stats.reproduccion +
+
+"</div>" +
+
+
+
+"<div>Ofensiva: " +
+
+stats.ofensiva +
+
+"</div>" +
+
+
+
+"<div>Defensa: " +
+
+stats.defensa +
+
+"</div>" +
+
+
+
+"<div>Movilidad: " +
+
+stats.movilidad +
+
+"</div>" +
+
+
+
+"<div>Plasticidad ecológica: " +
+
+stats.plasticidad_ecologica +
+
+"</div>" +
+
+
+
+"<div>Tamaño: " +
+
+stats.tamano +
+
+"</div>" +
+
+
+
+"<div>Velocidad: " +
+
+stats.velocidad +
+
+"</div>" +
+
+
+
+"<div>Inteligencia: " +
+
+stats.inteligencia +
+
+"</div>";
+
+
+
+}
+</script>
+
+
+</body>
+
+
+</html>
+
+
+
+
+
+
+
+
+
 
