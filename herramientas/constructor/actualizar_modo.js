@@ -2,30 +2,58 @@
 ==========================================================
  actualizar_modo.js v1.0
  PalEntropía
- Fase 1 - Lectura de palmodo.csv
+
+ Actualizador automático de campos de modo de vida
+
+ Entrada:
+ - palmodo.csv
+ - paleofichas.json
+
+ Salida:
+ - paleofichas_actualizado.json
+
 ==========================================================
 */
 
-console.log("========================================");
+
+const CSV_ENTRADA = "palmodo.csv";
+
+const JSON_ENTRADA = "paleofichas.json";
+
+const JSON_SALIDA = "paleofichas_actualizado.json";
+
+
+console.log("====================================");
 console.log(" PalEntropía - Actualizador de Modo");
-console.log(" Fase 1 - Leyendo palmodo.csv");
-console.log("========================================");
+console.log(" Iniciando proceso...");
+console.log("====================================");
 
 
-fetch("palmodo.csv")
+
+/*
+------------------------------------------
+ Cargar CSV
+------------------------------------------
+*/
+
+
+fetch(CSV_ENTRADA)
 
 .then(res => res.text())
 
-.then(texto => {
+.then(csv => {
 
 
-    const lineas = texto.trim().split("\n");
+    console.log("CSV cargado correctamente");
+
+
+    const lineas = csv.trim().split("\n");
 
 
     const cabecera = lineas[0].split(",");
 
 
-    let registros = [];
+    let modos = {};
 
 
     for(let i = 1; i < lineas.length; i++){
@@ -34,36 +62,192 @@ fetch("palmodo.csv")
         const datos = lineas[i].split(",");
 
 
-        registros.push({
+        modos[datos[0]] = {
 
-            codigo: datos[0],
-            nombre: datos[1],
-            MV: datos[2],
-            SM_L_ES_C: datos[3]
 
-        });
+            modo_vida:
+            "MV" + datos[2],
+
+
+            medio_compuesto:
+            datos[3]
+
+
+        };
+
 
     }
 
 
-    console.log("Registros leídos:", registros.length);
+    console.log(
+        "Registros CSV cargados:",
+        Object.keys(modos).length
+    );
 
 
-    registros.forEach(f => {
+    return modos;
+
+
+})
+
+/*
+------------------------------------------
+ Cargar paleofichas.json
+------------------------------------------
+*/
+
+
+.then(modos => {
+
+
+    return fetch(JSON_ENTRADA)
+
+    .then(res => res.json())
+
+    .then(fichas => {
 
 
         console.log(
-            f.codigo,
-            f.nombre,
-            "MV" + f.MV,
-            f.SM_L_ES_C
+            "JSON cargado correctamente"
         );
+
+
+        console.log(
+            "Fichas encontradas:",
+            fichas.length
+        );
+
+
+        let actualizadas = 0;
+
+        let noEncontradas = [];
+
+
+        /*
+        ----------------------------------
+        Actualizar campos
+        ----------------------------------
+        */
+
+
+        fichas.forEach(ficha => {
+
+
+            const codigo = ficha.codigo;
+
+
+            if(modos[codigo]){
+
+
+                ficha.modo_vida =
+                modos[codigo].modo_vida;
+
+
+                ficha.medio_compuesto =
+                modos[codigo].medio_compuesto;
+
+
+                actualizadas++;
+
+
+            }
+
+            else{
+
+
+                noEncontradas.push(codigo);
+
+
+            }
+
+
+        });
+
+
+
+        console.log(
+            "Fichas actualizadas:",
+            actualizadas
+        );
+
+
+        console.log(
+            "Fichas sin coincidencia:",
+            noEncontradas.length
+        );
+
+
+        return fichas;
 
 
     });
 
 
-    console.log("Lectura completada correctamente.");
+})
+
+/*
+------------------------------------------
+ Guardar nuevo JSON
+------------------------------------------
+*/
+
+
+.then(fichasActualizadas => {
+
+
+    const contenido = JSON.stringify(
+        fichasActualizadas,
+        null,
+        2
+    );
+
+
+    /*
+    --------------------------------------
+    Descarga del archivo generado
+    --------------------------------------
+    */
+
+
+    const blob = new Blob(
+        [contenido],
+        {
+            type:"application/json"
+        }
+    );
+
+
+    const enlace = document.createElement("a");
+
+
+    enlace.href =
+    URL.createObjectURL(blob);
+
+
+    enlace.download =
+    JSON_SALIDA;
+
+
+    enlace.click();
+
+
+
+    console.log(
+        "===================================="
+    );
+
+    console.log(
+        "Proceso terminado correctamente"
+    );
+
+    console.log(
+        "Archivo generado:",
+        JSON_SALIDA
+    );
+
+    console.log(
+        "===================================="
+    );
 
 
 })
@@ -72,13 +256,12 @@ fetch("palmodo.csv")
 
 
     console.error(
-        "Error leyendo palmodo.csv:",
+        "Error durante la actualización:",
         error
     );
 
 
 });
-
 
 
 
