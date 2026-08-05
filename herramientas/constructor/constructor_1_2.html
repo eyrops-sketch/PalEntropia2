@@ -29,7 +29,6 @@ Buscar
 
 </div>
 
-
 <div id="ficha" style="display:none;">
 
 <div id="titulo"></div>
@@ -42,10 +41,7 @@ Buscar
 
 <h2>Estadísticas</h2>
 
-<div
-id="estadisticas"
-class="stats">
-</div>
+<div id="estadisticas" class="stats"></div>
 
 <div id="galeria">
 
@@ -57,10 +53,9 @@ class="stats">
 </div>
 
 
-
-<!-- ===========================================
+<!-- =========================
      BASES DE DATOS
-=========================================== -->
+========================= -->
 
 <script src="paldb.js"></script>
 <script src="palstats.js"></script>
@@ -70,19 +65,16 @@ class="stats">
 <script src="palmedio.js"></script>
 <script src="paltaxon.js"></script>
 
-<!-- ===========================================
+<!-- =========================
      DECODIFICADORES
-=========================================== -->
+========================= -->
 
 <script src="paldecoder.js"></script>
 <script src="paldecoder2.js"></script>
 
-
-
 <script>
 
 let paleofichas = [];
-
 
 fetch("paleofichas.json")
 .then(r => r.json())
@@ -95,658 +87,360 @@ fetch("paleofichas.json")
 
 function buscarFicha(){
 
-const codigo =
-
-document.getElementById("codigo")
-.value
-.trim();
+    const codigo = document.getElementById("codigo").value.trim();
 
 
 
-const ficha =
+        const ficha =
+    paleofichas.find(f => f.codigo === codigo);
 
-paleofichas.find(
-f=>f.codigo===codigo
-);
+    const db =
+    PALDB.find(f => f.codigo === codigo);
 
+    const stats =
+    PALSTATS[codigo];
 
-
-const db =
-
-PALDB.find(
-f=>f.codigo===codigo
-);
+    const taxon =
+    PALTAXON[codigo];
 
 
 
-const stats =
+    if(!ficha || !db || !stats || !taxon){
 
-PALSTATS[codigo];
+        alert("Código no encontrado.");
 
+        return;
 
-
-const taxon =
-
-PALTAXON[codigo];
+    }
 
 
 
-if(
+    document.getElementById("ficha").style.display = "block";
 
-!ficha ||
 
-!db ||
 
-!stats ||
+    /*=========================================
+      TÍTULO
+    =========================================*/
 
-!taxon
+    document.getElementById("titulo").innerHTML =
+    ficha.nombre;
 
-){
 
-alert("Código no encontrado.");
 
-return;
+    /*=========================================
+      CRONOLOGÍA
+    =========================================*/
+
+    const geo =
+    PALDECODER.decodeCronologia(ficha.cronologia);
+
+
+
+    let htmlGeo =
+    `<div>${geo.rango}</div>`;
+
+
+
+    if(geo.periodo_texto){
+
+        htmlGeo +=
+        `<div><strong>Período:</strong> ${geo.periodo_texto}</div>`;
+
+    }
+
+
+
+    if(geo.subperiodo_texto){
+
+        htmlGeo +=
+        `<div><strong>Subperíodo:</strong> ${geo.subperiodo_texto}</div>`;
+
+    }
+
+
+
+    document.getElementById("cronologia").innerHTML =
+    htmlGeo;
+
+
+         /*=========================================
+      HÁBITATS
+    =========================================*/
+
+    const hab =
+    PALDECODER.decodeHabitats(
+        ficha.HP,
+        ficha.HS
+    );
+
+    let habitats = "";
+
+    if(hab.principales.length){
+
+        habitats += "<b>Principales</b><br>";
+
+        hab.principales.forEach(h => {
+
+            habitats += "• " + h.nombre + "<br>";
+
+        });
+
+    }
+
+    if(hab.secundarios.length){
+
+        habitats += "<br><b>Secundarios</b><br>";
+
+        hab.secundarios.forEach(h => {
+
+            habitats += "• " + h.nombre + "<br>";
+
+        });
+
+    }
+
+
+
+    /*=========================================
+      MODO DE VIDA
+    =========================================*/
+
+    const modo =
+    ficha.modo_vida
+    ? PALDECODER2.decodeModoVida(ficha.modo_vida)
+    : null;
+
+    let textoModo = "";
+
+    if(modo){
+
+        textoModo =
+        "<b>Modo de vida</b><br>" +
+        "• " + modo.nombre;
+
+    }
+
+
+
+    /*=========================================
+      MEDIO ECOLÓGICO
+    =========================================*/
+
+    const medioCompuesto =
+    ficha.medio_compuesto
+    ? PALDECODER2.decodeMedio(ficha.medio_compuesto)
+    : null;
+
+    let textoMedio = "";
+
+    if(medioCompuesto){
+
+        textoMedio =
+        "<b>Medio ecológico</b><br>";
+
+        if(medioCompuesto.medio){
+
+            textoMedio +=
+            "• " + medioCompuesto.medio.nombre + "<br>";
+
+        }
+
+        if(medioCompuesto.localizacion){
+
+            textoMedio +=
+            "• " + medioCompuesto.localizacion.nombre + "<br>";
+
+        }
+
+        if(medioCompuesto.estrato){
+
+            textoMedio +=
+            "• " + medioCompuesto.estrato.nombre + "<br>";
+
+        }
+
+        if(medioCompuesto.comportamiento){
+
+            textoMedio +=
+            "• " + medioCompuesto.comportamiento.nombre + "<br>";
+
+        }
+
+    }
+
+
+         /*=========================================
+      TAXONOMÍA
+    =========================================*/
+
+    const arbolTaxonomia =
+    "└─ " +
+    taxon.ta1
+    .split(">")
+    .map(t => t.trim())
+    .join("<br>└─ ");
+
+
+
+    /*=========================================
+      BLOQUE PRINCIPAL
+    =========================================*/
+
+    document.getElementById("bloqueInfo").innerHTML =
+
+    "<b>Código</b><br>" +
+    ficha.codigo +
+
+    "<br><br><b>Taxonomía</b><br>" +
+    arbolTaxonomia +
+
+    "<br><br><b>Clasificación</b><br>" +
+    taxon.ta2 +
+
+    "<br><br>" +
+    textoModo +
+
+    "<br><br>" +
+    textoMedio +
+
+    "<br><br><b>Dieta</b><br>" +
+    ficha.dieta +
+
+    "<br><br><b>Anatomía</b><br>" +
+    ficha.anatomia +
+
+    "<br><br><b>Hábitats</b><br>" +
+    habitats;
+
+
+
+    /*=========================================
+      RUTA DE LAS IMÁGENES
+    =========================================*/
+
+    const especie =
+    db.carpeta
+    .split("_")
+    .slice(2)
+    .join("_");
+
+
+
+    const nombreArchivo =
+    especie.charAt(0).toUpperCase() +
+    especie.slice(1);
+
+
+
+    const ruta =
+
+    "../../paleofichas/vol" +
+
+    String(db.volumen).padStart(3,"0") +
+
+    "/" +
+
+    db.carpeta +
+
+    "/";
+
+    /*=========================================
+      CARGA DE IMÁGENES
+    =========================================*/
+
+    function cargarImagen(elemento, base){
+
+        const img = document.getElementById(elemento);
+
+        const extensiones = [
+            ".png",
+            ".jpg",
+            ".jpeg"
+        ];
+
+        let i = 0;
+
+        function probar(){
+
+            if(i >= extensiones.length){
+                return;
+            }
+
+            const url =
+            ruta +
+            base +
+            extensiones[i];
+
+            const prueba = new Image();
+
+            prueba.onload = function(){
+
+                img.src = url;
+
+            };
+
+            prueba.onerror = function(){
+
+                i++;
+
+                probar();
+
+            };
+
+            prueba.src = url;
+
+        }
+
+        probar();
+
+    }
+
+
+
+    cargarImagen(
+        "imagenPrincipal",
+        nombreArchivo + "_i0"
+    );
+
+    cargarImagen(
+        "img2",
+        nombreArchivo + "_i2"
+    );
+
+    cargarImagen(
+        "img3",
+        nombreArchivo + "_i3"
+    );
+
+
+
+    /*=========================================
+      ESTADÍSTICAS
+    =========================================*/
+
+    document.getElementById("estadisticas").innerHTML =
+
+        "<div>Adaptabilidad: " + stats.adaptabilidad + "</div>" +
+        "<div>Resistencia: " + stats.resistencia + "</div>" +
+        "<div>Sociabilidad: " + stats.sociabilidad + "</div>" +
+        "<div>Reproducción: " + stats.reproduccion + "</div>" +
+        "<div>Ofensiva: " + stats.ofensiva + "</div>" +
+        "<div>Defensa: " + stats.defensa + "</div>" +
+        "<div>Movilidad: " + stats.movilidad + "</div>" +
+        "<div>Plasticidad ecológica: " + stats.plasticidad_ecologica + "</div>" +
+        "<div>Tamaño: " + stats.tamano + "</div>" +
+        "<div>Velocidad: " + stats.velocidad + "</div>" +
+        "<div>Inteligencia: " + stats.inteligencia + "</div>";
 
 }
-
-
-
-document.getElementById("ficha")
-.style.display="block";
-
-
-
-/*=========================================
-TÍTULO
-=========================================*/
-
-document.getElementById("titulo")
-.innerHTML=ficha.nombre;
-
-
-
-/*=========================================
-CRONOLOGÍA
-=========================================*/
-
-const geo =
-
-PALDECODER.decodeCronologia(
-ficha.cronologia
-);
-
-
-
-let htmlGeo =
-
-`<div>${geo.rango}</div>`;
-
-
-
-if(geo.periodo_texto){
-
-htmlGeo +=
-
-`<div><strong>Período:</strong> ${geo.periodo_texto}</div>`;
-
-}
-
-
-
-if(geo.subperiodo_texto){
-
-htmlGeo +=
-
-`<div><strong>Subperíodo:</strong> ${geo.subperiodo_texto}</div>`;
-
-}
-
-
-
-document.getElementById("cronologia")
-.innerHTML=htmlGeo;
-
-
-
-/*=========================================
-HÁBITATS
-=========================================*/
-
-const hab =
-
-PALDECODER.decodeHabitats(
-
-ficha.HP,
-
-ficha.HS
-
-);
-
-
-
-let habitats="";
-
-
-
-if(hab.principales.length){
-
-habitats +=
-
-"<b>Principales</b><br>";
-
-
-
-hab.principales.forEach(h=>{
-
-habitats +=
-
-"• "+h.nombre+"<br>";
-
-});
-
-}
-
-
-
-if(hab.secundarios.length){
-
-habitats +=
-
-"<br><b>Secundarios</b><br>";
-
-
-
-hab.secundarios.forEach(h=>{
-
-habitats +=
-
-"• "+h.nombre+"<br>";
-
-});
-
-}
-
-
-
-/*=========================================
-MODO DE VIDA
-=========================================*/
-
-const modo =
-
-ficha.modo_vida
-
-?
-
-PALDECODER2.decodeModoVida(
-
-ficha.modo_vida
-
-)
-
-:
-
-null;
-
-
-
-let textoModo="";
-
-
-
-if(modo){
-
-textoModo=
-
-"<b>Modo de vida</b><br>"
-
-+
-
-"• "
-
-+
-
-modo.nombre;
-
-}
-
-
-
-/*=========================================
-MEDIO ECOLÓGICO
-=========================================*/
-
-const medioCompuesto =
-
-ficha.medio_compuesto
-
-?
-
-PALDECODER2.decodeMedio(
-
-ficha.medio_compuesto
-
-)
-
-:
-
-null;
-
-
-
-let textoMedio="";
-
-
-
-if(medioCompuesto){
-
-textoMedio=
-
-"<b>Medio ecológico</b><br>";
-
-
-
-if(medioCompuesto.medio){
-
-textoMedio+=
-
-"• "
-
-+
-
-medioCompuesto.medio.nombre
-
-+
-
-"<br>";
-
-}
-
-
-
-if(medioCompuesto.localizacion){
-
-textoMedio+=
-
-"• "
-
-+
-
-medioCompuesto.localizacion.nombre
-
-+
-
-"<br>";
-
-}
-
-
-
-if(medioCompuesto.estrato){
-
-textoMedio+=
-
-"• "
-
-+
-
-medioCompuesto.estrato.nombre
-
-+
-
-"<br>";
-
-}
-
-
-
-if(medioCompuesto.comportamiento){
-
-textoMedio+=
-
-"• "
-
-+
-
-medioCompuesto.comportamiento.nombre
-
-+
-
-"<br>";
-
-}
-
-
-
-/*=========================================
-TAXONOMÍA
-Convierte TA1 en árbol vertical
-=========================================*/
-
-const arbolTaxonomia =
-
-taxon.ta1
-
-.split(">")
-
-.map(t=>t.trim())
-
-.join("<br>└─ ");
-
-
-/*=========================================
-BLOQUE PRINCIPAL DE INFORMACIÓN
-=========================================*/
-
-document.getElementById("bloqueInfo").innerHTML =
-
-"<b>Código</b><br>" +
-
-ficha.codigo +
-
-"<br><br>" +
-
-"<b>Taxonomía</b><br>" +
-
-arbolTaxonomia +
-
-"<br><br>" +
-
-"<b>Clasificación</b><br>" +
-
-taxon.ta2 +
-
-"<br><br>" +
-
-textoModo +
-
-"<br><br>" +
-
-textoMedio +
-
-"<br><br>" +
-
-"<b>Dieta</b><br>" +
-
-ficha.dieta +
-
-"<br><br>" +
-
-"<b>Anatomía</b><br>" +
-
-ficha.anatomia +
-
-"<br><br>" +
-
-"<b>Hábitats</b><br>" +
-
-habitats;
-
-
-
-/*=========================================
-RUTA DE LAS IMÁGENES
-=========================================*/
-
-const especie =
-
-db.carpeta
-
-.split("_")
-
-.slice(2)
-
-.join("_");
-
-
-
-const nombreArchivo =
-
-especie.charAt(0).toUpperCase()
-
-+
-
-especie.slice(1);
-
-
-
-const ruta =
-
-"../../paleofichas/vol"
-
-+
-
-String(db.volumen).padStart(3,"0")
-
-+
-
-"/"
-
-+
-
-db.carpeta
-
-+
-
-"/";
-
-
-
-/*=========================================
-CARGA AUTOMÁTICA DE IMÁGENES
-PNG → JPG → JPEG
-=========================================*/
-
-function cargarImagen(
-
-elemento,
-
-base
-
-){
-
-const img =
-
-document.getElementById(elemento);
-
-
-
-const extensiones = [
-
-".png",
-
-".jpg",
-
-".jpeg"
-
-];
-
-
-
-let i = 0;
-
-
-
-function probar(){
-
-
-if(i >= extensiones.length){
-
-return;
-
-}
-
-
-
-const url =
-
-ruta +
-
-base +
-
-extensiones[i];
-
-
-
-const prueba =
-
-new Image();
-
-
-
-prueba.onload = function(){
-
-img.src = url;
-
-};
-
-
-
-prueba.onerror = function(){
-
-i++;
-
-probar();
-
-};
-
-
-
-prueba.src = url;
-
-}
-
-
-
-probar();
-
-}
-
-
-
-/*=========================================
-IMÁGENES DE LA FICHA
-=========================================*/
-
-cargarImagen(
-
-"imagenPrincipal",
-
-nombreArchivo+"_i0"
-
-);
-
-
-
-cargarImagen(
-
-"img2",
-
-nombreArchivo+"_i2"
-
-);
-
-
-
-cargarImagen(
-
-"img3",
-
-nombreArchivo+"_i3"
-
-);
-
-/*=========================================
-ESTADÍSTICAS
-=========================================*/
-
-document.getElementById("estadisticas").innerHTML =
-
-"<div>Adaptabilidad: " +
-
-stats.adaptabilidad +
-
-"</div>" +
-
-
-"<div>Resistencia: " +
-
-stats.resistencia +
-
-"</div>" +
-
-
-"<div>Sociabilidad: " +
-
-stats.sociabilidad +
-
-"</div>" +
-
-
-"<div>Reproducción: " +
-
-stats.reproduccion +
-
-"</div>" +
-
-
-"<div>Ofensiva: " +
-
-stats.ofensiva +
-
-"</div>" +
-
-
-"<div>Defensa: " +
-
-stats.defensa +
-
-"</div>" +
-
-
-"<div>Movilidad: " +
-
-stats.movilidad +
-
-"</div>" +
-
-
-"<div>Plasticidad ecológica: " +
-
-stats.plasticidad_ecologica +
-
-"</div>" +
-
-
-"<div>Tamaño: " +
-
-stats.tamano +
-
-"</div>" +
-
-
-"<div>Velocidad: " +
-
-stats.velocidad +
-
-"</div>" +
-
-
-"<div>Inteligencia: " +
-
-stats.inteligencia +
-
-"</div>";
-
-
-
-} // Fin de buscarFicha()
 
 </script>
 
 </body>
 
 </html>
+     
 
 
 
