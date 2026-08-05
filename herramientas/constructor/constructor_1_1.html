@@ -227,19 +227,19 @@ if(hab.secundarios.length){
 */
 
 
-const modo =
+const modo = ficha.modo_vida
+?
+PALDECODER2.decodeModoVida(ficha.modo_vida)
+:
+null;
 
-PALDECODER2.decodeModoVida(
-    ficha.modo_vida
-);
 
 
-
-const medioCompuesto =
-
-PALDECODER2.decodeMedio(
-    ficha.medio_compuesto
-);
+const medioCompuesto = ficha.medio_compuesto
+?
+PALDECODER2.decodeMedio(ficha.medio_compuesto)
+:
+null;
 
 
 
