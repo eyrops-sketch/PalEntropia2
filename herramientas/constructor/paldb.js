@@ -791,13 +791,13 @@ nombre:"Cacops aspidephorus",
 volumen:3,
 posicion:14,
 
-carpeta:"003_14_cacops_aspidephorus",
+carpeta:"003_14_cacops",
 
 imagenes:{
-i0:"Cacops_aspidephorus_i0.png",
-i1:"Cacops_aspidephorus_i1.png",
-i2:"Cacops_aspidephorus_i2.png",
-i3:"Cacops_aspidephorus_i3.png"
+i0:"Cacops_i0.png",
+i1:"Cacops_i1.png",
+i2:"Cacops_i2.png",
+i3:"Cacops_i3.png"
 }
 
 },
