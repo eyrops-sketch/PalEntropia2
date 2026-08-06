@@ -4,13 +4,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Constructor 1.5 | PalEntropía</title>
+<title>Constructor 1.6 | PalEntropía</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>Constructor PalEntropía 1.5</h1>
+<h1>Constructor PalEntropía 1.6</h1>
 
 <div id="buscador">
     <input id="codigo" type="text" placeholder="Ej: 005_12">
@@ -60,6 +60,7 @@
 
 <!-- DECODIFICADORES -->
 <script src="paldecoder.js"></script>
+<script src="paldecoder2.js"></script>
 <script src="paldecoder3.js"></script>
 
 <script>
@@ -112,11 +113,11 @@ function buscarFicha(){
     }
 
     /* MODO DE VIDA */
-    const modo = ficha.modo_vida ? PALDECODER.decodeModoVida(ficha.modo_vida) : null;
+    const modo = ficha.modo_vida ? PALDECODER2.decodeModoVida(ficha.modo_vida) : null;
     let textoModo = modo ? "<span class='campo'>Modo de vida</span><br>• " + modo.nombre : "";
 
     /* MEDIO ECOLÓGICO */
-    const medioCompuesto = ficha.medio_compuesto ? PALDECODER.decodeMedio(ficha.medio_compuesto) : null;
+    const medioCompuesto = ficha.medio_compuesto ? PALDECODER2.decodeMedio(ficha.medio_compuesto) : null;
     let textoMedio = "";
     if(medioCompuesto){
         textoMedio = "<span class='campo'>Medio ecológico</span><br>";
@@ -173,9 +174,7 @@ function buscarFicha(){
     bloqueVideo.innerHTML = videoData && videoData.video ?
         `<a href="${videoData.video}" target="_blank" class="botonVideo">▶ Pulsar para ver imagen en movimiento</a>` : "";
 
-    /* ============================
-       ESTADÍSTICAS BASE
-    ============================ */
+    /* ESTADÍSTICAS BASE */
     document.getElementById("estadisticas").innerHTML =
         "<div>Adaptabilidad: " + stats.adaptabilidad + "</div>" +
         "<div>Resistencia: " + stats.resistencia + "</div>" +
@@ -189,9 +188,7 @@ function buscarFicha(){
         "<div>Velocidad: " + stats.velocidad + "</div>" +
         "<div>Inteligencia: " + stats.inteligencia + "</div>";
 
-    /* ============================
-       ANÁLISIS ESTADÍSTICO
-    ============================ */
+    /* ANÁLISIS ESTADÍSTICO AUTOMÁTICO */
     mostrarAnalisis();
 }
 
@@ -205,8 +202,7 @@ function mostrarAnalisis(){
     const stats = PALSTATS[codigo];
 
     if(!stats){
-        document.getElementById("bloqueAnalisis").innerHTML =
-            "<div>No se pudo generar el análisis.</div>";
+        alert("Primero busca una ficha válida.");
         return;
     }
 
@@ -251,8 +247,3 @@ visor.onclick = e => { if(e.target === visor) cerrarImagen(); };
 
 </body>
 </html>
-
-
-
-
-
