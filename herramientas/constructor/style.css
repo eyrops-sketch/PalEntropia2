@@ -1,8 +1,9 @@
 /*=========================================================
 PalEntropía
-Constructor 1.2
-Style v2.1
+Constructor 1.4
+Style v2.2
 =========================================================*/
+
 
 body{
 
@@ -10,6 +11,7 @@ margin:0;
 padding:30px;
 
 background:#111;
+
 color:#eee;
 
 font-family:Arial,Helvetica,sans-serif;
@@ -34,6 +36,7 @@ margin-bottom:10px;
 }
 
 
+
 /*=========================================================
 BUSCADOR
 =========================================================*/
@@ -45,6 +48,7 @@ text-align:center;
 margin:30px;
 
 }
+
 
 input{
 
@@ -65,6 +69,7 @@ border:2px solid #62d6ff;
 border-radius:10px;
 
 }
+
 
 button{
 
@@ -88,11 +93,13 @@ transition:.25s;
 
 }
 
+
 button:hover{
 
 background:#62d6ff;
 
 }
+
 
 
 /*=========================================================
@@ -120,6 +127,7 @@ box-shadow:0 0 20px rgba(98,214,255,.35);
 }
 
 
+
 /*=========================================================
 NOMBRE
 =========================================================*/
@@ -143,6 +151,7 @@ hyphens:auto;
 }
 
 
+
 /*=========================================================
 CRONOLOGÍA
 =========================================================*/
@@ -158,6 +167,7 @@ color:#aaa;
 margin-bottom:25px;
 
 }
+
 
 
 /*=========================================================
@@ -180,7 +190,64 @@ border:2px solid #62d6ff;
 
 box-shadow:0 0 15px rgba(98,214,255,.25);
 
+cursor:pointer;
+
 }
+
+
+
+/*=========================================================
+VÍDEO
+=========================================================*/
+
+
+#videoFicha{
+
+text-align:center;
+
+}
+
+
+a.botonVideo,
+a.botonVideo:visited{
+
+
+display:inline-block;
+
+margin:20px;
+
+padding:12px 22px;
+
+background:#62d6ff;
+
+color:#001018 !important;
+
+border-radius:10px;
+
+text-decoration:none !important;
+
+font-weight:bold;
+
+font-size:18px;
+
+box-shadow:0 0 12px rgba(98,214,255,.5);
+
+transition:.25s;
+
+
+}
+
+
+a.botonVideo:hover{
+
+
+background:#00e5ff;
+
+transform:scale(1.05);
+
+}
+
+
 
 
 /*=========================================================
@@ -198,9 +265,6 @@ line-height:1.8;
 }
 
 
-/*=========================================================
-TÍTULOS DE CAMPOS
-=========================================================*/
 
 .campo{
 
@@ -211,9 +275,11 @@ font-weight:bold;
 }
 
 
+
 /*=========================================================
 GALERÍA
 =========================================================*/
+
 
 #galeria{
 
@@ -231,7 +297,9 @@ flex-wrap:nowrap;
 
 }
 
+
 #galeria img{
+
 
 width:40%;
 
@@ -243,12 +311,16 @@ border:2px solid #62d6ff;
 
 box-shadow:0 0 15px rgba(98,214,255,.25);
 
+cursor:pointer;
+
 }
+
 
 
 /*=========================================================
 ESTADÍSTICAS
 =========================================================*/
+
 
 h2{
 
@@ -261,6 +333,8 @@ margin-top:35px;
 margin-bottom:20px;
 
 }
+
+
 
 .stats{
 
@@ -276,7 +350,10 @@ margin-top:20px;
 
 }
 
+
+
 .stats div{
+
 
 padding:12px;
 
@@ -288,88 +365,203 @@ border-radius:8px;
 
 box-shadow:0 0 6px rgba(98,214,255,.10);
 
+
 }
+
+
+
+/*=========================================================
+LIGHTBOX IMÁGENES
+=========================================================*/
+
+
+#visorImagen{
+
+
+display:none;
+
+
+position:fixed;
+
+
+top:0;
+
+left:0;
+
+
+width:100vw;
+
+height:100vh;
+
+
+background:rgba(0,0,0,.95);
+
+
+z-index:999999;
+
+
+justify-content:center;
+
+
+align-items:center;
+
+
+}
+
+
+
+#imagenAmpliada{
+
+
+max-width:95vw;
+
+
+max-height:95vh;
+
+
+object-fit:contain;
+
+
+border-radius:12px;
+
+
+border:2px solid #62d6ff;
+
+
+box-shadow:0 0 25px rgba(98,214,255,.6);
+
+
+}
+
 
 
 /*=========================================================
 RESPONSIVE
 =========================================================*/
 
+
 @media (max-width:768px){
+
 
 body{
 
+
 padding:15px;
 
+
 }
+
+
 
 h1{
 
+
 font-size:30px;
 
+
 }
+
+
 
 #titulo{
 
+
 font-size:clamp(24px,7vw,34px);
 
+
 }
+
+
 
 #cronologia{
 
+
 font-size:18px;
+
 
 }
 
+
+
 #bloqueInfo{
+
 
 font-size:18px;
 
 line-height:1.7;
 
+
 }
+
+
 
 #imagenPrincipal{
 
+
 width:90%;
+
 
 max-width:520px;
 
+
 }
+
+
 
 #galeria{
 
+
 gap:10px;
 
-flex-wrap:nowrap;
 
 }
+
+
 
 #galeria img{
 
+
 width:43%;
+
 
 max-width:none;
 
+
 }
+
+
 
 .stats{
 
+
 grid-template-columns:1fr;
+
 
 font-size:17px;
 
+
 }
+
+
 
 button{
 
+
 margin-top:10px;
+
 
 margin-left:0;
 
-}
 
 }
+
+
+
+}
+
+
+
+
 
 
 
