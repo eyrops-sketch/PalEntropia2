@@ -1,1 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constructor 1.5 | PalEntropía</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>Constructor PalEntropía 1.5</h1>
+
+<div id="buscador">
+    <input id="codigo" type="text" placeholder="Ej: 005_12">
+    <button onclick="buscarFicha()">Buscar</button>
+</div>
+
+<div id="ficha" style="display:none;">
+    <div id="titulo"></div>
+    <div id="cronologia"></div>
+    <img id="imagenPrincipal" src="">
+
+    <div id="videoFicha"></div>
+    <div id="bloqueInfo"></div>
+
+    <!-- ============================
+         ESTADÍSTICAS BASE
+    ============================ -->
+    <h2>Estadísticas base</h2>
+    <div id="estadisticas" class="stats"></div>
+
+    <!-- ============================
+         ANÁLISIS ESTADÍSTICO
+    ============================ -->
+    <h2>Análisis estadístico</h2>
+    <div id="bloqueAnalisis"></div>
+
+    <div id="galeria">
+        <img id="img2" src="">
+        <img id="img3" src="">
+    </div>
+</div>
+
+<!-- VISOR -->
+<div id="visorImagen">
+    <img id="imagenAmpliada" src="">
+</div>
+
+<!-- BASES DE DATOS -->
+<script src="paldb.js"></script>
+<script src="palstats.js"></script>
+<script src="palhab.js"></script>
+<script src="palgeo.js"></script>
+<script src="palmodo.js"></script>
+<script src="palmedio.js"></script>
+<script src="paltaxon.js"></script>
+<script src="palvideo.js"></script>
+
+<!-- DECODIFICADORES -->
+<script src="paldecoder.js"></script>
+<script src="paldecoder3.js"></script>
+
+<script>
+let paleofichas = [];
+
+fetch("paleofichas.json")
+.then(r => r.json())
+.then(datos => paleofichas = datos);
+
+/* ============================
+   BUSCAR FICHA
+============================ */
+
+function buscarFicha(){
+
+    const codigo = document.getElementById("codigo").value.trim();
+
+    const ficha = paleofichas.find(f => f.codigo === codigo);
+    const db = PALDB.find(f => f.codigo === codigo);
+    const stats = PALSTATS[codigo];
+    const taxon = PALTAXON[codigo];
+
+    if(!ficha || !db || !stats || !taxon){
+        alert("Código no encontrado.");
+        return;
+    }
+
+    document.getElementById("ficha").style.display="block";
+
+    /* TÍTULO */
+    document.getElementById("titulo").innerHTML = ficha.nombre;
+
+    /* CRONOLOGÍA */
+    const geo = PALDECODER.decodeCronologia(ficha.cronologia);
+    let htmlGeo = `<div>${geo.rango}</div>`;
+    if(geo.periodo_texto) htmlGeo += `<div><strong>Período:</strong> ${geo.periodo_texto}</div>`;
+    if(geo.subperiodo_texto) htmlGeo += `<div><strong>Subperíodo:</strong> ${geo.subperiodo_texto}</div>`;
+    document.getElementById("cronologia").innerHTML = htmlGeo;
+
+    /* HÁBITATS */
+    const hab = PALDECODER.decodeHabitats(ficha.HP, ficha.HS);
+    let habitats = "";
+    if(hab.principales.length){
+        habitats += "<b>Principales</b><br>";
+        hab.principales.forEach(h => habitats += "• " + h.nombre + "<br>");
+    }
+    if(hab.secundarios.length){
+        habitats += "<br><b>Secundarios</b><br>";
+        hab.secundarios.forEach(h => habitats += "• " + h.nombre + "<br>");
+    }
+
+    /* MODO DE VIDA */
+    const modo = ficha.modo_vida ? PALDECODER.decodeModoVida(ficha.modo_vida) : null;
+    let textoModo = modo ? "<span class='campo'>Modo de vida</span><br>• " + modo.nombre : "";
+
+    /* MEDIO ECOLÓGICO */
+    const medioCompuesto = ficha.medio_compuesto ? PALDECODER.decodeMedio(ficha.medio_compuesto) : null;
+    let textoMedio = "";
+    if(medioCompuesto){
+        textoMedio = "<span class='campo'>Medio ecológico</span><br>";
+        if(medioCompuesto.medio) textoMedio += "• " + medioCompuesto.medio.nombre + "<br>";
+        if(medioCompuesto.localizacion) textoMedio += "• " + medioCompuesto.localizacion.nombre + "<br>";
+        if(medioCompuesto.estrato) textoMedio += "• " + medioCompuesto.estrato.nombre + "<br>";
+        if(medioCompuesto.comportamiento) textoMedio += "• " + medioCompuesto.comportamiento.nombre + "<br>";
+    }
+
+    /* TAXONOMÍA */
+    const arbolTaxonomia = "└─ " + taxon.ta1.split(">").map(t => t.trim()).join("<br>└─ ");
+
+    /* BLOQUE PRINCIPAL */
+    document.getElementById("bloqueInfo").innerHTML =
+        "<span class='campo'>Código</span><br>" + ficha.codigo +
+        "<br><br><span class='campo'>Taxonomía</span><br>" + arbolTaxonomia +
+        "<br><br><span class='campo'>Clasificación</span><br>" + taxon.ta2 +
+        "<br><br>" + textoModo +
+        "<br><br>" + textoMedio +
+        "<br><br><span class='campo'>Dieta</span><br>" + ficha.dieta +
+        "<br><br><span class='campo'>Anatomía</span><br>" + ficha.anatomia +
+        "<br><br><span class='campo'>Hábitats</span><br>" + habitats;
+
+    /* RUTA IMÁGENES */
+    const especie = db.carpeta.split("_").slice(2).join("_");
+    const nombreArchivo = especie.charAt(0).toUpperCase() + especie.slice(1);
+    const ruta = "../../paleofichas/vol" + String(db.volumen).padStart(3,"0") + "/" + db.carpeta + "/";
+
+    /* CARGA IMÁGENES */
+    function cargarImagen(elemento, base){
+        const img = document.getElementById(elemento);
+        img.src = "";
+        const extensiones = [".png",".jpg",".jpeg"];
+        let i = 0;
+
+        function probar(){
+            if(i >= extensiones.length) return;
+            const url = ruta + base + extensiones[i];
+            const test = new Image();
+            test.onload = () => img.src = url;
+            test.onerror = () => { i++; probar(); };
+            test.src = url;
+        }
+        probar();
+    }
+
+    cargarImagen("imagenPrincipal", nombreArchivo + "_i0");
+    cargarImagen("img2", nombreArchivo + "_i2");
+    cargarImagen("img3", nombreArchivo + "_i3");
+
+    /* VÍDEO */
+    const videoData = PALVIDEO[codigo];
+    const bloqueVideo = document.getElementById("videoFicha");
+    bloqueVideo.innerHTML = videoData && videoData.video ?
+        `<a href="${videoData.video}" target="_blank" class="botonVideo">▶ Pulsar para ver imagen en movimiento</a>` : "";
+
+    /* ============================
+       ESTADÍSTICAS BASE
+    ============================ */
+    document.getElementById("estadisticas").innerHTML =
+        "<div>Adaptabilidad: " + stats.adaptabilidad + "</div>" +
+        "<div>Resistencia: " + stats.resistencia + "</div>" +
+        "<div>Sociabilidad: " + stats.sociabilidad + "</div>" +
+        "<div>Reproducción: " + stats.reproduccion + "</div>" +
+        "<div>Ofensiva: " + stats.ofensiva + "</div>" +
+        "<div>Defensa: " + stats.defensa + "</div>" +
+        "<div>Movilidad: " + stats.movilidad + "</div>" +
+        "<div>Plasticidad ecológica: " + stats.plasticidad_ecologica + "</div>" +
+        "<div>Tamaño: " + stats.tamano + "</div>" +
+        "<div>Velocidad: " + stats.velocidad + "</div>" +
+        "<div>Inteligencia: " + stats.inteligencia + "</div>";
+
+    /* ============================
+       ANÁLISIS ESTADÍSTICO
+    ============================ */
+    mostrarAnalisis();
+}
+
+/* ============================
+   ANÁLISIS INTEGRADO
+============================ */
+
+function mostrarAnalisis(){
+
+    const codigo = document.getElementById("codigo").value.trim();
+    const stats = PALSTATS[codigo];
+
+    if(!stats){
+        document.getElementById("bloqueAnalisis").innerHTML =
+            "<div>No se pudo generar el análisis.</div>";
+        return;
+    }
+
+    const analisis = PALDECODER3.analizar(codigo);
+
+    document.getElementById("bloqueAnalisis").innerHTML = `
+        <div><b>Índice global:</b> ${analisis.nivel1.indice_global}</div>
+        <div><b>Supervivencia:</b> ${analisis.nivel1.supervivencia}</div>
+        <div><b>Competencia:</b> ${analisis.nivel1.competencia}</div>
+        <div><b>Movilidad:</b> ${analisis.nivel1.movilidad}</div>
+        <div><b>Reproducción:</b> ${analisis.nivel1.reproduccion}</div>
+    `;
+}
+
+/* ============================
+   LIGHTBOX
+============================ */
+
+const visor = document.getElementById("visorImagen");
+const imagenAmpliada = document.getElementById("imagenAmpliada");
+
+function ampliarImagen(src){
+    if(!src) return;
+    imagenAmpliada.src = src;
+    visor.style.display = "flex";
+    document.body.style.overflow = "hidden";
+}
+
+function cerrarImagen(){
+    visor.style.display = "none";
+    imagenAmpliada.src = "";
+    document.body.style.overflow = "auto";
+}
+
+document.getElementById("imagenPrincipal").onclick = () => ampliarImagen(imagenPrincipal.src);
+document.getElementById("img2").onclick = () => ampliarImagen(img2.src);
+document.getElementById("img3").onclick = () => ampliarImagen(img3.src);
+
+visor.onclick = e => { if(e.target === visor) cerrarImagen(); };
+
+</script>
+
+</body>
+</html>
+
+
+
+
 
