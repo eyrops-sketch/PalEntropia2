@@ -1,21 +1,16 @@
 /*=========================================================
 PalEntropía
-Constructor 1.4
-Style v2.2
+Constructor 1.6
+Style v2.3
 =========================================================*/
 
 
 body{
-
-margin:0;
-padding:30px;
-
-background:#111;
-
-color:#eee;
-
-font-family:Arial,Helvetica,sans-serif;
-
+    margin:0;
+    padding:30px;
+    background:#111;
+    color:#eee;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
 
@@ -24,17 +19,11 @@ TÍTULO
 =========================================================*/
 
 h1{
-
-text-align:center;
-
-color:#62d6ff;
-
-font-size:44px;
-
-margin-bottom:10px;
-
+    text-align:center;
+    color:#62d6ff;
+    font-size:44px;
+    margin-bottom:10px;
 }
-
 
 
 /*=========================================================
@@ -42,64 +31,36 @@ BUSCADOR
 =========================================================*/
 
 #buscador{
-
-text-align:center;
-
-margin:30px;
-
+    text-align:center;
+    margin:30px;
 }
-
 
 input{
-
-width:180px;
-
-padding:10px;
-
-font-size:18px;
-
-text-align:center;
-
-background:#222;
-
-color:#fff;
-
-border:2px solid #62d6ff;
-
-border-radius:10px;
-
+    width:180px;
+    padding:10px;
+    font-size:18px;
+    text-align:center;
+    background:#222;
+    color:#fff;
+    border:2px solid #62d6ff;
+    border-radius:10px;
 }
-
 
 button{
-
-padding:10px 20px;
-
-font-size:18px;
-
-margin-left:10px;
-
-cursor:pointer;
-
-background:#1d9bf0;
-
-color:#fff;
-
-border:none;
-
-border-radius:10px;
-
-transition:.25s;
-
+    padding:10px 20px;
+    font-size:18px;
+    margin-left:10px;
+    cursor:pointer;
+    background:#1d9bf0;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    transition:.25s;
 }
-
 
 button:hover{
-
-background:#62d6ff;
-
+    background:#62d6ff;
 }
-
 
 
 /*=========================================================
@@ -107,25 +68,15 @@ FICHA
 =========================================================*/
 
 #ficha{
-
-display:none;
-
-max-width:900px;
-
-margin:auto;
-
-background:#1b1b1b;
-
-border:2px solid #62d6ff;
-
-border-radius:18px;
-
-padding:25px;
-
-box-shadow:0 0 20px rgba(98,214,255,.35);
-
+    display:none;
+    max-width:900px;
+    margin:auto;
+    background:#1b1b1b;
+    border:2px solid #62d6ff;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 0 20px rgba(98,214,255,.35);
 }
-
 
 
 /*=========================================================
@@ -133,23 +84,14 @@ NOMBRE
 =========================================================*/
 
 #titulo{
-
-text-align:center;
-
-font-size:clamp(30px,5vw,40px);
-
-line-height:1.15;
-
-color:#62d6ff;
-
-margin-bottom:12px;
-
-overflow-wrap:break-word;
-
-hyphens:auto;
-
+    text-align:center;
+    font-size:clamp(30px,5vw,40px);
+    line-height:1.15;
+    color:#62d6ff;
+    margin-bottom:12px;
+    overflow-wrap:break-word;
+    hyphens:auto;
 }
-
 
 
 /*=========================================================
@@ -157,17 +99,11 @@ CRONOLOGÍA
 =========================================================*/
 
 #cronologia{
-
-text-align:center;
-
-font-size:22px;
-
-color:#aaa;
-
-margin-bottom:25px;
-
+    text-align:center;
+    font-size:22px;
+    color:#eee;   /* ← corregido: antes #aaa */
+    margin-bottom:25px;
 }
-
 
 
 /*=========================================================
@@ -175,79 +111,44 @@ IMAGEN PRINCIPAL
 =========================================================*/
 
 #imagenPrincipal{
-
-display:block;
-
-width:78%;
-
-max-width:540px;
-
-margin:0 auto 20px auto;
-
-border-radius:10px;
-
-border:2px solid #62d6ff;
-
-box-shadow:0 0 15px rgba(98,214,255,.25);
-
-cursor:pointer;
-
+    display:block;
+    width:78%;
+    max-width:540px;
+    margin:0 auto 20px auto;
+    border-radius:10px;
+    border:2px solid #62d6ff;
+    box-shadow:0 0 15px rgba(98,214,255,.25);
+    cursor:pointer;
 }
-
 
 
 /*=========================================================
 VÍDEO
 =========================================================*/
 
-
 #videoFicha{
-
-text-align:center;
-
+    text-align:center;
 }
-
 
 a.botonVideo,
 a.botonVideo:visited{
-
-
-display:inline-block;
-
-margin:20px;
-
-padding:12px 22px;
-
-background:#62d6ff;
-
-color:#001018 !important;
-
-border-radius:10px;
-
-text-decoration:none !important;
-
-font-weight:bold;
-
-font-size:18px;
-
-box-shadow:0 0 12px rgba(98,214,255,.5);
-
-transition:.25s;
-
-
+    display:inline-block;
+    margin:20px;
+    padding:12px 22px;
+    background:#62d6ff;
+    color:#001018 !important;
+    border-radius:10px;
+    text-decoration:none !important;
+    font-weight:bold;
+    font-size:18px;
+    box-shadow:0 0 12px rgba(98,214,255,.5);
+    transition:.25s;
 }
-
 
 a.botonVideo:hover{
-
-
-background:#00e5ff;
-
-transform:scale(1.05);
-
+    background:#00e5ff;
+    transform:scale(1.05);
 }
-
-
 
 
 /*=========================================================
@@ -255,314 +156,169 @@ BLOQUE INFORMACIÓN
 =========================================================*/
 
 #bloqueInfo{
-
-margin-top:30px;
-
-font-size:20px;
-
-line-height:1.8;
-
+    margin-top:30px;
+    font-size:20px;
+    line-height:1.8;
 }
-
-
 
 .campo{
-
-color:#62d6ff;
-
-font-weight:bold;
-
+    color:#62d6ff;
+    font-weight:bold;
 }
-
 
 
 /*=========================================================
 GALERÍA
 =========================================================*/
 
-
 #galeria{
-
-margin-top:35px;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-gap:14px;
-
-flex-wrap:nowrap;
-
+    margin-top:35px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
+    flex-wrap:nowrap;
 }
-
 
 #galeria img{
-
-
-width:40%;
-
-max-width:220px;
-
-border-radius:10px;
-
-border:2px solid #62d6ff;
-
-box-shadow:0 0 15px rgba(98,214,255,.25);
-
-cursor:pointer;
-
+    width:40%;
+    max-width:220px;
+    border-radius:10px;
+    border:2px solid #62d6ff;
+    box-shadow:0 0 15px rgba(98,214,255,.25);
+    cursor:pointer;
 }
-
 
 
 /*=========================================================
-ESTADÍSTICAS
+ESTADÍSTICAS BASE
 =========================================================*/
 
-
 h2{
-
-text-align:center;
-
-color:#62d6ff;
-
-margin-top:35px;
-
-margin-bottom:20px;
-
+    text-align:center;
+    color:#62d6ff;
+    margin-top:35px;
+    margin-bottom:20px;
 }
-
-
 
 .stats{
-
-display:grid;
-
-grid-template-columns:1fr 1fr;
-
-gap:10px;
-
-font-size:18px;
-
-margin-top:20px;
-
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    font-size:18px;
+    margin-top:20px;
 }
-
-
 
 .stats div{
-
-
-padding:12px;
-
-background:#181818;
-
-border-left:4px solid #62d6ff;
-
-border-radius:8px;
-
-box-shadow:0 0 6px rgba(98,214,255,.10);
-
-
+    padding:12px;
+    background:#181818;
+    border-left:4px solid #62d6ff;
+    border-radius:8px;
+    box-shadow:0 0 6px rgba(98,214,255,.10);
 }
 
+
+/*=========================================================
+ANÁLISIS ESTADÍSTICO (igual que estadísticas base)
+=========================================================*/
+
+#bloqueAnalisis{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    font-size:18px;
+    margin-top:20px;
+}
+
+#bloqueAnalisis div{
+    padding:12px;
+    background:#181818;
+    border-left:4px solid #62d6ff;
+    border-radius:8px;
+    box-shadow:0 0 6px rgba(98,214,255,.10);
+}
 
 
 /*=========================================================
 LIGHTBOX IMÁGENES
 =========================================================*/
 
-
 #visorImagen{
-
-
-display:none;
-
-
-position:fixed;
-
-
-top:0;
-
-left:0;
-
-
-width:100vw;
-
-height:100vh;
-
-
-background:rgba(0,0,0,.95);
-
-
-z-index:999999;
-
-
-justify-content:center;
-
-
-align-items:center;
-
-
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    background:rgba(0,0,0,.95);
+    z-index:999999;
+    justify-content:center;
+    align-items:center;
 }
-
-
 
 #imagenAmpliada{
-
-
-max-width:95vw;
-
-
-max-height:95vh;
-
-
-object-fit:contain;
-
-
-border-radius:12px;
-
-
-border:2px solid #62d6ff;
-
-
-box-shadow:0 0 25px rgba(98,214,255,.6);
-
-
+    max-width:95vw;
+    max-height:95vh;
+    object-fit:contain;
+    border-radius:12px;
+    border:2px solid #62d6ff;
+    box-shadow:0 0 25px rgba(98,214,255,.6);
 }
-
 
 
 /*=========================================================
 RESPONSIVE
 =========================================================*/
 
-
 @media (max-width:768px){
 
+    body{
+        padding:15px;
+    }
 
-body{
+    h1{
+        font-size:30px;
+    }
 
+    #titulo{
+        font-size:clamp(24px,7vw,34px);
+    }
 
-padding:15px;
+    #cronologia{
+        font-size:18px;
+    }
 
+    #bloqueInfo{
+        font-size:18px;
+        line-height:1.7;
+    }
 
+    #imagenPrincipal{
+        width:90%;
+        max-width:520px;
+    }
+
+    #galeria{
+        gap:10px;
+    }
+
+    #galeria img{
+        width:43%;
+        max-width:none;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+        font-size:17px;
+    }
+
+    #bloqueAnalisis{
+        grid-template-columns:1fr;
+        font-size:17px;
+    }
+
+    button{
+        margin-top:10px;
+        margin-left:0;
+    }
 }
-
-
-
-h1{
-
-
-font-size:30px;
-
-
-}
-
-
-
-#titulo{
-
-
-font-size:clamp(24px,7vw,34px);
-
-
-}
-
-
-
-#cronologia{
-
-
-font-size:18px;
-
-
-}
-
-
-
-#bloqueInfo{
-
-
-font-size:18px;
-
-line-height:1.7;
-
-
-}
-
-
-
-#imagenPrincipal{
-
-
-width:90%;
-
-
-max-width:520px;
-
-
-}
-
-
-
-#galeria{
-
-
-gap:10px;
-
-
-}
-
-
-
-#galeria img{
-
-
-width:43%;
-
-
-max-width:none;
-
-
-}
-
-
-
-.stats{
-
-
-grid-template-columns:1fr;
-
-
-font-size:17px;
-
-
-}
-
-
-
-button{
-
-
-margin-top:10px;
-
-
-margin-left:0;
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-
