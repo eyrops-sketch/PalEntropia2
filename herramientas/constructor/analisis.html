@@ -1,1 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Análisis | PalEntropía</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="palstats.js"></script>
+<script src="paldecoder3.js"></script>
+
+</head>
+
+<body>
+
+<h1>Análisis PalEntropía</h1>
+
+<div id="resultado"></div>
+
+<script>
+
+// Leer el código de la URL
+const parametros = new URLSearchParams(window.location.search);
+const codigo = parametros.get("codigo");
+
+// Ejecutar el análisis
+const analisis = PALDECODER3.analizar(codigo);
+
+// Mostrar resultados
+if(analisis){
+
+document.getElementById("resultado").innerHTML = `
+
+<h2>${analisis.nombre}</h2>
+
+<p><strong>Código:</strong> ${analisis.codigo}</p>
+
+<h3>Nivel 1</h3>
+
+<p><strong>Índice Global:</strong> ${analisis.nivel1.indice_global}</p>
+
+<p><strong>Supervivencia:</strong> ${analisis.nivel1.supervivencia}</p>
+
+<p><strong>Competencia:</strong> ${analisis.nivel1.competencia}</p>
+
+<p><strong>Movilidad:</strong> ${analisis.nivel1.movilidad}</p>
+
+<p><strong>Reproducción:</strong> ${analisis.nivel1.reproduccion}</p>
+
+`;
+
+}else{
+
+document.getElementById("resultado").innerHTML =
+"<h2>Error</h2><p>Código no encontrado.</p>";
+
+}
+
+</script>
+
+</body>
+
+</html>
+
+
+
+
 
