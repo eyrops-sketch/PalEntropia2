@@ -4,49 +4,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Constructor 1.4 | PalEntropía</title>
+<title>Constructor 1.5 | PalEntropía</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>Constructor PalEntropía 1.4</h1>
+<h1>Constructor PalEntropía 1.5</h1>
 
 <div id="buscador">
-<input id="codigo" type="text" placeholder="Ej: 005_12">
-<button onclick="buscarFicha()">Buscar</button>
-<button onclick="abrirAnalisis()">Análisis</button>
+    <input id="codigo" type="text" placeholder="Ej: 005_12">
+    <button onclick="buscarFicha()">Buscar</button>
+    <button onclick="mostrarAnalisis()">Análisis</button>
 </div>
 
 <div id="ficha" style="display:none;">
-<div id="titulo"></div>
-<div id="cronologia"></div>
-<img id="imagenPrincipal" src="">
+    <div id="titulo"></div>
+    <div id="cronologia"></div>
+    <img id="imagenPrincipal" src="">
 
-<!-- VÍDEO -->
-<div id="videoFicha"></div>
+    <div id="videoFicha"></div>
+    <div id="bloqueInfo"></div>
 
-<div id="bloqueInfo"></div>
+    <h2>Estadísticas</h2>
+    <div id="estadisticas" class="stats"></div>
 
-<h2>Estadísticas</h2>
-<div id="estadisticas" class="stats"></div>
+    <h2>Análisis</h2>
+    <div id="bloqueAnalisis"></div>
 
-<div id="galeria">
-<img id="img2" src="">
-<img id="img3" src="">
+    <div id="galeria">
+        <img id="img2" src="">
+        <img id="img3" src="">
+    </div>
 </div>
-</div>
 
-<!-- =========================
-     VISOR DE IMÁGENES
-========================= -->
+<!-- VISOR -->
 <div id="visorImagen">
-<img id="imagenAmpliada" src="">
+    <img id="imagenAmpliada" src="">
 </div>
 
-<!-- =========================
-     BASES DE DATOS
-========================= -->
+<!-- BASES DE DATOS -->
 <script src="paldb.js"></script>
 <script src="palstats.js"></script>
 <script src="palhab.js"></script>
@@ -56,9 +53,7 @@
 <script src="paltaxon.js"></script>
 <script src="palvideo.js"></script>
 
-<!-- =========================
-     DECODIFICADORES
-========================= -->
+<!-- DECODIFICADORES -->
 <script src="paldecoder.js"></script>
 <script src="paldecoder2.js"></script>
 <script src="paldecoder3.js"></script>
@@ -68,11 +63,14 @@ let paleofichas = [];
 
 fetch("paleofichas.json")
 .then(r => r.json())
-.then(datos => {
-    paleofichas = datos;
-});
+.then(datos => paleofichas = datos);
+
+/* ============================
+   BUSCAR FICHA
+============================ */
 
 function buscarFicha(){
+
     const codigo = document.getElementById("codigo").value.trim();
 
     const ficha = paleofichas.find(f => f.codigo === codigo);
@@ -86,88 +84,48 @@ function buscarFicha(){
     }
 
     document.getElementById("ficha").style.display="block";
-     
-    /*=========================================
-      TÍTULO
-    =========================================*/
+
+    /* TÍTULO */
     document.getElementById("titulo").innerHTML = ficha.nombre;
 
-    /*=========================================
-      CRONOLOGÍA
-    =========================================*/
+    /* CRONOLOGÍA */
     const geo = PALDECODER.decodeCronologia(ficha.cronologia);
     let htmlGeo = `<div>${geo.rango}</div>`;
-
-    if(geo.periodo_texto){
-        htmlGeo += `<div><strong>Período:</strong> ${geo.periodo_texto}</div>`;
-    }
-
-    if(geo.subperiodo_texto){
-        htmlGeo += `<div><strong>Subperíodo:</strong> ${geo.subperiodo_texto}</div>`;
-    }
-
+    if(geo.periodo_texto) htmlGeo += `<div><strong>Período:</strong> ${geo.periodo_texto}</div>`;
+    if(geo.subperiodo_texto) htmlGeo += `<div><strong>Subperíodo:</strong> ${geo.subperiodo_texto}</div>`;
     document.getElementById("cronologia").innerHTML = htmlGeo;
 
-    /*=========================================
-      HÁBITATS
-    =========================================*/
+    /* HÁBITATS */
     const hab = PALDECODER.decodeHabitats(ficha.HP, ficha.HS);
     let habitats = "";
-
     if(hab.principales.length){
         habitats += "<b>Principales</b><br>";
-        hab.principales.forEach(h => {
-            habitats += "• " + h.nombre + "<br>";
-        });
+        hab.principales.forEach(h => habitats += "• " + h.nombre + "<br>");
     }
-
     if(hab.secundarios.length){
         habitats += "<br><b>Secundarios</b><br>";
-        hab.secundarios.forEach(h => {
-            habitats += "• " + h.nombre + "<br>";
-        });
+        hab.secundarios.forEach(h => habitats += "• " + h.nombre + "<br>");
     }
 
-    /*=========================================
-      MODO DE VIDA
-    =========================================*/
+    /* MODO DE VIDA */
     const modo = ficha.modo_vida ? PALDECODER2.decodeModoVida(ficha.modo_vida) : null;
-    let textoModo = "";
+    let textoModo = modo ? "<span class='campo'>Modo de vida</span><br>• " + modo.nombre : "";
 
-    if(modo){
-        textoModo = "<span class='campo'>Modo de vida</span><br>• " + modo.nombre;
-    }
-
-    /*=========================================
-      MEDIO ECOLÓGICO
-    =========================================*/
+    /* MEDIO ECOLÓGICO */
     const medioCompuesto = ficha.medio_compuesto ? PALDECODER2.decodeMedio(ficha.medio_compuesto) : null;
     let textoMedio = "";
-
     if(medioCompuesto){
         textoMedio = "<span class='campo'>Medio ecológico</span><br>";
-        if(medioCompuesto.medio){
-            textoMedio += "• " + medioCompuesto.medio.nombre + "<br>";
-        }
-        if(medioCompuesto.localizacion){
-            textoMedio += "• " + medioCompuesto.localizacion.nombre + "<br>";
-        }
-        if(medioCompuesto.estrato){
-            textoMedio += "• " + medioCompuesto.estrato.nombre + "<br>";
-        }
-        if(medioCompuesto.comportamiento){
-            textoMedio += "• " + medioCompuesto.comportamiento.nombre + "<br>";
-        }
+        if(medioCompuesto.medio) textoMedio += "• " + medioCompuesto.medio.nombre + "<br>";
+        if(medioCompuesto.localizacion) textoMedio += "• " + medioCompuesto.localizacion.nombre + "<br>";
+        if(medioCompuesto.estrato) textoMedio += "• " + medioCompuesto.estrato.nombre + "<br>";
+        if(medioCompuesto.comportamiento) textoMedio += "• " + medioCompuesto.comportamiento.nombre + "<br>";
     }
 
-    /*=========================================
-      TAXONOMÍA
-    =========================================*/
+    /* TAXONOMÍA */
     const arbolTaxonomia = "└─ " + taxon.ta1.split(">").map(t => t.trim()).join("<br>└─ ");
 
-    /*=========================================
-      BLOQUE PRINCIPAL
-    =========================================*/
+    /* BLOQUE PRINCIPAL */
     document.getElementById("bloqueInfo").innerHTML =
         "<span class='campo'>Código</span><br>" + ficha.codigo +
         "<br><br><span class='campo'>Taxonomía</span><br>" + arbolTaxonomia +
@@ -178,39 +136,25 @@ function buscarFicha(){
         "<br><br><span class='campo'>Anatomía</span><br>" + ficha.anatomia +
         "<br><br><span class='campo'>Hábitats</span><br>" + habitats;
 
-    /*=========================================
-      RUTA DE IMÁGENES
-    =========================================*/
+    /* RUTA IMÁGENES */
     const especie = db.carpeta.split("_").slice(2).join("_");
     const nombreArchivo = especie.charAt(0).toUpperCase() + especie.slice(1);
     const ruta = "../../paleofichas/vol" + String(db.volumen).padStart(3,"0") + "/" + db.carpeta + "/";
 
-    /*=========================================
-      CARGA DE IMÁGENES
-    =========================================*/
+    /* CARGA IMÁGENES */
     function cargarImagen(elemento, base){
         const img = document.getElementById(elemento);
         img.src = "";
-        const extensiones = [".png", ".jpg", ".jpeg"];
-        let indice = 0;
+        const extensiones = [".png",".jpg",".jpeg"];
+        let i = 0;
 
         function probar(){
-            if(indice >= extensiones.length){
-                return;
-            }
-            const url = ruta + base + extensiones[indice];
-            const prueba = new Image();
-            
-            prueba.onload = function(){
-                img.src = url;
-            };
-            
-            prueba.onerror = function(){
-                indice++;
-                probar();
-            };
-            
-            prueba.src = url;
+            if(i >= extensiones.length) return;
+            const url = ruta + base + extensiones[i];
+            const test = new Image();
+            test.onload = () => img.src = url;
+            test.onerror = () => { i++; probar(); };
+            test.src = url;
         }
         probar();
     }
@@ -219,21 +163,13 @@ function buscarFicha(){
     cargarImagen("img2", nombreArchivo + "_i2");
     cargarImagen("img3", nombreArchivo + "_i3");
 
-    /*=========================================
-      VÍDEO YOUTUBE
-    =========================================*/
+    /* VÍDEO */
     const videoData = PALVIDEO[codigo];
     const bloqueVideo = document.getElementById("videoFicha");
+    bloqueVideo.innerHTML = videoData && videoData.video ?
+        `<a href="${videoData.video}" target="_blank" class="botonVideo">▶ Pulsar para ver imagen en movimiento</a>` : "";
 
-    if(videoData && videoData.video){
-        bloqueVideo.innerHTML = "<a href='" + videoData.video + "' target='_blank' class='botonVideo'>▶ Pulsar para ver imagen en movimiento</a>";
-    } else {
-        bloqueVideo.innerHTML = "";
-    }
-
-    /*=========================================
-      ESTADÍSTICAS
-    =========================================*/
+    /* ESTADÍSTICAS */
     document.getElementById("estadisticas").innerHTML =
         "<div>Adaptabilidad: " + stats.adaptabilidad + "</div>" +
         "<div>Resistencia: " + stats.resistencia + "</div>" +
@@ -247,19 +183,41 @@ function buscarFicha(){
         "<div>Velocidad: " + stats.velocidad + "</div>" +
         "<div>Inteligencia: " + stats.inteligencia + "</div>";
 }
-</script>
 
-<!-- =========================
-     LIGHTBOX IMÁGENES
-========================= -->
-<script>
+/* ============================
+   ANÁLISIS INTEGRADO
+============================ */
+
+function mostrarAnalisis(){
+
+    const codigo = document.getElementById("codigo").value.trim();
+    const stats = PALSTATS[codigo];
+
+    if(!stats){
+        alert("Primero busca una ficha válida.");
+        return;
+    }
+
+    const analisis = PALDECODER3.analizar(codigo);
+
+    document.getElementById("bloqueAnalisis").innerHTML = `
+        <div><b>Índice global:</b> ${analisis.nivel1.indice_global}</div>
+        <div><b>Supervivencia:</b> ${analisis.nivel1.supervivencia}</div>
+        <div><b>Competencia:</b> ${analisis.nivel1.competencia}</div>
+        <div><b>Movilidad:</b> ${analisis.nivel1.movilidad}</div>
+        <div><b>Reproducción:</b> ${analisis.nivel1.reproduccion}</div>
+    `;
+}
+
+/* ============================
+   LIGHTBOX
+============================ */
+
 const visor = document.getElementById("visorImagen");
 const imagenAmpliada = document.getElementById("imagenAmpliada");
 
 function ampliarImagen(src){
-    if(!src){
-        return;
-    }
+    if(!src) return;
     imagenAmpliada.src = src;
     visor.style.display = "flex";
     document.body.style.overflow = "hidden";
@@ -271,48 +229,14 @@ function cerrarImagen(){
     document.body.style.overflow = "auto";
 }
 
-document.getElementById("imagenPrincipal").onclick = function(){
-    ampliarImagen(this.src);
-};
+document.getElementById("imagenPrincipal").onclick = () => ampliarImagen(imagenPrincipal.src);
+document.getElementById("img2").onclick = () => ampliarImagen(img2.src);
+document.getElementById("img3").onclick = () => ampliarImagen(img3.src);
 
-document.getElementById("img2").onclick = function(){
-    ampliarImagen(this.src);
-};
+visor.onclick = e => { if(e.target === visor) cerrarImagen(); };
 
-document.getElementById("img3").onclick = function(){
-    ampliarImagen(this.src);
-};
-
-visor.onclick = function(e){
-    if(e.target === visor){
-        cerrarImagen();
-    }
-}
-
-function abrirAnalisis(){
-    const codigo = document.getElementById("codigo").value.trim();
-
-    if(codigo===""){
-        alert("Introduce un código.");
-        return;
-    }
-
-    const ficha = paleofichas.find(f => f.codigo === codigo);
-
-    if(!ficha){
-        alert("Código no encontrado.");
-        return;
-    }
-
-    window.location.href = "analisis.html?codigo=" + codigo;
-}
 </script>
 
 </body>
 </html>
-
-
-
-
-
 
