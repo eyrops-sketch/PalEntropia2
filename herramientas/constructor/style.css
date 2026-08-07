@@ -834,15 +834,28 @@ box-sizing:border-box;
 
 }
 
+
+
+
 #filaBusqueda button{
 
 flex:0 0 30%;
 
 box-sizing:border-box;
 
+height:72px;
+
 }
 
 #terminoInterpretado{
+
+height:72px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
 
 flex:1;
 
@@ -871,7 +884,6 @@ overflow:hidden;
 text-overflow:ellipsis;
 
 }
-
 
 
 
