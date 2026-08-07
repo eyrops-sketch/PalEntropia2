@@ -818,11 +818,21 @@ font-size:15px;
 }
 
 
-#terminoInterpretado{
+#filaBusqueda{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
 
 margin-top:10px;
 
-display:block;
+}
+
+#terminoInterpretado{
+
+display:inline-block;
 
 padding:8px 16px;
 
@@ -839,8 +849,6 @@ font-size:1em;
 min-width:220px;
 
 text-align:center;
-
-margin-left:0; 
 
 }
 
