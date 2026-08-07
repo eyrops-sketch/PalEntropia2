@@ -828,13 +828,29 @@ gap:10px;
 
 margin-top:10px;
 
+width:100%;
+
+box-sizing:border-box;
+
+}
+
+#filaBusqueda button{
+
+flex:0 0 30%;
+
+box-sizing:border-box;
+
 }
 
 #terminoInterpretado{
 
-display:inline-block;
+flex:1;
 
-padding:8px 16px;
+min-width:0;
+
+box-sizing:border-box;
+
+padding:8px 12px;
 
 background:#7b2cbf;
 
@@ -846,13 +862,15 @@ font-weight:bold;
 
 font-size:1em;
 
-min-width:220px;
-
 text-align:center;
 
+white-space:nowrap;
+
+overflow:hidden;
+
+text-overflow:ellipsis;
+
 }
-
-
 
 
 
