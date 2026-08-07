@@ -95,6 +95,9 @@ Buscador Universal
 
 </h2>
 
+
+
+  
 <input
 
 id="buscarNombre"
@@ -105,7 +108,19 @@ placeholder="Nombre, código, período, hábitat, taxón..."
 
 onkeyup="filtrarPaleofichas()">
 
+<button onclick="filtrarPaleofichas()">
+
+Buscar
+
+</button>
+
 <div id="listaResultados"></div>
+
+
+
+
+
+  
 
 <button onclick="cerrarBuscador()">
 
@@ -896,6 +911,31 @@ cerrarImagen();
 
 };
 
+
+/*=========================================
+ENTER EN EL BUSCADOR
+=========================================*/
+
+document.getElementById("buscarNombre")
+
+.addEventListener(
+
+"keydown",
+
+function(e){
+
+if(e.key==="Enter"){
+
+filtrarPaleofichas();
+
+}
+
+}
+
+);
+
+  
+  
 /*=========================================
 ATAJOS DE TECLADO
 =========================================*/
