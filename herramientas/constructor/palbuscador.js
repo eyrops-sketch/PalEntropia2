@@ -1,11 +1,25 @@
 /*
 =========================================================
 PALBUSCADOR.js
-Motor de búsqueda universal
+Motor de Búsqueda Universal
 PalEntropía
 
-Versión: 1.1 LTS
-Compatible con Constructor 1.8
+Versión: 2.0 LTS
+
+Búsqueda por:
+
+- Código
+- Nombre
+- Eón
+- Era
+- Período
+- Edad geológica
+
+Compatible con:
+- Constructor 1.8
+- PALDB
+- PALGEO
+- PALDECODER
 =========================================================
 */
 
@@ -15,7 +29,7 @@ const PALBUSCADOR = {
 VERSIÓN
 =========================================================*/
 
-version:"1.1 LTS",
+version:"2.0 LTS",
 
 /*=========================================================
 NORMALIZAR TEXTO
@@ -39,6 +53,8 @@ return texto
 
 .replace(/[\u0300-\u036f]/g,"")
 
+.replace(/ñ/g,"n")
+
 .replace(/[.,;:()\-_/]/g," ")
 
 .replace(/\s+/g," ")
@@ -53,7 +69,9 @@ OBTENER PALABRAS
 
 obtenerPalabras(texto){
 
-return this.normalizar(texto)
+return this
+
+.normalizar(texto)
 
 .split(" ")
 
@@ -72,7 +90,7 @@ return [...new Set(lista)];
 },
 
 /*=========================================================
-CREAR ÍNDICE DE UNA FICHA
+CREAR ÍNDICE
 =========================================================*/
 
 crearIndice(codigo){
@@ -80,81 +98,42 @@ crearIndice(codigo){
 let datos=[];
 
 /*---------------------------------------
-PALEOFICHAS.JSON
+PALEOFICHAS
 ---------------------------------------*/
 
 const ficha=
 
-paleofichas.find(f=>f.codigo===codigo);
+paleofichas.find(
 
-if(ficha){
+f=>f.codigo===codigo
 
-Object.values(ficha).forEach(v=>{
+);
 
-if(v!==undefined && v!==null){
+if(!ficha){
 
-datos.push(String(v));
-
-}
-
-});
+return "";
 
 }
 
 /*---------------------------------------
-PALDB
+CÓDIGO
 ---------------------------------------*/
 
-const db=
-
-PALDB.find(f=>f.codigo===codigo);
-
-if(db){
-
-Object.values(db).forEach(v=>{
-
-if(v!==undefined && v!==null){
-
-datos.push(String(v));
-
-}
-
-});
-
-}
-
+datos.push(ficha.codigo);
 
 /*---------------------------------------
-PALTAXON
+NOMBRE
 ---------------------------------------*/
 
-if(typeof PALTAXON!=="undefined"){
+datos.push(ficha.nombre);
 
-const taxon=
 
-PALTAXON[codigo];
-
-if(taxon){
-
-Object.values(taxon).forEach(v=>{
-
-if(v!==undefined && v!==null){
-
-datos.push(String(v));
-
-}
-
-});
-
-}
-
-}
 
 /*---------------------------------------
 CRONOLOGÍA
 ---------------------------------------*/
 
-if(ficha && typeof PALDECODER!=="undefined"){
+if(typeof PALDECODER!=="undefined"){
 
 const geo=
 
@@ -164,148 +143,89 @@ ficha.cronologia
 
 );
 
-Object.values(geo).forEach(v=>{
+if(geo){
 
-if(v!==undefined && v!==null){
+/* Rango temporal */
 
-datos.push(String(v));
+if(geo.rango){
+
+datos.push(geo.rango);
 
 }
+
+/* Eón */
+
+if(Array.isArray(geo.eon)){
+
+geo.eon.forEach(v=>{
+
+datos.push(v);
 
 });
 
 }
 
-/*---------------------------------------
-HÁBITATS
----------------------------------------*/
+/* Era */
 
-if(ficha && typeof PALDECODER!=="undefined"){
+if(Array.isArray(geo.era)){
 
-const hab=
+geo.era.forEach(v=>{
 
-PALDECODER.decodeHabitats(
-
-ficha.HP,
-
-ficha.HS
-
-);
-
-hab.principales.forEach(h=>{
-
-datos.push(h.nombre);
-
-});
-
-hab.secundarios.forEach(h=>{
-
-datos.push(h.nombre);
+datos.push(v);
 
 });
 
 }
 
-/*---------------------------------------
-MODO DE VIDA
----------------------------------------*/
+/* Período */
 
-if(ficha &&
+if(Array.isArray(geo.periodo)){
 
-ficha.modo_vida &&
+geo.periodo.forEach(v=>{
 
-typeof PALDECODER2!=="undefined"){
-
-const modo=
-
-PALDECODER2.decodeModoVida(
-
-ficha.modo_vida
-
-);
-
-if(modo){
-
-datos.push(modo.nombre);
-
-}
-
-}
-
-/*---------------------------------------
-MEDIO ECOLÓGICO
----------------------------------------*/
-
-if(ficha &&
-
-ficha.medio_compuesto &&
-
-typeof PALDECODER2!=="undefined"){
-
-const medio=
-
-PALDECODER2.decodeMedio(
-
-ficha.medio_compuesto
-
-);
-
-if(medio.medio){
-
-datos.push(medio.medio.nombre);
-
-}
-
-if(medio.localizacion){
-
-datos.push(medio.localizacion.nombre);
-
-}
-
-if(medio.estrato){
-
-datos.push(medio.estrato.nombre);
-
-}
-
-if(medio.comportamiento){
-
-datos.push(medio.comportamiento.nombre);
-
-}
-
-}
-
-
-/*---------------------------------------
-PALSTATS
----------------------------------------*/
-
-if(typeof PALSTATS!=="undefined"){
-
-const stats=
-
-PALSTATS[codigo];
-
-if(stats){
-
-Object.keys(stats).forEach(clave=>{
-
-datos.push(clave);
-
-datos.push(String(stats[clave]));
+datos.push(v);
 
 });
 
 }
 
+/* Edad / Subperíodo */
+
+if(Array.isArray(geo.edad)){
+
+geo.edad.forEach(v=>{
+
+datos.push(v);
+
+});
+
+}
+
+/* Textos preparados */
+
+if(geo.periodo_texto){
+
+datos.push(geo.periodo_texto);
+
+}
+
+if(geo.subperiodo_texto){
+
+datos.push(geo.subperiodo_texto);
+
+}
+
+}
+
 }
 
 /*---------------------------------------
-ELIMINAR DUPLICADOS
+LIMPIAR REPETIDOS
 ---------------------------------------*/
 
-datos=this.unicos(datos);
+datos=
+
+this.unicos(datos);
 
 /*---------------------------------------
 DEVOLVER ÍNDICE NORMALIZADO
@@ -318,6 +238,7 @@ datos.join(" ")
 );
 
 },
+
 
 /*=========================================================
 BUSCADOR PRINCIPAL
@@ -341,13 +262,21 @@ paleofichas.forEach(ficha=>{
 
 const indice=
 
-this.crearIndice(ficha.codigo);
+this.crearIndice(
+
+ficha.codigo
+
+);
 
 let coincidencias=0;
 
 consulta.forEach(palabra=>{
 
-if(indice.includes(palabra)){
+if(
+
+indice.includes(palabra)
+
+){
 
 coincidencias++;
 
@@ -355,7 +284,11 @@ coincidencias++;
 
 });
 
-if(coincidencias===consulta.length){
+if(
+
+coincidencias===consulta.length
+
+){
 
 resultados.push({
 
@@ -379,10 +312,13 @@ consulta.length)
 
 });
 
-return this.ordenar(resultados);
+return this.ordenar(
+
+resultados
+
+);
 
 },
-
 
 /*=========================================================
 ORDENAR RESULTADOS
@@ -392,7 +328,11 @@ ordenar(resultados){
 
 return resultados.sort((a,b)=>{
 
-if(b.relevancia!==a.relevancia){
+if(
+
+b.relevancia!==a.relevancia
+
+){
 
 return b.relevancia-a.relevancia;
 
@@ -402,20 +342,54 @@ return a.nombre.localeCompare(
 
 b.nombre,
 
-"es"
+"es",
+
+{
+
+sensitivity:"base"
+
+}
 
 );
 
 });
 
-}
+},
+
+
+/*=========================================================
+FIN DEL MÓDULO
+=========================================================*/
 
 };
 
 /*=========================================================
 FIN PALBUSCADOR
-Versión 1.1 LTS
+Motor de búsqueda universal
+
+Versión: 2.0 LTS
+
+Indexa:
+
+✓ Código
+✓ Nombre
+✓ Eón
+✓ Era
+✓ Período
+✓ Edad geológica
+
+Características:
+
+✓ Autocompletado
+✓ Búsqueda por varias palabras
+✓ Ignora mayúsculas/minúsculas
+✓ Ignora tildes
+✓ Trata la ñ como equivalente a n
+✓ Elimina duplicados del índice
+
+Compatible con Constructor 1.8
 =========================================================*/
+  
 
 
 
