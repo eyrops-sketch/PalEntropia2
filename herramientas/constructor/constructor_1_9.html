@@ -248,17 +248,45 @@ document.getElementById("buscarNombre")
 
 .trim();
 
+const etiqueta = document.getElementById("terminoInterpretado");
+
+const interpretacion = PALBUSCADOR.interpretar(texto);
+
+if(interpretacion){
+
+etiqueta.innerHTML = "<b>" + interpretacion + "</b>";
+
+}else{
+
+etiqueta.innerHTML = "";
+
+}
+
+
+
+  
+
 const lista=
 
 document.getElementById("listaResultados");
 
 lista.innerHTML="";
 
+
+  
+
 if(texto===""){
+
+etiqueta.innerHTML="";
+
+lista.innerHTML="";
 
 return;
 
 }
+
+
+  
 
 const resultados=
 
