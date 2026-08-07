@@ -1,14 +1,21 @@
-/*=========================================================
+/*
+=========================================================
 PALBUSCADOR.js
 Motor de búsqueda universal
 PalEntropía
 
-Versión: 1.0 LTS
-=========================================================*/
+Versión: 1.1 LTS
+Compatible con Constructor 1.8
+=========================================================
+*/
 
 const PALBUSCADOR = {
 
-version: "1.0 LTS",
+/*=========================================================
+VERSIÓN
+=========================================================*/
+
+version:"1.1 LTS",
 
 /*=========================================================
 NORMALIZAR TEXTO
@@ -41,14 +48,12 @@ return texto
 },
 
 /*=========================================================
-DIVIDIR BÚSQUEDA EN PALABRAS
+OBTENER PALABRAS
 =========================================================*/
 
 obtenerPalabras(texto){
 
-return this
-
-.normalizar(texto)
+return this.normalizar(texto)
 
 .split(" ")
 
@@ -67,50 +72,7 @@ return [...new Set(lista)];
 },
 
 /*=========================================================
-CONSTRUIR CADENA INDEXABLE
-=========================================================*/
-
-crearIndice(codigo){
-
-/* Se desarrollará en la Parte 2 */
-
-return "";
-
-},
-
-/*=========================================================
-BUSCADOR PRINCIPAL
-=========================================================*/
-
-buscar(texto){
-
-/* Se desarrollará en la Parte 3 */
-
-return [];
-
-},
-
-/*=========================================================
-ORDENAR RESULTADOS
-=========================================================*/
-
-ordenar(resultados){
-
-/* Se desarrollará en la Parte 4 */
-
-return resultados;
-
-}
-
-};
-
-/*=========================================================
-FIN PALBUSCADOR
-=========================================================*/
-
-
-/*=========================================================
-CONSTRUIR CADENA INDEXABLE
+CREAR ÍNDICE DE UNA FICHA
 =========================================================*/
 
 crearIndice(codigo){
@@ -127,11 +89,11 @@ paleofichas.find(f=>f.codigo===codigo);
 
 if(ficha){
 
-Object.values(ficha).forEach(valor=>{
+Object.values(ficha).forEach(v=>{
 
-if(valor!==undefined && valor!==null){
+if(v!==undefined && v!==null){
 
-datos.push(String(valor));
+datos.push(String(v));
 
 }
 
@@ -149,11 +111,11 @@ PALDB.find(f=>f.codigo===codigo);
 
 if(db){
 
-Object.values(db).forEach(valor=>{
+Object.values(db).forEach(v=>{
 
-if(valor!==undefined && valor!==null){
+if(v!==undefined && v!==null){
 
-datos.push(String(valor));
+datos.push(String(v));
 
 }
 
@@ -161,24 +123,24 @@ datos.push(String(valor));
 
 }
 
+
 /*---------------------------------------
 PALTAXON
-(Se ampliará en Parte 3)
 ---------------------------------------*/
 
 if(typeof PALTAXON!=="undefined"){
 
 const taxon=
 
-PALTAXON.find(t=>t.codigo===codigo);
+PALTAXON[codigo];
 
 if(taxon){
 
-Object.values(taxon).forEach(valor=>{
+Object.values(taxon).forEach(v=>{
 
-if(valor!==undefined && valor!==null){
+if(v!==undefined && v!==null){
 
-datos.push(String(valor));
+datos.push(String(v));
 
 }
 
@@ -189,46 +151,24 @@ datos.push(String(valor));
 }
 
 /*---------------------------------------
-ELIMINAR DUPLICADOS
----------------------------------------*/
-
-datos=
-
-this.unicos(datos);
-
-/*---------------------------------------
-NORMALIZAR
----------------------------------------*/
-
-return this.normalizar(
-
-datos.join(" ")
-
-);
-
-},
-
-
-/*=========================================================
-AMPLIACIÓN DEL ÍNDICE
-PALDECODER / PALDECODER2
-=========================================================*/
-
-/*---------------------------------------
 CRONOLOGÍA
 ---------------------------------------*/
 
-if(ficha){
+if(ficha && typeof PALDECODER!=="undefined"){
 
 const geo=
 
-PALDECODER.decodeCronologia(ficha.cronologia);
+PALDECODER.decodeCronologia(
 
-Object.values(geo).forEach(valor=>{
+ficha.cronologia
 
-if(valor!==undefined && valor!==null){
+);
 
-datos.push(String(valor));
+Object.values(geo).forEach(v=>{
+
+if(v!==undefined && v!==null){
+
+datos.push(String(v));
 
 }
 
@@ -240,41 +180,27 @@ datos.push(String(valor));
 HÁBITATS
 ---------------------------------------*/
 
-if(db && typeof PALDECODER2!=="undefined"){
+if(ficha && typeof PALDECODER!=="undefined"){
 
 const hab=
 
-PALDECODER2.decodeHabitat(db.habitat_principal);
+PALDECODER.decodeHabitats(
 
-Object.values(hab).forEach(valor=>{
+ficha.HP,
 
-if(valor!==undefined && valor!==null){
+ficha.HS
 
-datos.push(String(valor));
+);
 
-}
+hab.principales.forEach(h=>{
+
+datos.push(h.nombre);
 
 });
 
-}
+hab.secundarios.forEach(h=>{
 
-/*---------------------------------------
-MEDIOS ECOLÓGICOS
----------------------------------------*/
-
-if(db && typeof PALDECODER2!=="undefined"){
-
-const medio=
-
-PALDECODER2.decodeMedio(db.medio_principal);
-
-Object.values(medio).forEach(valor=>{
-
-if(valor!==undefined && valor!==null){
-
-datos.push(String(valor));
-
-}
+datos.push(h.nombre);
 
 });
 
@@ -284,27 +210,75 @@ datos.push(String(valor));
 MODO DE VIDA
 ---------------------------------------*/
 
-if(db && typeof PALDECODER2!=="undefined"){
+if(ficha &&
+
+ficha.modo_vida &&
+
+typeof PALDECODER2!=="undefined"){
 
 const modo=
 
-PALDECODER2.decodeModoVida(db.modo_vida);
+PALDECODER2.decodeModoVida(
 
-Object.values(modo).forEach(valor=>{
+ficha.modo_vida
 
-if(valor!==undefined && valor!==null){
+);
 
-datos.push(String(valor));
+if(modo){
+
+datos.push(modo.nombre);
 
 }
-
-});
 
 }
 
 /*---------------------------------------
-ESTADÍSTICAS
-Preparado para futuras versiones
+MEDIO ECOLÓGICO
+---------------------------------------*/
+
+if(ficha &&
+
+ficha.medio_compuesto &&
+
+typeof PALDECODER2!=="undefined"){
+
+const medio=
+
+PALDECODER2.decodeMedio(
+
+ficha.medio_compuesto
+
+);
+
+if(medio.medio){
+
+datos.push(medio.medio.nombre);
+
+}
+
+if(medio.localizacion){
+
+datos.push(medio.localizacion.nombre);
+
+}
+
+if(medio.estrato){
+
+datos.push(medio.estrato.nombre);
+
+}
+
+if(medio.comportamiento){
+
+datos.push(medio.comportamiento.nombre);
+
+}
+
+}
+
+
+/*---------------------------------------
+PALSTATS
 ---------------------------------------*/
 
 if(typeof PALSTATS!=="undefined"){
@@ -327,6 +301,23 @@ datos.push(String(stats[clave]));
 
 }
 
+/*---------------------------------------
+ELIMINAR DUPLICADOS
+---------------------------------------*/
+
+datos=this.unicos(datos);
+
+/*---------------------------------------
+DEVOLVER ÍNDICE NORMALIZADO
+---------------------------------------*/
+
+return this.normalizar(
+
+datos.join(" ")
+
+);
+
+},
 
 /*=========================================================
 BUSCADOR PRINCIPAL
@@ -354,10 +345,6 @@ this.crearIndice(ficha.codigo);
 
 let coincidencias=0;
 
-/*---------------------------------------
-COMPROBAR PALABRAS
----------------------------------------*/
-
 consulta.forEach(palabra=>{
 
 if(indice.includes(palabra)){
@@ -368,23 +355,7 @@ coincidencias++;
 
 });
 
-/*---------------------------------------
-SOLO SI CUMPLE TODAS
----------------------------------------*/
-
 if(coincidencias===consulta.length){
-
-const relevancia=
-
-Math.round(
-
-(coincidencias/
-
-consulta.length)
-
-*100
-
-);
 
 resultados.push({
 
@@ -392,9 +363,15 @@ codigo:ficha.codigo,
 
 nombre:ficha.nombre,
 
-relevancia:relevancia,
+relevancia:Math.round(
 
-coincidencias:coincidencias
+(coincidencias/
+
+consulta.length)
+
+*100
+
+)
 
 });
 
@@ -402,13 +379,10 @@ coincidencias:coincidencias
 
 });
 
-/*---------------------------------------
-ORDENAR
----------------------------------------*/
-
 return this.ordenar(resultados);
 
 },
+
 
 /*=========================================================
 ORDENAR RESULTADOS
@@ -436,9 +410,12 @@ b.nombre,
 
 }
 
+};
 
-
-
+/*=========================================================
+FIN PALBUSCADOR
+Versión 1.1 LTS
+=========================================================*/
 
 
 
