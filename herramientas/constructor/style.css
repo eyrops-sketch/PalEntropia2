@@ -818,6 +818,38 @@ font-size:15px;
 }
 
 
+#terminoInterpretado{
+
+margin-top:10px;
+
+display:inline-block;
+
+padding:8px 16px;
+
+background:#7b2cbf;
+
+color:white;
+
+border-radius:10px;
+
+font-weight:bold;
+
+font-size:1em;
+
+min-width:220px;
+
+text-align:center;
+
+}
+
+
+
+
+
+
+
+
+
 
 /*=========================================================
 FIN STYLE.CSS v2.3
