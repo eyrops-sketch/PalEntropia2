@@ -356,7 +356,69 @@ sensitivity:"base"
 
 },
 
+/*=========================================================
+INTERPRETAR BÚSQUEDA
+Devuelve el texto completo reconocido
+=========================================================*/
 
+interpretar(texto){
+
+const consulta=this.normalizar(texto);
+
+if(consulta===""){
+
+return "";
+
+}
+
+for(const ficha of paleofichas){
+
+if(this.normalizar(ficha.codigo).startsWith(consulta)){
+
+return ficha.codigo;
+
+}
+
+if(this.normalizar(ficha.nombre).startsWith(consulta)){
+
+return ficha.nombre;
+
+}
+
+const geo=PALDECODER.decodeCronologia(ficha.cronologia);
+
+if(geo){
+
+const lista=[];
+
+lista.push(...geo.eon);
+
+lista.push(...geo.era);
+
+lista.push(...geo.periodo);
+
+lista.push(...geo.edad);
+
+for(const termino of lista){
+
+if(this.normalizar(termino).startsWith(consulta)){
+
+return termino;
+
+}
+
+}
+
+}
+
+}
+
+return "";
+
+},
+
+
+  
 /*=========================================================
 FIN DEL MÓDULO
 =========================================================*/
