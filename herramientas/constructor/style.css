@@ -1,6 +1,6 @@
 /*=========================================================
 PalEntropía
-Constructor 1.5
+Constructor 1.7
 Style v2.3
 =========================================================*/
 
@@ -17,6 +17,7 @@ color:#eee;
 font-family:Arial,Helvetica,sans-serif;
 
 }
+
 
 
 /*=========================================================
@@ -50,6 +51,7 @@ margin:30px;
 }
 
 
+
 input{
 
 width:180px;
@@ -69,6 +71,7 @@ border:2px solid #62d6ff;
 border-radius:10px;
 
 }
+
 
 
 button{
@@ -94,9 +97,28 @@ transition:.25s;
 }
 
 
+
 button:hover{
 
 background:#62d6ff;
+
+}
+
+
+
+/*=========================================================
+BOTÓN LUPA
+=========================================================*/
+
+#botonLupa{
+
+width:52px;
+
+padding:10px;
+
+font-size:22px;
+
+font-weight:bold;
 
 }
 
@@ -162,11 +184,19 @@ text-align:center;
 
 font-size:22px;
 
-/* CAMBIADO A BLANCO */
+color:#ffffff;
 
-color:#eee;
+line-height:1.6;
 
 margin-bottom:25px;
+
+}
+
+
+
+#cronologia strong{
+
+color:#62d6ff;
 
 }
 
@@ -207,6 +237,7 @@ text-align:center;
 }
 
 
+
 a.botonVideo,
 a.botonVideo:visited{
 
@@ -235,6 +266,7 @@ transition:.25s;
 }
 
 
+
 a.botonVideo:hover{
 
 background:#00e5ff;
@@ -258,6 +290,7 @@ font-size:20px;
 line-height:1.8;
 
 }
+
 
 
 .campo{
@@ -291,6 +324,7 @@ flex-wrap:nowrap;
 }
 
 
+
 #galeria img{
 
 width:40%;
@@ -307,8 +341,10 @@ cursor:pointer;
 
 }
 
+
+
 /*=========================================================
-ESTADÍSTICAS Y ANÁLISIS
+TÍTULOS DE SECCIÓN
 =========================================================*/
 
 h2{
@@ -324,9 +360,47 @@ margin-bottom:20px;
 }
 
 
-/* Cuadrícula */
 
-.stats,
+/*=========================================================
+ESTADÍSTICAS Y ANÁLISIS
+=========================================================*/
+
+.stats{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:10px;
+
+font-size:18px;
+
+margin-top:20px;
+
+}
+
+
+
+.stats div{
+
+padding:12px;
+
+background:#181818;
+
+border-left:4px solid #62d6ff;
+
+border-radius:8px;
+
+box-shadow:0 0 6px rgba(98,214,255,.10);
+
+}
+
+
+
+/*=========================================================
+ANÁLISIS
+=========================================================*/
+
 #bloqueAnalisis{
 
 display:grid;
@@ -342,9 +416,7 @@ margin-top:20px;
 }
 
 
-/* Tarjetas */
 
-.stats div,
 #bloqueAnalisis div{
 
 padding:12px;
@@ -360,13 +432,176 @@ box-shadow:0 0 6px rgba(98,214,255,.10);
 }
 
 
-/* Resaltar el nombre del índice */
+/*=========================================================
+EXPLORADOR DE PALEOFICHAS
+(Constructor 1.7)
+=========================================================*/
 
-#bloqueAnalisis b{
+#visorBuscador{
+
+display:none;
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100vw;
+
+height:100vh;
+
+background:rgba(0,0,0,.90);
+
+z-index:999998;
+
+justify-content:center;
+
+align-items:center;
+
+}
+
+
+
+/*=========================================================
+VENTANA DEL BUSCADOR
+=========================================================*/
+
+#ventanaBuscador{
+
+width:90%;
+
+max-width:700px;
+
+max-height:80vh;
+
+overflow:auto;
+
+padding:25px;
+
+background:#1b1b1b;
+
+border:2px solid #62d6ff;
+
+border-radius:18px;
+
+box-shadow:0 0 25px rgba(98,214,255,.40);
+
+}
+
+
+
+#ventanaBuscador h2{
+
+margin-top:0;
+
+margin-bottom:20px;
+
+}
+
+
+
+#buscarNombre{
+
+display:block;
+
+width:90%;
+
+margin:0 auto 25px auto;
+
+font-size:20px;
+
+}
+
+
+
+/*=========================================================
+LISTA RESULTADOS
+=========================================================*/
+
+#listaResultados{
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+}
+
+
+
+/*=========================================================
+RESULTADOS
+=========================================================*/
+
+.resultadoBusqueda{
+
+padding:15px;
+
+background:#181818;
+
+border-left:4px solid #62d6ff;
+
+border-radius:8px;
+
+cursor:pointer;
+
+transition:.20s;
+
+box-shadow:0 0 6px rgba(98,214,255,.12);
+
+}
+
+
+
+.resultadoBusqueda:hover{
+
+background:#22343d;
+
+transform:translateX(6px);
+
+box-shadow:0 0 12px rgba(98,214,255,.35);
+
+}
+
+
+
+.resultadoBusqueda b{
+
+display:block;
+
+font-size:19px;
 
 color:#62d6ff;
 
-font-weight:bold;
+margin-bottom:4px;
+
+}
+
+
+
+.resultadoBusqueda span{
+
+font-size:16px;
+
+color:#ffffff;
+
+opacity:.90;
+
+}
+
+
+
+/*=========================================================
+BOTÓN CERRAR BUSCADOR
+=========================================================*/
+
+#ventanaBuscador button{
+
+display:block;
+
+margin:25px auto 0 auto;
 
 }
 
@@ -399,6 +634,7 @@ align-items:center;
 }
 
 
+
 #imagenAmpliada{
 
 max-width:95vw;
@@ -411,7 +647,41 @@ border-radius:12px;
 
 border:2px solid #62d6ff;
 
-box-shadow:0 0 25px rgba(98,214,255,.6);
+box-shadow:0 0 25px rgba(98,214,255,.60);
+
+}
+
+
+
+/*=========================================================
+SCROLL EXPLORADOR
+=========================================================*/
+
+#ventanaBuscador::-webkit-scrollbar{
+
+width:10px;
+
+}
+
+#ventanaBuscador::-webkit-scrollbar-track{
+
+background:#151515;
+
+border-radius:10px;
+
+}
+
+#ventanaBuscador::-webkit-scrollbar-thumb{
+
+background:#62d6ff;
+
+border-radius:10px;
+
+}
+
+#ventanaBuscador::-webkit-scrollbar-thumb:hover{
+
+background:#00e5ff;
 
 }
 
@@ -429,13 +699,11 @@ padding:15px;
 
 }
 
-
 h1{
 
 font-size:30px;
 
 }
-
 
 #titulo{
 
@@ -443,13 +711,11 @@ font-size:clamp(24px,7vw,34px);
 
 }
 
-
 #cronologia{
 
 font-size:18px;
 
 }
-
 
 #bloqueInfo{
 
@@ -459,7 +725,6 @@ line-height:1.7;
 
 }
 
-
 #imagenPrincipal{
 
 width:90%;
@@ -468,13 +733,11 @@ max-width:520px;
 
 }
 
-
 #galeria{
 
 gap:10px;
 
 }
-
 
 #galeria img{
 
@@ -484,11 +747,7 @@ max-width:none;
 
 }
 
-
-/* Estadísticas y análisis en una columna */
-
-.stats,
-#bloqueAnalisis{
+.stats{
 
 grid-template-columns:1fr;
 
@@ -496,6 +755,13 @@ font-size:17px;
 
 }
 
+#bloqueAnalisis{
+
+grid-template-columns:1fr;
+
+font-size:17px;
+
+}
 
 button{
 
@@ -505,7 +771,61 @@ margin-left:0;
 
 }
 
+#botonLupa{
+
+width:100%;
+
+max-width:70px;
+
 }
+
+#ventanaBuscador{
+
+width:95%;
+
+padding:18px;
+
+max-height:85vh;
+
+}
+
+#buscarNombre{
+
+width:95%;
+
+font-size:18px;
+
+}
+
+.resultadoBusqueda{
+
+padding:12px;
+
+}
+
+.resultadoBusqueda b{
+
+font-size:18px;
+
+}
+
+.resultadoBusqueda span{
+
+font-size:15px;
+
+}
+
+}
+
+
+
+/*=========================================================
+FIN STYLE.CSS v2.3
+PalEntropía Constructor 1.7
+=========================================================*/
+
+
+
 
 
 
