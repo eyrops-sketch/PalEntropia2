@@ -250,6 +250,65 @@ document.getElementById("buscarNombre")
 
 .trim();
 
+
+/*=========================================
+RESTRICCIÓN DE AUTOCOMPLETADO
+=========================================*/
+
+const textoNormalizado =
+PALBUSCADOR.normalizar(texto);
+
+/*
+Código:
+sin restricción mínima
+*/
+
+const esCodigo =
+/^[0-9_]+$/.test(textoNormalizado);
+
+/*
+Nombre:
+mínimo 3 caracteres
+*/
+
+const tieneLongitudNombre =
+textoNormalizado.length >= 3;
+
+/*
+Tiempo geológico:
+mínimo 4 caracteres
+
+Ejemplos:
+perm → Pérmico
+chan → Changhsingiense
+vise → Viseense
+*/
+
+const tieneLongitudGeologica =
+textoNormalizado.length >= 4;
+
+
+/*
+Si no es código y tiene menos de
+3 caracteres, no buscamos.
+*/
+
+if(
+!esCodigo &&
+!tieneLongitudNombre
+){
+
+document.getElementById("terminoInterpretado").innerHTML="";
+document.getElementById("listaResultados").innerHTML="";
+return;
+
+}
+
+
+  
+
+
+
 const etiqueta = document.getElementById("terminoInterpretado");
 
 const interpretacion = PALBUSCADOR.interpretar(texto);
