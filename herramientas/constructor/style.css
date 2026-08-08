@@ -106,10 +106,36 @@ background:#62d6ff;
 
 
 /*=========================================================
-BOTONES DE BÚSQUEDA
+CONTROLES DEL BUSCADOR
 =========================================================*/
 
-#buscador button{
+#controlesBusqueda{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:10px;
+
+flex-wrap:wrap;
+
+margin-top:10px;
+
+}
+
+
+/*=========================================================
+BOTONES DEL BUSCADOR
+=========================================================*/
+
+#controlesBusqueda button,
+#controlesBusqueda .botonInicio{
+
+height:48px;
+
+box-sizing:border-box;
 
 background:#1d9bf0;
 
@@ -119,8 +145,6 @@ border:none;
 
 border-radius:10px;
 
-padding:10px 20px;
-
 font-size:18px;
 
 font-weight:bold;
@@ -129,13 +153,26 @@ cursor:pointer;
 
 transition:.25s;
 
-margin-left:10px;
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+text-decoration:none;
+
+margin:0;
 
 }
 
-#buscador button:hover{
 
-background:#62d6ff;
+/*=========================================================
+CARGAR FICHA
+=========================================================*/
+
+#controlesBusqueda button{
+
+padding:10px 20px;
 
 }
 
@@ -146,31 +183,9 @@ BOTÓN LUPA
 
 #botonLupa{
 
-background:#1d9bf0;
+width:58px;
 
-color:#fff;
-
-border:none;
-
-border-radius:10px;
-
-padding:10px 20px;
-
-font-size:18px;
-
-font-weight:bold;
-
-cursor:pointer;
-
-transition:.25s;
-
-margin-left:10px;
-
-}
-
-#botonLupa:hover{
-
-background:#62d6ff;
+padding:10px;
 
 }
 
@@ -179,35 +194,19 @@ background:#62d6ff;
 BOTÓN VOLVER A PALENTROPÍA
 =========================================================*/
 
-.botonInicio{
-
-display:inline-block;
+#controlesBusqueda .botonInicio{
 
 padding:10px 20px;
 
-margin-left:10px;
-
-background:#1d9bf0;
-
-color:#fff;
-
-border:none;
-
-border-radius:10px;
-
-font-size:18px;
-
-font-weight:bold;
-
-text-decoration:none;
-
-cursor:pointer;
-
-transition:.25s;
-
 }
 
-.botonInicio:hover{
+
+/*=========================================================
+EFECTO AL PASAR POR ENCIMA
+=========================================================*/
+
+#controlesBusqueda button:hover,
+#controlesBusqueda .botonInicio:hover{
 
 background:#62d6ff;
 
