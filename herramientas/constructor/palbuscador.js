@@ -75,7 +75,7 @@ return texto
 
 .replace(/ñ/g,"n")
 
-.replace(/[.,;:()\-_/]/g," ")
+.replace(/[.,;:()\-\/]/g," ")
 
 .replace(/\s+/g," ")
 
