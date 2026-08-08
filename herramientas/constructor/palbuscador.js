@@ -4,9 +4,9 @@ PALBUSCADOR.js
 Motor de Búsqueda Universal
 PalEntropía
 
-Versión: 2.0 LTS
+Versión: 2.1 LTS
 
-Búsqueda por:
+Búsqueda restringida por:
 
 - Código
 - Nombre
@@ -15,8 +15,14 @@ Búsqueda por:
 - Período
 - Edad geológica
 
+Restricciones:
+
+- Código: desde 1 carácter
+- Nombre: desde 3 caracteres
+- Tiempo geológico: desde 4 caracteres
+
 Compatible con:
-- Constructor 1.8
+- Constructor 1.9
 - PALDB
 - PALGEO
 - PALDECODER
@@ -29,7 +35,8 @@ const PALBUSCADOR = {
 VERSIÓN
 =========================================================*/
 
-version:"2.0 LTS",
+version:"2.1 LTS",
+
 
 /*=========================================================
 NORMALIZAR TEXTO
@@ -63,6 +70,7 @@ return texto
 
 },
 
+
 /*=========================================================
 OBTENER PALABRAS
 =========================================================*/
@@ -79,6 +87,7 @@ return this
 
 },
 
+
 /*=========================================================
 ELIMINAR DUPLICADOS
 =========================================================*/
@@ -89,6 +98,124 @@ return [...new Set(lista)];
 
 },
 
+
+/*=========================================================
+OBTENER CRONOLOGÍA
+=========================================================*/
+
+obtenerGeologia(ficha){
+
+if(
+
+typeof PALDECODER==="undefined" ||
+
+!ficha ||
+
+!ficha.cronologia
+
+){
+
+return [];
+
+}
+
+const geo =
+
+PALDECODER.decodeCronologia(
+
+ficha.cronologia
+
+);
+
+if(!geo){
+
+return [];
+
+}
+
+let terminos=[];
+
+
+/*---------------------------------------
+EÓN
+---------------------------------------*/
+
+if(Array.isArray(geo.eon)){
+
+terminos.push(...geo.eon);
+
+}
+
+
+/*---------------------------------------
+ERA
+---------------------------------------*/
+
+if(Array.isArray(geo.era)){
+
+terminos.push(...geo.era);
+
+}
+
+
+/*---------------------------------------
+PERÍODO
+---------------------------------------*/
+
+if(Array.isArray(geo.periodo)){
+
+terminos.push(...geo.periodo);
+
+}
+
+
+/*---------------------------------------
+EDAD
+---------------------------------------*/
+
+if(Array.isArray(geo.edad)){
+
+terminos.push(...geo.edad);
+
+}
+
+
+/*---------------------------------------
+TEXTOS PREPARADOS
+---------------------------------------*/
+
+if(geo.periodo_texto){
+
+terminos.push(
+
+geo.periodo_texto
+
+);
+
+}
+
+if(geo.subperiodo_texto){
+
+terminos.push(
+
+geo.subperiodo_texto
+
+);
+
+}
+
+
+return this.unicos(
+
+terminos
+
+.filter(Boolean)
+
+);
+
+},
+
+
 /*=========================================================
 CREAR ÍNDICE
 =========================================================*/
@@ -97,8 +224,9 @@ crearIndice(codigo){
 
 let datos=[];
 
+
 /*---------------------------------------
-PALEOFICHAS
+BUSCAR FICHA
 ---------------------------------------*/
 
 const ficha=
@@ -115,109 +243,47 @@ return "";
 
 }
 
+
 /*---------------------------------------
 CÓDIGO
 ---------------------------------------*/
 
-datos.push(ficha.codigo);
+datos.push(
+
+ficha.codigo
+
+);
+
 
 /*---------------------------------------
 NOMBRE
 ---------------------------------------*/
 
-datos.push(ficha.nombre);
+datos.push(
 
+ficha.nombre
+
+);
 
 
 /*---------------------------------------
 CRONOLOGÍA
 ---------------------------------------*/
 
-if(typeof PALDECODER!=="undefined"){
+const geologia=
 
-const geo=
+this.obtenerGeologia(
 
-PALDECODER.decodeCronologia(
-
-ficha.cronologia
+ficha
 
 );
 
-if(geo){
+datos.push(
 
-/* Rango temporal */
+...geologia
 
-if(geo.rango){
+);
 
-datos.push(geo.rango);
-
-}
-
-/* Eón */
-
-if(Array.isArray(geo.eon)){
-
-geo.eon.forEach(v=>{
-
-datos.push(v);
-
-});
-
-}
-
-/* Era */
-
-if(Array.isArray(geo.era)){
-
-geo.era.forEach(v=>{
-
-datos.push(v);
-
-});
-
-}
-
-/* Período */
-
-if(Array.isArray(geo.periodo)){
-
-geo.periodo.forEach(v=>{
-
-datos.push(v);
-
-});
-
-}
-
-/* Edad / Subperíodo */
-
-if(Array.isArray(geo.edad)){
-
-geo.edad.forEach(v=>{
-
-datos.push(v);
-
-});
-
-}
-
-/* Textos preparados */
-
-if(geo.periodo_texto){
-
-datos.push(geo.periodo_texto);
-
-}
-
-if(geo.subperiodo_texto){
-
-datos.push(geo.subperiodo_texto);
-
-}
-
-}
-
-}
 
 /*---------------------------------------
 LIMPIAR REPETIDOS
@@ -226,6 +292,7 @@ LIMPIAR REPETIDOS
 datos=
 
 this.unicos(datos);
+
 
 /*---------------------------------------
 DEVOLVER ÍNDICE NORMALIZADO
@@ -241,6 +308,163 @@ datos.join(" ")
 
 
 /*=========================================================
+DETERMINAR TIPO DE CONSULTA
+=========================================================*/
+
+tipoConsulta(texto){
+
+const consulta=
+
+this.normalizar(texto);
+
+
+/*---------------------------------------
+VACÍO
+---------------------------------------*/
+
+if(!consulta){
+
+return "vacio";
+
+}
+
+
+/*---------------------------------------
+CÓDIGO
+---------------------------------------
+
+Un código está compuesto únicamente
+por números y guion bajo.
+
+Ejemplos:
+
+0
+00
+003
+003_
+003_1
+003_12
+---------------------------------------*/
+
+if(
+
+/^[0-9_]+$/.test(consulta)
+
+){
+
+return "codigo";
+
+}
+
+
+/*---------------------------------------
+TIEMPO GEOLÓGICO
+
+Mínimo 4 caracteres.
+
+Ejemplo:
+
+perm
+devon
+triass
+jurass
+
+---------------------------------------*/
+
+if(
+
+consulta.length>=4 &&
+
+this.esTerminoGeologico(
+
+consulta)
+
+){
+
+return "geologia";
+
+}
+
+
+/*---------------------------------------
+NOMBRE
+
+Mínimo 3 caracteres.
+
+---------------------------------------*/
+
+if(
+
+consulta.length>=3
+
+){
+
+return "nombre";
+
+}
+
+
+/*---------------------------------------
+DEMASIADO CORTO
+---------------------------------------*/
+
+return "corto";
+
+},
+
+
+/*=========================================================
+COMPROBAR SI EXISTE TÉRMINO GEOLÓGICO
+=========================================================*/
+
+esTerminoGeologico(texto){
+
+const consulta=
+
+this.normalizar(texto);
+
+if(
+
+consulta.length<4
+
+){
+
+return false;
+
+}
+
+for(const ficha of paleofichas){
+
+const terminos=
+
+this.obtenerGeologia(ficha);
+
+for(const termino of terminos){
+
+const normalizado=
+
+this.normalizar(termino);
+
+if(
+
+normalizado.startsWith(consulta)
+
+){
+
+return true;
+
+}
+
+}
+
+}
+
+return false;
+
+},
+
+
+/*=========================================================
 BUSCADOR PRINCIPAL
 =========================================================*/
 
@@ -248,45 +472,56 @@ buscar(texto){
 
 const consulta=
 
-this.obtenerPalabras(texto);
+this.normalizar(texto);
 
-if(consulta.length===0){
+if(!consulta){
 
 return [];
 
 }
 
+const tipo=
+
+this.tipoConsulta(consulta);
+
+
+/*---------------------------------------
+CONSULTA DEMASIADO CORTA
+---------------------------------------*/
+
+if(tipo==="corto"){
+
+return [];
+
+}
+
+
+/*---------------------------------------
+RESULTADOS
+---------------------------------------*/
+
 let resultados=[];
+
+
+/*=========================================================
+BÚSQUEDA POR CÓDIGO
+=========================================================*/
+
+if(tipo==="codigo"){
 
 paleofichas.forEach(ficha=>{
 
-const indice=
+const codigo=
 
-this.crearIndice(
+this.normalizar(
 
 ficha.codigo
 
 );
 
-let coincidencias=0;
-
-consulta.forEach(palabra=>{
-
 if(
 
-indice.includes(palabra)
-
-){
-
-coincidencias++;
-
-}
-
-});
-
-if(
-
-coincidencias===consulta.length
+codigo.startsWith(consulta)
 
 ){
 
@@ -296,21 +531,132 @@ codigo:ficha.codigo,
 
 nombre:ficha.nombre,
 
-relevancia:Math.round(
+tipo:"codigo",
 
-(coincidencias/
-
-consulta.length)
-
-*100
-
-)
+relevancia:100
 
 });
 
 }
 
 });
+
+}
+
+
+/*=========================================================
+BÚSQUEDA POR NOMBRE
+=========================================================*/
+
+else if(tipo==="nombre"){
+
+paleofichas.forEach(ficha=>{
+
+const nombre=
+
+this.normalizar(
+
+ficha.nombre
+
+);
+
+if(
+
+nombre.startsWith(consulta)
+
+){
+
+resultados.push({
+
+codigo:ficha.codigo,
+
+nombre:ficha.nombre,
+
+tipo:"nombre",
+
+relevancia:100
+
+});
+
+}
+
+});
+
+}
+
+
+/*=========================================================
+BÚSQUEDA POR TIEMPO GEOLÓGICO
+=========================================================*/
+
+else if(tipo==="geologia"){
+
+paleofichas.forEach(ficha=>{
+
+const terminos=
+
+this.obtenerGeologia(
+
+ficha
+
+);
+
+let encontrado=false;
+
+
+/*---------------------------------------
+COMPROBAR TÉRMINOS
+---------------------------------------*/
+
+for(const termino of terminos){
+
+const normalizado=
+
+this.normalizar(termino);
+
+if(
+
+normalizado.startsWith(consulta)
+
+){
+
+encontrado=true;
+
+break;
+
+}
+
+}
+
+
+/*---------------------------------------
+AÑADIR RESULTADO
+---------------------------------------*/
+
+if(encontrado){
+
+resultados.push({
+
+codigo:ficha.codigo,
+
+nombre:ficha.nombre,
+
+tipo:"geologia",
+
+relevancia:100
+
+});
+
+}
+
+});
+
+}
+
+
+/*---------------------------------------
+ORDENAR
+---------------------------------------*/
 
 return this.ordenar(
 
@@ -319,6 +665,7 @@ resultados
 );
 
 },
+
 
 /*=========================================================
 ORDENAR RESULTADOS
@@ -352,56 +699,129 @@ sensitivity:"base"
 
 );
 
-});
-
 },
+
 
 /*=========================================================
 INTERPRETAR BÚSQUEDA
-Devuelve el texto completo reconocido
 =========================================================*/
 
 interpretar(texto){
 
-const consulta=this.normalizar(texto);
+const consulta=
 
-if(consulta===""){
+this.normalizar(texto);
+
+if(!consulta){
 
 return "";
 
 }
 
+
+/*---------------------------------------
+CÓDIGO
+---------------------------------------*/
+
+if(
+
+/^[0-9_]+$/.test(consulta)
+
+){
+
 for(const ficha of paleofichas){
 
-if(this.normalizar(ficha.codigo).startsWith(consulta)){
+const codigo=
+
+this.normalizar(
+
+ficha.codigo
+
+);
+
+if(
+
+codigo.startsWith(consulta)
+
+){
 
 return ficha.codigo;
 
 }
 
-if(this.normalizar(ficha.nombre).startsWith(consulta)){
+}
+
+return "";
+
+}
+
+
+/*---------------------------------------
+NOMBRE
+Mínimo 3 caracteres
+---------------------------------------*/
+
+if(
+
+consulta.length>=3
+
+){
+
+for(const ficha of paleofichas){
+
+const nombre=
+
+this.normalizar(
+
+ficha.nombre
+
+);
+
+if(
+
+nombre.startsWith(consulta)
+
+){
 
 return ficha.nombre;
 
 }
 
-const geo=PALDECODER.decodeCronologia(ficha.cronologia);
+}
 
-if(geo){
+}
 
-const lista=[];
 
-lista.push(...geo.eon);
+/*---------------------------------------
+GEOLOGÍA
+Mínimo 4 caracteres
+---------------------------------------*/
 
-lista.push(...geo.era);
+if(
 
-lista.push(...geo.periodo);
+consulta.length>=4
 
-lista.push(...geo.edad);
+){
 
-for(const termino of lista){
+for(const ficha of paleofichas){
 
-if(this.normalizar(termino).startsWith(consulta)){
+const terminos=
+
+this.obtenerGeologia(
+
+ficha
+
+);
+
+for(const termino of terminos){
+
+if(
+
+this.normalizar(termino)
+
+.startsWith(consulta)
+
+){
 
 return termino;
 
@@ -415,23 +835,29 @@ return termino;
 
 return "";
 
-},
+}
 
 
-  
 /*=========================================================
 FIN DEL MÓDULO
 =========================================================*/
 
 };
 
-/*=========================================================
+
+/*
+=========================================================
 FIN PALBUSCADOR
-Motor de búsqueda universal
 
-Versión: 2.0 LTS
+Versión 2.1 LTS
 
-Indexa:
+Restricciones:
+
+✓ Código desde 1 carácter
+✓ Nombre desde 3 caracteres
+✓ Geología desde 4 caracteres
+
+Búsqueda separada:
 
 ✓ Código
 ✓ Nombre
@@ -443,18 +869,14 @@ Indexa:
 Características:
 
 ✓ Autocompletado
-✓ Búsqueda por varias palabras
+✓ Búsqueda por prefijo
 ✓ Ignora mayúsculas/minúsculas
 ✓ Ignora tildes
 ✓ Trata la ñ como equivalente a n
-✓ Elimina duplicados del índice
+✓ Elimina duplicados
+✓ Evita coincidencias indiscriminadas
+✓ No mezcla nombre y cronología
 
-Compatible con Constructor 1.8
-=========================================================*/
-  
-
-
-
-
-
-
+Compatible con Constructor 1.9
+=========================================================
+*/
