@@ -271,6 +271,15 @@ const esCodigo =
 
 
 /*-----------------------------------------
+NOMBRE
+Mínimo 3 caracteres
+-----------------------------------------*/
+
+const puedeBuscarNombre =
+textoNormalizado.length >= 3;
+
+
+/*-----------------------------------------
 TIEMPO GEOLÓGICO
 Mínimo 4 caracteres
 -----------------------------------------*/
@@ -324,22 +333,13 @@ break;
 
 
 /*-----------------------------------------
-NOMBRE
-Mínimo 3 caracteres
------------------------------------------*/
-
-const puedeBuscarNombre =
-textoNormalizado.length >= 3;
-
-
-/*-----------------------------------------
 COMPROBAR LONGITUD
 -----------------------------------------*/
 
 if(
 !esCodigo &&
-!esGeologia &&
-!puedeBuscarNombre
+!puedeBuscarNombre &&
+!esGeologia
 ){
 
 document.getElementById(
@@ -353,7 +353,6 @@ document.getElementById(
 return;
 
 }
-
 
   
 
