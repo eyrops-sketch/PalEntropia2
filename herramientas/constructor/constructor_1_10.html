@@ -201,7 +201,7 @@ SCRIPT PRINCIPAL
 let paleofichas=[];
 
 /*=========================================
-CARGA JSON
+CARGA JSON + PALEOFICHA ALEATORIA INICIAL
 =========================================*/
 
 fetch("paleofichas.json")
@@ -211,6 +211,52 @@ fetch("paleofichas.json")
 .then(datos=>{
 
 paleofichas=datos;
+
+/*=========================================
+ELEGIR PALEOFICHA ALEATORIA
+=========================================*/
+
+if(paleofichas.length > 0){
+
+const indiceAleatorio =
+
+Math.floor(
+
+Math.random() * paleofichas.length
+
+);
+
+const fichaAleatoria =
+
+paleofichas[indiceAleatorio];
+
+/*=========================================
+CARGAR CÓDIGO EN EL BUSCADOR
+=========================================*/
+
+document.getElementById("codigo").value =
+
+fichaAleatoria.codigo;
+
+/*=========================================
+USAR EL SISTEMA NORMAL DE CARGA
+=========================================*/
+
+buscarFicha();
+
+}
+
+})
+
+.catch(error=>{
+
+console.error(
+
+"Error cargando paleofichas.json:",
+
+error
+
+);
 
 });
 
