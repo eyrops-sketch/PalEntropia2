@@ -670,7 +670,6 @@ resultados
 /*=========================================================
 ORDENAR RESULTADOS
 =========================================================*/
-
 ordenar(resultados){
 
 return resultados.sort((a,b)=>{
@@ -698,6 +697,8 @@ sensitivity:"base"
 }
 
 );
+
+});
 
 },
 
