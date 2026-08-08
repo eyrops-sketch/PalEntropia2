@@ -4,9 +4,9 @@ PALBUSCADOR.js
 Motor de Búsqueda Universal
 PalEntropía
 
-Versión: 2.1 LTS
+Versión: 2.2 LTS
 
-Búsqueda restringida por:
+Búsqueda por:
 
 - Código
 - Nombre
@@ -35,7 +35,7 @@ const PALBUSCADOR = {
 VERSIÓN
 =========================================================*/
 
-version:"2.1 LTS",
+version:"2.2 LTS",
 
 
 /*=========================================================
@@ -62,7 +62,13 @@ return texto
 
 .replace(/ñ/g,"n")
 
-.replace(/[.,;:()\-_/]/g," ")
+/*
+IMPORTANTE:
+NO eliminamos "_"
+porque forma parte de los códigos.
+*/
+
+.replace(/[.,;:()\-\/]/g," ")
 
 .replace(/\s+/g," ")
 
@@ -119,7 +125,7 @@ return [];
 
 }
 
-const geo =
+const geo=
 
 PALDECODER.decodeCronologia(
 
@@ -136,9 +142,9 @@ return [];
 let terminos=[];
 
 
-/*---------------------------------------
+/*-----------------------------------------
 EÓN
----------------------------------------*/
+-----------------------------------------*/
 
 if(Array.isArray(geo.eon)){
 
@@ -147,9 +153,9 @@ terminos.push(...geo.eon);
 }
 
 
-/*---------------------------------------
+/*-----------------------------------------
 ERA
----------------------------------------*/
+-----------------------------------------*/
 
 if(Array.isArray(geo.era)){
 
@@ -158,9 +164,9 @@ terminos.push(...geo.era);
 }
 
 
-/*---------------------------------------
+/*-----------------------------------------
 PERÍODO
----------------------------------------*/
+-----------------------------------------*/
 
 if(Array.isArray(geo.periodo)){
 
@@ -169,9 +175,9 @@ terminos.push(...geo.periodo);
 }
 
 
-/*---------------------------------------
+/*-----------------------------------------
 EDAD
----------------------------------------*/
+-----------------------------------------*/
 
 if(Array.isArray(geo.edad)){
 
@@ -180,9 +186,9 @@ terminos.push(...geo.edad);
 }
 
 
-/*---------------------------------------
+/*-----------------------------------------
 TEXTOS PREPARADOS
----------------------------------------*/
+-----------------------------------------*/
 
 if(geo.periodo_texto){
 
@@ -207,9 +213,7 @@ geo.subperiodo_texto
 
 return this.unicos(
 
-terminos
-
-.filter(Boolean)
+terminos.filter(Boolean)
 
 );
 
@@ -217,98 +221,7 @@ terminos
 
 
 /*=========================================================
-CREAR ÍNDICE
-=========================================================*/
-
-crearIndice(codigo){
-
-let datos=[];
-
-
-/*---------------------------------------
-BUSCAR FICHA
----------------------------------------*/
-
-const ficha=
-
-paleofichas.find(
-
-f=>f.codigo===codigo
-
-);
-
-if(!ficha){
-
-return "";
-
-}
-
-
-/*---------------------------------------
-CÓDIGO
----------------------------------------*/
-
-datos.push(
-
-ficha.codigo
-
-);
-
-
-/*---------------------------------------
-NOMBRE
----------------------------------------*/
-
-datos.push(
-
-ficha.nombre
-
-);
-
-
-/*---------------------------------------
-CRONOLOGÍA
----------------------------------------*/
-
-const geologia=
-
-this.obtenerGeologia(
-
-ficha
-
-);
-
-datos.push(
-
-...geologia
-
-);
-
-
-/*---------------------------------------
-LIMPIAR REPETIDOS
----------------------------------------*/
-
-datos=
-
-this.unicos(datos);
-
-
-/*---------------------------------------
-DEVOLVER ÍNDICE NORMALIZADO
----------------------------------------*/
-
-return this.normalizar(
-
-datos.join(" ")
-
-);
-
-},
-
-
-/*=========================================================
-DETERMINAR TIPO DE CONSULTA
+TIPO DE CONSULTA
 =========================================================*/
 
 tipoConsulta(texto){
@@ -318,9 +231,9 @@ const consulta=
 this.normalizar(texto);
 
 
-/*---------------------------------------
+/*-----------------------------------------
 VACÍO
----------------------------------------*/
+-----------------------------------------*/
 
 if(!consulta){
 
@@ -329,12 +242,9 @@ return "vacio";
 }
 
 
-/*---------------------------------------
+/*-----------------------------------------
 CÓDIGO
----------------------------------------
-
-Un código está compuesto únicamente
-por números y guion bajo.
+-----------------------------------------
 
 Ejemplos:
 
@@ -344,7 +254,7 @@ Ejemplos:
 003_
 003_1
 003_12
----------------------------------------*/
+-----------------------------------------*/
 
 if(
 
@@ -357,41 +267,10 @@ return "codigo";
 }
 
 
-/*---------------------------------------
-TIEMPO GEOLÓGICO
-
-Mínimo 4 caracteres.
-
-Ejemplo:
-
-perm
-devon
-triass
-jurass
-
----------------------------------------*/
-
-if(
-
-consulta.length>=4 &&
-
-this.esTerminoGeologico(
-
-consulta)
-
-){
-
-return "geologia";
-
-}
-
-
-/*---------------------------------------
+/*-----------------------------------------
 NOMBRE
-
-Mínimo 3 caracteres.
-
----------------------------------------*/
+MÍNIMO 3 CARACTERES
+-----------------------------------------*/
 
 if(
 
@@ -404,62 +283,11 @@ return "nombre";
 }
 
 
-/*---------------------------------------
+/*-----------------------------------------
 DEMASIADO CORTO
----------------------------------------*/
+-----------------------------------------*/
 
 return "corto";
-
-},
-
-
-/*=========================================================
-COMPROBAR SI EXISTE TÉRMINO GEOLÓGICO
-=========================================================*/
-
-esTerminoGeologico(texto){
-
-const consulta=
-
-this.normalizar(texto);
-
-if(
-
-consulta.length<4
-
-){
-
-return false;
-
-}
-
-for(const ficha of paleofichas){
-
-const terminos=
-
-this.obtenerGeologia(ficha);
-
-for(const termino of terminos){
-
-const normalizado=
-
-this.normalizar(termino);
-
-if(
-
-normalizado.startsWith(consulta)
-
-){
-
-return true;
-
-}
-
-}
-
-}
-
-return false;
 
 },
 
@@ -485,9 +313,9 @@ const tipo=
 this.tipoConsulta(consulta);
 
 
-/*---------------------------------------
+/*-----------------------------------------
 CONSULTA DEMASIADO CORTA
----------------------------------------*/
+-----------------------------------------*/
 
 if(tipo==="corto"){
 
@@ -496,18 +324,13 @@ return [];
 }
 
 
-/*---------------------------------------
-RESULTADOS
----------------------------------------*/
-
-let resultados=[];
-
-
 /*=========================================================
-BÚSQUEDA POR CÓDIGO
+CÓDIGO
 =========================================================*/
 
 if(tipo==="codigo"){
+
+const resultados=[];
 
 paleofichas.forEach(ficha=>{
 
@@ -541,14 +364,18 @@ relevancia:100
 
 });
 
+return this.ordenar(resultados);
+
 }
 
 
 /*=========================================================
-BÚSQUEDA POR NOMBRE
+NOMBRE
 =========================================================*/
 
-else if(tipo==="nombre"){
+if(tipo==="nombre"){
+
+const resultados=[];
 
 paleofichas.forEach(ficha=>{
 
@@ -559,6 +386,21 @@ this.normalizar(
 ficha.nombre
 
 );
+
+
+/*
+El nombre debe comenzar por
+la consulta.
+
+Ejemplo:
+
+hel → Helicoprion
+
+goni → Goniatites
+
+dim → Dimetrodon
+
+*/
 
 if(
 
@@ -582,41 +424,57 @@ relevancia:100
 
 });
 
+return this.ordenar(resultados);
+
 }
 
 
 /*=========================================================
-BÚSQUEDA POR TIEMPO GEOLÓGICO
+TIEMPO GEOLÓGICO
+=========================================================
+
+IMPORTANTE:
+
+La búsqueda geológica necesita
+4 caracteres.
+
+Por tanto:
+
+ord → NO
+
+perm → SÍ
+
+devo → SÍ
+
+jurá → SÍ
+
 =========================================================*/
 
-else if(tipo==="geologia"){
+if(
+
+consulta.length>=4
+
+){
+
+const resultados=[];
 
 paleofichas.forEach(ficha=>{
 
 const terminos=
 
-this.obtenerGeologia(
-
-ficha
-
-);
+this.obtenerGeologia(ficha);
 
 let encontrado=false;
 
-
-/*---------------------------------------
-COMPROBAR TÉRMINOS
----------------------------------------*/
-
 for(const termino of terminos){
 
-const normalizado=
+const geo=
 
 this.normalizar(termino);
 
 if(
 
-normalizado.startsWith(consulta)
+geo.startsWith(consulta)
 
 ){
 
@@ -627,11 +485,6 @@ break;
 }
 
 }
-
-
-/*---------------------------------------
-AÑADIR RESULTADO
----------------------------------------*/
 
 if(encontrado){
 
@@ -651,18 +504,16 @@ relevancia:100
 
 });
 
+return this.ordenar(resultados);
+
 }
 
 
-/*---------------------------------------
-ORDENAR
----------------------------------------*/
+/*-----------------------------------------
+CUALQUIER OTRA CONSULTA
+-----------------------------------------*/
 
-return this.ordenar(
-
-resultados
-
-);
+return [];
 
 },
 
@@ -670,6 +521,7 @@ resultados
 /*=========================================================
 ORDENAR RESULTADOS
 =========================================================*/
+
 ordenar(resultados){
 
 return resultados.sort((a,b)=>{
@@ -698,8 +550,6 @@ sensitivity:"base"
 
 );
 
-});
-
 },
 
 
@@ -720,9 +570,9 @@ return "";
 }
 
 
-/*---------------------------------------
+/*-----------------------------------------
 CÓDIGO
----------------------------------------*/
+-----------------------------------------*/
 
 if(
 
@@ -757,10 +607,10 @@ return "";
 }
 
 
-/*---------------------------------------
+/*-----------------------------------------
 NOMBRE
-Mínimo 3 caracteres
----------------------------------------*/
+MÍNIMO 3
+-----------------------------------------*/
 
 if(
 
@@ -793,10 +643,10 @@ return ficha.nombre;
 }
 
 
-/*---------------------------------------
+/*-----------------------------------------
 GEOLOGÍA
-Mínimo 4 caracteres
----------------------------------------*/
+MÍNIMO 4
+-----------------------------------------*/
 
 if(
 
@@ -808,11 +658,7 @@ for(const ficha of paleofichas){
 
 const terminos=
 
-this.obtenerGeologia(
-
-ficha
-
-);
+this.obtenerGeologia(ficha);
 
 for(const termino of terminos){
 
@@ -850,7 +696,7 @@ FIN DEL MÓDULO
 =========================================================
 FIN PALBUSCADOR
 
-Versión 2.1 LTS
+Versión 2.2 LTS
 
 Restricciones:
 
@@ -858,25 +704,15 @@ Restricciones:
 ✓ Nombre desde 3 caracteres
 ✓ Geología desde 4 caracteres
 
-Búsqueda separada:
-
-✓ Código
-✓ Nombre
-✓ Eón
-✓ Era
-✓ Período
-✓ Edad geológica
-
 Características:
 
-✓ Autocompletado
 ✓ Búsqueda por prefijo
 ✓ Ignora mayúsculas/minúsculas
 ✓ Ignora tildes
-✓ Trata la ñ como equivalente a n
-✓ Elimina duplicados
-✓ Evita coincidencias indiscriminadas
+✓ Mantiene "_" en códigos
+✓ No mezcla código y nombre
 ✓ No mezcla nombre y cronología
+✓ Autocompletado
 
 Compatible con Constructor 1.9
 =========================================================
