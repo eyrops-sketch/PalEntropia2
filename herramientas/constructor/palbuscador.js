@@ -232,7 +232,56 @@ terminos
 
 },
 
+/*=========================================================
+OBTENER TAXONOMÍA
+=========================================================*/
 
+obtenerTaxonomia(codigo){
+
+if(
+
+typeof PALTAXON==="undefined" ||
+
+!codigo
+
+){
+
+return [];
+
+}
+
+const taxon=
+
+PALTAXON[codigo];
+
+if(!taxon || !taxon.ta1){
+
+return [];
+
+}
+
+const terminos=
+
+taxon.ta1
+
+.split(">")
+
+.map(t=>t.trim())
+
+.filter(Boolean);
+
+return this.unicos(
+
+terminos
+
+);
+
+},
+
+
+
+
+   
 /*=========================================================
 CREAR ÍNDICE
 =========================================================*/
@@ -414,6 +463,7 @@ return "nombre";
 }
 
 
+
 /*---------------------------------------
 GEOLOGÍA
 ---------------------------------------
@@ -439,6 +489,36 @@ return "geologia";
 }
 
 
+/*---------------------------------------
+TAXONOMÍA
+---------------------------------------
+
+Solo se considera taxonomía cuando:
+
+1. Tiene mínimo 5 caracteres.
+2. Coincide realmente con un término
+   taxonómico existente.
+
+---------------------------------------*/
+
+if(
+
+consulta.length>=5 &&
+
+this.esTerminoTaxonomico(consulta)
+
+){
+
+return "taxon";
+
+}
+
+
+
+
+
+   
+   
 /*---------------------------------------
 OTRA CONSULTA DE NOMBRE
 ---------------------------------------
@@ -532,6 +612,72 @@ return false;
 },
 
 
+
+/*=========================================================
+COMPROBAR TÉRMINO TAXONÓMICO
+=========================================================*/
+
+esTerminoTaxonomico(texto){
+
+const consulta=
+
+this.normalizar(texto);
+
+if(
+
+consulta.length<5
+
+){
+
+return false;
+
+}
+
+for(const ficha of paleofichas){
+
+const terminos=
+
+this.obtenerTaxonomia(
+
+ficha.codigo
+
+);
+
+for(const termino of terminos){
+
+const normalizado=
+
+this.normalizar(
+
+termino
+
+);
+
+if(
+
+normalizado.startsWith(
+
+consulta
+
+)
+
+){
+
+return true;
+
+}
+
+}
+
+}
+
+return false;
+
+},
+
+
+
+   
 /*=========================================================
 BUSCAR POR CÓDIGO
 =========================================================*/
@@ -701,6 +847,83 @@ return resultados;
 },
 
 
+
+/*=========================================================
+BUSCAR POR TAXONOMÍA
+=========================================================*/
+
+buscarPorTaxon(consulta){
+
+let resultados=[];
+
+for(const ficha of paleofichas){
+
+const terminos=
+
+this.obtenerTaxonomia(
+
+ficha.codigo
+
+);
+
+let encontrado=false;
+
+for(const termino of terminos){
+
+const normalizado=
+
+this.normalizar(
+
+termino
+
+);
+
+if(
+
+normalizado.startsWith(
+
+consulta
+
+)
+
+){
+
+encontrado=true;
+
+break;
+
+}
+
+}
+
+if(encontrado){
+
+resultados.push({
+
+codigo:ficha.codigo,
+
+nombre:ficha.nombre,
+
+tipo:"taxon",
+
+relevancia:100
+
+});
+
+}
+
+}
+
+return resultados;
+
+},
+
+
+   
+
+
+
+   
 /*=========================================================
 BUSCADOR PRINCIPAL
 =========================================================*/
@@ -817,6 +1040,30 @@ consulta
 }
 
 
+/*---------------------------------------
+TAXONOMÍA
+---------------------------------------*/
+
+if(
+
+tipo==="taxon"
+
+){
+
+return this.ordenar(
+
+this.buscarPorTaxon(
+
+consulta
+
+)
+
+);
+
+}
+
+   
+   
 return [];
 
 },
@@ -1027,6 +1274,62 @@ return termino;
 }
 
 
+
+/*---------------------------------------
+TAXONOMÍA
+---------------------------------------
+
+Mínimo 5 caracteres.
+
+---------------------------------------*/
+
+if(
+
+consulta.length>=5
+
+){
+
+for(const ficha of paleofichas){
+
+const terminos=
+
+this.obtenerTaxonomia(
+
+ficha.codigo
+
+);
+
+for(const termino of terminos){
+
+if(
+
+this.normalizar(
+
+termino
+
+)
+
+.startsWith(
+
+consulta
+
+)
+
+){
+
+return termino;
+
+}
+
+}
+
+}
+
+}
+
+   
+   
+   
 return "";
 
 }
