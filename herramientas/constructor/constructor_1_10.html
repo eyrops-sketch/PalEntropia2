@@ -201,7 +201,7 @@ SCRIPT PRINCIPAL
 let paleofichas=[];
 
 /*=========================================
-CARGA JSON + PALEOFICHA ALEATORIA INICIAL
+CARGA JSON + CARGA INICIAL
 =========================================*/
 
 fetch("paleofichas.json")
@@ -213,7 +213,39 @@ fetch("paleofichas.json")
 paleofichas=datos;
 
 /*=========================================
-ELEGIR PALEOFICHA ALEATORIA
+COMPROBAR CÓDIGO EN LA URL
+=========================================*/
+
+const parametros =
+
+new URLSearchParams(
+
+window.location.search
+
+);
+
+const codigoURL =
+
+parametros.get("codigo");
+
+/*=========================================
+SI EXISTE ?codigo=...
+=========================================*/
+
+if(codigoURL){
+
+document.getElementById("codigo").value =
+
+codigoURL.trim();
+
+buscarFicha();
+
+return;
+
+}
+
+/*=========================================
+SI NO HAY CÓDIGO → FICHA ALEATORIA
 =========================================*/
 
 if(paleofichas.length > 0){
@@ -230,17 +262,9 @@ const fichaAleatoria =
 
 paleofichas[indiceAleatorio];
 
-/*=========================================
-CARGAR CÓDIGO EN EL BUSCADOR
-=========================================*/
-
 document.getElementById("codigo").value =
 
 fichaAleatoria.codigo;
-
-/*=========================================
-USAR EL SISTEMA NORMAL DE CARGA
-=========================================*/
 
 buscarFicha();
 
