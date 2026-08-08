@@ -251,6 +251,8 @@ document.getElementById("buscarNombre")
 .trim();
 
 
+  
+
 /*=========================================
 RESTRICCIÓN DE AUTOCOMPLETADO
 =========================================*/
@@ -258,48 +260,96 @@ RESTRICCIÓN DE AUTOCOMPLETADO
 const textoNormalizado =
 PALBUSCADOR.normalizar(texto);
 
-/*
-Código:
-sin restricción mínima
-*/
+
+/*-----------------------------------------
+CÓDIGO
+Sin restricción mínima
+-----------------------------------------*/
 
 const esCodigo =
 /^[0-9_]+$/.test(textoNormalizado);
 
-/*
-Nombre:
-mínimo 3 caracteres
-*/
 
-const tieneLongitudNombre =
+/*-----------------------------------------
+TIEMPO GEOLÓGICO
+Mínimo 4 caracteres
+-----------------------------------------*/
+
+let esGeologia = false;
+
+if(textoNormalizado.length >= 4){
+
+for(const ficha of paleofichas){
+
+const geo =
+PALDECODER.decodeCronologia(
+ficha.cronologia
+);
+
+if(!geo){
+continue;
+}
+
+const terminos = [
+
+...geo.eon,
+...geo.era,
+...geo.periodo,
+...geo.edad
+
+];
+
+for(const termino of terminos){
+
+if(
+PALBUSCADOR.normalizar(termino)
+.startsWith(textoNormalizado)
+){
+
+esGeologia = true;
+
+break;
+
+}
+
+}
+
+if(esGeologia){
+break;
+}
+
+}
+
+}
+
+
+/*-----------------------------------------
+NOMBRE
+Mínimo 3 caracteres
+-----------------------------------------*/
+
+const puedeBuscarNombre =
 textoNormalizado.length >= 3;
 
-/*
-Tiempo geológico:
-mínimo 4 caracteres
 
-Ejemplos:
-perm → Pérmico
-chan → Changhsingiense
-vise → Viseense
-*/
-
-const tieneLongitudGeologica =
-textoNormalizado.length >= 4;
-
-
-/*
-Si no es código y tiene menos de
-3 caracteres, no buscamos.
-*/
+/*-----------------------------------------
+COMPROBAR LONGITUD
+-----------------------------------------*/
 
 if(
 !esCodigo &&
-!tieneLongitudNombre
+!esGeologia &&
+!puedeBuscarNombre
 ){
 
-document.getElementById("terminoInterpretado").innerHTML="";
-document.getElementById("listaResultados").innerHTML="";
+document.getElementById(
+"terminoInterpretado"
+).innerHTML="";
+
+document.getElementById(
+"listaResultados"
+).innerHTML="";
+
 return;
 
 }
