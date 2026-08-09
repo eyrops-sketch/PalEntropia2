@@ -15,18 +15,72 @@ input{
     padding:10px;
     font-size:16px;
     width:150px;
+    border-radius:6px;
+    border:1px solid #666;
+    background:#222;
+    color:#fff;
 }
 
+
+/*=========================================
+BOTÓN
+=========================================*/
+
 button{
-    padding:10px 15px;
+    padding:10px 18px;
     font-size:16px;
+    font-weight:bold;
+    color:#fff;
+
+    background:linear-gradient(
+        145deg,
+        #444,
+        #222
+    );
+
+    border:1px solid #666;
+    border-radius:8px;
+
+    box-shadow:
+        0 4px 0 #000,
+        0 6px 10px rgba(0,0,0,0.5);
+
     cursor:pointer;
+
+    transition:
+        all 0.12s ease;
 }
+
+button:hover{
+
+    background:linear-gradient(
+        145deg,
+        #555,
+        #292929
+    );
+
+}
+
+button:active{
+
+    transform:translateY(4px);
+
+    box-shadow:
+        0 1px 0 #000,
+        0 3px 6px rgba(0,0,0,0.4);
+
+}
+
+
+/*=========================================
+RESULTADO
+=========================================*/
 
 #resultado{
     margin-top:25px;
     padding:20px;
     border:1px solid #555;
+    border-radius:8px;
     background:#1b1b1b;
     line-height:1.7;
 }
@@ -51,6 +105,29 @@ button{
 
 .nombre{
     font-weight:bold;
+}
+
+
+/*=========================================
+DATOS TRANSCRITOS
+=========================================*/
+
+.transcripcion{
+
+    margin-top:20px;
+    padding:15px;
+
+    border:1px solid #555;
+    border-radius:8px;
+
+    background:#151515;
+
+}
+
+.transcripcion h3{
+
+    margin-top:0;
+
 }
 
 </style></head><body><h1>TEST CONTENEDOR</h1><input
@@ -99,6 +176,7 @@ async function cargarFicha(){
 
     try{
 
+
         /*=================================
         CARGAR CSV
         =================================*/
@@ -112,7 +190,8 @@ async function cargarFicha(){
         if(!respuesta.ok){
 
             throw new Error(
-                "HTTP " + respuesta.status
+                "HTTP " +
+                respuesta.status
             );
 
         }
@@ -235,7 +314,67 @@ async function cargarFicha(){
 
 
         /*=================================
-        MOSTRAR RESULTADO
+        OBJETO TRANSCRITO
+        =================================*/
+
+        const paleoficha = {
+
+            codigo:
+                registro.j1,
+
+            cronologia:
+                registro.j3,
+
+            HP:
+                registro.j5,
+
+            HS:
+                registro.j6,
+
+            modo_vida:
+                registro.j9,
+
+            medio_compuesto:
+                registro.j10,
+
+            e1:
+                registro.e1,
+
+            e2:
+                registro.e2,
+
+            e3:
+                registro.e3,
+
+            e4:
+                registro.e4,
+
+            e5:
+                registro.e5,
+
+            e6:
+                registro.e6,
+
+            e7:
+                registro.e7,
+
+            e8:
+                registro.e8,
+
+            e9:
+                registro.e9,
+
+            e10:
+                registro.e10,
+
+            e11:
+                registro.e11
+
+        };
+
+
+        /*=================================
+        MOSTRAR REGISTRO
         =================================*/
 
         let html =
@@ -342,6 +481,55 @@ async function cargarFicha(){
 
 
         /*=================================
+        TRANSCRIPCIÓN
+        =================================*/
+
+        html +=
+
+            "<div class='transcripcion'>" +
+
+            "<h3>Datos transcritos para Paleoficha</h3>" +
+
+            "<div class='campo'><b>codigo:</b> " +
+
+            paleoficha.codigo +
+
+            "</div>" +
+
+            "<div class='campo'><b>cronologia:</b> " +
+
+            paleoficha.cronologia +
+
+            "</div>" +
+
+            "<div class='campo'><b>HP:</b> " +
+
+            paleoficha.HP +
+
+            "</div>" +
+
+            "<div class='campo'><b>HS:</b> " +
+
+            paleoficha.HS +
+
+            "</div>" +
+
+            "<div class='campo'><b>modo_vida:</b> " +
+
+            paleoficha.modo_vida +
+
+            "</div>" +
+
+            "<div class='campo'><b>medio_compuesto:</b> " +
+
+            paleoficha.medio_compuesto +
+
+            "</div>" +
+
+            "</div>";
+
+
+        /*=================================
         INFORMACIÓN DE CONTROL
         =================================*/
 
@@ -371,8 +559,13 @@ async function cargarFicha(){
         =================================*/
 
         console.log(
-            "Registro encontrado:",
+            "Registro CSV:",
             registro
+        );
+
+        console.log(
+            "Paleoficha transcrita:",
+            paleoficha
         );
 
     }
@@ -405,9 +598,3 @@ CARGA AUTOMÁTICA
 cargarFicha();
 
 </script></body></html>
-
-
-
-
-
-
