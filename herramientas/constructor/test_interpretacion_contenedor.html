@@ -1,1 +1,1331 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>PRUEBA INTERPRETACIÓN CONTENEDOR</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    margin:20px;
+    line-height:1.5;
+    max-width:900px;
+}
+
+h1{
+    font-size:22px;
+}
+
+h2{
+    font-size:19px;
+    margin-top:28px;
+}
+
+h3{
+    font-size:17px;
+}
+
+.bloque{
+    margin-top:20px;
+    padding:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+input{
+    padding:10px;
+    font-size:16px;
+    width:180px;
+    box-sizing:border-box;
+    border:1px solid #999;
+    border-radius:6px;
+}
+
+button{
+    padding:10px 16px;
+    margin:8px 0;
+    font-size:16px;
+    cursor:pointer;
+    border:1px solid #777;
+    border-radius:6px;
+    background:#eee;
+    box-shadow:0 2px 4px rgba(0,0,0,.25);
+}
+
+button:active{
+    transform:translateY(1px);
+    box-shadow:0 1px 2px rgba(0,0,0,.2);
+}
+
+.resultado{
+    margin-top:15px;
+    padding:15px;
+    background:#f7f7f7;
+    border:1px solid #ddd;
+    border-radius:8px;
+}
+
+.ok{
+    color:green;
+}
+
+.error{
+    color:red;
+}
+
+.bruto{
+    font-family:monospace;
+    white-space:pre-wrap;
+}
+
+.paleoficha{
+    background:white;
+    border:1px solid #bbb;
+    border-radius:8px;
+    padding:18px;
+}
+
+.campo{
+    font-weight:bold;
+}
+
+.seccion{
+    margin-top:15px;
+}
+
+.linea{
+    margin:4px 0;
+}
+
+.rangoEntrada{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.rangoEntrada input{
+    width:120px;
+}
+
+.separador{
+    font-weight:bold;
+    font-size:20px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>PRUEBA DE INTERPRETACIÓN DE CARGA</h1>
+
+
+<!-- =====================================================
+     CARGA DE FICHA
+====================================================== -->
+
+<div class="bloque">
+
+<input
+id="codigoEntrada"
+type="text"
+value="002_11"
+placeholder="Ej: 002_11">
+
+<br>
+
+<button
+type="button"
+onclick="cargarFicha()">
+
+Cargar ficha
+
+</button>
+
+</div>
+
+
+<!-- =====================================================
+     RESULTADO PRINCIPAL
+====================================================== -->
+
+<div
+id="resultadoCarga"
+class="resultado">
+
+Esperando carga...
+
+</div>
+
+
+<!-- =====================================================
+     PRUEBA MANUAL AUXILIAR DE PALGEOSIMPLIFICADO
+====================================================== -->
+
+<div class="bloque">
+
+<h2>Prueba PALGEOSIMPLIFICADO</h2>
+
+<p>
+Prueba una cronología sin utilizar el constructor.
+</p>
+
+
+<h3>Rango en Ma</h3>
+
+<div class="rangoEntrada">
+
+<input
+id="maInicio"
+type="number"
+step="0.0001"
+placeholder="521">
+
+<span class="separador">Ma -</span>
+
+<input
+id="maFin"
+type="number"
+step="0.0001"
+placeholder="201.3">
+
+<span>Ma</span>
+
+</div>
+
+
+<button
+type="button"
+onclick="probarRangoMa()">
+
+Probar rango Ma
+
+</button>
+
+
+<h3>Rango en años</h3>
+
+<div class="rangoEntrada">
+
+<input
+id="anosInicio"
+type="number"
+step="1"
+placeholder="21700">
+
+<span class="separador">a -</span>
+
+<input
+id="anosFin"
+type="text"
+placeholder="Actualidad">
+
+</div>
+
+
+<button
+type="button"
+onclick="probarRangoAnos()">
+
+Probar rango en años
+
+</button>
+
+
+<div
+id="resultadoPALGEO"
+class="resultado">
+
+Esperando prueba...
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     BASES
+====================================================== -->
+
+<script src="palgeo.js"></script>
+
+<script src="palgeosimplificado.js"></script>
+
+<script src="palcontenedor_decoder.js"></script>
+
+
+<script>
+
+/* ======================================================
+   VARIABLES
+====================================================== */
+
+let contenedor = [];
+
+
+/* ======================================================
+   CARGAR CSV
+====================================================== */
+
+async function cargarContenedor(){
+
+    try{
+
+        const respuesta =
+            await fetch("contenedor.csv");
+
+
+        if(!respuesta.ok){
+
+            throw new Error(
+                "No se pudo cargar contenedor.csv"
+            );
+
+        }
+
+
+        const texto =
+            await respuesta.text();
+
+
+        const lineas =
+            texto
+            .trim()
+            .split(/\r?\n/);
+
+
+        if(!lineas.length){
+
+            throw new Error(
+                "El archivo está vacío"
+            );
+
+        }
+
+
+        const cabecera =
+            lineas[0]
+            .split(",")
+            .map(
+                x => x.trim()
+            );
+
+
+        contenedor = [];
+
+
+        for(
+            let i = 1;
+            i < lineas.length;
+            i++
+        ){
+
+            if(!lineas[i].trim()){
+
+                continue;
+
+            }
+
+
+            const valores =
+                lineas[i]
+                .split(",")
+                .map(
+                    x => x.trim()
+                );
+
+
+            const registro = {};
+
+
+            cabecera.forEach(
+                (campo,indice)=>{
+
+                    registro[campo] =
+                        valores[indice] !== undefined
+                        ?
+                        valores[indice]
+                        :
+                        "";
+
+                }
+            );
+
+
+            contenedor.push(
+                registro
+            );
+
+        }
+
+
+        return true;
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        document.getElementById(
+            "resultadoCarga"
+        ).innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Error cargando contenedor.csv" +
+
+            "</span>";
+
+        return false;
+
+    }
+
+}
+
+
+/* ======================================================
+   CARGAR PALEOFICHA
+====================================================== */
+
+async function cargarFicha(){
+
+    const codigo =
+        document
+        .getElementById(
+            "codigoEntrada"
+        )
+        .value
+        .trim();
+
+
+    const salida =
+        document
+        .getElementById(
+            "resultadoCarga"
+        );
+
+
+    salida.innerHTML =
+        "Cargando contenedor.csv...";
+
+
+    const cargado =
+        await cargarContenedor();
+
+
+    if(!cargado){
+
+        return;
+
+    }
+
+
+    const registro =
+        contenedor.find(
+            r => String(r.j1).trim() === codigo
+        );
+
+
+    if(!registro){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Ficha no encontrada: " +
+
+            codigo +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    /*
+    ======================================================
+    DECODIFICAR REGISTRO
+    ======================================================
+    */
+
+    const datos =
+        PALCONTENEDOR_DECODER
+        .decodificarRegistro(
+            registro
+        );
+
+
+    if(!datos){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ No se pudo decodificar el registro." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    const J = datos.J;
+
+    const E = datos.E;
+
+    const ficha =
+        datos.paleoficha;
+
+
+    /*
+    ======================================================
+    DECODIFICACIÓN GEOLÓGICA
+    ======================================================
+    */
+
+    let geo = null;
+
+
+    if(
+        J.j3 &&
+        window.PALGEOSIMPLIFICADO
+    ){
+
+        geo =
+            PALGEOSIMPLIFICADO
+            .analizar(
+                J.j3
+            );
+
+    }
+
+
+    /*
+    ======================================================
+    BLOQUE DE DATOS BRUTOS
+    ======================================================
+    */
+
+    let html = "";
+
+
+    html +=
+        "<div class='ok'>" +
+
+        "✓ Registro identificado" +
+
+        "</div>";
+
+
+    html +=
+        "<div class='seccion'>" +
+
+        "<b>Registros leídos:</b> " +
+
+        contenedor.length +
+
+        "</div>";
+
+
+    html +=
+        "<div class='seccion bruto'>" +
+
+        "<b>Contenedor J</b>\n";
+
+
+    for(
+        let i = 1;
+        i <= 10;
+        i++
+    ){
+
+        html +=
+            "j" +
+            i +
+            ": " +
+            J["j"+i] +
+            "\n";
+
+    }
+
+
+    html +=
+        "\n<b>Estadísticas E</b>\n";
+
+
+    for(
+        let i = 1;
+        i <= 11;
+        i++
+    ){
+
+        html +=
+            "e" +
+            i +
+            " → " +
+            E["e"+i] +
+            "\n";
+
+    }
+
+
+    html +=
+        "</div>";
+
+
+    /*
+    ======================================================
+    PALEOFICHA INTERPRETADA
+    ======================================================
+    */
+
+    html +=
+        "<h2>PALEOFICHA INTERPRETADA</h2>";
+
+
+    html +=
+        "<div class='paleoficha'>";
+
+
+    /*
+    CÓDIGO
+    */
+
+    html +=
+        "<div class='linea'>" +
+
+        "<span class='campo'>Código:</span> " +
+
+        escapeHTML(
+            ficha.codigo
+        ) +
+
+        "</div>";
+
+
+    /*
+    CRONOLOGÍA
+    */
+
+    html +=
+        "<div class='seccion'>" +
+
+        "<span class='campo'>Cronología:</span> ";
+
+
+    if(geo && geo.rango){
+
+        html +=
+            escapeHTML(
+                geo.rango
+            );
+
+    }
+
+    else{
+
+        html +=
+            escapeHTML(
+                ficha.cronologia
+            );
+
+    }
+
+
+    html +=
+        "</div>";
+
+
+    /*
+    PERÍODO
+    */
+
+    html +=
+        "<div class='seccion'>" +
+
+        "<span class='campo'>Período:</span><br>";
+
+
+    if(
+        geo &&
+        geo.periodo &&
+        geo.periodo.length
+    ){
+
+        html +=
+            escapeHTML(
+                geo.periodo.join(
+                    " · "
+                )
+            );
+
+    }
+
+    else{
+
+        html +=
+            "No disponible";
+
+    }
+
+
+    html +=
+        "</div>";
+
+
+    /*
+    EDAD / SUBPERÍODO
+    */
+
+    html +=
+        "<div class='seccion'>" +
+
+        "<span class='campo'>" +
+
+        "Edad / Subperíodo:" +
+
+        "</span><br>";
+
+
+    if(
+        geo &&
+        geo.edad &&
+        geo.edad.length
+    ){
+
+        html +=
+            escapeHTML(
+                geo.edad.join(
+                    " · "
+                )
+            );
+
+    }
+
+    else{
+
+        html +=
+            "No disponible";
+
+    }
+
+
+    html +=
+        "</div>";
+
+
+    /*
+    AVISO
+    */
+
+    html +=
+        "<div class='seccion'>" +
+
+        "(Aún por decodificar)" +
+
+        "</div>";
+
+
+    /*
+    HP
+    */
+
+    html +=
+        "<div class='seccion'>" +
+
+        "<span class='campo'>HP:</span> " +
+
+        escapeHTML(
+            ficha.HP
+        ) +
+
+        "</div>";
+
+
+    /*
+    HS
+    */
+
+    html +=
+        "<div class='linea'>" +
+
+        "<span class='campo'>HS:</span> " +
+
+        escapeHTML(
+            ficha.HS
+        ) +
+
+        "</div>";
+
+
+    /*
+    MODO DE VIDA
+    */
+
+    html +=
+        "<div class='linea'>" +
+
+        "<span class='campo'>" +
+
+        "modo_vida:" +
+
+        "</span> " +
+
+        escapeHTML(
+            ficha.modo_vida
+        ) +
+
+        "</div>";
+
+
+    /*
+    MEDIO ECOLÓGICO
+    */
+
+    html +=
+        "<div class='linea'>" +
+
+        "<span class='campo'>" +
+
+        "medio_compuesto:" +
+
+        "</span> " +
+
+        escapeHTML(
+            ficha.medio_compuesto
+        ) +
+
+        "</div>";
+
+
+    html +=
+        "</div>";
+
+
+    /*
+    ======================================================
+    MAPA DE INTERPRETACIÓN
+    ======================================================
+    */
+
+    html +=
+        "<h2>Correspondencia detectada</h2>";
+
+
+    html +=
+        "<div class='resultado bruto'>";
+
+
+    html +=
+        "Código\n" +
+        "→ j1\n" +
+        "→ " +
+        escapeHTML(J.j1) +
+        "\n\n";
+
+
+    html +=
+        "Cronología\n" +
+        "→ j3\n" +
+        "→ " +
+        escapeHTML(J.j3) +
+        "\n\n";
+
+
+    html +=
+        "HP\n" +
+        "→ j5\n" +
+        "→ " +
+        escapeHTML(J.j5) +
+        "\n\n";
+
+
+    html +=
+        "HS\n" +
+        "→ j6\n" +
+        "→ " +
+        escapeHTML(J.j6) +
+        "\n\n";
+
+
+    html +=
+        "Modo de vida\n" +
+        "→ j9\n" +
+        "→ " +
+        escapeHTML(J.j9) +
+        "\n\n";
+
+
+    html +=
+        "Medio ecológico\n" +
+        "→ j10\n" +
+        "→ " +
+        escapeHTML(J.j10);
+
+
+    html +=
+        "</div>";
+
+
+    salida.innerHTML =
+        html;
+
+}
+
+
+/* ======================================================
+   ESCAPAR HTML
+====================================================== */
+
+function escapeHTML(valor){
+
+    return String(
+        valor ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ======================================================
+   PRUEBA MANUAL PALGEOSIMPLIFICADO
+   AUXILIAR
+====================================================== */
+
+function probarRangoMa(){
+
+    const inicioTexto =
+        document
+        .getElementById(
+            "maInicio"
+        )
+        .value
+        .trim();
+
+
+    const finTexto =
+        document
+        .getElementById(
+            "maFin"
+        )
+        .value
+        .trim();
+
+
+    const salida =
+        document
+        .getElementById(
+            "resultadoPALGEO"
+        );
+
+
+    if(
+        inicioTexto === "" ||
+        finTexto === ""
+    ){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Introduce los dos valores." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    const inicio =
+        parseFloat(
+            inicioTexto
+        );
+
+
+    const fin =
+        parseFloat(
+            finTexto
+        );
+
+
+    if(
+        isNaN(inicio) ||
+        isNaN(fin)
+    ){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Los valores no son válidos." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    if(inicio < fin){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ El primer valor debe ser mayor o igual que el segundo." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    const cronologia =
+        normalizarMa(inicio)
+        +
+        "-"
+        +
+        normalizarMa(fin);
+
+
+    ejecutarPALGEO(
+        cronologia
+    );
+
+}
+
+
+/* ======================================================
+   NORMALIZAR MA
+====================================================== */
+
+function normalizarMa(valor){
+
+    const partes =
+        Number(valor)
+        .toFixed(4)
+        .split(".");
+
+
+    const entero =
+        partes[0]
+        .padStart(
+            4,
+            "0"
+        );
+
+
+    const decimal =
+        partes[1] ||
+        "0000";
+
+
+    return (
+        entero +
+        "." +
+        decimal
+    );
+
+}
+
+
+/* ======================================================
+   PRUEBA MANUAL EN AÑOS
+====================================================== */
+
+function probarRangoAnos(){
+
+    const inicioTexto =
+        document
+        .getElementById(
+            "anosInicio"
+        )
+        .value
+        .trim();
+
+
+    const finTexto =
+        document
+        .getElementById(
+            "anosFin"
+        )
+        .value
+        .trim();
+
+
+    const salida =
+        document
+        .getElementById(
+            "resultadoPALGEO"
+        );
+
+
+    if(
+        inicioTexto === "" ||
+        finTexto === ""
+    ){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Introduce los valores." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    const inicio =
+        parseFloat(
+            inicioTexto
+        );
+
+
+    let fin;
+
+
+    if(
+        finTexto
+        .toLowerCase()
+        ===
+        "actualidad"
+    ){
+
+        fin = 0;
+
+    }
+
+    else{
+
+        fin =
+            parseFloat(
+                finTexto
+            );
+
+    }
+
+
+    if(
+        isNaN(inicio) ||
+        isNaN(fin)
+    ){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Valor no válido." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    if(inicio < fin){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ El primer valor debe representar una antigüedad mayor." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    const inicioMa =
+        inicio / 1000000;
+
+
+    const finMa =
+        fin / 1000000;
+
+
+    const cronologia =
+        normalizarMa(inicioMa)
+        +
+        "-"
+        +
+        normalizarMa(finMa);
+
+
+    ejecutarPALGEO(
+        cronologia
+    );
+
+}
+
+
+/* ======================================================
+   EJECUTAR PALGEO MANUAL
+====================================================== */
+
+function ejecutarPALGEO(
+    cronologia
+){
+
+    const salida =
+        document
+        .getElementById(
+            "resultadoPALGEO"
+        );
+
+
+    try{
+
+        const resultado =
+            PALGEOSIMPLIFICADO
+            .analizar(
+                cronologia
+            );
+
+
+        if(!resultado){
+
+            salida.innerHTML =
+
+                "<span class='error'>" +
+
+                "❌ Formato no válido o cronología no procesable." +
+
+                "</span>";
+
+            return;
+
+        }
+
+
+        let html = "";
+
+
+        html +=
+            "<b>Cronología interna:</b><br>" +
+
+            escapeHTML(
+                resultado.cronologia
+            ) +
+
+            "<br><br>";
+
+
+        html +=
+            "<b>Rango:</b><br>" +
+
+            escapeHTML(
+                resultado.rango
+            ) +
+
+            "<br><br>";
+
+
+        html +=
+            "<b>Período:</b><br>" +
+
+            (
+                resultado.periodo.length
+                ?
+                escapeHTML(
+                    resultado.periodo.join(
+                        " · "
+                    )
+                )
+                :
+                "No disponible"
+            ) +
+
+            "<br><br>";
+
+
+        html +=
+            "<b>Edad / Subperíodo:</b><br>" +
+
+            (
+                resultado.edad.length
+                ?
+                escapeHTML(
+                    resultado.edad.join(
+                        " · "
+                    )
+                )
+                :
+                "No disponible"
+            );
+
+
+        salida.innerHTML =
+            html;
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Error ejecutando PALGEOSIMPLIFICADO." +
+
+            "</span>";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>
+
+
+
+
+
 
