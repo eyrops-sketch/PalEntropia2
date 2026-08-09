@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Test Contenedor | PalEntropía</title>
-
-<style>
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Test Contenedor | PalEntropía</title><style>
 
 body{
 font-family:Arial,sans-serif;
@@ -34,6 +23,10 @@ font-size:16px;
 cursor:pointer;
 }
 
+#estado{
+margin-top:20px;
+}
+
 #resultado{
 margin-top:25px;
 padding:20px;
@@ -49,52 +42,31 @@ margin:6px 0;
 font-weight:bold;
 }
 
-.error{
-color:#ff7777;
-}
-
 .ok{
 color:#7cff9b;
 }
 
-</style>
+.error{
+color:#ff7777;
+}
 
-</head>
+.bloque{
+margin-top:25px;
+padding-top:15px;
+border-top:1px solid #444;
+}
 
-
-<body>
-
-
-<h1>TEST CONTENEDOR</h1>
-
-
-<div>
-
-<input
+</style></head><body><h1>TEST CONTENEDOR</h1><div><input
 id="codigo"
 type="text"
-value="003_01"
+value="002_11"
 placeholder="j1">
 
 <button onclick="cargarFicha()">
 Cargar ficha
-</button>
+</button></div><div id="estado"></div><div id="resultado">Esperando carga...
 
-</div>
-
-
-<div id="estado"></div>
-
-
-<div id="resultado">
-
-Esperando carga...
-
-</div>
-
-
-
-<script>
+</div><script>
 
 /*=========================================
 CONFIGURACIÓN
@@ -112,7 +84,7 @@ cargarFicha();
 
 
 /*=========================================
-CARGAR FICHA DESDE CONTENEDOR.CSV
+CARGAR REGISTRO
 =========================================*/
 
 async function cargarFicha(){
@@ -123,11 +95,9 @@ document.getElementById("codigo")
 .value
 .trim();
 
-
 const estado =
 
 document.getElementById("estado");
-
 
 const resultado =
 
@@ -138,7 +108,9 @@ if(!codigo){
 
 resultado.innerHTML =
 
-"<div class='error'>Introduce un j1.</div>";
+"<div class='error'>" +
+"Introduce un j1." +
+"</div>";
 
 return;
 
@@ -152,11 +124,6 @@ estado.innerHTML =
 
 try{
 
-
-/*=========================================
-LEER CSV
-=========================================*/
-
 const respuesta =
 
 await fetch(ARCHIVO_CONTENEDOR);
@@ -165,9 +132,7 @@ await fetch(ARCHIVO_CONTENEDOR);
 if(!respuesta.ok){
 
 throw new Error(
-
 "No se pudo cargar contenedor.csv"
-
 );
 
 }
@@ -178,42 +143,28 @@ const texto =
 await respuesta.text();
 
 
-/*=========================================
-CONVERTIR CSV
-=========================================*/
-
 const registros =
 
 parsearCSV(texto);
 
 
-/*=========================================
-BUSCAR POR j1
-=========================================*/
-
-const ficha =
+const registro =
 
 registros.find(
 
-registro =>
-
-registro.j1 === codigo
+r => r.j1 === codigo
 
 );
 
 
-if(!ficha){
+if(!registro){
 
 estado.innerHTML =
 
 "<p class='error'>" +
-
 "No existe el j1 " +
-
 codigo +
-
 " en contenedor.csv" +
-
 "</p>";
 
 resultado.innerHTML = "";
@@ -224,26 +175,31 @@ return;
 
 
 /*=========================================
-FICHA ENCONTRADA
+REGISTRO ENCONTRADO
 =========================================*/
 
 estado.innerHTML =
 
 "<p class='ok'>" +
-
-"✓ Ficha encontrada: " +
-
-ficha.j1 +
-
+"✓ Registro encontrado: " +
+registro.j1 +
 "</p>";
 
 
 /*=========================================
-MOSTRAR DATOS
+CONSTRUIR PALEOFICHA
 =========================================*/
 
-mostrarFicha(ficha);
+const paleoficha =
 
+convertirRegistro(registro);
+
+
+/*=========================================
+MOSTRAR
+=========================================*/
+
+mostrarPaleoficha(paleoficha);
 
 }
 
@@ -251,35 +207,202 @@ catch(error){
 
 console.error(error);
 
-
 estado.innerHTML =
 
 "<p class='error'>" +
-
-"Error cargando contenedor.csv"
-
-+
-
+"Error cargando contenedor.csv" +
 "</p>";
-
 
 resultado.innerHTML =
 
 "<pre>" +
-
 error.message +
-
-"</pre>";
-
-}
+"</pre>";}
 
 }
 
+/=========================================
+CONVERTIR REGISTRO DEL CONTENEDOR
+A ESTRUCTURA DE PALEOFICHA
+=========================================/
 
+function convertirRegistro(registro){
 
-/*=========================================
+return {
+
+codigo: registro.j1,
+
+j2: registro.j2,
+
+cronologia: registro.j3,
+
+j4: registro.j4,
+
+HP: registro.j5,
+
+HS: registro.j6,
+
+j7: registro.j7,
+
+j8: registro.j8,
+
+modo_vida: registro.j9,
+
+medio_compuesto: registro.j10,
+
+stats: {
+
+e1: Number(registro.e1),
+e2: Number(registro.e2),
+e3: Number(registro.e3),
+e4: Number(registro.e4),
+e5: Number(registro.e5),
+e6: Number(registro.e6),
+e7: Number(registro.e7),
+e8: Number(registro.e8),
+e9: Number(registro.e9),
+e10: Number(registro.e10),
+e11: Number(registro.e11)
+
+}
+
+};
+
+}
+
+/=========================================
+MOSTRAR PALEOFICHA INTERPRETADA
+=========================================/
+
+function mostrarPaleoficha(ficha){
+
+const resultado =
+
+document.getElementById("resultado");
+
+let html =
+
+"<h2>Paleoficha interpretada</h2>";
+
+html +=
+
+"<div class='campo'>" +
+"<span class='nombre'>Código / j1:</span> " +
+ficha.codigo +
+"</div>";
+
+html +=
+
+"<div class='campo'>" +
+"<span class='nombre'>j2:</span> " +
+ficha.j2 +
+"</div>";
+
+html +=
+
+"<div class='campo'>" +
+"<span class='nombre'>Cronología / j3:</span> " +
+ficha.cronologia +
+"</div>";
+
+html +=
+
+"<div class='campo'>" +
+"<span class='nombre'>j4:</span> " +
+ficha.j4 +
+"</div>";
+
+html +=
+
+"<div class='campo'>" +
+"<span class='nombre'>HP / j5:</span> " +
+ficha.HP +
+"</div>";
+
+html +=
+
+"<div class='campo'>" +
+"<span class='nombre'>HS / j6:</span> " +
+ficha.HS +
+"</div>";
+
+html +=
+
+"<div class='campo'>" +
+"<span class='nombre'>j7:</span> " +
+ficha.j7 +
+"</div>";
+
+html +=
+
+"<div class='campo'>" +
+"<span class='nombre'>j8:</span> " +
+ficha.j8 +
+"</div>";
+
+html +=
+
+"<div class='campo'>" +
+"<span class='nombre'>Modo de vida / j9:</span> " +
+ficha.modo_vida +
+"</div>";
+
+html +=
+
+"<div class='campo'>" +
+"<span class='nombre'>Medio compuesto / j10:</span> " +
+ficha.medio_compuesto +
+"</div>";
+
+/=========================================
+ESTADÍSTICAS
+=========================================/
+
+html +=
+
+"<div class='bloque'>" +
+
+"<h3>Estadísticas E</h3>" +
+
+"<div>e1: " + ficha.stats.e1 + "</div>" +
+"<div>e2: " + ficha.stats.e2 + "</div>" +
+"<div>e3: " + ficha.stats.e3 + "</div>" +
+"<div>e4: " + ficha.stats.e4 + "</div>" +
+"<div>e5: " + ficha.stats.e5 + "</div>" +
+"<div>e6: " + ficha.stats.e6 + "</div>" +
+"<div>e7: " + ficha.stats.e7 + "</div>" +
+"<div>e8: " + ficha.stats.e8 + "</div>" +
+"<div>e9: " + ficha.stats.e9 + "</div>" +
+"<div>e10: " + ficha.stats.e10 + "</div>" +
+"<div>e11: " + ficha.stats.e11 + "</div>" +
+
+"</div>";
+
+/=========================================
+REPRESENTACIÓN EQUIVALENTE A JSON
+=========================================/
+
+html +=
+
+"<div class='bloque'>" +
+
+"<h3>Estructura generada</h3>" +
+
+"<pre>" +
+
+JSON.stringify(ficha,null,2) +
+
+"</pre>" +
+
+"</div>";
+
+resultado.innerHTML = html;
+
+}
+
+/=========================================
 PARSER CSV
-=========================================*/
+=========================================/
 
 function parsearCSV(texto){
 
@@ -289,13 +412,11 @@ texto
 .trim()
 .split(/\r?\n/);
 
-
 if(lineas.length < 2){
 
 return [];
 
 }
-
 
 const cabecera =
 
@@ -303,12 +424,9 @@ lineas[0]
 .split(",")
 .map(c => c.trim());
 
-
 const registros = [];
 
-
 for(let i = 1; i < lineas.length; i++){
-
 
 if(!lineas[i].trim()){
 
@@ -316,20 +434,17 @@ continue;
 
 }
 
-
 const valores =
 
 lineas[i]
 .split(",")
 .map(v => v.trim());
 
-
 const registro = {};
-
 
 cabecera.forEach(
 
-(campo, indice) => {
+(campo,indice) => {
 
 registro[campo] =
 
@@ -339,112 +454,14 @@ valores[indice] ?? "";
 
 );
 
-
 registros.push(registro);
 
 }
-
 
 return registros;
 
 }
 
-
-
-/*=========================================
-MOSTRAR FICHA
-=========================================*/
-
-function mostrarFicha(ficha){
-
-const resultado =
-
-document.getElementById("resultado");
-
-
-let html =
-
-"<h2>Registro " +
-
-ficha.j1 +
-
-"</h2>";
-
-
-/*=========================================
-CAMPOS J
-=========================================*/
-
-html +=
-
-"<h3>Contenedor J</h3>";
-
-
-for(let i = 1; i <= 10; i++){
-
-const campo = "j" + i;
-
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>" +
-
-campo +
-
-":</span> " +
-
-(ficha[campo] ?? "") +
-
-"</div>";
-
-}
-
-
-
-/*=========================================
-CAMPOS E
-=========================================*/
-
-html +=
-
-"<h3>Estadísticas E</h3>";
-
-
-for(let i = 1; i <= 11; i++){
-
-const campo = "e" + i;
-
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>" +
-
-campo +
-
-":</span> " +
-
-(ficha[campo] ?? "") +
-
-"</div>";
-
-}
-
-
-resultado.innerHTML = html;
-
-}
-
-</script>
-
-
-</body>
-
-</html>
-
-
+</script></body></html>
 
 
