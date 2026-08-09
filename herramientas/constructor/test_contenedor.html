@@ -1,24 +1,75 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>TEST CONTENEDOR</title><style>
 
+/*=========================================
+BASE
+=========================================*/
+
 body{
+
     font-family:Arial,sans-serif;
+
     margin:20px;
+
     background:#111;
+
     color:#eee;
+
 }
 
 h1{
+
     margin-bottom:20px;
+
 }
 
-input{
-    padding:10px;
-    font-size:16px;
+
+/*=========================================
+CONTROLES
+=========================================*/
+
+.controles{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+
+/*=========================================
+ENTRADA J1
+=========================================*/
+
+#codigo{
+
+    box-sizing:border-box;
+
     width:150px;
-    border-radius:6px;
-    border:1px solid #666;
-    background:#222;
+
+    height:42px;
+
+    padding:8px 10px;
+
+    font-size:16px;
+
     color:#fff;
+
+    background:#222;
+
+    border:1px solid #666;
+
+    border-radius:7px;
+
+    outline:none;
+
+}
+
+#codigo:focus{
+
+    border-color:#999;
+
 }
 
 
@@ -26,48 +77,69 @@ input{
 BOTÓN
 =========================================*/
 
-button{
-    padding:10px 18px;
+#botonCargar{
+
+    box-sizing:border-box;
+
+    height:42px;
+
+    padding:0 18px;
+
     font-size:16px;
+
     font-weight:bold;
+
     color:#fff;
 
     background:linear-gradient(
         145deg,
-        #444,
+        #4b4b4b,
         #222
     );
 
-    border:1px solid #666;
+    border:1px solid #777;
+
     border-radius:8px;
 
     box-shadow:
+
         0 4px 0 #000,
+
         0 6px 10px rgba(0,0,0,0.5);
 
     cursor:pointer;
 
+    user-select:none;
+
     transition:
-        all 0.12s ease;
+
+        transform 0.08s ease,
+
+        box-shadow 0.08s ease,
+
+        background 0.12s ease;
+
 }
 
-button:hover{
+#botonCargar:hover{
 
     background:linear-gradient(
         145deg,
-        #555,
+        #5a5a5a,
         #292929
     );
 
 }
 
-button:active{
+#botonCargar:active{
 
     transform:translateY(4px);
 
     box-shadow:
-        0 1px 0 #000,
-        0 3px 6px rgba(0,0,0,0.4);
+
+        0 0 0 #000,
+
+        0 2px 5px rgba(0,0,0,0.4);
 
 }
 
@@ -77,47 +149,68 @@ RESULTADO
 =========================================*/
 
 #resultado{
+
     margin-top:25px;
+
     padding:20px;
+
     border:1px solid #555;
+
     border-radius:8px;
+
     background:#1b1b1b;
+
     line-height:1.7;
+
 }
 
 .bloque{
+
     margin-top:20px;
+
     padding-top:15px;
+
     border-top:1px solid #444;
+
 }
 
 .ok{
+
     color:#7cff9b;
+
 }
 
 .error{
+
     color:#ff7777;
+
 }
 
 .campo{
+
     margin:3px 0;
+
 }
 
 .nombre{
+
     font-weight:bold;
+
 }
 
 
 /*=========================================
-DATOS TRANSCRITOS
+TRANSCRIPCIÓN
 =========================================*/
 
 .transcripcion{
 
     margin-top:20px;
+
     padding:15px;
 
     border:1px solid #555;
+
     border-radius:8px;
 
     background:#151515;
@@ -130,18 +223,28 @@ DATOS TRANSCRITOS
 
 }
 
-</style></head><body><h1>TEST CONTENEDOR</h1><input
-id="codigo"
-type="text"
-value="002_11"
-placeholder="j1"
+</style></head><body><h1>TEST CONTENEDOR</h1><!--=========================================
+CONTROLES
+=========================================--><div class="controles"><input
+    id="codigo"
+    type="text"
+    value="001_15"
+    placeholder="j1"
+    autocomplete="off"
+>
 
-«»
-
-<button onclick="cargarFicha()">
+<button
+    id="botonCargar"
+    type="button"
+    onclick="cargarFicha()"
+>
     Cargar ficha
-</button><div id="resultado">
-    Esperando carga...
+</button>
+
+</div><!--=========================================
+RESULTADO
+=========================================--><div id="resultado">Esperando carga...
+
 </div><script>
 
 /*=========================================
@@ -153,12 +256,13 @@ const ARCHIVO_CONTENEDOR =
 
 
 /*=========================================
-CARGAR FICHA
+CARGAR FICHA DESDE CONTENEDOR
 =========================================*/
 
 async function cargarFicha(){
 
     const codigo =
+
         document
         .getElementById("codigo")
         .value
@@ -166,8 +270,28 @@ async function cargarFicha(){
 
 
     const resultado =
+
         document
         .getElementById("resultado");
+
+
+    /*=====================================
+    COMPROBAR J1
+    =====================================*/
+
+    if(!codigo){
+
+        resultado.innerHTML =
+
+            "<div class='error'>" +
+
+            "✗ Introduce un código j1." +
+
+            "</div>";
+
+        return;
+
+    }
 
 
     resultado.innerHTML =
@@ -182,6 +306,7 @@ async function cargarFicha(){
         =================================*/
 
         const respuesta =
+
             await fetch(
                 ARCHIVO_CONTENEDOR
             );
@@ -190,14 +315,17 @@ async function cargarFicha(){
         if(!respuesta.ok){
 
             throw new Error(
+
                 "HTTP " +
                 respuesta.status
+
             );
 
         }
 
 
         const texto =
+
             await respuesta.text();
 
 
@@ -206,6 +334,7 @@ async function cargarFicha(){
         =================================*/
 
         const lineas =
+
             texto
             .trim()
             .split(/\r?\n/);
@@ -214,7 +343,9 @@ async function cargarFicha(){
         if(lineas.length < 2){
 
             throw new Error(
+
                 "El CSV no contiene registros."
+
             );
 
         }
@@ -225,12 +356,36 @@ async function cargarFicha(){
         =================================*/
 
         const cabecera =
+
             lineas[0]
             .split(",")
             .map(
+
                 campo =>
                 campo.trim()
+
             );
+
+
+        /*=================================
+        COMPROBAR 21 COLUMNAS
+        =================================*/
+
+        if(cabecera.length !== 21){
+
+            throw new Error(
+
+                "Se esperaban 21 columnas y " +
+
+                "se encontraron " +
+
+                cabecera.length +
+
+                "."
+
+            );
+
+        }
 
 
         /*=================================
@@ -241,9 +396,13 @@ async function cargarFicha(){
 
 
         for(
+
             let i = 1;
+
             i < lineas.length;
+
             i++
+
         ){
 
             if(!lineas[i].trim()){
@@ -254,45 +413,68 @@ async function cargarFicha(){
 
 
             const valores =
+
                 lineas[i]
                 .split(",")
                 .map(
+
                     valor =>
                     valor.trim()
+
                 );
+
+
+            if(valores.length !== 21){
+
+                console.warn(
+
+                    "Fila incorrecta:",
+
+                    i + 1,
+
+                    valores.length
+
+                );
+
+                continue;
+
+            }
 
 
             const registro = {};
 
 
             cabecera.forEach(
-                function(campo, indice){
+
+                function(campo,indice){
 
                     registro[campo] =
-                        valores[indice] ?? "";
+                        valores[indice];
 
                 }
+
             );
 
 
-            registros.push(
-                registro
-            );
+            registros.push(registro);
 
         }
 
 
         /*=================================
-        BUSCAR POR j1
+        BUSCAR POR J1
         =================================*/
 
         const registro =
+
             registros.find(
+
                 function(r){
 
                     return r.j1 === codigo;
 
                 }
+
             );
 
 
@@ -302,7 +484,7 @@ async function cargarFicha(){
 
                 "<div class='error'>" +
 
-                "✗ No se encontró el registro " +
+                "✗ No se encontró la ficha " +
 
                 codigo +
 
@@ -314,7 +496,7 @@ async function cargarFicha(){
 
 
         /*=================================
-        OBJETO TRANSCRITO
+        TRANSCRIPCIÓN J → PALEOFICHA
         =================================*/
 
         const paleoficha = {
@@ -374,7 +556,7 @@ async function cargarFicha(){
 
 
         /*=================================
-        MOSTRAR REGISTRO
+        RESULTADO
         =================================*/
 
         let html =
@@ -387,6 +569,10 @@ async function cargarFicha(){
 
             "</div>";
 
+
+        /*=================================
+        REGISTRO J
+        =================================*/
 
         html +=
 
@@ -401,14 +587,14 @@ async function cargarFicha(){
             "<h3>Contenedor J</h3>";
 
 
-        /*=================================
-        CAMPOS J
-        =================================*/
-
         for(
+
             let i = 1;
+
             i <= 10;
+
             i++
+
         ){
 
             const campo =
@@ -438,7 +624,7 @@ async function cargarFicha(){
 
 
         /*=================================
-        CAMPOS E
+        ESTADÍSTICAS E
         =================================*/
 
         html +=
@@ -449,9 +635,13 @@ async function cargarFicha(){
 
 
         for(
+
             let i = 1;
+
             i <= 11;
+
             i++
+
         ){
 
             const campo =
@@ -481,7 +671,7 @@ async function cargarFicha(){
 
 
         /*=================================
-        TRANSCRIPCIÓN
+        DATOS TRANSCRITOS
         =================================*/
 
         html +=
@@ -490,37 +680,49 @@ async function cargarFicha(){
 
             "<h3>Datos transcritos para Paleoficha</h3>" +
 
-            "<div class='campo'><b>codigo:</b> " +
+            "<div class='campo'>" +
+
+            "<b>codigo:</b> " +
 
             paleoficha.codigo +
 
             "</div>" +
 
-            "<div class='campo'><b>cronologia:</b> " +
+            "<div class='campo'>" +
+
+            "<b>cronologia:</b> " +
 
             paleoficha.cronologia +
 
             "</div>" +
 
-            "<div class='campo'><b>HP:</b> " +
+            "<div class='campo'>" +
+
+            "<b>HP:</b> " +
 
             paleoficha.HP +
 
             "</div>" +
 
-            "<div class='campo'><b>HS:</b> " +
+            "<div class='campo'>" +
+
+            "<b>HS:</b> " +
 
             paleoficha.HS +
 
             "</div>" +
 
-            "<div class='campo'><b>modo_vida:</b> " +
+            "<div class='campo'>" +
+
+            "<b>modo_vida:</b> " +
 
             paleoficha.modo_vida +
 
             "</div>" +
 
-            "<div class='campo'><b>medio_compuesto:</b> " +
+            "<div class='campo'>" +
+
+            "<b>medio_compuesto:</b> " +
 
             paleoficha.medio_compuesto +
 
@@ -530,7 +732,7 @@ async function cargarFicha(){
 
 
         /*=================================
-        INFORMACIÓN DE CONTROL
+        CONTROL
         =================================*/
 
         html +=
@@ -592,9 +794,19 @@ async function cargarFicha(){
 
 
 /*=========================================
-CARGA AUTOMÁTICA
+CARGA AUTOMÁTICA INICIAL
 =========================================*/
 
-cargarFicha();
+window.addEventListener(
+
+    "DOMContentLoaded",
+
+    function(){
+
+        cargarFicha();
+
+    }
+
+);
 
 </script></body></html>
