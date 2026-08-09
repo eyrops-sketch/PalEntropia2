@@ -1,1 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Test Contenedor | PalEntropía</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+margin:20px;
+background:#111;
+color:#eee;
+}
+
+h1{
+margin-bottom:20px;
+}
+
+input{
+padding:10px;
+font-size:16px;
+width:150px;
+}
+
+button{
+padding:10px 15px;
+font-size:16px;
+cursor:pointer;
+}
+
+#resultado{
+margin-top:25px;
+padding:20px;
+border:1px solid #555;
+background:#1b1b1b;
+}
+
+.campo{
+margin:6px 0;
+}
+
+.nombre{
+font-weight:bold;
+}
+
+.error{
+color:#ff7777;
+}
+
+.ok{
+color:#7cff9b;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>TEST CONTENEDOR</h1>
+
+
+<div>
+
+<input
+id="codigo"
+type="text"
+value="003_01"
+placeholder="j1">
+
+<button onclick="cargarFicha()">
+Cargar ficha
+</button>
+
+</div>
+
+
+<div id="estado"></div>
+
+
+<div id="resultado">
+
+Esperando carga...
+
+</div>
+
+
+
+<script>
+
+/*=========================================
+CONFIGURACIÓN
+=========================================*/
+
+const ARCHIVO_CONTENEDOR = "contenedor.csv";
+
+
+/*=========================================
+CARGA INICIAL
+=========================================*/
+
+cargarFicha();
+
+
+
+/*=========================================
+CARGAR FICHA DESDE CONTENEDOR.CSV
+=========================================*/
+
+async function cargarFicha(){
+
+const codigo =
+
+document.getElementById("codigo")
+.value
+.trim();
+
+
+const estado =
+
+document.getElementById("estado");
+
+
+const resultado =
+
+document.getElementById("resultado");
+
+
+if(!codigo){
+
+resultado.innerHTML =
+
+"<div class='error'>Introduce un j1.</div>";
+
+return;
+
+}
+
+
+estado.innerHTML =
+
+"<p>Cargando contenedor.csv...</p>";
+
+
+try{
+
+
+/*=========================================
+LEER CSV
+=========================================*/
+
+const respuesta =
+
+await fetch(ARCHIVO_CONTENEDOR);
+
+
+if(!respuesta.ok){
+
+throw new Error(
+
+"No se pudo cargar contenedor.csv"
+
+);
+
+}
+
+
+const texto =
+
+await respuesta.text();
+
+
+/*=========================================
+CONVERTIR CSV
+=========================================*/
+
+const registros =
+
+parsearCSV(texto);
+
+
+/*=========================================
+BUSCAR POR j1
+=========================================*/
+
+const ficha =
+
+registros.find(
+
+registro =>
+
+registro.j1 === codigo
+
+);
+
+
+if(!ficha){
+
+estado.innerHTML =
+
+"<p class='error'>" +
+
+"No existe el j1 " +
+
+codigo +
+
+" en contenedor.csv" +
+
+"</p>";
+
+resultado.innerHTML = "";
+
+return;
+
+}
+
+
+/*=========================================
+FICHA ENCONTRADA
+=========================================*/
+
+estado.innerHTML =
+
+"<p class='ok'>" +
+
+"✓ Ficha encontrada: " +
+
+ficha.j1 +
+
+"</p>";
+
+
+/*=========================================
+MOSTRAR DATOS
+=========================================*/
+
+mostrarFicha(ficha);
+
+
+}
+
+catch(error){
+
+console.error(error);
+
+
+estado.innerHTML =
+
+"<p class='error'>" +
+
+"Error cargando contenedor.csv"
+
++
+
+"</p>";
+
+
+resultado.innerHTML =
+
+"<pre>" +
+
+error.message +
+
+"</pre>";
+
+}
+
+}
+
+
+
+/*=========================================
+PARSER CSV
+=========================================*/
+
+function parsearCSV(texto){
+
+const lineas =
+
+texto
+.trim()
+.split(/\r?\n/);
+
+
+if(lineas.length < 2){
+
+return [];
+
+}
+
+
+const cabecera =
+
+lineas[0]
+.split(",")
+.map(c => c.trim());
+
+
+const registros = [];
+
+
+for(let i = 1; i < lineas.length; i++){
+
+
+if(!lineas[i].trim()){
+
+continue;
+
+}
+
+
+const valores =
+
+lineas[i]
+.split(",")
+.map(v => v.trim());
+
+
+const registro = {};
+
+
+cabecera.forEach(
+
+(campo, indice) => {
+
+registro[campo] =
+
+valores[indice] ?? "";
+
+}
+
+);
+
+
+registros.push(registro);
+
+}
+
+
+return registros;
+
+}
+
+
+
+/*=========================================
+MOSTRAR FICHA
+=========================================*/
+
+function mostrarFicha(ficha){
+
+const resultado =
+
+document.getElementById("resultado");
+
+
+let html =
+
+"<h2>Registro " +
+
+ficha.j1 +
+
+"</h2>";
+
+
+/*=========================================
+CAMPOS J
+=========================================*/
+
+html +=
+
+"<h3>Contenedor J</h3>";
+
+
+for(let i = 1; i <= 10; i++){
+
+const campo = "j" + i;
+
+
+html +=
+
+"<div class='campo'>" +
+
+"<span class='nombre'>" +
+
+campo +
+
+":</span> " +
+
+(ficha[campo] ?? "") +
+
+"</div>";
+
+}
+
+
+
+/*=========================================
+CAMPOS E
+=========================================*/
+
+html +=
+
+"<h3>Estadísticas E</h3>";
+
+
+for(let i = 1; i <= 11; i++){
+
+const campo = "e" + i;
+
+
+html +=
+
+"<div class='campo'>" +
+
+"<span class='nombre'>" +
+
+campo +
+
+":</span> " +
+
+(ficha[campo] ?? "") +
+
+"</div>";
+
+}
+
+
+resultado.innerHTML = html;
+
+}
+
+</script>
+
+
+</body>
+
+</html>
+
+
+
 
