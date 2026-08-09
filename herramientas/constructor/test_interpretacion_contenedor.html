@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>PRUEBA INTERPRETACIÓN CONTENEDOR</title>
+<title>TEST INTERPRETACIÓN DE CONTENEDOR</title>
 
 <style>
 
@@ -255,7 +255,7 @@ Esperando prueba...
 
 
 <!-- =====================================================
-     BASES
+     BASES DE DATOS
 ====================================================== -->
 
 <script src="palgeo.js"></script>
@@ -273,9 +273,11 @@ Esperando prueba...
 
 let contenedor = [];
 
+let paleofichas = [];
+
 
 /* ======================================================
-   CARGAR CSV
+   CARGAR CONTENEDOR.CSV
 ====================================================== */
 
 async function cargarContenedor(){
@@ -396,7 +398,56 @@ async function cargarContenedor(){
 
 
 /* ======================================================
-   CARGAR PALEOFICHA
+   CARGAR PALEOFICHAS.JSON
+====================================================== */
+
+async function cargarPaleofichas(){
+
+    try{
+
+        const respuesta =
+            await fetch("paleofichas.json");
+
+
+        if(!respuesta.ok){
+
+            throw new Error(
+                "No se pudo cargar paleofichas.json"
+            );
+
+        }
+
+
+        paleofichas =
+            await respuesta.json();
+
+
+        if(!Array.isArray(paleofichas)){
+
+            throw new Error(
+                "paleofichas.json no contiene un array válido"
+            );
+
+        }
+
+
+        return true;
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        return false;
+
+    }
+
+}
+
+
+/* ======================================================
+   CARGAR FICHA
 ====================================================== */
 
 async function cargarFicha(){
@@ -418,23 +469,58 @@ async function cargarFicha(){
 
 
     salida.innerHTML =
-        "Cargando contenedor.csv...";
+        "Cargando datos...";
 
 
-    const cargado =
+    /*
+    ======================================================
+    CARGAR AMBAS FUENTES
+    ======================================================
+    */
+
+    const csvOK =
         await cargarContenedor();
 
 
-    if(!cargado){
+    if(!csvOK){
 
         return;
 
     }
 
 
+    const jsonOK =
+        await cargarPaleofichas();
+
+
+    if(!jsonOK){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ No se pudo cargar paleofichas.json" +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    /*
+    ======================================================
+    BUSCAR REGISTRO DEL CONTENEDOR POR J1
+    ======================================================
+    */
+
     const registro =
         contenedor.find(
-            r => String(r.j1).trim() === codigo
+            r =>
+                String(r.j1)
+                .trim()
+                ===
+                codigo
         );
 
 
@@ -446,7 +532,7 @@ async function cargarFicha(){
 
             "❌ Ficha no encontrada: " +
 
-            codigo +
+            escapeHTML(codigo) +
 
             "</span>";
 
@@ -493,6 +579,69 @@ async function cargarFicha(){
 
     /*
     ======================================================
+    BUSCAR LA PALEOFICHA CORRESPONDIENTE EN JSON
+    USANDO J1 COMO PUNTERO
+    ======================================================
+    */
+
+    const fichaJSON =
+        paleofichas.find(
+            f =>
+                String(f.codigo)
+                .trim()
+                ===
+                String(J.j1)
+                .trim()
+        );
+
+
+    if(!fichaJSON){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Registro encontrado en CSV, " +
+
+            "pero no existe una Paleoficha con código " +
+
+            escapeHTML(J.j1) +
+
+            " en paleofichas.json." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    /*
+    ======================================================
+    DATOS INTERPRETADOS DESDE JSON
+    ======================================================
+    */
+
+    const nombre =
+        fichaJSON.nombre
+        ||
+        "";
+
+
+    const dieta =
+        fichaJSON.dieta
+        ||
+        "";
+
+
+    const anatomia =
+        fichaJSON.anatomia
+        ||
+        "";
+
+
+    /*
+    ======================================================
     DECODIFICACIÓN GEOLÓGICA
     ======================================================
     */
@@ -516,14 +665,21 @@ async function cargarFicha(){
 
     /*
     ======================================================
-    BLOQUE DE DATOS BRUTOS
+    RESULTADO
     ======================================================
     */
 
     let html = "";
 
 
+    /*
+    ======================================================
+    ESTADO
+    ======================================================
+    */
+
     html +=
+
         "<div class='ok'>" +
 
         "✓ Registro identificado" +
@@ -532,6 +688,7 @@ async function cargarFicha(){
 
 
     html +=
+
         "<div class='seccion'>" +
 
         "<b>Registros leídos:</b> " +
@@ -541,8 +698,20 @@ async function cargarFicha(){
         "</div>";
 
 
+    /*
+    ======================================================
+    DATOS BRUTOS
+    ======================================================
+    */
+
     html +=
-        "<div class='seccion bruto'>" +
+
+        "<h2>DATOS BRUTOS DEL CONTENEDOR</h2>";
+
+
+    html +=
+
+        "<div class='resultado bruto'>" +
 
         "<b>Contenedor J</b>\n";
 
@@ -554,16 +723,20 @@ async function cargarFicha(){
     ){
 
         html +=
+
             "j" +
             i +
             ": " +
-            J["j"+i] +
+            escapeHTML(
+                J["j"+i]
+            ) +
             "\n";
 
     }
 
 
     html +=
+
         "\n<b>Estadísticas E</b>\n";
 
 
@@ -574,16 +747,20 @@ async function cargarFicha(){
     ){
 
         html +=
+
             "e" +
             i +
             " → " +
-            E["e"+i] +
+            escapeHTML(
+                E["e"+i]
+            ) +
             "\n";
 
     }
 
 
     html +=
+
         "</div>";
 
 
@@ -594,10 +771,12 @@ async function cargarFicha(){
     */
 
     html +=
+
         "<h2>PALEOFICHA INTERPRETADA</h2>";
 
 
     html +=
+
         "<div class='paleoficha'>";
 
 
@@ -606,12 +785,38 @@ async function cargarFicha(){
     */
 
     html +=
+
         "<div class='linea'>" +
 
-        "<span class='campo'>Código:</span> " +
+        "<span class='campo'>" +
+
+        "Código:" +
+
+        "</span> " +
 
         escapeHTML(
-            ficha.codigo
+            J.j1
+        ) +
+
+        "</div>";
+
+
+    /*
+    NOMBRE
+    */
+
+    html +=
+
+        "<div class='seccion'>" +
+
+        "<span class='campo'>" +
+
+        "Nombre:" +
+
+        "</span><br>" +
+
+        escapeHTML(
+            nombre
         ) +
 
         "</div>";
@@ -622,14 +827,23 @@ async function cargarFicha(){
     */
 
     html +=
+
         "<div class='seccion'>" +
 
-        "<span class='campo'>Cronología:</span> ";
+        "<span class='campo'>" +
+
+        "Cronología:" +
+
+        "</span> ";
 
 
-    if(geo && geo.rango){
+    if(
+        geo &&
+        geo.rango
+    ){
 
         html +=
+
             escapeHTML(
                 geo.rango
             );
@@ -639,14 +853,16 @@ async function cargarFicha(){
     else{
 
         html +=
+
             escapeHTML(
-                ficha.cronologia
+                J.j3
             );
 
     }
 
 
     html +=
+
         "</div>";
 
 
@@ -655,9 +871,14 @@ async function cargarFicha(){
     */
 
     html +=
+
         "<div class='seccion'>" +
 
-        "<span class='campo'>Período:</span><br>";
+        "<span class='campo'>" +
+
+        "Período:" +
+
+        "</span><br>";
 
 
     if(
@@ -667,6 +888,7 @@ async function cargarFicha(){
     ){
 
         html +=
+
             escapeHTML(
                 geo.periodo.join(
                     " · "
@@ -678,12 +900,14 @@ async function cargarFicha(){
     else{
 
         html +=
+
             "No disponible";
 
     }
 
 
     html +=
+
         "</div>";
 
 
@@ -692,6 +916,7 @@ async function cargarFicha(){
     */
 
     html +=
+
         "<div class='seccion'>" +
 
         "<span class='campo'>" +
@@ -708,6 +933,7 @@ async function cargarFicha(){
     ){
 
         html +=
+
             escapeHTML(
                 geo.edad.join(
                     " · "
@@ -719,20 +945,71 @@ async function cargarFicha(){
     else{
 
         html +=
+
             "No disponible";
 
     }
 
 
     html +=
+
         "</div>";
 
 
     /*
-    AVISO
+    ======================================================
+    DIETA
+    ======================================================
     */
 
     html +=
+
+        "<div class='seccion'>" +
+
+        "<span class='campo'>" +
+
+        "Dieta:" +
+
+        "</span><br>" +
+
+        escapeHTML(
+            dieta
+        ) +
+
+        "</div>";
+
+
+    /*
+    ======================================================
+    ANATOMÍA
+    ======================================================
+    */
+
+    html +=
+
+        "<div class='seccion'>" +
+
+        "<span class='campo'>" +
+
+        "Anatomía:" +
+
+        "</span><br>" +
+
+        escapeHTML(
+            anatomia
+        ) +
+
+        "</div>";
+
+
+    /*
+    ======================================================
+    CAMPOS TODAVÍA SIN DECODIFICAR
+    ======================================================
+    */
+
+    html +=
+
         "<div class='seccion'>" +
 
         "(Aún por decodificar)" +
@@ -745,12 +1022,17 @@ async function cargarFicha(){
     */
 
     html +=
+
         "<div class='seccion'>" +
 
-        "<span class='campo'>HP:</span> " +
+        "<span class='campo'>" +
+
+        "HP:" +
+
+        "</span> " +
 
         escapeHTML(
-            ficha.HP
+            J.j5
         ) +
 
         "</div>";
@@ -761,12 +1043,17 @@ async function cargarFicha(){
     */
 
     html +=
+
         "<div class='linea'>" +
 
-        "<span class='campo'>HS:</span> " +
+        "<span class='campo'>" +
+
+        "HS:" +
+
+        "</span> " +
 
         escapeHTML(
-            ficha.HS
+            J.j6
         ) +
 
         "</div>";
@@ -777,6 +1064,7 @@ async function cargarFicha(){
     */
 
     html +=
+
         "<div class='linea'>" +
 
         "<span class='campo'>" +
@@ -786,7 +1074,7 @@ async function cargarFicha(){
         "</span> " +
 
         escapeHTML(
-            ficha.modo_vida
+            J.j9
         ) +
 
         "</div>";
@@ -797,6 +1085,7 @@ async function cargarFicha(){
     */
 
     html +=
+
         "<div class='linea'>" +
 
         "<span class='campo'>" +
@@ -806,78 +1095,172 @@ async function cargarFicha(){
         "</span> " +
 
         escapeHTML(
-            ficha.medio_compuesto
+            J.j10
         ) +
 
         "</div>";
 
 
     html +=
+
         "</div>";
 
 
     /*
     ======================================================
-    MAPA DE INTERPRETACIÓN
+    CORRESPONDENCIA DE CAMPOS
     ======================================================
     */
 
     html +=
-        "<h2>Correspondencia detectada</h2>";
+
+        "<h2>INTERPRETACIÓN DE CAMPOS</h2>";
 
 
     html +=
+
         "<div class='resultado bruto'>";
 
 
     html +=
-        "Código\n" +
-        "→ j1\n" +
-        "→ " +
-        escapeHTML(J.j1) +
+
+        "j1 → Código → " +
+
+        escapeHTML(
+            J.j1
+        ) +
+
         "\n\n";
 
 
     html +=
-        "Cronología\n" +
-        "→ j3\n" +
-        "→ " +
-        escapeHTML(J.j3) +
+
+        "j2 → Nombre → " +
+
+        escapeHTML(
+            nombre
+        ) +
+
         "\n\n";
 
 
     html +=
-        "HP\n" +
-        "→ j5\n" +
-        "→ " +
-        escapeHTML(J.j5) +
+
+        "j3 → Cronología → " +
+
+        escapeHTML(
+            J.j3
+        ) +
+
         "\n\n";
 
 
     html +=
-        "HS\n" +
-        "→ j6\n" +
-        "→ " +
-        escapeHTML(J.j6) +
+
+        "j5 → HP → " +
+
+        escapeHTML(
+            J.j5
+        ) +
+
         "\n\n";
 
 
     html +=
-        "Modo de vida\n" +
-        "→ j9\n" +
-        "→ " +
-        escapeHTML(J.j9) +
+
+        "j6 → HS → " +
+
+        escapeHTML(
+            J.j6
+        ) +
+
         "\n\n";
 
 
     html +=
-        "Medio ecológico\n" +
-        "→ j10\n" +
-        "→ " +
-        escapeHTML(J.j10);
+
+        "j7 → Dieta → " +
+
+        escapeHTML(
+            dieta
+        ) +
+
+        "\n\n";
 
 
     html +=
+
+        "j8 → Anatomía → " +
+
+        escapeHTML(
+            anatomia
+        ) +
+
+        "\n\n";
+
+
+    html +=
+
+        "j9 → Modo de vida → " +
+
+        escapeHTML(
+            J.j9
+        ) +
+
+        "\n\n";
+
+
+    html +=
+
+        "j10 → Medio ecológico → " +
+
+        escapeHTML(
+            J.j10
+        );
+
+
+    html +=
+
+        "</div>";
+
+
+    /*
+    ======================================================
+    ESTADÍSTICAS
+    ======================================================
+    */
+
+    html +=
+
+        "<h2>ESTADÍSTICAS</h2>";
+
+
+    html +=
+
+        "<div class='resultado bruto'>";
+
+
+    for(
+        let i = 1;
+        i <= 11;
+        i++
+    ){
+
+        html +=
+
+            "e" +
+            i +
+            " → " +
+            escapeHTML(
+                E["e"+i]
+            ) +
+            "\n";
+
+    }
+
+
+    html +=
+
         "</div>";
 
 
@@ -922,7 +1305,6 @@ function escapeHTML(valor){
 
 /* ======================================================
    PRUEBA MANUAL PALGEOSIMPLIFICADO
-   AUXILIAR
 ====================================================== */
 
 function probarRangoMa(){
@@ -1063,37 +1445,85 @@ function normalizarMa(valor){
 
 }
 
+<!-- =====================================================
+     PRUEBA MANUAL EN AÑOS
+====================================================== -->
+
+<h3>Rango en años</h3>
+
+<div class="rangoEntrada">
+
+<input
+id="anosInicio"
+type="number"
+step="1"
+placeholder="21700">
+
+<span class="separador">a -</span>
+
+<input
+id="anosFin"
+type="text"
+placeholder="Actualidad">
+
+</div>
+
+
+<button
+type="button"
+onclick="probarRangoAnos()">
+
+Probar rango en años
+
+</button>
+
+
+<div
+id="resultadoPALGEO"
+class="resultado">
+
+Esperando prueba...
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     FUNCIONES DE PRUEBA PALGEOSIMPLIFICADO
+====================================================== -->
+
+<script>
+
 
 /* ======================================================
-   PRUEBA MANUAL EN AÑOS
+   PRUEBA RANGO EN AÑOS
 ====================================================== */
 
 function probarRangoAnos(){
 
     const inicioTexto =
         document
-        .getElementById(
-            "anosInicio"
-        )
+        .getElementById("anosInicio")
         .value
         .trim();
 
 
     const finTexto =
         document
-        .getElementById(
-            "anosFin"
-        )
+        .getElementById("anosFin")
         .value
         .trim();
 
 
     const salida =
         document
-        .getElementById(
-            "resultadoPALGEO"
-        );
+        .getElementById("resultadoPALGEO");
 
+
+    /*
+    COMPROBAR CAMPOS
+    */
 
     if(
         inicioTexto === "" ||
@@ -1104,7 +1534,7 @@ function probarRangoAnos(){
 
             "<span class='error'>" +
 
-            "❌ Introduce los valores." +
+            "❌ Introduce los dos valores." +
 
             "</span>";
 
@@ -1113,18 +1543,30 @@ function probarRangoAnos(){
     }
 
 
+    /*
+    PRIMER VALOR
+    */
+
     const inicio =
         parseFloat(
             inicioTexto
         );
 
 
+    /*
+    SEGUNDO VALOR
+
+    Puede ser:
+
+    21700
+    Actualidad
+    */
+
     let fin;
 
 
     if(
-        finTexto
-        .toLowerCase()
+        finTexto.toLowerCase()
         ===
         "actualidad"
     ){
@@ -1142,6 +1584,10 @@ function probarRangoAnos(){
 
     }
 
+
+    /*
+    VALIDAR
+    */
 
     if(
         isNaN(inicio) ||
@@ -1161,6 +1607,13 @@ function probarRangoAnos(){
     }
 
 
+    /*
+    SENTIDO TEMPORAL
+
+    El primer valor debe ser
+    más antiguo que el segundo.
+    */
+
     if(inicio < fin){
 
         salida.innerHTML =
@@ -1176,6 +1629,10 @@ function probarRangoAnos(){
     }
 
 
+    /*
+    CONVERTIR A Ma
+    */
+
     const inicioMa =
         inicio / 1000000;
 
@@ -1184,13 +1641,34 @@ function probarRangoAnos(){
         fin / 1000000;
 
 
+    /*
+    CONSTRUIR FORMATO INTERNO
+
+    Ejemplo:
+
+    21700 a - Actualidad
+
+    ↓
+
+    0000.0217-0000.0000
+
+    */
+
     const cronologia =
-        normalizarMa(inicioMa)
+        normalizarMa(
+            inicioMa
+        )
         +
         "-"
         +
-        normalizarMa(finMa);
+        normalizarMa(
+            finMa
+        );
 
+
+    /*
+    PASAR A PALGEOSIMPLIFICADO
+    */
 
     ejecutarPALGEO(
         cronologia
@@ -1200,7 +1678,46 @@ function probarRangoAnos(){
 
 
 /* ======================================================
-   EJECUTAR PALGEO MANUAL
+   NORMALIZAR MA
+====================================================== */
+
+function normalizarMa(valor){
+
+    const partes =
+        Number(valor)
+        .toFixed(4)
+        .split(".");
+
+
+    const entero =
+        partes[0]
+        .padStart(
+            4,
+            "0"
+        );
+
+
+    const decimal =
+        partes[1]
+        ||
+        "0000";
+
+
+    return (
+
+        entero
+        +
+        "."
+        +
+        decimal
+
+    );
+
+}
+
+
+/* ======================================================
+   EJECUTAR PALGEOSIMPLIFICADO
 ====================================================== */
 
 function ejecutarPALGEO(
@@ -1214,6 +1731,27 @@ function ejecutarPALGEO(
         );
 
 
+    /*
+    COMPROBAR QUE EXISTE EL DECODIFICADOR
+    */
+
+    if(
+        !window.PALGEOSIMPLIFICADO
+    ){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ PALGEOSIMPLIFICADO no está cargado." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
     try{
 
         const resultado =
@@ -1222,6 +1760,10 @@ function ejecutarPALGEO(
                 cronologia
             );
 
+
+        /*
+        RESULTADO NO VÁLIDO
+        */
 
         if(!resultado){
 
@@ -1238,10 +1780,19 @@ function ejecutarPALGEO(
         }
 
 
+        /*
+        CONSTRUIR RESULTADO
+        */
+
         let html = "";
 
 
+        /*
+        CRONOLOGÍA INTERNA
+        */
+
         html +=
+
             "<b>Cronología interna:</b><br>" +
 
             escapeHTML(
@@ -1251,7 +1802,12 @@ function ejecutarPALGEO(
             "<br><br>";
 
 
+        /*
+        RANGO HUMANO
+        */
+
         html +=
+
             "<b>Rango:</b><br>" +
 
             escapeHTML(
@@ -1261,39 +1817,77 @@ function ejecutarPALGEO(
             "<br><br>";
 
 
-        html +=
-            "<b>Período:</b><br>" +
+        /*
+        PERÍODO
+        */
 
-            (
-                resultado.periodo.length
-                ?
+        html +=
+
+            "<b>Período:</b><br>";
+
+
+        if(
+            resultado.periodo &&
+            resultado.periodo.length > 0
+        ){
+
+            html +=
+
                 escapeHTML(
                     resultado.periodo.join(
                         " · "
                     )
-                )
-                :
-                "No disponible"
-            ) +
+                );
 
-            "<br><br>";
+        }
+
+        else{
+
+            html +=
+                "No disponible";
+
+        }
 
 
         html +=
-            "<b>Edad / Subperíodo:</b><br>" +
+            "<br><br>";
 
-            (
-                resultado.edad.length
-                ?
+
+        /*
+        EDAD / SUBPERÍODO
+        */
+
+        html +=
+
+            "<b>Edad / Subperíodo:</b><br>";
+
+
+        if(
+            resultado.edad &&
+            resultado.edad.length > 0
+        ){
+
+            html +=
+
                 escapeHTML(
                     resultado.edad.join(
                         " · "
                     )
-                )
-                :
-                "No disponible"
-            );
+                );
 
+        }
+
+        else{
+
+            html +=
+                "No disponible";
+
+        }
+
+
+        /*
+        MOSTRAR
+        */
 
         salida.innerHTML =
             html;
@@ -1302,7 +1896,9 @@ function ejecutarPALGEO(
 
     catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
 
         salida.innerHTML =
@@ -1317,6 +1913,61 @@ function ejecutarPALGEO(
 
 }
 
+
+/* ======================================================
+   ESCAPAR HTML
+====================================================== */
+
+function escapeHTML(
+    valor
+){
+
+    return String(
+        valor ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* ======================================================
+   CARGA AUTOMÁTICA INICIAL
+====================================================== */
+
+window.addEventListener(
+    "load",
+    function(){
+
+        cargarFicha();
+
+    }
+);
+
+
 </script>
 
 
@@ -1325,7 +1976,4 @@ function ejecutarPALGEO(
 </html>
 
 
-
-
-
-
+    
