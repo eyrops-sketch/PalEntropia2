@@ -1303,6 +1303,15 @@ function escapeHTML(valor){
 }
 
 
+
+
+
+
+
+
+    
+
+    
 /* ======================================================
    PRUEBA MANUAL PALGEOSIMPLIFICADO
 ====================================================== */
@@ -1831,8 +1840,328 @@ function ejecutarPALGEO(
             resultado.periodo.length > 0
         ){
 
-            html +=
 
+    
+
+<!-- ======================================================
+     PRUEBA MANUAL PALGEOSIMPLIFICADO
+====================================================== -->
+
+<script>
+
+/* ======================================================
+   PRUEBA RANGO MA
+====================================================== */
+
+function probarRangoMa(){
+
+    const inicioTexto =
+        document
+        .getElementById("maInicio")
+        .value
+        .trim();
+
+    const finTexto =
+        document
+        .getElementById("maFin")
+        .value
+        .trim();
+
+    const salida =
+        document
+        .getElementById("resultadoPALGEO");
+
+
+    if(
+        inicioTexto === "" ||
+        finTexto === ""
+    ){
+
+        salida.innerHTML =
+            "<span class='error'>" +
+            "❌ Introduce los dos valores." +
+            "</span>";
+
+        return;
+
+    }
+
+
+    const inicio =
+        parseFloat(inicioTexto);
+
+    const fin =
+        parseFloat(finTexto);
+
+
+    if(
+        isNaN(inicio) ||
+        isNaN(fin)
+    ){
+
+        salida.innerHTML =
+            "<span class='error'>" +
+            "❌ Los valores no son válidos." +
+            "</span>";
+
+        return;
+
+    }
+
+
+    if(inicio < fin){
+
+        salida.innerHTML =
+            "<span class='error'>" +
+            "❌ El primer valor debe ser mayor o igual que el segundo." +
+            "</span>";
+
+        return;
+
+    }
+
+
+    const cronologia =
+        normalizarMa(inicio)
+        +
+        "-"
+        +
+        normalizarMa(fin);
+
+
+    ejecutarPALGEO(cronologia);
+
+}
+
+
+/* ======================================================
+   NORMALIZAR MA
+====================================================== */
+
+function normalizarMa(valor){
+
+    const partes =
+        Number(valor)
+        .toFixed(4)
+        .split(".");
+
+
+    const entero =
+        partes[0]
+        .padStart(4,"0");
+
+
+    const decimal =
+        partes[1] ||
+        "0000";
+
+
+    return (
+        entero +
+        "." +
+        decimal
+    );
+
+}
+
+
+/* ======================================================
+   PRUEBA RANGO EN AÑOS
+====================================================== */
+
+function probarRangoAnos(){
+
+    const inicioTexto =
+        document
+        .getElementById("anosInicio")
+        .value
+        .trim();
+
+
+    const finTexto =
+        document
+        .getElementById("anosFin")
+        .value
+        .trim();
+
+
+    const salida =
+        document
+        .getElementById("resultadoPALGEO");
+
+
+    if(
+        inicioTexto === "" ||
+        finTexto === ""
+    ){
+
+        salida.innerHTML =
+            "<span class='error'>" +
+            "❌ Introduce los dos valores." +
+            "</span>";
+
+        return;
+
+    }
+
+
+    const inicio =
+        parseFloat(inicioTexto);
+
+
+    let fin;
+
+
+    if(
+        finTexto
+        .toLowerCase()
+        ===
+        "actualidad"
+    ){
+
+        fin = 0;
+
+    }
+
+    else{
+
+        fin =
+            parseFloat(finTexto);
+
+    }
+
+
+    if(
+        isNaN(inicio) ||
+        isNaN(fin)
+    ){
+
+        salida.innerHTML =
+            "<span class='error'>" +
+            "❌ Valor no válido." +
+            "</span>";
+
+        return;
+
+    }
+
+
+    if(inicio < fin){
+
+        salida.innerHTML =
+            "<span class='error'>" +
+            "❌ El primer valor debe representar una antigüedad mayor." +
+            "</span>";
+
+        return;
+
+    }
+
+
+    /*
+    CONVERTIR A MILLONES DE AÑOS
+    */
+
+    const inicioMa =
+        inicio / 1000000;
+
+
+    const finMa =
+        fin / 1000000;
+
+
+    /*
+    CONSTRUIR CRONOLOGÍA INTERNA
+    */
+
+    const cronologia =
+        normalizarMa(inicioMa)
+        +
+        "-"
+        +
+        normalizarMa(finMa);
+
+
+    ejecutarPALGEO(cronologia);
+
+}
+
+
+/* ======================================================
+   EJECUTAR PALGEOSIMPLIFICADO
+====================================================== */
+
+function ejecutarPALGEO(cronologia){
+
+    const salida =
+        document
+        .getElementById("resultadoPALGEO");
+
+
+    if(
+        !window.PALGEOSIMPLIFICADO
+    ){
+
+        salida.innerHTML =
+            "<span class='error'>" +
+            "❌ PALGEOSIMPLIFICADO no está cargado." +
+            "</span>";
+
+        return;
+
+    }
+
+
+    try{
+
+        const resultado =
+            PALGEOSIMPLIFICADO
+            .analizar(
+                cronologia
+            );
+
+
+        if(!resultado){
+
+            salida.innerHTML =
+                "<span class='error'>" +
+                "❌ Formato no válido o cronología no procesable." +
+                "</span>";
+
+            return;
+
+        }
+
+
+        let html = "";
+
+
+        html +=
+            "<b>Cronología interna:</b><br>" +
+            escapeHTML(
+                resultado.cronologia
+            ) +
+            "<br><br>";
+
+
+        html +=
+            "<b>Rango:</b><br>" +
+            escapeHTML(
+                resultado.rango
+            ) +
+            "<br><br>";
+
+
+        html +=
+            "<b>Período:</b><br>";
+
+
+        if(
+            resultado.periodo &&
+            resultado.periodo.length
+        ){
+
+            html +=
                 escapeHTML(
                     resultado.periodo.join(
                         " · "
@@ -1853,22 +2182,16 @@ function ejecutarPALGEO(
             "<br><br>";
 
 
-        /*
-        EDAD / SUBPERÍODO
-        */
-
         html +=
-
             "<b>Edad / Subperíodo:</b><br>";
 
 
         if(
             resultado.edad &&
-            resultado.edad.length > 0
+            resultado.edad.length
         ){
 
             html +=
-
                 escapeHTML(
                     resultado.edad.join(
                         " · "
@@ -1885,10 +2208,6 @@ function ejecutarPALGEO(
         }
 
 
-        /*
-        MOSTRAR
-        */
-
         salida.innerHTML =
             html;
 
@@ -1896,17 +2215,11 @@ function ejecutarPALGEO(
 
     catch(error){
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         salida.innerHTML =
-
             "<span class='error'>" +
-
             "❌ Error ejecutando PALGEOSIMPLIFICADO." +
-
             "</span>";
 
     }
@@ -1918,9 +2231,7 @@ function ejecutarPALGEO(
    ESCAPAR HTML
 ====================================================== */
 
-function escapeHTML(
-    valor
-){
+function escapeHTML(valor){
 
     return String(
         valor ?? ""
@@ -1967,7 +2278,6 @@ window.addEventListener(
     }
 );
 
-
 </script>
 
 
@@ -1975,5 +2285,4 @@ window.addEventListener(
 
 </html>
 
-
-    
+        
