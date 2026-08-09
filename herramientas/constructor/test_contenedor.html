@@ -1,580 +1,157 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>TEST CONTENEDOR</title><style>
 
 body{
-font-family:Arial,sans-serif;
-margin:20px;
-background:#111;
-color:#eee;
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #111;
+    color: #eee;
 }
 
 h1{
-margin-bottom:20px;
+    margin-bottom: 20px;
 }
 
 input{
-padding:10px;
-font-size:16px;
-width:150px;
+    padding: 10px;
+    font-size: 16px;
+    width: 150px;
 }
 
 button{
-padding:10px 15px;
-font-size:16px;
-cursor:pointer;
-}
-
-#estado{
-margin-top:20px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
 #resultado{
-margin-top:25px;
-padding:20px;
-border:1px solid #555;
-background:#1b1b1b;
-}
-
-.campo{
-margin:6px 0;
-}
-
-.nombre{
-font-weight:bold;
+    margin-top: 25px;
+    padding: 20px;
+    border: 1px solid #555;
+    background: #1b1b1b;
+    line-height: 1.6;
 }
 
 .ok{
-color:#7cff9b;
+    color: #7cff9b;
 }
 
 .error{
-color:#ff7777;
+    color: #ff7777;
 }
 
-.bloque{
-margin-top:25px;
-padding-top:15px;
-border-top:1px solid #444;
-}
-
-pre{
-white-space:pre-wrap;
-word-break:break-word;
-}
-
-</style></head><body><h1>TEST CONTENEDOR</h1><div><input
+</style></head><body><h1>TEST CONTENEDOR</h1><input
 id="codigo"
 type="text"
 value="002_11"
-placeholder="j1">
+placeholder="j1"
+
+«»
 
 <button onclick="cargarFicha()">
-Cargar ficha
-</button></div><div id="estado"></div><div id="resultado">Esperando carga...
-
+    Cargar ficha
+</button><div id="resultado">
+    Esperando carga...
 </div><script>
 
 /*=========================================
-CONFIGURACIÓN
-=========================================*/
-
-const ARCHIVO_CONTENEDOR = "contenedor.csv";
-
-
-/*=========================================
-CARGA INICIAL
-=========================================*/
-
-cargarFicha();
-
-
-/*=========================================
-CARGAR FICHA
+CARGAR CONTENEDOR
 =========================================*/
 
 async function cargarFicha(){
 
-const codigo =
-
-document
-.getElementById("codigo")
-.value
-.trim();
-
-
-const estado =
-
-document
-.getElementById("estado");
+    const codigo =
+        document
+        .getElementById("codigo")
+        .value
+        .trim();
 
 
-const resultado =
-
-document
-.getElementById("resultado");
-
-
-if(!codigo){
-
-resultado.innerHTML =
-
-"<div class='error'>" +
-"Introduce un código j1." +
-"</div>";
-
-return;
-
-}
+    const salida =
+        document
+        .getElementById("resultado");
 
 
-estado.innerHTML =
-"Cargando contenedor.csv...";
+    salida.innerHTML =
+        "Cargando contenedor.csv...";
 
 
-try{
+    try{
 
-const respuesta =
-
-await fetch(
-ARCHIVO_CONTENEDOR
-);
+        const respuesta =
+            await fetch("contenedor.csv");
 
 
-if(!respuesta.ok){
+        if(!respuesta.ok){
 
-throw new Error(
-"No se pudo cargar contenedor.csv"
-);
+            throw new Error(
+                "HTTP " + respuesta.status
+            );
 
-}
-
-
-const texto =
-
-await respuesta.text();
+        }
 
 
-const registros =
-
-parsearCSV(texto);
-
-
-/*=========================================
-BUSCAR j1
-=========================================*/
-
-const registro =
-
-registros.find(
-
-function(r){
-
-return r.j1 === codigo;
-
-}
-
-);
+        const texto =
+            await respuesta.text();
 
 
-if(!registro){
+        salida.innerHTML =
 
-estado.innerHTML =
+            "<div class='ok'>" +
 
-"<div class='error'>" +
+            "✓ contenedor.csv cargado correctamente" +
 
-"No se encontró " +
-codigo +
-" en contenedor.csv."
+            "</div>" +
 
-+
+            "<br>" +
 
-"</div>";
+            "Código solicitado: " +
 
-resultado.innerHTML = "";
+            codigo +
 
-return;
+            "<br>" +
+
+            "Tamaño del archivo: " +
+
+            texto.length +
+
+            " caracteres";
+
+
+        console.log(
+            "CONTENEDOR.CSV:"
+        );
+
+        console.log(texto);
+
+    }
+
+
+    catch(error){
+
+        salida.innerHTML =
+
+            "<div class='error'>" +
+
+            "✗ Error cargando contenedor.csv" +
+
+            "</div>" +
+
+            "<br>" +
+
+            error.message;
+
+
+        console.error(error);
+
+    }
 
 }
 
 
 /*=========================================
-REGISTRO ENCONTRADO
+PRUEBA AUTOMÁTICA AL ABRIR
 =========================================*/
 
-estado.innerHTML =
-
-"<div class='ok'>" +
-
-"✓ Ficha encontrada: " +
-
-registro.j1 +
-
-"</div>";
-
-
-/*=========================================
-TRANSCRIPCIÓN
-=========================================*/
-
-const ficha =
-
-transcribirRegistro(
-registro
-);
-
-
-/*=========================================
-MOSTRAR
-=========================================*/
-
-mostrarFicha(
-ficha
-);
-
-}
-
-catch(error){
-
-console.error(error);
-
-estado.innerHTML =
-
-"<div class='error'>" +
-
-"Error cargando contenedor.csv"
-
-+
-
-"</div>";
-
-resultado.innerHTML =
-
-"<pre>" +
-
-error.message +
-
-"</pre>";}
-
-}
-
-/=========================================
-TRANSCRIBIR REGISTRO
-=========================================/
-
-function transcribirRegistro(registro){
-
-const ficha = {
-
-codigo: registro.j1,
-
-cronologia: registro.j3,
-
-HP: registro.j5,
-
-HS: registro.j6,
-
-modo_vida: registro.j9,
-
-medio_compuesto: registro.j10,
-
-stats: {
-
-e1: Number(registro.e1),
-
-e2: Number(registro.e2),
-
-e3: Number(registro.e3),
-
-e4: Number(registro.e4),
-
-e5: Number(registro.e5),
-
-e6: Number(registro.e6),
-
-e7: Number(registro.e7),
-
-e8: Number(registro.e8),
-
-e9: Number(registro.e9),
-
-e10: Number(registro.e10),
-
-e11: Number(registro.e11)
-
-}
-
-};
-
-/=========================================
-CAMPOS RESERVADOS
-=========================================/
-
-ficha.j2 = registro.j2;
-
-ficha.j4 = registro.j4;
-
-ficha.j7 = registro.j7;
-
-ficha.j8 = registro.j8;
-
-return ficha;
-
-}
-
-/=========================================
-MOSTRAR FICHA TRANSCRITA
-=========================================/
-
-function mostrarFicha(ficha){
-
-const resultado =
-
-document.getElementById(
-"resultado"
-);
-
-let html =
-
-"<h2>Paleoficha transcrita</h2>";
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>j1 / código:</span> " +
-
-ficha.codigo +
-
-"</div>";
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>j2:</span> " +
-
-ficha.j2 +
-
-"</div>";
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>j3 / cronología:</span> " +
-
-ficha.cronologia +
-
-"</div>";
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>j4:</span> " +
-
-ficha.j4 +
-
-"</div>";
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>j5 / HP:</span> " +
-
-ficha.HP +
-
-"</div>";
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>j6 / HS:</span> " +
-
-ficha.HS +
-
-"</div>";
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>j7:</span> " +
-
-ficha.j7 +
-
-"</div>";
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>j8:</span> " +
-
-ficha.j8 +
-
-"</div>";
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>j9 / modo de vida:</span> " +
-
-ficha.modo_vida +
-
-"</div>";
-
-html +=
-
-"<div class='campo'>" +
-
-"<span class='nombre'>j10 / medio compuesto:</span> " +
-
-ficha.medio_compuesto +
-
-"</div>";
-
-/=========================================
-ESTADÍSTICAS
-=========================================/
-
-html +=
-
-"<div class='bloque'>" +
-
-"<h3>Estadísticas</h3>" +
-
-"<div>e1: " + ficha.stats.e1 + "</div>" +
-"<div>e2: " + ficha.stats.e2 + "</div>" +
-"<div>e3: " + ficha.stats.e3 + "</div>" +
-"<div>e4: " + ficha.stats.e4 + "</div>" +
-"<div>e5: " + ficha.stats.e5 + "</div>" +
-"<div>e6: " + ficha.stats.e6 + "</div>" +
-"<div>e7: " + ficha.stats.e7 + "</div>" +
-"<div>e8: " + ficha.stats.e8 + "</div>" +
-"<div>e9: " + ficha.stats.e9 + "</div>" +
-"<div>e10: " + ficha.stats.e10 + "</div>" +
-"<div>e11: " + ficha.stats.e11 + "</div>" +
-
-"</div>";
-
-/=========================================
-OBJETO FINAL
-=========================================/
-
-html +=
-
-"<div class='bloque'>" +
-
-"<h3>Objeto transcrito</h3>" +
-
-"<pre>" +
-
-JSON.stringify(
-ficha,
-null,
-2
-) +
-
-"</pre>" +
-
-"</div>";
-
-resultado.innerHTML = html;
-
-}
-
-/=========================================
-PARSER CSV
-=========================================/
-
-function parsearCSV(texto){
-
-const lineas =
-
-texto
-.trim()
-.split(/\r?\n/);
-
-if(lineas.length < 2){
-
-return [];
-
-}
-
-const cabecera =
-
-lineas[0]
-.split(",")
-.map(
-
-function(c){
-
-return c.trim();
-
-}
-
-);
-
-const registros = [];
-
-for(
-let i = 1;
-i < lineas.length;
-i++
-){
-
-if(!lineas[i].trim()){
-
-continue;
-
-}
-
-const valores =
-
-lineas[i]
-.split(",")
-.map(
-
-function(v){
-
-return v.trim();
-
-}
-
-);
-
-const registro = {};
-
-cabecera.forEach(
-
-function(
-campo,
-indice
-){
-
-registro[campo] =
-
-valores[indice] ?? "";
-
-}
-
-);
-
-registros.push(
-registro
-);
-
-}
-
-return registros;
-
-}
+cargarFicha();
 
 </script></body></html>
-
-
-
-
