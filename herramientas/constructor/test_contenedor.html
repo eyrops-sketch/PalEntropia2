@@ -1,42 +1,56 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>TEST CONTENEDOR</title><style>
 
 body{
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background: #111;
-    color: #eee;
+    font-family:Arial,sans-serif;
+    margin:20px;
+    background:#111;
+    color:#eee;
 }
 
 h1{
-    margin-bottom: 20px;
+    margin-bottom:20px;
 }
 
 input{
-    padding: 10px;
-    font-size: 16px;
-    width: 150px;
+    padding:10px;
+    font-size:16px;
+    width:150px;
 }
 
 button{
-    padding: 10px 15px;
-    font-size: 16px;
-    cursor: pointer;
+    padding:10px 15px;
+    font-size:16px;
+    cursor:pointer;
 }
 
 #resultado{
-    margin-top: 25px;
-    padding: 20px;
-    border: 1px solid #555;
-    background: #1b1b1b;
-    line-height: 1.6;
+    margin-top:25px;
+    padding:20px;
+    border:1px solid #555;
+    background:#1b1b1b;
+    line-height:1.7;
+}
+
+.bloque{
+    margin-top:20px;
+    padding-top:15px;
+    border-top:1px solid #444;
 }
 
 .ok{
-    color: #7cff9b;
+    color:#7cff9b;
 }
 
 .error{
-    color: #ff7777;
+    color:#ff7777;
+}
+
+.campo{
+    margin:3px 0;
+}
+
+.nombre{
+    font-weight:bold;
 }
 
 </style></head><body><h1>TEST CONTENEDOR</h1><input
@@ -54,7 +68,15 @@ placeholder="j1"
 </div><script>
 
 /*=========================================
-CARGAR CONTENEDOR
+CONFIGURACIÓN
+=========================================*/
+
+const ARCHIVO_CONTENEDOR =
+    "contenedor.csv";
+
+
+/*=========================================
+CARGAR FICHA
 =========================================*/
 
 async function cargarFicha(){
@@ -66,19 +88,25 @@ async function cargarFicha(){
         .trim();
 
 
-    const salida =
+    const resultado =
         document
         .getElementById("resultado");
 
 
-    salida.innerHTML =
+    resultado.innerHTML =
         "Cargando contenedor.csv...";
 
 
     try{
 
+        /*=================================
+        CARGAR CSV
+        =================================*/
+
         const respuesta =
-            await fetch("contenedor.csv");
+            await fetch(
+                ARCHIVO_CONTENEDOR
+            );
 
 
         if(!respuesta.ok){
@@ -94,54 +122,276 @@ async function cargarFicha(){
             await respuesta.text();
 
 
-        salida.innerHTML =
+        /*=================================
+        SEPARAR LÍNEAS
+        =================================*/
+
+        const lineas =
+            texto
+            .trim()
+            .split(/\r?\n/);
+
+
+        if(lineas.length < 2){
+
+            throw new Error(
+                "El CSV no contiene registros."
+            );
+
+        }
+
+
+        /*=================================
+        CABECERA
+        =================================*/
+
+        const cabecera =
+            lineas[0]
+            .split(",")
+            .map(
+                campo =>
+                campo.trim()
+            );
+
+
+        /*=================================
+        CREAR REGISTROS
+        =================================*/
+
+        const registros = [];
+
+
+        for(
+            let i = 1;
+            i < lineas.length;
+            i++
+        ){
+
+            if(!lineas[i].trim()){
+
+                continue;
+
+            }
+
+
+            const valores =
+                lineas[i]
+                .split(",")
+                .map(
+                    valor =>
+                    valor.trim()
+                );
+
+
+            const registro = {};
+
+
+            cabecera.forEach(
+                function(campo, indice){
+
+                    registro[campo] =
+                        valores[indice] ?? "";
+
+                }
+            );
+
+
+            registros.push(
+                registro
+            );
+
+        }
+
+
+        /*=================================
+        BUSCAR POR j1
+        =================================*/
+
+        const registro =
+            registros.find(
+                function(r){
+
+                    return r.j1 === codigo;
+
+                }
+            );
+
+
+        if(!registro){
+
+            resultado.innerHTML =
+
+                "<div class='error'>" +
+
+                "✗ No se encontró el registro " +
+
+                codigo +
+
+                "</div>";
+
+            return;
+
+        }
+
+
+        /*=================================
+        MOSTRAR RESULTADO
+        =================================*/
+
+        let html =
 
             "<div class='ok'>" +
 
-            "✓ contenedor.csv cargado correctamente" +
+            "✓ Ficha encontrada: " +
 
-            "</div>" +
+            registro.j1 +
+
+            "</div>";
+
+
+        html +=
+
+            "<div class='bloque'>" +
+
+            "<h2>Registro " +
+
+            registro.j1 +
+
+            "</h2>" +
+
+            "<h3>Contenedor J</h3>";
+
+
+        /*=================================
+        CAMPOS J
+        =================================*/
+
+        for(
+            let i = 1;
+            i <= 10;
+            i++
+        ){
+
+            const campo =
+                "j" + i;
+
+
+            html +=
+
+                "<div class='campo'>" +
+
+                "<span class='nombre'>" +
+
+                campo +
+
+                ":</span> " +
+
+                registro[campo] +
+
+                "</div>";
+
+        }
+
+
+        html +=
+
+            "</div>";
+
+
+        /*=================================
+        CAMPOS E
+        =================================*/
+
+        html +=
+
+            "<div class='bloque'>" +
+
+            "<h3>Estadísticas E</h3>";
+
+
+        for(
+            let i = 1;
+            i <= 11;
+            i++
+        ){
+
+            const campo =
+                "e" + i;
+
+
+            html +=
+
+                "<div class='campo'>" +
+
+                "<span class='nombre'>" +
+
+                campo +
+
+                ":</span> " +
+
+                registro[campo] +
+
+                "</div>";
+
+        }
+
+
+        html +=
+
+            "</div>";
+
+
+        /*=================================
+        INFORMACIÓN DE CONTROL
+        =================================*/
+
+        html +=
+
+            "<div class='bloque'>" +
+
+            "Registros leídos: " +
+
+            registros.length +
 
             "<br>" +
 
-            "Código solicitado: " +
+            "Columnas detectadas: " +
 
-            codigo +
+            cabecera.length +
 
-            "<br>" +
+            "</div>";
 
-            "Tamaño del archivo: " +
 
-            texto.length +
+        resultado.innerHTML =
+            html;
 
-            " caracteres";
 
+        /*=================================
+        CONSOLA
+        =================================*/
 
         console.log(
-            "CONTENEDOR.CSV:"
+            "Registro encontrado:",
+            registro
         );
-
-        console.log(texto);
 
     }
 
 
     catch(error){
 
-        salida.innerHTML =
+        console.error(error);
+
+
+        resultado.innerHTML =
 
             "<div class='error'>" +
 
-            "✗ Error cargando contenedor.csv" +
+            "✗ Error: " +
 
-            "</div>" +
+            error.message +
 
-            "<br>" +
-
-            error.message;
-
-
-        console.error(error);
+            "</div>";
 
     }
 
@@ -149,9 +399,15 @@ async function cargarFicha(){
 
 
 /*=========================================
-PRUEBA AUTOMÁTICA AL ABRIR
+CARGA AUTOMÁTICA
 =========================================*/
 
 cargarFicha();
 
 </script></body></html>
+
+
+
+
+
+
