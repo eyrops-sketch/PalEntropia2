@@ -36,9 +36,17 @@ input{
 
     font-size:16px;
 
-    width:180px;
+    width:220px;
 
     box-sizing:border-box;
+
+    background:#222;
+
+    color:#fff;
+
+    border:1px solid #777;
+
+    border-radius:6px;
 
 }
 
@@ -108,9 +116,13 @@ button:hover{
 
 }
 
-ul{
+.separador{
 
-    margin-top:8px;
+    margin-top:30px;
+
+    padding-top:20px;
+
+    border-top:2px solid #555;
 
 }
 
@@ -125,13 +137,17 @@ ul{
 <h1>TEST CONTENEDOR</h1>
 
 
+<!-- =========================================
+     BUSCADOR DEL CONTENEDOR
+========================================= -->
+
 <div>
 
 <input
 id="codigoInput"
 type="text"
-value="002_11"
-placeholder="Ej: 002_11"
+value="002_15"
+placeholder="Ej: 002_15"
 >
 
 <button
@@ -165,6 +181,13 @@ Esperando carga...
 ========================================= -->
 
 <script src="palgeosimplificado.js"></script>
+
+
+<!-- =========================================
+     DECODIFICADOR DEL CONTENEDOR
+========================================= -->
+
+<script src="palcontenedor_decoder.js"></script>
 
 
 <script>
@@ -399,11 +422,9 @@ function cargarFicha(){
     }
 
 
-    /*
-    =============================================
-    MOSTRAR CONTENEDOR
-    =============================================
-    */
+    /* =================================================
+       MOSTRAR REGISTRO J
+    ================================================= */
 
     let html =
 
@@ -499,7 +520,7 @@ function cargarFicha(){
 
 
     /* =================================================
-       ESTADÍSTICAS
+       ESTADÍSTICAS E
     ================================================= */
 
     html +=
@@ -534,35 +555,102 @@ function cargarFicha(){
 
 
     /* =================================================
-       PALEFICHA NORMALIZADA
+       DECODIFICADOR DEL CONTENEDOR
     ================================================= */
 
-    const paleoficha = {
+    let datosDecodificados = null;
 
-        codigo:
-            registro.j1,
 
-        cronologia:
-            registro.j3,
+    if(
+        window.PALCONTENEDOR_DECODER
+    ){
 
-        HP:
-            registro.j5,
+        datosDecodificados =
 
-        HS:
-            registro.j6,
+            PALCONTENEDOR_DECODER
+            .decodificarRegistro(
+                registro
+            );
 
-        modo_vida:
-            registro.j9,
+    }
 
-        medio_compuesto:
-            registro.j10
 
-    };
+    /* =================================================
+       DATOS TRANSCRITOS
+    ================================================= */
+
+    if(datosDecodificados){
+
+        const p =
+
+            datosDecodificados.paleoficha;
+
+
+        html +=
+
+            "<div class='bloque'>" +
+
+            "<h2>Datos transcritos para Paleoficha</h2>" +
+
+            "<div>codigo: " +
+
+            p.codigo +
+
+            "</div>" +
+
+            "<div>cronologia: " +
+
+            p.cronologia +
+
+            "</div>" +
+
+            "<div>HP: " +
+
+            p.HP +
+
+            "</div>" +
+
+            "<div>HS: " +
+
+            p.HS +
+
+            "</div>" +
+
+            "<div>modo_vida: " +
+
+            p.modo_vida +
+
+            "</div>" +
+
+            "<div>medio_compuesto: " +
+
+            p.medio_compuesto +
+
+            "</div>" +
+
+            "</div>";
+
+    }
 
 
     /* =================================================
        DECODIFICACIÓN GEOCRONOLÓGICA
     ================================================= */
+
+    const cronologia =
+
+        datosDecodificados
+
+        ?
+
+        datosDecodificados
+        .paleoficha
+        .cronologia
+
+        :
+
+        registro.j3;
+
 
     let geo = null;
 
@@ -575,14 +663,14 @@ function cargarFicha(){
 
             PALGEOSIMPLIFICADO
             .analizar(
-                paleoficha.cronologia
+                cronologia
             );
 
     }
 
 
     /* =================================================
-       MOSTRAR RESULTADO GEO
+       RESULTADO GEO
     ================================================= */
 
     html +=
@@ -606,7 +694,6 @@ function cargarFicha(){
 
     else{
 
-
         html +=
 
             "<div>" +
@@ -629,9 +716,9 @@ function cargarFicha(){
             "</div>";
 
 
-        /*
-        CÓDIGOS PALGEO
-        */
+        /* =========================================
+           CÓDIGOS PALGEO
+        ========================================= */
 
         html +=
 
@@ -651,13 +738,13 @@ function cargarFicha(){
             html += "<ul>";
 
             geo.codes.forEach(
-                codigo=>{
+                codigoGeo=>{
 
                     html +=
 
                         "<li>" +
 
-                        codigo +
+                        codigoGeo +
 
                         "</li>";
 
@@ -681,9 +768,9 @@ function cargarFicha(){
         }
 
 
-        /*
-        PERÍODOS
-        */
+        /* =========================================
+           PERÍODOS
+        ========================================= */
 
         html +=
 
@@ -700,23 +787,15 @@ function cargarFicha(){
             geo.periodo.length
         ){
 
-            html += "<ul>";
+            html += "<div>";
 
-            geo.periodo.forEach(
-                periodo=>{
+            html +=
 
-                    html +=
+                geo.periodo.join(
+                    " · "
+                );
 
-                        "<li>" +
-
-                        periodo +
-
-                        "</li>";
-
-                }
-            );
-
-            html += "</ul>";
+            html += "</div>";
 
         }
 
@@ -733,9 +812,9 @@ function cargarFicha(){
         }
 
 
-        /*
-        EDAD / SUBPERÍODO
-        */
+        /* =========================================
+           EDAD / SUBPERÍODO
+        ========================================= */
 
         html +=
 
@@ -752,23 +831,15 @@ function cargarFicha(){
             geo.edad.length
         ){
 
-            html += "<ul>";
+            html += "<div>";
 
-            geo.edad.forEach(
-                edad=>{
+            html +=
 
-                    html +=
+                geo.edad.join(
+                    " · "
+                );
 
-                        "<li>" +
-
-                        edad +
-
-                        "</li>";
-
-                }
-            );
-
-            html += "</ul>";
+            html += "</div>";
 
         }
 
@@ -793,50 +864,230 @@ function cargarFicha(){
 
 
     /* =================================================
-       DATOS TRANSCRITOS
+       GUARDAR RESULTADO
     ================================================= */
 
-    html +=
+    resultado.innerHTML = html;
+
+}
+
+
+/* =================================================
+   PRUEBA INDEPENDIENTE DE PALGEOSIMPLIFICADO
+================================================= */
+
+function probarCronologia(){
+
+
+    const texto =
+
+        document.getElementById(
+            "cronologiaPrueba"
+        )
+        .value
+        .trim();
+
+
+    const resultado =
+
+        document.getElementById(
+            "resultadoCronologia"
+        );
+
+
+    resultado.innerHTML = "";
+
+
+    if(!texto){
+
+        resultado.innerHTML =
+
+            "<div class='bloque error'>" +
+
+            "Introduce una cronología." +
+
+            "</div>";
+
+        return;
+
+    }
+
+
+    /*
+    CONVERTIR FORMATO HUMANO
+    A FORMATO INTERNO
+    */
+
+    const codificada =
+
+        PALGEOSIMPLIFICADO
+        .codificarRango(
+            texto
+        );
+
+
+    if(!codificada){
+
+        resultado.innerHTML =
+
+            "<div class='bloque error'>" +
+
+            "❌ Formato no válido." +
+
+            "<br><br>" +
+
+            "Ejemplos válidos:" +
+
+            "<br>521 Ma - 201,3 Ma" +
+
+            "<br>0521.0000-0201.3000" +
+
+            "<br>21700 a - Actualidad" +
+
+            "</div>";
+
+        return;
+
+    }
+
+
+    /*
+    ANALIZAR
+    */
+
+    const analisis =
+
+        PALGEOSIMPLIFICADO
+        .analizar(
+            codificada
+        );
+
+
+    if(!analisis){
+
+        resultado.innerHTML =
+
+            "<div class='bloque error'>" +
+
+            "❌ La cronología fue convertida " +
+
+            "pero PALGEO no pudo analizarla." +
+
+            "</div>";
+
+        return;
+
+    }
+
+
+    let html =
 
         "<div class='bloque'>" +
 
-        "<h2>Datos transcritos para Paleoficha</h2>" +
+        "<h2>✓ Cronología válida</h2>" +
 
-        "<div>codigo: " +
+        "<div>" +
 
-        paleoficha.codigo +
+        "<span class='campo'>Entrada:</span><br>" +
 
-        "</div>" +
-
-        "<div>cronologia: " +
-
-        paleoficha.cronologia +
+        texto +
 
         "</div>" +
 
-        "<div>HP: " +
+        "<br>" +
 
-        paleoficha.HP +
+        "<div>" +
 
-        "</div>" +
+        "<span class='campo'>Código interno:</span><br>" +
 
-        "<div>HS: " +
-
-        paleoficha.HS +
+        codificada +
 
         "</div>" +
 
-        "<div>modo_vida: " +
+        "<br>" +
 
-        paleoficha.modo_vida +
+        "<div>" +
 
-        "</div>" +
+        "<span class='campo'>Rango:</span><br>" +
 
-        "<div>medio_compuesto: " +
+        analisis.rango +
 
-        paleoficha.medio_compuesto +
+        "</div>";
 
-        "</div>" +
+
+    /*
+    PERÍODOS
+    */
+
+    html +=
+
+        "<br><br>" +
+
+        "<div class='campo'>" +
+
+        "Períodos:" +
+
+        "</div>";
+
+
+    if(
+        analisis.periodo.length
+    ){
+
+        html +=
+
+            analisis.periodo.join(
+                " · "
+            );
+
+    }
+
+    else{
+
+        html +=
+
+            "Sin datos";
+
+    }
+
+
+    /*
+    EDADES / SUBPERÍODOS
+    */
+
+    html +=
+
+        "<br><br>" +
+
+        "<div class='campo'>" +
+
+        "Edades / subperíodos:" +
+
+        "</div>";
+
+
+    if(
+        analisis.edad.length
+    ){
+
+        html +=
+
+            analisis.edad.join(
+                " · "
+            );
+
+    }
+
+    else{
+
+        html +=
+
+            "Sin datos";
+
+    }
+
+
+    html +=
 
         "</div>";
 
@@ -846,6 +1097,43 @@ function cargarFicha(){
 }
 
 </script>
+
+
+<!-- =========================================
+     PRUEBA INDEPENDIENTE
+========================================= -->
+
+<div class="separador">
+
+<h2>Prueba PALGEOSIMPLIFICADO</h2>
+
+<p>
+
+Prueba una cronología sin utilizar el
+constructor.
+
+</p>
+
+
+<input
+id="cronologiaPrueba"
+type="text"
+placeholder="Ej: 521 Ma - 201,3 Ma"
+>
+
+
+<button
+onclick="probarCronologia()"
+>
+
+Probar cronología
+
+</button>
+
+
+<div id="resultadoCronologia"></div>
+
+</div>
 
 
 </body>
