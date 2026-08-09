@@ -1,1 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Generador — Prueba de Paleofichas</title>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: #eee;
+    margin: 0;
+    padding: 20px;
+}
+
+.contenedor {
+    max-width: 700px;
+    margin: auto;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.busqueda {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #555;
+    background: #222;
+    color: #fff;
+}
+
+button {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.resultado {
+    display: none;
+    background: #1b1b1b;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.campo {
+    margin-bottom: 18px;
+}
+
+.etiqueta {
+    font-weight: bold;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.valor {
+    background: #252525;
+    padding: 10px;
+    border-radius: 5px;
+    line-height: 1.5;
+}
+
+.error {
+    display: none;
+    color: #ff7777;
+    margin-top: 15px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+<h1>Generador — Prueba de Paleofichas</h1>
+
+<div class="busqueda">
+
+<input
+    type="text"
+    id="codigoBusqueda"
+    placeholder="Ejemplo: 001_01"
+>
+
+<button onclick="buscarFicha()">
+    Buscar
+</button>
+
+</div>
+
+<div id="error" class="error"></div>
+
+<div id="resultado" class="resultado">
+
+    <div class="campo">
+        <div class="etiqueta">Código</div>
+        <div id="codigo" class="valor"></div>
+    </div>
+
+    <div class="campo">
+        <div class="etiqueta">Nombre</div>
+        <div id="nombre" class="valor"></div>
+    </div>
+
+    <div class="campo">
+        <div class="etiqueta">Dieta</div>
+        <div id="dieta" class="valor"></div>
+    </div>
+
+    <div class="campo">
+        <div class="etiqueta">Anatomía</div>
+        <div id="anatomia" class="valor"></div>
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let PALEOFICHAS = [];
+
+
+/* ========================================================
+   CARGA DE PALEOFICHAS.JSON
+======================================================== */
+
+fetch("paleofichas.json")
+
+.then(response => {
+
+    if (!response.ok) {
+        throw new Error("No se pudo cargar paleofichas.json");
+    }
+
+    return response.json();
+
+})
+
+.then(data => {
+
+    PALEOFICHAS = data;
+
+    console.log(
+        "Paleofichas cargadas:",
+        PALEOFICHAS.length
+    );
+
+})
+
+.catch(error => {
+
+    console.error(error);
+
+    mostrarError(
+        "No se pudo cargar paleofichas.json"
+    );
+
+});
+
+
+/* ========================================================
+   BUSCADOR
+======================================================== */
+
+function buscarFicha() {
+
+    const codigoBuscado =
+        document
+        .getElementById("codigoBusqueda")
+        .value
+        .trim();
+
+
+    if (!codigoBuscado) {
+
+        mostrarError(
+            "Introduce un código."
+        );
+
+        return;
+
+    }
+
+
+    const ficha = PALEOFICHAS.find(
+        item => item.codigo === codigoBuscado
+    );
+
+
+    if (!ficha) {
+
+        mostrarError(
+            "No se encontró ninguna Paleoficha con el código " +
+            codigoBuscado
+        );
+
+        return;
+
+    }
+
+
+    mostrarFicha(ficha);
+
+}
+
+
+/* ========================================================
+   PRESENTACIÓN DE LOS 4 CAMPOS
+======================================================== */
+
+function mostrarFicha(ficha) {
+
+    document.getElementById("error").style.display =
+        "none";
+
+
+    /*
+    ========================================================
+    CONTENEDOR DE DATOS PARA EL GENERADOR
+
+    Aquí quedan preparados exclusivamente:
+
+    codigo
+    nombre
+    dieta
+    anatomia
+    ========================================================
+    */
+
+    const datosGenerador = {
+
+        codigo: ficha.codigo,
+
+        nombre: ficha.nombre,
+
+        dieta: ficha.dieta,
+
+        anatomia: ficha.anatomia
+
+    };
+
+
+    console.log(
+        "DATOS PREPARADOS PARA GENERADOR:",
+        datosGenerador
+    );
+
+
+    document.getElementById("codigo").textContent =
+        datosGenerador.codigo;
+
+    document.getElementById("nombre").textContent =
+        datosGenerador.nombre;
+
+    document.getElementById("dieta").textContent =
+        datosGenerador.dieta;
+
+    document.getElementById("anatomia").textContent =
+        datosGenerador.anatomia;
+
+
+    document.getElementById("resultado").style.display =
+        "block";
+
+}
+
+
+/* ========================================================
+   ERROR
+======================================================== */
+
+function mostrarError(mensaje) {
+
+    const error =
+        document.getElementById("error");
+
+    error.textContent = mensaje;
+
+    error.style.display = "block";
+
+    document.getElementById("resultado").style.display =
+        "none";
+
+}
+
+
+/* ========================================================
+   ENTER = BUSCAR
+======================================================== */
+
+document
+.getElementById("codigoBusqueda")
+.addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+
+        buscarFicha();
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>
+
+
+
 
