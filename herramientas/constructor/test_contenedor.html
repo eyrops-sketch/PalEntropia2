@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Test Contenedor | PalEntropía</title><style>
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>TEST CONTENEDOR</title><style>
 
 body{
 font-family:Arial,sans-serif;
@@ -56,6 +56,11 @@ padding-top:15px;
 border-top:1px solid #444;
 }
 
+pre{
+white-space:pre-wrap;
+word-break:break-word;
+}
+
 </style></head><body><h1>TEST CONTENEDOR</h1><div><input
 id="codigo"
 type="text"
@@ -82,26 +87,30 @@ CARGA INICIAL
 cargarFicha();
 
 
-
 /*=========================================
-CARGAR REGISTRO
+CARGAR FICHA
 =========================================*/
 
 async function cargarFicha(){
 
 const codigo =
 
-document.getElementById("codigo")
+document
+.getElementById("codigo")
 .value
 .trim();
 
+
 const estado =
 
-document.getElementById("estado");
+document
+.getElementById("estado");
+
 
 const resultado =
 
-document.getElementById("resultado");
+document
+.getElementById("resultado");
 
 
 if(!codigo){
@@ -109,7 +118,7 @@ if(!codigo){
 resultado.innerHTML =
 
 "<div class='error'>" +
-"Introduce un j1." +
+"Introduce un código j1." +
 "</div>";
 
 return;
@@ -118,15 +127,16 @@ return;
 
 
 estado.innerHTML =
-
-"<p>Cargando contenedor.csv...</p>";
+"Cargando contenedor.csv...";
 
 
 try{
 
 const respuesta =
 
-await fetch(ARCHIVO_CONTENEDOR);
+await fetch(
+ARCHIVO_CONTENEDOR
+);
 
 
 if(!respuesta.ok){
@@ -148,11 +158,19 @@ const registros =
 parsearCSV(texto);
 
 
+/*=========================================
+BUSCAR j1
+=========================================*/
+
 const registro =
 
 registros.find(
 
-r => r.j1 === codigo
+function(r){
+
+return r.j1 === codigo;
+
+}
 
 );
 
@@ -161,11 +179,15 @@ if(!registro){
 
 estado.innerHTML =
 
-"<p class='error'>" +
-"No existe el j1 " +
+"<div class='error'>" +
+
+"No se encontró " +
 codigo +
-" en contenedor.csv" +
-"</p>";
+" en contenedor.csv."
+
++
+
+"</div>";
 
 resultado.innerHTML = "";
 
@@ -180,26 +202,33 @@ REGISTRO ENCONTRADO
 
 estado.innerHTML =
 
-"<p class='ok'>" +
-"✓ Registro encontrado: " +
+"<div class='ok'>" +
+
+"✓ Ficha encontrada: " +
+
 registro.j1 +
-"</p>";
+
+"</div>";
 
 
 /*=========================================
-CONSTRUIR PALEOFICHA
+TRANSCRIPCIÓN
 =========================================*/
 
-const paleoficha =
+const ficha =
 
-convertirRegistro(registro);
+transcribirRegistro(
+registro
+);
 
 
 /*=========================================
 MOSTRAR
 =========================================*/
 
-mostrarPaleoficha(paleoficha);
+mostrarFicha(
+ficha
+);
 
 }
 
@@ -209,42 +238,39 @@ console.error(error);
 
 estado.innerHTML =
 
-"<p class='error'>" +
-"Error cargando contenedor.csv" +
-"</p>";
+"<div class='error'>" +
+
+"Error cargando contenedor.csv"
+
++
+
+"</div>";
 
 resultado.innerHTML =
 
 "<pre>" +
+
 error.message +
+
 "</pre>";}
 
 }
 
 /=========================================
-CONVERTIR REGISTRO DEL CONTENEDOR
-A ESTRUCTURA DE PALEOFICHA
+TRANSCRIBIR REGISTRO
 =========================================/
 
-function convertirRegistro(registro){
+function transcribirRegistro(registro){
 
-return {
+const ficha = {
 
 codigo: registro.j1,
 
-j2: registro.j2,
-
 cronologia: registro.j3,
-
-j4: registro.j4,
 
 HP: registro.j5,
 
 HS: registro.j6,
-
-j7: registro.j7,
-
-j8: registro.j8,
 
 modo_vida: registro.j9,
 
@@ -253,105 +279,161 @@ medio_compuesto: registro.j10,
 stats: {
 
 e1: Number(registro.e1),
+
 e2: Number(registro.e2),
+
 e3: Number(registro.e3),
+
 e4: Number(registro.e4),
+
 e5: Number(registro.e5),
+
 e6: Number(registro.e6),
+
 e7: Number(registro.e7),
+
 e8: Number(registro.e8),
+
 e9: Number(registro.e9),
+
 e10: Number(registro.e10),
+
 e11: Number(registro.e11)
 
 }
 
 };
 
+/=========================================
+CAMPOS RESERVADOS
+=========================================/
+
+ficha.j2 = registro.j2;
+
+ficha.j4 = registro.j4;
+
+ficha.j7 = registro.j7;
+
+ficha.j8 = registro.j8;
+
+return ficha;
+
 }
 
 /=========================================
-MOSTRAR PALEOFICHA INTERPRETADA
+MOSTRAR FICHA TRANSCRITA
 =========================================/
 
-function mostrarPaleoficha(ficha){
+function mostrarFicha(ficha){
 
 const resultado =
 
-document.getElementById("resultado");
+document.getElementById(
+"resultado"
+);
 
 let html =
 
-"<h2>Paleoficha interpretada</h2>";
+"<h2>Paleoficha transcrita</h2>";
 
 html +=
 
 "<div class='campo'>" +
-"<span class='nombre'>Código / j1:</span> " +
+
+"<span class='nombre'>j1 / código:</span> " +
+
 ficha.codigo +
+
 "</div>";
 
 html +=
 
 "<div class='campo'>" +
+
 "<span class='nombre'>j2:</span> " +
+
 ficha.j2 +
+
 "</div>";
 
 html +=
 
 "<div class='campo'>" +
-"<span class='nombre'>Cronología / j3:</span> " +
+
+"<span class='nombre'>j3 / cronología:</span> " +
+
 ficha.cronologia +
+
 "</div>";
 
 html +=
 
 "<div class='campo'>" +
+
 "<span class='nombre'>j4:</span> " +
+
 ficha.j4 +
+
 "</div>";
 
 html +=
 
 "<div class='campo'>" +
-"<span class='nombre'>HP / j5:</span> " +
+
+"<span class='nombre'>j5 / HP:</span> " +
+
 ficha.HP +
+
 "</div>";
 
 html +=
 
 "<div class='campo'>" +
-"<span class='nombre'>HS / j6:</span> " +
+
+"<span class='nombre'>j6 / HS:</span> " +
+
 ficha.HS +
+
 "</div>";
 
 html +=
 
 "<div class='campo'>" +
+
 "<span class='nombre'>j7:</span> " +
+
 ficha.j7 +
+
 "</div>";
 
 html +=
 
 "<div class='campo'>" +
+
 "<span class='nombre'>j8:</span> " +
+
 ficha.j8 +
+
 "</div>";
 
 html +=
 
 "<div class='campo'>" +
-"<span class='nombre'>Modo de vida / j9:</span> " +
+
+"<span class='nombre'>j9 / modo de vida:</span> " +
+
 ficha.modo_vida +
+
 "</div>";
 
 html +=
 
 "<div class='campo'>" +
-"<span class='nombre'>Medio compuesto / j10:</span> " +
+
+"<span class='nombre'>j10 / medio compuesto:</span> " +
+
 ficha.medio_compuesto +
+
 "</div>";
 
 /=========================================
@@ -362,7 +444,7 @@ html +=
 
 "<div class='bloque'>" +
 
-"<h3>Estadísticas E</h3>" +
+"<h3>Estadísticas</h3>" +
 
 "<div>e1: " + ficha.stats.e1 + "</div>" +
 "<div>e2: " + ficha.stats.e2 + "</div>" +
@@ -379,18 +461,22 @@ html +=
 "</div>";
 
 /=========================================
-REPRESENTACIÓN EQUIVALENTE A JSON
+OBJETO FINAL
 =========================================/
 
 html +=
 
 "<div class='bloque'>" +
 
-"<h3>Estructura generada</h3>" +
+"<h3>Objeto transcrito</h3>" +
 
 "<pre>" +
 
-JSON.stringify(ficha,null,2) +
+JSON.stringify(
+ficha,
+null,
+2
+) +
 
 "</pre>" +
 
@@ -422,11 +508,23 @@ const cabecera =
 
 lineas[0]
 .split(",")
-.map(c => c.trim());
+.map(
+
+function(c){
+
+return c.trim();
+
+}
+
+);
 
 const registros = [];
 
-for(let i = 1; i < lineas.length; i++){
+for(
+let i = 1;
+i < lineas.length;
+i++
+){
 
 if(!lineas[i].trim()){
 
@@ -438,13 +536,24 @@ const valores =
 
 lineas[i]
 .split(",")
-.map(v => v.trim());
+.map(
+
+function(v){
+
+return v.trim();
+
+}
+
+);
 
 const registro = {};
 
 cabecera.forEach(
 
-(campo,indice) => {
+function(
+campo,
+indice
+){
 
 registro[campo] =
 
@@ -454,7 +563,9 @@ valores[indice] ?? "";
 
 );
 
-registros.push(registro);
+registros.push(
+registro
+);
 
 }
 
@@ -463,5 +574,7 @@ return registros;
 }
 
 </script></body></html>
+
+
 
 
