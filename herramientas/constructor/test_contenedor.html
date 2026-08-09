@@ -13,117 +13,78 @@ content="width=device-width, initial-scale=1.0">
 <style>
 
 body{
-
     font-family:Arial,sans-serif;
-
     margin:20px;
-
-    background:#111;
-
-    color:#eee;
-
+    line-height:1.5;
 }
 
 h1{
-
-    margin-bottom:20px;
-
+    font-size:22px;
 }
 
 input{
-
     padding:10px;
-
+    margin:5px 0;
     font-size:16px;
-
-    width:220px;
-
+    width:180px;
     box-sizing:border-box;
-
-    background:#222;
-
-    color:#fff;
-
-    border:1px solid #777;
-
+    border:1px solid #999;
     border-radius:6px;
-
 }
 
 button{
-
-    padding:10px 18px;
-
-    margin-left:8px;
-
+    padding:10px 16px;
+    margin:8px 0;
     font-size:16px;
-
-    font-weight:bold;
-
     cursor:pointer;
-
     border:1px solid #777;
-
     border-radius:6px;
-
-    background:#222;
-
-    color:#fff;
-
+    background:#eee;
+    box-shadow:0 2px 4px rgba(0,0,0,.25);
 }
 
-button:hover{
-
-    background:#333;
-
-}
-
-#estado{
-
-    margin-top:20px;
-
+button:active{
+    box-shadow:0 1px 2px rgba(0,0,0,.2);
+    transform:translateY(1px);
 }
 
 .bloque{
-
-    margin-top:15px;
-
+    margin-top:20px;
     padding:15px;
-
-    border:1px solid #555;
-
+    border:1px solid #ccc;
     border-radius:8px;
-
-    background:#1b1b1b;
-
 }
 
-.campo{
-
-    font-weight:bold;
-
+.resultado{
+    margin-top:15px;
+    padding:12px;
+    background:#f5f5f5;
+    border-radius:6px;
+    white-space:pre-wrap;
 }
 
 .ok{
-
-    color:#7cff9b;
-
+    color:green;
 }
 
 .error{
+    color:red;
+}
 
-    color:#ff7777;
+.rangoEntrada{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+}
 
+.rangoEntrada input{
+    width:120px;
 }
 
 .separador{
-
-    margin-top:30px;
-
-    padding-top:20px;
-
-    border-top:2px solid #555;
-
+    font-weight:bold;
+    font-size:20px;
 }
 
 </style>
@@ -137,55 +98,148 @@ button:hover{
 <h1>TEST CONTENEDOR</h1>
 
 
-<!-- =========================================
-     BUSCADOR DEL CONTENEDOR
-========================================= -->
+<!-- =====================================================
+     ENTRADA DE CÓDIGO
+====================================================== -->
 
-<div>
+<div class="bloque">
 
 <input
-id="codigoInput"
+id="codigoEntrada"
 type="text"
 value="002_15"
-placeholder="Ej: 002_15"
->
+placeholder="Ej: 002_15">
+
+<br>
 
 <button
-onclick="cargarFicha()"
->
+type="button"
+onclick="cargarFicha()">
+
 Cargar ficha
+
 </button>
 
 </div>
 
 
-<div id="estado">
+<!-- =====================================================
+     RESULTADO DEL CONTENEDOR
+====================================================== -->
+
+<div
+id="resultadoContenedor"
+class="resultado">
 
 Esperando carga...
 
 </div>
 
 
-<div id="resultado"></div>
+<!-- =====================================================
+     PRUEBA PALGEO SIMPLIFICADO
+====================================================== -->
+
+<div class="bloque">
+
+<h2>Prueba PALGEOSIMPLIFICADO</h2>
+
+<p>
+Prueba una cronología sin utilizar el constructor.
+</p>
 
 
-<!-- =========================================
-     PALGEO
-========================================= -->
+<!-- =====================================================
+     RANGO EN MA
+====================================================== -->
+
+<h3>Rango en Ma</h3>
+
+<div class="rangoEntrada">
+
+<input
+id="maInicio"
+type="number"
+step="0.0001"
+placeholder="521">
+
+<span class="separador">Ma -</span>
+
+<input
+id="maFin"
+type="number"
+step="0.0001"
+placeholder="201.3">
+
+<span>Ma</span>
+
+</div>
+
+
+<br>
+
+<button
+type="button"
+onclick="probarRangoMa()">
+
+Probar rango Ma
+
+</button>
+
+
+<!-- =====================================================
+     RANGO EN AÑOS
+====================================================== -->
+
+<h3>Rango en años</h3>
+
+<div class="rangoEntrada">
+
+<input
+id="anosInicio"
+type="number"
+step="1"
+placeholder="21700">
+
+<span class="separador">a -</span>
+
+<input
+id="anosFin"
+type="text"
+placeholder="Actualidad">
+
+</div>
+
+
+<br>
+
+<button
+type="button"
+onclick="probarRangoAnos()">
+
+Probar rango en años
+
+</button>
+
+
+<div
+id="resultadoPALGEO"
+class="resultado">
+
+Esperando prueba...
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     BASES DE DATOS
+====================================================== -->
 
 <script src="palgeo.js"></script>
 
-
-<!-- =========================================
-     DECODIFICADOR GEO SIMPLIFICADO
-========================================= -->
-
 <script src="palgeosimplificado.js"></script>
-
-
-<!-- =========================================
-     DECODIFICADOR DEL CONTENEDOR
-========================================= -->
 
 <script src="palcontenedor_decoder.js"></script>
 
@@ -193,214 +247,168 @@ Esperando carga...
 <script>
 
 
-/* =================================================
+/* ======================================================
    VARIABLES
-================================================= */
+====================================================== */
 
-let registros = [];
-
-
-/* =================================================
-   CARGAR CSV
-================================================= */
-
-fetch("contenedor.csv")
-
-.then(response=>{
-
-    if(!response.ok){
-
-        throw new Error(
-            "No se pudo cargar contenedor.csv"
-        );
-
-    }
-
-    return response.text();
-
-})
-
-.then(texto=>{
-
-    const lineas =
-
-        texto
-        .trim()
-        .split(/\r?\n/);
+let contenedor = [];
 
 
-    if(!lineas.length){
+/* ======================================================
+   CARGAR CONTENEDOR.CSV
+====================================================== */
 
-        throw new Error(
-            "El CSV está vacío"
-        );
+async function cargarContenedor(){
 
-    }
+    try{
 
-
-    /*
-    CABECERA
-    */
-
-    const cabecera =
-
-        lineas[0]
-        .split(",")
-        .map(x=>x.trim());
+        const respuesta =
+            await fetch("contenedor.csv");
 
 
-    /*
-    REGISTROS
-    */
+        if(!respuesta.ok){
 
-    registros = [];
-
-
-    for(
-        let i=1;
-        i<lineas.length;
-        i++
-    ){
-
-        if(!lineas[i].trim()){
-
-            continue;
+            throw new Error(
+                "No se pudo cargar contenedor.csv"
+            );
 
         }
 
 
-        const valores =
+        const texto =
+            await respuesta.text();
 
-            lineas[i]
+
+        const lineas =
+            texto
+            .trim()
+            .split(/\r?\n/);
+
+
+        if(!lineas.length){
+
+            throw new Error(
+                "El archivo está vacío"
+            );
+
+        }
+
+
+        const cabecera =
+            lineas[0]
             .split(",")
             .map(x=>x.trim());
 
 
-        if(
-            valores.length !==
-            cabecera.length
+        contenedor = [];
+
+
+        for(
+            let i=1;
+            i<lineas.length;
+            i++
         ){
 
-            console.warn(
-                "Fila incorrecta:",
-                i+1
+            if(!lineas[i].trim()){
+
+                continue;
+
+            }
+
+
+            const valores =
+                lineas[i]
+                .split(",")
+                .map(x=>x.trim());
+
+
+            const registro = {};
+
+
+            cabecera.forEach(
+                (campo,indice)=>{
+
+                    registro[campo] =
+                        valores[indice] !== undefined
+                        ?
+                        valores[indice]
+                        :
+                        "";
+
+                }
             );
 
-            continue;
+
+            contenedor.push(registro);
 
         }
 
 
-        const registro = {};
-
-
-        cabecera.forEach(
-            (campo,index)=>{
-
-                registro[campo] =
-                    valores[index];
-
-            }
-        );
-
-
-        registros.push(
-            registro
-        );
+        return true;
 
     }
 
+    catch(error){
 
-    document.getElementById(
-        "estado"
-    ).innerHTML =
+        console.error(error);
 
-        "<span class='ok'>" +
-
-        "✓ contenedor.csv cargado correctamente" +
-
-        "</span><br>" +
-
-        "Registros leídos: " +
-
-        registros.length +
-
-        "<br>" +
-
-        "Columnas detectadas: " +
-
-        cabecera.length;
-
-})
-
-
-.catch(error=>{
-
-    console.error(error);
-
-    document.getElementById(
-        "estado"
-    ).innerHTML =
-
-        "<span class='error'>" +
-
-        "✗ Error cargando contenedor.csv" +
-
-        "</span><br>" +
-
-        error.message;
-
-});
-
-
-/* =================================================
-   CARGAR FICHA
-================================================= */
-
-function cargarFicha(){
-
-
-    const codigo =
 
         document.getElementById(
-            "codigoInput"
+            "resultadoContenedor"
+        ).innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Error cargando contenedor.csv" +
+
+            "</span>";
+
+
+        return false;
+
+    }
+
+}
+
+
+/* ======================================================
+   CARGAR FICHA
+====================================================== */
+
+async function cargarFicha(){
+
+    const codigo =
+        document
+        .getElementById(
+            "codigoEntrada"
         )
         .value
         .trim();
 
 
     const resultado =
-
         document.getElementById(
-            "resultado"
+            "resultadoContenedor"
         );
 
 
-    resultado.innerHTML = "";
+    resultado.innerHTML =
+        "Cargando contenedor.csv...";
 
 
-    if(!codigo){
+    const cargado =
+        await cargarContenedor();
 
-        resultado.innerHTML =
 
-            "<div class='bloque error'>" +
-
-            "Introduce un código." +
-
-            "</div>";
+    if(!cargado){
 
         return;
 
     }
 
 
-    /*
-    BUSCAR J1
-    */
-
     const registro =
-
-        registros.find(
+        contenedor.find(
             r => r.j1 === codigo
         );
 
@@ -409,731 +417,559 @@ function cargarFicha(){
 
         resultado.innerHTML =
 
-            "<div class='bloque error'>" +
+            "<span class='error'>" +
 
-            "✗ Ficha no encontrada: " +
+            "❌ Ficha no encontrada: " +
 
             codigo +
 
-            "</div>";
+            "</span>";
 
         return;
 
     }
 
 
-    /* =================================================
-       MOSTRAR REGISTRO J
-    ================================================= */
-
-    let html =
-
-        "<div class='bloque'>" +
-
-        "<h2>✓ Ficha encontrada: " +
-
-        registro.j1 +
-
-        "</h2>" +
-
-        "<div>" +
-
-        "<span class='campo'>j1:</span> " +
-
-        registro.j1 +
-
-        "</div>" +
-
-        "<div>" +
-
-        "<span class='campo'>j2:</span> " +
-
-        registro.j2 +
-
-        "</div>" +
-
-        "<div>" +
-
-        "<span class='campo'>j3:</span> " +
-
-        registro.j3 +
-
-        "</div>" +
-
-        "<div>" +
-
-        "<span class='campo'>j4:</span> " +
-
-        registro.j4 +
-
-        "</div>" +
-
-        "<div>" +
-
-        "<span class='campo'>j5:</span> " +
-
-        registro.j5 +
-
-        "</div>" +
-
-        "<div>" +
-
-        "<span class='campo'>j6:</span> " +
-
-        registro.j6 +
-
-        "</div>" +
-
-        "<div>" +
-
-        "<span class='campo'>j7:</span> " +
-
-        registro.j7 +
-
-        "</div>" +
-
-        "<div>" +
-
-        "<span class='campo'>j8:</span> " +
-
-        registro.j8 +
-
-        "</div>" +
-
-        "<div>" +
-
-        "<span class='campo'>j9:</span> " +
-
-        registro.j9 +
-
-        "</div>" +
-
-        "<div>" +
-
-        "<span class='campo'>j10:</span> " +
-
-        registro.j10 +
-
-        "</div>" +
-
-        "</div>";
+    const datos =
+        PALCONTENEDOR_DECODER
+        .decodificarRegistro(
+            registro
+        );
 
 
-    /* =================================================
-       ESTADÍSTICAS E
-    ================================================= */
+    if(!datos){
+
+        resultado.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ No se pudo decodificar el registro." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    const J = datos.J;
+
+    const E = datos.E;
+
+    const ficha = datos.paleoficha;
+
+
+    let html = "";
+
 
     html +=
+        "<span class='ok'>" +
 
-        "<div class='bloque'>" +
+        "✓ contenedor.csv cargado correctamente" +
 
-        "<h2>Estadísticas E</h2>" +
-
-        "<div>e1: " + registro.e1 + "</div>" +
-
-        "<div>e2: " + registro.e2 + "</div>" +
-
-        "<div>e3: " + registro.e3 + "</div>" +
-
-        "<div>e4: " + registro.e4 + "</div>" +
-
-        "<div>e5: " + registro.e5 + "</div>" +
-
-        "<div>e6: " + registro.e6 + "</div>" +
-
-        "<div>e7: " + registro.e7 + "</div>" +
-
-        "<div>e8: " + registro.e8 + "</div>" +
-
-        "<div>e9: " + registro.e9 + "</div>" +
-
-        "<div>e10: " + registro.e10 + "</div>" +
-
-        "<div>e11: " + registro.e11 + "</div>" +
-
-        "</div>";
+        "</span><br><br>";
 
 
-    /* =================================================
-       DECODIFICADOR DEL CONTENEDOR
-    ================================================= */
+    html +=
+        "<b>Registros leídos:</b> " +
 
-    let datosDecodificados = null;
+        contenedor.length +
+
+        "<br><br>";
 
 
-    if(
-        window.PALCONTENEDOR_DECODER
+    html +=
+        "<b>✓ Ficha encontrada:</b> " +
+
+        J.j1 +
+
+        "<br><br>";
+
+
+    html +=
+        "<b>Contenedor J</b><br>";
+
+
+    for(
+        let i=1;
+        i<=10;
+        i++
     ){
 
-        datosDecodificados =
-
-            PALCONTENEDOR_DECODER
-            .decodificarRegistro(
-                registro
-            );
-
-    }
-
-
-    /* =================================================
-       DATOS TRANSCRITOS
-    ================================================= */
-
-    if(datosDecodificados){
-
-        const p =
-
-            datosDecodificados.paleoficha;
-
-
         html +=
-
-            "<div class='bloque'>" +
-
-            "<h2>Datos transcritos para Paleoficha</h2>" +
-
-            "<div>codigo: " +
-
-            p.codigo +
-
-            "</div>" +
-
-            "<div>cronologia: " +
-
-            p.cronologia +
-
-            "</div>" +
-
-            "<div>HP: " +
-
-            p.HP +
-
-            "</div>" +
-
-            "<div>HS: " +
-
-            p.HS +
-
-            "</div>" +
-
-            "<div>modo_vida: " +
-
-            p.modo_vida +
-
-            "</div>" +
-
-            "<div>medio_compuesto: " +
-
-            p.medio_compuesto +
-
-            "</div>" +
-
-            "</div>";
+            "j" +
+            i +
+            ": " +
+            J["j"+i] +
+            "<br>";
 
     }
 
 
-    /* =================================================
-       DECODIFICACIÓN GEOCRONOLÓGICA
-    ================================================= */
-
-    const cronologia =
-
-        datosDecodificados
-
-        ?
-
-        datosDecodificados
-        .paleoficha
-        .cronologia
-
-        :
-
-        registro.j3;
+    html +=
+        "<br><b>Estadísticas E</b><br>";
 
 
-    let geo = null;
-
-
-    if(
-        window.PALGEOSIMPLIFICADO
+    for(
+        let i=1;
+        i<=11;
+        i++
     ){
 
-        geo =
-
-            PALGEOSIMPLIFICADO
-            .analizar(
-                cronologia
-            );
-
-    }
-
-
-    /* =================================================
-       RESULTADO GEO
-    ================================================= */
-
-    html +=
-
-        "<div class='bloque'>" +
-
-        "<h2>Decodificación geológica</h2>";
-
-
-    if(!geo){
-
         html +=
-
-            "<div class='error'>" +
-
-            "✗ No se pudo interpretar la cronología." +
-
-            "</div>";
-
-    }
-
-    else{
-
-        html +=
-
-            "<div>" +
-
-            "<span class='campo'>Cronología:</span> " +
-
-            geo.cronologia +
-
-            "</div>";
-
-
-        html +=
-
-            "<div>" +
-
-            "<span class='campo'>Rango:</span> " +
-
-            geo.rango +
-
-            "</div>";
-
-
-        /* =========================================
-           CÓDIGOS PALGEO
-        ========================================= */
-
-        html +=
-
-            "<br>" +
-
-            "<div class='campo'>" +
-
-            "Códigos PALGEO:" +
-
-            "</div>";
-
-
-        if(
-            geo.codes.length
-        ){
-
-            html += "<ul>";
-
-            geo.codes.forEach(
-                codigoGeo=>{
-
-                    html +=
-
-                        "<li>" +
-
-                        codigoGeo +
-
-                        "</li>";
-
-                }
-            );
-
-            html += "</ul>";
-
-        }
-
-        else{
-
-            html +=
-
-                "<div>" +
-
-                "Sin códigos encontrados." +
-
-                "</div>";
-
-        }
-
-
-        /* =========================================
-           PERÍODOS
-        ========================================= */
-
-        html +=
-
-            "<br>" +
-
-            "<div class='campo'>" +
-
-            "Período:" +
-
-            "</div>";
-
-
-        if(
-            geo.periodo.length
-        ){
-
-            html += "<div>";
-
-            html +=
-
-                geo.periodo.join(
-                    " · "
-                );
-
-            html += "</div>";
-
-        }
-
-        else{
-
-            html +=
-
-                "<div>" +
-
-                "Sin período registrado." +
-
-                "</div>";
-
-        }
-
-
-        /* =========================================
-           EDAD / SUBPERÍODO
-        ========================================= */
-
-        html +=
-
-            "<br>" +
-
-            "<div class='campo'>" +
-
-            "Edad / Subperíodo:" +
-
-            "</div>";
-
-
-        if(
-            geo.edad.length
-        ){
-
-            html += "<div>";
-
-            html +=
-
-                geo.edad.join(
-                    " · "
-                );
-
-            html += "</div>";
-
-        }
-
-        else{
-
-            html +=
-
-                "<div>" +
-
-                "Sin edad/subperíodo registrado." +
-
-                "</div>";
-
-        }
+            "e" +
+            i +
+            ": " +
+            E["e"+i] +
+            "<br>";
 
     }
 
 
     html +=
+        "<br><b>Datos transcritos para Paleoficha</b><br>";
 
-        "</div>";
+
+    html +=
+        "codigo: " +
+        ficha.codigo +
+        "<br>";
 
 
-    /* =================================================
-       GUARDAR RESULTADO
-    ================================================= */
+    html +=
+        "cronologia: " +
+        ficha.cronologia +
+        "<br>";
+
+
+    html +=
+        "HP: " +
+        ficha.HP +
+        "<br>";
+
+
+    html +=
+        "HS: " +
+        ficha.HS +
+        "<br>";
+
+
+    html +=
+        "modo_vida: " +
+        ficha.modo_vida +
+        "<br>";
+
+
+    html +=
+        "medio_compuesto: " +
+        ficha.medio_compuesto +
+        "<br>";
+
 
     resultado.innerHTML = html;
 
 }
 
 
-/* =================================================
-   PRUEBA INDEPENDIENTE DE PALGEOSIMPLIFICADO
-================================================= */
+/* ======================================================
+   PROBAR RANGO MA
+====================================================== */
 
-function probarCronologia(){
+function probarRangoMa(){
 
-
-    const texto =
-
-        document.getElementById(
-            "cronologiaPrueba"
+    const inicioTexto =
+        document
+        .getElementById(
+            "maInicio"
         )
         .value
         .trim();
 
 
-    const resultado =
+    const finTexto =
+        document
+        .getElementById(
+            "maFin"
+        )
+        .value
+        .trim();
 
-        document.getElementById(
-            "resultadoCronologia"
+
+    const salida =
+        document
+        .getElementById(
+            "resultadoPALGEO"
         );
-
-
-    resultado.innerHTML = "";
-
-
-    if(!texto){
-
-        resultado.innerHTML =
-
-            "<div class='bloque error'>" +
-
-            "Introduce una cronología." +
-
-            "</div>";
-
-        return;
-
-    }
-
-
-    /*
-    CONVERTIR FORMATO HUMANO
-    A FORMATO INTERNO
-    */
-
-    const codificada =
-
-        PALGEOSIMPLIFICADO
-        .codificarRango(
-            texto
-        );
-
-
-    if(!codificada){
-
-        resultado.innerHTML =
-
-            "<div class='bloque error'>" +
-
-            "❌ Formato no válido." +
-
-            "<br><br>" +
-
-            "Ejemplos válidos:" +
-
-            "<br>521 Ma - 201,3 Ma" +
-
-            "<br>0521.0000-0201.3000" +
-
-            "<br>21700 a - Actualidad" +
-
-            "</div>";
-
-        return;
-
-    }
-
-
-    /*
-    ANALIZAR
-    */
-
-    const analisis =
-
-        PALGEOSIMPLIFICADO
-        .analizar(
-            codificada
-        );
-
-
-    if(!analisis){
-
-        resultado.innerHTML =
-
-            "<div class='bloque error'>" +
-
-            "❌ La cronología fue convertida " +
-
-            "pero PALGEO no pudo analizarla." +
-
-            "</div>";
-
-        return;
-
-    }
-
-
-    let html =
-
-        "<div class='bloque'>" +
-
-        "<h2>✓ Cronología válida</h2>" +
-
-        "<div>" +
-
-        "<span class='campo'>Entrada:</span><br>" +
-
-        texto +
-
-        "</div>" +
-
-        "<br>" +
-
-        "<div>" +
-
-        "<span class='campo'>Código interno:</span><br>" +
-
-        codificada +
-
-        "</div>" +
-
-        "<br>" +
-
-        "<div>" +
-
-        "<span class='campo'>Rango:</span><br>" +
-
-        analisis.rango +
-
-        "</div>";
-
-
-    /*
-    PERÍODOS
-    */
-
-    html +=
-
-        "<br><br>" +
-
-        "<div class='campo'>" +
-
-        "Períodos:" +
-
-        "</div>";
 
 
     if(
-        analisis.periodo.length
+        inicioTexto === "" ||
+        finTexto === ""
     ){
 
-        html +=
+        salida.innerHTML =
 
-            analisis.periodo.join(
-                " · "
-            );
+            "<span class='error'>" +
+
+            "❌ Introduce los dos valores del rango." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    const inicio =
+        parseFloat(
+            inicioTexto
+        );
+
+
+    const fin =
+        parseFloat(
+            finTexto
+        );
+
+
+    if(
+        isNaN(inicio) ||
+        isNaN(fin)
+    ){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Los valores no son válidos." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    if(inicio < fin){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ El primer valor debe ser mayor o igual que el segundo." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    const cronologia =
+        normalizarMa(inicio)
+        +
+        "-"
+        +
+        normalizarMa(fin);
+
+
+    ejecutarPruebaPALGEO(
+        cronologia
+    );
+
+}
+
+
+/* ======================================================
+   NORMALIZAR MA
+====================================================== */
+
+function normalizarMa(valor){
+
+    const partes =
+        valor
+        .toFixed(4)
+        .split(".");
+
+
+    const entero =
+        partes[0]
+        .padStart(4,"0");
+
+
+    const decimal =
+        partes[1] || "0000";
+
+
+    return (
+        entero +
+        "." +
+        decimal
+    );
+
+}
+
+
+/* ======================================================
+   PROBAR RANGO EN AÑOS
+====================================================== */
+
+function probarRangoAnos(){
+
+    const inicioTexto =
+        document
+        .getElementById(
+            "anosInicio"
+        )
+        .value
+        .trim();
+
+
+    const finTexto =
+        document
+        .getElementById(
+            "anosFin"
+        )
+        .value
+        .trim();
+
+
+    const salida =
+        document
+        .getElementById(
+            "resultadoPALGEO"
+        );
+
+
+    if(
+        inicioTexto === "" ||
+        finTexto === ""
+    ){
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Introduce los valores." +
+
+            "</span>";
+
+        return;
+
+    }
+
+
+    const inicio =
+        parseFloat(
+            inicioTexto
+        );
+
+
+    let fin;
+
+
+    if(
+        finTexto
+        .toLowerCase()
+        ===
+        "actualidad"
+    ){
+
+        fin = 0;
 
     }
 
     else{
 
-        html +=
-
-            "Sin datos";
-
-    }
-
-
-    /*
-    EDADES / SUBPERÍODOS
-    */
-
-    html +=
-
-        "<br><br>" +
-
-        "<div class='campo'>" +
-
-        "Edades / subperíodos:" +
-
-        "</div>";
-
-
-    if(
-        analisis.edad.length
-    ){
-
-        html +=
-
-            analisis.edad.join(
-                " · "
+        fin =
+            parseFloat(
+                finTexto
             );
 
     }
 
-    else{
 
-        html +=
+    if(
+        isNaN(inicio) ||
+        isNaN(fin)
+    ){
 
-            "Sin datos";
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Valor no válido." +
+
+            "</span>";
+
+        return;
 
     }
 
 
-    html +=
+    if(inicio < fin){
 
-        "</div>";
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ El primer valor debe representar una antigüedad mayor." +
+
+            "</span>";
+
+        return;
+
+    }
 
 
-    resultado.innerHTML = html;
+    const inicioMa =
+        inicio / 1000000;
+
+
+    const finMa =
+        fin / 1000000;
+
+
+    const cronologia =
+        normalizarMa(inicioMa)
+        +
+        "-"
+        +
+        normalizarMa(finMa);
+
+
+    ejecutarPruebaPALGEO(
+        cronologia
+    );
+
+}
+
+
+/* ======================================================
+   EJECUTAR PALGEOSIMPLIFICADO
+====================================================== */
+
+function ejecutarPruebaPALGEO(
+    cronologia
+){
+
+    const salida =
+        document
+        .getElementById(
+            "resultadoPALGEO"
+        );
+
+
+    salida.innerHTML =
+        "Procesando...";
+
+
+    try{
+
+        const resultado =
+            PALGEOSIMPLIFICADO
+            .analizar(
+                cronologia
+            );
+
+
+        if(!resultado){
+
+            salida.innerHTML =
+
+                "<span class='error'>" +
+
+                "❌ Formato no válido o cronología no procesable." +
+
+                "</span>";
+
+            return;
+
+        }
+
+
+        let html = "";
+
+
+        html +=
+            "<b>Cronología interna:</b><br>" +
+
+            resultado.cronologia +
+
+            "<br><br>";
+
+
+        html +=
+            "<b>Rango:</b><br>" +
+
+            resultado.rango +
+
+            "<br><br>";
+
+
+        html +=
+            "<b>Códigos PALGEO:</b><br>" +
+
+            (
+                resultado.codes.length
+                ?
+                resultado.codes.join("<br>")
+                :
+                "Ninguno"
+            ) +
+
+            "<br><br>";
+
+
+        html +=
+            "<b>Período:</b><br>" +
+
+            (
+                resultado.periodo.length
+                ?
+                resultado.periodo.join(" · ")
+                :
+                "No disponible"
+            ) +
+
+            "<br><br>";
+
+
+        html +=
+            "<b>Edad / Subperíodo:</b><br>" +
+
+            (
+                resultado.edad.length
+                ?
+                resultado.edad.join(" · ")
+                :
+                "No disponible"
+            );
+
+
+        salida.innerHTML =
+            html;
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+
+        salida.innerHTML =
+
+            "<span class='error'>" +
+
+            "❌ Error ejecutando PALGEOSIMPLIFICADO." +
+
+            "</span>";
+
+    }
 
 }
 
 </script>
-
-
-<!-- =========================================
-     PRUEBA INDEPENDIENTE
-========================================= -->
-
-<div class="separador">
-
-<h2>Prueba PALGEOSIMPLIFICADO</h2>
-
-<p>
-
-Prueba una cronología sin utilizar el
-constructor.
-
-</p>
-
-
-<input
-id="cronologiaPrueba"
-type="text"
-placeholder="Ej: 521 Ma - 201,3 Ma"
->
-
-
-<button
-onclick="probarCronologia()"
->
-
-Probar cronología
-
-</button>
-
-
-<div id="resultadoCronologia"></div>
-
-</div>
 
 
 </body>
