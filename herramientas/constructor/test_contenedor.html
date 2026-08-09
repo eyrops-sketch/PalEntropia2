@@ -102,9 +102,7 @@ BOTÓN
     border-radius:8px;
 
     box-shadow:
-
         0 4px 0 #000,
-
         0 6px 10px rgba(0,0,0,0.5);
 
     cursor:pointer;
@@ -112,11 +110,8 @@ BOTÓN
     user-select:none;
 
     transition:
-
         transform 0.08s ease,
-
         box-shadow 0.08s ease,
-
         background 0.12s ease;
 
 }
@@ -136,9 +131,7 @@ BOTÓN
     transform:translateY(4px);
 
     box-shadow:
-
         0 0 0 #000,
-
         0 2px 5px rgba(0,0,0,0.4);
 
 }
@@ -245,7 +238,9 @@ CONTROLES
 RESULTADO
 =========================================--><div id="resultado">Esperando carga...
 
-</div><script>
+</div><!--=========================================
+DECODIFICADOR DEL CONTENEDOR
+=========================================--><script src="palcontenedor_decoder.js"></script><script>
 
 /*=========================================
 CONFIGURACIÓN
@@ -256,7 +251,7 @@ const ARCHIVO_CONTENEDOR =
 
 
 /*=========================================
-CARGAR FICHA DESDE CONTENEDOR
+CARGAR FICHA
 =========================================*/
 
 async function cargarFicha(){
@@ -368,7 +363,7 @@ async function cargarFicha(){
 
 
         /*=================================
-        COMPROBAR 21 COLUMNAS
+        COMPROBAR COLUMNAS
         =================================*/
 
         if(cabecera.length !== 21){
@@ -496,67 +491,46 @@ async function cargarFicha(){
 
 
         /*=================================
-        TRANSCRIPCIÓN J → PALEOFICHA
+        DECODIFICADOR GENERAL
         =================================*/
 
-        const paleoficha = {
+        const datosDecodificados =
 
-            codigo:
-                registro.j1,
+            PALCONTENEDOR_DECODER
+            .decodificarRegistro(
+                registro
+            );
 
-            cronologia:
-                registro.j3,
 
-            HP:
-                registro.j5,
+        if(!datosDecodificados){
 
-            HS:
-                registro.j6,
+            throw new Error(
 
-            modo_vida:
-                registro.j9,
+                "El decodificador no pudo " +
+                "procesar el registro."
 
-            medio_compuesto:
-                registro.j10,
+            );
 
-            e1:
-                registro.e1,
+        }
 
-            e2:
-                registro.e2,
 
-            e3:
-                registro.e3,
+        const paleoficha =
 
-            e4:
-                registro.e4,
+            datosDecodificados.paleoficha;
 
-            e5:
-                registro.e5,
 
-            e6:
-                registro.e6,
+        const J =
 
-            e7:
-                registro.e7,
+            datosDecodificados.J;
 
-            e8:
-                registro.e8,
 
-            e9:
-                registro.e9,
+        const E =
 
-            e10:
-                registro.e10,
-
-            e11:
-                registro.e11
-
-        };
+            datosDecodificados.E;
 
 
         /*=================================
-        RESULTADO
+        RESULTADO PRINCIPAL
         =================================*/
 
         let html =
@@ -565,7 +539,7 @@ async function cargarFicha(){
 
             "✓ Ficha encontrada: " +
 
-            registro.j1 +
+            J.j1 +
 
             "</div>";
 
@@ -580,7 +554,7 @@ async function cargarFicha(){
 
             "<h2>Registro " +
 
-            registro.j1 +
+            J.j1 +
 
             "</h2>" +
 
@@ -611,7 +585,7 @@ async function cargarFicha(){
 
                 ":</span> " +
 
-                registro[campo] +
+                J[campo] +
 
                 "</div>";
 
@@ -658,7 +632,7 @@ async function cargarFicha(){
 
                 ":</span> " +
 
-                registro[campo] +
+                E[campo] +
 
                 "</div>";
 
@@ -671,7 +645,7 @@ async function cargarFicha(){
 
 
         /*=================================
-        DATOS TRANSCRITOS
+        DATOS PALEOFICHA
         =================================*/
 
         html +=
@@ -732,7 +706,54 @@ async function cargarFicha(){
 
 
         /*=================================
-        CONTROL
+        ESTADÍSTICAS DENTRO DE PALEOFICHA
+        =================================*/
+
+        html +=
+
+            "<div class='bloque'>" +
+
+            "<h3>Estadísticas de Paleoficha</h3>";
+
+
+        for(
+
+            let i = 1;
+
+            i <= 11;
+
+            i++
+
+        ){
+
+            const campo =
+                "e" + i;
+
+
+            html +=
+
+                "<div class='campo'>" +
+
+                "<span class='nombre'>" +
+
+                campo +
+
+                ":</span> " +
+
+                paleoficha.estadisticas[campo] +
+
+                "</div>";
+
+        }
+
+
+        html +=
+
+            "</div>";
+
+
+        /*=================================
+        CONTROL DEL CSV
         =================================*/
 
         html +=
@@ -757,17 +778,33 @@ async function cargarFicha(){
 
 
         /*=================================
-        CONSOLA
+        CONSOLA DE CONTROL
         =================================*/
 
         console.log(
-            "Registro CSV:",
+
+            "Registro contenedor:",
+
             registro
+
         );
 
+
         console.log(
-            "Paleoficha transcrita:",
+
+            "Datos decodificados:",
+
+            datosDecodificados
+
+        );
+
+
+        console.log(
+
+            "Paleoficha normalizada:",
+
             paleoficha
+
         );
 
     }
