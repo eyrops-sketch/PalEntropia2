@@ -8,7 +8,7 @@
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
-<title>Generador — Prueba LEEPALGEO</title>
+<title>Generador — Prueba de LEEPALGEO</title>
 
 <style>
 
@@ -20,63 +20,71 @@ body{
     padding:20px;
 }
 
-h1{
-    font-size:22px;
-    margin-bottom:20px;
+.contenedor{
+    max-width:800px;
+    margin:auto;
 }
 
-.contenedor{
-    max-width:700px;
-    margin:auto;
+h1{
+    font-size:22px;
+    margin-bottom:25px;
 }
 
 .fila{
     display:flex;
     align-items:center;
-    gap:8px;
-    margin-bottom:15px;
+    gap:6px;
     flex-wrap:wrap;
+    margin-bottom:20px;
 }
 
 input{
-    width:60px;
-    padding:10px;
-    font-size:18px;
-    text-align:center;
+    width:65px;
+    height:42px;
     box-sizing:border-box;
+    text-align:center;
+    font-size:18px;
+    background:#222;
+    color:#fff;
+    border:1px solid #555;
+    border-radius:4px;
 }
 
-.punto,
-.guion{
+.separador{
     font-size:22px;
 }
 
 button{
-    padding:10px 18px;
+    padding:11px 22px;
     font-size:16px;
     cursor:pointer;
-    margin-bottom:20px;
+    background:#eee;
+    color:#111;
+    border:0;
+    border-radius:4px;
+}
+
+#mensaje{
+    margin-top:15px;
+    color:#ff7777;
 }
 
 #resultado{
     display:none;
-    line-height:1.6;
+    margin-top:30px;
 }
 
 .campo{
-    margin-bottom:12px;
+    margin-bottom:20px;
 }
 
 .etiqueta{
     font-weight:bold;
+    margin-bottom:5px;
 }
 
 .valor{
-    margin-top:3px;
-}
-
-.error{
-    color:#ff7777;
+    line-height:1.6;
 }
 
 </style>
@@ -91,37 +99,49 @@ button{
 <h1>Generador — Prueba de LEEPALGEO</h1>
 
 
+<!-- =================================================
+     CRONOLOGÍA
+
+     Cuatro cajas de exactamente 4 caracteres:
+
+     MMMM . DDDD - MMMM . DDDD
+================================================== -->
+
 <div class="fila">
 
     <input
         id="inicioEntero"
+        type="text"
         maxlength="4"
         inputmode="numeric"
         placeholder="0000"
     >
 
-    <span class="punto">.</span>
+    <span class="separador">.</span>
 
     <input
         id="inicioDecimal"
+        type="text"
         maxlength="4"
         inputmode="numeric"
         placeholder="0000"
     >
 
-    <span class="guion">-</span>
+    <span class="separador">-</span>
 
     <input
         id="finEntero"
+        type="text"
         maxlength="4"
         inputmode="numeric"
         placeholder="0000"
     >
 
-    <span class="punto">.</span>
+    <span class="separador">.</span>
 
     <input
         id="finDecimal"
+        type="text"
         maxlength="4"
         inputmode="numeric"
         placeholder="0000"
@@ -130,12 +150,22 @@ button{
 </div>
 
 
-<button id="buscar">
+<button
+    type="button"
+    id="buscar">
     Buscar
 </button>
 
 
+<div id="mensaje"></div>
+
+
+<!-- =================================================
+     RESULTADO PARA EL GENERADOR
+================================================== -->
+
 <div id="resultado">
+
 
     <div class="campo">
 
@@ -172,45 +202,40 @@ button{
         </div>
 
         <div
-            id="edad"
+            id="subperiodo"
             class="valor">
         </div>
 
     </div>
 
-</div>
 
-
-<div
-    id="mensaje"
-    class="error">
 </div>
 
 </div>
 
 
-<!-- =====================================================
-     BASE CRONOESTRATIGRÁFICA
-===================================================== -->
+<!-- =================================================
+     ORDEN DE CARGA
+
+     1. PALGEO
+     2. PALGEOSIMPLIFICADO
+     3. LEEPALGEO
+================================================== -->
 
 <script src="js/palgeo.js"></script>
 
-
-<!-- =====================================================
-     MÓDULO SIMPLIFICADO
-===================================================== -->
-
 <script src="js/palgeosimplificado.js"></script>
-
-
-<!-- =====================================================
-     LECTOR PALGEO
-===================================================== -->
 
 <script src="js/leepalgeo.js"></script>
 
 
 <script>
+
+/*
+========================================================
+BUSCAR
+========================================================
+*/
 
 document
 .getElementById("buscar")
@@ -218,75 +243,95 @@ document
     "click",
     function(){
 
-        const ie =
-            document
-            .getElementById("inicioEntero")
-            .value
-            .trim();
-
-        const id =
-            document
-            .getElementById("inicioDecimal")
-            .value
-            .trim();
-
-        const fe =
-            document
-            .getElementById("finEntero")
-            .value
-            .trim();
-
-        const fd =
-            document
-            .getElementById("finDecimal")
-            .value
-            .trim();
-
-
         const mensaje =
-            document
-            .getElementById("mensaje");
+            document.getElementById(
+                "mensaje"
+            );
 
         const resultado =
-            document
-            .getElementById("resultado");
+            document.getElementById(
+                "resultado"
+            );
 
+
+        /*
+        LIMPIAR RESULTADO ANTERIOR
+        */
 
         mensaje.textContent = "";
 
-        resultado.style.display = "none";
+        resultado.style.display =
+            "none";
 
 
         /*
         =================================================
-        VALIDAR LAS CUATRO CAJAS
+        LEER LAS CUATRO CAJAS
+        =================================================
+        */
+
+        const inicioEntero =
+            document
+            .getElementById(
+                "inicioEntero"
+            )
+            .value
+            .trim();
+
+
+        const inicioDecimal =
+            document
+            .getElementById(
+                "inicioDecimal"
+            )
+            .value
+            .trim();
+
+
+        const finEntero =
+            document
+            .getElementById(
+                "finEntero"
+            )
+            .value
+            .trim();
+
+
+        const finDecimal =
+            document
+            .getElementById(
+                "finDecimal"
+            )
+            .value
+            .trim();
+
+
+        /*
+        =================================================
+        COMPROBAR 4 CARACTERES
         =================================================
         */
 
         if(
-            ie.length !== 4 ||
-            id.length !== 4 ||
-            fe.length !== 4 ||
-            fd.length !== 4
+            !/^\d{4}$/.test(
+                inicioEntero
+            ) ||
+
+            !/^\d{4}$/.test(
+                inicioDecimal
+            ) ||
+
+            !/^\d{4}$/.test(
+                finEntero
+            ) ||
+
+            !/^\d{4}$/.test(
+                finDecimal
+            )
         ){
 
             mensaje.textContent =
-                "Debes introducir 4 caracteres en cada caja.";
-
-            return;
-
-        }
-
-
-        if(
-            !/^\d{4}$/.test(ie) ||
-            !/^\d{4}$/.test(id) ||
-            !/^\d{4}$/.test(fe) ||
-            !/^\d{4}$/.test(fd)
-        ){
-
-            mensaje.textContent =
-                "Las cuatro cajas deben contener únicamente números.";
+                "Las cuatro cajas deben contener exactamente 4 cifras.";
 
             return;
 
@@ -295,11 +340,14 @@ document
 
         /*
         =================================================
-        CONSTRUIR CRONOLOGÍA INTERNA
+        CONSTRUIR J3
 
-        0521 + . + 0000
-        -
-        0201 + . + 3000
+        Ejemplo:
+
+        0521
+        0000
+        0201
+        3000
 
         ↓
 
@@ -307,10 +355,35 @@ document
         =================================================
         */
 
-        const cronologia =
-            ie + "." + id +
-            "-" +
-            fe + "." + fd;
+        const j3 =
+            inicioEntero
+            + "."
+            + inicioDecimal
+            + "-"
+            + finEntero
+            + "."
+            + finDecimal;
+
+
+        /*
+        =================================================
+        CREAR REGISTRO DEL CONTENEDOR
+
+        LEEPALGEO SOLO NECESITA J3.
+
+        Los demás campos son simulados.
+        =================================================
+        */
+
+        const registro = {
+
+            j1: "PRUEBA",
+
+            j2: "Prueba",
+
+            j3: j3
+
+        };
 
 
         /*
@@ -321,12 +394,13 @@ document
 
         if(
             !window.LEEPALGEO ||
-            typeof window.LEEPALGEO.analizar !==
-            "function"
+            typeof
+            window.LEEPALGEO.leer
+            !== "function"
         ){
 
             mensaje.textContent =
-                "No se ha podido cargar LEEPALGEO.";
+                "ERROR: LEEPALGEO no se ha cargado correctamente.";
 
             return;
 
@@ -335,20 +409,37 @@ document
 
         /*
         =================================================
-        ANALIZAR
+        LLAMAR A LA FUNCIÓN REAL
+
+        NO usamos:
+
+        LEEPALGEO.analizar()
+
+        porque esa función no pertenece
+        al módulo.
+
+        Usamos:
+
+        LEEPALGEO.leer(registro)
         =================================================
         */
 
         const datos =
-            window.LEEPALGEO.analizar(
-                cronologia
+            window.LEEPALGEO.leer(
+                registro
             );
 
+
+        /*
+        =================================================
+        COMPROBAR RESULTADO
+        =================================================
+        */
 
         if(!datos){
 
             mensaje.textContent =
-                "Cronología no válida o sin datos.";
+                "No se han podido obtener datos para esta cronología.";
 
             return;
 
@@ -358,52 +449,50 @@ document
         /*
         =================================================
         MOSTRAR INTERVALO
+        =================================================
 
-        Se utiliza el formato humano
-        preparado por PALGEOSIMPLIFICADO.
+        Ejemplo:
 
-        NO se muestra la cronología interna.
+        521 Ma - 201,3 Ma
+
+        La cronología interna NO se muestra.
         =================================================
         */
 
         document
-        .getElementById("intervalo")
+        .getElementById(
+            "intervalo"
+        )
         .textContent =
-            datos.rango || "";
+            datos.intervalo || "";
 
 
         /*
         =================================================
-        PERÍODOS
+        MOSTRAR PERÍODOS
         =================================================
         */
 
         document
-        .getElementById("periodo")
+        .getElementById(
+            "periodo"
+        )
         .textContent =
-            datos.periodo &&
-            datos.periodo.length
-            ?
-            datos.periodo.join(" · ")
-            :
-            "Sin datos";
+            datos.periodo || "";
 
 
         /*
         =================================================
-        SUBPERÍODOS / EDADES
+        MOSTRAR SUBPERÍODOS
         =================================================
         */
 
         document
-        .getElementById("edad")
+        .getElementById(
+            "subperiodo"
+        )
         .textContent =
-            datos.edad &&
-            datos.edad.length
-            ?
-            datos.edad.join(" - ")
-            :
-            "Sin datos";
+            datos.subperiodo || "";
 
 
         /*
@@ -419,6 +508,7 @@ document
 );
 
 </script>
+
 
 </body>
 
