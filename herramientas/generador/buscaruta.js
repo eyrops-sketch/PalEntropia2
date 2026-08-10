@@ -1,26 +1,35 @@
 /*
 ========================================================
 PalEntropía
-buscaruta.js v0.1
+buscaruta.js v0.2
 
-BUSCARUTA — MÓDULO INICIAL
+BUSCARUTA — PRUEBA INICIAL
 
-Esta versión trabaja únicamente con las
-cuatro excepciones conocidas.
+FUNCIONAMIENTO
+--------------------------------------------------------
+Recibe j1.
 
-EXCEPCIONES:
+Comprueba si pertenece a una de las cuatro
+excepciones conocidas.
 
-001_12
-002_04
-003_14
-004_14
+Cada excepción tiene sus TRES rutas escritas
+directamente.
 
-Las rutas de las imágenes están escritas
-directamente y NO se construyen mediante cadenas.
+No construye rutas.
 
 No utiliza PALDB.
 
-No procesa todavía el Caso 1 normal.
+No utiliza j2.
+
+No busca otras extensiones.
+
+No busca otras carpetas.
+
+Si la imagen existe:
+    estado = "ok"
+
+Si no existe:
+    estado = "imagen no subida"
 
 ========================================================
 */
@@ -29,7 +38,7 @@ window.BUSCARUTA = {
 
 
     /* ==================================================
-       RUTAS FIJAS DE LAS EXCEPCIONES
+       RUTAS FIJAS
     ================================================== */
 
     excepciones: {
@@ -37,13 +46,13 @@ window.BUSCARUTA = {
         "001_12": {
 
             i0:
-                "../multimedia/001_075/001_012_i0.jpg",
+                "../multimedia/001_075/001_12_i0.jpg",
 
             i2:
-                "../multimedia/001_075/001_012_i2.jpg",
+                "../multimedia/001_075/001_12_i2.jpg",
 
             i3:
-                "../multimedia/001_075/001_012_i3.jpg"
+                "../multimedia/001_075/001_12_i3.jpg"
 
         },
 
@@ -51,13 +60,13 @@ window.BUSCARUTA = {
         "002_04": {
 
             i0:
-                "../multimedia/001_075/002_004_i0.jpg",
+                "../multimedia/001_075/002_04_i0.jpg",
 
             i2:
-                "../multimedia/001_075/002_004_i2.jpg",
+                "../multimedia/001_075/002_04_i2.jpg",
 
             i3:
-                "../multimedia/001_075/002_004_i3.jpg"
+                "../multimedia/001_075/002_04_i3.jpg"
 
         },
 
@@ -65,13 +74,13 @@ window.BUSCARUTA = {
         "003_14": {
 
             i0:
-                "../multimedia/001_075/003_014_i0.jpg",
+                "../multimedia/001_075/003_14_i0.jpg",
 
             i2:
-                "../multimedia/001_075/003_014_i2.jpg",
+                "../multimedia/001_075/003_14_i2.jpg",
 
             i3:
-                "../multimedia/001_075/003_014_i3.jpg"
+                "../multimedia/001_075/003_14_i3.jpg"
 
         },
 
@@ -79,13 +88,13 @@ window.BUSCARUTA = {
         "004_14": {
 
             i0:
-                "../multimedia/001_075/004_014_i0.jpg",
+                "../multimedia/001_075/004_14_i0.jpg",
 
             i2:
-                "../multimedia/001_075/004_014_i2.jpg",
+                "../multimedia/001_075/004_14_i2.jpg",
 
             i3:
-                "../multimedia/001_075/004_014_i3.jpg"
+                "../multimedia/001_075/004_14_i3.jpg"
 
         }
 
@@ -93,17 +102,14 @@ window.BUSCARUTA = {
 
 
     /* ==================================================
-       COMPROBAR SI J1 ES UNA EXCEPCIÓN
+       COMPROBAR EXCEPCIÓN
     ================================================== */
 
     esExcepcion(j1){
 
         return Object.prototype.hasOwnProperty.call(
-
             this.excepciones,
-
             j1
-
         );
 
     },
@@ -111,17 +117,11 @@ window.BUSCARUTA = {
 
     /* ==================================================
        COMPROBAR IMAGEN
-
-       Image() permite comprobar si el recurso
-       realmente puede cargarse.
-
-       No se muestra ningún 404 al usuario.
     ================================================== */
 
     comprobarImagen(ruta){
 
         return new Promise(
-
             resolve => {
 
                 const imagen =
@@ -148,14 +148,13 @@ window.BUSCARUTA = {
                     ruta;
 
             }
-
         );
 
     },
 
 
     /* ==================================================
-       BUSCAR EXCEPCIÓN
+       BUSCAR LAS TRES IMÁGENES
     ================================================== */
 
     async buscarExcepcion(j1){
@@ -169,8 +168,8 @@ window.BUSCARUTA = {
             j1:
                 j1,
 
-            excepcion:
-                true,
+            caso:
+                "excepcion",
 
             imagenes:
                 []
@@ -179,7 +178,9 @@ window.BUSCARUTA = {
 
 
         /*
-        Comprobamos i0, i2 e i3
+        i0
+        i2
+        i3
         */
 
         for(
@@ -197,39 +198,20 @@ window.BUSCARUTA = {
                 );
 
 
-            if(existe){
+            resultado.imagenes.push({
 
-                resultado.imagenes.push({
+                tipo:
+                    tipo,
 
-                    tipo:
-                        tipo,
+                ruta:
+                    ruta,
 
-                    ruta:
-                        ruta,
+                estado:
+                    existe
+                        ? "ok"
+                        : "imagen no subida"
 
-                    estado:
-                        "ok"
-
-                });
-
-            }
-
-            else{
-
-                resultado.imagenes.push({
-
-                    tipo:
-                        tipo,
-
-                    ruta:
-                        ruta,
-
-                    estado:
-                        "imagen no subida"
-
-                });
-
-            }
+            });
 
         }
 
@@ -246,7 +228,7 @@ window.BUSCARUTA = {
     async buscar(j1){
 
         /*
-        Normalizar código
+        Normalización mínima
         */
 
         j1 =
@@ -256,7 +238,7 @@ window.BUSCARUTA = {
 
 
         /*
-        Comprobar excepción
+        Determinar caso
         */
 
         if(
@@ -268,14 +250,14 @@ window.BUSCARUTA = {
                 j1:
                     j1,
 
-                excepcion:
-                    false,
+                caso:
+                    "desconocido",
 
                 imagenes:
                     [],
 
                 mensaje:
-                    "El código no pertenece a las excepciones."
+                    "Código no contemplado."
 
             };
 
@@ -283,7 +265,7 @@ window.BUSCARUTA = {
 
 
         /*
-        Resolver las tres imágenes
+        Resolver las tres rutas
         */
 
         return await this.buscarExcepcion(
@@ -297,6 +279,6 @@ window.BUSCARUTA = {
 
 /*
 ========================================================
-FIN BUSCARUTA v0.1
+FIN BUSCARUTA v0.2
 ========================================================
 */
