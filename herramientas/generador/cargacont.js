@@ -1,28 +1,42 @@
 /* ========================================================
    PalEntropía
-   cargacont.js v1.1 LTS
+   cargacont.js v1.2 LTS
 
    COMPUERTA DEL CONTENEDOR
 
-   Funciones:
-   - Carga un registro mediante j1
-   - Carga aleatoriamente un j1
-   - Obtiene datos desde LEEPALJSON
-   - Obtiene rutas de imágenes desde BUSCARUTA
-   - Convierte las rutas relativas en rutas reales
-   - Devuelve un registro preparado al generador
+   ARQUITECTURA
+   --------------------------------------------------------
+
+   master.csv
+       ↓
+      j1
+
+   paleofichas.json
+       ↓
+      j2
+      j7
+      j8
+
+   BUSCARUTA
+       ↓
+      i0
+      i2
+      i3
+
+   CARGACONT
+       ↓
+   REGISTRO FINAL PARA EL GENERADOR
+
 
    IMPORTANTE
-   ----------
-   El HTML NO debe calcular ni modificar rutas.
+   --------------------------------------------------------
+   master.csv NO contiene los valores finales de j2, j7, j8.
 
-   CARGACONT entrega directamente:
+   El CSV se utiliza únicamente como fuente de j1.
 
-   paleofichas/vol003/003_11_greererpeton/Greererpeton_i3.png
+   paleofichas.json contiene los valores finales.
 
-   o:
-
-   herramientas/multimedia/new/006_01_i3.png
+   El HTML no calcula ni busca rutas.
 
 ======================================================== */
 
@@ -39,6 +53,17 @@ window.CARGACONT = {
     ==================================================== */
 
     campoPuntero: "j1",
+
+    rutaJSON: "paleofichas.json",
+
+
+    /* ====================================================
+       CACHE JSON
+    ==================================================== */
+
+    _datosJSON: null,
+
+    _cargandoJSON: null,
 
 
     /* ====================================================
@@ -63,13 +88,16 @@ window.CARGACONT = {
 
     /* ====================================================
        OBTENER CONTENEDOR CSV
+       
+       El CSV se utiliza como índice de j1.
     ==================================================== */
 
     obtenerContenedor(){
 
         if(
             !window.LEEPALJSON ||
-            typeof window.LEEPALJSON.obtener !== "function"
+            typeof window.LEEPALJSON.obtener !==
+            "function"
         ){
 
             throw new Error(
@@ -89,7 +117,7 @@ window.CARGACONT = {
         ){
 
             throw new Error(
-                "CARGACONT: el contenedor CSV está vacío."
+                "CARGACONT: master.csv está vacío."
             );
 
         }
@@ -101,10 +129,12 @@ window.CARGACONT = {
 
 
     /* ====================================================
-       BUSCAR REGISTRO POR J1
+       BUSCAR J1 EN MASTER.CSV
+       
+       Solo necesitamos el código.
     ==================================================== */
 
-    buscarRegistro(j1){
+    buscarJ1EnCSV(j1){
 
         const contenedor =
             this.obtenerContenedor();
@@ -122,11 +152,9 @@ window.CARGACONT = {
 
 
             const codigo =
-                String(
-                    registro.codigo || ""
-                )
-                .trim()
-                .toUpperCase();
+                this.normalizarJ1(
+                    registro.codigo
+                );
 
 
             if(
@@ -146,21 +174,259 @@ window.CARGACONT = {
 
 
     /* ====================================================
+       CARGAR PALEOFICHAS.JSON
+       
+       Se carga una sola vez.
+    ==================================================== */
+
+    async cargarJSON(){
+
+        if(
+            this._datosJSON
+        ){
+
+            return this._datosJSON;
+
+        }
+
+
+        if(
+            this._cargandoJSON
+        ){
+
+            return this._cargandoJSON;
+
+        }
+
+
+        this._cargandoJSON =
+
+            fetch(
+                this.rutaJSON,
+                {
+                    cache: "default"
+                }
+            )
+
+            .then(
+                respuesta => {
+
+                    if(
+                        !respuesta.ok
+                    ){
+
+                        throw new Error(
+                            "CARGACONT: no se pudo cargar " +
+                            this.rutaJSON +
+                            " (" +
+                            respuesta.status +
+                            ")"
+                        );
+
+                    }
+
+
+                    return respuesta.json();
+
+                }
+            )
+
+            .then(
+                datos => {
+
+                    if(
+                        !Array.isArray(datos)
+                    ){
+
+                        throw new Error(
+                            "CARGACONT: paleofichas.json " +
+                            "no contiene un array válido."
+                        );
+
+                    }
+
+
+                    this._datosJSON =
+                        datos;
+
+
+                    return datos;
+
+                }
+            )
+
+            .catch(
+                error => {
+
+                    this._cargandoJSON =
+                        null;
+
+                    throw error;
+
+                }
+            );
+
+
+        return this._cargandoJSON;
+
+    },
+
+
+    /* ====================================================
+       BUSCAR REGISTRO EN PALEOFICHAS.JSON
+    ==================================================== */
+
+    async buscarEnJSON(j1){
+
+        const datos =
+            await this.cargarJSON();
+
+
+        for(
+            const registro of datos
+        ){
+
+            if(!registro){
+
+                continue;
+
+            }
+
+
+            const codigo =
+
+                this.normalizarJ1(
+                    registro.codigo ||
+                    registro.j1
+                );
+
+
+            if(
+                codigo === j1
+            ){
+
+                return registro;
+
+            }
+
+        }
+
+
+        return null;
+
+    },
+
+
+    /* ====================================================
+       OBTENER VALORES FINALES DEL JSON
+
+       j2 ← nombre
+       j7 ← dieta
+       j8 ← anatomia
+    ==================================================== */
+
+    async obtenerDatosFinales(j1){
+
+        const registro =
+            await this.buscarEnJSON(
+                j1
+            );
+
+
+        if(
+            !registro
+        ){
+
+            throw new Error(
+                "CARGACONT: no existe " +
+                j1 +
+                " en paleofichas.json."
+            );
+
+        }
+
+
+        const nombre =
+            registro.nombre;
+
+
+        const dieta =
+            registro.dieta;
+
+
+        const anatomia =
+            registro.anatomia;
+
+
+        if(
+            nombre === undefined ||
+            nombre === null ||
+            String(nombre).trim() === ""
+        ){
+
+            throw new Error(
+                "CARGACONT: j2/nombre vacío para " +
+                j1 +
+                "."
+            );
+
+        }
+
+
+        if(
+            dieta === undefined ||
+            dieta === null ||
+            String(dieta).trim() === ""
+        ){
+
+            throw new Error(
+                "CARGACONT: j7/dieta vacío para " +
+                j1 +
+                "."
+            );
+
+        }
+
+
+        if(
+            anatomia === undefined ||
+            anatomia === null ||
+            String(anatomia).trim() === ""
+        ){
+
+            throw new Error(
+                "CARGACONT: j8/anatomia vacío para " +
+                j1 +
+                "."
+            );
+
+        }
+
+
+        return {
+
+            j2:
+                String(nombre).trim(),
+
+            j7:
+                String(dieta).trim(),
+
+            j8:
+                String(anatomia).trim()
+
+        };
+
+    },
+
+
+    /* ====================================================
        CONVERTIR RUTA A RUTA REAL DEL PROYECTO
 
-       BUSCARUTA puede devolver:
+       BUSCARUTA puede devolver rutas relativas
+       respecto al HTML que lo utiliza.
 
-       ../../paleofichas/vol003/...
-       ../multimedia/new/...
-       ../multimedia/001_075/...
-
-       CARGACONT transforma:
-
-       paleofichas/vol003/...
-       herramientas/multimedia/new/...
-       herramientas/multimedia/001_075/...
-
-       El HTML recibe siempre la ruta final.
+       CARGACONT elimina esa dependencia y entrega
+       una ruta desde la raíz del proyecto.
     ==================================================== */
 
     convertirRuta(ruta){
@@ -214,22 +480,7 @@ window.CARGACONT = {
 
 
         /* ----------------------------------------------
-           MULTIMEDIA NUEVA
-
-           ../multimedia/new/...
-
-           → herramientas/multimedia/new/...
-        ---------------------------------------------- */
-
-        texto =
-            texto.replace(
-                /^(\.\.\/)+multimedia\/new\//i,
-                "herramientas/multimedia/new/"
-            );
-
-
-        /* ----------------------------------------------
-           EXCEPCIONES
+           CASO 1
 
            ../multimedia/001_075/...
 
@@ -244,10 +495,22 @@ window.CARGACONT = {
 
 
         /* ----------------------------------------------
-           SEGURIDAD
+           CASO 3
 
-           Si por alguna razón quedasen ../,
-           eliminarlos del comienzo.
+           ../multimedia/new/...
+
+           → herramientas/multimedia/new/...
+        ---------------------------------------------- */
+
+        texto =
+            texto.replace(
+                /^(\.\.\/)+multimedia\/new\//i,
+                "herramientas/multimedia/new/"
+            );
+
+
+        /* ----------------------------------------------
+           SEGURIDAD
         ---------------------------------------------- */
 
         texto =
@@ -263,36 +526,35 @@ window.CARGACONT = {
 
 
     /* ====================================================
-       CONVERTIR TODAS LAS IMÁGENES
+       PREPARAR IMÁGENES
 
-       Recibe el resultado de BUSCARUTA y devuelve
-       solamente las rutas finales.
+       BUSCARUTA devuelve:
 
-       Entrada:
+       imagenes: [
+           {
+               tipo: "i0",
+               ruta: "..."
+           }
+       ]
 
-       {
-           j1: "...",
-           caso: "...",
-           imagenes: [
-               {
-                   tipo: "i0",
-                   ruta: "../../paleofichas/..."
-               }
-           ]
-       }
+       CARGACONT devuelve:
 
-       Salida:
-
-       {
-           i0: "paleofichas/...",
-           i2: "paleofichas/...",
-           i3: "paleofichas/..."
-       }
+       i0: "ruta final"
+       i2: "ruta final"
+       i3: "ruta final"
     ==================================================== */
 
     prepararImagenes(resultadoBusqueda){
 
-        const imagenes = {};
+        const imagenes = {
+
+            i0: null,
+
+            i2: null,
+
+            i3: null
+
+        };
 
 
         if(
@@ -331,7 +593,8 @@ window.CARGACONT = {
 
 
             if(
-                !["i0", "i2", "i3"].includes(tipo)
+                !["i0", "i2", "i3"]
+                    .includes(tipo)
             ){
 
                 continue;
@@ -339,21 +602,12 @@ window.CARGACONT = {
             }
 
 
-            if(
+            imagenes[tipo] =
                 imagen.ruta
-            ){
-
-                imagenes[tipo] =
-                    this.convertirRuta(
+                    ? this.convertirRuta(
                         imagen.ruta
-                    );
-
-            } else {
-
-                imagenes[tipo] =
-                    null;
-
-            }
+                    )
+                    : null;
 
         }
 
@@ -369,11 +623,19 @@ window.CARGACONT = {
 
     async cargar(j1){
 
+        /* ----------------------------------------------
+           NORMALIZAR
+        ---------------------------------------------- */
+
         j1 =
-            this.normalizarJ1(j1);
+            this.normalizarJ1(
+                j1
+            );
 
 
-        if(!j1){
+        if(
+            !j1
+        ){
 
             throw new Error(
                 "CARGACONT: no se ha indicado j1."
@@ -383,44 +645,42 @@ window.CARGACONT = {
 
 
         /* ----------------------------------------------
-           BUSCAR REGISTRO CSV
+           VALIDAR J1 EN CSV
+
+           El CSV es solamente el índice maestro.
         ---------------------------------------------- */
 
         const registroCSV =
-            this.buscarRegistro(j1);
+            this.buscarJ1EnCSV(
+                j1
+            );
 
 
-        if(!registroCSV){
+        if(
+            !registroCSV
+        ){
 
             throw new Error(
-                "CARGACONT: no existe el registro " +
+                "CARGACONT: el j1 " +
                 j1 +
-                " en el contenedor."
+                " no existe en master.csv."
             );
 
         }
 
 
         /* ----------------------------------------------
-           DATOS GENERALES
-
-           Proceden del contenedor CSV.
+           OBTENER J2 / J7 / J8 DEL JSON
         ---------------------------------------------- */
 
-        const nombre =
-            registroCSV.nombre || null;
-
-
-        const dieta =
-            registroCSV.dieta || null;
-
-
-        const anatomia =
-            registroCSV.anatomia || null;
+        const datosFinales =
+            await this.obtenerDatosFinales(
+                j1
+            );
 
 
         /* ----------------------------------------------
-           BUSCAR IMÁGENES
+           OBTENER IMÁGENES
         ---------------------------------------------- */
 
         let resultadoBusqueda =
@@ -428,17 +688,22 @@ window.CARGACONT = {
 
 
         if(
-            window.BUSCARUTA &&
-            typeof window.BUSCARUTA.buscar ===
+            !window.BUSCARUTA ||
+            typeof window.BUSCARUTA.buscar !==
             "function"
         ){
 
-            resultadoBusqueda =
-                await window.BUSCARUTA.buscar(
-                    j1
-                );
+            throw new Error(
+                "CARGACONT: BUSCARUTA no está disponible."
+            );
 
         }
+
+
+        resultadoBusqueda =
+            await window.BUSCARUTA.buscar(
+                j1
+            );
 
 
         /* ----------------------------------------------
@@ -453,8 +718,6 @@ window.CARGACONT = {
 
         /* ----------------------------------------------
            REGISTRO FINAL
-
-           ESTE ES EL OBJETO QUE RECIBE EL HTML.
         ---------------------------------------------- */
 
         const resultado = {
@@ -463,22 +726,22 @@ window.CARGACONT = {
                 j1,
 
             j2:
-                nombre,
+                datosFinales.j2,
 
             j7:
-                dieta,
+                datosFinales.j7,
 
             j8:
-                anatomia,
+                datosFinales.j8,
 
             i0:
-                imagenes.i0 || null,
+                imagenes.i0,
 
             i2:
-                imagenes.i2 || null,
+                imagenes.i2,
 
             i3:
-                imagenes.i3 || null
+                imagenes.i3
 
         };
 
@@ -517,42 +780,15 @@ window.CARGACONT = {
         );
 
         console.log(
-            "CARGACONT — registro cargado"
+            "PalEntropía — CARGACONT v1.2 LTS"
         );
 
         console.log(
-            "j1:",
-            resultado.j1
+            "Registro final:"
         );
 
         console.log(
-            "j2:",
-            resultado.j2
-        );
-
-        console.log(
-            "j7:",
-            resultado.j7
-        );
-
-        console.log(
-            "j8:",
-            resultado.j8
-        );
-
-        console.log(
-            "i0:",
-            resultado.i0
-        );
-
-        console.log(
-            "i2:",
-            resultado.i2
-        );
-
-        console.log(
-            "i3:",
-            resultado.i3
+            resultado
         );
 
         console.log(
@@ -567,8 +803,8 @@ window.CARGACONT = {
 
     /* ====================================================
        CARGA ALEATORIA
-
-       Selecciona un j1 existente en master.csv.
+       
+       Selecciona un j1 real existente en master.csv.
     ==================================================== */
 
     async aleatorio(){
@@ -581,18 +817,24 @@ window.CARGACONT = {
             contenedor.filter(
                 registro => {
 
-                    if(!registro){
+                    if(
+                        !registro
+                    ){
 
                         return false;
 
                     }
 
 
+                    const codigo =
+                        this.normalizarJ1(
+                            registro.codigo
+                        );
+
+
                     return (
-                        String(
-                            registro.codigo || ""
-                        )
-                        .trim() !== ""
+                        /^\d{3}_\d{2}$/
+                            .test(codigo)
                     );
 
                 }
@@ -665,5 +907,5 @@ window.CARGACONT = {
 
 
 /* ========================================================
-   FIN CARGACONT v1.1 LTS
+   FIN cargacont.js v1.2 LTS
 ======================================================== */
