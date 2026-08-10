@@ -1,7 +1,16 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="es">
 
-<title>Generador — Prueba de BUSCARUTA</title><style>
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Generador — Prueba de BUSCARUTA</title>
+
+<style>
 
 body{
     font-family:Arial,sans-serif;
@@ -36,11 +45,6 @@ button{
     cursor:pointer;
 }
 
-#estado{
-    margin-top:20px;
-    font-weight:bold;
-}
-
 #resultado{
     margin-top:20px;
 }
@@ -65,108 +69,111 @@ button{
     max-height:300px;
 }
 
+.estado{
+    margin-top:8px;
+    font-weight:bold;
+}
+
+.ok{
+    color:#176b2c;
+}
+
+.no-subida{
+    color:#8a5a00;
+}
+
 .ruta{
     margin-top:8px;
     font-size:12px;
     word-break:break-all;
 }
 
-.error{
-    color:#b00020;
-}
+</style>
 
-.exito{
-    color:#176b2c;
-}
+</head>
 
-.info{
-    color:#8a5a00;
-    background:#fff8e1;
-    padding:12px;
-    margin-top:15px;
-    border-radius:6px;
-}
 
-.info-item{
-    margin-top:8px;
-}
+<body>
 
-</style></head><body><h1>Generador — Prueba de BUSCARUTA</h1><label for="j1">
+
+<h1>Generador — Prueba de BUSCARUTA</h1>
+
+
+<label for="j1">
 Código j1
-</label><input
-id="j1"
-type="text"
-maxlength="6"
-placeholder="Ejemplo: 002_02"
+</label>
 
-«»
+
+<input
+    id="j1"
+    type="text"
+    maxlength="6"
+    placeholder="Ejemplo: 003_14"
+>
+
 
 <button
-id="buscar"
-type="button"
-
-«»
-
+    id="buscar"
+    type="button"
+>
 Buscar
 </button>
 
-<div id="estado"></div><div id="resultado"></div><!-- =====================================================
+
+<div id="resultado"></div>
+
+
+<!-- =====================================================
      BUSCARUTA
-===================================================== --><script src="buscaruta.js"></script><script>
+===================================================== -->
+
+<script src="buscaruta.js"></script>
+
+
+<script>
 
 /* ======================================================
    ELEMENTOS
 ====================================================== */
 
-const inputJ1 =
+const input =
     document.getElementById("j1");
 
-const botonBuscar =
+const boton =
     document.getElementById("buscar");
-
-const estado =
-    document.getElementById("estado");
 
 const resultado =
     document.getElementById("resultado");
 
 
 /* ======================================================
-   EVENTO BOTÓN BUSCAR
+   BOTÓN BUSCAR
 ====================================================== */
 
-botonBuscar.addEventListener(
+boton.addEventListener(
     "click",
     buscar
 );
 
 
 /* ======================================================
-   FUNCIÓN PRINCIPAL
+   BUSCAR POR J1
 ====================================================== */
 
 async function buscar(){
 
     resultado.innerHTML = "";
 
-    estado.className = "";
 
-    estado.textContent = "";
-
-
-    /* ==================================================
-       LEER J1
-    ================================================== */
-
-    let j1 =
-        inputJ1.value.trim();
+    const j1 =
+        input.value
+        .trim()
+        .toUpperCase();
 
 
     if(!j1){
 
-        estado.className = "error";
-
-        estado.textContent =
+        resultado.textContent =
             "Introduce un código j1.";
 
         return;
@@ -174,17 +181,9 @@ async function buscar(){
     }
 
 
-    /* ==================================================
-       NORMALIZAR
-    ================================================== */
-
-    j1 =
-        j1.toUpperCase();
-
-
-    /* ==================================================
-       COMPROBAR BUSCARUTA
-    ================================================== */
+    /*
+    Comprobar BUSCARUTA
+    */
 
     if(
         !window.BUSCARUTA ||
@@ -192,240 +191,29 @@ async function buscar(){
         "function"
     ){
 
-        estado.className = "error";
-
-        estado.textContent =
-            "ERROR: buscaruta.js no se ha cargado correctamente.";
+        resultado.textContent =
+            "ERROR: buscaruta.js no se ha cargado.";
 
         return;
 
     }
 
 
-    /* ==================================================
-       BUSCAR
-    ================================================== */
+    /*
+    Buscar por j1
+    */
 
-    botonBuscar.disabled = true;
-
-    botonBuscar.textContent =
-        "Buscando...";
-
-
-    let datos;
-
-
-    try{
-
-        datos =
-            await window.BUSCARUTA.buscar(
-                j1
-            );
-
-    }
-
-    catch(error){
-
-        console.error(error);
-
-        estado.className = "error";
-
-        estado.textContent =
-            "ERROR al ejecutar BUSCARUTA.";
-
-        botonBuscar.disabled = false;
-
-        botonBuscar.textContent =
-            "Buscar";
-
-        return;
-
-    }
-
-
-    botonBuscar.disabled = false;
-
-    botonBuscar.textContent =
-        "Buscar";
-
-
-    /* ==================================================
-       INFORMACIÓN
-    ================================================== */
-
-    let tieneInformacion =
-
-        datos &&
-
-        Array.isArray(
-            datos.informacion
-        ) &&
-
-        datos.informacion.length > 0;
-
-
-    if(
-        tieneInformacion
-    ){
-
-        let cajaInfo =
-            document.createElement(
-                "div"
-            );
-
-        cajaInfo.className =
-            "info";
-
-
-        datos.informacion.forEach(
-            dato => {
-
-                let linea =
-                    document.createElement(
-                        "div"
-                    );
-
-                linea.className =
-                    "info-item";
-
-
-                if(
-                    dato &&
-                    dato.mensaje
-                ){
-
-                    linea.textContent =
-                        dato.mensaje;
-
-                }
-
-                else{
-
-                    linea.textContent =
-                        "Subir imagen al directorio 001_075";
-
-                }
-
-
-                cajaInfo.appendChild(
-                    linea
-                );
-
-            }
+    const datos =
+        await window.BUSCARUTA.buscar(
+            j1
         );
 
 
-        resultado.appendChild(
-            cajaInfo
-        );
+    /*
+    Contenedor
+    */
 
-    }
-
-
-    /* ==================================================
-       COMPROBAR IMÁGENES
-    ================================================== */
-
-    let hayImagenes =
-
-        datos &&
-
-        Array.isArray(
-            datos.imagenes
-        ) &&
-
-        datos.imagenes.length > 0;
-
-
-    /* ==================================================
-       SIN IMÁGENES
-    ================================================== */
-
-    if(!hayImagenes){
-
-        /*
-        Si hay información,
-        no es un error.
-        */
-
-        if(
-            tieneInformacion
-        ){
-
-            estado.className =
-                "info";
-
-            estado.textContent =
-                "Información para " +
-                j1 + ":";
-
-            return;
-
-        }
-
-
-        /*
-        Caso normal sin imágenes.
-        */
-
-        estado.className =
-            "error";
-
-        estado.textContent =
-            "No se han encontrado imágenes para " +
-            j1 + ".";
-
-        return;
-
-    }
-
-
-    /* ==================================================
-       ESTADO DE ÉXITO
-    ================================================== */
-
-    estado.className =
-        "exito";
-
-    estado.textContent =
-        "Se han encontrado " +
-        datos.imagenes.length +
-        " imagen(es) para " +
-        j1 + ".";
-
-
-    /* ==================================================
-       ARQUITECTURA
-    ================================================== */
-
-    if(
-        datos.arquitectura
-    ){
-
-        let infoArquitectura =
-            document.createElement(
-                "div"
-            );
-
-        infoArquitectura.style.marginTop =
-            "10px";
-
-        infoArquitectura.textContent =
-            "Arquitectura detectada: " +
-            datos.arquitectura;
-
-        resultado.appendChild(
-            infoArquitectura
-        );
-
-    }
-
-
-    /* ==================================================
-       CONTENEDOR DE IMÁGENES
-    ================================================== */
-
-    let contenedor =
+    const contenedor =
         document.createElement(
             "div"
         );
@@ -434,124 +222,108 @@ async function buscar(){
         "imagenes";
 
 
-    /* ==================================================
-       MOSTRAR IMÁGENES
-    ================================================== */
+    /*
+    Las tres imágenes
+    */
 
-    datos.imagenes.forEach(
-        imagenData => {
+    if(
+        datos &&
+        Array.isArray(datos.imagenes)
+    ){
 
-            let ruta = "";
+        datos.imagenes.forEach(
+            imagenData => {
 
+                const caja =
+                    document.createElement(
+                        "div"
+                    );
 
-            /*
-            CADENA
-            */
-
-            if(
-                typeof imagenData ===
-                "string"
-            ){
-
-                ruta =
-                    imagenData;
-
-            }
+                caja.className =
+                    "imagen";
 
 
-            /*
-            OBJETO
-            */
+                /*
+                Si existe
+                */
 
-            else if(
-                imagenData &&
-                typeof imagenData ===
-                "object"
-            ){
+                if(
+                    imagenData.estado ===
+                    "ok"
+                ){
 
-                ruta =
-                    imagenData.ruta ||
-                    imagenData.url ||
-                    "";
-
-            }
+                    const imagen =
+                        document.createElement(
+                            "img"
+                        );
 
 
-            if(!ruta){
-
-                return;
-
-            }
+                    imagen.src =
+                        imagenData.ruta;
 
 
-            let caja =
-                document.createElement(
-                    "div"
+                    imagen.alt =
+                        j1 +
+                        "_" +
+                        imagenData.tipo;
+
+
+                    const ruta =
+                        document.createElement(
+                            "div"
+                        );
+
+                    ruta.className =
+                        "ruta";
+
+                    ruta.textContent =
+                        imagenData.ruta;
+
+
+                    caja.appendChild(
+                        imagen
+                    );
+
+                    caja.appendChild(
+                        ruta
+                    );
+
+                }
+
+
+                /*
+                Si no existe
+                */
+
+                else{
+
+                    const mensaje =
+                        document.createElement(
+                            "div"
+                        );
+
+                    mensaje.className =
+                        "estado no-subida";
+
+                    mensaje.textContent =
+                        "Imagen no subida";
+
+
+                    caja.appendChild(
+                        mensaje
+                    );
+
+                }
+
+
+                contenedor.appendChild(
+                    caja
                 );
 
-            caja.className =
-                "imagen";
+            }
+        );
 
-
-            let imagen =
-                document.createElement(
-                    "img"
-                );
-
-            imagen.src =
-                ruta;
-
-            imagen.alt =
-                j1;
-
-
-            /*
-            Si por algún motivo
-            una ruta falla al cargar,
-            se elimina únicamente
-            esa imagen.
-            */
-
-            imagen.onerror =
-                function(){
-
-                    caja.remove();
-
-                };
-
-
-            caja.appendChild(
-                imagen
-            );
-
-
-            /* ==========================================
-               RUTA
-            ========================================== */
-
-            let textoRuta =
-                document.createElement(
-                    "div"
-                );
-
-            textoRuta.className =
-                "ruta";
-
-            textoRuta.textContent =
-                ruta;
-
-
-            caja.appendChild(
-                textoRuta
-            );
-
-
-            contenedor.appendChild(
-                caja
-            );
-
-        }
-    );
+    }
 
 
     resultado.appendChild(
@@ -560,4 +332,9 @@ async function buscar(){
 
 }
 
-</script></body></html>
+</script>
+
+
+</body>
+
+</html>
