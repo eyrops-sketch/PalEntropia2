@@ -643,7 +643,7 @@ async caso1(j1){
         ){
 
             let ruta =
-                "paleofichas/"
+                "../../paleofichas/"
                 +
                 volumen
                 +
