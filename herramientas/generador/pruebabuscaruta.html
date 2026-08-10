@@ -1,16 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>Generador — Prueba de BUSCARUTA</title>
-
-<style>
+<title>Generador — Prueba de BUSCARUTA</title><style>
 
 body{
     font-family:Arial,sans-serif;
@@ -88,49 +79,33 @@ button{
     color:#176b2c;
 }
 
-</style>
+.info{
+    color:#8a5a00;
+    background:#fff8e1;
+    padding:12px;
+    margin-top:15px;
+    border-radius:6px;
+}
 
-</head>
+.info-item{
+    margin-top:8px;
+}
 
-
-<body>
-
-
-<h1>Generador — Prueba de BUSCARUTA</h1>
-
-
-<label for="j1">
+</style></head><body><h1>Generador — Prueba de BUSCARUTA</h1><label for="j1">
 Código j1
-</label>
+</label><input
+id="j1"
+type="text"
+maxlength="6"
+placeholder="Ejemplo: 002_02"
 
-
-<input
-    id="j1"
-    type="text"
-    maxlength="6"
-    placeholder="Ejemplo: 002_02"
->
-
+«»
 
 <button id="buscar">
 Buscar
-</button>
-
-
-<div id="estado"></div>
-
-
-<div id="resultado"></div>
-
-
-<!-- =====================================================
+</button><div id="estado"></div><div id="resultado"></div><!-- =====================================================
      BUSCARUTA
-===================================================== -->
-
-<script src="buscaruta.js"></script>
-
-
-<script>
+===================================================== --><script src="buscaruta.js"></script><script>
 
 
 /* ======================================================
@@ -184,6 +159,7 @@ async function buscar(){
     if(!j1){
 
         estado.className = "error";
+
         estado.textContent =
             "Introduce un código j1.";
 
@@ -194,11 +170,6 @@ async function buscar(){
 
     /*
     NORMALIZAR
-
-    Ejemplo:
-
-    002_02
-
     */
 
     j1 =
@@ -227,7 +198,7 @@ async function buscar(){
 
     /*
     =====================================================
-    BUSCAR RUTAS
+    BUSCAR
     =====================================================
     */
 
@@ -255,16 +226,123 @@ async function buscar(){
 
 
     /*
-    SIN RESULTADOS
+    =====================================================
+    INFORMACIÓN
+    =====================================================
+
+    Las excepciones pueden devolver información
+    aunque no haya imágenes todavía.
+
+    =====================================================
     */
 
     if(
-        !datos ||
-        !Array.isArray(datos.imagenes) ||
-        datos.imagenes.length === 0
+        datos &&
+        Array.isArray(datos.informacion) &&
+        datos.informacion.length > 0
     ){
 
-        estado.className = "error";
+        let cajaInfo =
+            document.createElement(
+                "div"
+            );
+
+        cajaInfo.className =
+            "info";
+
+
+        datos.informacion.forEach(
+            dato => {
+
+                let linea =
+                    document.createElement(
+                        "div"
+                    );
+
+                linea.className =
+                    "info-item";
+
+
+                if(
+                    dato &&
+                    dato.mensaje
+                ){
+
+                    linea.textContent =
+                        dato.mensaje;
+
+                }else{
+
+                    linea.textContent =
+                        "Subir imagen al directorio 001_075";
+
+                }
+
+
+                cajaInfo.appendChild(
+                    linea
+                );
+
+            }
+        );
+
+
+        resultado.appendChild(
+            cajaInfo
+        );
+
+    }
+
+
+    /*
+    =====================================================
+    SIN IMÁGENES
+    =====================================================
+    */
+
+    let hayImagenes =
+
+        datos &&
+        Array.isArray(
+            datos.imagenes
+        ) &&
+        datos.imagenes.length > 0;
+
+
+    /*
+    Si no hay imágenes PERO sí hay información,
+    no mostramos mensaje de error.
+
+    */
+
+    if(!hayImagenes){
+
+        if(
+            datos &&
+            Array.isArray(
+                datos.informacion
+            ) &&
+            datos.informacion.length > 0
+        ){
+
+            estado.className =
+                "info";
+
+            estado.textContent =
+                "Información para " +
+                j1 + ":";
+
+            return;
+
+        }
+
+
+        /*
+        Caso normal sin imágenes.
+        */
+
+        estado.className =
+            "error";
 
         estado.textContent =
             "No se han encontrado imágenes para " +
@@ -281,7 +359,8 @@ async function buscar(){
     =====================================================
     */
 
-    estado.className = "exito";
+    estado.className =
+        "exito";
 
     estado.textContent =
         "Se han encontrado " +
@@ -300,7 +379,9 @@ async function buscar(){
         );
 
 
-    if(datos.arquitectura){
+    if(
+        datos.arquitectura
+    ){
 
         info.textContent =
             "Arquitectura detectada: " +
@@ -317,7 +398,9 @@ async function buscar(){
 
 
     /*
+    =====================================================
     CONTENEDOR DE IMÁGENES
+    =====================================================
     */
 
     let contenedor =
@@ -330,12 +413,13 @@ async function buscar(){
 
 
     /*
+    =====================================================
     RECORRER IMÁGENES
+    =====================================================
     */
 
     datos.imagenes.forEach(
         imagenData => {
-
 
             let caja =
                 document.createElement(
@@ -450,18 +534,8 @@ async function buscar(){
         contenedor
     );
 
+
 }
 
 
-</script>
-
-
-</body>
-
-</html>
-
-
-
-
-
-
+</script></body></html>
