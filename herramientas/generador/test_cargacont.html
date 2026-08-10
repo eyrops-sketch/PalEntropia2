@@ -1,1 +1,392 @@
+/*
+========================================================
+PalEntropía
+cargacont.js v1.0
+
+COMPUERTA DEL CONTENEDOR
+
+Funciones:
+- Carga un registro mediante j1
+- Carga aleatoriamente un j1
+- Obtiene datos desde LEEPALJSON
+- Obtiene rutas de imágenes desde BUSCARUTA
+- Devuelve un registro preparado al generador
+
+Arquitectura preparada para futura ampliación
+a un contenedor basado en arrays/matrices.
+========================================================
+*/
+
+window.CARGACONT = {
+
+
+    /* ==================================================
+       CONFIGURACIÓN
+    ================================================== */
+
+    campoPuntero: "j1",
+
+
+    /* ==================================================
+       CARGAR REGISTRO POR J1
+    ================================================== */
+
+    async cargar(j1){
+
+        /* ----------------------------------------------
+           NORMALIZAR J1
+        ---------------------------------------------- */
+
+        j1 =
+            String(j1 || "")
+            .trim()
+            .toUpperCase();
+
+
+        if(!j1){
+
+            throw new Error(
+                "CARGACONT: no se ha indicado j1."
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           COMPROBAR LEEPALJSON
+        ---------------------------------------------- */
+
+        if(
+            !window.LEEPALJSON ||
+            typeof window.LEEPALJSON.obtener !==
+            "function"
+        ){
+
+            throw new Error(
+                "CARGACONT: LEEPALJSON no está disponible."
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           OBTENER CONTENEDOR CSV
+        ---------------------------------------------- */
+
+        const contenedor =
+            window.LEEPALJSON.obtener();
+
+
+        if(
+            !Array.isArray(contenedor) ||
+            !contenedor.length
+        ){
+
+            throw new Error(
+                "CARGACONT: el contenedor CSV está vacío."
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           BUSCAR REGISTRO POR J1
+        ---------------------------------------------- */
+
+        let registroCSV = null;
+
+
+        for(
+            const registro of contenedor
+        ){
+
+            if(!registro){
+                continue;
+            }
+
+
+            if(
+                String(registro.codigo || "")
+                .trim()
+                .toUpperCase() === j1
+            ){
+
+                registroCSV = registro;
+
+                break;
+
+            }
+
+        }
+
+
+        if(!registroCSV){
+
+            throw new Error(
+                "CARGACONT: no existe el registro " +
+                j1 +
+                " en el contenedor."
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           DATOS DEL JSON
+           
+           LEEPALJSON contiene:
+           codigo
+           nombre
+           dieta
+           anatomia
+        ---------------------------------------------- */
+
+        const nombre =
+            registroCSV.nombre || null;
+
+        const dieta =
+            registroCSV.dieta || null;
+
+        const anatomia =
+            registroCSV.anatomia || null;
+
+
+        /* ----------------------------------------------
+           OBTENER IMÁGENES
+        ---------------------------------------------- */
+
+        let rutasImagenes = null;
+
+
+        if(
+            window.BUSCARUTA &&
+            typeof window.BUSCARUTA.buscar ===
+            "function"
+        ){
+
+            rutasImagenes =
+                await window.BUSCARUTA.buscar(
+                    j1
+                );
+
+        }
+
+
+        /* ----------------------------------------------
+           CREAR REGISTRO PREPARADO
+        ---------------------------------------------- */
+
+        const resultado = {
+
+            j1:
+                j1,
+
+            j2:
+                nombre,
+
+            j7:
+                dieta,
+
+            j8:
+                anatomia,
+
+            imagenes:
+                rutasImagenes
+
+        };
+
+
+        /* ----------------------------------------------
+           CACHE DEL ÚLTIMO REGISTRO
+        ---------------------------------------------- */
+
+        this.ultimo =
+            resultado;
+
+
+        /* ----------------------------------------------
+           EVENTO
+        ---------------------------------------------- */
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+
+                "palentropia:contenedor-cargado",
+
+                {
+                    detail:
+                        resultado
+                }
+
+            )
+
+        );
+
+
+        console.log(
+            "CARGACONT — registro cargado:",
+            j1
+        );
+
+
+        return resultado;
+
+    },
+
+
+    /* ==================================================
+       CARGA ALEATORIA
+       
+       Selecciona un j1 existente en el contenedor.
+    ================================================== */
+
+    async aleatorio(){
+
+        /* ----------------------------------------------
+           OBTENER CONTENEDOR
+        ---------------------------------------------- */
+
+        if(
+            !window.LEEPALJSON ||
+            typeof window.LEEPALJSON.obtener !==
+            "function"
+        ){
+
+            throw new Error(
+                "CARGACONT: LEEPALJSON no está disponible."
+            );
+
+        }
+
+
+        const contenedor =
+            window.LEEPALJSON.obtener();
+
+
+        if(
+            !Array.isArray(contenedor) ||
+            !contenedor.length
+        ){
+
+            throw new Error(
+                "CARGACONT: no existen registros para seleccionar."
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           FILTRAR REGISTROS CON J1 VÁLIDO
+        ---------------------------------------------- */
+
+        const registros =
+            contenedor.filter(
+
+                registro => {
+
+                    return (
+
+                        registro &&
+
+                        String(
+                            registro.codigo || ""
+                        ).trim() !== ""
+
+                    );
+
+                }
+
+            );
+
+
+        if(!registros.length){
+
+            throw new Error(
+                "CARGACONT: no existen j1 válidos."
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           SELECCIÓN ALEATORIA
+        ---------------------------------------------- */
+
+        const indice =
+            Math.floor(
+                Math.random() *
+                registros.length
+            );
+
+
+        const j1 =
+            String(
+                registros[indice].codigo
+            )
+            .trim()
+            .toUpperCase();
+
+
+        /* ----------------------------------------------
+           CARGAR REGISTRO
+        ---------------------------------------------- */
+
+        return await this.cargar(
+            j1
+        );
+
+    },
+
+
+    /* ==================================================
+       OBTENER ÚLTIMO REGISTRO
+    ================================================== */
+
+    obtener(){
+
+        return this.ultimo || null;
+
+    },
+
+
+    /* ==================================================
+       ESTADO
+    ================================================== */
+
+    estado(){
+
+        return {
+
+            disponible:
+                !!this.ultimo,
+
+            j1:
+                this.ultimo
+                    ? this.ultimo.j1
+                    : null
+
+        };
+
+    },
+
+
+    /* ==================================================
+       ÚLTIMO REGISTRO
+    ================================================== */
+
+    ultimo:
+        null
+
+};
+
+
+/*
+========================================================
+FIN cargacont.js v1.0
+========================================================
+*/
+
+
+
 
