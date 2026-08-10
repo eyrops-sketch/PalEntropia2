@@ -1,392 +1,365 @@
-/*
-========================================================
-PalEntropía
-cargacont.js v1.0
+<!DOCTYPE html>
+<html lang="es">
 
-COMPUERTA DEL CONTENEDOR
+<head>
 
-Funciones:
-- Carga un registro mediante j1
-- Carga aleatoriamente un j1
-- Obtiene datos desde LEEPALJSON
-- Obtiene rutas de imágenes desde BUSCARUTA
-- Devuelve un registro preparado al generador
+<meta charset="UTF-8">
 
-Arquitectura preparada para futura ampliación
-a un contenedor basado en arrays/matrices.
-========================================================
-*/
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-window.CARGACONT = {
+<title>PalEntropía — Test CARGACONT</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    margin:20px;
+    background:#111;
+    color:#eee;
+}
+
+button,
+input{
+    font-size:16px;
+    padding:10px;
+    margin:5px 0;
+}
+
+button{
+    cursor:pointer;
+}
+
+#resultado{
+    white-space:pre-wrap;
+    background:#1d1d1d;
+    padding:15px;
+    border-radius:8px;
+    margin-top:20px;
+    overflow:auto;
+}
+
+.imagenes{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-top:20px;
+}
+
+.imagen{
+    width:30%;
+    min-width:180px;
+}
+
+.imagen img{
+    width:100%;
+    display:block;
+    border-radius:8px;
+}
+
+.estado-ok{
+    color:#7cff9b;
+}
+
+.estado-error{
+    color:#ff7777;
+}
+
+</style>
+
+</head>
 
 
-    /* ==================================================
-       CONFIGURACIÓN
-    ================================================== */
+<body>
 
-    campoPuntero: "j1",
+<h1>PalEntropía</h1>
 
-
-    /* ==================================================
-       CARGAR REGISTRO POR J1
-    ================================================== */
-
-    async cargar(j1){
-
-        /* ----------------------------------------------
-           NORMALIZAR J1
-        ---------------------------------------------- */
-
-        j1 =
-            String(j1 || "")
-            .trim()
-            .toUpperCase();
+<h2>Test CARGACONT</h2>
 
 
-        if(!j1){
+<div>
 
-            throw new Error(
-                "CARGACONT: no se ha indicado j1."
+<input
+    id="entradaJ1"
+    type="text"
+    placeholder="Ejemplo: 001_01"
+>
+
+<br>
+
+<button id="btnCargar">
+
+Cargar J1
+
+</button>
+
+<button id="btnAleatorio">
+
+Cargar aleatorio
+
+</button>
+
+</div>
+
+
+<div id="resultado">
+
+Esperando carga...
+
+</div>
+
+
+<div
+    id="imagenes"
+    class="imagenes"
+></div>
+
+
+<script src="leepaljson.js"></script>
+
+<script src="buscaruta.js"></script>
+
+<script src="cargacont.js"></script>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        const entrada =
+            document.getElementById(
+                "entradaJ1"
             );
 
-        }
-
-
-        /* ----------------------------------------------
-           COMPROBAR LEEPALJSON
-        ---------------------------------------------- */
-
-        if(
-            !window.LEEPALJSON ||
-            typeof window.LEEPALJSON.obtener !==
-            "function"
-        ){
-
-            throw new Error(
-                "CARGACONT: LEEPALJSON no está disponible."
+        const btnCargar =
+            document.getElementById(
+                "btnCargar"
             );
 
-        }
-
-
-        /* ----------------------------------------------
-           OBTENER CONTENEDOR CSV
-        ---------------------------------------------- */
-
-        const contenedor =
-            window.LEEPALJSON.obtener();
-
-
-        if(
-            !Array.isArray(contenedor) ||
-            !contenedor.length
-        ){
-
-            throw new Error(
-                "CARGACONT: el contenedor CSV está vacío."
+        const btnAleatorio =
+            document.getElementById(
+                "btnAleatorio"
             );
 
-        }
+        const resultado =
+            document.getElementById(
+                "resultado"
+            );
+
+        const imagenes =
+            document.getElementById(
+                "imagenes"
+            );
 
 
-        /* ----------------------------------------------
-           BUSCAR REGISTRO POR J1
-        ---------------------------------------------- */
+        /* ==========================================
+           MOSTRAR RESULTADO
+        ========================================== */
 
-        let registroCSV = null;
+        function mostrar(datos){
+
+            resultado.textContent =
+                JSON.stringify(
+                    datos,
+                    null,
+                    2
+                );
 
 
-        for(
-            const registro of contenedor
-        ){
-
-            if(!registro){
-                continue;
-            }
+            imagenes.innerHTML = "";
 
 
             if(
-                String(registro.codigo || "")
-                .trim()
-                .toUpperCase() === j1
+                !datos ||
+                !datos.imagenes ||
+                !Array.isArray(
+                    datos.imagenes.imagenes
+                )
             ){
 
-                registroCSV = registro;
-
-                break;
+                return;
 
             }
 
-        }
+
+            for(
+                const imagen of
+                datos.imagenes.imagenes
+            ){
+
+                const bloque =
+                    document.createElement(
+                        "div"
+                    );
+
+                bloque.className =
+                    "imagen";
 
 
-        if(!registroCSV){
+                const titulo =
+                    document.createElement(
+                        "div"
+                    );
 
-            throw new Error(
-                "CARGACONT: no existe el registro " +
-                j1 +
-                " en el contenedor."
-            );
-
-        }
-
-
-        /* ----------------------------------------------
-           DATOS DEL JSON
-           
-           LEEPALJSON contiene:
-           codigo
-           nombre
-           dieta
-           anatomia
-        ---------------------------------------------- */
-
-        const nombre =
-            registroCSV.nombre || null;
-
-        const dieta =
-            registroCSV.dieta || null;
-
-        const anatomia =
-            registroCSV.anatomia || null;
+                titulo.textContent =
+                    imagen.tipo +
+                    " — " +
+                    imagen.estado;
 
 
-        /* ----------------------------------------------
-           OBTENER IMÁGENES
-        ---------------------------------------------- */
-
-        let rutasImagenes = null;
-
-
-        if(
-            window.BUSCARUTA &&
-            typeof window.BUSCARUTA.buscar ===
-            "function"
-        ){
-
-            rutasImagenes =
-                await window.BUSCARUTA.buscar(
-                    j1
+                bloque.appendChild(
+                    titulo
                 );
 
-        }
+
+                if(imagen.ruta){
+
+                    const img =
+                        document.createElement(
+                            "img"
+                        );
+
+                    img.src =
+                        imagen.ruta;
+
+                    img.alt =
+                        datos.j1 +
+                        " " +
+                        imagen.tipo;
 
 
-        /* ----------------------------------------------
-           CREAR REGISTRO PREPARADO
-        ---------------------------------------------- */
-
-        const resultado = {
-
-            j1:
-                j1,
-
-            j2:
-                nombre,
-
-            j7:
-                dieta,
-
-            j8:
-                anatomia,
-
-            imagenes:
-                rutasImagenes
-
-        };
-
-
-        /* ----------------------------------------------
-           CACHE DEL ÚLTIMO REGISTRO
-        ---------------------------------------------- */
-
-        this.ultimo =
-            resultado;
-
-
-        /* ----------------------------------------------
-           EVENTO
-        ---------------------------------------------- */
-
-        document.dispatchEvent(
-
-            new CustomEvent(
-
-                "palentropia:contenedor-cargado",
-
-                {
-                    detail:
-                        resultado
-                }
-
-            )
-
-        );
-
-
-        console.log(
-            "CARGACONT — registro cargado:",
-            j1
-        );
-
-
-        return resultado;
-
-    },
-
-
-    /* ==================================================
-       CARGA ALEATORIA
-       
-       Selecciona un j1 existente en el contenedor.
-    ================================================== */
-
-    async aleatorio(){
-
-        /* ----------------------------------------------
-           OBTENER CONTENEDOR
-        ---------------------------------------------- */
-
-        if(
-            !window.LEEPALJSON ||
-            typeof window.LEEPALJSON.obtener !==
-            "function"
-        ){
-
-            throw new Error(
-                "CARGACONT: LEEPALJSON no está disponible."
-            );
-
-        }
-
-
-        const contenedor =
-            window.LEEPALJSON.obtener();
-
-
-        if(
-            !Array.isArray(contenedor) ||
-            !contenedor.length
-        ){
-
-            throw new Error(
-                "CARGACONT: no existen registros para seleccionar."
-            );
-
-        }
-
-
-        /* ----------------------------------------------
-           FILTRAR REGISTROS CON J1 VÁLIDO
-        ---------------------------------------------- */
-
-        const registros =
-            contenedor.filter(
-
-                registro => {
-
-                    return (
-
-                        registro &&
-
-                        String(
-                            registro.codigo || ""
-                        ).trim() !== ""
-
+                    bloque.appendChild(
+                        img
                     );
 
                 }
 
-            );
 
+                imagenes.appendChild(
+                    bloque
+                );
 
-        if(!registros.length){
-
-            throw new Error(
-                "CARGACONT: no existen j1 válidos."
-            );
+            }
 
         }
 
 
-        /* ----------------------------------------------
-           SELECCIÓN ALEATORIA
-        ---------------------------------------------- */
+        /* ==========================================
+           MOSTRAR ERROR
+        ========================================== */
 
-        const indice =
-            Math.floor(
-                Math.random() *
-                registros.length
-            );
+        function mostrarError(error){
 
+            resultado.textContent =
+                "ERROR CARGACONT\n\n" +
+                error.message;
 
-        const j1 =
-            String(
-                registros[indice].codigo
-            )
-            .trim()
-            .toUpperCase();
+            imagenes.innerHTML = "";
+
+        }
 
 
-        /* ----------------------------------------------
-           CARGAR REGISTRO
-        ---------------------------------------------- */
+        /* ==========================================
+           CARGA MANUAL
+        ========================================== */
 
-        return await this.cargar(
-            j1
+        btnCargar.addEventListener(
+
+            "click",
+
+            async function(){
+
+                const j1 =
+                    entrada.value
+                    .trim();
+
+
+                if(!j1){
+
+                    resultado.textContent =
+                        "Introduce un código j1.";
+
+                    return;
+
+                }
+
+
+                resultado.textContent =
+                    "Cargando " +
+                    j1 +
+                    "...";
+
+                imagenes.innerHTML = "";
+
+
+                try{
+
+                    const datos =
+                        await window.CARGACONT.cargar(
+                            j1
+                        );
+
+
+                    mostrar(datos);
+
+                }
+
+                catch(error){
+
+                    mostrarError(error);
+
+                }
+
+            }
+
         );
 
-    },
+
+        /* ==========================================
+           CARGA ALEATORIA
+        ========================================== */
+
+        btnAleatorio.addEventListener(
+
+            "click",
+
+            async function(){
+
+                resultado.textContent =
+                    "Seleccionando registro aleatorio...";
+
+                imagenes.innerHTML = "";
 
 
-    /* ==================================================
-       OBTENER ÚLTIMO REGISTRO
-    ================================================== */
+                try{
 
-    obtener(){
-
-        return this.ultimo || null;
-
-    },
+                    const datos =
+                        await window.CARGACONT.aleatorio();
 
 
-    /* ==================================================
-       ESTADO
-    ================================================== */
+                    mostrar(datos);
 
-    estado(){
+                }
 
-        return {
+                catch(error){
 
-            disponible:
-                !!this.ultimo,
+                    mostrarError(error);
 
-            j1:
-                this.ultimo
-                    ? this.ultimo.j1
-                    : null
+                }
 
-        };
+            }
 
-    },
+        );
 
+    }
 
-    /* ==================================================
-       ÚLTIMO REGISTRO
-    ================================================== */
+);
 
-    ultimo:
-        null
-
-};
+</script>
 
 
-/*
-========================================================
-FIN cargacont.js v1.0
-========================================================
-*/
+</body>
 
-
-
-
+</html>
