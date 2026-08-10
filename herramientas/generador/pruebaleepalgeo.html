@@ -1,1 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Prueba LeePALGEO — PalEntropía</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    max-width:800px;
+    margin:30px auto;
+    padding:20px;
+}
+
+h1{
+    font-size:24px;
+}
+
+.grupo{
+    margin-bottom:20px;
+}
+
+.grupo label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.cajas{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.cajas span{
+    font-weight:bold;
+}
+
+.cajas input{
+    width:55px;
+    padding:10px;
+    text-align:center;
+    font-size:18px;
+    box-sizing:border-box;
+}
+
+button{
+    margin-top:10px;
+    padding:10px 18px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+#resultado{
+    margin-top:30px;
+    padding:20px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.campo{
+    margin-bottom:18px;
+}
+
+.etiqueta{
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.valor{
+    line-height:1.6;
+}
+
+.error{
+    color:#b00020;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Generador — Prueba de PALGEO</h1>
+
+
+<!-- =====================================================
+     INICIO
+===================================================== -->
+
+<div class="grupo">
+
+<label>Inicio</label>
+
+<div class="cajas">
+
+<input
+    id="inicioEntero"
+    maxlength="4"
+    inputmode="numeric"
+    placeholder="0521"
+>
+
+<span>.</span>
+
+<input
+    id="inicioDecimal"
+    maxlength="4"
+    inputmode="numeric"
+    placeholder="0000"
+>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     FINAL
+===================================================== -->
+
+<div class="grupo">
+
+<label>Final</label>
+
+<div class="cajas">
+
+<input
+    id="finEntero"
+    maxlength="4"
+    inputmode="numeric"
+    placeholder="0201"
+>
+
+<span>.</span>
+
+<input
+    id="finDecimal"
+    maxlength="4"
+    inputmode="numeric"
+    placeholder="3000"
+>
+
+</div>
+
+</div>
+
+
+<button onclick="buscar()">
+Buscar
+</button>
+
+
+<!-- =====================================================
+     RESULTADO
+===================================================== -->
+
+<div id="resultado">
+
+Introduce una cronología y pulsa Buscar.
+
+</div>
+
+
+<!-- =====================================================
+     BASES
+===================================================== -->
+
+<script src="js/palgeo.js"></script>
+
+<script src="js/palgeosimplificado.js"></script>
+
+<script src="js/leepalgeo.js"></script>
+
+
+<script>
+
+/* ========================================================
+   CONSTRUIR CRONOLOGÍA
+
+   Las cuatro cajas se convierten en:
+
+   MMMM.DDDD-MMMM.DDDD
+======================================================== */
+
+function construirCronologia(){
+
+    const inicioEntero =
+        document
+        .getElementById("inicioEntero")
+        .value
+        .trim();
+
+    const inicioDecimal =
+        document
+        .getElementById("inicioDecimal")
+        .value
+        .trim();
+
+    const finEntero =
+        document
+        .getElementById("finEntero")
+        .value
+        .trim();
+
+    const finDecimal =
+        document
+        .getElementById("finDecimal")
+        .value
+        .trim();
+
+
+    /*
+    Comprobar exactamente
+    cuatro caracteres numéricos.
+    */
+
+    if(
+        !/^\d{4}$/.test(inicioEntero) ||
+        !/^\d{4}$/.test(inicioDecimal) ||
+        !/^\d{4}$/.test(finEntero) ||
+        !/^\d{4}$/.test(finDecimal)
+    ){
+
+        return null;
+
+    }
+
+
+    /*
+    Montar código interno.
+    */
+
+    return (
+
+        inicioEntero
+        +
+        "."
+        +
+        inicioDecimal
+        +
+        "-"
+        +
+        finEntero
+        +
+        "."
+        +
+        finDecimal
+
+    );
+
+}
+
+
+/* ========================================================
+   BUSCAR
+======================================================== */
+
+function buscar(){
+
+    const resultado =
+        document.getElementById("resultado");
+
+
+    /*
+    Construir cronología.
+    */
+
+    const cronologia =
+        construirCronologia();
+
+
+    if(!cronologia){
+
+        resultado.innerHTML =
+            '<div class="error">' +
+            'Los cuatro campos deben contener exactamente 4 cifras.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    /*
+    Enviar al módulo LeePALGEO.
+    */
+
+    const datos =
+        window.LEEPALGEO.leer(
+            cronologia
+        );
+
+
+    if(!datos){
+
+        resultado.innerHTML =
+            '<div class="error">' +
+            'No se ha podido interpretar la cronología.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    /*
+    ========================================================
+    PRESENTACIÓN DEL GENERADOR
+
+    NO se muestra la cronología interna.
+    ========================================================
+    */
+
+    let html = "";
+
+
+    /*
+    INTERVALO
+    */
+
+    if(datos.intervalo){
+
+        html +=
+            '<div class="campo">' +
+                '<div class="etiqueta">Intervalo:</div>' +
+                '<div class="valor">' +
+                    datos.intervalo +
+                '</div>' +
+            '</div>';
+
+    }
+
+
+    /*
+    PERÍODO
+    */
+
+    if(
+        datos.periodo &&
+        datos.periodo.length
+    ){
+
+        html +=
+            '<div class="campo">' +
+                '<div class="etiqueta">Período:</div>' +
+                '<div class="valor">' +
+                    datos.periodo.join(" · ") +
+                '</div>' +
+            '</div>';
+
+    }
+
+
+    /*
+    SUBPERÍODO / EDAD
+    */
+
+    if(
+        datos.edad &&
+        datos.edad.length
+    ){
+
+        html +=
+            '<div class="campo">' +
+                '<div class="etiqueta">Subperíodo:</div>' +
+                '<div class="valor">' +
+                    datos.edad.join(" - ") +
+                '</div>' +
+            '</div>';
+
+    }
+
+
+    resultado.innerHTML = html;
+
+}
+
+</script>
+
+</body>
+
+</html>
+
+
+
+
 
