@@ -1,99 +1,62 @@
 /*
 ========================================================
 PalEntropía
-buscaruta.js v1.0 LTS
+buscaruta.js v1.1 LTS
 
 ADAPTADOR UNIVERSAL DE RUTAS DE IMAGEN
 
-Función:
+CASO 1 — ARQUITECTURA ANTIGUA
+--------------------------------
 
-Recibe j1 del contenedor intermedio CSV y determina
-la ruta de imagen correspondiente.
+001_01 → 005_15
 
-========================================================
+Lee:
 
-CASO 1
---------------------------------------------------------
+herramientas/generador/paleofichas.json
 
-Códigos antiguos:
-
-001_01 → 001_15
-002_01 → 002_15
-003_01 → 003_15
-004_01 → 004_15
-005_01 → 005_15
-
-Proceso:
-
-j1
- ↓
-paleofichas.json
- ↓
-j2
- ↓
-ruta antigua
+j1 → j2
 
 Ejemplo:
 
-j1 = 002_02
-j2 = Diplocaulus
+j1 = 003_01
+j2 = Nombre
 
-Resultado:
+Ruta:
 
-paleofichas/vol002/002_02_diplocaulus/Diplocaulus_i2.png
-
-Se comprueban:
-
-.png
-.jpg
-.jpeg
-.webp
+paleofichas/vol003/003_01_nombre/Nombre_i0.png
+paleofichas/vol003/003_01_nombre/Nombre_i2.png
+paleofichas/vol003/003_01_nombre/Nombre_i3.png
 
 
-========================================================
+IMPORTANTE:
 
-CASO 2
---------------------------------------------------------
+DIRECTORIO:
+- nombre completamente en minúsculas
 
-Cualquier código que NO pertenezca al sistema antiguo.
+ARCHIVO:
+- primera letra mayúscula
+- resto conserva el nombre de j2
 
-Ejemplos:
 
-005_17
+CASO 2 — ARQUITECTURA NUEVA
+--------------------------------
+
+Busca j1 dentro de:
+
+herramientas/multimedia/
+
+Ejemplo:
+
 016_02
-076_01
-150_15
-151_01
 
-Proceso:
+Busca:
 
-j1
- ↓
-herramientas/multimedia/index.html
- ↓
-índices de bloques
- ↓
-buscar una imagen cuyo nombre empiece por j1_
- ↓
-devolver la primera imagen encontrada
+016_02_i0.xxx
+016_02_i2.xxx
+016_02_i3.xxx
 
 
-Ejemplo:
-
-j1 = 016_02
-
-Encontrado:
-
-herramientas/multimedia/076_150/016_02_i0.webp
-
-Resultado:
-
-esa ruta
-
-
-========================================================
-
-FORMATOS SOPORTADOS
+FORMATOS:
 
 .png
 .jpg
@@ -104,7 +67,7 @@ FORMATOS SOPORTADOS
 ========================================================
 */
 
-window.BUSCARUTA_VERSION = "1.0 LTS";
+window.BUSCARUTA_VERSION = "1.1 LTS";
 
 
 window.BUSCARUTA = {
@@ -124,6 +87,14 @@ EXTENSIONES:
         ".jpg",
         ".jpeg",
         ".webp"
+    ],
+
+
+IMAGENES:
+    [
+        "i0",
+        "i2",
+        "i3"
     ],
 
 
@@ -151,19 +122,16 @@ validarJ1(j1){
 
 
 /* ======================================================
-   DETERMINAR CASO
-
-   CASO 1:
+   DETERMINAR CASO 1
 
    001_01 → 005_15
-
-   únicamente los 75 registros antiguos.
-
 ====================================================== */
 
 esCaso1(j1){
 
-    if(!this.validarJ1(j1)){
+    if(
+        !this.validarJ1(j1)
+    ){
 
         return false;
 
@@ -208,12 +176,9 @@ esCaso1(j1){
 
 
 /* ======================================================
-   OBTENER DATOS DEL JSON
+   LEER PALEOFICHAS.JSON
 
-   Archivo:
-
-   herramientas/generador/paleofichas.json
-
+   j1 → j2
 ====================================================== */
 
 async obtenerPaleoficha(j1){
@@ -226,7 +191,9 @@ async obtenerPaleoficha(j1){
             );
 
 
-        if(!respuesta.ok){
+        if(
+            !respuesta.ok
+        ){
 
             return null;
 
@@ -238,37 +205,38 @@ async obtenerPaleoficha(j1){
 
 
         /*
-        Aceptar tanto:
-
-        [
-            {...},
-            {...}
-        ]
-
-        como:
-
-        {
-            ...
-        }
+        CASO ARRAY
         */
 
-
-        if(Array.isArray(datos)){
+        if(
+            Array.isArray(datos)
+        ){
 
             let encontrada =
                 datos.find(
                     elemento => {
 
+                        if(
+                            !elemento
+                        ){
+
+                            return false;
+
+                        }
+
+
+                        let codigo =
+                            elemento.j1 ||
+                            elemento.codigo ||
+                            elemento.codigo_j1;
+
+
                         return (
-                            elemento &&
-                            String(
-                                elemento.j1 ||
-                                elemento.codigo ||
-                                elemento.codigo_j1 ||
-                                ""
-                            ).trim()
+                            String(codigo)
+                            .trim()
                             ===
-                            String(j1).trim()
+                            String(j1)
+                            .trim()
                         );
 
                     }
@@ -281,20 +249,22 @@ async obtenerPaleoficha(j1){
 
 
         /*
-        Si el JSON es un objeto
-        con registros internos.
+        CASO OBJETO
         */
 
         if(
             datos &&
-            typeof datos === "object"
+            typeof datos ===
+            "object"
         ){
 
             /*
-            Buscar directamente por clave.
+            Buscar por clave j1.
             */
 
-            if(datos[j1]){
+            if(
+                datos[j1]
+            ){
 
                 return datos[j1];
 
@@ -302,7 +272,7 @@ async obtenerPaleoficha(j1){
 
 
             /*
-            Buscar dentro de los valores.
+            Buscar entre valores.
             */
 
             let valores =
@@ -315,16 +285,27 @@ async obtenerPaleoficha(j1){
                 valores.find(
                     elemento => {
 
+                        if(
+                            !elemento
+                        ){
+
+                            return false;
+
+                        }
+
+
+                        let codigo =
+                            elemento.j1 ||
+                            elemento.codigo ||
+                            elemento.codigo_j1;
+
+
                         return (
-                            elemento &&
-                            String(
-                                elemento.j1 ||
-                                elemento.codigo ||
-                                elemento.codigo_j1 ||
-                                ""
-                            ).trim()
+                            String(codigo)
+                            .trim()
                             ===
-                            String(j1).trim()
+                            String(j1)
+                            .trim()
                         );
 
                     }
@@ -366,16 +347,14 @@ async obtenerNombre(j1){
         );
 
 
-    if(!ficha){
+    if(
+        !ficha
+    ){
 
         return null;
 
     }
 
-
-    /*
-    j2 es el nombre oficial.
-    */
 
     let nombre =
         ficha.j2 ||
@@ -393,10 +372,13 @@ async obtenerNombre(j1){
 
 
     nombre =
-        String(nombre).trim();
+        String(nombre)
+        .trim();
 
 
-    if(nombre === ""){
+    if(
+        nombre === ""
+    ){
 
         return null;
 
@@ -409,19 +391,22 @@ async obtenerNombre(j1){
 
 
 /* ======================================================
-   NORMALIZAR NOMBRE DE CARPETA
+   NOMBRE PARA DIRECTORIO
 
-   Ejemplo:
+   IMPORTANTE:
+
+   Todo en minúsculas.
 
    Diplocaulus
    ↓
    diplocaulus
-
 ====================================================== */
 
-nombreCarpeta(nombre){
+nombreDirectorio(nombre){
 
-    if(!nombre){
+    if(
+        !nombre
+    ){
 
         return null;
 
@@ -451,19 +436,23 @@ nombreCarpeta(nombre){
 /* ======================================================
    NOMBRE PARA ARCHIVO
 
-   Primera letra mayúscula.
+   IMPORTANTE:
 
-   Ejemplo:
+   Primera letra MAYÚSCULA.
 
-   diplocaulus
+   No convertir el resto
+   a minúsculas.
+
+   Diplocaulus
    ↓
    Diplocaulus
-
 ====================================================== */
 
 nombreArchivo(nombre){
 
-    if(!nombre){
+    if(
+        !nombre
+    ){
 
         return null;
 
@@ -475,7 +464,9 @@ nombreArchivo(nombre){
         .trim();
 
 
-    if(texto === ""){
+    if(
+        texto === ""
+    ){
 
         return null;
 
@@ -492,16 +483,11 @@ nombreArchivo(nombre){
 
 
 /* ======================================================
-   OBTENER VOLUMEN ANTIGUO
+   OBTENER VOLUMEN
 
-   001_01
+   003_01
    ↓
-   vol001
-
-   005_15
-   ↓
-   vol005
-
+   vol003
 ====================================================== */
 
 obtenerVolumen(j1){
@@ -511,7 +497,9 @@ obtenerVolumen(j1){
         .split("_");
 
 
-    if(partes.length !== 2){
+    if(
+        partes.length !== 2
+    ){
 
         return null;
 
@@ -522,7 +510,11 @@ obtenerVolumen(j1){
         partes[0];
 
 
-    if(!/^\d{3}$/.test(volumen)){
+    if(
+        !/^\d{3}$/.test(
+            volumen
+        )
+    ){
 
         return null;
 
@@ -539,78 +531,34 @@ obtenerVolumen(j1){
 
 
 /* ======================================================
-   BUSCAR EXTENSIÓN EN CASO 1
+   COMPROBAR UNA IMAGEN
 
-   No presupone que sea PNG.
+   Se prueba con HEAD.
 
 ====================================================== */
 
-async comprobarImagenAntigua(
-    carpeta,
-    nombreArchivo
-){
+async comprobarImagen(ruta){
 
-    for(
-        let extension
-        of this.EXTENSIONES
-    ){
+    try{
 
-        let ruta =
-            "paleofichas/"
-            +
-            carpeta.volumen
-            +
-            "/"
-            +
-            carpeta.j1
-            +
-            "_"
-            +
-            carpeta.nombreCarpeta
-            +
-            "/"
-            +
-            nombreArchivo
-            +
-            "_i2"
-            +
-            extension;
+        let respuesta =
+            await fetch(
+                ruta,
+                {
+                    method:"HEAD"
+                }
+            );
 
 
-        try{
-
-            let respuesta =
-                await fetch(
-                    ruta,
-                    {
-                        method:"HEAD"
-                    }
-                );
-
-
-            if(
-                respuesta.ok
-            ){
-
-                return ruta;
-
-            }
-
-        }
-
-        catch(error){
-
-            /*
-            Continuar con
-            la siguiente extensión.
-            */
-
-        }
+        return respuesta.ok;
 
     }
 
+    catch(error){
 
-    return null;
+        return false;
+
+    }
 
 },
 
@@ -618,7 +566,13 @@ async comprobarImagenAntigua(
 /* ======================================================
    CASO 1
 
-   Ruta antigua.
+   BUSCAR i0 / i2 / i3
+
+   Ejemplo:
+
+   paleofichas/vol003/
+   003_01_nombre/
+   Nombre_i0.png
 
 ====================================================== */
 
@@ -630,7 +584,9 @@ async caso1(j1){
         );
 
 
-    if(!nombre){
+    if(
+        !nombre
+    ){
 
         return null;
 
@@ -643,15 +599,17 @@ async caso1(j1){
         );
 
 
-    if(!volumen){
+    if(
+        !volumen
+    ){
 
         return null;
 
     }
 
 
-    let nombreCarpeta =
-        this.nombreCarpeta(
+    let nombreDirectorio =
+        this.nombreDirectorio(
             nombre
         );
 
@@ -663,7 +621,7 @@ async caso1(j1){
 
 
     if(
-        !nombreCarpeta ||
+        !nombreDirectorio ||
         !nombreArchivo
     ){
 
@@ -672,28 +630,104 @@ async caso1(j1){
     }
 
 
-    let datosCarpeta = {
-
-        volumen:
-            volumen,
-
-        j1:
-            j1,
-
-        nombreCarpeta:
-            nombreCarpeta
-
-    };
+    let imagenes = [];
 
 
-    let ruta =
-        await this.comprobarImagenAntigua(
-            datosCarpeta,
-            nombreArchivo
-        );
+    /*
+    =====================================================
+    BUSCAR i0 / i2 / i3
+    =====================================================
+    */
+
+    for(
+        let tipo
+        of this.IMAGENES
+    ){
+
+        let encontrada =
+            null;
 
 
-    if(!ruta){
+        /*
+        Probar todas las extensiones.
+        */
+
+        for(
+            let extension
+            of this.EXTENSIONES
+        ){
+
+            let ruta =
+                "paleofichas/"
+                +
+                volumen
+                +
+                "/"
+                +
+                j1
+                +
+                "_"
+                +
+                nombreDirectorio
+                +
+                "/"
+                +
+                nombreArchivo
+                +
+                "_"
+                +
+                tipo
+                +
+                extension;
+
+
+            let existe =
+                await this.comprobarImagen(
+                    ruta
+                );
+
+
+            if(
+                existe
+            ){
+
+                encontrada =
+                    ruta;
+
+                break;
+
+            }
+
+        }
+
+
+        /*
+        Si existe la imagen,
+        añadirla.
+        */
+
+        if(
+            encontrada
+        ){
+
+            imagenes.push(
+                encontrada
+            );
+
+        }
+
+    }
+
+
+    /*
+    =====================================================
+    RESULTADO
+    =====================================================
+    */
+
+    if(
+        imagenes.length === 0
+    ){
 
         return null;
 
@@ -704,11 +738,14 @@ async caso1(j1){
 
         caso:1,
 
+        arquitectura:
+            "antigua",
+
         j1:j1,
 
         j2:nombre,
 
-        ruta:ruta
+        imagenes:imagenes
 
     };
 
@@ -716,12 +753,7 @@ async caso1(j1){
 
 
 /* ======================================================
-   OBTENER ÍNDICE MULTIMEDIA
-
-   Archivo maestro:
-
-   herramientas/multimedia/index.html
-
+   OBTENER ÍNDICE MAESTRO MULTIMEDIA
 ====================================================== */
 
 async obtenerIndiceMultimedia(){
@@ -736,7 +768,9 @@ async obtenerIndiceMultimedia(){
             );
 
 
-        if(!respuesta.ok){
+        if(
+            !respuesta.ok
+        ){
 
             return null;
 
@@ -762,19 +796,20 @@ async obtenerIndiceMultimedia(){
 
 
 /* ======================================================
-   EXTRAER DIRECTORIOS DEL ÍNDICE MAESTRO
+   EXTRAER DIRECTORIOS
 
-   Busca enlaces del tipo:
+   Ejemplo:
 
    001_075/
    076_150/
-   151_225/
 
 ====================================================== */
 
 extraerDirectorios(html){
 
-    if(!html){
+    if(
+        !html
+    ){
 
         return [];
 
@@ -801,11 +836,6 @@ extraerDirectorios(html){
         let ruta =
             coincidencia[1];
 
-
-        /*
-        Quedarnos solamente
-        con directorios numéricos.
-        */
 
         let nombre =
             ruta
@@ -846,12 +876,7 @@ extraerDirectorios(html){
 
 
 /* ======================================================
-   OBTENER ÍNDICE DE UN BLOQUE
-
-   Ejemplo:
-
-   076_150/index.html
-
+   OBTENER ÍNDICE DEL BLOQUE
 ====================================================== */
 
 async obtenerIndiceBloque(
@@ -870,7 +895,9 @@ async obtenerIndiceBloque(
             );
 
 
-        if(!respuesta.ok){
+        if(
+            !respuesta.ok
+        ){
 
             return null;
 
@@ -891,33 +918,35 @@ async obtenerIndiceBloque(
 
 
 /* ======================================================
-   BUSCAR IMAGEN DENTRO DE UN ÍNDICE
+   EXTRAER TODAS LAS IMÁGENES DE UN J1
 
    Busca:
 
-   016_02_i0.png
-   016_02_i2.jpg
-   016_02_i3.jpeg
-   016_02_ix.webp
-
-   etc.
+   016_02_i0.xxx
+   016_02_i2.xxx
+   016_02_i3.xxx
 
 ====================================================== */
 
-extraerImagen(
+extraerImagenes(
     html,
     j1
 ){
 
-    if(!html){
+    if(
+        !html
+    ){
 
-        return null;
+        return [];
 
     }
 
 
+    let resultado = [];
+
+
     /*
-    Escapar j1 para expresión regular.
+    Escapar j1 para RegExp.
     */
 
     let codigo =
@@ -929,55 +958,102 @@ extraerImagen(
 
 
     /*
-    Buscar cualquier imagen
-    que empiece exactamente por:
+    Buscar cualquier archivo:
 
-    j1_
+    j1_i0.xxx
+    j1_i2.xxx
+    j1_i3.xxx
 
-    y termine en una extensión válida.
+    Se permiten las cuatro extensiones.
     */
 
     let regex =
         new RegExp(
             codigo
             +
-            "_[^\"'<>\\s]+\\.(?:png|jpg|jpeg|webp)",
-            "i"
+            "_(i0|i2|i3)"
+            +
+            "\\.(png|jpg|jpeg|webp)",
+            "gi"
         );
 
 
-    let coincidencia =
-        html.match(
-            regex
-        );
+    let coincidencia;
 
 
-    if(!coincidencia){
+    while(
+        (
+            coincidencia =
+                regex.exec(html)
+        ) !== null
+    ){
 
-        return null;
+        let archivo =
+            coincidencia[0];
+
+
+        if(
+            !resultado.includes(
+                archivo
+            )
+        ){
+
+            resultado.push(
+                archivo
+            );
+
+        }
 
     }
 
 
-    let archivo =
-        coincidencia[0];
-
-
     /*
-    Evitar devolver una ruta absoluta
-    o una ruta externa.
+    Ordenar siempre:
 
-    Nos interesa solamente
-    el nombre del archivo.
+    i0
+    i2
+    i3
     */
 
-    archivo =
-        archivo
-        .split("/")
-        .pop();
+    resultado.sort(
+        (a,b) => {
+
+            let orden = {
+
+                i0:0,
+                i2:1,
+                i3:2
+
+            };
 
 
-    return archivo;
+            let ia =
+                a.match(
+                    /_(i0|i2|i3)\./i
+                );
+
+
+            let ib =
+                b.match(
+                    /_(i0|i2|i3)\./i
+                );
+
+
+            return (
+                orden[
+                    ia[1].toLowerCase()
+                ]
+                -
+                orden[
+                    ib[1].toLowerCase()
+                ]
+            );
+
+        }
+    );
+
+
+    return resultado;
 
 },
 
@@ -985,8 +1061,7 @@ extraerImagen(
 /* ======================================================
    CASO 2
 
-   Buscar j1 en todos los bloques multimedia.
-
+   BUSCAR EN TODOS LOS BLOQUES
 ====================================================== */
 
 async caso2(j1){
@@ -995,7 +1070,9 @@ async caso2(j1){
         await this.obtenerIndiceMultimedia();
 
 
-    if(!htmlMaestro){
+    if(
+        !htmlMaestro
+    ){
 
         return null;
 
@@ -1008,15 +1085,7 @@ async caso2(j1){
         );
 
 
-    /*
-    Si el índice maestro no contiene
-    directorios, no podemos continuar.
-    */
-
     if(
-        !Array.isArray(
-            directorios
-        ) ||
         directorios.length === 0
     ){
 
@@ -1026,12 +1095,14 @@ async caso2(j1){
 
 
     /*
-    Recorrer todos los bloques.
+    Buscar bloque por bloque.
 
-    En cuanto se encuentre
-    una imagen válida se devuelve.
+    En cuanto encontremos
+    al menos una imagen,
+    terminamos.
 
-    No necesitamos más de una.
+    Solo necesitamos una carpeta
+    válida para ese j1.
     */
 
     for(
@@ -1045,44 +1116,59 @@ async caso2(j1){
             );
 
 
-        if(!htmlBloque){
+        if(
+            !htmlBloque
+        ){
 
             continue;
 
         }
 
 
-        let archivo =
-            this.extraerImagen(
+        let archivos =
+            this.extraerImagenes(
                 htmlBloque,
                 j1
             );
 
 
-        if(!archivo){
+        if(
+            archivos.length === 0
+        ){
 
             continue;
 
         }
 
 
-        let ruta =
-            this.BASE_MULTIMEDIA
-            +
-            directorio
-            +
-            "/"
-            +
-            archivo;
+        let imagenes =
+            archivos.map(
+                archivo => {
+
+                    return (
+                        this.BASE_MULTIMEDIA
+                        +
+                        directorio
+                        +
+                        "/"
+                        +
+                        archivo
+                    );
+
+                }
+            );
 
 
         return {
 
             caso:2,
 
+            arquitectura:
+                "nueva",
+
             j1:j1,
 
-            ruta:ruta
+            imagenes:imagenes
 
         };
 
@@ -1101,19 +1187,13 @@ async caso2(j1){
 
    j1
 
-   Ejemplo:
-
-   "002_02"
-
-   o
-
-   "016_02"
-
 ====================================================== */
 
 async buscar(j1){
 
-    if(!this.validarJ1(j1)){
+    if(
+        !this.validarJ1(j1)
+    ){
 
         return {
 
@@ -1126,6 +1206,21 @@ async buscar(j1){
 
     }
 
+
+    /*
+    IMPORTANTE:
+
+    NO modificar mayúsculas/minúsculas
+    de j1.
+
+    El código debe conservarse
+    exactamente como:
+
+    003_01
+    016_02
+
+    etc.
+    */
 
     j1 =
         String(j1)
@@ -1148,7 +1243,9 @@ async buscar(j1){
             );
 
 
-        if(resultado1){
+        if(
+            resultado1
+        ){
 
             return {
 
@@ -1161,28 +1258,21 @@ async buscar(j1){
         }
 
 
-        /*
-        Si el registro pertenece
-        al sistema antiguo pero
-        la imagen no existe,
-        no saltamos silenciosamente
-        al caso 2.
-
-        Esto permite detectar
-        correctamente errores
-        del sistema antiguo.
-        */
-
         return {
 
             ok:false,
 
             caso:1,
 
+            arquitectura:
+                "antigua",
+
             j1:j1,
 
+            imagenes:[],
+
             error:
-                "El registro pertenece al sistema antiguo, pero no se encontró su imagen."
+                "El registro pertenece a la arquitectura antigua, pero no se encontraron imágenes."
 
         };
 
@@ -1201,7 +1291,9 @@ async buscar(j1){
         );
 
 
-    if(resultado2){
+    if(
+        resultado2
+    ){
 
         return {
 
@@ -1214,19 +1306,18 @@ async buscar(j1){
     }
 
 
-    /*
-    =====================================================
-    NO ENCONTRADO
-    =====================================================
-    */
-
     return {
 
         ok:false,
 
         caso:2,
 
+        arquitectura:
+            "nueva",
+
         j1:j1,
+
+        imagenes:[],
 
         error:
             "No se encontró ninguna imagen para este código en los índices multimedia."
@@ -1241,10 +1332,6 @@ async buscar(j1){
 
 /*
 ========================================================
-FIN BUSCARUTA v1.0 LTS
+FIN BUSCARUTA v1.1 LTS
 ========================================================
 */
-
-
-
-
