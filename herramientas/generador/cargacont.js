@@ -4,66 +4,30 @@ PalEntropía
 cargacont.js v1.1
 
 COMPUERTA DEL CONTENEDOR
-Generador — Carga de registro
 
-========================================================
+FUNCIONES
+---------
+- Carga un registro mediante j1
+- Carga un registro aleatorio
+- j1 procede de master.csv
+- j2, j7, j8 proceden de paleofichas.json
+- i0, i2, i3 proceden de BUSCARUTA
+- Devuelve un registro preparado para generador.html
 
-FUNCIÓN
--------
-
-Construye un registro completo a partir de un único j1.
-
-Si se proporciona j1:
-    → carga ese registro.
-
-Si NO se proporciona j1:
-    → selecciona aleatoriamente un registro disponible.
-
-El módulo NO modifica las fuentes originales.
-
-FUENTES
--------
-
-LEEPALJSON
-    └── paleofichas.json
-        ├── codigo → j1
-        ├── nombre → j2
-        ├── dieta → j7
-        └── anatomia → j8
-
-BUSCARUTA
+ARQUITECTURA
+------------
+master.csv
+    │
     └── j1
-        ├── i0
-        ├── i2
-        └── i3
-
-========================================================
-
-SALIDA
-
-Registro único:
-
-{
-    j1: "...",
-    j2: "...",
-    j7: "...",
-    j8: "...",
-    i0: "...",
-    i2: "...",
-    i3: "..."
-}
-
-========================================================
-
-PRINCIPIO DE FUNCIONAMIENTO
-
-CARGACONT.cargar("001_01")
-        ↓
-    carga 001_01
-
-CARGACONT.cargar()
-        ↓
-    selecciona j1 aleatorio
+         │
+         ▼
+     CARGACONT
+       │    │
+       │    └── BUSCARUTA
+       │          └── i0 / i2 / i3
+       │
+       └──── LEEPALJSON / paleofichas.json
+              └── j2 / j7 / j8
 
 ========================================================
 */
@@ -73,46 +37,24 @@ window.CARGACONT = {
 
 
     /* ==================================================
-       CONTENEDOR ACTUAL
-       
-       En esta versión solamente existe
-       un registro activo.
+       CONFIGURACIÓN
     ================================================== */
 
-    registro: null,
+    campoPuntero: "j1",
 
 
     /* ==================================================
-       NORMALIZAR J1
+       ÚLTIMO REGISTRO
     ================================================== */
 
-    normalizarJ1(j1){
-
-        if(
-            j1 === undefined ||
-            j1 === null
-        ){
-
-            return "";
-
-        }
-
-
-        return String(j1)
-            .trim()
-            .toUpperCase();
-
-    },
+    ultimo: null,
 
 
     /* ==================================================
-       OBTENER FUENTE DE DATOS
-       
-       LEEPALJSON ya debe haber cargado
-       paleofichas.json.
+       BUSCAR REGISTRO DEL CSV POR J1
     ================================================== */
 
-    obtenerFuente(){
+    buscarCSV(j1){
 
         if(
             !window.LEEPALJSON ||
@@ -127,218 +69,67 @@ window.CARGACONT = {
         }
 
 
-        const datos =
+        const contenedor =
             window.LEEPALJSON.obtener();
 
 
         if(
-            !Array.isArray(datos) ||
-            datos.length === 0
+            !Array.isArray(contenedor) ||
+            !contenedor.length
         ){
 
             throw new Error(
-                "CARGACONT: no existen registros disponibles."
+                "CARGACONT: el contenedor CSV está vacío."
             );
 
         }
 
 
-        return datos;
-
-    },
-
-
-    /* ==================================================
-       BUSCAR REGISTRO POR J1
-    ================================================== */
-
-    buscarPorJ1(
-        datos,
-        j1
-    ){
-
-        return datos.find(
-
-            registro => {
-
-                if(
-                    !registro ||
-                    typeof registro !==
-                    "object"
-                ){
-
-                    return false;
-
-                }
-
-
-                const codigo =
-
-                    this.normalizarJ1(
-                        registro.codigo
-                    );
-
-
-                return codigo === j1;
-
-            }
-
-        ) || null;
-
-    },
-
-
-    /* ==================================================
-       SELECCIÓN ALEATORIA
-       
-       Selecciona un registro real de la fuente.
-    ================================================== */
-
-    seleccionarAleatorio(
-        datos
-    ){
-
-        const posicion =
-
-            Math.floor(
-                Math.random() *
-                datos.length
-            );
-
-
-        return datos[posicion];
-
-    },
-
-
-    /* ==================================================
-       OBTENER J1 EFECTIVO
-       
-       Determina si se utiliza el j1 solicitado
-       o uno aleatorio.
-    ================================================== */
-
-    determinarJ1(
-        datos,
-        j1
-    ){
-
-        const j1Normalizado =
-            this.normalizarJ1(j1);
-
-
-        /* ----------------------------------------------
-           J1 EXPLÍCITO
-        ---------------------------------------------- */
-
-        if(
-            j1Normalizado
+        for(
+            const registro of contenedor
         ){
-
-            const registro =
-
-                this.buscarPorJ1(
-                    datos,
-                    j1Normalizado
-                );
-
 
             if(!registro){
-
-                throw new Error(
-                    "CARGACONT: no se encontró el j1 " +
-                    j1Normalizado +
-                    "."
-                );
-
+                continue;
             }
 
 
-            return {
+            const codigo =
 
-                j1:
-                    j1Normalizado,
-
-                registro:
-                    registro,
-
-                origen:
-                    "solicitado"
-
-            };
-
-        }
+                String(
+                    registro.codigo || ""
+                )
+                .trim()
+                .toUpperCase();
 
 
-        /* ----------------------------------------------
-           J1 ALEATORIO
-        ---------------------------------------------- */
+            if(
+                codigo === j1
+            ){
 
-        const registroAleatorio =
+                return registro;
 
-            this.seleccionarAleatorio(
-                datos
-            );
-
-
-        if(
-            !registroAleatorio
-        ){
-
-            throw new Error(
-                "CARGACONT: no se pudo seleccionar " +
-                "un registro aleatorio."
-            );
+            }
 
         }
 
 
-        const codigoAleatorio =
-
-            this.normalizarJ1(
-                registroAleatorio.codigo
-            );
-
-
-        if(
-            !codigoAleatorio
-        ){
-
-            throw new Error(
-                "CARGACONT: el registro aleatorio " +
-                "no contiene código."
-            );
-
-        }
-
-
-        return {
-
-            j1:
-                codigoAleatorio,
-
-            registro:
-                registroAleatorio,
-
-            origen:
-                "aleatorio"
-
-        };
+        return null;
 
     },
 
 
     /* ==================================================
-       OBTENER IMÁGENES
+       OBTENER DATOS FINALES DESDE PALEOFICHAS.JSON
+       
+       BUSCARUTA ya contiene el lector de JSON.
     ================================================== */
 
-    async obtenerImagenes(
-        j1
-    ){
+    async obtenerDatosFinales(j1){
 
         if(
             !window.BUSCARUTA ||
-            typeof window.BUSCARUTA.buscar !==
+            typeof window.BUSCARUTA.obtenerJ2 !==
             "function"
         ){
 
@@ -349,20 +140,167 @@ window.CARGACONT = {
         }
 
 
-        return await window.BUSCARUTA.buscar(
-            j1
-        );
+        /*
+        BUSCARUTA ya sabe localizar
+        el registro correcto mediante j1.
+        */
+
+        const datos =
+            await window.BUSCARUTA.cargarJSON();
+
+
+        const registro =
+
+            window.BUSCARUTA.buscarRegistro(
+                datos,
+                j1
+            );
+
+
+        if(!registro){
+
+            throw new Error(
+                "CARGACONT: no se encontró " +
+                j1 +
+                " en paleofichas.json."
+            );
+
+        }
+
+
+        const j2 =
+
+            registro.j2 !== undefined
+                ? registro.j2
+                : registro.nombre;
+
+
+        const j7 =
+
+            registro.j7 !== undefined
+                ? registro.j7
+                : registro.dieta;
+
+
+        const j8 =
+
+            registro.j8 !== undefined
+                ? registro.j8
+                : registro.anatomia;
+
+
+        return {
+
+            j2:
+                j2 !== undefined &&
+                j2 !== null
+                    ? String(j2).trim()
+                    : null,
+
+            j7:
+                j7 !== undefined &&
+                j7 !== null
+                    ? String(j7).trim()
+                    : null,
+
+            j8:
+                j8 !== undefined &&
+                j8 !== null
+                    ? String(j8).trim()
+                    : null
+
+        };
 
     },
 
 
     /* ==================================================
-       EXTRAER RUTAS
+       CARGAR REGISTRO POR J1
     ================================================== */
 
-    extraerRutas(
-        resultadoImagenes
-    ){
+    async cargar(j1){
+
+        /* ----------------------------------------------
+           NORMALIZAR J1
+        ---------------------------------------------- */
+
+        j1 =
+
+            String(j1 || "")
+            .trim()
+            .toUpperCase();
+
+
+        if(!j1){
+
+            throw new Error(
+                "CARGACONT: no se ha indicado j1."
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           COMPROBAR QUE EXISTE EN CSV
+        ---------------------------------------------- */
+
+        const registroCSV =
+            this.buscarCSV(j1);
+
+
+        if(!registroCSV){
+
+            throw new Error(
+                "CARGACONT: no existe " +
+                j1 +
+                " en master.csv."
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           OBTENER DATOS FINALES
+        ---------------------------------------------- */
+
+        const datosFinales =
+
+            await this.obtenerDatosFinales(
+                j1
+            );
+
+
+        /* ----------------------------------------------
+           BUSCAR IMÁGENES
+        ---------------------------------------------- */
+
+        let resultadoImagenes = null;
+
+
+        if(
+            window.BUSCARUTA &&
+            typeof window.BUSCARUTA.buscar ===
+            "function"
+        ){
+
+            resultadoImagenes =
+
+                await window.BUSCARUTA.buscar(
+                    j1
+                );
+
+        }
+
+
+        /* ----------------------------------------------
+           PREPARAR IMÁGENES
+           
+           Se entregan directamente como:
+           
+           i0
+           i2
+           i3
+        ---------------------------------------------- */
 
         let i0 = null;
         let i2 = null;
@@ -420,7 +358,23 @@ window.CARGACONT = {
         }
 
 
-        return {
+        /* ----------------------------------------------
+           REGISTRO FINAL
+        ---------------------------------------------- */
+
+        const resultado = {
+
+            j1:
+                j1,
+
+            j2:
+                datosFinales.j2,
+
+            j7:
+                datosFinales.j7,
+
+            j8:
+                datosFinales.j8,
 
             i0:
                 i0,
@@ -433,255 +387,217 @@ window.CARGACONT = {
 
         };
 
+
+        /* ----------------------------------------------
+           GUARDAR ÚLTIMO REGISTRO
+        ---------------------------------------------- */
+
+        this.ultimo =
+            resultado;
+
+
+        /* ----------------------------------------------
+           EVENTO
+        ---------------------------------------------- */
+
+        document.dispatchEvent(
+
+            new CustomEvent(
+
+                "palentropia:contenedor-cargado",
+
+                {
+                    detail:
+                        resultado
+                }
+
+            )
+
+        );
+
+
+        /* ----------------------------------------------
+           CONSOLA
+        ---------------------------------------------- */
+
+        console.log(
+            "========================================"
+        );
+
+        console.log(
+            "PalEntropía — CARGACONT"
+        );
+
+        console.log(
+            "Registro cargado:",
+            j1
+        );
+
+        console.log(
+            resultado
+        );
+
+        console.log(
+            "========================================"
+        );
+
+
+        return resultado;
+
     },
 
 
     /* ==================================================
-       CONSTRUIR REGISTRO
-    ================================================== */
-
-    construirRegistro(
-        j1,
-        datos,
-        rutas
-    ){
-
-        return {
-
-            j1:
-                j1,
-
-            j2:
-                datos.nombre || "",
-
-            j7:
-                datos.dieta || "",
-
-            j8:
-                datos.anatomia || "",
-
-            i0:
-                rutas.i0,
-
-            i2:
-                rutas.i2,
-
-            i3:
-                rutas.i3
-
-        };
-
-    },
-
-
-    /* ==================================================
-       CARGAR
+       CARGA ALEATORIA
        
-       Uso:
-
-       CARGACONT.cargar("001_01")
-
-       o:
-
-       CARGACONT.cargar()
+       Selecciona un j1 existente en master.csv.
     ================================================== */
 
-    async cargar(
-        j1
-    ){
+    async aleatorio(){
 
-        try {
+        if(
+            !window.LEEPALJSON ||
+            typeof window.LEEPALJSON.obtener !==
+            "function"
+        ){
 
-
-            /* ------------------------------------------
-               OBTENER FUENTE
-            ------------------------------------------ */
-
-            const datos =
-                this.obtenerFuente();
-
-
-            /* ------------------------------------------
-               DETERMINAR J1
-            ------------------------------------------ */
-
-            const seleccion =
-
-                this.determinarJ1(
-                    datos,
-                    j1
-                );
-
-
-            const codigo =
-                seleccion.j1;
-
-
-            const registroFuente =
-                seleccion.registro;
-
-
-            /* ------------------------------------------
-               BUSCAR IMÁGENES
-            ------------------------------------------ */
-
-            const resultadoImagenes =
-
-                await this.obtenerImagenes(
-                    codigo
-                );
-
-
-            /* ------------------------------------------
-               EXTRAER RUTAS
-            ------------------------------------------ */
-
-            const rutas =
-
-                this.extraerRutas(
-                    resultadoImagenes
-                );
-
-
-            /* ------------------------------------------
-               CONSTRUIR REGISTRO
-            ------------------------------------------ */
-
-            const registro =
-
-                this.construirRegistro(
-                    codigo,
-                    registroFuente,
-                    rutas
-                );
-
-
-            /* ------------------------------------------
-               GUARDAR EN EL CONTENEDOR
-            ------------------------------------------ */
-
-            this.registro =
-                registro;
-
-
-            /* ------------------------------------------
-               EVENTO
-            ------------------------------------------ */
-
-            document.dispatchEvent(
-
-                new CustomEvent(
-                    "palentropia:contenedor-cargado",
-                    {
-
-                        detail: {
-
-                            registro:
-                                registro,
-
-                            origen:
-                                seleccion.origen
-
-                        }
-
-                    }
-                )
-
+            throw new Error(
+                "CARGACONT: LEEPALJSON no está disponible."
             );
-
-
-            /* ------------------------------------------
-               DEPURACIÓN
-            ------------------------------------------ */
-
-            console.log(
-                "========================================"
-            );
-
-            console.log(
-                "PalEntropía — CARGACONT v1.1"
-            );
-
-            console.log(
-                "J1:",
-                codigo
-            );
-
-            console.log(
-                "Origen:",
-                seleccion.origen
-            );
-
-            console.log(
-                "Registro:",
-                registro
-            );
-
-            console.log(
-                "========================================"
-            );
-
-
-            return registro;
-
 
         }
-        catch(error){
 
-            console.error(
-                "ERROR CARGACONT:",
-                error
+
+        const contenedor =
+            window.LEEPALJSON.obtener();
+
+
+        if(
+            !Array.isArray(contenedor) ||
+            !contenedor.length
+        ){
+
+            throw new Error(
+                "CARGACONT: master.csv está vacío."
             );
-
-
-            this.registro =
-                null;
-
-
-            document.dispatchEvent(
-
-                new CustomEvent(
-                    "palentropia:error-contenedor",
-                    {
-
-                        detail:
-                            error
-
-                    }
-
-                )
-
-            );
-
-
-            throw error;
 
         }
+
+
+        /* ----------------------------------------------
+           OBTENER J1 VÁLIDOS
+        ---------------------------------------------- */
+
+        const registros =
+
+            contenedor.filter(
+
+                registro => {
+
+                    if(!registro){
+                        return false;
+                    }
+
+
+                    return (
+
+                        String(
+                            registro.codigo || ""
+                        )
+                        .trim() !== ""
+
+                    );
+
+                }
+
+            );
+
+
+        if(!registros.length){
+
+            throw new Error(
+                "CARGACONT: no existen j1 válidos."
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           SELECCIÓN ALEATORIA
+        ---------------------------------------------- */
+
+        const indice =
+
+            Math.floor(
+
+                Math.random() *
+                registros.length
+
+            );
+
+
+        const j1 =
+
+            String(
+                registros[indice].codigo
+            )
+            .trim()
+            .toUpperCase();
+
+
+        /* ----------------------------------------------
+           CARGAR REGISTRO
+        ---------------------------------------------- */
+
+        return await this.cargar(
+            j1
+        );
 
     },
 
 
     /* ==================================================
-       OBTENER REGISTRO ACTUAL
+       OBTENER ÚLTIMO REGISTRO
     ================================================== */
 
     obtener(){
 
-        return this.registro;
+        return this.ultimo || null;
 
     },
 
 
     /* ==================================================
-       LIMPIAR CONTENEDOR
+       LIMPIAR ÚLTIMO REGISTRO
     ================================================== */
 
     limpiar(){
 
-        this.registro =
-            null;
+        this.ultimo = null;
+
+    },
+
+
+    /* ==================================================
+       ESTADO
+    ================================================== */
+
+    estado(){
+
+        return {
+
+            disponible:
+                !!this.ultimo,
+
+            j1:
+                this.ultimo
+                    ? this.ultimo.j1
+                    : null
+
+        };
 
     }
+
 
 };
 
@@ -691,9 +607,3 @@ window.CARGACONT = {
 FIN cargacont.js v1.1
 ========================================================
 */
-
-
-
-
-
-
