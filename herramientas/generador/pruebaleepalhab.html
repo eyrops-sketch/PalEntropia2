@@ -5,8 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Generador — Prueba de LEEPALHAB</title>
 
@@ -15,238 +14,843 @@
 body{
     font-family:Arial,sans-serif;
     margin:20px;
-    background:#111;
-    color:#eee;
-}
-
-h1{
-    font-size:22px;
-}
-
-.caja{
-    margin-bottom:15px;
-}
-
-label{
-    display:block;
-    margin-bottom:6px;
-    font-weight:bold;
 }
 
 input{
-    width:100%;
-    max-width:320px;
-    box-sizing:border-box;
-    padding:10px;
-    font-size:18px;
-    background:#222;
-    color:#fff;
-    border:1px solid #555;
+    width:55px;
+    padding:8px;
+    margin:3px;
+    text-align:center;
+    font-size:16px;
 }
 
 button{
-    margin-top:10px;
     padding:10px 20px;
-    font-size:16px;
+    margin-top:15px;
     cursor:pointer;
 }
 
 #resultado{
     margin-top:25px;
-    padding:15px;
-    border:1px solid #444;
-    background:#181818;
-}
-
-.campo{
-    margin-bottom:18px;
-}
-
-.titulo{
-    font-weight:bold;
-    margin-bottom:6px;
 }
 
 .error{
-    color:#ff7777;
+    color:#b00020;
+    font-weight:bold;
+}
+
+.campo{
+    margin-bottom:20px;
 }
 
 </style>
 
 </head>
 
+
 <body>
+
 
 <h1>Generador — Prueba de LEEPALHAB</h1>
 
-<div class="caja">
 
-<label for="hp">
-Hábitat principal — j5
-</label>
+<!-- =====================================================
+     HÁBITAT PRINCIPAL — j5
+===================================================== -->
 
-<input
-    id="hp"
-    type="text"
-    maxlength="12"
-    value="002000000000"
-    placeholder="12 caracteres numéricos">
+<div class="campo">
+
+<h2>Hábitat principal — j5</h2>
+
+<input id="hp1"
+       type="text"
+       maxlength="3"
+       inputmode="numeric"
+       placeholder="000">
+
+<input id="hp2"
+       type="text"
+       maxlength="3"
+       inputmode="numeric"
+       placeholder="000">
+
+<input id="hp3"
+       type="text"
+       maxlength="3"
+       inputmode="numeric"
+       placeholder="000">
+
+<input id="hp4"
+       type="text"
+       maxlength="3"
+       inputmode="numeric"
+       placeholder="000">
 
 </div>
 
-<div class="caja">
 
-<label for="hs">
-Hábitat secundario — j6
-</label>
+<!-- =====================================================
+     HÁBITAT SECUNDARIO — j6
+===================================================== -->
 
-<input
-    id="hs"
-    type="text"
-    maxlength="12"
-    value="000000000000"
-    placeholder="12 caracteres numéricos">
+<div class="campo">
+
+<h2>Hábitat secundario — j6</h2>
+
+<input id="hs1"
+       type="text"
+       maxlength="3"
+       inputmode="numeric"
+       placeholder="000">
+
+<input id="hs2"
+       type="text"
+       maxlength="3"
+       inputmode="numeric"
+       placeholder="000">
+
+<input id="hs3"
+       type="text"
+       maxlength="3"
+       inputmode="numeric"
+       placeholder="000">
+
+<input id="hs4"
+       type="text"
+       maxlength="3"
+       inputmode="numeric"
+       placeholder="000">
 
 </div>
 
-<button onclick="buscar()">
+
+<button id="buscar">
 Buscar
 </button>
 
-<div id="resultado">
-Introduce los códigos y pulsa Buscar.
-</div>
+
+<div id="resultado"></div>
+
+
+<!-- =====================================================
+     PALHAB
+
+     El archivo está en:
+
+     herramientas/generador/palhab.js
+===================================================== -->
 
 <script src="palhab.js"></script>
-
-<script src="leepalhab.js"></script>
 
 
 <script>
 
-function buscar(){
+/*
+========================================================
+PRUEBA LEEPALHAB
+========================================================
 
-    const resultado =
-        document.getElementById("resultado");
+j5 = HP
+j6 = HS
 
+Cada código tiene:
+
+12 caracteres
+
+4 slots de 3 caracteres:
+
+000 | 000 | 000 | 000
+
+Límite:
+
+000 = vacío
+001-256 = válido
+257-999 = inválido
+
+El prefijo H NO forma parte
+del código HP/HS.
+
+Se utiliza únicamente
+para consultar PALHAB.
+
+Ejemplo:
+
+002
+↓
+H002
+↓
+Océano pelágico
+
+========================================================
+*/
+
+
+/* ======================================================
+   COMPROBAR PALHAB
+====================================================== */
+
+function comprobarPALHAB(){
 
     if(
-        !window.PALHAB ||
-        typeof window.PALHAB !== "object"
+        typeof window.PALHAB !== "object" ||
+        window.PALHAB === null
     ){
 
-        resultado.innerHTML =
-            '<div class="error">' +
-            'ERROR: PALHAB.js no se ha cargado correctamente.' +
-            '</div>';
+        return false;
 
-        return;
+    }
+
+    return true;
+
+}
+
+
+/* ======================================================
+   LEER UN SLOT
+====================================================== */
+
+function leerSlot(id){
+
+    const elemento =
+        document.getElementById(id);
+
+
+    if(!elemento){
+
+        return {
+            valido:false,
+            mensaje:
+                "No se encontró el campo " + id
+        };
 
     }
 
 
-    if(
-        !window.LEEPALHAB ||
-        typeof window.LEEPALHAB.leer !== "function"
-    ){
+    let valor =
+        elemento.value.trim();
 
-        resultado.innerHTML =
-            '<div class="error">' +
-            'ERROR: leepalhab.js no se ha cargado correctamente.' +
-            '</div>';
 
-        return;
+    /*
+    Campo vacío = 000
+    */
+
+    if(valor === ""){
+
+        valor = "000";
 
     }
 
 
-    const hp =
-        document
-        .getElementById("hp")
-        .value
-        .trim();
+    /*
+    Solo números.
+    */
+
+    if(!/^\d{1,3}$/.test(valor)){
+
+        return {
+            valido:false,
+            mensaje:
+                "El campo " +
+                id +
+                " debe contener solamente números."
+        };
+
+    }
 
 
-    const hs =
-        document
-        .getElementById("hs")
-        .value
-        .trim();
+    let numero =
+        Number(valor);
 
 
-    const registro = {
+    /*
+    LÍMITE MÁXIMO ABSOLUTO
+    */
 
-        j5: hp,
+    if(numero > 256){
 
-        j6: hs
+        return {
+            valido:false,
+            mensaje:
+                "El valor " +
+                valor +
+                " no es válido. " +
+                "El límite máximo es 256."
+        };
+
+    }
+
+
+    /*
+    Normalizar a tres cifras.
+
+    2 → 002
+    25 → 025
+    256 → 256
+    */
+
+    let codigo =
+        String(numero)
+        .padStart(3,"0");
+
+
+    return {
+
+        valido:true,
+
+        codigo:codigo,
+
+        numero:numero
 
     };
 
+}
 
-    const datos =
-        window.LEEPALHAB.leer(
-            registro
+
+/* ======================================================
+   LEER LOS 4 SLOTS
+====================================================== */
+
+function leerSlots(prefijo){
+
+    let slots = [];
+
+
+    for(
+        let i = 1;
+        i <= 4;
+        i++
+    ){
+
+        let resultado =
+            leerSlot(
+                prefijo + i
+            );
+
+
+        if(!resultado.valido){
+
+            return resultado;
+
+        }
+
+
+        slots.push(
+            resultado.codigo
         );
 
+    }
 
-    if(!datos){
 
-        resultado.innerHTML =
-            '<div class="error">' +
-            'ERROR: no se han podido procesar los códigos de hábitat.' +
-            '</div>';
+    return {
 
-        return;
+        valido:true,
+
+        slots:slots
+
+    };
+
+}
+
+
+/* ======================================================
+   MONTAR CÓDIGO
+====================================================== */
+
+function montarCodigo(prefijo,slots){
+
+    return (
+        prefijo +
+        slots.join("")
+    );
+
+}
+
+
+/* ======================================================
+   CONSULTAR PALHAB
+====================================================== */
+
+function consultarHabitat(codigo){
+
+    /*
+    000 = slot vacío.
+    */
+
+    if(codigo === "000"){
+
+        return null;
 
     }
+
+
+    /*
+    Convertimos:
+
+    002
+
+    en referencia:
+
+    H002
+    */
+
+    const referencia =
+        "H" + codigo;
+
+
+    const habitat =
+        window.PALHAB[referencia];
+
+
+    if(!habitat){
+
+        return {
+
+            error:true,
+
+            mensaje:
+                "No existe " +
+                referencia +
+                " en PALHAB.js."
+
+        };
+
+    }
+
+
+    return {
+
+        error:false,
+
+        codigo:referencia,
+
+        nombre:
+            habitat.nombre,
+
+        descripcion:
+            habitat.descripcion
+
+    };
+
+}
+
+
+/* ======================================================
+   PROCESAR HP
+====================================================== */
+
+function procesarHP(slots){
+
+    let habitats = [];
+
+
+    /*
+    El primer slot de HP
+    debe contener un hábitat.
+    */
+
+    if(slots[0] === "000"){
+
+        return {
+
+            error:true,
+
+            mensaje:
+                "El Hábitat principal debe ocupar " +
+                "como mínimo el primer slot."
+
+        };
+
+    }
+
+
+    for(
+        let i = 0;
+        i < slots.length;
+        i++
+    ){
+
+        const codigo =
+            slots[i];
+
+
+        if(codigo === "000"){
+
+            continue;
+
+        }
+
+
+        const habitat =
+            consultarHabitat(codigo);
+
+
+        if(habitat.error){
+
+            return habitat;
+
+        }
+
+
+        habitats.push(habitat);
+
+    }
+
+
+    return {
+
+        error:false,
+
+        habitats:habitats
+
+    };
+
+}
+
+
+/* ======================================================
+   PROCESAR HS
+====================================================== */
+
+function procesarHS(slots){
+
+    let habitats = [];
+
+
+    for(
+        let i = 0;
+        i < slots.length;
+        i++
+    ){
+
+        const codigo =
+            slots[i];
+
+
+        if(codigo === "000"){
+
+            continue;
+
+        }
+
+
+        const habitat =
+            consultarHabitat(codigo);
+
+
+        if(habitat.error){
+
+            return habitat;
+
+        }
+
+
+        habitats.push(habitat);
+
+    }
+
+
+    return {
+
+        error:false,
+
+        habitats:habitats
+
+    };
+
+}
+
+
+/* ======================================================
+   MOSTRAR RESULTADO
+====================================================== */
+
+function mostrarResultado(
+    hpCodigo,
+    hsCodigo,
+    hp,
+    hs
+){
+
+    const resultado =
+        document.getElementById(
+            "resultado"
+        );
 
 
     let html = "";
 
 
-    html +=
-        '<div class="campo">' +
-
-        '<div class="titulo">' +
-        'Hábitat principal:' +
-        '</div>' +
-
-        '<div>' +
-        (datos.habitat_principal || "No aplicable") +
-        '</div>' +
-
-        '</div>';
-
+    html += "<hr>";
 
     html +=
-        '<div class="campo">' +
-
-        '<div class="titulo">' +
-        'Hábitat secundario:' +
-        '</div>' +
-
-        '<div>' +
-        (
-            datos.habitat_secundario ||
-            "No definido"
-        ) +
-        '</div>' +
-
-        '</div>';
+        "<h2>Resultado</h2>";
 
 
-    resultado.innerHTML = html;
+    /*
+    Estos códigos se muestran
+    SOLO en esta página de prueba
+    para comprobar que el montaje
+    funciona correctamente.
+    */
+
+    html +=
+        "<p><strong>HP interno:</strong> " +
+        hpCodigo +
+        "</p>";
+
+
+    html +=
+        "<p><strong>HS interno:</strong> " +
+        hsCodigo +
+        "</p>";
+
+
+    /*
+    HÁBITAT PRINCIPAL
+    */
+
+    html +=
+        "<h3>Hábitat principal:</h3>";
+
+
+    if(
+        hp.habitats.length === 0
+    ){
+
+        html +=
+            "<p>No definido</p>";
+
+    }
+    else{
+
+        hp.habitats.forEach(
+            function(habitat){
+
+                html +=
+                    "<p>" +
+                    habitat.nombre +
+                    "</p>";
+
+            }
+        );
+
+    }
+
+
+    /*
+    HÁBITAT SECUNDARIO
+    */
+
+    html +=
+        "<h3>Hábitat secundario:</h3>";
+
+
+    if(
+        hs.habitats.length === 0
+    ){
+
+        html +=
+            "<p>No definido</p>";
+
+    }
+    else{
+
+        hs.habitats.forEach(
+            function(habitat){
+
+                html +=
+                    "<p>" +
+                    habitat.nombre +
+                    "</p>";
+
+            }
+        );
+
+    }
+
+
+    resultado.innerHTML =
+        html;
 
 }
 
+
+/* ======================================================
+   BOTÓN BUSCAR
+====================================================== */
+
+document
+.getElementById("buscar")
+.addEventListener(
+    "click",
+    function(){
+
+        const resultado =
+            document.getElementById(
+                "resultado"
+            );
+
+
+        resultado.innerHTML = "";
+
+
+        /*
+        Comprobar que PALHAB
+        está cargado.
+        */
+
+        if(!comprobarPALHAB()){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: PALHAB.js no se ha ' +
+                'cargado correctamente.' +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        LEER HP
+        */
+
+        const hp =
+            leerSlots("hp");
+
+
+        if(!hp.valido){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: ' +
+                hp.mensaje +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        LEER HS
+        */
+
+        const hs =
+            leerSlots("hs");
+
+
+        if(!hs.valido){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: ' +
+                hs.mensaje +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        MONTAR HP
+
+        002 | 000 | 000 | 000
+
+        ↓
+
+        HP002000000000
+        */
+
+        const hpCodigo =
+            montarCodigo(
+                "HP",
+                hp.slots
+            );
+
+
+        /*
+        MONTAR HS
+
+        000 | 000 | 000 | 000
+
+        ↓
+
+        HS000000000000
+        */
+
+        const hsCodigo =
+            montarCodigo(
+                "HS",
+                hs.slots
+            );
+
+
+        /*
+        PROCESAR HP
+        */
+
+        const datosHP =
+            procesarHP(
+                hp.slots
+            );
+
+
+        if(datosHP.error){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: ' +
+                datosHP.mensaje +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        PROCESAR HS
+        */
+
+        const datosHS =
+            procesarHS(
+                hs.slots
+            );
+
+
+        if(datosHS.error){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: ' +
+                datosHS.mensaje +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        MOSTRAR RESULTADO
+        */
+
+        mostrarResultado(
+            hpCodigo,
+            hsCodigo,
+            datosHP,
+            datosHS
+        );
+
+    }
+);
+
 </script>
+
 
 </body>
 
 </html>
-
-
-
-
-
-
