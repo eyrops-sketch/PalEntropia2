@@ -118,13 +118,13 @@ window.BUSCARUTA = {
         "001_12": {
 
             i0:
-                "../multimedia/001_075/001_12_i0.jpg",
+                "../herramientas/multimedia/001_075/001_12_i0.jpg",
 
             i2:
-                "../multimedia/001_075/001_12_i2.jpg",
+                "../herramientas/multimedia/001_075/001_12_i2.jpg",
 
             i3:
-                "../multimedia/001_075/001_12_i3.jpg"
+                "../herramientas/multimedia/001_075/001_12_i3.jpg"
 
         },
 
@@ -132,13 +132,13 @@ window.BUSCARUTA = {
         "002_04": {
 
             i0:
-                "../multimedia/001_075/002_04_i0.jpg",
+                "../herramientas/multimedia/001_075/002_04_i0.jpg",
 
             i2:
-                "../multimedia/001_075/002_04_i2.jpg",
+                "../herramientas/multimedia/001_075/002_04_i2.jpg",
 
             i3:
-                "../multimedia/001_075/002_04_i3.jpg"
+                "../herramientas/multimedia/001_075/002_04_i3.jpg"
 
         },
 
@@ -146,13 +146,13 @@ window.BUSCARUTA = {
         "003_14": {
 
             i0:
-                "../multimedia/001_075/003_14_i0.jpg",
+                "../herramientas/multimedia/001_075/003_14_i0.jpg",
 
             i2:
-                "../multimedia/001_075/003_14_i2.jpg",
+                "../herramientas/multimedia/001_075/003_14_i2.jpg",
 
             i3:
-                "../multimedia/001_075/003_14_i3.jpg"
+                "../herramientas/multimedia/001_075/003_14_i3.jpg"
 
         },
 
@@ -160,13 +160,13 @@ window.BUSCARUTA = {
         "004_14": {
 
             i0:
-                "../multimedia/001_075/004_14_i0.jpg",
+                "../herramientas/multimedia/001_075/004_14_i0.jpg",
 
             i2:
-                "../multimedia/001_075/004_14_i2.jpg",
+                "../herramientas/multimedia/001_075/004_14_i2.jpg",
 
             i3:
-                "../multimedia/001_075/004_14_i3.jpg"
+                "../herramientas/multimedia/001_075/004_14_i3.jpg"
 
         }
 
@@ -733,7 +733,7 @@ window.BUSCARUTA = {
 
         return (
 
-            "../multimedia/new/"
+            "../herramientas/multimedia/new/"
 
             +
 
