@@ -1,67 +1,95 @@
 /*
 ========================================================
 PalEntropía
-buscaruta.js v1.2 LTS
+buscaruta.js v1.3 LTS
 
 ADAPTADOR UNIVERSAL DE RUTAS DE IMÁGENES
 
+FUNCIÓN:
+
+Recibe j1 y prepara las posibles rutas de imagen.
+
+NO comprueba archivos.
+NO descarga imágenes.
+NO hace peticiones HEAD.
+NO hace peticiones GET para verificar imágenes.
+
+El elemento <img> del generador será quien
+intente cargar la imagen.
+
+--------------------------------------------------------
+
 ARQUITECTURA ANTIGUA
---------------------
+--------------------------------------------------------
 
 001_01 → 005_15
 
 Lee:
 
-paleofichas.json
+herramientas/generador/paleofichas.json
 
-j1 → j2
-
-Ejemplo:
-
-002_12
+j1
 ↓
 j2
-
-Construye:
-
-paleofichas/vol002/002_12_nombre/Nombre_i0.png
-paleofichas/vol002/002_12_nombre/Nombre_i2.png
-paleofichas/vol002/002_12_nombre/Nombre_i3.png
-
-
-ARQUITECTURA NUEVA
-------------------
-
-Cualquier j1 fuera del bloque antiguo.
-
-Busca en:
-
-herramientas/multimedia/
-
-Bloques:
-
-001_075
-076_150
-etc.
+↓
+ruta
 
 Ejemplo:
 
-016_02_i0.webp
-016_02_i2.webp
-016_02_i3.webp
+j1 = 002_12
+j2 = Diplocaulus
 
+Resultado:
 
-EXTENSIONES:
+../../paleofichas/vol002/002_12_diplocaulus/Diplocaulus_i0.png
+../../paleofichas/vol002/002_12_diplocaulus/Diplocaulus_i2.png
+../../paleofichas/vol002/002_12_diplocaulus/Diplocaulus_i3.png
+
+Cada imagen tiene cuatro posibles extensiones:
 
 .png
 .jpg
 .jpeg
 .webp
 
+--------------------------------------------------------
+
+ARQUITECTURA NUEVA
+--------------------------------------------------------
+
+Busca el código j1 dentro de los índices de:
+
+herramientas/multimedia/
+
+Ejemplo:
+
+016_02
+
+Puede encontrar:
+
+016_02_i0.png
+016_02_i2.jpg
+016_02_i3.webp
+
+El módulo devuelve las rutas encontradas
+en el índice.
+
+--------------------------------------------------------
+
+IMPORTANTE
+
+BUSCARUTA NO COMPRUEBA SI EL ARCHIVO EXISTE.
+
+Su función es exclusivamente:
+
+j1
+↓
+ruta/rutas posibles
+
 ========================================================
 */
 
-window.BUSCARUTA_VERSION = "1.2 LTS";
+window.BUSCARUTA_VERSION = "1.3 LTS";
 
 
 window.BUSCARUTA = {
@@ -71,18 +99,24 @@ window.BUSCARUTA = {
    CONFIGURACIÓN
 ====================================================== */
 
-EXTENSIONES:[
+EXTENSIONES: [
+
     ".png",
     ".jpg",
     ".jpeg",
     ".webp"
+
 ],
 
-IMAGENES:[
+
+IMAGENES: [
+
     "i0",
     "i2",
     "i3"
+
 ],
+
 
 BASE_MULTIMEDIA:
     "../multimedia/",
@@ -103,15 +137,18 @@ validarJ1(j1){
 
     }
 
+
     return /^\d{3}_\d{2}$/.test(
+
         String(j1).trim()
+
     );
 
 },
 
 
 /* ======================================================
-   CASO 1
+   DETERMINAR ARQUITECTURA ANTIGUA
 
    001_01 → 005_15
 ====================================================== */
@@ -126,16 +163,27 @@ esCaso1(j1){
 
     }
 
+
     let partes =
+
         String(j1)
         .trim()
         .split("_");
 
+
     let volumen =
-        Number(partes[0]);
+
+        Number(
+            partes[0]
+        );
+
 
     let numero =
-        Number(partes[1]);
+
+        Number(
+            partes[1]
+        );
+
 
     if(
         !Number.isFinite(volumen) ||
@@ -146,18 +194,22 @@ esCaso1(j1){
 
     }
 
+
     return (
+
         volumen >= 1 &&
         volumen <= 5 &&
+
         numero >= 1 &&
         numero <= 15
+
     );
 
 },
 
 
 /* ======================================================
-   LEER PALEOFICHAS.JSON
+   CARGAR PALEOFICHAS.JSON
 ====================================================== */
 
 async cargarPaleofichas(){
@@ -165,24 +217,31 @@ async cargarPaleofichas(){
     try{
 
         let respuesta =
+
             await fetch(
+
                 "paleofichas.json",
                 {
                     cache:"no-store"
                 }
+
             );
+
 
         if(
             !respuesta.ok
         ){
 
             console.error(
+
                 "BUSCARUTA: no se pudo cargar paleofichas.json"
+
             );
 
             return null;
 
         }
+
 
         return await respuesta.json();
 
@@ -191,8 +250,10 @@ async cargarPaleofichas(){
     catch(error){
 
         console.error(
+
             "BUSCARUTA: error leyendo paleofichas.json",
             error
+
         );
 
         return null;
@@ -203,30 +264,17 @@ async cargarPaleofichas(){
 
 
 /* ======================================================
-   BUSCAR REGISTRO RECURSIVAMENTE
+   BUSCAR REGISTRO
 
-   Permite:
-
-   [
-      {...},
-      {...}
-   ]
-
-   o:
-
-   {
-      fichas:[...]
-   }
-
-   o:
-
-   {
-      datos:[...]
-   }
+   Permite encontrar j1 aunque el JSON
+   tenga diferentes estructuras.
 
 ====================================================== */
 
-buscarRegistro(datos,j1){
+buscarRegistro(
+    datos,
+    j1
+){
 
     if(
         datos === null ||
@@ -251,10 +299,12 @@ buscarRegistro(datos,j1){
         ){
 
             let encontrado =
+
                 this.buscarRegistro(
                     elemento,
                     j1
                 );
+
 
             if(
                 encontrado
@@ -265,6 +315,7 @@ buscarRegistro(datos,j1){
             }
 
         }
+
 
         return null;
 
@@ -280,13 +331,16 @@ buscarRegistro(datos,j1){
     ){
 
         /*
-        COMPROBAR ESTE OBJETO
+        COMPROBAR SI ESTE OBJETO
+        ES EL REGISTRO.
         */
 
         let codigo =
+
             datos.j1 ||
             datos.codigo ||
             datos.codigo_j1;
+
 
         if(
             codigo !== undefined &&
@@ -300,18 +354,21 @@ buscarRegistro(datos,j1){
 
 
         /*
-        BUSCAR DENTRO DE SUS PROPIEDADES
+        BUSCAR EN SUS PROPIEDADES.
         */
 
         for(
-            let clave of Object.keys(datos)
+            let clave of
+            Object.keys(datos)
         ){
 
             let encontrado =
+
                 this.buscarRegistro(
                     datos[clave],
                     j1
                 );
+
 
             if(
                 encontrado
@@ -338,6 +395,7 @@ buscarRegistro(datos,j1){
 async obtenerNombre(j1){
 
     let datos =
+
         await this.cargarPaleofichas();
 
 
@@ -351,6 +409,7 @@ async obtenerNombre(j1){
 
 
     let registro =
+
         this.buscarRegistro(
             datos,
             j1
@@ -362,8 +421,10 @@ async obtenerNombre(j1){
     ){
 
         console.error(
-            "BUSCARUTA: no se encontró j1 en paleofichas.json:",
+
+            "BUSCARUTA: j1 no encontrado:",
             j1
+
         );
 
         return null;
@@ -372,6 +433,7 @@ async obtenerNombre(j1){
 
 
     let nombre =
+
         registro.j2 ||
         registro.nombre;
 
@@ -387,6 +449,7 @@ async obtenerNombre(j1){
 
 
     nombre =
+
         String(nombre).trim();
 
 
@@ -414,6 +477,7 @@ async obtenerNombre(j1){
    ↓
 
    diplocaulus
+
 ====================================================== */
 
 nombreDirectorio(nombre){
@@ -427,22 +491,43 @@ nombreDirectorio(nombre){
     }
 
 
-    return String(nombre)
+    return (
+
+        String(nombre)
         .trim()
         .toLowerCase()
+
+        /*
+        Eliminar diacríticos
+        */
+
         .normalize("NFD")
         .replace(
             /[\u0300-\u036f]/g,
             ""
         )
+
+        /*
+        Espacios y caracteres
+        no válidos → _
+        */
+
         .replace(
             /[^a-z0-9]+/g,
             "_"
         )
+
+        /*
+        Quitar _ inicial/final
+        */
+
         .replace(
             /^_+|_+$/g,
             ""
-        );
+
+        )
+
+    );
 
 },
 
@@ -453,6 +538,9 @@ nombreDirectorio(nombre){
    Diplocaulus
    ↓
    Diplocaulus
+
+   Primera letra mayúscula.
+
 ====================================================== */
 
 nombreArchivo(nombre){
@@ -467,6 +555,7 @@ nombreArchivo(nombre){
 
 
     let texto =
+
         String(nombre).trim();
 
 
@@ -480,25 +569,29 @@ nombreArchivo(nombre){
 
 
     return (
+
         texto.charAt(0).toUpperCase()
         +
         texto.slice(1)
+
     );
 
 },
 
 
 /* ======================================================
-   VOLUMEN
+   OBTENER VOLUMEN
 
    002_12
    ↓
    vol002
+
 ====================================================== */
 
 obtenerVolumen(j1){
 
     let partes =
+
         String(j1)
         .split("_");
 
@@ -513,102 +606,47 @@ obtenerVolumen(j1){
 
 
     return (
+
         "vol"
         +
         partes[0]
+
     );
 
 },
 
 
 /* ======================================================
-   COMPROBAR IMAGEN
+   GENERAR RUTAS DEL CASO 1
 
-   GET en lugar de HEAD.
+   NO COMPRUEBA NADA.
 
-   Esto evita problemas con servidores
-   que no responden correctamente a HEAD.
+   Simplemente genera todas
+   las posibilidades.
 
 ====================================================== */
 
-async comprobarImagen(ruta){
-
-    try{
-
-        let respuesta =
-            await fetch(
-                ruta,
-                {
-                    method:"GET",
-                    cache:"no-store"
-                }
-            );
-
-
-        if(
-            !respuesta.ok
-        ){
-
-            return false;
-
-        }
-
-
-        /*
-        La imagen existe.
-        No necesitamos descargarla
-        completamente para esta comprobación.
-        */
-
-        return true;
-
-    }
-
-    catch(error){
-
-        return false;
-
-    }
-
-},
-
-
-/* ======================================================
-   CASO 1
-
-   ARQUITECTURA ANTIGUA
-====================================================== */
-
-async caso1(j1){
-
-    let nombre =
-        await this.obtenerNombre(
-            j1
-        );
-
-
-    if(
-        !nombre
-    ){
-
-        return null;
-
-    }
-
+generarRutasCaso1(
+    j1,
+    nombre
+){
 
     let volumen =
+
         this.obtenerVolumen(
             j1
         );
 
 
     let directorio =
+
         this.nombreDirectorio(
             nombre
         );
 
 
     let archivo =
+
         this.nombreArchivo(
             nombre
         );
@@ -620,29 +658,43 @@ async caso1(j1){
         !archivo
     ){
 
-        return null;
+        return [];
 
     }
 
 
-    let imagenes = [];
+    let rutas = [];
 
 
     /*
-    i0
-    i2
-    i3
+    =====================================================
+    ORDEN DE BÚSQUEDA
+
+    Primero i0
+    después i2
+    después i3
+
+    Dentro de cada imagen:
+
+    PNG
+    JPG
+    JPEG
+    WEBP
+    =====================================================
     */
 
     for(
-        let tipo of this.IMAGENES
+        let tipo of
+        this.IMAGENES
     ){
 
         for(
-            let extension of this.EXTENSIONES
+            let extension of
+            this.EXTENSIONES
         ){
 
-            let ruta =
+            rutas.push(
+
                 "../../paleofichas/"
                 +
                 volumen
@@ -663,60 +715,27 @@ async caso1(j1){
                 +
                 tipo
                 +
-                extension;
+                extension
 
-
-            let existe =
-                await this.comprobarImagen(
-                    ruta
-                );
-
-
-            if(
-                existe
-            ){
-
-                imagenes.push(
-                    ruta
-                );
-
-                break;
-
-            }
+            );
 
         }
 
     }
 
 
-    if(
-        imagenes.length === 0
-    ){
-
-        return null;
-
-    }
-
-
-    return {
-
-        caso:1,
-
-        arquitectura:"antigua",
-
-        j1:j1,
-
-        j2:nombre,
-
-        imagenes:imagenes
-
-    };
+    return rutas;
 
 },
 
 
 /* ======================================================
-   LEER ÍNDICE MULTIMEDIA
+   ÍNDICE MULTIMEDIA
+
+   Se utiliza exclusivamente
+   para localizar los archivos
+   de la arquitectura nueva.
+
 ====================================================== */
 
 async obtenerIndiceMultimedia(){
@@ -724,13 +743,16 @@ async obtenerIndiceMultimedia(){
     try{
 
         let respuesta =
+
             await fetch(
+
                 this.BASE_MULTIMEDIA
                 +
                 "index.html",
                 {
                     cache:"no-store"
                 }
+
             );
 
 
@@ -749,6 +771,13 @@ async obtenerIndiceMultimedia(){
 
     catch(error){
 
+        console.error(
+
+            "BUSCARUTA: error leyendo índice multimedia",
+            error
+
+        );
+
         return null;
 
     }
@@ -757,7 +786,13 @@ async obtenerIndiceMultimedia(){
 
 
 /* ======================================================
-   EXTRAER DIRECTORIOS MULTIMEDIA
+   EXTRAER DIRECTORIOS
+
+   Busca:
+
+   001_075/
+   076_150/
+
 ====================================================== */
 
 extraerDirectorios(html){
@@ -775,6 +810,7 @@ extraerDirectorios(html){
 
 
     let regex =
+
         /href\s*=\s*["']([^"']+\/)["']/gi;
 
 
@@ -782,17 +818,22 @@ extraerDirectorios(html){
 
 
     while(
+
         (
             coincidencia =
                 regex.exec(html)
+
         ) !== null
+
     ){
 
         let ruta =
+
             coincidencia[1];
 
 
         let nombre =
+
             ruta
             .replace(
                 /\/$/,
@@ -803,15 +844,19 @@ extraerDirectorios(html){
 
 
         if(
+
             /^\d{3}_\d{3}$/.test(
                 nombre
             )
+
         ){
 
             if(
+
                 !resultado.includes(
                     nombre
                 )
+
             ){
 
                 resultado.push(
@@ -831,7 +876,7 @@ extraerDirectorios(html){
 
 
 /* ======================================================
-   ÍNDICE DE BLOQUE
+   CARGAR ÍNDICE DE BLOQUE
 ====================================================== */
 
 async obtenerIndiceBloque(
@@ -841,7 +886,9 @@ async obtenerIndiceBloque(
     try{
 
         let respuesta =
+
             await fetch(
+
                 this.BASE_MULTIMEDIA
                 +
                 directorio
@@ -850,6 +897,7 @@ async obtenerIndiceBloque(
                 {
                     cache:"no-store"
                 }
+
             );
 
 
@@ -876,7 +924,14 @@ async obtenerIndiceBloque(
 
 
 /* ======================================================
-   EXTRAER IMÁGENES DEL ÍNDICE
+   EXTRAER IMÁGENES NUEVAS
+
+   Busca directamente:
+
+   j1_i0.xxx
+   j1_i2.xxx
+   j1_i3.xxx
+
 ====================================================== */
 
 extraerImagenes(
@@ -897,6 +952,7 @@ extraerImagenes(
 
 
     let codigo =
+
         String(j1)
         .replace(
             /[.*+?^${}()|[\]\\]/g,
@@ -905,13 +961,17 @@ extraerImagenes(
 
 
     let regex =
+
         new RegExp(
+
             codigo
             +
             "_(i0|i2|i3)"
             +
             "\\.(png|jpg|jpeg|webp)",
+
             "gi"
+
         );
 
 
@@ -919,20 +979,26 @@ extraerImagenes(
 
 
     while(
+
         (
             coincidencia =
                 regex.exec(html)
+
         ) !== null
+
     ){
 
         let archivo =
+
             coincidencia[0];
 
 
         if(
+
             !resultado.includes(
                 archivo
             )
+
         ){
 
             resultado.push(
@@ -945,7 +1011,7 @@ extraerImagenes(
 
 
     /*
-    ORDEN:
+    Ordenar:
 
     i0
     i2
@@ -953,28 +1019,34 @@ extraerImagenes(
     */
 
     resultado.sort(
+
         (a,b) => {
 
             const orden = {
+
                 i0:0,
                 i2:1,
                 i3:2
+
             };
 
 
             let ma =
+
                 a.match(
                     /_(i0|i2|i3)\./i
                 );
 
 
             let mb =
+
                 b.match(
                     /_(i0|i2|i3)\./i
                 );
 
 
             return (
+
                 orden[
                     ma[1].toLowerCase()
                 ]
@@ -982,9 +1054,11 @@ extraerImagenes(
                 orden[
                     mb[1].toLowerCase()
                 ]
+
             );
 
         }
+
     );
 
 
@@ -997,11 +1071,13 @@ extraerImagenes(
    CASO 2
 
    ARQUITECTURA NUEVA
+
 ====================================================== */
 
 async caso2(j1){
 
     let indice =
+
         await this.obtenerIndiceMultimedia();
 
 
@@ -1015,17 +1091,87 @@ async caso2(j1){
 
 
     let directorios =
+
         this.extraerDirectorios(
             indice
         );
 
 
+    /*
+    Ordenar bloques por inicio numérico.
+
+    */
+
+    directorios.sort(
+
+        (a,b) => {
+
+            return (
+                Number(a.slice(0,3))
+                -
+                Number(b.slice(0,3))
+            );
+
+        }
+
+    );
+
+
+    /*
+    Buscar el bloque que corresponda
+    al código j1.
+
+    */
+
+    let numero =
+
+        Number(
+            String(j1)
+            .split("_")[0]
+        );
+
+
     for(
-        let directorio
-        of directorios
+        let directorio of
+        directorios
     ){
 
+        let partes =
+
+            directorio.split("_");
+
+
+        let inicio =
+
+            Number(
+                partes[0]
+            );
+
+
+        let fin =
+
+            Number(
+                partes[1]
+            );
+
+
+        /*
+        Si el volumen de j1
+        está dentro del bloque.
+        */
+
+        if(
+            numero < inicio ||
+            numero > fin
+        ){
+
+            continue;
+
+        }
+
+
         let indiceBloque =
+
             await this.obtenerIndiceBloque(
                 directorio
             );
@@ -1041,6 +1187,7 @@ async caso2(j1){
 
 
         let archivos =
+
             this.extraerImagenes(
                 indiceBloque,
                 j1
@@ -1057,10 +1204,13 @@ async caso2(j1){
 
 
         let imagenes =
+
             archivos.map(
+
                 archivo => {
 
                     return (
+
                         this.BASE_MULTIMEDIA
                         +
                         directorio
@@ -1068,9 +1218,11 @@ async caso2(j1){
                         "/"
                         +
                         archivo
+
                     );
 
                 }
+
             );
 
 
@@ -1096,6 +1248,11 @@ async caso2(j1){
 
 /* ======================================================
    FUNCIÓN PRINCIPAL
+
+   Entrada:
+
+   j1
+
 ====================================================== */
 
 async buscar(j1){
@@ -1118,7 +1275,17 @@ async buscar(j1){
     }
 
 
+    /*
+    Mantener exactamente:
+
+    002_12
+    016_02
+
+    etc.
+    */
+
     j1 =
+
         String(j1).trim();
 
 
@@ -1132,30 +1299,48 @@ async buscar(j1){
         this.esCaso1(j1)
     ){
 
-        let resultado =
-            await this.caso1(
+        let nombre =
+
+            await this.obtenerNombre(
                 j1
             );
 
 
         if(
-            resultado
+            !nombre
         ){
 
             return {
 
-                ok:true,
+                ok:false,
 
-                ...resultado
+                caso:1,
+
+                arquitectura:"antigua",
+
+                j1:j1,
+
+                imagenes:[],
+
+                error:
+                    "No se encontró j2 para este j1 en paleofichas.json."
 
             };
 
         }
 
 
+        let rutas =
+
+            this.generarRutasCaso1(
+                j1,
+                nombre
+            );
+
+
         return {
 
-            ok:false,
+            ok:true,
 
             caso:1,
 
@@ -1163,10 +1348,9 @@ async buscar(j1){
 
             j1:j1,
 
-            imagenes:[],
+            j2:nombre,
 
-            error:
-                "No se encontraron imágenes en la arquitectura antigua."
+            imagenes:rutas
 
         };
 
@@ -1180,6 +1364,7 @@ async buscar(j1){
     */
 
     let resultado =
+
         await this.caso2(
             j1
         );
@@ -1213,7 +1398,7 @@ async buscar(j1){
         imagenes:[],
 
         error:
-            "No se encontró ninguna imagen en la arquitectura nueva."
+            "No se encontró el código en la arquitectura nueva."
 
     };
 
@@ -1225,6 +1410,6 @@ async buscar(j1){
 
 /*
 ========================================================
-FIN BUSCARUTA v1.2 LTS
+FIN BUSCARUTA v1.3 LTS
 ========================================================
 */
