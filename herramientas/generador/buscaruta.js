@@ -1,94 +1,80 @@
-/*
-========================================================
-PalEntropía
-buscaruta.js v2.0 LTS
+/* ========================================================
+   PalEntropía
+   buscaruta.js v3.0 LTS
 
-BUSCARUTA
-Cargador universal de imágenes del Generador
+   BUSCARUTA
+   Cargador universal de imágenes del Generador
 
-========================================================
+   FUNCIÓN
+   -------
+   Determina la ubicación de las imágenes según j1
+   y devuelve SIEMPRE URLs públicas absolutas.
 
-CASO 1 — EXCEPCIONES
---------------------------------------------------------
+   CASO 1 — EXCEPCIONES
+   --------------------------------------------------------
+   001_12
+   002_04
+   003_14
+   004_14
 
-001_12
-002_04
-003_14
-004_14
+   Ubicación pública:
 
-Rutas fijas:
+   https://palentropia.es/herramientas/multimedia/001_075/
 
-herramientas/multimedia/001_075/
+   CASO 2 — ARQUITECTURA ANTIGUA
+   --------------------------------------------------------
+   001_01 → 005_15
 
+   Obtiene j2 desde:
 
-CASO 2 — ARQUITECTURA ANTIGUA
---------------------------------------------------------
+   paleofichas.json
 
-001_01 → 005_15
+   Ubicación pública:
 
-EXCEPTO:
+   https://palentropia.es/paleofichas/volXXX/
 
-001_12
-002_04
-003_14
-004_14
+   CASO 3 — ARQUITECTURA NUEVA
+   --------------------------------------------------------
+   Códigos posteriores.
 
-Obtiene j2 desde:
+   Repositorio único:
 
-herramientas/generador/paleofichas.json
+   herramientas/multimedia/new/
 
+   Ejemplo:
 
-CASO 3 — ARQUITECTURA NUEVA
---------------------------------------------------------
+   https://palentropia.es/herramientas/multimedia/new/006_01_i0.jpg
 
-Todo código posterior al Caso 2.
+   ========================================================
 
-Repositorio único:
+   FORMATOS:
+   PNG → JPG → JPEG → WEBP
 
-herramientas/multimedia/new/
+   IMÁGENES:
+   i0
+   i2
+   i3
 
-Ejemplo:
-
-006_01_i0.jpg
-006_01_i2.jpg
-006_01_i3.jpg
-
-No utiliza j2.
-
-
-========================================================
-
-FORMATOS ADMITIDOS
-
-PNG
-JPG
-JPEG
-WEBP
-
-Orden:
-
-PNG → JPG → JPEG → WEBP
+======================================================== */
 
 
-========================================================
-
-IMÁGENES
-
-i0
-i2
-i3
-
-
-========================================================
-*/
-
+/* ========================================================
+   CONFIGURACIÓN GLOBAL
+======================================================== */
 
 window.BUSCARUTA = {
 
+    /* ----------------------------------------------------
+       DOMINIO PÚBLICO
+    ---------------------------------------------------- */
 
-    /* ==================================================
-       CONFIGURACIÓN
-    ================================================== */
+    dominio:
+        "https://palentropia.es",
+
+
+    /* ----------------------------------------------------
+       EXTENSIONES ADMITIDAS
+    ---------------------------------------------------- */
 
     extensiones: [
 
@@ -100,6 +86,10 @@ window.BUSCARUTA = {
     ],
 
 
+    /* ----------------------------------------------------
+       IMÁGENES A BUSCAR
+    ---------------------------------------------------- */
+
     imagenes: [
 
         "i0",
@@ -109,22 +99,22 @@ window.BUSCARUTA = {
     ],
 
 
-    /* ==================================================
+    /* ====================================================
        EXCEPCIONES
-    ================================================== */
+    ==================================================== */
 
     excepciones: {
 
         "001_12": {
 
             i0:
-                "../multimedia/001_075/001_12_i0.jpg",
+                "/herramientas/multimedia/001_075/001_12_i0.jpg",
 
             i2:
-                "../multimedia/001_075/001_12_i2.jpg",
+                "/herramientas/multimedia/001_075/001_12_i2.jpg",
 
             i3:
-                "../multimedia/001_075/001_12_i3.jpg"
+                "/herramientas/multimedia/001_075/001_12_i3.jpg"
 
         },
 
@@ -132,13 +122,13 @@ window.BUSCARUTA = {
         "002_04": {
 
             i0:
-                "../multimedia/001_075/002_04_i0.jpg",
+                "/herramientas/multimedia/001_075/002_04_i0.jpg",
 
             i2:
-                "../multimedia/001_075/002_04_i2.jpg",
+                "/herramientas/multimedia/001_075/002_04_i2.jpg",
 
             i3:
-                "../multimedia/001_075/002_04_i3.jpg"
+                "/herramientas/multimedia/001_075/002_04_i3.jpg"
 
         },
 
@@ -146,13 +136,13 @@ window.BUSCARUTA = {
         "003_14": {
 
             i0:
-                "../multimedia/001_075/003_14_i0.jpg",
+                "/herramientas/multimedia/001_075/003_14_i0.jpg",
 
             i2:
-                "../multimedia/001_075/003_14_i2.jpg",
+                "/herramientas/multimedia/001_075/003_14_i2.jpg",
 
             i3:
-                "../multimedia/001_075/003_14_i3.jpg"
+                "/herramientas/multimedia/001_075/003_14_i3.jpg"
 
         },
 
@@ -160,22 +150,22 @@ window.BUSCARUTA = {
         "004_14": {
 
             i0:
-                "../multimedia/001_075/004_14_i0.jpg",
+                "/herramientas/multimedia/001_075/004_14_i0.jpg",
 
             i2:
-                "../multimedia/001_075/004_14_i2.jpg",
+                "/herramientas/multimedia/001_075/004_14_i2.jpg",
 
             i3:
-                "../multimedia/001_075/004_14_i3.jpg"
+                "/herramientas/multimedia/001_075/004_14_i3.jpg"
 
         }
 
     },
 
 
-    /* ==================================================
-       CACHE DEL JSON
-    ================================================== */
+    /* ====================================================
+       CACHE JSON
+    ==================================================== */
 
     _datosJSON:
         null,
@@ -184,9 +174,89 @@ window.BUSCARUTA = {
         null,
 
 
-    /* ==================================================
+    /* ====================================================
+       NORMALIZAR J1
+    ==================================================== */
+
+    normalizarJ1(j1){
+
+        return String(j1 || "")
+            .trim()
+            .toUpperCase();
+
+    },
+
+
+    /* ====================================================
+       CREAR URL ABSOLUTA
+    ==================================================== */
+
+    crearURL(ruta){
+
+        if(!ruta){
+
+            return null;
+
+        }
+
+
+        const texto =
+            String(ruta).trim();
+
+
+        if(!texto){
+
+            return null;
+
+        }
+
+
+        /* ----------------------------------------------
+           Ya es URL absoluta
+        ---------------------------------------------- */
+
+        if(
+            texto.startsWith("http://") ||
+            texto.startsWith("https://")
+        ){
+
+            return texto;
+
+        }
+
+
+        /* ----------------------------------------------
+           Convertir ruta del sitio en URL absoluta
+        ---------------------------------------------- */
+
+        if(
+            texto.startsWith("/")
+        ){
+
+            return (
+                this.dominio +
+                texto
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           Cualquier otra ruta
+        ---------------------------------------------- */
+
+        return (
+            this.dominio +
+            "/" +
+            texto
+        );
+
+    },
+
+
+    /* ====================================================
        ¿ES EXCEPCIÓN?
-    ================================================== */
+    ==================================================== */
 
     esExcepcion(j1){
 
@@ -198,11 +268,11 @@ window.BUSCARUTA = {
     },
 
 
-    /* ==================================================
+    /* ====================================================
        ¿ES CASO 2?
        
        001_01 → 005_15
-    ================================================== */
+    ==================================================== */
 
     esCaso2(j1){
 
@@ -239,11 +309,8 @@ window.BUSCARUTA = {
         return (
 
             volumen >= 1 &&
-
             volumen <= 5 &&
-
             ficha >= 1 &&
-
             ficha <= 15
 
         );
@@ -251,12 +318,9 @@ window.BUSCARUTA = {
     },
 
 
-    /* ==================================================
+    /* ====================================================
        CARGAR PALEOFICHAS.JSON
-       
-       Solo se utiliza para el Caso 2.
-       Se carga una sola vez.
-    ================================================== */
+    ==================================================== */
 
     async cargarJSON(){
 
@@ -297,7 +361,9 @@ window.BUSCARUTA = {
                     ){
 
                         throw new Error(
-                            "No se pudo cargar paleofichas.json"
+                            "BUSCARUTA: no se pudo cargar paleofichas.json (" +
+                            respuesta.status +
+                            ")"
                         );
 
                     }
@@ -313,8 +379,20 @@ window.BUSCARUTA = {
 
                 datos => {
 
+                    if(
+                        !Array.isArray(datos)
+                    ){
+
+                        throw new Error(
+                            "BUSCARUTA: paleofichas.json no contiene un array válido."
+                        );
+
+                    }
+
+
                     this._datosJSON =
                         datos;
+
 
                     return datos;
 
@@ -341,9 +419,9 @@ window.BUSCARUTA = {
     },
 
 
-    /* ==================================================
+    /* ====================================================
        BUSCAR REGISTRO POR J1
-    ================================================== */
+    ==================================================== */
 
     buscarRegistro(
         datos,
@@ -360,7 +438,7 @@ window.BUSCARUTA = {
 
 
         /* ----------------------------------------------
-           JSON COMO ARRAY
+           ARRAY
         ---------------------------------------------- */
 
         if(
@@ -373,8 +451,7 @@ window.BUSCARUTA = {
 
                 if(
                     !registro ||
-                    typeof registro !==
-                    "object"
+                    typeof registro !== "object"
                 ){
 
                     continue;
@@ -384,15 +461,14 @@ window.BUSCARUTA = {
 
                 const codigo =
 
-                    registro.j1 ||
+                    registro.codigo ||
 
-                    registro.codigo;
+                    registro.j1;
 
 
                 if(
                     codigo &&
-                    String(codigo).trim() ===
-                    j1
+                    this.normalizarJ1(codigo) === j1
                 ){
 
                     return registro;
@@ -408,18 +484,16 @@ window.BUSCARUTA = {
 
 
         /* ----------------------------------------------
-           JSON COMO OBJETO
+           OBJETO
         ---------------------------------------------- */
 
         if(
-            typeof datos ===
-            "object"
+            typeof datos === "object"
         ){
 
             if(
                 datos[j1] &&
-                typeof datos[j1] ===
-                "object"
+                typeof datos[j1] === "object"
             ){
 
                 return datos[j1];
@@ -428,8 +502,7 @@ window.BUSCARUTA = {
 
 
             for(
-                const clave of
-                Object.keys(datos)
+                const clave of Object.keys(datos)
             ){
 
                 const registro =
@@ -438,8 +511,7 @@ window.BUSCARUTA = {
 
                 if(
                     !registro ||
-                    typeof registro !==
-                    "object"
+                    typeof registro !== "object"
                 ){
 
                     continue;
@@ -449,15 +521,14 @@ window.BUSCARUTA = {
 
                 const codigo =
 
-                    registro.j1 ||
+                    registro.codigo ||
 
-                    registro.codigo;
+                    registro.j1;
 
 
                 if(
                     codigo &&
-                    String(codigo).trim() ===
-                    j1
+                    this.normalizarJ1(codigo) === j1
                 ){
 
                     return registro;
@@ -474,9 +545,9 @@ window.BUSCARUTA = {
     },
 
 
-    /* ==================================================
+    /* ====================================================
        OBTENER J2
-    ================================================== */
+    ==================================================== */
 
     async obtenerJ2(j1){
 
@@ -485,7 +556,6 @@ window.BUSCARUTA = {
 
 
         const registro =
-
             this.buscarRegistro(
                 datos,
                 j1
@@ -501,16 +571,16 @@ window.BUSCARUTA = {
         }
 
 
-        const j2 =
+        const nombre =
 
-            registro.j2 ||
+            registro.nombre ||
 
-            registro.nombre;
+            registro.j2;
 
 
         if(
-            j2 === undefined ||
-            j2 === null
+            nombre === undefined ||
+            nombre === null
         ){
 
             return null;
@@ -519,15 +589,15 @@ window.BUSCARUTA = {
 
 
         return String(
-            j2
+            nombre
         ).trim();
 
     },
 
 
-    /* ==================================================
-       NORMALIZAR NOMBRE DE DIRECTORIO
-    ================================================== */
+    /* ====================================================
+       NORMALIZAR DIRECTORIO
+    ==================================================== */
 
     normalizarDirectorio(
         nombre
@@ -563,9 +633,9 @@ window.BUSCARUTA = {
     },
 
 
-    /* ==================================================
-       NORMALIZAR NOMBRE DE ARCHIVO
-    ================================================== */
+    /* ====================================================
+       NORMALIZAR ARCHIVO
+    ==================================================== */
 
     normalizarArchivo(
         nombre
@@ -617,9 +687,9 @@ window.BUSCARUTA = {
     },
 
 
-    /* ==================================================
+    /* ====================================================
        CREAR RUTA CASO 2
-    ================================================== */
+    ==================================================== */
 
     crearRutaCaso2(
 
@@ -662,66 +732,43 @@ window.BUSCARUTA = {
         }
 
 
-        return (
+        const ruta =
 
-            "../../paleofichas/"
+            "/paleofichas/" +
 
-            +
+            "vol" +
 
-            "vol"
+            volumen +
 
-            +
+            "/" +
 
-            volumen
+            j1 +
 
-            +
+            "_" +
 
-            "/"
+            directorio +
 
-            +
+            "/" +
 
-            j1
+            archivo +
 
-            +
+            "_" +
 
-            "_"
+            tipo +
 
-            +
+            extension;
 
-            directorio
 
-            +
-
-            "/"
-
-            +
-
-            archivo
-
-            +
-
-            "_"
-
-            +
-
-            tipo
-
-            +
-
-            extension
-
+        return this.crearURL(
+            ruta
         );
 
     },
 
 
-    /* ==================================================
+    /* ====================================================
        CREAR RUTA CASO 3
-       
-       Ejemplo:
-       
-       006_01_i0.jpg
-    ================================================== */
+    ==================================================== */
 
     crearRutaCaso3(
 
@@ -731,34 +778,29 @@ window.BUSCARUTA = {
 
     ){
 
-        return (
+        const ruta =
 
-            "../multimedia/new/"
+            "/herramientas/multimedia/new/" +
 
-            +
+            j1 +
 
-            j1
+            "_" +
 
-            +
+            tipo +
 
-            "_"
+            extension;
 
-            +
 
-            tipo
-
-            +
-
-            extension
-
+        return this.crearURL(
+            ruta
         );
 
     },
 
 
-    /* ==================================================
+    /* ====================================================
        COMPROBAR IMAGEN
-    ================================================== */
+    ==================================================== */
 
     comprobarImagen(
         ruta
@@ -767,6 +809,17 @@ window.BUSCARUTA = {
         return new Promise(
 
             resolve => {
+
+                if(
+                    !ruta
+                ){
+
+                    resolve(false);
+
+                    return;
+
+                }
+
 
                 const imagen =
                     new Image();
@@ -798,11 +851,11 @@ window.BUSCARUTA = {
     },
 
 
-    /* ==================================================
+    /* ====================================================
        BUSCAR UNA IMAGEN
        
        PNG → JPG → JPEG → WEBP
-    ================================================== */
+    ==================================================== */
 
     async buscarImagen(
         rutas
@@ -813,7 +866,6 @@ window.BUSCARUTA = {
         ){
 
             const existe =
-
                 await this.comprobarImagen(
                     ruta
                 );
@@ -844,29 +896,24 @@ window.BUSCARUTA = {
                 null,
 
             estado:
-                "imagen no subida"
+                "Imagen no subida"
 
         };
 
     },
 
 
-    /* ==================================================
+    /* ====================================================
        CASO 1 — EXCEPCIONES
-    ================================================== */
+    ==================================================== */
 
     async buscarExcepcion(
         j1
     ){
 
-        const rutas =
+        const definicion =
             this.excepciones[j1];
 
-
-        /*
-        Las tres imágenes
-        se comprueban simultáneamente.
-        */
 
         const promesas =
 
@@ -874,10 +921,14 @@ window.BUSCARUTA = {
 
                 tipo => {
 
+                    const ruta =
+                        definicion[tipo];
+
+
                     return (
 
                         this.comprobarImagen(
-                            rutas[tipo]
+                            this.crearURL(ruta)
                         )
 
                         .then(
@@ -889,13 +940,13 @@ window.BUSCARUTA = {
 
                                 ruta:
                                     existe
-                                        ? rutas[tipo]
+                                        ? this.crearURL(ruta)
                                         : null,
 
                                 estado:
                                     existe
                                         ? "ok"
-                                        : "imagen no subida"
+                                        : "Imagen no subida"
 
                             })
 
@@ -931,9 +982,9 @@ window.BUSCARUTA = {
     },
 
 
-    /* ==================================================
+    /* ====================================================
        CASO 2 — ARQUITECTURA ANTIGUA
-    ================================================== */
+    ==================================================== */
 
     async buscarCaso2(
         j1
@@ -970,11 +1021,6 @@ window.BUSCARUTA = {
 
         }
 
-
-        /*
-        Crear las cuatro posibilidades
-        de cada imagen.
-        */
 
         const promesas =
 
@@ -1071,22 +1117,13 @@ window.BUSCARUTA = {
     },
 
 
-    /* ==================================================
+    /* ====================================================
        CASO 3 — ARQUITECTURA NUEVA
-       
-       Repositorio único:
-       
-       multimedia/new/
-    ================================================== */
+    ==================================================== */
 
     async buscarCaso3(
         j1
     ){
-
-        /*
-        Las tres imágenes
-        se buscan simultáneamente.
-        */
 
         const promesas =
 
@@ -1138,135 +1175,4 @@ window.BUSCARUTA = {
 
                             })
 
-                        )
-
-                    );
-
-                }
-
-            );
-
-
-        const imagenes =
-
-            await Promise.all(
-                promesas
-            );
-
-
-        return {
-
-            j1:
-                j1,
-
-            caso:
-                "caso3",
-
-            imagenes:
-                imagenes
-
-        };
-
-    },
-
-
-    /* ==================================================
-       FUNCIÓN PRINCIPAL
-       
-       Determina el caso.
-    ================================================== */
-
-    async buscar(
-        j1
-    ){
-
-        /*
-        Normalización mínima.
-        */
-
-        j1 =
-
-            String(j1)
-
-            .trim()
-
-            .toUpperCase();
-
-
-        /* ----------------------------------------------
-           CASO 1
-        ---------------------------------------------- */
-
-        if(
-            this.esExcepcion(j1)
-        ){
-
-            return await this.buscarExcepcion(
-                j1
-            );
-
-        }
-
-
-        /* ----------------------------------------------
-           CASO 2
-        ---------------------------------------------- */
-
-        if(
-            this.esCaso2(j1)
-        ){
-
-            return await this.buscarCaso2(
-                j1
-            );
-
-        }
-
-
-        /* ----------------------------------------------
-           CASO 3
-           
-           Nueva arquitectura.
-        ---------------------------------------------- */
-
-        if(
-            /^\d{3}_\d{2}$/.test(j1)
-        ){
-
-            return await this.buscarCaso3(
-                j1
-            );
-
-        }
-
-
-        /* ----------------------------------------------
-           NO CONTEMPLADO
-        ---------------------------------------------- */
-
-        return {
-
-            j1:
-                j1,
-
-            caso:
-                "no contemplado",
-
-            imagenes:
-                [],
-
-            error:
-                "Código j1 no válido."
-
-        };
-
-    }
-
-};
-
-
-/*
-========================================================
-FIN BUSCARUTA v2.0 LTS
-========================================================
-*/
+                 
