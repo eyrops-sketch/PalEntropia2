@@ -1,38 +1,30 @@
 /*
 ========================================================
 PalEntropía
-buscaruta.js v1.0 LTS
+buscaruta.js v2.0 LTS
 
 BUSCARUTA
-Cargador universal de imágenes para el Generador
+Cargador universal de imágenes del Generador
 
 ========================================================
 
-FUNCIONES ACTUALES
---------------------------------------------------------
-
 CASO 1 — EXCEPCIONES
+--------------------------------------------------------
 
 001_12
 002_04
 003_14
 004_14
 
-Estas cuatro fichas tienen rutas físicas fijas
-dentro de:
+Rutas fijas:
 
 herramientas/multimedia/001_075/
 
-No se construyen sus rutas.
-
 
 CASO 2 — ARQUITECTURA ANTIGUA
+--------------------------------------------------------
 
-001_01 → 001_15
-002_01 → 002_15
-003_01 → 003_15
-004_01 → 004_15
-005_01 → 005_15
+001_01 → 005_15
 
 EXCEPTO:
 
@@ -40,6 +32,28 @@ EXCEPTO:
 002_04
 003_14
 004_14
+
+Obtiene j2 desde:
+
+herramientas/generador/paleofichas.json
+
+
+CASO 3 — ARQUITECTURA NUEVA
+--------------------------------------------------------
+
+Todo código posterior al Caso 2.
+
+Repositorio único:
+
+herramientas/multimedia/new/
+
+Ejemplo:
+
+006_01_i0.jpg
+006_01_i2.jpg
+006_01_i3.jpg
+
+No utiliza j2.
 
 
 ========================================================
@@ -51,7 +65,7 @@ JPG
 JPEG
 WEBP
 
-Orden de búsqueda:
+Orden:
 
 PNG → JPG → JPEG → WEBP
 
@@ -64,21 +78,6 @@ i0
 i2
 i3
 
-
-========================================================
-
-PRINCIPIOS
-
-- No utiliza PALDB.
-- Lee paleofichas.json para obtener j2.
-- paleofichas.json se carga una sola vez.
-- i0, i2 e i3 se buscan en paralelo.
-- Cada imagen deja de buscarse en cuanto encuentra
-  una extensión válida.
-- Las imágenes inexistentes devuelven:
-  "imagen no subida"
-- No se generan errores 404 visibles al usuario.
-- La arquitectura nueva se añadirá posteriormente.
 
 ========================================================
 */
@@ -112,8 +111,6 @@ window.BUSCARUTA = {
 
     /* ==================================================
        EXCEPCIONES
-       
-       RUTAS FÍSICAS FIJAS
     ================================================== */
 
     excepciones: {
@@ -178,44 +175,36 @@ window.BUSCARUTA = {
 
     /* ==================================================
        CACHE DEL JSON
-       
-       El archivo se carga una sola vez.
     ================================================== */
 
-    _datosJSON: null,
+    _datosJSON:
+        null,
 
-    _cargandoJSON: null,
+    _cargandoJSON:
+        null,
 
 
     /* ==================================================
-       COMPROBAR SI ES EXCEPCIÓN
+       ¿ES EXCEPCIÓN?
     ================================================== */
 
     esExcepcion(j1){
 
         return Object.prototype.hasOwnProperty.call(
-
             this.excepciones,
-
             j1
-
         );
 
     },
 
 
     /* ==================================================
-       COMPROBAR SI PERTENECE AL CASO 2
+       ¿ES CASO 2?
        
        001_01 → 005_15
     ================================================== */
 
     esCaso2(j1){
-
-        /*
-        Formato obligatorio:
-        XXX_XX
-        */
 
         if(
             !/^\d{3}_\d{2}$/.test(j1)
@@ -225,10 +214,6 @@ window.BUSCARUTA = {
 
         }
 
-
-        /*
-        Las excepciones quedan fuera.
-        */
 
         if(
             this.esExcepcion(j1)
@@ -269,14 +254,11 @@ window.BUSCARUTA = {
     /* ==================================================
        CARGAR PALEOFICHAS.JSON
        
-       CACHEADO
+       Solo se utiliza para el Caso 2.
+       Se carga una sola vez.
     ================================================== */
 
     async cargarJSON(){
-
-        /*
-        Ya cargado
-        */
 
         if(
             this._datosJSON
@@ -287,10 +269,6 @@ window.BUSCARUTA = {
         }
 
 
-        /*
-        Carga en curso
-        */
-
         if(
             this._cargandoJSON
         ){
@@ -300,22 +278,14 @@ window.BUSCARUTA = {
         }
 
 
-        /*
-        paleofichas.json está junto a buscaruta.js
-        dentro de herramientas/generador/
-        */
-
         this._cargandoJSON =
 
             fetch(
-
                 "paleofichas.json",
-
                 {
                     cache:
                         "default"
                 }
-
             )
 
             .then(
@@ -327,9 +297,7 @@ window.BUSCARUTA = {
                     ){
 
                         throw new Error(
-
                             "No se pudo cargar paleofichas.json"
-
                         );
 
                     }
@@ -375,11 +343,12 @@ window.BUSCARUTA = {
 
     /* ==================================================
        BUSCAR REGISTRO POR J1
-       
-       Compatible con JSON en array u objeto.
     ================================================== */
 
-    buscarRegistro(datos, j1){
+    buscarRegistro(
+        datos,
+        j1
+    ){
 
         if(
             !datos
@@ -390,9 +359,9 @@ window.BUSCARUTA = {
         }
 
 
-        /*
-        ARRAY
-        */
+        /* ----------------------------------------------
+           JSON COMO ARRAY
+        ---------------------------------------------- */
 
         if(
             Array.isArray(datos)
@@ -403,27 +372,30 @@ window.BUSCARUTA = {
             ){
 
                 if(
-                    registro &&
-                    typeof registro ===
+                    !registro ||
+                    typeof registro !==
                     "object"
                 ){
 
-                    const codigo =
+                    continue;
 
-                        registro.j1 ||
-
-                        registro.codigo;
+                }
 
 
-                    if(
-                        codigo &&
-                        String(codigo).trim() ===
-                        j1
-                    ){
+                const codigo =
 
-                        return registro;
+                    registro.j1 ||
 
-                    }
+                    registro.codigo;
+
+
+                if(
+                    codigo &&
+                    String(codigo).trim() ===
+                    j1
+                ){
+
+                    return registro;
 
                 }
 
@@ -435,18 +407,14 @@ window.BUSCARUTA = {
         }
 
 
-        /*
-        OBJETO
-        */
+        /* ----------------------------------------------
+           JSON COMO OBJETO
+        ---------------------------------------------- */
 
         if(
             typeof datos ===
             "object"
         ){
-
-            /*
-            Puede estar indexado directamente por j1.
-            */
 
             if(
                 datos[j1] &&
@@ -458,10 +426,6 @@ window.BUSCARUTA = {
 
             }
 
-
-            /*
-            Buscar dentro de sus valores.
-            */
 
             for(
                 const clave of
@@ -554,22 +518,20 @@ window.BUSCARUTA = {
         }
 
 
-        return String(j2).trim();
+        return String(
+            j2
+        ).trim();
 
     },
 
 
     /* ==================================================
-       NORMALIZAR J2 PARA DIRECTORIO
-       
-       Ejemplo:
-       
-       Diplocaulus
-       ↓
-       diplocaulus
+       NORMALIZAR NOMBRE DE DIRECTORIO
     ================================================== */
 
-    normalizarDirectorio(nombre){
+    normalizarDirectorio(
+        nombre
+    ){
 
         return (
 
@@ -594,7 +556,6 @@ window.BUSCARUTA = {
             .replace(
                 /^_+|_+$/g,
                 ""
-
             )
 
         );
@@ -603,16 +564,12 @@ window.BUSCARUTA = {
 
 
     /* ==================================================
-       NORMALIZAR NOMBRE DEL ARCHIVO
-       
-       Ejemplo:
-       
-       diplocaulus
-       ↓
-       Diplocaulus
+       NORMALIZAR NOMBRE DE ARCHIVO
     ================================================== */
 
-    normalizarArchivo(nombre){
+    normalizarArchivo(
+        nombre
+    ){
 
         let texto =
 
@@ -635,7 +592,6 @@ window.BUSCARUTA = {
             .replace(
                 /^_+|_+$/g,
                 ""
-
             );
 
 
@@ -662,18 +618,7 @@ window.BUSCARUTA = {
 
 
     /* ==================================================
-       CREAR RUTA DEL CASO 2
-       
-       Ejemplo:
-       
-       002_02
-       Diplocaulus
-       
-       ↓
-       
-       ../../paleofichas/vol002/
-       002_02_diplocaulus/
-       Diplocaulus_i0.png
+       CREAR RUTA CASO 2
     ================================================== */
 
     crearRutaCaso2(
@@ -694,12 +639,14 @@ window.BUSCARUTA = {
 
 
         const directorio =
+
             this.normalizarDirectorio(
                 j2
             );
 
 
         const archivo =
+
             this.normalizarArchivo(
                 j2
             );
@@ -769,14 +716,53 @@ window.BUSCARUTA = {
 
 
     /* ==================================================
-       COMPROBAR UNA IMAGEN
+       CREAR RUTA CASO 3
        
-       No utiliza HEAD.
+       Ejemplo:
        
-       Image() es suficiente para nuestro cargador.
+       006_01_i0.jpg
     ================================================== */
 
-    comprobarImagen(ruta){
+    crearRutaCaso3(
+
+        j1,
+        tipo,
+        extension
+
+    ){
+
+        return (
+
+            "../multimedia/new/"
+
+            +
+
+            j1
+
+            +
+
+            "_"
+
+            +
+
+            tipo
+
+            +
+
+            extension
+
+        );
+
+    },
+
+
+    /* ==================================================
+       COMPROBAR IMAGEN
+    ================================================== */
+
+    comprobarImagen(
+        ruta
+    ){
 
         return new Promise(
 
@@ -816,15 +802,10 @@ window.BUSCARUTA = {
        BUSCAR UNA IMAGEN
        
        PNG → JPG → JPEG → WEBP
-       
-       En cuanto encuentra una,
-       deja de buscar.
     ================================================== */
 
     async buscarImagen(
-
         rutas
-
     ){
 
         for(
@@ -871,187 +852,11 @@ window.BUSCARUTA = {
 
 
     /* ==================================================
-       CONSTRUIR CANDIDATAS DE UNA IMAGEN
-    ================================================== */
-
-    crearCandidatas(
-
-        j1,
-        j2,
-        tipo
-
-    ){
-
-        const rutas = [];
-
-
-        for(
-            const extension of
-            this.extensiones
-        ){
-
-            const ruta =
-
-                this.crearRutaCaso2(
-
-                    j1,
-                    j2,
-                    tipo,
-                    extension
-
-                );
-
-
-            if(
-                ruta
-            ){
-
-                rutas.push(
-                    ruta
-                );
-
-            }
-
-        }
-
-
-        return rutas;
-
-    },
-
-
-    /* ==================================================
-       BUSCAR LAS TRES IMÁGENES DEL CASO 2
-       
-       i0, i2 e i3 EN PARALELO
-    ================================================== */
-
-    async buscarCaso2(
-
-        j1
-
-    ){
-
-        const j2 =
-            await this.obtenerJ2(
-                j1
-            );
-
-
-        if(
-            !j2
-        ){
-
-            return {
-
-                j1:
-                    j1,
-
-                caso:
-                    "caso2",
-
-                j2:
-                    null,
-
-                imagenes:
-                    [],
-
-                error:
-                    "No se encontró j2 en paleofichas.json."
-
-            };
-
-        }
-
-
-        /*
-        Crear las tres búsquedas
-        simultáneamente.
-        */
-
-        const promesas =
-
-            this.imagenes.map(
-
-                tipo => {
-
-                    const rutas =
-
-                        this.crearCandidatas(
-
-                            j1,
-                            j2,
-                            tipo
-
-                        );
-
-
-                    return (
-
-                        this.buscarImagen(
-                            rutas
-                        )
-
-                        .then(
-
-                            resultado => ({
-
-                                tipo:
-                                    tipo,
-
-                                ruta:
-                                    resultado.ruta,
-
-                                estado:
-                                    resultado.estado
-
-                            })
-
-                        )
-
-                    );
-
-                }
-
-            );
-
-
-        const imagenes =
-
-            await Promise.all(
-                promesas
-            );
-
-
-        return {
-
-            j1:
-                j1,
-
-            caso:
-                "caso2",
-
-            j2:
-                j2,
-
-            imagenes:
-                imagenes
-
-        };
-
-    },
-
-
-    /* ==================================================
-       BUSCAR UNA EXCEPCIÓN
-       
-       Las rutas son fijas.
+       CASO 1 — EXCEPCIONES
     ================================================== */
 
     async buscarExcepcion(
-
         j1
-
     ){
 
         const rutas =
@@ -1059,8 +864,8 @@ window.BUSCARUTA = {
 
 
         /*
-        Las tres comprobaciones
-        también se ejecutan en paralelo.
+        Las tres imágenes
+        se comprueban simultáneamente.
         */
 
         const promesas =
@@ -1127,12 +932,253 @@ window.BUSCARUTA = {
 
 
     /* ==================================================
-       FUNCIÓN PRINCIPAL
-       
-       Determina qué caso corresponde.
+       CASO 2 — ARQUITECTURA ANTIGUA
     ================================================== */
 
-    async buscar(j1){
+    async buscarCaso2(
+        j1
+    ){
+
+        const j2 =
+            await this.obtenerJ2(
+                j1
+            );
+
+
+        if(
+            !j2
+        ){
+
+            return {
+
+                j1:
+                    j1,
+
+                caso:
+                    "caso2",
+
+                j2:
+                    null,
+
+                imagenes:
+                    [],
+
+                error:
+                    "No se encontró j2 en paleofichas.json."
+
+            };
+
+        }
+
+
+        /*
+        Crear las cuatro posibilidades
+        de cada imagen.
+        */
+
+        const promesas =
+
+            this.imagenes.map(
+
+                tipo => {
+
+                    const rutas = [];
+
+
+                    for(
+                        const extension of
+                        this.extensiones
+                    ){
+
+                        const ruta =
+
+                            this.crearRutaCaso2(
+
+                                j1,
+                                j2,
+                                tipo,
+                                extension
+
+                            );
+
+
+                        if(
+                            ruta
+                        ){
+
+                            rutas.push(
+                                ruta
+                            );
+
+                        }
+
+                    }
+
+
+                    return (
+
+                        this.buscarImagen(
+                            rutas
+                        )
+
+                        .then(
+
+                            resultado => ({
+
+                                tipo:
+                                    tipo,
+
+                                ruta:
+                                    resultado.ruta,
+
+                                estado:
+                                    resultado.estado
+
+                            })
+
+                        )
+
+                    );
+
+                }
+
+            );
+
+
+        const imagenes =
+
+            await Promise.all(
+                promesas
+            );
+
+
+        return {
+
+            j1:
+                j1,
+
+            caso:
+                "caso2",
+
+            j2:
+                j2,
+
+            imagenes:
+                imagenes
+
+        };
+
+    },
+
+
+    /* ==================================================
+       CASO 3 — ARQUITECTURA NUEVA
+       
+       Repositorio único:
+       
+       multimedia/new/
+    ================================================== */
+
+    async buscarCaso3(
+        j1
+    ){
+
+        /*
+        Las tres imágenes
+        se buscan simultáneamente.
+        */
+
+        const promesas =
+
+            this.imagenes.map(
+
+                tipo => {
+
+                    const rutas = [];
+
+
+                    for(
+                        const extension of
+                        this.extensiones
+                    ){
+
+                        rutas.push(
+
+                            this.crearRutaCaso3(
+
+                                j1,
+                                tipo,
+                                extension
+
+                            )
+
+                        );
+
+                    }
+
+
+                    return (
+
+                        this.buscarImagen(
+                            rutas
+                        )
+
+                        .then(
+
+                            resultado => ({
+
+                                tipo:
+                                    tipo,
+
+                                ruta:
+                                    resultado.ruta,
+
+                                estado:
+                                    resultado.estado
+
+                            })
+
+                        )
+
+                    );
+
+                }
+
+            );
+
+
+        const imagenes =
+
+            await Promise.all(
+                promesas
+            );
+
+
+        return {
+
+            j1:
+                j1,
+
+            caso:
+                "caso3",
+
+            imagenes:
+                imagenes
+
+        };
+
+    },
+
+
+    /* ==================================================
+       FUNCIÓN PRINCIPAL
+       
+       Determina el caso.
+    ================================================== */
+
+    async buscar(
+        j1
+    ){
 
         /*
         Normalización mínima.
@@ -1147,12 +1193,9 @@ window.BUSCARUTA = {
             .toUpperCase();
 
 
-        /*
-        ================================================
-        CASO 1
-        EXCEPCIONES
-        ================================================
-        */
+        /* ----------------------------------------------
+           CASO 1
+        ---------------------------------------------- */
 
         if(
             this.esExcepcion(j1)
@@ -1165,12 +1208,9 @@ window.BUSCARUTA = {
         }
 
 
-        /*
-        ================================================
-        CASO 2
-        ARQUITECTURA ANTIGUA NORMAL
-        ================================================
-        */
+        /* ----------------------------------------------
+           CASO 2
+        ---------------------------------------------- */
 
         if(
             this.esCaso2(j1)
@@ -1183,11 +1223,26 @@ window.BUSCARUTA = {
         }
 
 
-        /*
-        ================================================
-        CÓDIGO NO CONTEMPLADO
-        ================================================
-        */
+        /* ----------------------------------------------
+           CASO 3
+           
+           Nueva arquitectura.
+        ---------------------------------------------- */
+
+        if(
+            /^\d{3}_\d{2}$/.test(j1)
+        ){
+
+            return await this.buscarCaso3(
+                j1
+            );
+
+        }
+
+
+        /* ----------------------------------------------
+           NO CONTEMPLADO
+        ---------------------------------------------- */
 
         return {
 
@@ -1201,7 +1256,7 @@ window.BUSCARUTA = {
                 [],
 
             error:
-                "Código no contemplado por BUSCARUTA."
+                "Código j1 no válido."
 
         };
 
@@ -1212,6 +1267,6 @@ window.BUSCARUTA = {
 
 /*
 ========================================================
-FIN BUSCARUTA v1.0 LTS
+FIN BUSCARUTA v2.0 LTS
 ========================================================
 */
