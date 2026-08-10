@@ -57,12 +57,24 @@ button{
     border-radius:8px;
 }
 
+.titulo-imagen{
+    margin-bottom:6px;
+    font-weight:bold;
+}
+
 .estado-ok{
     color:#7cff9b;
 }
 
 .estado-error{
     color:#ff7777;
+}
+
+.ruta{
+    font-size:12px;
+    word-break:break-all;
+    margin-top:6px;
+    color:#aaa;
 }
 
 </style>
@@ -88,24 +100,18 @@ button{
 <br>
 
 <button id="btnCargar">
-
 Cargar J1
-
 </button>
 
 <button id="btnAleatorio">
-
 Cargar aleatorio
-
 </button>
 
 </div>
 
 
 <div id="resultado">
-
 Esperando carga...
-
 </div>
 
 
@@ -114,6 +120,10 @@ Esperando carga...
     class="imagenes"
 ></div>
 
+
+<!-- ==================================================
+     MÓDULOS
+================================================== -->
 
 <script src="leepaljson.js"></script>
 
@@ -171,23 +181,46 @@ document.addEventListener(
             imagenes.innerHTML = "";
 
 
-            if(
-                !datos ||
-                !datos.imagenes ||
-                !Array.isArray(
-                    datos.imagenes.imagenes
-                )
-            ){
+            if(!datos){
 
                 return;
 
             }
 
 
+            /*
+            =================================================
+            CARGACONT ENTREGA:
+
+            i0
+            i2
+            i3
+
+            como rutas absolutas.
+
+            Ejemplo:
+
+            /paleofichas/vol003/
+            003_05_anomalocaris/
+            Anomalocaris_i0.png
+            =================================================
+            */
+
+
+            const tipos = [
+                "i0",
+                "i2",
+                "i3"
+            ];
+
+
             for(
-                const imagen of
-                datos.imagenes.imagenes
+                const tipo of tipos
             ){
+
+                const ruta =
+                    datos[tipo];
+
 
                 const bloque =
                     document.createElement(
@@ -203,10 +236,11 @@ document.addEventListener(
                         "div"
                     );
 
+                titulo.className =
+                    "titulo-imagen";
+
                 titulo.textContent =
-                    imagen.tipo +
-                    " — " +
-                    imagen.estado;
+                    tipo;
 
 
                 bloque.appendChild(
@@ -214,24 +248,132 @@ document.addEventListener(
                 );
 
 
-                if(imagen.ruta){
+                /*
+                ==============================================
+                SI CARGACONT HA ENTREGADO RUTA
+                ==============================================
+                */
+
+                if(ruta){
 
                     const img =
                         document.createElement(
                             "img"
                         );
 
+
+                    /*
+                    ------------------------------------------
+                    LA RUTA YA VIENE PREPARADA POR CARGACONT.
+                    EL HTML NO LA MODIFICA.
+                    ------------------------------------------
+                    */
+
                     img.src =
-                        imagen.ruta;
+                        ruta;
+
 
                     img.alt =
                         datos.j1 +
                         " " +
-                        imagen.tipo;
+                        tipo;
+
+
+                    /*
+                    ------------------------------------------
+                    INFORMACIÓN DE CARGA
+                    ------------------------------------------
+                    */
+
+                    img.onload =
+                        function(){
+
+                            estado.className =
+                                "estado-ok";
+
+                            estado.textContent =
+                                "✓ imagen cargada";
+
+                        };
+
+
+                    img.onerror =
+                        function(){
+
+                            estado.className =
+                                "estado-error";
+
+                            estado.textContent =
+                                "✗ error al cargar";
+
+                        };
 
 
                     bloque.appendChild(
                         img
+                    );
+
+
+                    /*
+                    ------------------------------------------
+                    MOSTRAR RUTA REAL
+                    ------------------------------------------
+                    */
+
+                    const rutaTexto =
+                        document.createElement(
+                            "div"
+                        );
+
+                    rutaTexto.className =
+                        "ruta";
+
+                    rutaTexto.textContent =
+                        ruta;
+
+
+                    bloque.appendChild(
+                        rutaTexto
+                    );
+
+
+                    /*
+                    ------------------------------------------
+                    ESTADO
+                    ------------------------------------------
+                    */
+
+                    const estado =
+                        document.createElement(
+                            "div"
+                        );
+
+                    estado.textContent =
+                        "Cargando...";
+
+
+                    bloque.appendChild(
+                        estado
+                    );
+
+                }
+
+                else{
+
+                    const estado =
+                        document.createElement(
+                            "div"
+                        );
+
+                    estado.className =
+                        "estado-error";
+
+                    estado.textContent =
+                        "✗ imagen no disponible";
+
+
+                    bloque.appendChild(
+                        estado
                     );
 
                 }
@@ -254,7 +396,13 @@ document.addEventListener(
 
             resultado.textContent =
                 "ERROR CARGACONT\n\n" +
-                error.message;
+                (
+                    error &&
+                    error.message
+                        ? error.message
+                        : error
+                );
+
 
             imagenes.innerHTML = "";
 
@@ -281,6 +429,8 @@ document.addEventListener(
                     resultado.textContent =
                         "Introduce un código j1.";
 
+                    imagenes.innerHTML = "";
+
                     return;
 
                 }
@@ -290,6 +440,7 @@ document.addEventListener(
                     "Cargando " +
                     j1 +
                     "...";
+
 
                 imagenes.innerHTML = "";
 
@@ -329,6 +480,7 @@ document.addEventListener(
 
                 resultado.textContent =
                     "Seleccionando registro aleatorio...";
+
 
                 imagenes.innerHTML = "";
 
