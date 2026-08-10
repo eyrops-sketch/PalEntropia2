@@ -1,88 +1,81 @@
 /*
 ========================================================
 PalEntropía
-buscaruta.js v1.5 LTS
+buscaruta.js v1.6 LTS
 
-ADAPTADOR UNIVERSAL DE RUTAS DE IMÁGENES
+ADAPTADOR DE RUTAS — ARQUITECTURA ANTIGUA
 
-========================================================
-
-ARQUITECTURA ANTIGUA
+CASO 1
 --------------------------------------------------------
-
 001_01 → 005_15
 
 Lee:
 
 herramientas/generador/paleofichas.json
 
-j1
-↓
-j2
-↓
-ruta de imagen
+Obtiene:
 
-No utiliza PALDB.
+j1 → j2
 
---------------------------------------------------------
+Y construye las rutas de las imágenes antiguas.
 
-ARQUITECTURA NUEVA
---------------------------------------------------------
-
-Busca j1 dentro de cualquier bloque de:
-
-herramientas/multimedia/
-
-El nombre del bloque NO determina el j1.
-
-Ejemplo:
-
-006_01
-
-puede estar en:
-
-herramientas/multimedia/076_150/
-
---------------------------------------------------------
-
-IMÁGENES
---------------------------------------------------------
-
-Solo se devuelven:
+Imágenes:
 
 i0
 i2
 i3
 
-Para cada imagen se prueba:
+Extensiones:
 
-.png
-.jpg
-.jpeg
-.webp
+png
+jpg
+jpeg
+webp
 
-Las tres imágenes se resuelven
-simultáneamente.
 
+EXCEPCIONES
 --------------------------------------------------------
 
-EXCEPCIONES HISTÓRICAS
+Las siguientes cuatro fichas NO utilizan j2
+para construir la ruta.
+
+Se buscan exclusivamente en:
+
+herramientas/multimedia/001_075/
+
+001_12
+002_04
+003_14
+004_14
+
+Formato físico:
+
+001_012_i0.jpg
+001_012_i2.jpg
+001_012_i3.jpg
+
+etc.
+
+Si una imagen de una excepción no existe:
+
+NO se devuelve ERROR.
+
+Se devuelve información:
+
+"Subir imagen al directorio 001_075"
+
+
+IMPORTANTE
 --------------------------------------------------------
-
-001_12 → Hippopotamus creutzburgi
-002_04 → Thyesthes verrucosus
-003_14 → Cacops aspidephorus
-004_14 → Albertonectes vanderveldei
-
-Estas excepciones son únicamente de compatibilidad
-con la arquitectura antigua.
 
 PALDB NO SE UTILIZA.
+
+La arquitectura nueva todavía NO se procesa aquí.
 
 ========================================================
 */
 
-window.BUSCARUTA_VERSION = "1.5 LTS";
+window.BUSCARUTA_VERSION = "1.6 LTS";
 
 
 window.BUSCARUTA = {
@@ -111,29 +104,30 @@ IMAGENES: [
 ],
 
 
-BASE_MULTIMEDIA:
-    "../multimedia/",
-
-
 /* ======================================================
-   EXCEPCIONES HISTÓRICAS
+   EXCEPCIONES
 ====================================================== */
 
 EXCEPCIONES: {
 
-    "001_12":
-        "Hippopotamus creutzburgi",
+    "001_12": true,
 
-    "002_04":
-        "Thyesthes verrucosus",
+    "002_04": true,
 
-    "003_14":
-        "Cacops aspidephorus",
+    "003_14": true,
 
-    "004_14":
-        "Albertonectes vanderveldei"
+    "004_14": true
 
 },
+
+
+/* ======================================================
+   DIRECTORIO FIJO DE EXCEPCIONES
+====================================================== */
+
+DIRECTORIO_EXCEPCIONES:
+
+    "../multimedia/001_075/",
 
 
 /* ======================================================
@@ -162,9 +156,7 @@ validarJ1(j1){
 
 
 /* ======================================================
-   CASO 1
-
-   001_01 → 005_15
+   COMPROBAR SI ES CASO 1
 ====================================================== */
 
 esCaso1(j1){
@@ -202,12 +194,15 @@ esCaso1(j1){
     return (
 
         Number.isFinite(volumen) &&
+
         Number.isFinite(numero) &&
 
         volumen >= 1 &&
+
         volumen <= 5 &&
 
         numero >= 1 &&
+
         numero <= 15
 
     );
@@ -226,16 +221,25 @@ async cargarPaleofichas(){
         let respuesta =
 
             await fetch(
+
                 "paleofichas.json",
+
                 {
                     cache:"no-store"
                 }
+
             );
 
 
         if(
             !respuesta.ok
         ){
+
+            console.error(
+
+                "BUSCARUTA: no se pudo cargar paleofichas.json"
+
+            );
 
             return null;
 
@@ -249,8 +253,11 @@ async cargarPaleofichas(){
     catch(error){
 
         console.error(
+
             "BUSCARUTA: error cargando paleofichas.json",
+
             error
+
         );
 
         return null;
@@ -261,7 +268,11 @@ async cargarPaleofichas(){
 
 
 /* ======================================================
-   BUSCAR REGISTRO EN JSON
+   BUSCAR REGISTRO
+
+   Permite localizar j1 aunque el JSON
+   esté organizado como array u objeto.
+
 ====================================================== */
 
 buscarRegistro(
@@ -407,6 +418,13 @@ async obtenerNombre(j1){
         !registro
     ){
 
+        console.error(
+
+            "BUSCARUTA: no se encontró el registro:",
+            j1
+
+        );
+
         return null;
 
     }
@@ -429,6 +447,7 @@ async obtenerNombre(j1){
 
 
     nombre =
+
         String(nombre).trim();
 
 
@@ -447,32 +466,6 @@ async obtenerNombre(j1){
 
 
 /* ======================================================
-   OBTENER NOMBRE FÍSICO
-
-   Primero mira si existe una excepción.
-
-====================================================== */
-
-obtenerNombreFisico(
-    j1,
-    nombre
-){
-
-    if(
-        this.EXCEPCIONES[j1]
-    ){
-
-        return this.EXCEPCIONES[j1];
-
-    }
-
-
-    return nombre;
-
-},
-
-
-/* ======================================================
    NORMALIZAR NOMBRE PARA DIRECTORIO
 
    Ejemplo:
@@ -480,10 +473,6 @@ obtenerNombreFisico(
    Diplocaulus
    ↓
    diplocaulus
-
-   Hippopotamus creutzburgi
-   ↓
-   hippopotamus_creutzburgi
 
 ====================================================== */
 
@@ -501,7 +490,9 @@ nombreDirectorio(nombre){
     return (
 
         String(nombre)
+
         .trim()
+
         .toLowerCase()
 
         .normalize("NFD")
@@ -528,7 +519,7 @@ nombreDirectorio(nombre){
 
 
 /* ======================================================
-   NORMALIZAR NOMBRE DE ARCHIVO
+   NORMALIZAR NOMBRE PARA ARCHIVO
 
    Primera letra mayúscula.
 
@@ -537,10 +528,6 @@ nombreDirectorio(nombre){
    diplocaulus
    ↓
    Diplocaulus
-
-   hippopotamus creutzburgi
-   ↓
-   Hippopotamus_creutzburgi
 
 ====================================================== */
 
@@ -558,19 +545,25 @@ nombreArchivo(nombre){
     let texto =
 
         String(nombre)
+
         .trim()
+
         .normalize("NFD")
+
         .replace(
             /[\u0300-\u036f]/g,
             ""
         )
+
         .replace(
             /[^a-zA-Z0-9]+/g,
             "_"
         )
+
         .replace(
             /^_+|_+$/g,
             ""
+
         );
 
 
@@ -586,7 +579,9 @@ nombreArchivo(nombre){
     return (
 
         texto.charAt(0).toUpperCase()
+
         +
+
         texto.slice(1)
 
     );
@@ -596,11 +591,6 @@ nombreArchivo(nombre){
 
 /* ======================================================
    OBTENER VOLUMEN
-
-   002_12
-   ↓
-   vol002
-
 ====================================================== */
 
 obtenerVolumen(j1){
@@ -621,8 +611,13 @@ obtenerVolumen(j1){
 
 
     return (
-        "vol" +
+
+        "vol"
+
+        +
+
         partes[0]
+
     );
 
 },
@@ -633,10 +628,15 @@ obtenerVolumen(j1){
 ====================================================== */
 
 crearRutaAntigua(
+
     j1,
+
     nombre,
+
     tipo,
+
     extension
+
 ){
 
     let volumen =
@@ -674,25 +674,45 @@ crearRutaAntigua(
     return (
 
         "../../paleofichas/"
+
         +
+
         volumen
+
         +
+
         "/"
+
         +
+
         j1
+
         +
+
         "_"
+
         +
+
         directorio
+
         +
+
         "/"
+
         +
+
         archivo
+
         +
+
         "_"
+
         +
+
         tipo
+
         +
+
         extension
 
     );
@@ -701,297 +721,18 @@ crearRutaAntigua(
 
 
 /* ======================================================
-   INTENTAR CARGAR UNA IMAGEN
+   COMPROBAR IMAGEN
 
-   Prueba las extensiones en orden:
+   Utiliza Image()
 
-   PNG
-   JPG
-   JPEG
-   WEBP
+   No utiliza HEAD.
 
 ====================================================== */
 
-cargarPrimeraImagen(
-    rutas
-){
+comprobarImagen(ruta){
 
     return new Promise(
-        resolve => {
 
-            let indice = 0;
-
-
-            const intentar = () => {
-
-                if(
-                    indice >= rutas.length
-                ){
-
-                    resolve(null);
-
-                    return;
-
-                }
-
-
-                let ruta =
-                    rutas[indice];
-
-
-                let imagen =
-                    new Image();
-
-
-                imagen.onload = () => {
-
-                    resolve(ruta);
-
-                };
-
-
-                imagen.onerror = () => {
-
-                    indice++;
-
-                    intentar();
-
-                };
-
-
-                imagen.src = ruta;
-
-            };
-
-
-            intentar();
-
-        }
-    );
-
-},
-
-
-/* ======================================================
-   RESOLVER CASO 1
-
-   i0, i2 e i3 se buscan
-   simultáneamente.
-
-   Resultado máximo: 3 imágenes.
-
-====================================================== */
-
-async resolverCaso1(
-    j1,
-    nombre
-){
-
-    let nombreFisico =
-
-        this.obtenerNombreFisico(
-            j1,
-            nombre
-        );
-
-
-    let promesas = [];
-
-
-    for(
-        let tipo of
-        this.IMAGENES
-    ){
-
-        let rutas = [];
-
-
-        for(
-            let extension of
-            this.EXTENSIONES
-        ){
-
-            let ruta =
-
-                this.crearRutaAntigua(
-                    j1,
-                    nombreFisico,
-                    tipo,
-                    extension
-                );
-
-
-            if(
-                ruta
-            ){
-
-                rutas.push(
-                    ruta
-                );
-
-            }
-
-        }
-
-
-        promesas.push(
-
-            this.cargarPrimeraImagen(
-                rutas
-            )
-
-        );
-
-    }
-
-
-    let resultados =
-
-        await Promise.all(
-            promesas
-        );
-
-
-    return resultados.filter(
-        ruta => ruta !== null
-    );
-
-},
-
-
-/* ======================================================
-   ÍNDICE PRINCIPAL MULTIMEDIA
-====================================================== */
-
-async obtenerIndiceMultimedia(){
-
-    try{
-
-        let respuesta =
-
-            await fetch(
-
-                this.BASE_MULTIMEDIA +
-                "index.html",
-
-                {
-                    cache:"no-store"
-                }
-
-            );
-
-
-        if(
-            !respuesta.ok
-        ){
-
-            return null;
-
-        }
-
-
-        return await respuesta.text();
-
-    }
-
-    catch(error){
-
-        return null;
-
-    }
-
-},
-
-
-/* ======================================================
-   EXTRAER DIRECTORIOS MULTIMEDIA
-====================================================== */
-
-extraerDirectorios(html){
-
-    if(
-        !html
-    ){
-
-        return [];
-
-    }
-
-
-    let resultado = [];
-
-
-    let regex =
-
-        /href\s*=\s*["']([^"']+\/)["']/gi;
-
-
-    let coincidencia;
-
-
-    while(
-
-        (
-            coincidencia =
-                regex.exec(html)
-
-        ) !== null
-
-    ){
-
-        let ruta =
-            coincidencia[1];
-
-
-        let nombre =
-
-            ruta
-            .replace(
-                /\/$/,
-                ""
-            )
-            .split("/")
-            .pop();
-
-
-        if(
-
-            /^\d{3}_\d{3}$/.test(
-                nombre
-            )
-
-        ){
-
-            if(
-                !resultado.includes(nombre)
-            ){
-
-                resultado.push(nombre);
-
-            }
-
-        }
-
-    }
-
-
-    return resultado;
-
-},
-
-
-/* ======================================================
-   COMPROBAR IMAGEN DIRECTAMENTE
-
-   No se utiliza HEAD.
-
-   Se utiliza Image().
-
-====================================================== */
-
-probarImagen(ruta){
-
-    return new Promise(
         resolve => {
 
             let imagen =
@@ -1015,19 +756,16 @@ probarImagen(ruta){
             imagen.src = ruta;
 
         }
+
     );
 
 },
 
 
 /* ======================================================
-   BUSCAR UNA IMAGEN DENTRO DE UN BLOQUE
+   BUSCAR PRIMERA EXTENSIÓN VÁLIDA
 
-   j1_i0
-   j1_i2
-   j1_i3
-
-   Cada una prueba:
+   Orden:
 
    PNG
    JPG
@@ -1036,9 +774,111 @@ probarImagen(ruta){
 
 ====================================================== */
 
-async buscarImagenesBloque(
-    directorio,
-    j1
+async buscarPrimeraExtension(
+    rutas
+){
+
+    for(
+        let ruta of rutas
+    ){
+
+        let existe =
+
+            await this.comprobarImagen(
+                ruta
+            );
+
+
+        if(
+            existe
+        ){
+
+            return ruta;
+
+        }
+
+    }
+
+
+    return null;
+
+},
+
+
+/* ======================================================
+   RESOLVER UNA IMAGEN NORMAL
+
+   i0 / i2 / i3
+
+====================================================== */
+
+async resolverImagenNormal(
+
+    j1,
+
+    nombre,
+
+    tipo
+
+){
+
+    let rutas = [];
+
+
+    for(
+        let extension of
+        this.EXTENSIONES
+    ){
+
+        let ruta =
+
+            this.crearRutaAntigua(
+
+                j1,
+
+                nombre,
+
+                tipo,
+
+                extension
+
+            );
+
+
+        if(
+            ruta
+        ){
+
+            rutas.push(
+                ruta
+            );
+
+        }
+
+    }
+
+
+    return this.buscarPrimeraExtension(
+        rutas
+    );
+
+},
+
+
+/* ======================================================
+   RESOLVER CASO 1 NORMAL
+
+   Las tres imágenes se buscan
+   simultáneamente.
+
+====================================================== */
+
+async resolverCaso1Normal(
+
+    j1,
+
+    nombre
+
 ){
 
     let promesas = [];
@@ -1051,56 +891,15 @@ async buscarImagenesBloque(
 
         promesas.push(
 
-            (async () => {
+            this.resolverImagenNormal(
 
-                for(
-                    let extension of
-                    this.EXTENSIONES
-                ){
+                j1,
 
-                    let archivo =
+                nombre,
 
-                        j1
-                        +
-                        "_"
-                        +
-                        tipo
-                        +
-                        extension;
+                tipo
 
-
-                    let ruta =
-
-                        this.BASE_MULTIMEDIA
-                        +
-                        directorio
-                        +
-                        "/"
-                        +
-                        archivo;
-
-
-                    let existe =
-
-                        await this.probarImagen(
-                            ruta
-                        );
-
-
-                    if(
-                        existe
-                    ){
-
-                        return ruta;
-
-                    }
-
-                }
-
-
-                return null;
-
-            })()
+            )
 
         );
 
@@ -1115,39 +914,47 @@ async buscarImagenesBloque(
 
 
     return resultados.filter(
-        ruta => ruta !== null
+
+        ruta =>
+
+            ruta !== null
+
     );
 
 },
 
 
 /* ======================================================
-   CASO 2
+   CREAR RUTA DE EXCEPCIÓN
 
-   Busca j1 en TODOS los bloques.
+   Ejemplo:
 
-   NO relaciona:
+   004_14
 
-   006 → 001_075
+   ↓
 
-   ni:
-
-   006 → 076_150
-
-   El bloque es solamente
-   un contenedor físico.
+   004_014_i0.jpg
 
 ====================================================== */
 
-async caso2(j1){
+crearRutaExcepcion(
 
-    let indice =
+    j1,
 
-        await this.obtenerIndiceMultimedia();
+    tipo,
+
+    extension
+
+){
+
+    let partes =
+
+        String(j1)
+        .split("_");
 
 
     if(
-        !indice
+        partes.length !== 2
     ){
 
         return null;
@@ -1155,84 +962,264 @@ async caso2(j1){
     }
 
 
-    let directorios =
+    let volumen =
 
-        this.extraerDirectorios(
-            indice
+        partes[0];
+
+
+    let numero =
+
+        Number(
+            partes[1]
         );
 
 
-    /*
-    Buscar todos los bloques
-    en paralelo.
-
-    */
-
-    let resultados =
-
-        await Promise.all(
-
-            directorios.map(
-
-                directorio =>
-
-                    this.buscarImagenesBloque(
-                        directorio,
-                        j1
-                    )
-
-            )
-
-        );
-
-
-    /*
-    Primer bloque que contenga
-    al menos una imagen.
-
-    */
-
-    for(
-        let i = 0;
-        i < resultados.length;
-        i++
+    if(
+        !Number.isFinite(numero)
     ){
 
+        return null;
+
+    }
+
+
+    /*
+    El número de ficha se convierte
+    a tres dígitos.
+
+    14 → 014
+    4  → 004
+    */
+
+    let numeroFormateado =
+
+        String(numero)
+        .padStart(
+            3,
+            "0"
+        );
+
+
+    /*
+    Ejemplo:
+
+    004_14
+
+    ↓
+
+    004_014_i0.jpg
+
+    */
+
+    let archivo =
+
+        volumen
+
+        +
+
+        "_"
+
+        +
+
+        numeroFormateado
+
+        +
+
+        "_"
+
+        +
+
+        tipo
+
+        +
+
+        extension;
+
+
+    return (
+
+        this.DIRECTORIO_EXCEPCIONES
+
+        +
+
+        archivo
+
+    );
+
+},
+
+
+/* ======================================================
+   RESOLVER UNA IMAGEN DE EXCEPCIÓN
+====================================================== */
+
+async resolverImagenExcepcion(
+
+    j1,
+
+    tipo
+
+){
+
+    let rutas = [];
+
+
+    for(
+        let extension of
+        this.EXTENSIONES
+    ){
+
+        let ruta =
+
+            this.crearRutaExcepcion(
+
+                j1,
+
+                tipo,
+
+                extension
+
+            );
+
+
         if(
-            resultados[i].length > 0
+            ruta
         ){
 
-            return {
-
-                caso:2,
-
-                arquitectura:"nueva",
-
-                j1:j1,
-
-                directorio:
-                    directorios[i],
-
-                imagenes:
-                    resultados[i]
-
-            };
+            rutas.push(
+                ruta
+            );
 
         }
 
     }
 
 
-    return null;
+    let encontrada =
+
+        await this.buscarPrimeraExtension(
+            rutas
+        );
+
+
+    return encontrada;
+
+},
+
+
+/* ======================================================
+   RESOLVER EXCEPCIÓN
+
+   Devuelve imágenes encontradas
+   y avisos informativos para
+   las que falten.
+
+====================================================== */
+
+async resolverExcepcion(j1){
+
+    let promesas = [];
+
+
+    for(
+        let tipo of
+        this.IMAGENES
+    ){
+
+        promesas.push(
+
+            this.resolverImagenExcepcion(
+
+                j1,
+
+                tipo
+
+            )
+
+        );
+
+    }
+
+
+    let resultados =
+
+        await Promise.all(
+            promesas
+        );
+
+
+    let imagenes = [];
+
+
+    let informacion = [];
+
+
+    for(
+        let i = 0;
+        i < this.IMAGENES.length;
+        i++
+    ){
+
+        let tipo =
+            this.IMAGENES[i];
+
+
+        let ruta =
+            resultados[i];
+
+
+        if(
+            ruta
+        ){
+
+            imagenes.push(
+                ruta
+            );
+
+        }
+
+        else{
+
+            informacion.push({
+
+                tipo:tipo,
+
+                mensaje:
+                    "Subir imagen al directorio 001_075",
+
+                directorio:
+                    "001_075"
+
+            });
+
+        }
+
+    }
+
+
+    return {
+
+        imagenes:
+            imagenes,
+
+        informacion:
+            informacion
+
+    };
 
 },
 
 
 /* ======================================================
    FUNCIÓN PRINCIPAL
+
 ====================================================== */
 
 async buscar(j1){
+
+    /*
+    VALIDACIÓN
+    */
 
     if(
         !this.validarJ1(j1)
@@ -1242,10 +1229,14 @@ async buscar(j1){
 
             ok:false,
 
+            j1:j1,
+
             imagenes:[],
 
+            informacion:[],
+
             error:
-                "J1 no tiene un formato válido."
+                "El código j1 no tiene un formato válido."
 
         };
 
@@ -1253,12 +1244,62 @@ async buscar(j1){
 
 
     j1 =
+
         String(j1).trim();
 
 
-    /* ==================================================
-       CASO 1
-    ================================================== */
+    /*
+    =====================================================
+    EXCEPCIONES
+    =====================================================
+
+    Se comprueban ANTES del caso normal.
+
+    No se utiliza j2.
+
+    No se busca en ninguna otra carpeta.
+
+    */
+
+    if(
+        this.EXCEPCIONES[j1]
+    ){
+
+        let resultado =
+
+            await this.resolverExcepcion(
+                j1
+            );
+
+
+        return {
+
+            ok:
+
+                resultado.imagenes.length > 0,
+
+            caso:
+                "excepcion",
+
+            j1:
+                j1,
+
+            imagenes:
+                resultado.imagenes,
+
+            informacion:
+                resultado.informacion
+
+        };
+
+    }
+
+
+    /*
+    =====================================================
+    CASO 1 NORMAL
+    =====================================================
+    */
 
     if(
         this.esCaso1(j1)
@@ -1281,14 +1322,15 @@ async buscar(j1){
 
                 caso:1,
 
-                arquitectura:"antigua",
-
                 j1:j1,
 
                 imagenes:[],
 
+                informacion:[],
+
                 error:
-                    "No se encontró j2 para este j1."
+                    "No se encontró j2 para " +
+                    j1
 
             };
 
@@ -1297,69 +1339,44 @@ async buscar(j1){
 
         let imagenes =
 
-            await this.resolverCaso1(
+            await this.resolverCaso1Normal(
+
                 j1,
+
                 nombre
+
             );
 
 
-        if(
-            imagenes.length > 0
-        ){
-
-            return {
-
-                ok:true,
-
-                caso:1,
-
-                arquitectura:"antigua",
-
-                j1:j1,
-
-                j2:nombre,
-
-                imagenes:imagenes
-
-            };
-
-        }
-
-
-        /*
-        Si no existe imagen antigua,
-        intentamos arquitectura nueva.
-
-        */
-
-    }
-
-
-    /* ==================================================
-       CASO 2
-    ================================================== */
-
-    let resultado =
-
-        await this.caso2(
-            j1
-        );
-
-
-    if(
-        resultado
-    ){
-
         return {
 
-            ok:true,
+            ok:
+                imagenes.length > 0,
 
-            ...resultado
+            caso:
+                1,
+
+            j1:
+                j1,
+
+            j2:
+                nombre,
+
+            imagenes:
+                imagenes,
+
+            informacion:[]
 
         };
 
     }
 
+
+    /*
+    =====================================================
+    FUERA DEL CASO 1
+    =====================================================
+    */
 
     return {
 
@@ -1369,9 +1386,10 @@ async buscar(j1){
 
         imagenes:[],
 
+        informacion:[],
+
         error:
-            "No se han encontrado imágenes para " +
-            j1
+            "El código no pertenece todavía a la arquitectura antigua."
 
     };
 
@@ -1383,10 +1401,6 @@ async buscar(j1){
 
 /*
 ========================================================
-FIN BUSCARUTA v1.5 LTS
+FIN BUSCARUTA v1.6 LTS
 ========================================================
 */
-
-
-
-
