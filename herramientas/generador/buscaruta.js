@@ -1,95 +1,68 @@
 /*
 ========================================================
 PalEntropía
-buscaruta.js v1.3 LTS
+buscaruta.js v1.4 LTS
 
 ADAPTADOR UNIVERSAL DE RUTAS DE IMÁGENES
 
-FUNCIÓN:
-
-Recibe j1 y prepara las posibles rutas de imagen.
-
-NO comprueba archivos.
-NO descarga imágenes.
-NO hace peticiones HEAD.
-NO hace peticiones GET para verificar imágenes.
-
-El elemento <img> del generador será quien
-intente cargar la imagen.
-
---------------------------------------------------------
-
 ARQUITECTURA ANTIGUA
---------------------------------------------------------
+--------------------
 
 001_01 → 005_15
 
-Lee:
-
-herramientas/generador/paleofichas.json
-
-j1
-↓
-j2
-↓
-ruta
+j1 → paleofichas.json → j2 → ruta
 
 Ejemplo:
 
-j1 = 002_12
+002_12
+↓
 j2 = Diplocaulus
 
-Resultado:
+paleofichas/vol002/002_12_diplocaulus/Diplocaulus_i0.png
 
-../../paleofichas/vol002/002_12_diplocaulus/Diplocaulus_i0.png
-../../paleofichas/vol002/002_12_diplocaulus/Diplocaulus_i2.png
-../../paleofichas/vol002/002_12_diplocaulus/Diplocaulus_i3.png
 
-Cada imagen tiene cuatro posibles extensiones:
+ARQUITECTURA NUEVA
+------------------
+
+Busca j1 dentro de TODOS los bloques de:
+
+herramientas/multimedia/
+
+NO utiliza el nombre del bloque
+para determinar el código j1.
+
+Ejemplo válido:
+
+006_01
+
+puede encontrarse en:
+
+herramientas/multimedia/076_150/006_01_i0.jpg
+
+El bloque es solamente un contenedor.
+
+
+EXTENSIONES:
 
 .png
 .jpg
 .jpeg
 .webp
 
---------------------------------------------------------
 
-ARQUITECTURA NUEVA
---------------------------------------------------------
+IMPORTANTE:
 
-Busca el código j1 dentro de los índices de:
+BUSCARUTA NO comprueba previamente
+la existencia de las imágenes antiguas.
 
-herramientas/multimedia/
+Construye sus posibles rutas.
 
-Ejemplo:
-
-016_02
-
-Puede encontrar:
-
-016_02_i0.png
-016_02_i2.jpg
-016_02_i3.webp
-
-El módulo devuelve las rutas encontradas
-en el índice.
-
---------------------------------------------------------
-
-IMPORTANTE
-
-BUSCARUTA NO COMPRUEBA SI EL ARCHIVO EXISTE.
-
-Su función es exclusivamente:
-
-j1
-↓
-ruta/rutas posibles
+El generador será quien intente cargarlas.
 
 ========================================================
 */
 
-window.BUSCARUTA_VERSION = "1.3 LTS";
+window.BUSCARUTA_VERSION = "1.4 LTS";
 
 
 window.BUSCARUTA = {
@@ -266,8 +239,7 @@ async cargarPaleofichas(){
 /* ======================================================
    BUSCAR REGISTRO
 
-   Permite encontrar j1 aunque el JSON
-   tenga diferentes estructuras.
+   Busca j1 dentro de cualquier estructura JSON.
 
 ====================================================== */
 
@@ -295,7 +267,8 @@ buscarRegistro(
     ){
 
         for(
-            let elemento of datos
+            let elemento of
+            datos
         ){
 
             let encontrado =
@@ -330,11 +303,6 @@ buscarRegistro(
         typeof datos === "object"
     ){
 
-        /*
-        COMPROBAR SI ESTE OBJETO
-        ES EL REGISTRO.
-        */
-
         let codigo =
 
             datos.j1 ||
@@ -343,19 +311,18 @@ buscarRegistro(
 
 
         if(
+
             codigo !== undefined &&
+
             String(codigo).trim() ===
             String(j1).trim()
+
         ){
 
             return datos;
 
         }
 
-
-        /*
-        BUSCAR EN SUS PROPIEDADES.
-        */
 
         for(
             let clave of
@@ -468,14 +435,10 @@ async obtenerNombre(j1){
 
 
 /* ======================================================
-   NOMBRE DEL DIRECTORIO
-
-   j2:
+   NOMBRE PARA DIRECTORIO
 
    Diplocaulus
-
    ↓
-
    diplocaulus
 
 ====================================================== */
@@ -497,34 +460,21 @@ nombreDirectorio(nombre){
         .trim()
         .toLowerCase()
 
-        /*
-        Eliminar diacríticos
-        */
-
         .normalize("NFD")
+
         .replace(
             /[\u0300-\u036f]/g,
             ""
         )
-
-        /*
-        Espacios y caracteres
-        no válidos → _
-        */
 
         .replace(
             /[^a-z0-9]+/g,
             "_"
         )
 
-        /*
-        Quitar _ inicial/final
-        */
-
         .replace(
             /^_+|_+$/g,
             ""
-
         )
 
     );
@@ -533,13 +483,11 @@ nombreDirectorio(nombre){
 
 
 /* ======================================================
-   NOMBRE DEL ARCHIVO
+   NOMBRE PARA ARCHIVO
 
    Diplocaulus
    ↓
    Diplocaulus
-
-   Primera letra mayúscula.
 
 ====================================================== */
 
@@ -617,12 +565,9 @@ obtenerVolumen(j1){
 
 
 /* ======================================================
-   GENERAR RUTAS DEL CASO 1
+   GENERAR RUTAS CASO 1
 
-   NO COMPRUEBA NADA.
-
-   Simplemente genera todas
-   las posibilidades.
+   NO COMPRUEBA ARCHIVOS.
 
 ====================================================== */
 
@@ -665,23 +610,6 @@ generarRutasCaso1(
 
     let rutas = [];
 
-
-    /*
-    =====================================================
-    ORDEN DE BÚSQUEDA
-
-    Primero i0
-    después i2
-    después i3
-
-    Dentro de cada imagen:
-
-    PNG
-    JPG
-    JPEG
-    WEBP
-    =====================================================
-    */
 
     for(
         let tipo of
@@ -731,11 +659,6 @@ generarRutasCaso1(
 
 /* ======================================================
    ÍNDICE MULTIMEDIA
-
-   Se utiliza exclusivamente
-   para localizar los archivos
-   de la arquitectura nueva.
-
 ====================================================== */
 
 async obtenerIndiceMultimedia(){
@@ -786,12 +709,11 @@ async obtenerIndiceMultimedia(){
 
 
 /* ======================================================
-   EXTRAER DIRECTORIOS
+   EXTRAER TODOS LOS DIRECTORIOS
 
-   Busca:
+   NO interpreta sus rangos.
 
-   001_075/
-   076_150/
+   Solo obtiene los contenedores.
 
 ====================================================== */
 
@@ -843,6 +765,17 @@ extraerDirectorios(html){
             .pop();
 
 
+        /*
+        Aceptamos directorios tipo:
+
+        001_075
+        076_150
+        151_225
+
+        pero NO usamos esos números
+        para decidir qué j1 contienen.
+        */
+
         if(
 
             /^\d{3}_\d{3}$/.test(
@@ -876,7 +809,7 @@ extraerDirectorios(html){
 
 
 /* ======================================================
-   CARGAR ÍNDICE DE BLOQUE
+   CARGAR ÍNDICE DE UN BLOQUE
 ====================================================== */
 
 async obtenerIndiceBloque(
@@ -924,9 +857,9 @@ async obtenerIndiceBloque(
 
 
 /* ======================================================
-   EXTRAER IMÁGENES NUEVAS
+   EXTRAER IMÁGENES DE UN ÍNDICE
 
-   Busca directamente:
+   Busca:
 
    j1_i0.xxx
    j1_i2.xxx
@@ -1011,7 +944,7 @@ extraerImagenes(
 
 
     /*
-    Ordenar:
+    ORDEN:
 
     i0
     i2
@@ -1070,7 +1003,10 @@ extraerImagenes(
 /* ======================================================
    CASO 2
 
-   ARQUITECTURA NUEVA
+   BUSCA EN TODOS LOS BLOQUES.
+
+   NO utiliza el rango del nombre
+   del directorio.
 
 ====================================================== */
 
@@ -1098,77 +1034,27 @@ async caso2(j1){
 
 
     /*
-    Ordenar bloques por inicio numérico.
+    IMPORTANTE:
+
+    Se recorren TODOS los bloques.
+
+    No hacemos:
+
+    006 → 001_075
+
+    ni:
+
+    076 → 076_150
+
+    El contenido físico del bloque
+    es la única verdad.
 
     */
-
-    directorios.sort(
-
-        (a,b) => {
-
-            return (
-                Number(a.slice(0,3))
-                -
-                Number(b.slice(0,3))
-            );
-
-        }
-
-    );
-
-
-    /*
-    Buscar el bloque que corresponda
-    al código j1.
-
-    */
-
-    let numero =
-
-        Number(
-            String(j1)
-            .split("_")[0]
-        );
-
 
     for(
         let directorio of
         directorios
     ){
-
-        let partes =
-
-            directorio.split("_");
-
-
-        let inicio =
-
-            Number(
-                partes[0]
-            );
-
-
-        let fin =
-
-            Number(
-                partes[1]
-            );
-
-
-        /*
-        Si el volumen de j1
-        está dentro del bloque.
-        */
-
-        if(
-            numero < inicio ||
-            numero > fin
-        ){
-
-            continue;
-
-        }
-
 
         let indiceBloque =
 
@@ -1193,6 +1079,13 @@ async caso2(j1){
                 j1
             );
 
+
+        /*
+        Con una sola imagen
+        ya hemos localizado
+        el código.
+
+        */
 
         if(
             archivos.length === 0
@@ -1248,11 +1141,6 @@ async caso2(j1){
 
 /* ======================================================
    FUNCIÓN PRINCIPAL
-
-   Entrada:
-
-   j1
-
 ====================================================== */
 
 async buscar(j1){
@@ -1274,15 +1162,6 @@ async buscar(j1){
 
     }
 
-
-    /*
-    Mantener exactamente:
-
-    002_12
-    016_02
-
-    etc.
-    */
 
     j1 =
 
@@ -1398,7 +1277,7 @@ async buscar(j1){
         imagenes:[],
 
         error:
-            "No se encontró el código en la arquitectura nueva."
+            "No se encontró el código en ningún bloque multimedia."
 
     };
 
@@ -1410,6 +1289,6 @@ async buscar(j1){
 
 /*
 ========================================================
-FIN BUSCARUTA v1.3 LTS
+FIN BUSCARUTA v1.4 LTS
 ========================================================
 */
