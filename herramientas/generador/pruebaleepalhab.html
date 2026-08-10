@@ -1,1 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Generador — Prueba de LEEPALHAB</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    margin:20px;
+    background:#111;
+    color:#eee;
+}
+
+h1{
+    font-size:22px;
+}
+
+.caja{
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    max-width:320px;
+    box-sizing:border-box;
+    padding:10px;
+    font-size:18px;
+    background:#222;
+    color:#fff;
+    border:1px solid #555;
+}
+
+button{
+    margin-top:10px;
+    padding:10px 20px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+#resultado{
+    margin-top:25px;
+    padding:15px;
+    border:1px solid #444;
+    background:#181818;
+}
+
+.campo{
+    margin-bottom:18px;
+}
+
+.titulo{
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.error{
+    color:#ff7777;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Generador — Prueba de LEEPALHAB</h1>
+
+<div class="caja">
+
+<label for="hp">
+Hábitat principal — j5
+</label>
+
+<input
+    id="hp"
+    type="text"
+    maxlength="12"
+    value="002000000000"
+    placeholder="12 caracteres numéricos">
+
+</div>
+
+<div class="caja">
+
+<label for="hs">
+Hábitat secundario — j6
+</label>
+
+<input
+    id="hs"
+    type="text"
+    maxlength="12"
+    value="000000000000"
+    placeholder="12 caracteres numéricos">
+
+</div>
+
+<button onclick="buscar()">
+Buscar
+</button>
+
+<div id="resultado">
+Introduce los códigos y pulsa Buscar.
+</div>
+
+
+<script src="PALHAB.js"></script>
+
+<script src="leepalhab.js"></script>
+
+
+<script>
+
+function buscar(){
+
+    const resultado =
+        document.getElementById("resultado");
+
+
+    if(
+        !window.PALHAB ||
+        typeof window.PALHAB !== "object"
+    ){
+
+        resultado.innerHTML =
+            '<div class="error">' +
+            'ERROR: PALHAB.js no se ha cargado correctamente.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    if(
+        !window.LEEPALHAB ||
+        typeof window.LEEPALHAB.leer !== "function"
+    ){
+
+        resultado.innerHTML =
+            '<div class="error">' +
+            'ERROR: leepalhab.js no se ha cargado correctamente.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    const hp =
+        document
+        .getElementById("hp")
+        .value
+        .trim();
+
+
+    const hs =
+        document
+        .getElementById("hs")
+        .value
+        .trim();
+
+
+    const registro = {
+
+        j5: hp,
+
+        j6: hs
+
+    };
+
+
+    const datos =
+        window.LEEPALHAB.leer(
+            registro
+        );
+
+
+    if(!datos){
+
+        resultado.innerHTML =
+            '<div class="error">' +
+            'ERROR: no se han podido procesar los códigos de hábitat.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    let html = "";
+
+
+    html +=
+        '<div class="campo">' +
+
+        '<div class="titulo">' +
+        'Hábitat principal:' +
+        '</div>' +
+
+        '<div>' +
+        (datos.habitat_principal || "No aplicable") +
+        '</div>' +
+
+        '</div>';
+
+
+    html +=
+        '<div class="campo">' +
+
+        '<div class="titulo">' +
+        'Hábitat secundario:' +
+        '</div>' +
+
+        '<div>' +
+        (
+            datos.habitat_secundario ||
+            "No definido"
+        ) +
+        '</div>' +
+
+        '</div>';
+
+
+    resultado.innerHTML = html;
+
+}
+
+</script>
+
+</body>
+
+</html>
+
+
+
+
+
 
