@@ -5,392 +5,421 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-<title>Prueba LeePALGEO — PalEntropía</title>
+<title>Generador — Prueba LEEPALGEO</title>
 
 <style>
 
 body{
     font-family:Arial,sans-serif;
-    max-width:800px;
-    margin:30px auto;
+    background:#111;
+    color:#eee;
+    margin:0;
     padding:20px;
 }
 
 h1{
-    font-size:24px;
-}
-
-.grupo{
+    font-size:22px;
     margin-bottom:20px;
 }
 
-.grupo label{
-    display:block;
-    font-weight:bold;
-    margin-bottom:8px;
+.contenedor{
+    max-width:700px;
+    margin:auto;
 }
 
-.cajas{
+.fila{
     display:flex;
     align-items:center;
-    gap:6px;
+    gap:8px;
+    margin-bottom:15px;
+    flex-wrap:wrap;
 }
 
-.cajas span{
-    font-weight:bold;
-}
-
-.cajas input{
-    width:80px;
-    min-width:80px;
-    padding:10px 6px;
-    text-align:center;
+input{
+    width:60px;
+    padding:10px;
     font-size:18px;
+    text-align:center;
     box-sizing:border-box;
 }
 
+.punto,
+.guion{
+    font-size:22px;
+}
+
 button{
-    margin-top:10px;
     padding:10px 18px;
     font-size:16px;
     cursor:pointer;
+    margin-bottom:20px;
 }
 
 #resultado{
-    margin-top:30px;
-    padding:20px;
-    border:1px solid #ccc;
-    border-radius:8px;
+    display:none;
+    line-height:1.6;
 }
 
 .campo{
-    margin-bottom:18px;
+    margin-bottom:12px;
 }
 
 .etiqueta{
     font-weight:bold;
-    margin-bottom:6px;
 }
 
 .valor{
-    line-height:1.6;
+    margin-top:3px;
 }
 
 .error{
-    color:#b00020;
-    font-weight:bold;
+    color:#ff7777;
 }
 
 </style>
 
 </head>
 
+
 <body>
 
-<h1>Generador — Prueba de PALGEO</h1>
+<div class="contenedor">
+
+<h1>Generador — Prueba de LEEPALGEO</h1>
 
 
-<!-- =====================================================
-     INICIO
-===================================================== -->
+<div class="fila">
 
-<div class="grupo">
+    <input
+        id="inicioEntero"
+        maxlength="4"
+        inputmode="numeric"
+        placeholder="0000"
+    >
 
-<label>Inicio</label>
+    <span class="punto">.</span>
 
-<div class="cajas">
+    <input
+        id="inicioDecimal"
+        maxlength="4"
+        inputmode="numeric"
+        placeholder="0000"
+    >
 
-<input
-    id="inicioEntero"
-    maxlength="4"
-    inputmode="numeric"
-    placeholder="0521"
->
+    <span class="guion">-</span>
 
-<span>.</span>
+    <input
+        id="finEntero"
+        maxlength="4"
+        inputmode="numeric"
+        placeholder="0000"
+    >
 
-<input
-    id="inicioDecimal"
-    maxlength="4"
-    inputmode="numeric"
-    placeholder="0000"
->
+    <span class="punto">.</span>
 
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     FINAL
-===================================================== -->
-
-<div class="grupo">
-
-<label>Final</label>
-
-<div class="cajas">
-
-<input
-    id="finEntero"
-    maxlength="4"
-    inputmode="numeric"
-    placeholder="0201"
->
-
-<span>.</span>
-
-<input
-    id="finDecimal"
-    maxlength="4"
-    inputmode="numeric"
-    placeholder="3000"
->
-
-</div>
+    <input
+        id="finDecimal"
+        maxlength="4"
+        inputmode="numeric"
+        placeholder="0000"
+    >
 
 </div>
 
 
-<button onclick="buscar()">
-Buscar
+<button id="buscar">
+    Buscar
 </button>
 
 
-<!-- =====================================================
-     RESULTADO
-===================================================== -->
-
 <div id="resultado">
 
-Introduce una cronología y pulsa Buscar.
+    <div class="campo">
+
+        <div class="etiqueta">
+            Intervalo:
+        </div>
+
+        <div
+            id="intervalo"
+            class="valor">
+        </div>
+
+    </div>
+
+
+    <div class="campo">
+
+        <div class="etiqueta">
+            Período:
+        </div>
+
+        <div
+            id="periodo"
+            class="valor">
+        </div>
+
+    </div>
+
+
+    <div class="campo">
+
+        <div class="etiqueta">
+            Subperíodo:
+        </div>
+
+        <div
+            id="edad"
+            class="valor">
+        </div>
+
+    </div>
+
+</div>
+
+
+<div
+    id="mensaje"
+    class="error">
+</div>
 
 </div>
 
 
 <!-- =====================================================
-     BASES
+     BASE CRONOESTRATIGRÁFICA
 ===================================================== -->
 
 <script src="js/palgeo.js"></script>
 
+
+<!-- =====================================================
+     MÓDULO SIMPLIFICADO
+===================================================== -->
+
 <script src="js/palgeosimplificado.js"></script>
+
+
+<!-- =====================================================
+     LECTOR PALGEO
+===================================================== -->
 
 <script src="js/leepalgeo.js"></script>
 
 
 <script>
 
-/* ========================================================
-   CONSTRUIR CRONOLOGÍA
+document
+.getElementById("buscar")
+.addEventListener(
+    "click",
+    function(){
 
-   Las cuatro cajas se convierten en:
+        const ie =
+            document
+            .getElementById("inicioEntero")
+            .value
+            .trim();
 
-   MMMM.DDDD-MMMM.DDDD
-======================================================== */
+        const id =
+            document
+            .getElementById("inicioDecimal")
+            .value
+            .trim();
 
-function construirCronologia(){
+        const fe =
+            document
+            .getElementById("finEntero")
+            .value
+            .trim();
 
-    const inicioEntero =
+        const fd =
+            document
+            .getElementById("finDecimal")
+            .value
+            .trim();
+
+
+        const mensaje =
+            document
+            .getElementById("mensaje");
+
+        const resultado =
+            document
+            .getElementById("resultado");
+
+
+        mensaje.textContent = "";
+
+        resultado.style.display = "none";
+
+
+        /*
+        =================================================
+        VALIDAR LAS CUATRO CAJAS
+        =================================================
+        */
+
+        if(
+            ie.length !== 4 ||
+            id.length !== 4 ||
+            fe.length !== 4 ||
+            fd.length !== 4
+        ){
+
+            mensaje.textContent =
+                "Debes introducir 4 caracteres en cada caja.";
+
+            return;
+
+        }
+
+
+        if(
+            !/^\d{4}$/.test(ie) ||
+            !/^\d{4}$/.test(id) ||
+            !/^\d{4}$/.test(fe) ||
+            !/^\d{4}$/.test(fd)
+        ){
+
+            mensaje.textContent =
+                "Las cuatro cajas deben contener únicamente números.";
+
+            return;
+
+        }
+
+
+        /*
+        =================================================
+        CONSTRUIR CRONOLOGÍA INTERNA
+
+        0521 + . + 0000
+        -
+        0201 + . + 3000
+
+        ↓
+
+        0521.0000-0201.3000
+        =================================================
+        */
+
+        const cronologia =
+            ie + "." + id +
+            "-" +
+            fe + "." + fd;
+
+
+        /*
+        =================================================
+        COMPROBAR LEEPALGEO
+        =================================================
+        */
+
+        if(
+            !window.LEEPALGEO ||
+            typeof window.LEEPALGEO.analizar !==
+            "function"
+        ){
+
+            mensaje.textContent =
+                "No se ha podido cargar LEEPALGEO.";
+
+            return;
+
+        }
+
+
+        /*
+        =================================================
+        ANALIZAR
+        =================================================
+        */
+
+        const datos =
+            window.LEEPALGEO.analizar(
+                cronologia
+            );
+
+
+        if(!datos){
+
+            mensaje.textContent =
+                "Cronología no válida o sin datos.";
+
+            return;
+
+        }
+
+
+        /*
+        =================================================
+        MOSTRAR INTERVALO
+
+        Se utiliza el formato humano
+        preparado por PALGEOSIMPLIFICADO.
+
+        NO se muestra la cronología interna.
+        =================================================
+        */
+
         document
-        .getElementById("inicioEntero")
-        .value
-        .trim();
+        .getElementById("intervalo")
+        .textContent =
+            datos.rango || "";
 
-    const inicioDecimal =
+
+        /*
+        =================================================
+        PERÍODOS
+        =================================================
+        */
+
         document
-        .getElementById("inicioDecimal")
-        .value
-        .trim();
+        .getElementById("periodo")
+        .textContent =
+            datos.periodo &&
+            datos.periodo.length
+            ?
+            datos.periodo.join(" · ")
+            :
+            "Sin datos";
 
-    const finEntero =
+
+        /*
+        =================================================
+        SUBPERÍODOS / EDADES
+        =================================================
+        */
+
         document
-        .getElementById("finEntero")
-        .value
-        .trim();
+        .getElementById("edad")
+        .textContent =
+            datos.edad &&
+            datos.edad.length
+            ?
+            datos.edad.join(" - ")
+            :
+            "Sin datos";
 
-    const finDecimal =
-        document
-        .getElementById("finDecimal")
-        .value
-        .trim();
 
+        /*
+        =================================================
+        MOSTRAR RESULTADO
+        =================================================
+        */
 
-    /*
-    Comprobar exactamente
-    cuatro caracteres numéricos.
-    */
-
-    if(
-        !/^\d{4}$/.test(inicioEntero) ||
-        !/^\d{4}$/.test(inicioDecimal) ||
-        !/^\d{4}$/.test(finEntero) ||
-        !/^\d{4}$/.test(finDecimal)
-    ){
-
-        return null;
+        resultado.style.display =
+            "block";
 
     }
-
-
-    /*
-    Montar código interno.
-    */
-
-    return (
-
-        inicioEntero
-        +
-        "."
-        +
-        inicioDecimal
-        +
-        "-"
-        +
-        finEntero
-        +
-        "."
-        +
-        finDecimal
-
-    );
-
-}
-
-
-/* ========================================================
-   BUSCAR
-======================================================== */
-
-function buscar(){
-
-    const resultado =
-        document.getElementById("resultado");
-
-
-    /*
-    Construir cronología.
-    */
-
-    const cronologia =
-        construirCronologia();
-
-
-    if(!cronologia){
-
-        resultado.innerHTML =
-            '<div class="error">' +
-            'Los cuatro campos deben contener exactamente 4 cifras.' +
-            '</div>';
-
-        return;
-
-    }
-
-
-    /*
-    Enviar al módulo LeePALGEO.
-    */
-
-    const datos =
-        window.LEEPALGEO.leer(
-            cronologia
-        );
-
-
-    if(!datos){
-
-        resultado.innerHTML =
-            '<div class="error">' +
-            'No se ha podido interpretar la cronología.' +
-            '</div>';
-
-        return;
-
-    }
-
-
-    /*
-    ========================================================
-    PRESENTACIÓN DEL GENERADOR
-
-    NO se muestra la cronología interna.
-    ========================================================
-    */
-
-    let html = "";
-
-
-    /*
-    INTERVALO
-    */
-
-    if(datos.intervalo){
-
-        html +=
-            '<div class="campo">' +
-                '<div class="etiqueta">Intervalo:</div>' +
-                '<div class="valor">' +
-                    datos.intervalo +
-                '</div>' +
-            '</div>';
-
-    }
-
-
-    /*
-    PERÍODO
-    */
-
-    if(
-        datos.periodo &&
-        datos.periodo.length
-    ){
-
-        html +=
-            '<div class="campo">' +
-                '<div class="etiqueta">Período:</div>' +
-                '<div class="valor">' +
-                    datos.periodo.join(" · ") +
-                '</div>' +
-            '</div>';
-
-    }
-
-
-    /*
-    SUBPERÍODO / EDAD
-    */
-
-    if(
-        datos.edad &&
-        datos.edad.length
-    ){
-
-        html +=
-            '<div class="campo">' +
-                '<div class="etiqueta">Subperíodo:</div>' +
-                '<div class="valor">' +
-                    datos.edad.join(" - ") +
-                '</div>' +
-            '</div>';
-
-    }
-
-
-    resultado.innerHTML = html;
-
-}
+);
 
 </script>
 
 </body>
 
 </html>
-
-
-
-
-
