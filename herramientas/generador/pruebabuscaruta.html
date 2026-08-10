@@ -101,12 +101,18 @@ placeholder="Ejemplo: 002_02"
 
 «»
 
-<button id="buscar">
+<button
+id="buscar"
+type="button"
+
+«»
+
 Buscar
-</button><div id="estado"></div><div id="resultado"></div><!-- =====================================================
+</button>
+
+<div id="estado"></div><div id="resultado"></div><!-- =====================================================
      BUSCARUTA
 ===================================================== --><script src="buscaruta.js"></script><script>
-
 
 /* ======================================================
    ELEMENTOS
@@ -126,7 +132,7 @@ const resultado =
 
 
 /* ======================================================
-   BUSCAR
+   EVENTO BOTÓN BUSCAR
 ====================================================== */
 
 botonBuscar.addEventListener(
@@ -144,16 +150,16 @@ async function buscar(){
     resultado.innerHTML = "";
 
     estado.className = "";
+
     estado.textContent = "";
 
 
-    /*
-    LEER J1
-    */
+    /* ==================================================
+       LEER J1
+    ================================================== */
 
     let j1 =
-        inputJ1.value
-        .trim();
+        inputJ1.value.trim();
 
 
     if(!j1){
@@ -168,17 +174,17 @@ async function buscar(){
     }
 
 
-    /*
-    NORMALIZAR
-    */
+    /* ==================================================
+       NORMALIZAR
+    ================================================== */
 
     j1 =
         j1.toUpperCase();
 
 
-    /*
-    COMPROBAR BUSCARUTA
-    */
+    /* ==================================================
+       COMPROBAR BUSCARUTA
+    ================================================== */
 
     if(
         !window.BUSCARUTA ||
@@ -196,13 +202,18 @@ async function buscar(){
     }
 
 
-    /*
-    =====================================================
-    BUSCAR
-    =====================================================
-    */
+    /* ==================================================
+       BUSCAR
+    ================================================== */
+
+    botonBuscar.disabled = true;
+
+    botonBuscar.textContent =
+        "Buscando...";
+
 
     let datos;
+
 
     try{
 
@@ -211,7 +222,9 @@ async function buscar(){
                 j1
             );
 
-    }catch(error){
+    }
+
+    catch(error){
 
         console.error(error);
 
@@ -220,26 +233,39 @@ async function buscar(){
         estado.textContent =
             "ERROR al ejecutar BUSCARUTA.";
 
+        botonBuscar.disabled = false;
+
+        botonBuscar.textContent =
+            "Buscar";
+
         return;
 
     }
 
 
-    /*
-    =====================================================
-    INFORMACIÓN
-    =====================================================
+    botonBuscar.disabled = false;
 
-    Las excepciones pueden devolver información
-    aunque no haya imágenes todavía.
+    botonBuscar.textContent =
+        "Buscar";
 
-    =====================================================
-    */
+
+    /* ==================================================
+       INFORMACIÓN
+    ================================================== */
+
+    let tieneInformacion =
+
+        datos &&
+
+        Array.isArray(
+            datos.informacion
+        ) &&
+
+        datos.informacion.length > 0;
+
 
     if(
-        datos &&
-        Array.isArray(datos.informacion) &&
-        datos.informacion.length > 0
+        tieneInformacion
     ){
 
         let cajaInfo =
@@ -271,7 +297,9 @@ async function buscar(){
                     linea.textContent =
                         dato.mensaje;
 
-                }else{
+                }
+
+                else{
 
                     linea.textContent =
                         "Subir imagen al directorio 001_075";
@@ -294,35 +322,34 @@ async function buscar(){
     }
 
 
-    /*
-    =====================================================
-    SIN IMÁGENES
-    =====================================================
-    */
+    /* ==================================================
+       COMPROBAR IMÁGENES
+    ================================================== */
 
     let hayImagenes =
 
         datos &&
+
         Array.isArray(
             datos.imagenes
         ) &&
+
         datos.imagenes.length > 0;
 
 
-    /*
-    Si no hay imágenes PERO sí hay información,
-    no mostramos mensaje de error.
-
-    */
+    /* ==================================================
+       SIN IMÁGENES
+    ================================================== */
 
     if(!hayImagenes){
 
+        /*
+        Si hay información,
+        no es un error.
+        */
+
         if(
-            datos &&
-            Array.isArray(
-                datos.informacion
-            ) &&
-            datos.informacion.length > 0
+            tieneInformacion
         ){
 
             estado.className =
@@ -353,11 +380,9 @@ async function buscar(){
     }
 
 
-    /*
-    =====================================================
-    MOSTRAR RESULTADO
-    =====================================================
-    */
+    /* ==================================================
+       ESTADO DE ÉXITO
+    ================================================== */
 
     estado.className =
         "exito";
@@ -369,39 +394,36 @@ async function buscar(){
         j1 + ".";
 
 
-    /*
-    INFORMACIÓN DE ARQUITECTURA
-    */
-
-    let info =
-        document.createElement(
-            "div"
-        );
-
+    /* ==================================================
+       ARQUITECTURA
+    ================================================== */
 
     if(
         datos.arquitectura
     ){
 
-        info.textContent =
+        let infoArquitectura =
+            document.createElement(
+                "div"
+            );
+
+        infoArquitectura.style.marginTop =
+            "10px";
+
+        infoArquitectura.textContent =
             "Arquitectura detectada: " +
             datos.arquitectura;
 
-        info.style.marginTop =
-            "10px";
-
         resultado.appendChild(
-            info
+            infoArquitectura
         );
 
     }
 
 
-    /*
-    =====================================================
-    CONTENEDOR DE IMÁGENES
-    =====================================================
-    */
+    /* ==================================================
+       CONTENEDOR DE IMÁGENES
+    ================================================== */
 
     let contenedor =
         document.createElement(
@@ -412,14 +434,55 @@ async function buscar(){
         "imagenes";
 
 
-    /*
-    =====================================================
-    RECORRER IMÁGENES
-    =====================================================
-    */
+    /* ==================================================
+       MOSTRAR IMÁGENES
+    ================================================== */
 
     datos.imagenes.forEach(
         imagenData => {
+
+            let ruta = "";
+
+
+            /*
+            CADENA
+            */
+
+            if(
+                typeof imagenData ===
+                "string"
+            ){
+
+                ruta =
+                    imagenData;
+
+            }
+
+
+            /*
+            OBJETO
+            */
+
+            else if(
+                imagenData &&
+                typeof imagenData ===
+                "object"
+            ){
+
+                ruta =
+                    imagenData.ruta ||
+                    imagenData.url ||
+                    "";
+
+            }
+
+
+            if(!ruta){
+
+                return;
+
+            }
+
 
             let caja =
                 document.createElement(
@@ -435,48 +498,6 @@ async function buscar(){
                     "img"
                 );
 
-
-            /*
-            BUSCARUTA PUEDE DEVOLVER
-            UNA CADENA O UN OBJETO
-            */
-
-            let ruta = "";
-
-
-            if(
-                typeof imagenData ===
-                "string"
-            ){
-
-                ruta =
-                    imagenData;
-
-            }else if(
-                imagenData &&
-                typeof imagenData ===
-                "object"
-            ){
-
-                ruta =
-                    imagenData.ruta ||
-                    imagenData.url ||
-                    "";
-
-            }
-
-
-            /*
-            SIN RUTA
-            */
-
-            if(!ruta){
-
-                return;
-
-            }
-
-
             imagen.src =
                 ruta;
 
@@ -485,7 +506,10 @@ async function buscar(){
 
 
             /*
-            ERROR DE CARGA
+            Si por algún motivo
+            una ruta falla al cargar,
+            se elimina únicamente
+            esa imagen.
             */
 
             imagen.onerror =
@@ -501,9 +525,9 @@ async function buscar(){
             );
 
 
-            /*
-            MOSTRAR RUTA
-            */
+            /* ==========================================
+               RUTA
+            ========================================== */
 
             let textoRuta =
                 document.createElement(
@@ -534,8 +558,6 @@ async function buscar(){
         contenedor
     );
 
-
 }
-
 
 </script></body></html>
