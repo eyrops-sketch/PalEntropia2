@@ -183,19 +183,39 @@
 <body>
 
 
+
+
 <!-- =====================================================
-     BOTÓN PALEOFICHA ALEATORIA
+     ACCIONES SUPERIORES
      ===================================================== -->
 
-<button id="botonAleatorio"
-        type="button"
-        title="Paleoficha aleatoria"
-        aria-label="Paleoficha aleatoria">
+<div id="grupoAccionesSuperiores">
 
-    🎲
+    <button id="botonMenuPrincipal"
+            class="botonCircularSuperior"
+            type="button"
+            title="Volver al menú principal"
+            aria-label="Volver al menú principal">
 
-</button>
+        ↩
 
+    </button>
+
+
+    <button id="botonAleatorio"
+            type="button"
+            title="Paleoficha aleatoria"
+            aria-label="Paleoficha aleatoria">
+
+        🎲
+
+    </button>
+
+</div>
+
+
+
+      
 
 <!-- =====================================================
      CABECERA
@@ -524,6 +544,35 @@
 
 
 let fichaActual = null;
+
+
+
+/* =====================================================
+   VOLVER AL MENÚ PRINCIPAL
+   ===================================================== */
+
+document.getElementById(
+    "botonMenuPrincipal"
+)
+.addEventListener(
+    "click",
+    function(){
+
+        window.location.href =
+            "https://palentropia.es";
+
+    }
+);
+
+
+/* =====================================================
+   REFERENCIAS DE NAVEGACIÓN
+   ===================================================== */
+
+const botonPrimero =
+    document.getElementById(
+        "botonPrimero"
+    );
 
 
 /* =====================================================
