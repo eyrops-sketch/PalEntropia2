@@ -3,513 +3,786 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>PalEntropía — Test CARGACONT</title>
+    <title>
+        PalEntropía — Test Carga Contenedor
+    </title>
 
-<style>
+    <style>
 
-body{
-    font-family:Arial,sans-serif;
-    margin:20px;
-    background:#111;
-    color:#eee;
-}
+        * {
+            box-sizing: border-box;
+        }
 
-button,
-input{
-    font-size:16px;
-    padding:10px;
-    margin:5px 0;
-}
+        body {
 
-button{
-    cursor:pointer;
-}
+            margin: 0;
 
-#resultado{
-    white-space:pre-wrap;
-    background:#1d1d1d;
-    padding:15px;
-    border-radius:8px;
-    margin-top:20px;
-    overflow:auto;
-}
+            padding: 20px;
 
-.imagenes{
-    display:flex;
-    flex-wrap:wrap;
-    gap:15px;
-    margin-top:20px;
-}
+            background: #111;
 
-.imagen{
-    width:30%;
-    min-width:180px;
-}
+            color: #eee;
 
-.imagen img{
-    width:100%;
-    display:block;
-    border-radius:8px;
-}
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
 
-.titulo-imagen{
-    margin-bottom:6px;
-    font-weight:bold;
-}
+        }
 
-.estado-ok{
-    color:#7cff9b;
-}
+        h1 {
 
-.estado-error{
-    color:#ff7777;
-}
+            margin-top: 0;
 
-.ruta{
-    font-size:12px;
-    word-break:break-all;
-    margin-top:6px;
-    color:#aaa;
-}
+            font-size: 24px;
 
-</style>
+        }
+
+        #estado {
+
+            padding: 14px;
+
+            margin-bottom: 20px;
+
+            border: 1px solid #444;
+
+            border-radius: 8px;
+
+            background: #1b1b1b;
+
+        }
+
+        .registro {
+
+            margin-bottom: 18px;
+
+            padding: 14px;
+
+            border: 1px solid #333;
+
+            border-radius: 8px;
+
+            background: #181818;
+
+        }
+
+        .cabecera {
+
+            margin-bottom: 12px;
+
+            padding-bottom: 10px;
+
+            border-bottom: 1px solid #333;
+
+        }
+
+        .j1 {
+
+            font-size: 18px;
+
+            font-weight: bold;
+
+        }
+
+        .nombre {
+
+            font-size: 16px;
+
+            margin-top: 4px;
+
+        }
+
+        .datos {
+
+            margin-top: 8px;
+
+            color: #bbb;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+
+        }
+
+        .imagenes {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(180px, 1fr)
+                );
+
+            gap: 12px;
+
+            margin-top: 14px;
+
+        }
+
+        .imagen {
+
+            min-height: 150px;
+
+            padding: 8px;
+
+            border: 1px solid #333;
+
+            border-radius: 6px;
+
+            background: #101010;
+
+        }
+
+        .imagen-titulo {
+
+            margin-bottom: 8px;
+
+            font-weight: bold;
+
+        }
+
+        .imagen img {
+
+            display: block;
+
+            width: 100%;
+
+            max-height: 220px;
+
+            object-fit: contain;
+
+            border-radius: 4px;
+
+        }
+
+        .ok {
+
+            color: #7CFF8A;
+
+        }
+
+        .error {
+
+            color: #ff7777;
+
+        }
+
+        .ruta {
+
+            margin-top: 7px;
+
+            word-break: break-all;
+
+            font-size: 11px;
+
+            color: #999;
+
+        }
+
+        .resumen {
+
+            margin-top: 20px;
+
+            padding: 14px;
+
+            border: 1px solid #444;
+
+            border-radius: 8px;
+
+            background: #1b1b1b;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+
+        }
+
+    </style>
 
 </head>
 
 
 <body>
 
-<h1>PalEntropía</h1>
 
-<h2>Test CARGACONT</h2>
-
-
-<div>
-
-<input
-    id="entradaJ1"
-    type="text"
-    placeholder="Ejemplo: 001_01"
->
-
-<br>
-
-<button id="btnCargar">
-Cargar J1
-</button>
-
-<button id="btnAleatorio">
-Cargar aleatorio
-</button>
-
-</div>
+    <h1>
+        PalEntropía — Test Carga Contenedor
+    </h1>
 
 
-<div id="resultado">
-Esperando carga...
-</div>
+    <div id="estado">
+        Iniciando prueba...
+    </div>
 
 
-<div
-    id="imagenes"
-    class="imagenes"
-></div>
+    <div id="contenedor"></div>
 
 
-<!-- ==================================================
-     MÓDULOS
-================================================== -->
-
-<script src="leepaljson.js"></script>
-
-<script src="buscaruta.js"></script>
-
-<script src="cargacont.js"></script>
+    <div
+        id="resumen"
+        class="resumen"
+    >
+    </div>
 
 
-<script>
+    <!-- =================================================
+         LEEPALJSON
+         ================================================= -->
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function(){
-
-        const entrada =
-            document.getElementById(
-                "entradaJ1"
-            );
-
-        const btnCargar =
-            document.getElementById(
-                "btnCargar"
-            );
-
-        const btnAleatorio =
-            document.getElementById(
-                "btnAleatorio"
-            );
-
-        const resultado =
-            document.getElementById(
-                "resultado"
-            );
-
-        const imagenes =
-            document.getElementById(
-                "imagenes"
-            );
+    <script src="herramientas/generador/LEEPALJSON.js"></script>
 
 
-        /* ==========================================
-           MOSTRAR RESULTADO
-        ========================================== */
+    <!-- =================================================
+         BUSCARUTA
+         ================================================= -->
 
-        function mostrar(datos){
+    <script src="herramientas/generador/buscaruta.js"></script>
 
-            resultado.textContent =
-                JSON.stringify(
-                    datos,
-                    null,
-                    2
+
+    <!-- =================================================
+         PRUEBA
+         ================================================= -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            iniciarPrueba
+        );
+
+
+        async function iniciarPrueba() {
+
+            const estado =
+                document.getElementById(
+                    "estado"
+                );
+
+            const contenedor =
+                document.getElementById(
+                    "contenedor"
+                );
+
+            const resumen =
+                document.getElementById(
+                    "resumen"
                 );
 
 
-            imagenes.innerHTML = "";
+            try {
 
+                /* =========================================
+                   1. PREPARAR LECTOR DEL CSV
+                   ========================================= */
 
-            if(!datos){
-
-                return;
-
-            }
-
-
-            /*
-            =================================================
-            CARGACONT ENTREGA:
-
-            i0
-            i2
-            i3
-
-            como rutas absolutas.
-
-            Ejemplo:
-
-            /paleofichas/vol003/
-            003_05_anomalocaris/
-            Anomalocaris_i0.png
-            =================================================
-            */
-
-
-            const tipos = [
-                "i0",
-                "i2",
-                "i3"
-            ];
-
-
-            for(
-                const tipo of tipos
-            ){
-
-                const ruta =
-                    datos[tipo];
-
-
-                const bloque =
-                    document.createElement(
-                        "div"
-                    );
-
-                bloque.className =
-                    "imagen";
-
-
-                const titulo =
-                    document.createElement(
-                        "div"
-                    );
-
-                titulo.className =
-                    "titulo-imagen";
-
-                titulo.textContent =
-                    tipo;
-
-
-                bloque.appendChild(
-                    titulo
-                );
+                estado.innerHTML =
+                    "Cargando master.csv...";
 
 
                 /*
-                ==============================================
-                SI CARGACONT HA ENTREGADO RUTA
-                ==============================================
+                LEEPALJSON intenta automáticamente
+                cargar master.csv.
+
+                Aquí utilizamos explícitamente la ruta
+                del master del Generador.
                 */
 
-                if(ruta){
+                const datos =
 
-                    const img =
-                        document.createElement(
-                            "img"
-                        );
-
-
-                    /*
-                    ------------------------------------------
-                    LA RUTA YA VIENE PREPARADA POR CARGACONT.
-                    EL HTML NO LA MODIFICA.
-                    ------------------------------------------
-                    */
-
-                    img.src =
-                        ruta;
-
-
-                    img.alt =
-                        datos.j1 +
-                        " " +
-                        tipo;
-
-
-                    /*
-                    ------------------------------------------
-                    INFORMACIÓN DE CARGA
-                    ------------------------------------------
-                    */
-
-                    img.onload =
-                        function(){
-
-                            estado.className =
-                                "estado-ok";
-
-                            estado.textContent =
-                                "✓ imagen cargada";
-
-                        };
-
-
-                    img.onerror =
-                        function(){
-
-                            estado.className =
-                                "estado-error";
-
-                            estado.textContent =
-                                "✗ error al cargar";
-
-                        };
-
-
-                    bloque.appendChild(
-                        img
+                    await window.LEEPALJSON.cargar(
+                        "herramientas/generador/master.csv"
                     );
 
 
-                    /*
-                    ------------------------------------------
-                    MOSTRAR RUTA REAL
-                    ------------------------------------------
-                    */
+                if (
+                    !Array.isArray(datos)
+                ) {
 
-                    const rutaTexto =
-                        document.createElement(
-                            "div"
-                        );
-
-                    rutaTexto.className =
-                        "ruta";
-
-                    rutaTexto.textContent =
-                        ruta;
-
-
-                    bloque.appendChild(
-                        rutaTexto
-                    );
-
-
-                    /*
-                    ------------------------------------------
-                    ESTADO
-                    ------------------------------------------
-                    */
-
-                    const estado =
-                        document.createElement(
-                            "div"
-                        );
-
-                    estado.textContent =
-                        "Cargando...";
-
-
-                    bloque.appendChild(
-                        estado
-                    );
-
-                }
-
-                else{
-
-                    const estado =
-                        document.createElement(
-                            "div"
-                        );
-
-                    estado.className =
-                        "estado-error";
-
-                    estado.textContent =
-                        "✗ imagen no disponible";
-
-
-                    bloque.appendChild(
-                        estado
+                    throw new Error(
+                        "LEEPALJSON no devolvió un array."
                     );
 
                 }
 
 
-                imagenes.appendChild(
-                    bloque
-                );
+                estado.innerHTML =
 
-            }
+                    "CSV cargado correctamente. " +
 
-        }
+                    datos.length +
 
+                    " registros encontrados. " +
 
-        /* ==========================================
-           MOSTRAR ERROR
-        ========================================== */
-
-        function mostrarError(error){
-
-            resultado.textContent =
-                "ERROR CARGACONT\n\n" +
-                (
-                    error &&
-                    error.message
-                        ? error.message
-                        : error
-                );
+                    "Comprobando imágenes...";
 
 
-            imagenes.innerHTML = "";
+                /* =========================================
+                   2. PREPARAR PALEOFICHAS.JSON
+                      PARA BUSCARUTA — CASO 2
+                   ========================================= */
 
-        }
+                /*
+                BUSCARUTA v2.0 LTS espera
+                paleofichas.json relativo a la página.
+
+                Como esta prueba está en la raíz,
+                preparamos su caché directamente con
+                el JSON real del Generador.
+
+                NO modificamos buscaruta.js.
+                */
+
+                const respuestaJSON =
+
+                    await fetch(
+                        "herramientas/generador/paleofichas.json",
+                        {
+                            cache: "default"
+                        }
+                    );
 
 
-        /* ==========================================
-           CARGA MANUAL
-        ========================================== */
+                if (
+                    !respuestaJSON.ok
+                ) {
 
-        btnCargar.addEventListener(
-
-            "click",
-
-            async function(){
-
-                const j1 =
-                    entrada.value
-                    .trim();
-
-
-                if(!j1){
-
-                    resultado.textContent =
-                        "Introduce un código j1.";
-
-                    imagenes.innerHTML = "";
-
-                    return;
+                    throw new Error(
+                        "No se pudo cargar " +
+                        "herramientas/generador/paleofichas.json"
+                    );
 
                 }
 
 
-                resultado.textContent =
-                    "Cargando " +
-                    j1 +
-                    "...";
+                const datosJSON =
+
+                    await respuestaJSON.json();
 
 
-                imagenes.innerHTML = "";
+                window.BUSCARUTA._datosJSON =
+                    datosJSON;
 
 
-                try{
+                /* =========================================
+                   3. RECORRER TODOS LOS REGISTROS
+                   ========================================= */
 
-                    const datos =
-                        await window.CARGACONT.cargar(
+                let totalImagenes = 0;
+
+                let imagenesOK = 0;
+
+                let imagenesFaltantes = 0;
+
+
+                for (
+                    const registro of datos
+                ) {
+
+                    const j1 =
+                        registro.codigo;
+
+
+                    /* -------------------------------------
+                       CONTENEDOR DEL REGISTRO
+                       ------------------------------------- */
+
+                    const bloque =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    bloque.className =
+                        "registro";
+
+
+                    /* -------------------------------------
+                       CABECERA
+                       ------------------------------------- */
+
+                    const cabecera =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    cabecera.className =
+                        "cabecera";
+
+
+                    cabecera.innerHTML =
+
+                        '<div class="j1">' +
+
+                        escaparHTML(
+                            j1
+                        ) +
+
+                        '</div>' +
+
+                        '<div class="nombre">' +
+
+                        escaparHTML(
+                            registro.nombre
+                        ) +
+
+                        '</div>' +
+
+                        '<div class="datos">' +
+
+                        'dieta: ' +
+
+                        escaparHTML(
+                            registro.dieta
+                        ) +
+
+                        '<br>' +
+
+                        'anatomia: ' +
+
+                        escaparHTML(
+                            registro.anatomia
+                        ) +
+
+                        '</div>';
+
+
+                    bloque.appendChild(
+                        cabecera
+                    );
+
+
+                    /* -------------------------------------
+                       BUSCARUTA
+                       ------------------------------------- */
+
+                    const resultado =
+
+                        await window.BUSCARUTA.buscar(
                             j1
                         );
 
 
-                    mostrar(datos);
+                    /* -------------------------------------
+                       IMÁGENES
+                       ------------------------------------- */
+
+                    const imagenes =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    imagenes.className =
+                        "imagenes";
+
+
+                    for (
+                        const imagen
+                        of resultado.imagenes
+                    ) {
+
+                        totalImagenes++;
+
+
+                        const caja =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        caja.className =
+                            "imagen";
+
+
+                        const titulo =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        titulo.className =
+                            "imagen-titulo";
+
+
+                        titulo.textContent =
+                            imagen.tipo;
+
+
+                        caja.appendChild(
+                            titulo
+                        );
+
+
+                        if (
+                            imagen.estado ===
+                            "ok"
+                        ) {
+
+                            imagenesOK++;
+
+
+                            const elemento =
+                                document.createElement(
+                                    "img"
+                                );
+
+
+                            elemento.src =
+                                imagen.ruta;
+
+
+                            elemento.alt =
+
+                                j1 +
+                                " " +
+                                imagen.tipo;
+
+
+                            caja.appendChild(
+                                elemento
+                            );
+
+
+                            const estadoImagen =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            estadoImagen.className =
+                                "ok";
+
+
+                            estadoImagen.textContent =
+                                "✓ Imagen cargada";
+
+
+                            caja.appendChild(
+                                estadoImagen
+                            );
+
+
+                            const ruta =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            ruta.className =
+                                "ruta";
+
+
+                            ruta.textContent =
+                                imagen.ruta;
+
+
+                            caja.appendChild(
+                                ruta
+                            );
+
+                        }
+
+                        else {
+
+                            imagenesFaltantes++;
+
+
+                            const estadoImagen =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            estadoImagen.className =
+                                "error";
+
+
+                            estadoImagen.textContent =
+                                "Imagen no subida";
+
+
+                            caja.appendChild(
+                                estadoImagen
+                            );
+
+                        }
+
+
+                        imagenes.appendChild(
+                            caja
+                        );
+
+                    }
+
+
+                    bloque.appendChild(
+                        imagenes
+                    );
+
+
+                    /* -------------------------------------
+                       INFORMACIÓN DEL CASO
+                       ------------------------------------- */
+
+                    const informacion =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    informacion.className =
+                        "datos";
+
+
+                    informacion.textContent =
+
+                        "BUSCARUTA → " +
+                        resultado.caso;
+
+
+                    bloque.appendChild(
+                        informacion
+                    );
+
+
+                    contenedor.appendChild(
+                        bloque
+                    );
 
                 }
 
-                catch(error){
 
-                    mostrarError(error);
+                /* =========================================
+                   4. RESUMEN
+                   ========================================= */
 
-                }
+                estado.innerHTML =
+
+                    '<span class="ok">' +
+
+                    "✓ PRUEBA COMPLETADA" +
+
+                    "</span>";
+
+
+                resumen.innerHTML =
+
+                    "<strong>Resultado</strong><br><br>" +
+
+                    "Registros CSV: " +
+
+                    datos.length +
+
+                    "<br>" +
+
+                    "Imágenes comprobadas: " +
+
+                    totalImagenes +
+
+                    "<br>" +
+
+                    "Imágenes cargadas: " +
+
+                    imagenesOK +
+
+                    "<br>" +
+
+                    "Imágenes no subidas: " +
+
+                    imagenesFaltantes;
+
 
             }
 
-        );
+
+            catch (error) {
+
+                console.error(
+                    error
+                );
 
 
-        /* ==========================================
-           CARGA ALEATORIA
-        ========================================== */
+                estado.innerHTML =
 
-        btnAleatorio.addEventListener(
+                    '<span class="error">' +
 
-            "click",
+                    "✗ ERROR EN LA PRUEBA" +
 
-            async function(){
+                    "</span>" +
 
-                resultado.textContent =
-                    "Seleccionando registro aleatorio...";
+                    "<br><br>" +
 
-
-                imagenes.innerHTML = "";
+                    escaparHTML(
+                        error.message
+                    );
 
 
-                try{
+                resumen.innerHTML =
 
-                    const datos =
-                        await window.CARGACONT.aleatorio();
+                    '<span class="error">' +
 
+                    "La prueba se ha detenido. " +
 
-                    mostrar(datos);
+                    "Revisa la consola del navegador."
 
-                }
+                    +
 
-                catch(error){
-
-                    mostrarError(error);
-
-                }
+                    "</span>";
 
             }
 
-        );
+        }
 
-    }
 
-);
+        /* =================================================
+           ESCAPAR HTML
+           ================================================= */
 
-</script>
+        function escaparHTML(
+            valor
+        ) {
+
+            return String(
+                valor ?? ""
+            )
+
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+        }
+
+    </script>
 
 
 </body>
