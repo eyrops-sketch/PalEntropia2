@@ -1,13 +1,15 @@
-<!DOCTYPE html><html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PalEntropía — Generador de Paleofichas</title><link rel="stylesheet" href="style.css">
-</head><body><!-- =====================================================
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>PalEntropía — Generador de Paleofichas</title><link rel="stylesheet"
+      href="style.css"></head><body><!-- =====================================================
      BOTÓN PALEOFICHA ALEATORIA
      ===================================================== --><button id="botonAleatorio"
 type="button"
 title="Paleoficha aleatoria"
-aria-label="Paleoficha aleatoria">🎲</button>
+aria-label="Paleoficha aleatoria">
+🎲
+</button>
 
 <!-- =====================================================
      CABECERA
@@ -30,7 +32,9 @@ aria-label="Paleoficha aleatoria">🎲</button>
     Cargando contenedor...
 </div><!-- =====================================================
      FICHA
-     ===================================================== --><main id="ficha" class="ficha" style="display:none;"><div id="titulo"></div>
+     ===================================================== --><main id="ficha"
+      class="ficha"
+      style="display:none;"><div id="titulo"></div>
 
 <div id="codigoFicha"></div>
 
@@ -38,6 +42,7 @@ aria-label="Paleoficha aleatoria">🎲</button>
 <!-- =================================================
      CRONOLOGÍA
      ================================================= -->
+
 <div id="cronologia">
 </div>
 
@@ -45,6 +50,7 @@ aria-label="Paleoficha aleatoria">🎲</button>
 <!-- =================================================
      IMAGEN PRINCIPAL
      ================================================= -->
+
 <div id="contenedorImagenPrincipal">
 
     <img id="imagenPrincipal"
@@ -64,7 +70,9 @@ aria-label="Paleoficha aleatoria">🎲</button>
      Se abre en la misma pestaña para facilitar
      el retorno mediante el botón Atrás del móvil.
      ================================================= -->
-<div id="videoFicha" style="display:none;">
+
+<div id="videoFicha"
+     style="display:none;">
 
     <a id="botonVideo"
        href="#"
@@ -79,16 +87,30 @@ aria-label="Paleoficha aleatoria">🎲</button>
 <!-- =================================================
      INFORMACIÓN
      ================================================= -->
+
 <section id="bloqueInfo">
 
     <div class="campoInfo">
-        <span class="campo">Dieta</span>
-        <span id="dieta"></span>
+
+        <span class="campo">
+            Dieta
+        </span>
+
+        <span id="dieta">
+        </span>
+
     </div>
 
+
     <div class="campoInfo">
-        <span class="campo">Descripción</span>
-        <span id="descripcion"></span>
+
+        <span class="campo">
+            Descripción
+        </span>
+
+        <span id="descripcion">
+        </span>
+
     </div>
 
 </section>
@@ -97,6 +119,7 @@ aria-label="Paleoficha aleatoria">🎲</button>
 <!-- =================================================
      GALERÍA
      ================================================= -->
+
 <section id="galeria">
 
     <img id="img2"
@@ -111,9 +134,13 @@ aria-label="Paleoficha aleatoria">🎲</button>
 <!-- =================================================
      ESTADÍSTICAS — RESERVADO
      ================================================= -->
-<section id="bloqueEstadisticas" style="display:none;">
 
-    <h2>Estadísticas</h2>
+<section id="bloqueEstadisticas"
+         style="display:none;">
+
+    <h2>
+        Estadísticas
+    </h2>
 
     <div id="estadisticas"
          class="stats">
@@ -148,12 +175,17 @@ aria-label="Paleoficha aleatoria">🎲</button>
         ×
     </button>
 
-    <h2>Explorador de Paleofichas</h2>
+
+    <h2>
+        Explorador de Paleofichas
+    </h2>
+
 
     <input id="buscarNombre"
            type="text"
            placeholder="Buscar por nombre o código"
            autocomplete="off">
+
 
     <div id="listaResultados">
     </div>
@@ -162,7 +194,7 @@ aria-label="Paleoficha aleatoria">🎲</button>
 
 </div><!-- =====================================================
      MÓDULOS DEL CONTENEDOR — NO MODIFICAR
-     ===================================================== --><script src="leepaljson.js"></script><script src="palvideo.js"></script><script src="buscaruta.js"></script><script src="cargacont.js"></script><script src="palbuscador.js"></script><!-- =====================================================
+     ===================================================== --><script src="leepaljson.js"></script><script src="palvideo.js"></script><script src="buscaruta.js"></script><script src="palnavegador.js"></script><script src="cargacont.js"></script><script src="palbuscador.js"></script><!-- =====================================================
      GENERADOR — CAPA VISUAL
      ===================================================== --><script>
 
@@ -181,6 +213,7 @@ document.addEventListener(
 
             const ficha = evento.detail;
 
+
             if(!ficha) {
 
                 throw new Error(
@@ -188,6 +221,7 @@ document.addEventListener(
                 );
 
             }
+
 
             fichaActual = ficha;
 
@@ -197,16 +231,23 @@ document.addEventListener(
                ========================================= */
 
             document.getElementById("titulo")
-                .textContent = ficha.j2 || "";
+                .textContent =
+                ficha.j2 || "";
+
 
             document.getElementById("codigoFicha")
-                .textContent = ficha.j1 || "";
+                .textContent =
+                ficha.j1 || "";
+
 
             document.getElementById("dieta")
-                .textContent = ficha.j7 || "";
+                .textContent =
+                ficha.j7 || "";
+
 
             document.getElementById("descripcion")
-                .textContent = ficha.j8 || "";
+                .textContent =
+                ficha.j8 || "";
 
 
             /* =========================================
@@ -227,10 +268,12 @@ document.addEventListener(
                 ficha.i0
             );
 
+
             cargarImagen(
                 "img2",
                 ficha.i2
             );
+
 
             cargarImagen(
                 "img3",
@@ -243,7 +286,8 @@ document.addEventListener(
                ========================================= */
 
             document.getElementById("ficha")
-                .style.display = "block";
+                .style.display =
+                "block";
 
 
             document.getElementById("estado")
@@ -295,12 +339,15 @@ function actualizarVideo(j1) {
     const contenedorVideo =
         document.getElementById("videoFicha");
 
+
     const botonVideo =
         document.getElementById("botonVideo");
 
 
     if(!contenedorVideo || !botonVideo) {
+
         return;
+
     }
 
 
@@ -308,9 +355,12 @@ function actualizarVideo(j1) {
        ESTADO INICIAL: OCULTO
        ----------------------------------------- */
 
-    contenedorVideo.style.display = "none";
+    contenedorVideo.style.display =
+        "none";
 
-    botonVideo.href = "#";
+
+    botonVideo.href =
+        "#";
 
 
     /* -----------------------------------------
@@ -389,32 +439,45 @@ function cargarImagen(idImagen, ruta) {
     const imagen =
         document.getElementById(idImagen);
 
-    if(!imagen) return;
 
+    if(!imagen) {
 
-    imagen.style.display = "none";
-
-
-    if(!ruta) {
         return;
+
     }
 
 
-    imagen.src = ruta;
+    imagen.style.display =
+        "none";
 
 
-    imagen.onload = function() {
+    if(!ruta) {
 
-        imagen.style.display = "block";
+        return;
 
-    };
+    }
 
 
-    imagen.onerror = function() {
+    imagen.src =
+        ruta;
 
-        imagen.style.display = "none";
 
-    };
+    imagen.onload =
+        function() {
+
+            imagen.style.display =
+                "block";
+
+        };
+
+
+    imagen.onerror =
+        function() {
+
+            imagen.style.display =
+                "none";
+
+        };
 
 }
 
@@ -427,7 +490,9 @@ document.addEventListener(
     "palentropia:error-carga",
     function(evento) {
 
-        mostrarError(evento.detail);
+        mostrarError(
+            evento.detail
+        );
 
     }
 );
@@ -439,6 +504,7 @@ function mostrarError(error) {
         "ERROR GENERADOR:",
         error
     );
+
 
     document.getElementById("estado")
         .innerHTML =
@@ -459,20 +525,37 @@ function mostrarError(error) {
    ===================================================== */
 
 const visorImagen =
-    document.getElementById("visorImagen");
+    document.getElementById(
+        "visorImagen"
+    );
+
 
 const imagenAmpliada =
-    document.getElementById("imagenAmpliada");
+    document.getElementById(
+        "imagenAmpliada"
+    );
 
 
 function abrirLightbox(imagen) {
 
-    if(!imagen || !imagen.src) return;
+    if(
+        !imagen ||
+        !imagen.src
+    ) {
+
+        return;
+
+    }
+
 
     imagenAmpliada.src =
-        imagen.currentSrc || imagen.src;
+        imagen.currentSrc ||
+        imagen.src;
 
-    visorImagen.style.display = "flex";
+
+    visorImagen.style.display =
+        "flex";
+
 
     visorImagen.setAttribute(
         "aria-hidden",
@@ -484,63 +567,84 @@ function abrirLightbox(imagen) {
 
 function cerrarLightbox() {
 
-    visorImagen.style.display = "none";
+    visorImagen.style.display =
+        "none";
+
 
     visorImagen.setAttribute(
         "aria-hidden",
         "true"
     );
 
-    imagenAmpliada.src = "";
+
+    imagenAmpliada.src =
+        "";
 
 }
 
 
-document.getElementById("imagenPrincipal")
-    .addEventListener(
-        "click",
-        function() {
+document.getElementById(
+    "imagenPrincipal"
+)
+.addEventListener(
+    "click",
+    function() {
 
-            abrirLightbox(this);
+        abrirLightbox(
+            this
+        );
 
-        }
-    );
-
-
-document.getElementById("img2")
-    .addEventListener(
-        "click",
-        function() {
-
-            abrirLightbox(this);
-
-        }
-    );
+    }
+);
 
 
-document.getElementById("img3")
-    .addEventListener(
-        "click",
-        function() {
+document.getElementById(
+    "img2"
+)
+.addEventListener(
+    "click",
+    function() {
 
-            abrirLightbox(this);
+        abrirLightbox(
+            this
+        );
 
-        }
-    );
+    }
+);
 
 
-document.getElementById("cerrarImagen")
-    .addEventListener(
-        "click",
-        cerrarLightbox
-    );
+document.getElementById(
+    "img3"
+)
+.addEventListener(
+    "click",
+    function() {
+
+        abrirLightbox(
+            this
+        );
+
+    }
+);
+
+
+document.getElementById(
+    "cerrarImagen"
+)
+.addEventListener(
+    "click",
+    cerrarLightbox
+);
 
 
 visorImagen.addEventListener(
     "click",
     function(evento) {
 
-        if(evento.target === visorImagen) {
+        if(
+            evento.target ===
+            visorImagen
+        ) {
 
             cerrarLightbox();
 
@@ -558,7 +662,10 @@ document.addEventListener(
     "keydown",
     function(evento) {
 
-        if(evento.key === "Escape") {
+        if(
+            evento.key ===
+            "Escape"
+        ) {
 
             cerrarLightbox();
 
@@ -575,12 +682,16 @@ document.addEventListener(
    ===================================================== */
 
 const visorBuscador =
-    document.getElementById("visorBuscador");
+    document.getElementById(
+        "visorBuscador"
+    );
 
 
 function abrirBuscador() {
 
-    visorBuscador.style.display = "flex";
+    visorBuscador.style.display =
+        "flex";
+
 
     visorBuscador.setAttribute(
         "aria-hidden",
@@ -589,12 +700,16 @@ function abrirBuscador() {
 
 
     const input =
-        document.getElementById("buscarNombre");
+        document.getElementById(
+            "buscarNombre"
+        );
 
 
     if(input) {
 
-        input.value = "";
+        input.value =
+            "";
+
 
         setTimeout(
             function() {
@@ -612,7 +727,9 @@ function abrirBuscador() {
 
 function cerrarBuscador() {
 
-    visorBuscador.style.display = "none";
+    visorBuscador.style.display =
+        "none";
+
 
     visorBuscador.setAttribute(
         "aria-hidden",
@@ -622,18 +739,22 @@ function cerrarBuscador() {
 }
 
 
-document.getElementById("botonBuscar")
-    .addEventListener(
-        "click",
-        abrirBuscador
-    );
+document.getElementById(
+    "botonBuscar"
+)
+.addEventListener(
+    "click",
+    abrirBuscador
+);
 
 
-document.getElementById("cerrarBuscador")
-    .addEventListener(
-        "click",
-        cerrarBuscador
-    );
+document.getElementById(
+    "cerrarBuscador"
+)
+.addEventListener(
+    "click",
+    cerrarBuscador
+);
 
 
 /* =====================================================
@@ -641,10 +762,15 @@ document.getElementById("cerrarBuscador")
    ===================================================== */
 
 const campoBusqueda =
-    document.getElementById("buscarNombre");
+    document.getElementById(
+        "buscarNombre"
+    );
+
 
 const listaResultados =
-    document.getElementById("listaResultados");
+    document.getElementById(
+        "listaResultados"
+    );
 
 
 campoBusqueda.addEventListener(
@@ -661,7 +787,8 @@ campoBusqueda.addEventListener(
 
         if(!texto) {
 
-            listaResultados.innerHTML = "";
+            listaResultados.innerHTML =
+                "";
 
             return;
 
@@ -680,7 +807,8 @@ campoBusqueda.addEventListener(
                 );
 
 
-            listaResultados.innerHTML = "";
+            listaResultados.innerHTML =
+                "";
 
 
             /* -------------------------------------
@@ -708,7 +836,9 @@ campoBusqueda.addEventListener(
             ) {
 
                 const elemento =
-                    document.createElement("button");
+                    document.createElement(
+                        "button"
+                    );
 
 
                 elemento.type =
@@ -805,7 +935,10 @@ visorBuscador.addEventListener(
     "click",
     function(evento) {
 
-        if(evento.target === visorBuscador) {
+        if(
+            evento.target ===
+            visorBuscador
+        ) {
 
             cerrarBuscador();
 
@@ -819,50 +952,61 @@ visorBuscador.addEventListener(
    BOTÓN ALEATORIO
    ===================================================== */
 
-document.getElementById("botonAleatorio")
-    .addEventListener(
-        "click",
-        async function() {
+document.getElementById(
+    "botonAleatorio"
+)
+.addEventListener(
+    "click",
+    async function() {
 
-            try {
+        try {
 
-                if(!window.LEEPALJSON) {
+            if(
+                !window.LEEPALJSON
+            ) {
 
-                    throw new Error(
-                        "LEEPALJSON no está disponible."
-                    );
-
-                }
-
-
-                if(!window.CARGACONT) {
-
-                    throw new Error(
-                        "CARGACONT no está disponible."
-                    );
-
-                }
-
-
-                document.getElementById("estado")
-                    .innerHTML =
-                    "Cargando paleoficha aleatoria...";
-
-
-                await window.LEEPALJSON.cargar();
-
-                await window.CARGACONT.aleatorio();
+                throw new Error(
+                    "LEEPALJSON no está disponible."
+                );
 
             }
 
-            catch(error) {
 
-                mostrarError(error);
+            if(
+                !window.CARGACONT
+            ) {
+
+                throw new Error(
+                    "CARGACONT no está disponible."
+                );
 
             }
+
+
+            document.getElementById(
+                "estado"
+            )
+            .innerHTML =
+                "Cargando paleoficha aleatoria...";
+
+
+            await window.LEEPALJSON.cargar();
+
+
+            await window.CARGACONT.aleatorio();
 
         }
-    );
+
+        catch(error) {
+
+            mostrarError(
+                error
+            );
+
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -875,7 +1019,9 @@ document.addEventListener(
 
         try {
 
-            if(!window.LEEPALJSON) {
+            if(
+                !window.LEEPALJSON
+            ) {
 
                 throw new Error(
                     "LEEPALJSON no está disponible."
@@ -884,7 +1030,9 @@ document.addEventListener(
             }
 
 
-            if(!window.CARGACONT) {
+            if(
+                !window.CARGACONT
+            ) {
 
                 throw new Error(
                     "CARGACONT no está disponible."
@@ -895,18 +1043,30 @@ document.addEventListener(
 
             await window.LEEPALJSON.cargar();
 
+
             await window.CARGACONT.aleatorio();
 
         }
 
         catch(error) {
 
-            mostrarError(error);
+            mostrarError(
+                error
+            );
 
         }
 
     }
 );
 
-</script></body>
+</script> 
+           
+</body>
+
+     
 </html>
+
+
+
+
+
