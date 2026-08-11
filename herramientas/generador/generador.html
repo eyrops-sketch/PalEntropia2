@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PalEntropía — Generador de Paleofichas</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- =====================================================
+     BOTÓN PALEOFICHA ALEATORIA
+     ===================================================== -->
+<button id="botonAleatorio"
+        type="button"
+        title="Paleoficha aleatoria"
+        aria-label="Paleoficha aleatoria">🎲</button>
+
+
+<!-- =====================================================
+     CABECERA
+     ===================================================== -->
+<header id="cabecera">
+
+    <h1>PalEntropía</h1>
+
+    <div id="subtitulo">
+        Generador de Paleofichas
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     CONTROLES
+     ===================================================== -->
+<section id="controlesBusqueda">
+
+    <button id="botonBuscar"
+            type="button">
+        🔎 Explorar Paleofichas
+    </button>
+
+</section>
+
+
+<!-- =====================================================
+     ESTADO
+     ===================================================== -->
+<div id="estado">
+    Cargando contenedor...
+</div>
+
+
+<!-- =====================================================
+     FICHA
+     ===================================================== -->
+<main id="ficha" class="ficha" style="display:none;">
+
+    <div id="titulo"></div>
+
+    <div id="codigoFicha"></div>
+
+
+    <!-- =================================================
+         CRONOLOGÍA
+         ================================================= -->
+    <div id="cronologia">
+    </div>
+
+
+    <!-- =================================================
+         IMAGEN PRINCIPAL
+         ================================================= -->
+    <div id="contenedorImagenPrincipal">
+
+        <img id="imagenPrincipal"
+             alt="Imagen principal de la paleoficha">
+
+    </div>
+
+
+    <!-- =================================================
+         VÍDEO
+         Preparado para PALVIDEO
+         ================================================= -->
+    <div id="videoFicha" style="display:none;">
+
+        <a id="botonVideo"
+           href="#"
+           target="_blank"
+           rel="noopener">
+            ▶ Ver vídeo
+        </a>
+
+    </div>
+
+
+    <!-- =================================================
+         INFORMACIÓN
+         ================================================= -->
+    <section id="bloqueInfo">
+
+        <div class="campoInfo">
+            <span class="campo">Dieta</span>
+            <span id="dieta"></span>
+        </div>
+
+        <div class="campoInfo">
+            <span class="campo">Descripción</span>
+            <span id="descripcion"></span>
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         GALERÍA
+         ================================================= -->
+    <section id="galeria">
+
+        <img id="img2"
+             alt="Imagen secundaria 1">
+
+        <img id="img3"
+             alt="Imagen secundaria 2">
+
+    </section>
+
+
+    <!-- =================================================
+         ESTADÍSTICAS — RESERVADO
+         ================================================= -->
+    <section id="bloqueEstadisticas" style="display:none;">
+
+        <h2>Estadísticas</h2>
+
+        <div id="estadisticas"
+             class="stats">
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     LIGHTBOX IMÁGENES
+     ===================================================== -->
+<div id="visorImagen"
+     class="visor"
+     aria-hidden="true">
+
+    <button id="cerrarImagen"
+            class="botonCerrar"
+            type="button"
+            aria-label="Cerrar imagen">
+        ×
+    </button>
+
+    <img id="imagenAmpliada"
+         alt="Imagen ampliada">
+
+</div>
+
+
+<!-- =====================================================
+     EXPLORADOR DE PALEOFICHAS
+     ESTRUCTURA VISUAL PREPARADA
+     ===================================================== -->
+<div id="visorBuscador"
+     class="visor"
+     aria-hidden="true">
+
+    <div id="ventanaBuscador">
+
+        <button id="cerrarBuscador"
+                class="botonCerrar botonCerrarBuscador"
+                type="button"
+                aria-label="Cerrar buscador">
+            ×
+        </button>
+
+        <h2>Explorador de Paleofichas</h2>
+
+        <input id="buscarNombre"
+               type="text"
+               placeholder="Buscar por nombre o código"
+               autocomplete="off">
+
+        <div id="listaResultados">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MÓDULOS DEL CONTENEDOR — NO MODIFICAR
+     ===================================================== -->
+<script src="leepaljson.js"></script>
+<script src="buscaruta.js"></script>
+<script src="cargacont.js"></script>
+
+<!-- =====================================================
+     GENERADOR — CAPA VISUAL
+     ===================================================== -->
+<script>
+
+let fichaActual = null;
+
+
+/* =====================================================
+   EVENTO: CONTENEDOR CARGADO
+   ===================================================== */
+
+document.addEventListener(
+    "palentropia:contenedor-cargado",
+    function(evento) {
+
+        try {
+
+            const ficha = evento.detail;
+
+            if(!ficha) {
+                throw new Error(
+                    "CARGACONT no entregó ningún registro."
+                );
+            }
+
+            fichaActual = ficha;
+
+
+            /* =========================================
+               DATOS
+            ========================================= */
+
+            document.getElementById("titulo")
+                .textContent = ficha.j2 || "";
+
+            document.getElementById("codigoFicha")
+                .textContent = ficha.j1 || "";
+
+            document.getElementById("dieta")
+                .textContent = ficha.j7 || "";
+
+            document.getElementById("descripcion")
+                .textContent = ficha.j8 || "";
+
+
+            /* =========================================
+               IMÁGENES
+            ========================================= */
+
+            cargarImagen(
+                "imagenPrincipal",
+                ficha.i0
+            );
+
+            cargarImagen(
+                "img2",
+                ficha.i2
+            );
+
+            cargarImagen(
+                "img3",
+                ficha.i3
+            );
+
+
+            /* =========================================
+               MOSTRAR FICHA
+            ========================================= */
+
+            document.getElementById("ficha")
+                .style.display = "block";
+
+
+            document.getElementById("estado")
+                .innerHTML =
+                '<span class="ok">' +
+                "✓ Ficha " +
+                (ficha.j1 || "") +
+                " cargada" +
+                "</span>";
+
+
+            console.log(
+                "PalEntropía — GENERADOR",
+                ficha
+            );
+
+        }
+
+        catch(error) {
+
+            mostrarError(error);
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   CARGAR IMAGEN
+   ===================================================== */
+
+function cargarImagen(idImagen, ruta) {
+
+    const imagen =
+        document.getElementById(idImagen);
+
+    if(!imagen) return;
+
+
+    imagen.style.display = "none";
+
+
+    if(!ruta) {
+        return;
+    }
+
+
+    imagen.src = ruta;
+
+
+    imagen.onload = function() {
+
+        imagen.style.display = "block";
+
+    };
+
+
+    imagen.onerror = function() {
+
+        imagen.style.display = "none";
+
+    };
+
+}
+
+
+/* =====================================================
+   ERROR DEL CONTENEDOR
+   ===================================================== */
+
+document.addEventListener(
+    "palentropia:error-carga",
+    function(evento) {
+
+        mostrarError(evento.detail);
+
+    }
+);
+
+
+function mostrarError(error) {
+
+    console.error(
+        "ERROR GENERADOR:",
+        error
+    );
+
+    document.getElementById("estado")
+        .innerHTML =
+        '<span class="error">' +
+        "✗ ERROR: " +
+        (
+            error && error.message
+                ? error.message
+                : error
+        ) +
+        "</span>";
+
+}
+
+
+/* =====================================================
+   LIGHTBOX DE IMÁGENES
+   ===================================================== */
+
+const visorImagen =
+    document.getElementById("visorImagen");
+
+const imagenAmpliada =
+    document.getElementById("imagenAmpliada");
+
+
+function abrirLightbox(imagen) {
+
+    if(!imagen || !imagen.src) return;
+
+    imagenAmpliada.src =
+        imagen.currentSrc || imagen.src;
+
+    visorImagen.style.display = "flex";
+    visorImagen.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+function cerrarLightbox() {
+
+    visorImagen.style.display = "none";
+
+    visorImagen.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    imagenAmpliada.src = "";
+
+}
+
+
+document.getElementById("imagenPrincipal")
+    .addEventListener(
+        "click",
+        function() {
+            abrirLightbox(this);
+        }
+    );
+
+
+document.getElementById("img2")
+    .addEventListener(
+        "click",
+        function() {
+            abrirLightbox(this);
+        }
+    );
+
+
+document.getElementById("img3")
+    .addEventListener(
+        "click",
+        function() {
+            abrirLightbox(this);
+        }
+    );
+
+
+document.getElementById("cerrarImagen")
+    .addEventListener(
+        "click",
+        cerrarLightbox
+    );
+
+
+visorImagen.addEventListener(
+    "click",
+    function(evento) {
+
+        if(evento.target === visorImagen) {
+            cerrarLightbox();
+        }
+
+    }
+);
+
+
+/* =====================================================
+   TECLA ESC — LIGHTBOX
+   ===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(evento) {
+
+        if(evento.key === "Escape") {
+
+            cerrarLightbox();
+
+            cerrarBuscador();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   BUSCADOR — ESTRUCTURA VISUAL
+   ===================================================== */
+
+const visorBuscador =
+    document.getElementById("visorBuscador");
+
+
+function abrirBuscador() {
+
+    visorBuscador.style.display = "flex";
+
+    visorBuscador.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    const input =
+        document.getElementById("buscarNombre");
+
+    if(input) {
+
+        input.value = "";
+
+        setTimeout(
+            function() {
+                input.focus();
+            },
+            50
+        );
+
+    }
+
+}
+
+
+function cerrarBuscador() {
+
+    visorBuscador.style.display = "none";
+
+    visorBuscador.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+document.getElementById("botonBuscar")
+    .addEventListener(
+        "click",
+        abrirBuscador
+    );
+
+
+document.getElementById("cerrarBuscador")
+    .addEventListener(
+        "click",
+        cerrarBuscador
+    );
+
+
+visorBuscador.addEventListener(
+    "click",
+    function(evento) {
+
+        if(evento.target === visorBuscador) {
+            cerrarBuscador();
+        }
+
+    }
+);
+
+
+/* =====================================================
+   BOTÓN ALEATORIO
+   ===================================================== */
+
+document.getElementById("botonAleatorio")
+    .addEventListener(
+        "click",
+        async function() {
+
+            try {
+
+                if(!window.LEEPALJSON) {
+                    throw new Error(
+                        "LEEPALJSON no está disponible."
+                    );
+                }
+
+                if(!window.CARGACONT) {
+                    throw new Error(
+                        "CARGACONT no está disponible."
+                    );
+                }
+
+                document.getElementById("estado")
+                    .innerHTML =
+                    "Cargando paleoficha aleatoria...";
+
+                await window.LEEPALJSON.cargar();
+
+                await window.CARGACONT.aleatorio();
+
+            }
+
+            catch(error) {
+
+                mostrarError(error);
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   INICIAR GENERADOR
+   ===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+
+        try {
+
+            if(!window.LEEPALJSON) {
+
+                throw new Error(
+                    "LEEPALJSON no está disponible."
+                );
+
+            }
+
+            if(!window.CARGACONT) {
+
+                throw new Error(
+                    "CARGACONT no está disponible."
+                );
+
+            }
+
+            await window.LEEPALJSON.cargar();
+
+            await window.CARGACONT.aleatorio();
+
+        }
+
+        catch(error) {
+
+            mostrarError(error);
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
