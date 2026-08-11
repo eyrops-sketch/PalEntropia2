@@ -9,11 +9,18 @@ body{
 }
 
 input{
-    width:160px;
     padding:10px;
     margin:3px;
     text-align:center;
     font-size:18px;
+}
+
+.codigo-largo{
+    width:160px;
+}
+
+.codigo-slot{
+    width:55px;
 }
 
 button{
@@ -22,7 +29,11 @@ button{
     cursor:pointer;
 }
 
-#resultado{
+.opcion{
+    margin-top:25px;
+}
+
+.resultado{
     margin-top:25px;
 }
 
@@ -40,29 +51,103 @@ button{
     font-weight:bold;
 }
 
+.separador{
+    margin:0 5px;
+    font-weight:bold;
+}
+
+.oculto{
+    display:none;
+}
+
 </style></head><body><h1>Generador — Prueba de LEEPALMEDIO</h1><!-- =====================================================
-     MEDIO ECOLÓGICO — j10
-===================================================== --><div class="bloque"><h2>Medio ecológico — j10</h2><input
+     OPCIÓN DE ENTRADA
+===================================================== --><div class="opcion"><h2>Modo de entrada</h2><label><input
+type="radio"
+name="modo"
+value="largo"
+checked>
+
+Código largo
+
+</label><br><label><input
+type="radio"
+name="modo"
+value="descompuesto">
+
+Código descompuesto
+
+</label></div><!-- =====================================================
+     CÓDIGO LARGO
+===================================================== --><div
+    id="entradaLargo"
+    class="opcion"><h2>Código j10</h2><input
 id="j10"
+class="codigo-largo"
 type="text"
 maxlength="12"
 inputmode="numeric"
 placeholder="000000000000">
 
-</div><button id="buscar">
+</div><!-- =====================================================
+     CÓDIGO DESCOMPUESTO
+===================================================== --><div
+    id="entradaDescompuesto"
+    class="opcion oculto"><h2>Código j10 descompuesto</h2><div><label>SM</label>
+
+<input
+id="sm"
+class="codigo-slot"
+type="text"
+maxlength="3"
+inputmode="numeric"
+placeholder="000">
+
+<span class="separador">|</span>
+
+<label>L</label>
+
+<input
+id="l"
+class="codigo-slot"
+type="text"
+maxlength="3"
+inputmode="numeric"
+placeholder="000">
+
+<span class="separador">|</span>
+
+<label>ES</label>
+
+<input
+id="es"
+class="codigo-slot"
+type="text"
+maxlength="3"
+inputmode="numeric"
+placeholder="000">
+
+<span class="separador">|</span>
+
+<label>C</label>
+
+<input
+id="c"
+class="codigo-slot"
+type="text"
+maxlength="3"
+inputmode="numeric"
+placeholder="000">
+
+</div></div><button id="buscar">
 Buscar
-</button><div id="resultado"></div><!-- =====================================================
-     PALMEDIO
-
-     El catálogo está en:
-
-     palmedio.js
+</button><div
+    id="resultado"
+    class="resultado">
+</div><!-- =====================================================
+     CATÁLOGO PALMEDIO
 ===================================================== --><script src="palmedio.js"></script><!-- =====================================================
-     LEEPALMEDIO
-
-     La función está en:
-
-     leepalmedio.js
+     FUNCIÓN LEEPALMEDIO
 ===================================================== --><script src="leepalmedio.js"></script><script>
 
 /*
@@ -70,59 +155,248 @@ Buscar
 PRUEBA LEEPALMEDIO
 ========================================================
 
-j10 = Medio ecológico compuesto.
+Dos formas de introducir j10:
 
-Estructura:
+1. Código largo
 
-XXXXXXXXXXXX
+   002002004002
 
-Dividido en cuatro bloques:
 
-SM | L | ES | C
+2. Código descompuesto
 
-Ejemplo:
+   SM | L | ES | C
+
+   002 | 002 | 004 | 002
+
+
+Ambos producen:
 
 002002004002
 
-↓
 
-SM002
-L002
-ES004
-C002
+La interpretación siempre la realiza:
 
-La función LEEPALMEDIO:
-
-1. Valida j10.
-2. Descompone los cuatro bloques.
-3. Consulta PALMEDIO.js.
-4. Devuelve la información de:
-
-   SM
-   L
-   ES
-   C
+LEEPALMEDIO.decodificar()
 
 ========================================================
 */
 
 
 /* ======================================================
-   COMPROBAR LEEPALMEDIO
+   CAMBIAR MODO DE ENTRADA
 ====================================================== */
 
-function comprobarLEEPALMEDIO(){
+const radiosModo =
+    document.querySelectorAll(
+        'input[name="modo"]'
+    );
 
-    if(
-        typeof window.LEEPALMEDIO !== "object" ||
-        window.LEEPALMEDIO === null
-    ){
 
-        return false;
+radiosModo.forEach(
+    function(radio){
+
+        radio.addEventListener(
+            "change",
+            function(){
+
+                const entradaLargo =
+                    document.getElementById(
+                        "entradaLargo"
+                    );
+
+                const entradaDescompuesto =
+                    document.getElementById(
+                        "entradaDescompuesto"
+                    );
+
+
+                if(
+                    this.value === "largo"
+                ){
+
+                    entradaLargo.classList
+                        .remove("oculto");
+
+                    entradaDescompuesto.classList
+                        .add("oculto");
+
+                }
+                else{
+
+                    entradaLargo.classList
+                        .add("oculto");
+
+                    entradaDescompuesto.classList
+                        .remove("oculto");
+
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* ======================================================
+   NORMALIZAR SLOT
+====================================================== */
+
+function normalizarSlot(id){
+
+    const elemento =
+        document.getElementById(id);
+
+
+    let valor =
+        elemento.value.trim();
+
+
+    /*
+    Campo vacío = 000
+    */
+
+    if(valor === ""){
+
+        return "000";
 
     }
 
-    return true;
+
+    /*
+    Solo números.
+    */
+
+    if(!/^\d{1,3}$/.test(valor)){
+
+        return null;
+
+    }
+
+
+    /*
+    Normalizar:
+
+    2 → 002
+    25 → 025
+    256 → 256
+    */
+
+    return String(
+        Number(valor)
+    ).padStart(
+        3,
+        "0"
+    );
+
+}
+
+
+/* ======================================================
+   OBTENER j10 DESCOMPUESTO
+====================================================== */
+
+function obtenerJ10Descompuesto(){
+
+    const sm =
+        normalizarSlot("sm");
+
+    const l =
+        normalizarSlot("l");
+
+    const es =
+        normalizarSlot("es");
+
+    const c =
+        normalizarSlot("c");
+
+
+    if(
+        sm === null ||
+        l === null ||
+        es === null ||
+        c === null
+    ){
+
+        return {
+
+            valido:false,
+
+            mensaje:
+                "Cada bloque debe contener solamente " +
+                "números de hasta tres cifras."
+
+        };
+
+    }
+
+
+    return {
+
+        valido:true,
+
+        codigo:
+            sm +
+            l +
+            es +
+            c
+
+    };
+
+}
+
+
+/* ======================================================
+   SINCRONIZAR CÓDIGO LARGO
+====================================================== */
+
+function sincronizarDescompuesto(
+    codigo
+){
+
+    if(
+        !/^\d{12}$/.test(codigo)
+    ){
+
+        return;
+
+    }
+
+
+    document.getElementById("sm").value =
+        codigo.substring(0,3);
+
+    document.getElementById("l").value =
+        codigo.substring(3,6);
+
+    document.getElementById("es").value =
+        codigo.substring(6,9);
+
+    document.getElementById("c").value =
+        codigo.substring(9,12);
+
+}
+
+
+/* ======================================================
+   SINCRONIZAR CÓDIGO LARGO
+====================================================== */
+
+function sincronizarLargo(){
+
+    const datos =
+        obtenerJ10Descompuesto();
+
+
+    if(!datos.valido){
+
+        return;
+
+    }
+
+
+    document.getElementById("j10").value =
+        datos.codigo;
 
 }
 
@@ -147,10 +421,6 @@ function mostrarResultado(datos){
     html +=
         "<h2>Resultado</h2>";
 
-
-    /*
-    j10 original
-    */
 
     html +=
         "<p>" +
@@ -305,7 +575,10 @@ document
         está cargado.
         */
 
-        if(!comprobarLEEPALMEDIO()){
+        if(
+            typeof window.LEEPALMEDIO !== "object" ||
+            window.LEEPALMEDIO === null
+        ){
 
             resultado.innerHTML =
                 '<p class="error">' +
@@ -318,39 +591,83 @@ document
         }
 
 
-        /*
-        Leer j10.
-        */
-
-        const campo =
-            document.getElementById(
-                "j10"
-            );
-
-
-        let j10 =
-            campo.value.trim();
+        let j10;
 
 
         /*
-        Campo vacío.
+        CÓDIGO LARGO
         */
 
-        if(j10 === ""){
+        if(
+            document.querySelector(
+                'input[name="modo"]:checked'
+            ).value === "largo"
+        ){
 
-            resultado.innerHTML =
-                '<p class="error">' +
-                'ERROR: introduce un código j10.' +
-                '</p>';
+            j10 =
+                document.getElementById(
+                    "j10"
+                ).value.trim();
 
-            return;
+
+            /*
+            Si es válido,
+            sincronizar los cuatro bloques.
+            */
+
+            if(/^\d{12}$/.test(j10)){
+
+                sincronizarDescompuesto(
+                    j10
+                );
+
+            }
 
         }
 
 
         /*
-        Decodificar mediante
-        LEEPALMEDIO.
+        CÓDIGO DESCOMPUESTO
+        */
+
+        else{
+
+            const datos =
+                obtenerJ10Descompuesto();
+
+
+            if(!datos.valido){
+
+                resultado.innerHTML =
+                    '<p class="error">' +
+                    'ERROR: ' +
+                    datos.mensaje +
+                    '</p>';
+
+                return;
+
+            }
+
+
+            j10 =
+                datos.codigo;
+
+
+            /*
+            Mantener sincronizado
+            el código largo.
+            */
+
+            document.getElementById(
+                "j10"
+            ).value =
+                j10;
+
+        }
+
+
+        /*
+        Decodificar.
         */
 
         const datos =
@@ -360,8 +677,7 @@ document
 
 
         /*
-        Error de validación
-        o consulta.
+        Error.
         */
 
         if(!datos.valido){
@@ -389,7 +705,3 @@ document
 );
 
 </script></body></html>
-
-
-
-
