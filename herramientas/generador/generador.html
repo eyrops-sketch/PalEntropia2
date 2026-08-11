@@ -13,176 +13,10 @@
 <link rel="stylesheet"
       href="style.css">
 
-
-<style>
-
-/* =====================================================
-   CONTROLES DE NAVEGACIÓN
-   ===================================================== */
-
-#controlesNavegacion {
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    gap: 8px;
-
-    margin: 12px auto;
-
-    flex-wrap: wrap;
-
-}
-
-
-.botonNavegacion {
-
-    width: 38px;
-
-    height: 38px;
-
-    border-radius: 50%;
-
-    border: none;
-
-    cursor: pointer;
-
-    font-size: 16px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
-
-}
-
-
-.botonNavegacion:active {
-
-    transform: scale(0.92);
-
-}
-
-
-.botonNavegacion:disabled {
-
-    opacity: 0.35;
-
-    cursor: default;
-
-}
-
-
-#posicionNavegacion {
-
-    min-width: 70px;
-
-    text-align: center;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    opacity: 0.8;
-
-    padding: 4px 9px;
-
-    border-radius: 12px;
-
-}
-
-
-/* =====================================================
-   BOTÓN VÍDEO
-   ===================================================== */
-
-#videoFicha {
-
-    text-align: center;
-
-    margin: 12px 0;
-
-}
-
-
-#botonVideo {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-decoration: none;
-
-    padding: 9px 16px;
-
-    border-radius: 20px;
-
-    font-weight: 600;
-
-}
-
-
-/* =====================================================
-   RESULTADOS DEL BUSCADOR
-   ===================================================== */
-
-.resultadoBuscador {
-
-    width: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    text-align: left;
-
-    padding: 10px 12px;
-
-    margin: 5px 0;
-
-    border-radius: 12px;
-
-    border: none;
-
-    cursor: pointer;
-
-}
-
-
-.resultadoCodigo {
-
-    font-weight: 700;
-
-    opacity: 0.75;
-
-}
-
-
-.resultadoNombre {
-
-    font-weight: 600;
-
-}
-
-</style>
-
 </head>
 
 
 <body>
-
-
 
 
 <!-- =====================================================
@@ -213,9 +47,6 @@
 
 </div>
 
-
-
-      
 
 <!-- =====================================================
      CABECERA
@@ -546,35 +377,6 @@
 let fichaActual = null;
 
 
-
-/* =====================================================
-   VOLVER AL MENÚ PRINCIPAL
-   ===================================================== */
-
-document.getElementById(
-    "botonMenuPrincipal"
-)
-.addEventListener(
-    "click",
-    function(){
-
-        window.location.href =
-            "https://palentropia.es";
-
-    }
-);
-
-
-/* =====================================================
-   REFERENCIAS DE NAVEGACIÓN
-   ===================================================== */
-
-const botonPrimero =
-    document.getElementById(
-        "botonPrimero"
-    );
-
-
 /* =====================================================
    REFERENCIAS DE NAVEGACIÓN
    ===================================================== */
@@ -607,6 +409,33 @@ const posicionNavegacion =
     document.getElementById(
         "posicionNavegacion"
     );
+
+
+/* =====================================================
+   BOTÓN VOLVER AL MENÚ PRINCIPAL
+   ===================================================== */
+
+const botonMenuPrincipal =
+    document.getElementById(
+        "botonMenuPrincipal"
+    );
+
+
+if(
+    botonMenuPrincipal
+) {
+
+    botonMenuPrincipal.addEventListener(
+        "click",
+        function() {
+
+            window.location.href =
+                "https://palentropia.es";
+
+        }
+    );
+
+}
 
 
 /* =====================================================
@@ -1126,54 +955,62 @@ botonUltimo.addEventListener(
     }
 );
 
-
 /* =====================================================
    BOTÓN ALEATORIO
    ===================================================== */
 
-document.getElementById(
-    "botonAleatorio"
-)
-.addEventListener(
-    "click",
-    async function() {
+const botonAleatorio =
+    document.getElementById(
+        "botonAleatorio"
+    );
 
-        try {
 
-            if(
-                !window.PALNAVEGADOR
-            ) {
+if(
+    botonAleatorio
+) {
 
-                throw new Error(
-                    "PALNAVEGADOR no está disponible."
+    botonAleatorio.addEventListener(
+        "click",
+        async function() {
+
+            try {
+
+                if(
+                    !window.PALNAVEGADOR
+                ) {
+
+                    throw new Error(
+                        "PALNAVEGADOR no está disponible."
+                    );
+
+                }
+
+
+                document.getElementById(
+                    "estado"
+                ).innerHTML =
+                    "Cargando paleoficha aleatoria...";
+
+
+                await window.PALNAVEGADOR.aleatorio();
+
+
+                actualizarControlesNavegacion();
+
+            }
+
+            catch(error) {
+
+                mostrarError(
+                    error
                 );
 
             }
 
-
-            document.getElementById(
-                "estado"
-            ).innerHTML =
-                "Cargando paleoficha aleatoria...";
-
-
-            await window.PALNAVEGADOR.aleatorio();
-
-
-            actualizarControlesNavegacion();
-
         }
+    );
 
-        catch(error) {
-
-            mostrarError(
-                error
-            );
-
-        }
-
-    }
-);
+}
 
 
 /* =====================================================
@@ -1626,9 +1463,9 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   INICIAR GENERADOR
-   ===================================================== */
+<!-- =====================================================
+     INICIALIZACIÓN DEL GENERADOR
+     ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -1636,38 +1473,9 @@ document.addEventListener(
 
         try {
 
-            if(
-                !window.LEEPALJSON
-            ) {
-
-                throw new Error(
-                    "LEEPALJSON no está disponible."
-                );
-
-            }
-
-
-            if(
-                !window.CARGACONT
-            ) {
-
-                throw new Error(
-                    "CARGACONT no está disponible."
-                );
-
-            }
-
-
-            if(
-                !window.PALBUSCADOR
-            ) {
-
-                throw new Error(
-                    "PALBUSCADOR no está disponible."
-                );
-
-            }
-
+            /* =========================================
+               COMPROBAR PALNAVEGADOR
+               ========================================= */
 
             if(
                 !window.PALNAVEGADOR
@@ -1680,25 +1488,79 @@ document.addEventListener(
             }
 
 
-            /* -----------------------------------------
+            /* =========================================
                INICIALIZAR NAVEGADOR
-               ----------------------------------------- */
+               ========================================= */
 
             await window.PALNAVEGADOR.inicializar();
 
 
-            /* -----------------------------------------
-               CARGAR PALEOFICHA ALEATORIA
-               ----------------------------------------- */
+            /* =========================================
+               COMPROBAR CÓDIGO EN URL
+               ========================================= */
 
-            await window.PALNAVEGADOR.aleatorio();
+            const parametros =
+                new URLSearchParams(
+                    window.location.search
+                );
 
 
-            /* -----------------------------------------
+            const codigo =
+                parametros.get(
+                    "codigo"
+                );
+
+
+            /* =========================================
+               CARGA MEDIANTE CÓDIGO
+               ========================================= */
+
+            if(
+                codigo
+            ) {
+
+                const encontrado =
+                    await window.PALNAVEGADOR.posicionar(
+                        codigo
+                    );
+
+
+                if(
+                    !encontrado
+                ) {
+
+                    throw new Error(
+                        "No se encontró la paleoficha " +
+                        codigo
+                    );
+
+                }
+
+
+                await window.PALNAVEGADOR.cargarIndice(
+                    window.PALNAVEGADOR.indice
+                );
+
+            }
+
+
+            /* =========================================
+               CARGA ALEATORIA
+               ========================================= */
+
+            else {
+
+                await window.PALNAVEGADOR.aleatorio();
+
+            }
+
+
+            /* =========================================
                ACTUALIZAR CONTROLES
-               ----------------------------------------- */
+               ========================================= */
 
             actualizarControlesNavegacion();
+
 
         }
 
