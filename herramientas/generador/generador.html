@@ -13,6 +13,7 @@
 <link rel="stylesheet"
       href="style.css">
 
+
 <style>
 
 /* =====================================================
@@ -90,6 +91,10 @@
     font-weight: 600;
 
     opacity: 0.8;
+
+    padding: 4px 9px;
+
+    border-radius: 12px;
 
 }
 
@@ -170,19 +175,6 @@
 
 }
 
-
-/* =====================================================
-   ETIQUETA DE POSICIÓN
-   ===================================================== */
-
-#posicionNavegacion {
-
-    padding: 4px 9px;
-
-    border-radius: 12px;
-
-}
-
 </style>
 
 </head>
@@ -221,7 +213,7 @@
 
 
 <!-- =====================================================
-     CONTROLES
+     CONTROLES DE BÚSQUEDA
      ===================================================== -->
 
 <section id="controlesBusqueda">
@@ -237,7 +229,7 @@
 
 
 <!-- =====================================================
-     NAVEGACIÓN
+     CONTROLES DE NAVEGACIÓN
      ===================================================== -->
 
 <section id="controlesNavegacion"
@@ -438,7 +430,7 @@
 
 
 <!-- =====================================================
-     LIGHTBOX IMÁGENES
+     LIGHTBOX DE IMÁGENES
      ===================================================== -->
 
 <div id="visorImagen"
@@ -530,11 +522,12 @@
 
 <script>
 
+
 let fichaActual = null;
 
 
 /* =====================================================
-   REFERENCIAS NAVEGACIÓN
+   REFERENCIAS DE NAVEGACIÓN
    ===================================================== */
 
 const botonPrimero =
@@ -583,7 +576,7 @@ function actualizarControlesNavegacion() {
 
 
     const estado =
-        PALNAVEGADOR.estado();
+        window.PALNAVEGADOR.estado();
 
 
     const total =
@@ -655,7 +648,7 @@ document.addEventListener(
 
 
             /* =========================================
-               ACTUALIZAR PUNTERO
+               POSICIONAR PUNTERO
                ========================================= */
 
             if(
@@ -663,7 +656,7 @@ document.addEventListener(
                 ficha.j1
             ) {
 
-                await PALNAVEGADOR.posicionar(
+                await window.PALNAVEGADOR.posicionar(
                     ficha.j1
                 );
 
@@ -970,6 +963,7 @@ function mostrarError(error) {
 
 }
 
+
 /* =====================================================
    NAVEGACIÓN
    ===================================================== */
@@ -1015,7 +1009,7 @@ botonPrimero.addEventListener(
         ejecutarNavegacion(
             function() {
 
-                return PALNAVEGADOR.primero();
+                return window.PALNAVEGADOR.primero();
 
             }
         );
@@ -1035,7 +1029,7 @@ botonAnterior.addEventListener(
         ejecutarNavegacion(
             function() {
 
-                return PALNAVEGADOR.anterior();
+                return window.PALNAVEGADOR.anterior();
 
             }
         );
@@ -1055,7 +1049,7 @@ botonSiguiente.addEventListener(
         ejecutarNavegacion(
             function() {
 
-                return PALNAVEGADOR.siguiente();
+                return window.PALNAVEGADOR.siguiente();
 
             }
         );
@@ -1075,7 +1069,7 @@ botonUltimo.addEventListener(
         ejecutarNavegacion(
             function() {
 
-                return PALNAVEGADOR.ultimo();
+                return window.PALNAVEGADOR.ultimo();
 
             }
         );
@@ -1098,22 +1092,11 @@ document.getElementById(
         try {
 
             if(
-                !window.LEEPALJSON
+                !window.PALNAVEGADOR
             ) {
 
                 throw new Error(
-                    "LEEPALJSON no está disponible."
-                );
-
-            }
-
-
-            if(
-                !window.CARGACONT
-            ) {
-
-                throw new Error(
-                    "CARGACONT no está disponible."
+                    "PALNAVEGADOR no está disponible."
                 );
 
             }
@@ -1125,11 +1108,10 @@ document.getElementById(
                 "Cargando paleoficha aleatoria...";
 
 
-            await window.LEEPALJSON.cargar();
+            await window.PALNAVEGADOR.aleatorio();
 
 
-            await window.CARGACONT.aleatorio();
-
+            actualizarControlesNavegacion();
 
         }
 
@@ -1406,7 +1388,7 @@ campoBusqueda.addEventListener(
         try {
 
             const resultados =
-                await PALBUSCADOR.buscar(
+                await window.PALBUSCADOR.buscar(
                     texto
                 );
 
@@ -1490,7 +1472,7 @@ campoBusqueda.addEventListener(
                                 '</div>';
 
 
-                            await PALBUSCADOR.cargarResultado(
+                            await window.PALBUSCADOR.cargarResultado(
                                 resultado
                             );
 
@@ -1573,7 +1555,6 @@ visorBuscador.addEventListener(
 );
 
 
- 
 /* =====================================================
    TECLA ESC
    ===================================================== */
@@ -1651,24 +1632,17 @@ document.addEventListener(
 
 
             /* -----------------------------------------
-               CARGAR MASTER.CSV
-               ----------------------------------------- */
-
-            await window.LEEPALJSON.cargar();
-
-
-            /* -----------------------------------------
                INICIALIZAR NAVEGADOR
                ----------------------------------------- */
 
-            await window.PALNAVEGADOR.iniciar();
+            await window.PALNAVEGADOR.inicializar();
 
 
             /* -----------------------------------------
                CARGAR PALEOFICHA ALEATORIA
                ----------------------------------------- */
 
-            await window.CARGACONT.aleatorio();
+            await window.PALNAVEGADOR.aleatorio();
 
 
             /* -----------------------------------------
@@ -1676,7 +1650,6 @@ document.addEventListener(
                ----------------------------------------- */
 
             actualizarControlesNavegacion();
-
 
         }
 
@@ -1702,3 +1675,5 @@ document.addEventListener(
 </body>
 
 </html>
+
+
