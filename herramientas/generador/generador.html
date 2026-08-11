@@ -1,217 +1,170 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>PalEntropía — Generador de Paleofichas</title>
-
-<link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-
-<!-- =====================================================
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PalEntropía — Generador de Paleofichas</title><link rel="stylesheet" href="style.css">
+</head><body><!-- =====================================================
      BOTÓN PALEOFICHA ALEATORIA
-     ===================================================== -->
-<button id="botonAleatorio"
-        type="button"
-        title="Paleoficha aleatoria"
-        aria-label="Paleoficha aleatoria">🎲</button>
-
+     ===================================================== --><button id="botonAleatorio"
+type="button"
+title="Paleoficha aleatoria"
+aria-label="Paleoficha aleatoria">🎲</button>
 
 <!-- =====================================================
      CABECERA
-     ===================================================== -->
-<header id="cabecera">
+     ===================================================== --><header id="cabecera"><h1>PalEntropía</h1>
 
-    <h1>PalEntropía</h1>
+<div id="subtitulo">
+    Generador de Paleofichas
+</div>
 
-    <div id="subtitulo">
-        Generador de Paleofichas
+</header><!-- =====================================================
+     CONTROLES
+     ===================================================== --><section id="controlesBusqueda"><button id="botonBuscar"
+        type="button">
+    🔎 Explorar Paleofichas
+</button>
+
+</section><!-- =====================================================
+     ESTADO
+     ===================================================== --><div id="estado">
+    Cargando contenedor...
+</div><!-- =====================================================
+     FICHA
+     ===================================================== --><main id="ficha" class="ficha" style="display:none;"><div id="titulo"></div>
+
+<div id="codigoFicha"></div>
+
+
+<!-- =================================================
+     CRONOLOGÍA
+     ================================================= -->
+<div id="cronologia">
+</div>
+
+
+<!-- =================================================
+     IMAGEN PRINCIPAL
+     ================================================= -->
+<div id="contenedorImagenPrincipal">
+
+    <img id="imagenPrincipal"
+         alt="Imagen principal de la paleoficha">
+
+</div>
+
+
+<!-- =================================================
+     VÍDEO
+     PALVIDEO
+     
+     Se muestra solamente cuando existe:
+     
+     PALVIDEO[j1].video
+     
+     Se abre en la misma pestaña para facilitar
+     el retorno mediante el botón Atrás del móvil.
+     ================================================= -->
+<div id="videoFicha" style="display:none;">
+
+    <a id="botonVideo"
+       href="#"
+       target="_self"
+       rel="noopener">
+        ▶ Ver vídeo
+    </a>
+
+</div>
+
+
+<!-- =================================================
+     INFORMACIÓN
+     ================================================= -->
+<section id="bloqueInfo">
+
+    <div class="campoInfo">
+        <span class="campo">Dieta</span>
+        <span id="dieta"></span>
     </div>
 
-</header>
-
-
-<!-- =====================================================
-     CONTROLES
-     ===================================================== -->
-<section id="controlesBusqueda">
-
-    <button id="botonBuscar"
-            type="button">
-        🔎 Explorar Paleofichas
-    </button>
+    <div class="campoInfo">
+        <span class="campo">Descripción</span>
+        <span id="descripcion"></span>
+    </div>
 
 </section>
 
 
-<!-- =====================================================
-     ESTADO
-     ===================================================== -->
-<div id="estado">
-    Cargando contenedor...
-</div>
+<!-- =================================================
+     GALERÍA
+     ================================================= -->
+<section id="galeria">
+
+    <img id="img2"
+         alt="Imagen secundaria 1">
+
+    <img id="img3"
+         alt="Imagen secundaria 2">
+
+</section>
 
 
-<!-- =====================================================
-     FICHA
-     ===================================================== -->
-<main id="ficha" class="ficha" style="display:none;">
+<!-- =================================================
+     ESTADÍSTICAS — RESERVADO
+     ================================================= -->
+<section id="bloqueEstadisticas" style="display:none;">
 
-    <div id="titulo"></div>
+    <h2>Estadísticas</h2>
 
-    <div id="codigoFicha"></div>
-
-
-    <!-- =================================================
-         CRONOLOGÍA
-         ================================================= -->
-    <div id="cronologia">
+    <div id="estadisticas"
+         class="stats">
     </div>
 
+</section>
 
-    <!-- =================================================
-         IMAGEN PRINCIPAL
-         ================================================= -->
-    <div id="contenedorImagenPrincipal">
-
-        <img id="imagenPrincipal"
-             alt="Imagen principal de la paleoficha">
-
-    </div>
-
-
-    <!-- =================================================
-         VÍDEO
-         Preparado para PALVIDEO
-         ================================================= -->
-    <div id="videoFicha" style="display:none;">
-
-        <a id="botonVideo"
-           href="#"
-           target="_blank"
-           rel="noopener">
-            ▶ Ver vídeo
-        </a>
-
-    </div>
-
-
-    <!-- =================================================
-         INFORMACIÓN
-         ================================================= -->
-    <section id="bloqueInfo">
-
-        <div class="campoInfo">
-            <span class="campo">Dieta</span>
-            <span id="dieta"></span>
-        </div>
-
-        <div class="campoInfo">
-            <span class="campo">Descripción</span>
-            <span id="descripcion"></span>
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         GALERÍA
-         ================================================= -->
-    <section id="galeria">
-
-        <img id="img2"
-             alt="Imagen secundaria 1">
-
-        <img id="img3"
-             alt="Imagen secundaria 2">
-
-    </section>
-
-
-    <!-- =================================================
-         ESTADÍSTICAS — RESERVADO
-         ================================================= -->
-    <section id="bloqueEstadisticas" style="display:none;">
-
-        <h2>Estadísticas</h2>
-
-        <div id="estadisticas"
-             class="stats">
-        </div>
-
-    </section>
-
-</main>
-
-
-<!-- =====================================================
+</main><!-- =====================================================
      LIGHTBOX IMÁGENES
-     ===================================================== -->
-<div id="visorImagen"
+     ===================================================== --><div id="visorImagen"
      class="visor"
-     aria-hidden="true">
+     aria-hidden="true"><button id="cerrarImagen"
+        class="botonCerrar"
+        type="button"
+        aria-label="Cerrar imagen">
+    ×
+</button>
 
-    <button id="cerrarImagen"
-            class="botonCerrar"
+<img id="imagenAmpliada"
+     alt="Imagen ampliada">
+
+</div><!-- =====================================================
+     EXPLORADOR DE PALEOFICHAS
+     ===================================================== --><div id="visorBuscador"
+     class="visor"
+     aria-hidden="true"><div id="ventanaBuscador">
+
+    <button id="cerrarBuscador"
+            class="botonCerrar botonCerrarBuscador"
             type="button"
-            aria-label="Cerrar imagen">
+            aria-label="Cerrar buscador">
         ×
     </button>
 
-    <img id="imagenAmpliada"
-         alt="Imagen ampliada">
+    <h2>Explorador de Paleofichas</h2>
 
-</div>
+    <input id="buscarNombre"
+           type="text"
+           placeholder="Buscar por nombre o código"
+           autocomplete="off">
 
-
-<!-- =====================================================
-     EXPLORADOR DE PALEOFICHAS
-     ESTRUCTURA VISUAL PREPARADA
-     ===================================================== -->
-<div id="visorBuscador"
-     class="visor"
-     aria-hidden="true">
-
-    <div id="ventanaBuscador">
-
-        <button id="cerrarBuscador"
-                class="botonCerrar botonCerrarBuscador"
-                type="button"
-                aria-label="Cerrar buscador">
-            ×
-        </button>
-
-        <h2>Explorador de Paleofichas</h2>
-
-        <input id="buscarNombre"
-               type="text"
-               placeholder="Buscar por nombre o código"
-               autocomplete="off">
-
-        <div id="listaResultados">
-        </div>
-
+    <div id="listaResultados">
     </div>
 
 </div>
 
-
-<!-- =====================================================
+</div><!-- =====================================================
      MÓDULOS DEL CONTENEDOR — NO MODIFICAR
-     ===================================================== -->
-<script src="leepaljson.js"></script>
-<script src="palvideo.js"></script>
-<script src="buscaruta.js"></script>
-<script src="cargacont.js"></script>
-<script src="palbuscador.js"></script>
-
-<!-- =====================================================
+     ===================================================== --><script src="leepaljson.js"></script><script src="palvideo.js"></script><script src="buscaruta.js"></script><script src="cargacont.js"></script><script src="palbuscador.js"></script><!-- =====================================================
      GENERADOR — CAPA VISUAL
-     ===================================================== -->
-<script>
+     ===================================================== --><script>
 
 let fichaActual = null;
 
@@ -229,9 +182,11 @@ document.addEventListener(
             const ficha = evento.detail;
 
             if(!ficha) {
+
                 throw new Error(
                     "CARGACONT no entregó ningún registro."
                 );
+
             }
 
             fichaActual = ficha;
@@ -239,7 +194,7 @@ document.addEventListener(
 
             /* =========================================
                DATOS
-            ========================================= */
+               ========================================= */
 
             document.getElementById("titulo")
                 .textContent = ficha.j2 || "";
@@ -255,8 +210,17 @@ document.addEventListener(
 
 
             /* =========================================
+               VÍDEO
+               ========================================= */
+
+            actualizarVideo(
+                ficha.j1
+            );
+
+
+            /* =========================================
                IMÁGENES
-            ========================================= */
+               ========================================= */
 
             cargarImagen(
                 "imagenPrincipal",
@@ -276,7 +240,7 @@ document.addEventListener(
 
             /* =========================================
                MOSTRAR FICHA
-            ========================================= */
+               ========================================= */
 
             document.getElementById("ficha")
                 .style.display = "block";
@@ -306,6 +270,114 @@ document.addEventListener(
 
     }
 );
+
+
+/* =====================================================
+   ACTUALIZAR VÍDEO
+   =====================================================
+
+   PALVIDEO tiene esta estructura:
+
+   PALVIDEO = {
+
+       "004_14": {
+           video: "https://youtube.com/shorts/..."
+       }
+
+   };
+
+   El botón solamente aparece si existe
+   un enlace válido y no vacío.
+   ===================================================== */
+
+function actualizarVideo(j1) {
+
+    const contenedorVideo =
+        document.getElementById("videoFicha");
+
+    const botonVideo =
+        document.getElementById("botonVideo");
+
+
+    if(!contenedorVideo || !botonVideo) {
+        return;
+    }
+
+
+    /* -----------------------------------------
+       ESTADO INICIAL: OCULTO
+       ----------------------------------------- */
+
+    contenedorVideo.style.display = "none";
+
+    botonVideo.href = "#";
+
+
+    /* -----------------------------------------
+       COMPROBAR PALVIDEO
+       ----------------------------------------- */
+
+    if(
+        !window.PALVIDEO ||
+        !j1
+    ) {
+
+        return;
+
+    }
+
+
+    const codigo =
+        String(j1)
+            .trim()
+            .toUpperCase();
+
+
+    const registro =
+        window.PALVIDEO[codigo];
+
+
+    if(
+        !registro ||
+        typeof registro !== "object"
+    ) {
+
+        return;
+
+    }
+
+
+    const enlace =
+        registro.video;
+
+
+    /* -----------------------------------------
+       SIN VÍDEO
+       ----------------------------------------- */
+
+    if(
+        enlace === null ||
+        enlace === undefined ||
+        String(enlace).trim() === ""
+    ) {
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------
+       VÍDEO EXISTENTE
+       ----------------------------------------- */
+
+    botonVideo.href =
+        String(enlace).trim();
+
+
+    contenedorVideo.style.display =
+        "block";
+
+}
 
 
 /* =====================================================
@@ -401,6 +473,7 @@ function abrirLightbox(imagen) {
         imagen.currentSrc || imagen.src;
 
     visorImagen.style.display = "flex";
+
     visorImagen.setAttribute(
         "aria-hidden",
         "false"
@@ -427,7 +500,9 @@ document.getElementById("imagenPrincipal")
     .addEventListener(
         "click",
         function() {
+
             abrirLightbox(this);
+
         }
     );
 
@@ -436,7 +511,9 @@ document.getElementById("img2")
     .addEventListener(
         "click",
         function() {
+
             abrirLightbox(this);
+
         }
     );
 
@@ -445,7 +522,9 @@ document.getElementById("img3")
     .addEventListener(
         "click",
         function() {
+
             abrirLightbox(this);
+
         }
     );
 
@@ -462,7 +541,9 @@ visorImagen.addEventListener(
     function(evento) {
 
         if(evento.target === visorImagen) {
+
             cerrarLightbox();
+
         }
 
     }
@@ -506,8 +587,10 @@ function abrirBuscador() {
         "false"
     );
 
+
     const input =
         document.getElementById("buscarNombre");
+
 
     if(input) {
 
@@ -515,7 +598,9 @@ function abrirBuscador() {
 
         setTimeout(
             function() {
+
                 input.focus();
+
             },
             50
         );
@@ -550,7 +635,8 @@ document.getElementById("cerrarBuscador")
         cerrarBuscador
     );
 
-     /* =====================================================
+
+/* =====================================================
    BÚSQUEDA EN TIEMPO REAL
    ===================================================== */
 
@@ -571,7 +657,7 @@ campoBusqueda.addEventListener(
 
         /* -----------------------------------------
            LIMPIAR
-        ----------------------------------------- */
+           ----------------------------------------- */
 
         if(!texto) {
 
@@ -584,7 +670,7 @@ campoBusqueda.addEventListener(
 
         /* -----------------------------------------
            BUSCAR
-        ----------------------------------------- */
+           ----------------------------------------- */
 
         try {
 
@@ -599,7 +685,7 @@ campoBusqueda.addEventListener(
 
             /* -------------------------------------
                SIN RESULTADOS
-            ------------------------------------- */
+               ------------------------------------- */
 
             if(!resultados.length) {
 
@@ -615,7 +701,7 @@ campoBusqueda.addEventListener(
 
             /* -------------------------------------
                MOSTRAR RESULTADOS
-            ------------------------------------- */
+               ------------------------------------- */
 
             for(
                 const resultado of resultados
@@ -646,7 +732,7 @@ campoBusqueda.addEventListener(
 
                 /* -------------------------------
                    SELECCIONAR RESULTADO
-                ------------------------------- */
+                   ------------------------------- */
 
                 elemento.addEventListener(
                     "click",
@@ -720,7 +806,9 @@ visorBuscador.addEventListener(
     function(evento) {
 
         if(evento.target === visorBuscador) {
+
             cerrarBuscador();
+
         }
 
     }
@@ -739,20 +827,27 @@ document.getElementById("botonAleatorio")
             try {
 
                 if(!window.LEEPALJSON) {
+
                     throw new Error(
                         "LEEPALJSON no está disponible."
                     );
+
                 }
 
+
                 if(!window.CARGACONT) {
+
                     throw new Error(
                         "CARGACONT no está disponible."
                     );
+
                 }
+
 
                 document.getElementById("estado")
                     .innerHTML =
                     "Cargando paleoficha aleatoria...";
+
 
                 await window.LEEPALJSON.cargar();
 
@@ -788,6 +883,7 @@ document.addEventListener(
 
             }
 
+
             if(!window.CARGACONT) {
 
                 throw new Error(
@@ -795,6 +891,7 @@ document.addEventListener(
                 );
 
             }
+
 
             await window.LEEPALJSON.cargar();
 
@@ -811,7 +908,5 @@ document.addEventListener(
     }
 );
 
-</script>
-
-</body>
+</script></body>
 </html>
