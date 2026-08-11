@@ -2,7 +2,7 @@
 <head><meta charset="UTF-8"><meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>PalEntropía — Test Generador</title><style>
+<title>PalEntropía — Test Generador Aleatorio</title><style>
 
     body {
         margin: 0;
@@ -78,7 +78,7 @@ content="width=device-width, initial-scale=1.0">
 
     }
 
-</style></head><body><div class="ficha"><h1>PalEntropía — Test Generador</h1>
+</style></head><body><div class="ficha"><h1>PalEntropía — Test Generador Aleatorio</h1>
 
 <div id="estado">
     Cargando contenedor...
@@ -237,7 +237,7 @@ document.addEventListener(
                 "estado"
             ).innerHTML =
                 '<span class="ok">' +
-                "✓ CONTENEDOR COMPLETO RECIBIDO — FICHA " +
+                "✓ CONTENEDOR ALEATORIO RECIBIDO — FICHA " +
                 ficha.j1 +
                 " CARGADA" +
                 "</span>";
@@ -248,7 +248,7 @@ document.addEventListener(
             );
 
             console.log(
-                "PalEntropía — TEST GENERADOR"
+                "PalEntropía — TEST GENERADOR ALEATORIO"
             );
 
             console.log(
@@ -386,7 +386,7 @@ function mostrarError(error) {
 
 
 /* =====================================================
-   INICIAR PRUEBA
+   INICIAR PRUEBA ALEATORIA
 ===================================================== */
 
 document.addEventListener(
@@ -437,12 +437,10 @@ document.addEventListener(
             /* -----------------------------------------
                SEGUNDO:
 
-               Solicitar ficha 001_01
+               Cargar una ficha ALEATORIA
             ----------------------------------------- */
 
-            await window.CARGACONT.cargar(
-                "001_01"
-            );
+            await window.CARGACONT.aleatorio();
 
         }
 
