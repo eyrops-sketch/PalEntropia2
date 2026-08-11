@@ -1,1 +1,395 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Generador — Prueba de LEEPALMEDIO</title><style>
+
+body{
+    font-family:Arial,sans-serif;
+    margin:20px;
+}
+
+input{
+    width:160px;
+    padding:10px;
+    margin:3px;
+    text-align:center;
+    font-size:18px;
+}
+
+button{
+    padding:10px 20px;
+    margin-top:15px;
+    cursor:pointer;
+}
+
+#resultado{
+    margin-top:25px;
+}
+
+.error{
+    color:#b00020;
+    font-weight:bold;
+}
+
+.bloque{
+    margin-top:25px;
+    padding-bottom:10px;
+}
+
+.codigo{
+    font-weight:bold;
+}
+
+</style></head><body><h1>Generador — Prueba de LEEPALMEDIO</h1><!-- =====================================================
+     MEDIO ECOLÓGICO — j10
+===================================================== --><div class="bloque"><h2>Medio ecológico — j10</h2><input
+id="j10"
+type="text"
+maxlength="12"
+inputmode="numeric"
+placeholder="000000000000">
+
+</div><button id="buscar">
+Buscar
+</button><div id="resultado"></div><!-- =====================================================
+     PALMEDIO
+
+     El catálogo está en:
+
+     palmedio.js
+===================================================== --><script src="palmedio.js"></script><!-- =====================================================
+     LEEPALMEDIO
+
+     La función está en:
+
+     leepalmedio.js
+===================================================== --><script src="leepalmedio.js"></script><script>
+
+/*
+========================================================
+PRUEBA LEEPALMEDIO
+========================================================
+
+j10 = Medio ecológico compuesto.
+
+Estructura:
+
+XXXXXXXXXXXX
+
+Dividido en cuatro bloques:
+
+SM | L | ES | C
+
+Ejemplo:
+
+002002004002
+
+↓
+
+SM002
+L002
+ES004
+C002
+
+La función LEEPALMEDIO:
+
+1. Valida j10.
+2. Descompone los cuatro bloques.
+3. Consulta PALMEDIO.js.
+4. Devuelve la información de:
+
+   SM
+   L
+   ES
+   C
+
+========================================================
+*/
+
+
+/* ======================================================
+   COMPROBAR LEEPALMEDIO
+====================================================== */
+
+function comprobarLEEPALMEDIO(){
+
+    if(
+        typeof window.LEEPALMEDIO !== "object" ||
+        window.LEEPALMEDIO === null
+    ){
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+/* ======================================================
+   MOSTRAR RESULTADO
+====================================================== */
+
+function mostrarResultado(datos){
+
+    const resultado =
+        document.getElementById(
+            "resultado"
+        );
+
+
+    let html = "";
+
+
+    html += "<hr>";
+
+    html +=
+        "<h2>Resultado</h2>";
+
+
+    /*
+    j10 original
+    */
+
+    html +=
+        "<p>" +
+        "<strong>j10:</strong> " +
+        datos.j10 +
+        "</p>";
+
+
+    /*
+    MEDIO GENERAL
+    */
+
+    html +=
+        "<div class='bloque'>";
+
+    html +=
+        "<h3>Medio general</h3>";
+
+    html +=
+        "<p class='codigo'>" +
+        datos.SM.codigo +
+        "</p>";
+
+    html +=
+        "<p><strong>" +
+        datos.SM.nombre +
+        "</strong></p>";
+
+    html +=
+        "<p>" +
+        datos.SM.descripcion +
+        "</p>";
+
+    html +=
+        "</div>";
+
+
+    /*
+    LOCALIZACIÓN
+    */
+
+    html +=
+        "<div class='bloque'>";
+
+    html +=
+        "<h3>Localización ecológica</h3>";
+
+    html +=
+        "<p class='codigo'>" +
+        datos.L.codigo +
+        "</p>";
+
+    html +=
+        "<p><strong>" +
+        datos.L.nombre +
+        "</strong></p>";
+
+    html +=
+        "<p>" +
+        datos.L.descripcion +
+        "</p>";
+
+    html +=
+        "</div>";
+
+
+    /*
+    ESTRATO
+    */
+
+    html +=
+        "<div class='bloque'>";
+
+    html +=
+        "<h3>Estrato ecológico</h3>";
+
+    html +=
+        "<p class='codigo'>" +
+        datos.ES.codigo +
+        "</p>";
+
+    html +=
+        "<p><strong>" +
+        datos.ES.nombre +
+        "</strong></p>";
+
+    html +=
+        "<p>" +
+        datos.ES.descripcion +
+        "</p>";
+
+    html +=
+        "</div>";
+
+
+    /*
+    COMPORTAMIENTO
+    */
+
+    html +=
+        "<div class='bloque'>";
+
+    html +=
+        "<h3>Comportamiento espacial</h3>";
+
+    html +=
+        "<p class='codigo'>" +
+        datos.C.codigo +
+        "</p>";
+
+    html +=
+        "<p><strong>" +
+        datos.C.nombre +
+        "</strong></p>";
+
+    html +=
+        "<p>" +
+        datos.C.descripcion +
+        "</p>";
+
+    html +=
+        "</div>";
+
+
+    resultado.innerHTML =
+        html;
+
+}
+
+
+/* ======================================================
+   BOTÓN BUSCAR
+====================================================== */
+
+document
+.getElementById("buscar")
+.addEventListener(
+    "click",
+    function(){
+
+        const resultado =
+            document.getElementById(
+                "resultado"
+            );
+
+
+        resultado.innerHTML = "";
+
+
+        /*
+        Comprobar que LEEPALMEDIO
+        está cargado.
+        */
+
+        if(!comprobarLEEPALMEDIO()){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: leepalmedio.js no se ha ' +
+                'cargado correctamente.' +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        Leer j10.
+        */
+
+        const campo =
+            document.getElementById(
+                "j10"
+            );
+
+
+        let j10 =
+            campo.value.trim();
+
+
+        /*
+        Campo vacío.
+        */
+
+        if(j10 === ""){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: introduce un código j10.' +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        Decodificar mediante
+        LEEPALMEDIO.
+        */
+
+        const datos =
+            window.LEEPALMEDIO.decodificar(
+                j10
+            );
+
+
+        /*
+        Error de validación
+        o consulta.
+        */
+
+        if(!datos.valido){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: ' +
+                datos.mensaje +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        Mostrar resultado.
+        */
+
+        mostrarResultado(
+            datos
+        );
+
+    }
+);
+
+</script></body></html>
+
+
+
 
