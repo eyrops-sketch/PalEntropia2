@@ -549,6 +549,170 @@ document.getElementById("cerrarBuscador")
         cerrarBuscador
     );
 
+     /* =====================================================
+   BÚSQUEDA EN TIEMPO REAL
+   ===================================================== */
+
+const campoBusqueda =
+    document.getElementById("buscarNombre");
+
+const listaResultados =
+    document.getElementById("listaResultados");
+
+
+campoBusqueda.addEventListener(
+    "input",
+    async function() {
+
+        const texto =
+            this.value.trim();
+
+
+        /* -----------------------------------------
+           LIMPIAR
+        ----------------------------------------- */
+
+        if(!texto) {
+
+            listaResultados.innerHTML = "";
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------
+           BUSCAR
+        ----------------------------------------- */
+
+        try {
+
+            const resultados =
+                await PALBUSCADOR.buscar(
+                    texto
+                );
+
+
+            listaResultados.innerHTML = "";
+
+
+            /* -------------------------------------
+               SIN RESULTADOS
+            ------------------------------------- */
+
+            if(!resultados.length) {
+
+                listaResultados.innerHTML =
+                    '<div class="sinResultados">' +
+                    'No se encontraron paleofichas' +
+                    '</div>';
+
+                return;
+
+            }
+
+
+            /* -------------------------------------
+               MOSTRAR RESULTADOS
+            ------------------------------------- */
+
+            for(
+                const resultado of resultados
+            ) {
+
+                const elemento =
+                    document.createElement("button");
+
+
+                elemento.type =
+                    "button";
+
+
+                elemento.className =
+                    "resultadoBuscador";
+
+
+                elemento.innerHTML =
+
+                    '<span class="resultadoCodigo">' +
+                    resultado.codigo +
+                    '</span>' +
+
+                    '<span class="resultadoNombre">' +
+                    resultado.nombre +
+                    '</span>';
+
+
+                /* -------------------------------
+                   SELECCIONAR RESULTADO
+                ------------------------------- */
+
+                elemento.addEventListener(
+                    "click",
+                    async function() {
+
+                        try {
+
+                            listaResultados.innerHTML =
+                                '<div class="sinResultados">' +
+                                'Cargando paleoficha...' +
+                                '</div>';
+
+
+                            await PALBUSCADOR.cargarResultado(
+                                resultado
+                            );
+
+
+                            cerrarBuscador();
+
+                        }
+
+                        catch(error) {
+
+                            console.error(
+                                "ERROR BUSCADOR:",
+                                error
+                            );
+
+
+                            listaResultados.innerHTML =
+                                '<div class="sinResultados">' +
+                                'Error al cargar la paleoficha' +
+                                '</div>';
+
+                        }
+
+                    }
+                );
+
+
+                listaResultados.appendChild(
+                    elemento
+                );
+
+            }
+
+        }
+
+        catch(error) {
+
+            console.error(
+                "ERROR PALBUSCADOR:",
+                error
+            );
+
+
+            listaResultados.innerHTML =
+                '<div class="sinResultados">' +
+                'Error en el buscador' +
+                '</div>';
+
+        }
+
+    }
+);
+
 
 visorBuscador.addEventListener(
     "click",
