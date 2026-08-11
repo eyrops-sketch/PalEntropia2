@@ -1,3 +1,5 @@
+Archivo completo "test_cargacont.html":
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -187,24 +189,6 @@
 
         }
 
-        .resumen {
-
-            margin-top: 20px;
-
-            padding: 14px;
-
-            border: 1px solid #444;
-
-            border-radius: 8px;
-
-            background: #1b1b1b;
-
-            font-size: 14px;
-
-            line-height: 1.6;
-
-        }
-
     </style>
 
 </head>
@@ -226,29 +210,22 @@
     <div id="contenedor"></div>
 
 
-    <div
-        id="resumen"
-        class="resumen"
-    >
-    </div>
-
-
     <!-- =================================================
-         LEEPALJSON
+         LECTOR CSV
          ================================================= -->
 
-    <script src="herramientas/generador/LEEPALJSON.js"></script>
+    <script src="LEEPALJSON.js"></script>
 
 
     <!-- =================================================
          BUSCARUTA
          ================================================= -->
 
-    <script src="herramientas/generador/buscaruta.js"></script>
+    <script src="buscaruta.js"></script>
 
 
     <!-- =================================================
-         PRUEBA
+         PRUEBA DE INTEGRACIÓN
          ================================================= -->
 
     <script>
@@ -266,39 +243,53 @@
                     "estado"
                 );
 
+
             const contenedor =
                 document.getElementById(
                     "contenedor"
-                );
-
-            const resumen =
-                document.getElementById(
-                    "resumen"
                 );
 
 
             try {
 
                 /* =========================================
-                   1. PREPARAR LECTOR DEL CSV
+                   COMPROBACIÓN 1
                    ========================================= */
 
-                estado.innerHTML =
+                if (
+                    !window.LEEPALJSON
+                ) {
+
+                    throw new Error(
+                        "LEEPALJSON.js no está cargado."
+                    );
+
+                }
+
+
+                if (
+                    !window.BUSCARUTA
+                ) {
+
+                    throw new Error(
+                        "buscaruta.js no está cargado."
+                    );
+
+                }
+
+
+                estado.textContent =
                     "Cargando master.csv...";
 
 
-                /*
-                LEEPALJSON intenta automáticamente
-                cargar master.csv.
-
-                Aquí utilizamos explícitamente la ruta
-                del master del Generador.
-                */
+                /* =========================================
+                   CARGAR CSV
+                   ========================================= */
 
                 const datos =
 
                     await window.LEEPALJSON.cargar(
-                        "herramientas/generador/master.csv"
+                        "master.csv"
                     );
 
 
@@ -315,84 +306,47 @@
 
                 estado.innerHTML =
 
-                    "CSV cargado correctamente. " +
+                    '<span class="ok">' +
+
+                    "✓ CSV cargado: " +
 
                     datos.length +
 
-                    " registros encontrados. " +
+                    " registros" +
 
-                    "Comprobando imágenes...";
+                    "</span>" +
 
+                    "<br><br>" +
 
-                /* =========================================
-                   2. PREPARAR PALEOFICHAS.JSON
-                      PARA BUSCARUTA — CASO 2
-                   ========================================= */
-
-                /*
-                BUSCARUTA v2.0 LTS espera
-                paleofichas.json relativo a la página.
-
-                Como esta prueba está en la raíz,
-                preparamos su caché directamente con
-                el JSON real del Generador.
-
-                NO modificamos buscaruta.js.
-                */
-
-                const respuestaJSON =
-
-                    await fetch(
-                        "herramientas/generador/paleofichas.json",
-                        {
-                            cache: "default"
-                        }
-                    );
-
-
-                if (
-                    !respuestaJSON.ok
-                ) {
-
-                    throw new Error(
-                        "No se pudo cargar " +
-                        "herramientas/generador/paleofichas.json"
-                    );
-
-                }
-
-
-                const datosJSON =
-
-                    await respuestaJSON.json();
-
-
-                window.BUSCARUTA._datosJSON =
-                    datosJSON;
+                    "Comenzando prueba de BUSCARUTA...";
 
 
                 /* =========================================
-                   3. RECORRER TODOS LOS REGISTROS
+                   PROBAR TODOS LOS REGISTROS
                    ========================================= */
 
-                let totalImagenes = 0;
+                let total = 0;
 
-                let imagenesOK = 0;
+                let correctas = 0;
 
-                let imagenesFaltantes = 0;
+                let faltantes = 0;
 
 
                 for (
-                    const registro of datos
+                    const registro
+                    of datos
                 ) {
 
                     const j1 =
                         registro.codigo;
 
 
-                    /* -------------------------------------
-                       CONTENEDOR DEL REGISTRO
-                       ------------------------------------- */
+                    const resultado =
+
+                        await window.BUSCARUTA.buscar(
+                            j1
+                        );
+
 
                     const bloque =
                         document.createElement(
@@ -405,20 +359,12 @@
 
 
                     /* -------------------------------------
-                       CABECERA
+                       DATOS
                        ------------------------------------- */
 
-                    const cabecera =
-                        document.createElement(
-                            "div"
-                        );
+                    bloque.innerHTML =
 
-
-                    cabecera.className =
-                        "cabecera";
-
-
-                    cabecera.innerHTML =
+                        '<div class="cabecera">' +
 
                         '<div class="j1">' +
 
@@ -426,7 +372,7 @@
                             j1
                         ) +
 
-                        '</div>' +
+                        "</div>" +
 
                         '<div class="nombre">' +
 
@@ -434,41 +380,27 @@
                             registro.nombre
                         ) +
 
-                        '</div>' +
+                        "</div>" +
 
                         '<div class="datos">' +
 
-                        'dieta: ' +
+                        "Dieta: " +
 
                         escaparHTML(
                             registro.dieta
                         ) +
 
-                        '<br>' +
+                        "<br>" +
 
-                        'anatomia: ' +
+                        "Anatomía: " +
 
                         escaparHTML(
                             registro.anatomia
                         ) +
 
-                        '</div>';
+                        "</div>" +
 
-
-                    bloque.appendChild(
-                        cabecera
-                    );
-
-
-                    /* -------------------------------------
-                       BUSCARUTA
-                       ------------------------------------- */
-
-                    const resultado =
-
-                        await window.BUSCARUTA.buscar(
-                            j1
-                        );
+                        "</div>";
 
 
                     /* -------------------------------------
@@ -490,7 +422,7 @@
                         of resultado.imagenes
                     ) {
 
-                        totalImagenes++;
+                        total++;
 
 
                         const caja =
@@ -527,47 +459,46 @@
                             "ok"
                         ) {
 
-                            imagenesOK++;
+                            correctas++;
 
 
-                            const elemento =
+                            const img =
                                 document.createElement(
                                     "img"
                                 );
 
 
-                            elemento.src =
+                            img.src =
                                 imagen.ruta;
 
 
-                            elemento.alt =
-
+                            img.alt =
                                 j1 +
                                 " " +
                                 imagen.tipo;
 
 
                             caja.appendChild(
-                                elemento
+                                img
                             );
 
 
-                            const estadoImagen =
+                            const ok =
                                 document.createElement(
                                     "div"
                                 );
 
 
-                            estadoImagen.className =
+                            ok.className =
                                 "ok";
 
 
-                            estadoImagen.textContent =
+                            ok.textContent =
                                 "✓ Imagen cargada";
 
 
                             caja.appendChild(
-                                estadoImagen
+                                ok
                             );
 
 
@@ -593,25 +524,25 @@
 
                         else {
 
-                            imagenesFaltantes++;
+                            faltantes++;
 
 
-                            const estadoImagen =
+                            const error =
                                 document.createElement(
                                     "div"
                                 );
 
 
-                            estadoImagen.className =
+                            error.className =
                                 "error";
 
 
-                            estadoImagen.textContent =
+                            error.textContent =
                                 "Imagen no subida";
 
 
                             caja.appendChild(
-                                estadoImagen
+                                error
                             );
 
                         }
@@ -630,27 +561,28 @@
 
 
                     /* -------------------------------------
-                       INFORMACIÓN DEL CASO
+                       CASO BUSCARUTA
                        ------------------------------------- */
 
-                    const informacion =
+                    const caso =
                         document.createElement(
                             "div"
                         );
 
 
-                    informacion.className =
+                    caso.className =
                         "datos";
 
 
-                    informacion.textContent =
+                    caso.textContent =
 
-                        "BUSCARUTA → " +
+                        "BUSCARUTA: " +
+
                         resultado.caso;
 
 
                     bloque.appendChild(
-                        informacion
+                        caso
                     );
 
 
@@ -662,7 +594,7 @@
 
 
                 /* =========================================
-                   4. RESUMEN
+                   RESULTADO FINAL
                    ========================================= */
 
                 estado.innerHTML =
@@ -671,14 +603,11 @@
 
                     "✓ PRUEBA COMPLETADA" +
 
-                    "</span>";
+                    "</span>" +
 
+                    "<br><br>" +
 
-                resumen.innerHTML =
-
-                    "<strong>Resultado</strong><br><br>" +
-
-                    "Registros CSV: " +
+                    "Registros: " +
 
                     datos.length +
 
@@ -686,27 +615,27 @@
 
                     "Imágenes comprobadas: " +
 
-                    totalImagenes +
+                    total +
 
                     "<br>" +
 
                     "Imágenes cargadas: " +
 
-                    imagenesOK +
+                    correctas +
 
                     "<br>" +
 
                     "Imágenes no subidas: " +
 
-                    imagenesFaltantes;
+                    faltantes;
 
 
             }
 
-
             catch (error) {
 
                 console.error(
+                    "ERROR TEST CARGACONT:",
                     error
                 );
 
@@ -725,27 +654,14 @@
                         error.message
                     );
 
-
-                resumen.innerHTML =
-
-                    '<span class="error">' +
-
-                    "La prueba se ha detenido. " +
-
-                    "Revisa la consola del navegador."
-
-                    +
-
-                    "</span>";
-
             }
 
         }
 
 
-        /* =================================================
+        /* =============================================
            ESCAPAR HTML
-           ================================================= */
+           ============================================= */
 
         function escaparHTML(
             valor
