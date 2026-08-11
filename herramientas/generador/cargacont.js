@@ -1,6 +1,6 @@
 /* ========================================================
    PalEntropía
-   cargacont.js v1.3 LTS
+   cargacont.js v1.4 LTS
 
    COMPUERTA DEL CONTENEDOR
 
@@ -9,7 +9,8 @@
    - Carga aleatoriamente un j1
    - Obtiene datos finales desde paleofichas.json
    - Obtiene imágenes mediante BUSCARUTA
-   - Convierte las rutas de imágenes en URL absolutas
+   - Convierte correctamente las rutas relativas
+     en URL absolutas
    - Entrega al generador un registro completamente preparado
 
    SALIDA:
@@ -395,16 +396,33 @@ window.CARGACONT = {
     /* ====================================================
        CONVERTIR RUTA EN URL ABSOLUTA
 
-       Ejemplo recibido:
+       IMPORTANTE:
 
-       paleofichas/vol003/003_05_anomalocaris/
-       Anomalocaris_i3.png
+       BUSCARUTA devuelve rutas relativas respecto
+       a la ubicación del generador.
 
-       Resultado:
+       Ejemplos:
 
-       https://palentropia.es/paleofichas/vol003/
-       003_05_anomalocaris/Anomalocaris_i3.png
+       ../multimedia/001_075/004_14_i0.jpg
 
+       → https://palentropia.es/
+         herramientas/multimedia/001_075/004_14_i0.jpg
+
+
+       ../multimedia/new/006_01_i0.jpg
+
+       → https://palentropia.es/
+         herramientas/multimedia/new/006_01_i0.jpg
+
+
+       ../../paleofichas/vol001/...
+
+       → https://palentropia.es/
+         paleofichas/vol001/...
+
+
+       NO se eliminan simplemente los ../.
+       Se resuelven correctamente.
     ==================================================== */
 
     convertirRuta(ruta){
@@ -418,7 +436,7 @@ window.CARGACONT = {
         }
 
 
-        let texto =
+        const texto =
             String(ruta).trim();
 
 
@@ -445,51 +463,49 @@ window.CARGACONT = {
 
 
         /* --------------------------------------------
-           ELIMINAR ./ INICIAL
+           RUTAS ABSOLUTAS DEL SITIO
         -------------------------------------------- */
 
-        texto =
-            texto.replace(
-                /^\.\/+/,
-                ""
-            );
+        if(
+            texto.startsWith("/")
+        ){
+
+            return new URL(
+                texto,
+                this.dominio
+            ).href;
+
+        }
 
 
         /* --------------------------------------------
-           ELIMINAR ../ INICIAL
+           RESOLVER RUTA RELATIVA
 
-           Se eliminan todos los niveles.
+           Las rutas que entrega BUSCARUTA están
+           construidas desde la ubicación:
+
+           /herramientas/generador/
+
+           Por tanto usamos esa ubicación como
+           base real.
+
+           Esto permite resolver correctamente:
+
+           ../multimedia/
+           ../../paleofichas/
         -------------------------------------------- */
 
-        texto =
-            texto.replace(
-                /^(?:\.\.\/)+/,
-                ""
+        const base =
+            new URL(
+                "herramientas/generador/",
+                this.dominio
             );
 
 
-        /* --------------------------------------------
-           ELIMINAR / INICIAL
-        -------------------------------------------- */
-
-        texto =
-            texto.replace(
-                /^\/+/,
-                ""
-            );
-
-
-        /* --------------------------------------------
-           CONSTRUIR URL ABSOLUTA
-        -------------------------------------------- */
-
-        return (
-
-            this.dominio +
-
-            texto
-
-        );
+        return new URL(
+            texto,
+            base
+        ).href;
 
     },
 
@@ -697,9 +713,6 @@ window.CARGACONT = {
 
         /* --------------------------------------------
            REGISTRO FINAL
-
-           Este es el objeto que recibe
-           directamente el generador.
         -------------------------------------------- */
 
         const resultado = {
@@ -762,7 +775,7 @@ window.CARGACONT = {
         );
 
         console.log(
-            "PalEntropía — CARGACONT v1.3 LTS"
+            "PalEntropía — CARGACONT v1.4 LTS"
         );
 
         console.log(
@@ -886,5 +899,10 @@ window.CARGACONT = {
 
 
 /* ========================================================
-   FIN CARGACONT v1.3 LTS
+   FIN CARGACONT v1.4 LTS
 ======================================================== */
+
+
+
+
+
