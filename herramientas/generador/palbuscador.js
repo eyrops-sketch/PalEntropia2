@@ -1,7 +1,7 @@
 /*
 =========================================================
 PalEntropía
-palbuscador.js v3.0 LTS
+palbuscador.js v3.1 LTS
 
 MOTOR DE BÚSQUEDA DEL GENERADOR
 =========================================================
@@ -30,6 +30,7 @@ BUSCA POR:
 - Código (j1)
 - Nombre (j2)
 
+
 FUENTES:
 
 master.csv
@@ -38,6 +39,10 @@ master.csv
 paleofichas.json
     → nombre / j2
 
+PALVIDEO.js
+    → enlace de vídeo mediante j1
+
+
 NO DEPENDE DE:
 
 - PALDB
@@ -45,6 +50,7 @@ NO DEPENDE DE:
 - PALGEO
 - PALTAXON
 - variable global paleofichas
+
 
 =========================================================
 
@@ -70,7 +76,7 @@ const PALBUSCADOR = {
        VERSIÓN
     ===================================================== */
 
-    version: "3.0 LTS",
+    version: "3.1 LTS",
 
 
     /* =====================================================
@@ -370,6 +376,120 @@ const PALBUSCADOR = {
 
 
         return mapa;
+
+    },
+
+
+    /* =====================================================
+       OBTENER VÍDEO
+
+       Consulta PALVIDEO mediante j1.
+
+       Devuelve:
+
+       URL de YouTube
+       o
+       null
+
+       PALVIDEO es la única fuente de vídeos.
+    ===================================================== */
+
+    obtenerVideo(codigo) {
+
+        const j1 =
+            this.normalizarCodigo(
+                codigo
+            );
+
+
+        if (
+            !j1
+        ) {
+
+            return null;
+
+        }
+
+
+        /* ---------------------------------------------
+           PALVIDEO NO DISPONIBLE
+        --------------------------------------------- */
+
+        if (
+            !window.PALVIDEO ||
+            typeof window.PALVIDEO !==
+            "object"
+        ) {
+
+            return null;
+
+        }
+
+
+        /* ---------------------------------------------
+           BUSCAR REGISTRO
+        --------------------------------------------- */
+
+        const registro =
+            window.PALVIDEO[j1];
+
+
+        if (
+            !registro ||
+            typeof registro !==
+            "object"
+        ) {
+
+            return null;
+
+        }
+
+
+        /* ---------------------------------------------
+           OBTENER ENLACE
+        --------------------------------------------- */
+
+        const video =
+            registro.video;
+
+
+        if (
+            video === undefined ||
+            video === null
+        ) {
+
+            return null;
+
+        }
+
+
+        const url =
+            String(video).trim();
+
+
+        if (
+            !url
+        ) {
+
+            return null;
+
+        }
+
+
+        return url;
+
+    },
+
+
+    /* =====================================================
+       COMPROBAR SI EXISTE VÍDEO
+    ===================================================== */
+
+    tieneVideo(codigo) {
+
+        return !!this.obtenerVideo(
+            codigo
+        );
 
     },
 
@@ -988,6 +1108,13 @@ const PALBUSCADOR = {
             jsonCargado:
                 !!this._datosJSON,
 
+            palvideoDisponible:
+                !!(
+                    window.PALVIDEO &&
+                    typeof window.PALVIDEO ===
+                    "object"
+                ),
+
             version:
                 this.version
 
@@ -1007,5 +1134,11 @@ window.PALBUSCADOR =
 
 
 /* =========================================================
-   FIN PALBUSCADOR.js v3.0 LTS
+   FIN PALBUSCADOR.js v3.1 LTS
 ========================================================= */
+
+
+
+
+
+
