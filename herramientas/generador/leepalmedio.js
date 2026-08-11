@@ -170,41 +170,24 @@ descomponer:function(j10){
 consultar:function(prefijo,codigo){
 
     /*
-    000 = posición no aplicable.
-    */
-
-    if(codigo === "000"){
-
-        return {
-
-            valido:true,
-
-            vacio:true,
-
-            codigo:
-                prefijo + codigo,
-
-            nombre:"No aplicable",
-
-            categoria:
-                "No aplicable",
-
-            descripcion:
-                "Medio no definido."
-
-        };
-
-    }
-
-
-    /*
     Construir referencia:
 
     SM + 002 → SM002
     L  + 002 → L002
     ES + 004 → ES004
     C  + 002 → C002
+
+    También funciona con:
+
+    SM000
+    L000
+    ES000
+    C000
+
+    Los códigos 000 se consultan
+    directamente en PALMEDIO.js.
     */
+
 
     const referencia =
         prefijo + codigo;
@@ -213,6 +196,11 @@ consultar:function(prefijo,codigo){
     const dato =
         window.PALMEDIO[referencia];
 
+
+    /*
+    Comprobar que la referencia
+    existe en PALMEDIO.
+    */
 
     if(!dato){
 
@@ -236,7 +224,10 @@ consultar:function(prefijo,codigo){
 
         valido:true,
 
-        vacio:false,
+        error:false,
+
+        vacio:
+            codigo === "000",
 
         codigo:
             dato.codigo,
@@ -464,9 +455,3 @@ decodificar:function(j10){
 }
 
 };
-
-
-
-
-
-
