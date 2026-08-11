@@ -1,1 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
 
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>PalEntropía — Test Generador</title>
+
+<style>
+
+    body {
+        margin: 0;
+        padding: 20px;
+        background: #111;
+        color: #eee;
+        font-family: Arial, sans-serif;
+    }
+
+    h1 {
+        margin-top: 0;
+    }
+
+    #estado {
+        padding: 12px;
+        margin-bottom: 20px;
+        border-radius: 6px;
+        background: #222;
+    }
+
+    .ok {
+        color: #7CFF7C;
+    }
+
+    .error {
+        color: #FF7777;
+    }
+
+    .ficha {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+        background: #181818;
+        border-radius: 10px;
+    }
+
+    .datos {
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .imagenes {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .imagen {
+        background: #222;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .imagen img {
+        display: block;
+        width: 100%;
+        height: 220px;
+        object-fit: contain;
+        background: #000;
+        border-radius: 5px;
+    }
+
+    .imagen p {
+        font-size: 13px;
+        word-break: break-all;
+    }
+
+    .imagen.error {
+        color: #ff7777;
+    }
+
+    @media (max-width: 700px) {
+
+        .imagenes {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="ficha">
+
+    <h1>PalEntropía — Test Generador</h1>
+
+    <div id="estado">
+        Cargando contenedor...
+    </div>
+
+
+    <div id="contenido" style="display:none;">
+
+        <div class="datos">
+
+            <div>
+                <strong>codigo:</strong>
+                <span id="codigo"></span>
+            </div>
+
+            <div>
+                <strong>nombre:</strong>
+                <span id="nombre"></span>
+            </div>
+
+            <div>
+                <strong>dieta:</strong>
+                <span id="dieta"></span>
+            </div>
+
+            <div>
+                <strong>anatomia:</strong>
+                <span id="anatomia"></span>
+            </div>
+
+        </div>
+
+
+        <h2>Imágenes</h2>
+
+        <div class="imagenes">
+
+            <div class="imagen">
+                <strong>i0</strong>
+                <img id="imagen_i0"
+                     alt="Imagen i0">
+                <p id="ruta_i0"></p>
+            </div>
+
+            <div class="imagen">
+                <strong>i2</strong>
+                <img id="imagen_i2"
+                     alt="Imagen i2">
+                <p id="ruta_i2"></p>
+            </div>
+
+            <div class="imagen">
+                <strong>i3</strong>
+                <img id="imagen_i3"
+                     alt="Imagen i3">
+                <p id="ruta_i3"></p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     LECTOR DEL CONTENEDOR
+===================================================== -->
+
+<script src="leepaljson.js"></script>
+
+
+<script>
+
+document.addEventListener(
+    "palentropia:datos-cargados",
+    function(evento) {
+
+        try {
+
+            const datos = evento.detail;
+
+
+            /* =========================================
+               BUSCAR FICHA DE PRUEBA
+            ========================================= */
+
+            const ficha = datos.find(
+                registro => registro.codigo === "001_01"
+            );
+
+
+            if (!ficha) {
+
+                throw new Error(
+                    "No se encontró la ficha 001_01 en el contenedor."
+                );
+
+            }
+
+
+            /* =========================================
+               DATOS
+            ========================================= */
+
+            document.getElementById("codigo").textContent =
+                ficha.codigo;
+
+            document.getElementById("nombre").textContent =
+                ficha.nombre;
+
+            document.getElementById("dieta").textContent =
+                ficha.dieta;
+
+            document.getElementById("anatomia").textContent =
+                ficha.anatomia;
+
+
+            /* =========================================
+               DATOS PARA RUTA
+               -----------------------------------------
+               Ejemplo:
+               001_01
+               Gastornis
+
+               →
+               ../../paleofichas/vol001/
+               001_01_gastornis/
+               Gastornis_i0.png
+            ========================================= */
+
+            const codigo = ficha.codigo;
+            const nombre = ficha.nombre;
+
+            const volumen =
+                codigo.substring(0, 3);
+
+            const nombreCarpeta =
+                nombre
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9]+/g, "_")
+                    .replace(/^_+|_+$/g, "");
+
+
+            const carpeta =
+                codigo.toLowerCase() +
+                "_" +
+                nombreCarpeta;
+
+
+            const base =
+                "../../paleofichas/vol" +
+                volumen +
+                "/" +
+                carpeta +
+                "/" +
+                nombre;
+
+
+            /* =========================================
+               RUTAS
+            ========================================= */
+
+            const rutas = {
+
+                i0: base + "_i0.png",
+
+                i2: base + "_i2.png",
+
+                i3: base + "_i3.png"
+
+            };
+
+
+            /* =========================================
+               FUNCIÓN DE PRUEBA DE IMAGEN
+            ========================================= */
+
+            function cargarImagen(
+                idImagen,
+                idRuta,
+                ruta
+            ) {
+
+                const imagen =
+                    document.getElementById(idImagen);
+
+                const textoRuta =
+                    document.getElementById(idRuta);
+
+
+                textoRuta.textContent = ruta;
+
+                imagen.src = ruta;
+
+
+                imagen.onload = function() {
+
+                    textoRuta.innerHTML =
+                        ruta +
+                        "<br><strong>✓ Imagen encontrada</strong>";
+
+                };
+
+
+                imagen.onerror = function() {
+
+                    textoRuta.innerHTML =
+                        ruta +
+                        "<br><strong>✗ Imagen no encontrada</strong>";
+
+                    imagen.style.display = "none";
+
+                };
+
+            }
+
+
+            /* =========================================
+               CARGAR LAS TRES IMÁGENES
+            ========================================= */
+
+            cargarImagen(
+                "imagen_i0",
+                "ruta_i0",
+                rutas.i0
+            );
+
+
+            cargarImagen(
+                "imagen_i2",
+                "ruta_i2",
+                rutas.i2
+            );
+
+
+            cargarImagen(
+                "imagen_i3",
+                "ruta_i3",
+                rutas.i3
+            );
+
+
+            /* =========================================
+               MOSTRAR RESULTADO
+            ========================================= */
+
+            document.getElementById(
+                "contenido"
+            ).style.display = "block";
+
+
+            document.getElementById(
+                "estado"
+            ).innerHTML =
+                '<span class="ok">' +
+                "✓ CONTENEDOR RECIBIDO — FICHA 001_01 CARGADA" +
+                "</span>";
+
+
+            console.log(
+                "========================================"
+            );
+
+            console.log(
+                "PalEntropía — Test Generador"
+            );
+
+            console.log(
+                "Ficha recibida:",
+                ficha
+            );
+
+            console.log(
+                "Rutas de imágenes:",
+                rutas
+            );
+
+            console.log(
+                "========================================"
+            );
+
+        }
+
+
+        catch(error) {
+
+            console.error(
+                "ERROR TEST GENERADOR:",
+                error
+            );
+
+
+            document.getElementById(
+                "estado"
+            ).innerHTML =
+                '<span class="error">' +
+                "✗ ERROR: " +
+                error.message +
+                "</span>";
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   ERROR DEL LECTOR
+===================================================== */
+
+document.addEventListener(
+    "palentropia:error-carga",
+    function(evento) {
+
+        const error = evento.detail;
+
+        document.getElementById(
+            "estado"
+        ).innerHTML =
+            '<span class="error">' +
+            "✗ ERROR CARGANDO CONTENEDOR: " +
+            error.message +
+            "</span>";
+
+    }
+);
+
+</script>
+
+
+</body>
+</html>
