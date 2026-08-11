@@ -13,6 +13,7 @@
 <link rel="stylesheet"
       href="style.css">
 
+
 <style>
 
 /* =====================================================
@@ -79,6 +80,10 @@
 }
 
 
+/* =====================================================
+   POSICIÓN
+   ===================================================== */
+
 #posicionNavegacion {
 
     min-width: 70px;
@@ -90,6 +95,10 @@
     font-weight: 600;
 
     opacity: 0.8;
+
+    padding: 4px 9px;
+
+    border-radius: 12px;
 
 }
 
@@ -170,19 +179,6 @@
 
 }
 
-
-/* =====================================================
-   ETIQUETA DE POSICIÓN
-   ===================================================== */
-
-#posicionNavegacion {
-
-    padding: 4px 9px;
-
-    border-radius: 12px;
-
-}
-
 </style>
 
 </head>
@@ -214,7 +210,9 @@
     <h1>PalEntropía</h1>
 
     <div id="subtitulo">
+
         Generador de Paleofichas
+
     </div>
 
 </header>
@@ -320,7 +318,6 @@
 
     <div id="titulo"></div>
 
-
     <div id="codigoFicha"></div>
 
 
@@ -347,7 +344,6 @@
 
     <!-- =================================================
          VÍDEO
-         PALVIDEO
          ================================================= -->
 
     <div id="videoFicha"
@@ -375,7 +371,9 @@
         <div class="campoInfo">
 
             <span class="campo">
+
                 Dieta
+
             </span>
 
             <span id="dieta"></span>
@@ -386,7 +384,9 @@
         <div class="campoInfo">
 
             <span class="campo">
+
                 Descripción
+
             </span>
 
             <span id="descripcion"></span>
@@ -422,9 +422,10 @@
     <section id="bloqueEstadisticas"
              style="display:none;">
 
-
         <h2>
+
             Estadísticas
+
         </h2>
 
 
@@ -432,7 +433,6 @@
              class="stats">
 
         </div>
-
 
     </section>
 
@@ -489,7 +489,9 @@
 
 
         <h2>
+
             Explorador de Paleofichas
+
         </h2>
 
 
@@ -533,99 +535,8 @@
 
 <script>
 
+
 let fichaActual = null;
-
-
-/* =====================================================
-   REFERENCIAS NAVEGACIÓN
-   ===================================================== */
-
-const botonPrimero =
-    document.getElementById(
-        "botonPrimero"
-    );
-
-
-const botonAnterior =
-    document.getElementById(
-        "botonAnterior"
-    );
-
-
-const botonSiguiente =
-    document.getElementById(
-        "botonSiguiente"
-    );
-
-
-const botonUltimo =
-    document.getElementById(
-        "botonUltimo"
-    );
-
-
-const posicionNavegacion =
-    document.getElementById(
-        "posicionNavegacion"
-    );
-
-
-/* =====================================================
-   ACTUALIZAR CONTROLES
-   ===================================================== */
-
-function actualizarControlesNavegacion() {
-
-    if(
-        !window.PALNAVEGADOR
-    ) {
-
-        return;
-
-    }
-
-
-    const estado =
-        PALNAVEGADOR.estado();
-
-
-    const total =
-        estado.total || 0;
-
-
-    const posicion =
-        estado.posicion || 0;
-
-
-    posicionNavegacion.textContent =
-
-        total
-
-            ? posicion + " / " + total
-
-            : "— / —";
-
-
-    botonPrimero.disabled =
-        !total ||
-        posicion <= 1;
-
-
-    botonAnterior.disabled =
-        !total ||
-        posicion <= 1;
-
-
-    botonSiguiente.disabled =
-        !total ||
-        posicion >= total;
-
-
-    botonUltimo.disabled =
-        !total ||
-        posicion >= total;
-
-}
 
 
 /* =====================================================
@@ -634,7 +545,7 @@ function actualizarControlesNavegacion() {
 
 document.addEventListener(
     "palentropia:contenedor-cargado",
-    async function(evento) {
+    function(evento) {
 
         try {
 
@@ -656,47 +567,27 @@ document.addEventListener(
 
 
             /* =========================================
-               ACTUALIZAR PUNTERO
-               ========================================= */
-
-            if(
-                window.PALNAVEGADOR &&
-                ficha.j1
-            ) {
-
-                await PALNAVEGADOR.posicionar(
-                    ficha.j1
-                );
-
-            }
-
-
-            /* =========================================
                DATOS
                ========================================= */
 
-            document.getElementById(
-                "titulo"
-            ).textContent =
-                ficha.j2 || "";
+            document.getElementById("titulo")
+                .textContent =
+                    ficha.j2 || "";
 
 
-            document.getElementById(
-                "codigoFicha"
-            ).textContent =
-                ficha.j1 || "";
+            document.getElementById("codigoFicha")
+                .textContent =
+                    ficha.j1 || "";
 
 
-            document.getElementById(
-                "dieta"
-            ).textContent =
-                ficha.j7 || "";
+            document.getElementById("dieta")
+                .textContent =
+                    ficha.j7 || "";
 
 
-            document.getElementById(
-                "descripcion"
-            ).textContent =
-                ficha.j8 || "";
+            document.getElementById("descripcion")
+                .textContent =
+                    ficha.j8 || "";
 
 
             /* =========================================
@@ -734,28 +625,39 @@ document.addEventListener(
                MOSTRAR FICHA
                ========================================= */
 
-            document.getElementById(
-                "ficha"
-            ).style.display =
-                "block";
+            document.getElementById("ficha")
+                .style.display =
+                    "block";
 
 
-            document.getElementById(
-                "estado"
-            ).innerHTML =
+            /* =========================================
+               ACTUALIZAR NAVEGACIÓN
+               ========================================= */
 
-                '<span class="ok">' +
+            if(
+                window.PALNAVEGADOR &&
+                typeof window.PALNAVEGADOR.actualizar ===
+                "function"
+            ) {
 
-                "✓ Ficha " +
+                window.PALNAVEGADOR.actualizar(
+                    ficha.j1
+                );
 
-                (ficha.j1 || "") +
-
-                " cargada" +
-
-                "</span>";
+            }
 
 
-            actualizarControlesNavegacion();
+            /* =========================================
+               ESTADO
+               ========================================= */
+
+            document.getElementById("estado")
+                .innerHTML =
+                    '<span class="ok">' +
+                    "✓ Ficha " +
+                    (ficha.j1 || "") +
+                    " cargada" +
+                    "</span>";
 
 
             console.log(
@@ -779,6 +681,20 @@ document.addEventListener(
 
 /* =====================================================
    ACTUALIZAR VÍDEO
+   =====================================================
+
+   PALVIDEO:
+
+   PALVIDEO = {
+
+       "004_14": {
+           video: "https://youtube.com/shorts/..."
+       }
+
+   };
+
+   El botón solamente aparece cuando existe
+   un enlace válido y no vacío.
    ===================================================== */
 
 function actualizarVideo(j1) {
@@ -805,6 +721,10 @@ function actualizarVideo(j1) {
     }
 
 
+    /* -----------------------------------------
+       ESTADO INICIAL
+       ----------------------------------------- */
+
     contenedorVideo.style.display =
         "none";
 
@@ -812,6 +732,10 @@ function actualizarVideo(j1) {
     botonVideo.href =
         "#";
 
+
+    /* -----------------------------------------
+       COMPROBAR PALVIDEO
+       ----------------------------------------- */
 
     if(
         !window.PALVIDEO ||
@@ -847,6 +771,10 @@ function actualizarVideo(j1) {
         registro.video;
 
 
+    /* -----------------------------------------
+       SIN VÍDEO
+       ----------------------------------------- */
+
     if(
         enlace === null ||
         enlace === undefined ||
@@ -857,6 +785,10 @@ function actualizarVideo(j1) {
 
     }
 
+
+    /* -----------------------------------------
+       VÍDEO EXISTENTE
+       ----------------------------------------- */
 
     botonVideo.href =
         String(enlace).trim();
@@ -892,6 +824,11 @@ function cargarImagen(
 
     imagen.style.display =
         "none";
+
+
+    imagen.removeAttribute(
+        "src"
+    );
 
 
     if(!ruta) {
@@ -949,139 +886,22 @@ function mostrarError(error) {
     );
 
 
-    document.getElementById(
-        "estado"
-    ).innerHTML =
+    document.getElementById("estado")
+        .innerHTML =
+            '<span class="error">' +
+            "✗ ERROR: " +
+            (
+                error &&
+                error.message
+                    ? error.message
+                    : error
+            ) +
+            "</span>";
 
-        '<span class="error">' +
-
-        "✗ ERROR: " +
-
-        (
-            error && error.message
-                ? error.message
-                : error
-        ) +
-
-        "</span>";
-
-}
+      }
 
 
-/* =====================================================
-   NAVEGACIÓN
-   ===================================================== */
-
-async function ejecutarNavegacion(
-    funcion
-) {
-
-    try {
-
-        document.getElementById(
-            "estado"
-        ).textContent =
-            "Cargando paleoficha...";
-
-
-        await funcion();
-
-
-        actualizarControlesNavegacion();
-
-    }
-
-    catch(error) {
-
-        mostrarError(
-            error
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   PRIMERO
-   ===================================================== */
-
-botonPrimero.addEventListener(
-    "click",
-    function() {
-
-        ejecutarNavegacion(
-            function() {
-
-                return PALNAVEGADOR.primero();
-
-            }
-        );
-
-    }
-);
-
-
-/* =====================================================
-   ANTERIOR
-   ===================================================== */
-
-botonAnterior.addEventListener(
-    "click",
-    function() {
-
-        ejecutarNavegacion(
-            function() {
-
-                return PALNAVEGADOR.anterior();
-
-            }
-        );
-
-    }
-);
-
-
-/* =====================================================
-   SIGUIENTE
-   ===================================================== */
-
-botonSiguiente.addEventListener(
-    "click",
-    function() {
-
-        ejecutarNavegacion(
-            function() {
-
-                return PALNAVEGADOR.siguiente();
-
-            }
-        );
-
-    }
-);
-
-
-/* =====================================================
-   ÚLTIMO
-   ===================================================== */
-
-botonUltimo.addEventListener(
-    "click",
-    function() {
-
-        ejecutarNavegacion(
-            function() {
-
-                return PALNAVEGADOR.ultimo();
-
-            }
-        );
-
-    }
-);
-
-
+ 
 /* =====================================================
    LIGHTBOX DE IMÁGENES
    ===================================================== */
@@ -1147,7 +967,8 @@ function cerrarLightbox() {
 
 document.getElementById(
     "imagenPrincipal"
-).addEventListener(
+)
+.addEventListener(
     "click",
     function() {
 
@@ -1161,7 +982,8 @@ document.getElementById(
 
 document.getElementById(
     "img2"
-).addEventListener(
+)
+.addEventListener(
     "click",
     function() {
 
@@ -1175,7 +997,8 @@ document.getElementById(
 
 document.getElementById(
     "img3"
-).addEventListener(
+)
+.addEventListener(
     "click",
     function() {
 
@@ -1189,7 +1012,8 @@ document.getElementById(
 
 document.getElementById(
     "cerrarImagen"
-).addEventListener(
+)
+.addEventListener(
     "click",
     cerrarLightbox
 );
@@ -1205,6 +1029,413 @@ visorImagen.addEventListener(
         ) {
 
             cerrarLightbox();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   BUSCADOR
+   ===================================================== */
+
+const visorBuscador =
+    document.getElementById(
+        "visorBuscador"
+    );
+
+
+function abrirBuscador() {
+
+    visorBuscador.style.display =
+        "flex";
+
+
+    visorBuscador.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    const input =
+        document.getElementById(
+            "buscarNombre"
+        );
+
+
+    if(input) {
+
+        input.value =
+            "";
+
+
+        document.getElementById(
+            "listaResultados"
+        ).innerHTML =
+            "";
+
+
+        setTimeout(
+            function() {
+
+                input.focus();
+
+            },
+            50
+        );
+
+    }
+
+}
+
+
+function cerrarBuscador() {
+
+    visorBuscador.style.display =
+        "none";
+
+
+    visorBuscador.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+/* =====================================================
+   BOTÓN ABRIR BUSCADOR
+   ===================================================== */
+
+document.getElementById(
+    "botonBuscar"
+)
+.addEventListener(
+    "click",
+    abrirBuscador
+);
+
+
+/* =====================================================
+   BOTÓN CERRAR BUSCADOR
+   ===================================================== */
+
+document.getElementById(
+    "cerrarBuscador"
+)
+.addEventListener(
+    "click",
+    cerrarBuscador
+);
+
+
+/* =====================================================
+   BÚSQUEDA EN TIEMPO REAL
+   ===================================================== */
+
+const campoBusqueda =
+    document.getElementById(
+        "buscarNombre"
+    );
+
+
+const listaResultados =
+    document.getElementById(
+        "listaResultados"
+    );
+
+
+campoBusqueda.addEventListener(
+    "input",
+    async function() {
+
+        const texto =
+            this.value.trim();
+
+
+        /* -----------------------------------------
+           LIMPIAR
+           ----------------------------------------- */
+
+        if(!texto) {
+
+            listaResultados.innerHTML =
+                "";
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------
+           BUSCAR
+           ----------------------------------------- */
+
+        try {
+
+            const resultados =
+                await PALBUSCADOR.buscar(
+                    texto
+                );
+
+
+            listaResultados.innerHTML =
+                "";
+
+
+            /* -------------------------------------
+               SIN RESULTADOS
+               ------------------------------------- */
+
+            if(
+                !resultados.length
+            ) {
+
+                listaResultados.innerHTML =
+                    '<div class="sinResultados">' +
+                    'No se encontraron paleofichas' +
+                    '</div>';
+
+                return;
+
+            }
+
+
+            /* -------------------------------------
+               MOSTRAR RESULTADOS
+               ------------------------------------- */
+
+            for(
+                const resultado of resultados
+            ) {
+
+                const elemento =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                elemento.type =
+                    "button";
+
+
+                elemento.className =
+                    "resultadoBuscador";
+
+
+                elemento.innerHTML =
+
+                    '<span class="resultadoCodigo">' +
+                    resultado.codigo +
+                    '</span>' +
+
+                    '<span class="resultadoNombre">' +
+                    resultado.nombre +
+                    '</span>';
+
+
+                /* -------------------------------
+                   SELECCIONAR RESULTADO
+                   ------------------------------- */
+
+                elemento.addEventListener(
+                    "click",
+                    async function() {
+
+                        try {
+
+                            listaResultados.innerHTML =
+                                '<div class="sinResultados">' +
+                                'Cargando paleoficha...' +
+                                '</div>';
+
+
+                            await PALBUSCADOR
+                                .cargarResultado(
+                                    resultado
+                                );
+
+
+                            cerrarBuscador();
+
+                        }
+
+                        catch(error) {
+
+                            console.error(
+                                "ERROR BUSCADOR:",
+                                error
+                            );
+
+
+                            listaResultados.innerHTML =
+                                '<div class="sinResultados">' +
+                                'Error al cargar la paleoficha' +
+                                '</div>';
+
+                        }
+
+                    }
+                );
+
+
+                listaResultados.appendChild(
+                    elemento
+                );
+
+            }
+
+        }
+
+        catch(error) {
+
+            console.error(
+                "ERROR PALBUSCADOR:",
+                error
+            );
+
+
+            listaResultados.innerHTML =
+                '<div class="sinResultados">' +
+                'Error en el buscador' +
+                '</div>';
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   CLIC FUERA DEL BUSCADOR
+   ===================================================== */
+
+visorBuscador.addEventListener(
+    "click",
+    function(evento) {
+
+        if(
+            evento.target ===
+            visorBuscador
+        ) {
+
+            cerrarBuscador();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   BOTÓN ALEATORIO
+   ===================================================== */
+
+document.getElementById(
+    "botonAleatorio"
+)
+.addEventListener(
+    "click",
+    async function() {
+
+        try {
+
+            if(
+                !window.LEEPALJSON
+            ) {
+
+                throw new Error(
+                    "LEEPALJSON no está disponible."
+                );
+
+            }
+
+
+            if(
+                !window.CARGACONT
+            ) {
+
+                throw new Error(
+                    "CARGACONT no está disponible."
+                );
+
+            }
+
+
+            document.getElementById(
+                "estado"
+            ).innerHTML =
+                "Cargando paleoficha aleatoria...";
+
+
+            await window.LEEPALJSON
+                .cargar();
+
+
+            await window.CARGACONT
+                .aleatorio();
+
+        }
+
+        catch(error) {
+
+            mostrarError(
+                error
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   INICIAR GENERADOR
+   ===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+
+        try {
+
+            if(
+                !window.LEEPALJSON
+            ) {
+
+                throw new Error(
+                    "LEEPALJSON no está disponible."
+                );
+
+            }
+
+
+            if(
+                !window.CARGACONT
+            ) {
+
+                throw new Error(
+                    "CARGACONT no está disponible."
+                );
+
+            }
+
+
+            await window.LEEPALJSON
+                .cargar();
+
+
+            await window.CARGACONT
+                .aleatorio();
+
+        }
+
+        catch(error) {
+
+            mostrarError(
+                error
+            );
 
         }
 
@@ -1236,418 +1467,19 @@ document.addEventListener(
 
 
 /* =====================================================
-BUSCADOR
-===================================================== */
+   FIN DEL GENERADOR
+   ===================================================== */
 
-const visorBuscador =
-document.getElementById(
-"visorBuscador"
-);
+</script>
 
-function abrirBuscador() {
+</body>
 
-visorBuscador.style.display =
-    "flex";
-
-
-visorBuscador.setAttribute(
-    "aria-hidden",
-    "false"
-);
-
-
-const input =
-    document.getElementById(
-        "buscarNombre"
-    );
-
-
-if(input) {
-
-    input.value =
-        "";
-
-
-    document.getElementById(
-        "listaResultados"
-    ).innerHTML =
-        "";
-
-
-    setTimeout(
-        function() {
-
-            input.focus();
-
-        },
-        50
-    );
-
-}
-
-}
-
-function cerrarBuscador() {
-
-visorBuscador.style.display =
-    "none";
-
-
-visorBuscador.setAttribute(
-    "aria-hidden",
-    "true"
-);
-
-}
-
-/* =====================================================
-BOTÓN ABRIR BUSCADOR
-===================================================== */
-
-document.getElementById(
-"botonBuscar"
-)
-.addEventListener(
-"click",
-abrirBuscador
-);
-
-/* =====================================================
-BOTÓN CERRAR BUSCADOR
-===================================================== */
-
-document.getElementById(
-"cerrarBuscador"
-)
-.addEventListener(
-"click",
-cerrarBuscador
-);
-
-/* =====================================================
-BÚSQUEDA DINÁMICA
-===================================================== */
-
-const campoBusqueda =
-document.getElementById(
-"buscarNombre"
-);
-
-const listaResultados =
-document.getElementById(
-"listaResultados"
-);
-
-campoBusqueda.addEventListener(
-"input",
-async function() {
-
-    const texto =
-        this.value.trim();
-
-
-    /* -----------------------------------------
-       LIMPIAR
-       ----------------------------------------- */
-
-    if(!texto) {
-
-        listaResultados.innerHTML =
-            "";
-
-        return;
-
-    }
-
-
-    /* -----------------------------------------
-       BUSCAR
-       ----------------------------------------- */
-
-    try {
-
-        const resultados =
-            await PALBUSCADOR.buscar(
-                texto
-            );
-
-
-        listaResultados.innerHTML =
-            "";
-
-
-        /* -------------------------------------
-           SIN RESULTADOS
-           ------------------------------------- */
-
-        if(
-            !resultados.length
-        ) {
-
-            listaResultados.innerHTML =
-                '<div class="sinResultados">' +
-                'No se encontraron paleofichas' +
-                '</div>';
-
-            return;
-
-        }
-
-
-        /* -------------------------------------
-           MOSTRAR RESULTADOS
-           ------------------------------------- */
-
-        for(
-            const resultado of resultados
-        ) {
-
-            const elemento =
-                document.createElement(
-                    "button"
-                );
-
-
-            elemento.type =
-                "button";
-
-
-            elemento.className =
-                "resultadoBuscador";
-
-
-            elemento.innerHTML =
-
-                '<span class="resultadoCodigo">' +
-                resultado.codigo +
-                '</span>' +
-
-                '<span class="resultadoNombre">' +
-                resultado.nombre +
-                '</span>';
-
-
-            /* -------------------------------
-               SELECCIONAR RESULTADO
-            ------------------------------- */
-
-            elemento.addEventListener(
-                "click",
-                async function() {
-
-                    try {
-
-                        listaResultados.innerHTML =
-                            '<div class="sinResultados">' +
-                            'Cargando paleoficha...' +
-                            '</div>';
-
-
-                        await PALBUSCADOR
-                            .cargarResultado(
-                                resultado
-                            );
-
-
-                        cerrarBuscador();
-
-                    }
-
-                    catch(error) {
-
-                        console.error(
-                            "ERROR BUSCADOR:",
-                            error
-                        );
-
-
-                        listaResultados.innerHTML =
-                            '<div class="sinResultados">' +
-                            'Error al cargar la paleoficha' +
-                            '</div>';
-
-                    }
-
-                }
-            );
-
-
-            listaResultados.appendChild(
-                elemento
-            );
-
-        }
-
-    }
-
-    catch(error) {
-
-        console.error(
-            "ERROR PALBUSCADOR:",
-            error
-        );
-
-
-        listaResultados.innerHTML =
-            '<div class="sinResultados">' +
-            'Error en el buscador' +
-            '</div>';
-
-    }
-
-}
-
-);
-
-/* =====================================================
-CERRAR BUSCADOR AL PULSAR FUERA
-===================================================== */
-
-visorBuscador.addEventListener(
-"click",
-function(evento) {
-
-    if(
-        evento.target ===
-        visorBuscador
-    ) {
-
-        cerrarBuscador();
-
-    }
-
-}
-
-);
-
-/* =====================================================
-TECLA ESC
-===================================================== */
-
-document.addEventListener(
-"keydown",
-function(evento) {
-
-    if(
-        evento.key === "Escape"
-    ) {
-
-        cerrarLightbox();
-
-        cerrarBuscador();
-
-    }
-
-}
-
-);
-
-/* =====================================================
-BOTÓN ALEATORIO
-===================================================== */
-
-document.getElementById(
-"botonAleatorio"
-)
-.addEventListener(
-"click",
-async function() {
-
-    try {
-
-        if(
-            !window.LEEPALJSON
-        ) {
-
-            throw new Error(
-                "LEEPALJSON no está disponible."
-            );
-
-        }
-
-
-        if(
-            !window.CARGACONT
-        ) {
-
-            throw new Error(
-                "CARGACONT no está disponible."
-            );
-
-        }
-
-
-        document.getElementById(
-            "estado"
-        ).innerHTML =
-            "Cargando paleoficha aleatoria...";
-
-
-        await window.LEEPALJSON.cargar();
-
-
-        await window.CARGACONT.aleatorio();
-
-    }
-
-    catch(error) {
-
-        mostrarError(error);
-
-    }
-
-}
-
-);
-
-/* =====================================================
-INICIAR GENERADOR
-===================================================== */
-
-document.addEventListener(
-"DOMContentLoaded",
-async function() {
-
-    try {
-
-        if(
-            !window.LEEPALJSON
-        ) {
-
-            throw new Error(
-                "LEEPALJSON no está disponible."
-            );
-
-        }
-
-
-        if(
-            !window.CARGACONT
-        ) {
-
-            throw new Error(
-                "CARGACONT no está disponible."
-            );
-
-        }
-
-
-        await window.LEEPALJSON.cargar();
-
-
-        await window.CARGACONT.aleatorio();
-
-    }
-
-    catch(error) {
-
-        mostrarError(error);
-
-    }
-
-}
-
-);
-
-</script></body>
 </html>
+
+
+
+
+
+      
+
+      
