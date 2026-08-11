@@ -1,1 +1,300 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Generador — Prueba de LEEPALMODO</title><style>
+
+body{
+    font-family:Arial,sans-serif;
+    margin:20px;
+}
+
+input{
+    width:55px;
+    padding:10px;
+    margin:3px;
+    text-align:center;
+    font-size:18px;
+}
+
+button{
+    padding:10px 20px;
+    margin-top:15px;
+    cursor:pointer;
+}
+
+#resultado{
+    margin-top:25px;
+}
+
+.error{
+    color:#b00020;
+    font-weight:bold;
+}
+
+.bloque{
+    margin-top:25px;
+    padding-bottom:10px;
+}
+
+.codigo{
+    font-weight:bold;
+}
+
+</style></head><body><h1>Generador — Prueba de LEEPALMODO</h1><!-- =====================================================
+     MODO DE VIDA — j9
+===================================================== --><div class="bloque"><h2>Modo de vida — j9</h2><input
+id="j9"
+type="text"
+maxlength="3"
+inputmode="numeric"
+placeholder="000">
+
+</div><button id="buscar">
+Buscar
+</button><div id="resultado"></div><!-- =====================================================
+     PALMODO
+
+     El catálogo está en:
+
+     palmodo.js
+===================================================== --><script src="palmodo.js"></script><!-- =====================================================
+     LEEPALMODO
+
+     La función está en:
+
+     leepalmodo.js
+===================================================== --><script src="leepalmodo.js"></script><script>
+
+/*
+========================================================
+PRUEBA LEEPALMODO
+========================================================
+
+j9 = Modo de vida.
+
+Estructura:
+
+XXX
+
+Ejemplo:
+
+002
+
+↓
+
+MV002
+
+↓
+
+Acuático
+
+La función LEEPALMODO:
+
+1. Valida j9.
+2. Construye la referencia MVxxx.
+3. Consulta PALMODO.js.
+4. Devuelve la información del modo de vida.
+
+========================================================
+*/
+
+
+/* ======================================================
+   COMPROBAR LEEPALMODO
+====================================================== */
+
+function comprobarLEEPALMODO(){
+
+    if(
+        typeof window.LEEPALMODO !== "object" ||
+        window.LEEPALMODO === null
+    ){
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+/* ======================================================
+   MOSTRAR RESULTADO
+====================================================== */
+
+function mostrarResultado(datos){
+
+    const resultado =
+        document.getElementById(
+            "resultado"
+        );
+
+
+    let html = "";
+
+
+    html += "<hr>";
+
+    html +=
+        "<h2>Resultado</h2>";
+
+
+    /*
+    j9 original
+    */
+
+    html +=
+        "<p>" +
+        "<strong>j9:</strong> " +
+        datos.j9 +
+        "</p>";
+
+
+    /*
+    MODO DE VIDA
+    */
+
+    html +=
+        "<div class='bloque'>";
+
+    html +=
+        "<h3>Modo de vida</h3>";
+
+    html +=
+        "<p class='codigo'>" +
+        datos.MV.codigo +
+        "</p>";
+
+    html +=
+        "<p><strong>" +
+        datos.MV.nombre +
+        "</strong></p>";
+
+    html +=
+        "<p>" +
+        datos.MV.descripcion +
+        "</p>";
+
+    html +=
+        "</div>";
+
+
+    resultado.innerHTML =
+        html;
+
+}
+
+
+/* ======================================================
+   BOTÓN BUSCAR
+====================================================== */
+
+document
+.getElementById("buscar")
+.addEventListener(
+    "click",
+    function(){
+
+        const resultado =
+            document.getElementById(
+                "resultado"
+            );
+
+
+        resultado.innerHTML = "";
+
+
+        /*
+        Comprobar que LEEPALMODO
+        está cargado.
+        */
+
+        if(!comprobarLEEPALMODO()){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: leepalmodo.js no se ha ' +
+                'cargado correctamente.' +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        Leer j9.
+        */
+
+        const campo =
+            document.getElementById(
+                "j9"
+            );
+
+
+        let j9 =
+            campo.value.trim();
+
+
+        /*
+        Campo vacío.
+        */
+
+        if(j9 === ""){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: introduce un código j9.' +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        Decodificar mediante
+        LEEPALMODO.
+        */
+
+        const datos =
+            window.LEEPALMODO.decodificar(
+                j9
+            );
+
+
+        /*
+        Error de validación
+        o consulta.
+        */
+
+        if(!datos.valido){
+
+            resultado.innerHTML =
+                '<p class="error">' +
+                'ERROR: ' +
+                datos.mensaje +
+                '</p>';
+
+            return;
+
+        }
+
+
+        /*
+        Mostrar resultado.
+        */
+
+        mostrarResultado(
+            datos
+        );
+
+    }
+);
+
+</script></body></html>
+
+
+
 
