@@ -395,6 +395,25 @@ document.addEventListener(
 
         try {
 
+            /* -----------------------------------------
+               COMPROBAR LEEPALJSON
+            ----------------------------------------- */
+
+            if(
+                !window.LEEPALJSON
+            ) {
+
+                throw new Error(
+                    "LEEPALJSON no está disponible."
+                );
+
+            }
+
+
+            /* -----------------------------------------
+               COMPROBAR CARGACONT
+            ----------------------------------------- */
+
             if(
                 !window.CARGACONT
             ) {
@@ -406,12 +425,20 @@ document.addEventListener(
             }
 
 
-            /*
-             * PRUEBA FIJA
-             *
-             * El generador solicita
-             * exclusivamente el j1.
-             */
+            /* -----------------------------------------
+               PRIMERO:
+
+               Cargar master.csv
+            ----------------------------------------- */
+
+            await window.LEEPALJSON.cargar();
+
+
+            /* -----------------------------------------
+               SEGUNDO:
+
+               Solicitar ficha 001_01
+            ----------------------------------------- */
 
             await window.CARGACONT.cargar(
                 "001_01"
