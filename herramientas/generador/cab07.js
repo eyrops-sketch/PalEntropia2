@@ -4,24 +4,16 @@ PalEntropía
 CAB07.js
 Generador de Paleofichas 1.1
 
-PRIMERA FUNCIÓN
+FUNCIÓN:
 
-- Recibe j1
-- Obtiene el registro completo desde master.csv
-- Guarda el resultado en MASTER_ACTUAL
-- Normaliza j3
-- Muestra j3
-- No utiliza PALGEO todavía
-
-FORMATO CRONOLÓGICO:
-
-xxxx.xxxx-xxxx.xxxx
-
-Ejemplo:
-
-002.5800-0000.0117
-↓
-0002.5800-0000.0117
+- Recibe j1.
+- Obtiene el registro completo desde master.csv.
+- Normaliza j3.
+- Guarda el registro en CONT07.
+- No interpreta cronología.
+- No utiliza PALGEO.
+- Muestra j3.
+- Devuelve el registro.
 
 ========================================================
 */
@@ -51,12 +43,6 @@ window.CAB07 = {
             String(j3).trim();
 
 
-        /*
-        -----------------------------------------------------
-        SEPARAR LOS DOS EXTREMOS
-        -----------------------------------------------------
-        */
-
         const partes =
             texto.split("-");
 
@@ -70,98 +56,55 @@ window.CAB07 = {
         }
 
 
+        let inicio =
+            partes[0].trim();
+
+
+        let fin =
+            partes[1].trim();
+
+
         /*
         -----------------------------------------------------
-        NORMALIZAR CADA EXTREMO
+        GARANTIZAR XXXX.XXXX
         -----------------------------------------------------
         */
 
-        function normalizarExtremo(valor) {
+        if (
+            /^\d+\.\d{4}$/.test(inicio)
+        ) {
 
+            const partesInicio =
+                inicio.split(".");
 
-            valor =
-                String(valor).trim();
-
-
-            const partesValor =
-                valor.split(".");
-
-
-            /*
-            Si no tiene decimal,
-            no modificar.
-            */
-
-            if (
-                partesValor.length !== 2
-            ) {
-
-                return valor;
-
-            }
-
-
-            let entero =
-                partesValor[0];
-
-
-            const decimal =
-                partesValor[1];
-
-
-            /*
-            -------------------------------------------------
-            AÑADIR CEROS A LA IZQUIERDA
-            HASTA 4 CIFRAS
-            -------------------------------------------------
-            */
-
-            entero =
-                entero.padStart(
-                    4,
-                    "0"
-                );
-
-
-            /*
-            -------------------------------------------------
-            ASEGURAR 4 DECIMALES
-            -------------------------------------------------
-            */
-
-            const decimalNormalizado =
-                decimal.padEnd(
-                    4,
-                    "0"
-                );
-
-
-            return (
-                entero +
-                "." +
-                decimalNormalizado
-            );
+            inicio =
+                partesInicio[0]
+                .padStart(4, "0")
+                +
+                "."
+                +
+                partesInicio[1];
 
         }
 
 
-        const inicio =
-            normalizarExtremo(
-                partes[0]
-            );
+        if (
+            /^\d+\.\d{4}$/.test(fin)
+        ) {
 
+            const partesFin =
+                fin.split(".");
 
-        const fin =
-            normalizarExtremo(
-                partes[1]
-            );
+            fin =
+                partesFin[0]
+                .padStart(4, "0")
+                +
+                "."
+                +
+                partesFin[1];
 
+        }
 
-        /*
-        -----------------------------------------------------
-        RESULTADO
-        -----------------------------------------------------
-        */
 
         return (
             inicio +
@@ -235,7 +178,7 @@ window.CAB07 = {
         -----------------------------------------------------
         */
 
-        const j3Normalizado =
+        datos.j3 =
             this.normalizarJ3(
                 datos.j3
             );
@@ -243,18 +186,27 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        ACTUALIZAR EL REGISTRO
-        -----------------------------------------------------
-
-        Conservamos todos los demás datos
-        exactamente como llegan.
-
-        Solo normalizamos j3.
+        GUARDAR EN CONT07
         -----------------------------------------------------
         */
 
-        datos.j3 =
-            j3Normalizado;
+        if (
+            window.CONT07 &&
+            typeof window.CONT07.guardar ===
+            "function"
+        ) {
+
+            window.CONT07.guardar(
+                datos
+            );
+
+        } else {
+
+            console.warn(
+                "CAB07: CONT07 no está disponible."
+            );
+
+        }
 
 
         /*
@@ -279,7 +231,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        DEVOLVER REGISTRO COMPLETO
+        DEVOLVER REGISTRO
         -----------------------------------------------------
         */
 
