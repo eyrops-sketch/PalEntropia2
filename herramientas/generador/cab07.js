@@ -10,12 +10,33 @@ FUNCIÓN:
 - Obtiene el registro completo desde master.csv.
 - Normaliza j3.
 - Guarda el registro en CONT07.
-- Recupera el registro desde CONT07.
+- Consulta PALGEO mediante LEEPALGEO.
+- Guarda los datos geológicos en CONT07.
 - Muestra j3.
-- Devuelve el registro procedente de CONT07.
+- Devuelve el registro.
 
-No interpreta cronología.
-No utiliza PALGEO.
+NO:
+
+- interpreta cronología directamente
+- modifica PALGEO
+- modifica cargacont.js
+- modifica CAB01-CAB06
+
+FLUJO:
+
+master.csv
+   ↓
+CAB07
+   ↓
+CONT07
+   ↓
+LEEPALGEO
+   ↓
+PALGEOSIMPLIFICADO
+   ↓
+PALGEO
+   ↓
+CONT07.geologia
 
 ========================================================
 */
@@ -29,6 +50,7 @@ window.CAB07 = {
        ===================================================== */
 
     normalizarJ3(j3) {
+
 
         if (
             j3 === undefined ||
@@ -59,6 +81,7 @@ window.CAB07 = {
 
         function normalizarExtremo(valor) {
 
+
             valor =
                 String(valor).trim();
 
@@ -66,6 +89,13 @@ window.CAB07 = {
             const partesValor =
                 valor.split(".");
 
+
+            /*
+            -------------------------------------------------
+            Si no tiene decimal,
+            no modificar.
+            -------------------------------------------------
+            */
 
             if (
                 partesValor.length !== 2
@@ -80,9 +110,18 @@ window.CAB07 = {
                 partesValor[0];
 
 
-            const decimal =
+            let decimal =
                 partesValor[1];
 
+
+            /*
+            -------------------------------------------------
+            ENTERO
+
+            Debe tener exactamente
+            cuatro cifras.
+            -------------------------------------------------
+            */
 
             entero =
                 entero.padStart(
@@ -91,17 +130,32 @@ window.CAB07 = {
                 );
 
 
-            const decimalNormalizado =
+            /*
+            -------------------------------------------------
+            DECIMAL
+
+            Debe tener exactamente
+            cuatro cifras.
+            -------------------------------------------------
+            */
+
+            decimal =
                 decimal.padEnd(
                     4,
                     "0"
                 );
 
 
+            /*
+            -------------------------------------------------
+            RESULTADO
+            -------------------------------------------------
+            */
+
             return (
                 entero +
                 "." +
-                decimalNormalizado
+                decimal
             );
 
         }
@@ -135,6 +189,12 @@ window.CAB07 = {
     async procesar(j1) {
 
 
+        /*
+        -----------------------------------------------------
+        COMPROBAR CARGADOR MASTER
+        -----------------------------------------------------
+        */
+
         if (
             typeof window.cargarMasterPorJ1 !==
             "function"
@@ -151,7 +211,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        OBTENER REGISTRO DESDE MASTER
+        OBTENER REGISTRO DESDE MASTER.CSV
         -----------------------------------------------------
         */
 
@@ -160,6 +220,12 @@ window.CAB07 = {
                 j1
             );
 
+
+        /*
+        -----------------------------------------------------
+        COMPROBAR RESULTADO
+        -----------------------------------------------------
+        */
 
         if (!datos) {
 
@@ -187,7 +253,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        GUARDAR EN CONT07
+        COMPROBAR CONT07
         -----------------------------------------------------
         */
 
@@ -206,6 +272,12 @@ window.CAB07 = {
         }
 
 
+        /*
+        -----------------------------------------------------
+        GUARDAR REGISTRO EN CONT07
+        -----------------------------------------------------
+        */
+
         window.CONT07.guardar(
             datos
         );
@@ -213,21 +285,49 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        RECUPERAR DESDE CONT07
+        CONSULTAR PALGEO MEDIANTE LEEPALGEO
         -----------------------------------------------------
         */
 
-        const registroCont07 =
-            window.CONT07.obtener();
+        if (
+            window.LEEPALGEO &&
+            typeof window.LEEPALGEO.extraer ===
+            "function"
+        ) {
 
 
-        if (!registroCont07) {
+            const geologia =
+                window.LEEPALGEO.extraer(
+                    datos.j3
+                );
 
-            console.error(
-                "CAB07: CONT07 no devolvió ningún registro."
+
+            /*
+            -------------------------------------------------
+            GUARDAR GEOLOGÍA EN CONT07
+            -------------------------------------------------
+            */
+
+            if (geologia) {
+
+                if (
+                    typeof window.CONT07.guardarGeologia ===
+                    "function"
+                ) {
+
+                    window.CONT07.guardarGeologia(
+                        geologia
+                    );
+
+                }
+
+            }
+
+        } else {
+
+            console.warn(
+                "CAB07: LEEPALGEO no está disponible."
             );
-
-            return null;
 
         }
 
@@ -247,14 +347,29 @@ window.CAB07 = {
         if (cronologia) {
 
             cronologia.textContent =
-                registroCont07.j3 || "—";
+                datos.j3 || "—";
 
         }
 
 
         /*
         -----------------------------------------------------
-        DEVOLVER REGISTRO DE CONT07
+        RECUPERAR REGISTRO DESDE CONT07
+        -----------------------------------------------------
+        */
+
+        const registroCont07 =
+            typeof window.CONT07.obtener ===
+            "function"
+
+                ? window.CONT07.obtener()
+
+                : datos;
+
+
+        /*
+        -----------------------------------------------------
+        DEVOLVER REGISTRO
         -----------------------------------------------------
         */
 
