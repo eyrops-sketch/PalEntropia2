@@ -1,69 +1,62 @@
 /*
 =========================================================
 PalEntropía
-palbuscador.js v3.1 LTS
+palbuscador.js v3.2 LTS
 
 MOTOR DE BÚSQUEDA DEL GENERADOR
 =========================================================
 
-Arquitectura actual:
+ARQUITECTURA:
 
 MASTER.CSV
     ↓
 LEEPALJSON
     ↓
 PALBUSCADOR
-    ↓
-j1
-    ↓
-CARGACONT
-    ↓
-paleofichas.json
-    ↓
-BUSCARUTA
-    ↓
-GENERADOR
+    │
+    ├── Código
+    │      ↓
+    │   CARGACONT
+    │      ↓
+    │   CAB01-CAB06
+    │
+    ├── Nombre
+    │      ↓
+    │   CARGACONT
+    │      ↓
+    │   CAB01-CAB06
+    │
+    └── Tiempo geológico
+           ↓
+        CAB07
+           ↓
+        LEEPALGEO
+           ↓
+        PALGEOSIMPLIFICADO
+           ↓
+        PALGEO
 
 
 BUSCA POR:
 
 - Código (j1)
 - Nombre (j2)
+- Tiempo geológico
+  - Código geológico
+  - Período
+  - Edad
 
 
-FUENTES:
+IMPORTANTE:
 
-master.csv
-    → códigos j1
+PALBUSCADOR NO construye la Paleoficha.
 
-paleofichas.json
-    → nombre / j2
+Para código y nombre:
+    CARGACONT sigue siendo la puerta de entrada.
 
-PALVIDEO.js
-    → enlace de vídeo mediante j1
+Para geología:
+    CAB07 analiza el j3 mediante LEEPALGEO.
 
-
-NO DEPENDE DE:
-
-- PALDB
-- PALDECODER
-- PALGEO
-- PALTAXON
-- variable global paleofichas
-
-
-=========================================================
-
-RESULTADO:
-
-[
-    {
-        codigo: "001_01",
-        nombre: "Gastornis",
-        tipo: "codigo",
-        relevancia: 100
-    }
-]
 
 =========================================================
 */
@@ -74,14 +67,14 @@ const PALBUSCADOR = {
 
     /* =====================================================
        VERSIÓN
-    ===================================================== */
+       ===================================================== */
 
-    version: "3.1 LTS",
+    version: "3.2 LTS",
 
 
     /* =====================================================
        DATOS INTERNOS
-    ===================================================== */
+       ===================================================== */
 
     _datosJSON: null,
 
@@ -90,7 +83,7 @@ const PALBUSCADOR = {
 
     /* =====================================================
        NORMALIZAR TEXTO
-    ===================================================== */
+       ===================================================== */
 
     normalizar(texto) {
 
@@ -137,16 +130,7 @@ const PALBUSCADOR = {
 
     /* =====================================================
        NORMALIZAR CÓDIGO
-
-       Los códigos no deben perder el "_".
-
-       Ejemplo:
-
-       001_01
-       001_1
-       003_
-       005
-    ===================================================== */
+       ===================================================== */
 
     normalizarCodigo(codigo) {
 
@@ -171,7 +155,7 @@ const PALBUSCADOR = {
 
     /* =====================================================
        OBTENER CONTENEDOR
-    ===================================================== */
+       ===================================================== */
 
     obtenerContenedor() {
 
@@ -211,7 +195,7 @@ const PALBUSCADOR = {
 
     /* =====================================================
        CARGAR PALEOFICHAS.JSON
-    ===================================================== */
+       ===================================================== */
 
     async cargarJSON() {
 
@@ -312,13 +296,7 @@ const PALBUSCADOR = {
 
     /* =====================================================
        OBTENER MAPA DE NOMBRES
-
-       Convierte:
-
-       001_01 → Gastornis
-       001_02 → Goniatites
-       etc.
-    ===================================================== */
+       ===================================================== */
 
     async obtenerMapaNombres() {
 
@@ -382,17 +360,7 @@ const PALBUSCADOR = {
 
     /* =====================================================
        OBTENER VÍDEO
-
-       Consulta PALVIDEO mediante j1.
-
-       Devuelve:
-
-       URL de YouTube
-       o
-       null
-
-       PALVIDEO es la única fuente de vídeos.
-    ===================================================== */
+       ===================================================== */
 
     obtenerVideo(codigo) {
 
@@ -411,10 +379,6 @@ const PALBUSCADOR = {
         }
 
 
-        /* ---------------------------------------------
-           PALVIDEO NO DISPONIBLE
-        --------------------------------------------- */
-
         if (
             !window.PALVIDEO ||
             typeof window.PALVIDEO !==
@@ -425,10 +389,6 @@ const PALBUSCADOR = {
 
         }
 
-
-        /* ---------------------------------------------
-           BUSCAR REGISTRO
-        --------------------------------------------- */
 
         const registro =
             window.PALVIDEO[j1];
@@ -444,10 +404,6 @@ const PALBUSCADOR = {
 
         }
 
-
-        /* ---------------------------------------------
-           OBTENER ENLACE
-        --------------------------------------------- */
 
         const video =
             registro.video;
@@ -483,7 +439,7 @@ const PALBUSCADOR = {
 
     /* =====================================================
        COMPROBAR SI EXISTE VÍDEO
-    ===================================================== */
+       ===================================================== */
 
     tieneVideo(codigo) {
 
@@ -496,7 +452,7 @@ const PALBUSCADOR = {
 
     /* =====================================================
        DETERMINAR TIPO DE CONSULTA
-    ===================================================== */
+       ===================================================== */
 
     tipoConsulta(texto) {
 
@@ -529,7 +485,11 @@ const PALBUSCADOR = {
 
 
         /* ---------------------------------------------
-           NOMBRE
+           TEXTO
+           
+           Primero se considera nombre.
+           Si no produce resultados,
+           buscar() probará geología.
         --------------------------------------------- */
 
         if (
@@ -538,14 +498,10 @@ const PALBUSCADOR = {
             ).length >= 3
         ) {
 
-            return "nombre";
+            return "texto";
 
         }
 
-
-        /* ---------------------------------------------
-           DEMASIADO CORTA
-        --------------------------------------------- */
 
         return "corto";
 
@@ -554,7 +510,7 @@ const PALBUSCADOR = {
 
     /* =====================================================
        BUSCAR POR CÓDIGO
-    ===================================================== */
+       ===================================================== */
 
     async buscarPorCodigo(consulta) {
 
@@ -653,7 +609,7 @@ const PALBUSCADOR = {
 
     /* =====================================================
        BUSCAR POR NOMBRE
-    ===================================================== */
+       ===================================================== */
 
     async buscarPorNombre(consulta) {
 
@@ -760,8 +716,324 @@ const PALBUSCADOR = {
 
 
     /* =====================================================
+       BUSCAR POR TIEMPO GEOLÓGICO
+
+       FLUJO:
+
+       MASTER.CSV
+          ↓
+       j1
+          ↓
+       CAB07
+          ↓
+       j3
+          ↓
+       LEEPALGEO
+          ↓
+       codes / periodo / edad
+
+       La búsqueda se hace sobre TODOS los registros.
+
+       CAB07 devuelve el registro completo y
+       LEEPALGEO interpreta su j3.
+
+       ===================================================== */
+
+    async buscarPorGeologia(consulta) {
+
+        const textoConsulta =
+            this.normalizar(
+                consulta
+            );
+
+
+        if (
+            !textoConsulta
+        ) {
+
+            return [];
+
+        }
+
+
+        /* ---------------------------------------------
+           COMPROBAR CAB07
+        --------------------------------------------- */
+
+        if (
+            !window.CAB07 ||
+            typeof window.CAB07.procesar !==
+            "function"
+        ) {
+
+            throw new Error(
+                "PALBUSCADOR: CAB07 no está disponible."
+            );
+
+        }
+
+
+        /* ---------------------------------------------
+           COMPROBAR LEEPALGEO
+        --------------------------------------------- */
+
+        if (
+            !window.LEEPALGEO ||
+            typeof window.LEEPALGEO.extraer !==
+            "function"
+        ) {
+
+            throw new Error(
+                "PALBUSCADOR: LEEPALGEO no está disponible."
+            );
+
+        }
+
+
+        const contenedor =
+            this.obtenerContenedor();
+
+
+        const mapaNombres =
+            await this.obtenerMapaNombres();
+
+
+        const resultados = [];
+
+
+        /* ---------------------------------------------
+           RECORRER MASTER.CSV
+
+           Se procesa cada j1 mediante CAB07.
+        --------------------------------------------- */
+
+        for (
+            const registro of contenedor
+        ) {
+
+            if (
+                !registro ||
+                !registro.codigo
+            ) {
+
+                continue;
+
+            }
+
+
+            const j1 =
+                this.normalizarCodigo(
+                    registro.codigo
+                );
+
+
+            if (
+                !j1
+            ) {
+
+                continue;
+
+            }
+
+
+            let datos;
+
+
+            try {
+
+                datos =
+                    await window.CAB07.procesar(
+                        j1
+                    );
+
+            }
+            catch (
+                error
+            ) {
+
+                console.warn(
+                    "PALBUSCADOR: error geológico en " +
+                    j1,
+                    error
+                );
+
+                continue;
+
+            }
+
+
+            if (
+                !datos ||
+                !datos.j3
+            ) {
+
+                continue;
+
+            }
+
+
+            /* -----------------------------------------
+               EXTRAER DATOS GEOLOGICOS
+            ----------------------------------------- */
+
+            const geologia =
+                window.LEEPALGEO.extraer(
+                    datos.j3
+                );
+
+
+            if (
+                !geologia
+            ) {
+
+                continue;
+
+            }
+
+
+            /* -----------------------------------------
+               BUSCAR EN CÓDIGOS
+            ----------------------------------------- */
+
+            const coincideCodigo =
+                Array.isArray(
+                    geologia.codes
+                ) &&
+                geologia.codes.some(
+                    codigo =>
+                        this.normalizar(
+                            codigo
+                        ).includes(
+                            textoConsulta
+                        )
+                );
+
+
+            /* -----------------------------------------
+               BUSCAR EN PERÍODOS
+            ----------------------------------------- */
+
+            const coincidePeriodo =
+                Array.isArray(
+                    geologia.periodo
+                ) &&
+                geologia.periodo.some(
+                    periodo =>
+                        this.normalizar(
+                            periodo
+                        ).includes(
+                            textoConsulta
+                        )
+                );
+
+
+            /* -----------------------------------------
+               BUSCAR EN EDADES
+            ----------------------------------------- */
+
+            const coincideEdad =
+                Array.isArray(
+                    geologia.edad
+                ) &&
+                geologia.edad.some(
+                    edad =>
+                        this.normalizar(
+                            edad
+                        ).includes(
+                            textoConsulta
+                        )
+                );
+
+
+            if (
+                !coincideCodigo &&
+                !coincidePeriodo &&
+                !coincideEdad
+            ) {
+
+                continue;
+
+            }
+
+
+            let tipo =
+                "geologia";
+
+
+            let relevancia =
+                100;
+
+
+            if (
+                coincideCodigo
+            ) {
+
+                tipo =
+                    "codigo_geologico";
+
+                relevancia =
+                    130;
+
+            }
+            else if (
+                coincidePeriodo
+            ) {
+
+                tipo =
+                    "periodo";
+
+                relevancia =
+                    120;
+
+            }
+            else if (
+                coincideEdad
+            ) {
+
+                tipo =
+                    "edad";
+
+                relevancia =
+                    110;
+
+            }
+
+
+            resultados.push({
+
+                codigo:
+                    j1,
+
+                nombre:
+                    mapaNombres.get(
+                        j1
+                    ) ||
+                    "Sin nombre",
+
+                tipo:
+                    tipo,
+
+                relevancia:
+                    relevancia,
+
+                geologia:
+                    geologia
+
+            });
+
+        }
+
+
+        return this.unicosResultados(
+            resultados
+        );
+
+    },
+
+
+    /* =====================================================
        ELIMINAR RESULTADOS DUPLICADOS
-    ===================================================== */
+       ===================================================== */
 
     unicosResultados(resultados) {
 
@@ -812,17 +1084,13 @@ const PALBUSCADOR = {
 
     /* =====================================================
        ORDENAR RESULTADOS
-    ===================================================== */
+       ===================================================== */
 
     ordenar(resultados) {
 
         return resultados.sort(
 
             (a, b) => {
-
-                /* -------------------------------------
-                   MAYOR RELEVANCIA PRIMERO
-                ------------------------------------- */
 
                 if (
                     b.relevancia !==
@@ -836,10 +1104,6 @@ const PALBUSCADOR = {
 
                 }
 
-
-                /* -------------------------------------
-                   NOMBRE
-                ------------------------------------- */
 
                 return String(
                     a.nombre || ""
@@ -865,8 +1129,25 @@ const PALBUSCADOR = {
     },
 
 
-    /* =====================================================
+/* =====================================================
        BUSCADOR PRINCIPAL
+
+       ORDEN:
+
+       1. CÓDIGO
+          → PALBUSCADOR
+          → CARGACONT
+
+       2. NOMBRE
+          → PALBUSCADOR
+          → CARGACONT
+
+       3. TIEMPO GEOLÓGICO
+          → CAB07
+
+       El buscador NO construye la Paleoficha.
+       Solo localiza el j1 y lo entrega al
+       módulo correspondiente.
     ===================================================== */
 
     async buscar(texto) {
@@ -893,7 +1174,7 @@ const PALBUSCADOR = {
 
 
         /* ---------------------------------------------
-           DEMASIADO CORTA
+           CONSULTA DEMASIADO CORTA
         --------------------------------------------- */
 
         if (
@@ -948,6 +1229,27 @@ const PALBUSCADOR = {
         }
 
 
+        /* ---------------------------------------------
+           TIEMPO GEOLÓGICO
+
+           Se reserva para CAB07.
+
+           En esta fase PALBUSCADOR no intenta
+           interpretar cronologías ni consultar
+           PALGEO directamente.
+        --------------------------------------------- */
+
+        if (
+            tipo === "geologico"
+        ) {
+
+            return await this.buscarPorGeologia(
+                consultaOriginal
+            );
+
+        }
+
+
         return [];
 
     },
@@ -958,9 +1260,8 @@ const PALBUSCADOR = {
 
        Devuelve el primer código encontrado.
 
-       Útil si el buscador visual necesita
-       convertir directamente una consulta
-       en un j1.
+       Útil para el buscador visual cuando necesita
+       convertir una consulta en un j1.
     ===================================================== */
 
     async interpretar(texto) {
@@ -986,18 +1287,149 @@ const PALBUSCADOR = {
 
 
     /* =====================================================
-       CARGAR RESULTADO
+       BUSCAR POR GEOLOGÍA
 
-       Función puente con CARGACONT.
+       La búsqueda geológica pertenece a CAB07.
 
-       El buscador NO construye la ficha.
+       PALBUSCADOR actúa únicamente como puente.
 
-       Solo entrega el j1.
+       CAB07 debe devolver un array de resultados
+       con al menos:
 
-       CARGACONT se encarga del resto.
+       {
+           codigo: "001_01"
+       }
+
+       Si CAB07 todavía no dispone de la función
+       de búsqueda geológica, devuelve [] sin romper
+       el buscador de código/nombre.
     ===================================================== */
 
-    async cargarResultado(resultado) {
+    async buscarPorGeologia(
+        consulta
+    ) {
+
+        if (
+            !window.CAB07
+        ) {
+
+            console.warn(
+                "PALBUSCADOR: CAB07 no está disponible para búsqueda geológica."
+            );
+
+            return [];
+
+        }
+
+
+        /* ---------------------------------------------
+           BUSCAR
+
+           Se admite buscarGeologia() como función
+           principal del módulo CAB07.
+        --------------------------------------------- */
+
+        if (
+            typeof window.CAB07.buscarGeologia ===
+            "function"
+        ) {
+
+            const resultados =
+                await window.CAB07.buscarGeologia(
+                    consulta
+                );
+
+
+            if (
+                !Array.isArray(
+                    resultados
+                )
+            ) {
+
+                return [];
+
+            }
+
+
+            return this.ordenar(
+                this.unicosResultados(
+                    resultados
+                )
+            );
+
+        }
+
+
+        /* ---------------------------------------------
+           ALIAS OPCIONAL
+
+           Permite que CAB07 pueda utilizar
+           buscarTiempo() sin modificar
+           PALBUSCADOR.
+        --------------------------------------------- */
+
+        if (
+            typeof window.CAB07.buscarTiempo ===
+            "function"
+        ) {
+
+            const resultados =
+                await window.CAB07.buscarTiempo(
+                    consulta
+                );
+
+
+            if (
+                !Array.isArray(
+                    resultados
+                )
+            ) {
+
+                return [];
+
+            }
+
+
+            return this.ordenar(
+                this.unicosResultados(
+                    resultados
+                )
+            );
+
+        }
+
+
+        console.warn(
+            "PALBUSCADOR: CAB07 no dispone todavía de búsqueda geológica."
+        );
+
+
+        return [];
+
+    },
+
+
+    /* =====================================================
+       CARGAR RESULTADO
+
+       CÓDIGO / NOMBRE:
+
+       PALBUSCADOR
+            ↓
+          j1
+            ↓
+       CARGACONT
+            ↓
+       CAB01–CAB06
+            ↓
+       GENERADOR
+
+       El buscador no construye la ficha.
+    ===================================================== */
+
+    async cargarResultado(
+        resultado
+    ) {
 
         if (
             !resultado
@@ -1027,6 +1459,10 @@ const PALBUSCADOR = {
         }
 
 
+        /* ---------------------------------------------
+           CARGACONT
+        --------------------------------------------- */
+
         if (
             !window.CARGACONT ||
             typeof window.CARGACONT.cargar !==
@@ -1051,7 +1487,9 @@ const PALBUSCADOR = {
        CARGAR POR CÓDIGO DIRECTAMENTE
     ===================================================== */
 
-    async cargarPorCodigo(codigo) {
+    async cargarPorCodigo(
+        codigo
+    ) {
 
         const j1 =
             this.normalizarCodigo(
@@ -1070,6 +1508,10 @@ const PALBUSCADOR = {
         }
 
 
+        /* ---------------------------------------------
+           CARGACONT
+        --------------------------------------------- */
+
         if (
             !window.CARGACONT ||
             typeof window.CARGACONT.cargar !==
@@ -1086,6 +1528,142 @@ const PALBUSCADOR = {
         return await window.CARGACONT.cargar(
             j1
         );
+
+    },
+
+
+    /* =====================================================
+       CARGAR RESULTADO GEOLOGICO
+
+       CAB07 ya ha localizado el j1.
+
+       Una vez localizado el código, la carga final
+       vuelve a pasar por CARGACONT para que CAB01–CAB06
+       preparen los datos normales de la Paleoficha.
+
+       Por tanto:
+
+       BÚSQUEDA GEOLOGICA
+              ↓
+            CAB07
+              ↓
+             j1
+              ↓
+          CARGACONT
+              ↓
+          CAB01–CAB06
+    ===================================================== */
+
+    async cargarResultadoGeologico(
+        resultado
+    ) {
+
+        if (
+            !resultado
+        ) {
+
+            throw new Error(
+                "PALBUSCADOR: resultado geológico vacío."
+            );
+
+        }
+
+
+        const codigo =
+            this.normalizarCodigo(
+                resultado.codigo
+            );
+
+
+        if (
+            !codigo
+        ) {
+
+            throw new Error(
+                "PALBUSCADOR: el resultado geológico no contiene j1."
+            );
+
+        }
+
+
+        return await this.cargarPorCodigo(
+            codigo
+        );
+
+    },
+
+
+    /* =====================================================
+       UNIFICAR CARGA DE RESULTADO
+
+       Permite que el generador utilice una única
+       función independientemente del tipo de búsqueda.
+    ===================================================== */
+
+    async seleccionarResultado(
+        resultado
+    ) {
+
+        if (
+            !resultado
+        ) {
+
+            throw new Error(
+                "PALBUSCADOR: no se ha seleccionado ningún resultado."
+            );
+
+        }
+
+
+        const tipo =
+            String(
+                resultado.tipo || ""
+            )
+            .trim()
+            .toLowerCase();
+
+
+        /* ---------------------------------------------
+           GEOLOGÍA
+        --------------------------------------------- */
+
+        if (
+            tipo === "geologico" ||
+            tipo === "geologia" ||
+            tipo === "tiempo"
+        ) {
+
+            return await this.cargarResultadoGeologico(
+                resultado
+            );
+
+        }
+
+
+        /* ---------------------------------------------
+           CÓDIGO / NOMBRE
+        --------------------------------------------- */
+
+        return await this.cargarResultado(
+            resultado
+        );
+
+    },
+
+
+    /* =====================================================
+       LIMPIAR CACHE JSON
+       
+       Útil cuando paleofichas.json se actualiza.
+    ===================================================== */
+
+    limpiarCacheJSON() {
+
+        this._datosJSON =
+            null;
+
+        this._cargandoJSON =
+            null;
 
     },
 
@@ -1115,6 +1693,31 @@ const PALBUSCADOR = {
                     "object"
                 ),
 
+            cargacontDisponible:
+                !!(
+                    window.CARGACONT &&
+                    typeof window.CARGACONT.cargar ===
+                    "function"
+                ),
+
+            cab07Disponible:
+                !!(
+                    window.CAB07 &&
+                    typeof window.CAB07 ===
+                    "object"
+                ),
+
+            cab07GeologiaDisponible:
+                !!(
+                    window.CAB07 &&
+                    (
+                        typeof window.CAB07.buscarGeologia ===
+                        "function" ||
+                        typeof window.CAB07.buscarTiempo ===
+                        "function"
+                    )
+                ),
+
             version:
                 this.version
 
@@ -1136,9 +1739,3 @@ window.PALBUSCADOR =
 /* =========================================================
    FIN PALBUSCADOR.js v3.1 LTS
 ========================================================= */
-
-
-
-
-
-
