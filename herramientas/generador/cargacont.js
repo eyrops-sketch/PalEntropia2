@@ -1,4 +1,4 @@
-/* ========================================================
+./* ========================================================
    PalEntropía
    cargacont.js v1.5 LTS
 
@@ -433,9 +433,18 @@ window.CARGACONT = {
 
         }
 
+console.log(
+    "CARGACONT — registro master.csv:"
+);
 
-        const cronologia =
-            registroCSV.j3;
+console.log(
+    registroCSV
+);
+
+const cronologia =
+    registroCSV.j3 ||
+    registroCSV.cronologia ||
+    registroCSV.J3;
 
 
         if(
