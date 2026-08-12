@@ -1,57 +1,64 @@
 /*
 ========================================================
 PalEntropía
-cont07.js v1.0 LTS
+CONT07.js
+Contenedor independiente de CAB07
 
-CONTENEDOR DE CAB07
-
-Función:
+FUNCIÓN:
 
 - Recibe el registro completo procedente de CAB07.
-- Lo guarda en memoria.
-- No carga CSV.
+- Conserva todos sus campos.
+- Permite consultar el registro actual.
 - No interpreta datos.
 - No modifica datos.
-- No consulta PALGEO.
-- No ejecuta funciones externas.
+- No utiliza PALGEO.
+- No depende de cargacont.js.
 
-Entrada:
+FLUJO:
 
-registro completo procedente de CAB07
-
-Salida:
-
-window.CONT07_ACTUAL
+master.csv
+   ↓
+CAB07
+   ↓
+CONT07
+   ↓
+Navegador / futuros filtros
 
 ========================================================
 */
-
-
-window.CONT07_ACTUAL = null;
 
 
 window.CONT07 = {
 
 
     /* =====================================================
-       GUARDAR REGISTRO
+       REGISTRO ACTUAL
        ===================================================== */
 
-    guardar(registro) {
+    registro: null,
+
+
+    /* =====================================================
+       GUARDAR
+
+       Recibe el registro completo de CAB07.
+       ===================================================== */
+
+    guardar(datos) {
 
 
         /*
         -----------------------------------------------------
-        COMPROBAR REGISTRO
+        COMPROBAR DATOS
         -----------------------------------------------------
         */
 
         if (
-            !registro ||
-            typeof registro !== "object"
+            !datos ||
+            typeof datos !== "object"
         ) {
 
-            window.CONT07_ACTUAL = null;
+            this.registro = null;
 
             return null;
 
@@ -60,73 +67,172 @@ window.CONT07 = {
 
         /*
         -----------------------------------------------------
-        GUARDAR REGISTRO
+        CONSERVAR EL REGISTRO
+
+        CONT07 mantiene su propia copia.
         -----------------------------------------------------
-
-        Se conserva exactamente el registro
-        recibido desde CAB07.
-
-        CONT07 NO MODIFICA LOS DATOS.
         */
 
-        window.CONT07_ACTUAL =
-            registro;
+        this.registro = {
+
+            j1:
+                datos.j1 ?? "",
+
+            j2:
+                datos.j2 ?? "",
+
+            j3:
+                datos.j3 ?? "",
+
+            j4:
+                datos.j4 ?? "",
+
+            j5:
+                datos.j5 ?? "",
+
+            j6:
+                datos.j6 ?? "",
+
+            j7:
+                datos.j7 ?? "",
+
+            j8:
+                datos.j8 ?? "",
+
+            j9:
+                datos.j9 ?? "",
+
+            j10:
+                datos.j10 ?? "",
+
+
+            e1:
+                datos.e1 ?? "",
+
+            e2:
+                datos.e2 ?? "",
+
+            e3:
+                datos.e3 ?? "",
+
+            e4:
+                datos.e4 ?? "",
+
+            e5:
+                datos.e5 ?? "",
+
+            e6:
+                datos.e6 ?? "",
+
+            e7:
+                datos.e7 ?? "",
+
+            e8:
+                datos.e8 ?? "",
+
+            e9:
+                datos.e9 ?? "",
+
+            e10:
+                datos.e10 ?? "",
+
+            e11:
+                datos.e11 ?? ""
+
+        };
 
 
         /*
         -----------------------------------------------------
-        PRUEBA DE RECEPCIÓN
-        -----------------------------------------------------
-
-        Permite comprobar que CAB07
-        ha entregado correctamente
-        el registro al contenedor.
-        */
-
-        console.log(
-            "CONT07: registro recibido",
-            window.CONT07_ACTUAL
-        );
-
-
-        /*
-        -----------------------------------------------------
-        DEVOLVER REGISTRO
+        DEVOLVER REGISTRO GUARDADO
         -----------------------------------------------------
         */
 
-        return window.CONT07_ACTUAL;
+        return this.registro;
 
     },
 
 
     /* =====================================================
-       OBTENER REGISTRO ACTUAL
+       OBTENER
+
+       Devuelve el registro actualmente almacenado.
        ===================================================== */
 
     obtener() {
 
-        return window.CONT07_ACTUAL;
+
+        if (
+            !this.registro
+        ) {
+
+            return null;
+
+        }
+
+
+        return this.registro;
+
+    },
+
+
+    /* =====================================================
+       OBTENER POR J1
+
+       Comprueba si el registro almacenado
+       corresponde al código solicitado.
+       ===================================================== */
+
+    obtenerPorJ1(j1) {
+
+
+        if (
+            !this.registro ||
+            j1 === undefined ||
+            j1 === null
+        ) {
+
+            return null;
+
+        }
+
+
+        if (
+            String(
+                this.registro.j1
+            ).trim()
+            !==
+            String(j1).trim()
+        ) {
+
+            return null;
+
+        }
+
+
+        return this.registro;
 
     },
 
 
     /* =====================================================
        LIMPIAR
+
+       Vacía el contenedor.
        ===================================================== */
 
     limpiar() {
 
-        window.CONT07_ACTUAL =
-            null;
+        this.registro = null;
 
     }
+
 
 };
 
 
 /*
 ========================================================
-FIN cont07.js
+FIN CONT07.js
 ========================================================
 */
