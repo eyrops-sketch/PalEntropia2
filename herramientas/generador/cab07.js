@@ -10,10 +10,12 @@ FUNCIÓN:
 - Obtiene el registro completo desde master.csv.
 - Normaliza j3.
 - Guarda el registro en CONT07.
-- No interpreta cronología.
-- No utiliza PALGEO.
+- Recupera el registro desde CONT07.
 - Muestra j3.
-- Devuelve el registro.
+- Devuelve el registro procedente de CONT07.
+
+No interpreta cronología.
+No utiliza PALGEO.
 
 ========================================================
 */
@@ -27,7 +29,6 @@ window.CAB07 = {
        ===================================================== */
 
     normalizarJ3(j3) {
-
 
         if (
             j3 === undefined ||
@@ -56,54 +57,66 @@ window.CAB07 = {
         }
 
 
-        let inicio =
-            partes[0].trim();
+        function normalizarExtremo(valor) {
+
+            valor =
+                String(valor).trim();
 
 
-        let fin =
-            partes[1].trim();
+            const partesValor =
+                valor.split(".");
 
 
-        /*
-        -----------------------------------------------------
-        GARANTIZAR XXXX.XXXX
-        -----------------------------------------------------
-        */
+            if (
+                partesValor.length !== 2
+            ) {
 
-        if (
-            /^\d+\.\d{4}$/.test(inicio)
-        ) {
+                return valor;
 
-            const partesInicio =
-                inicio.split(".");
+            }
 
-            inicio =
-                partesInicio[0]
-                .padStart(4, "0")
-                +
-                "."
-                +
-                partesInicio[1];
+
+            let entero =
+                partesValor[0];
+
+
+            const decimal =
+                partesValor[1];
+
+
+            entero =
+                entero.padStart(
+                    4,
+                    "0"
+                );
+
+
+            const decimalNormalizado =
+                decimal.padEnd(
+                    4,
+                    "0"
+                );
+
+
+            return (
+                entero +
+                "." +
+                decimalNormalizado
+            );
 
         }
 
 
-        if (
-            /^\d+\.\d{4}$/.test(fin)
-        ) {
+        const inicio =
+            normalizarExtremo(
+                partes[0]
+            );
 
-            const partesFin =
-                fin.split(".");
 
-            fin =
-                partesFin[0]
-                .padStart(4, "0")
-                +
-                "."
-                +
-                partesFin[1];
-
-        }
+        const fin =
+            normalizarExtremo(
+                partes[1]
+            );
 
 
         return (
@@ -122,12 +135,6 @@ window.CAB07 = {
     async procesar(j1) {
 
 
-        /*
-        -----------------------------------------------------
-        COMPROBAR FUNCIÓN MAESTRA
-        -----------------------------------------------------
-        */
-
         if (
             typeof window.cargarMasterPorJ1 !==
             "function"
@@ -144,7 +151,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        OBTENER REGISTRO COMPLETO
+        OBTENER REGISTRO DESDE MASTER
         -----------------------------------------------------
         */
 
@@ -153,12 +160,6 @@ window.CAB07 = {
                 j1
             );
 
-
-        /*
-        -----------------------------------------------------
-        COMPROBAR RESULTADO
-        -----------------------------------------------------
-        */
 
         if (!datos) {
 
@@ -191,20 +192,42 @@ window.CAB07 = {
         */
 
         if (
-            window.CONT07 &&
-            typeof window.CONT07.guardar ===
+            !window.CONT07 ||
+            typeof window.CONT07.guardar !==
             "function"
         ) {
 
-            window.CONT07.guardar(
-                datos
-            );
-
-        } else {
-
-            console.warn(
+            console.error(
                 "CAB07: CONT07 no está disponible."
             );
+
+            return null;
+
+        }
+
+
+        window.CONT07.guardar(
+            datos
+        );
+
+
+        /*
+        -----------------------------------------------------
+        RECUPERAR DESDE CONT07
+        -----------------------------------------------------
+        */
+
+        const registroCont07 =
+            window.CONT07.obtener();
+
+
+        if (!registroCont07) {
+
+            console.error(
+                "CAB07: CONT07 no devolvió ningún registro."
+            );
+
+            return null;
 
         }
 
@@ -224,18 +247,18 @@ window.CAB07 = {
         if (cronologia) {
 
             cronologia.textContent =
-                datos.j3 || "—";
+                registroCont07.j3 || "—";
 
         }
 
 
         /*
         -----------------------------------------------------
-        DEVOLVER REGISTRO
+        DEVOLVER REGISTRO DE CONT07
         -----------------------------------------------------
         */
 
-        return datos;
+        return registroCont07;
 
     }
 
