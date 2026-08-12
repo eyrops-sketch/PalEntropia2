@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-PALNAVEGADOR.js
+PALNAVEGADOR.js v1.1 LTS
 
 Sistema de navegación de Paleofichas.
 
@@ -9,10 +9,41 @@ Función:
 - Carga registros desde LEEPALJSON
 - Navega por los registros
 - Gestiona filtros
-- Carga la Paleoficha mediante CARGACONT
+- Localiza un j1 por índice global
+- Carga una Paleoficha mediante CARGACONT
 - Entrega el j1 a CAB07
 - Consulta CONT07
 - Muestra temporalmente los resultados geológicos
+
+IMPORTANTE:
+
+La búsqueda por código/nombre puede entregar un j1
+a PALNAVEGADOR mediante:
+
+    PALNAVEGADOR.cargarPorCodigo(j1)
+
+De esta forma el navegador queda situado realmente
+en el índice correcto.
+
+FLUJO:
+
+PALBUSCADOR
+     ↓
+    j1
+     ↓
+PALNAVEGADOR.cargarPorCodigo()
+     ↓
+buscarIndice()
+     ↓
+cargarIndice()
+     ↓
+CAB07
+     ↓
+CARGACONT
+     ↓
+CAB01–CAB06
+     ↓
+PALEOFICHA
 
 ========================================================
 */
@@ -20,7 +51,7 @@ Función:
 
 const PALNAVEGADOR = {
 
-    version: "1.0 LTS",
+    version: "1.1 LTS",
 
     registros: [],
 
@@ -147,6 +178,14 @@ const PALNAVEGADOR = {
 
     /* =====================================================
        POSICIONAR
+
+       Solo localiza el índice.
+
+       NO carga la ficha.
+
+       Esto permite que otras funciones puedan
+       localizar primero el registro y después
+       decidir cómo cargarlo.
        ===================================================== */
 
     async posicionar(codigo) {
@@ -193,13 +232,67 @@ const PALNAVEGADOR = {
 
 
     /* =====================================================
+       CARGAR POR CÓDIGO
+
+       FUNCIÓN PUENTE PARA EL BUSCADOR.
+
+       Recibe un j1.
+
+       1. Localiza su índice.
+       2. Actualiza la posición global.
+       3. Ejecuta cargarIndice().
+       4. CAB07 procesa el j1.
+       5. CARGACONT carga la ficha.
+       6. Se muestran los datos geológicos.
+
+       Esto evita que PALBUSCADOR tenga que llamar
+       directamente a CARGACONT.
+       ===================================================== */
+
+    async cargarPorCodigo(codigo) {
+
+        const j1 =
+            this.normalizarCodigo(
+                codigo
+            );
+
+
+        if (!j1) {
+
+            throw new Error(
+                "PALNAVEGADOR: código vacío."
+            );
+
+        }
+
+
+        const situado =
+            await this.posicionar(
+                j1
+            );
+
+
+        if (!situado) {
+
+            return false;
+
+        }
+
+
+        return await this.cargarIndice(
+            this.indice
+        );
+
+    },
+
+
+    /* =====================================================
        MOSTRAR GEOLOGÍA
-       
+
        SALIDA PROVISIONAL DE PRUEBA
        ===================================================== */
 
     mostrarGeologia() {
-
 
         /*
         -----------------------------------------------------
@@ -811,12 +904,16 @@ const PALNAVEGADOR = {
 };
 
 
+/* =========================================================
+   DISPONIBILIDAD GLOBAL
+========================================================= */
+
 window.PALNAVEGADOR =
     PALNAVEGADOR;
 
 
 /*
 ========================================================
-FIN PALNAVEGADOR.js
+FIN PALNAVEGADOR.js v1.1 LTS
 ========================================================
 */
