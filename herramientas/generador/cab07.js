@@ -12,29 +12,10 @@ FUNCIÓN:
 - Guarda el registro en CONT07.
 - Envía j3 a LEEPALGEO.
 - Guarda la geología en CONT07.
+- Muestra temporalmente los resultados geológicos.
 - No modifica PALGEO.
 - No interpreta cronología.
-- No rompe la ficha si la geología falla.
-- Muestra j3.
-- Devuelve el registro.
-
-FLUJO:
-
-master.csv
-    ↓
-  CAB07
-    ↓
-CONT07.registro
-    ↓
-     j3
-    ↓
-LEEPALGEO
-    ↓
-PALGEOSIMPLIFICADO
-    ↓
-PALGEO
-    ↓
-CONT07.geologia
+- Si la geología falla, la ficha continúa funcionando.
 
 ========================================================
 */
@@ -48,7 +29,6 @@ window.CAB07 = {
        ===================================================== */
 
     normalizarJ3(j3) {
-
 
         if (
             j3 === undefined ||
@@ -132,6 +112,196 @@ window.CAB07 = {
             "-" +
             fin
         );
+
+    },
+
+
+    /* =====================================================
+       MOSTRAR GEOLOGÍA
+       
+       SALIDA PROVISIONAL DE PRUEBA
+       ===================================================== */
+
+    mostrarGeologia() {
+
+
+        /*
+        -----------------------------------------------------
+        OBTENER CONTENEDOR
+        -----------------------------------------------------
+        */
+
+        let contenedor =
+            document.getElementById(
+                "resultadoGeologiaCAB07"
+            );
+
+
+        /*
+        -----------------------------------------------------
+        CREAR CONTENEDOR SI NO EXISTE
+        -----------------------------------------------------
+        */
+
+        if (!contenedor) {
+
+            contenedor =
+                document.createElement(
+                    "div"
+                );
+
+
+            contenedor.id =
+                "resultadoGeologiaCAB07";
+
+
+            contenedor.style.margin =
+                "12px auto";
+
+
+            contenedor.style.padding =
+                "10px";
+
+
+            contenedor.style.maxWidth =
+                "700px";
+
+
+            contenedor.style.borderRadius =
+                "10px";
+
+
+            contenedor.style.fontSize =
+                "13px";
+
+
+            const cronologia =
+                document.getElementById(
+                    "cronologia"
+                );
+
+
+            if (cronologia) {
+
+                cronologia.insertAdjacentElement(
+                    "afterend",
+                    contenedor
+                );
+
+            } else {
+
+                document.body.appendChild(
+                    contenedor
+                );
+
+            }
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        OBTENER GEOLOGÍA
+        -----------------------------------------------------
+        */
+
+        let geologia =
+            null;
+
+
+        if (
+            window.CONT07 &&
+            typeof window.CONT07.obtenerGeologia ===
+            "function"
+        ) {
+
+            geologia =
+                window.CONT07.obtenerGeologia();
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        SIN DATOS
+        -----------------------------------------------------
+        */
+
+        if (!geologia) {
+
+            contenedor.innerHTML =
+                `
+                <strong>Geología</strong>
+                <br>
+                Sin datos geológicos.
+                `;
+
+            return;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        NORMALIZAR ARRAYS
+        -----------------------------------------------------
+        */
+
+        const codes =
+            Array.isArray(
+                geologia.codes
+            )
+                ? geologia.codes
+                : [];
+
+
+        const periodo =
+            Array.isArray(
+                geologia.periodo
+            )
+                ? geologia.periodo
+                : [];
+
+
+        const edad =
+            Array.isArray(
+                geologia.edad
+            )
+                ? geologia.edad
+                : [];
+
+
+        /*
+        -----------------------------------------------------
+        MOSTRAR RESULTADO
+        -----------------------------------------------------
+        */
+
+        contenedor.innerHTML =
+            `
+            <strong>Geología</strong>
+
+            <br><br>
+
+            <strong>Códigos:</strong>
+            ${codes.length
+                ? codes.join(", ")
+                : "—"}
+
+            <br><br>
+
+            <strong>Períodos:</strong>
+            ${periodo.length
+                ? periodo.join(", ")
+                : "—"}
+
+            <br><br>
+
+            <strong>Edades:</strong>
+            ${edad.length
+                ? edad.join(", ")
+                : "—"}
+            `;
 
     },
 
@@ -234,14 +404,6 @@ window.CAB07 = {
         =====================================================
         GEOLOGÍA
         =====================================================
-
-        Se utiliza el j3 ya normalizado.
-
-        Si LEEPALGEO está disponible,
-        solicitamos el análisis.
-
-        Si falla, NO se interrumpe la ficha.
-        =====================================================
         */
 
         if (
@@ -250,21 +412,13 @@ window.CAB07 = {
             "function"
         ) {
 
-
             try {
-
 
                 const geologia =
                     window.LEEPALGEO.extraer(
                         datos.j3
                     );
 
-
-                /*
-                -------------------------------------------------
-                GUARDAR GEOLOGÍA EN CONT07
-                -------------------------------------------------
-                */
 
                 if (
                     geologia &&
@@ -279,26 +433,20 @@ window.CAB07 = {
 
                 }
 
-
             } catch (error) {
-
 
                 console.warn(
                     "CAB07: Error al obtener datos geológicos.",
                     error
                 );
 
-
             }
 
-
         } else {
-
 
             console.warn(
                 "CAB07: LEEPALGEO no está disponible."
             );
-
 
         }
 
@@ -321,6 +469,15 @@ window.CAB07 = {
                 datos.j3 || "—";
 
         }
+
+
+        /*
+        -----------------------------------------------------
+        MOSTRAR GEOLOGÍA
+        -----------------------------------------------------
+        */
+
+        this.mostrarGeologia();
 
 
         /*
