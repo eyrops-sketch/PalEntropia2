@@ -11,7 +11,8 @@ Función:
 - Gestiona filtros
 - Carga la Paleoficha mediante CARGACONT
 - Entrega el j1 a CAB07
-- Permite consultar el registro actual de CONT07
+- Consulta CONT07
+- Muestra temporalmente los resultados geológicos
 
 ========================================================
 */
@@ -192,6 +193,189 @@ const PALNAVEGADOR = {
 
 
     /* =====================================================
+       MOSTRAR GEOLOGÍA
+       
+       SALIDA PROVISIONAL DE PRUEBA
+       ===================================================== */
+
+    mostrarGeologia() {
+
+
+        /*
+        -----------------------------------------------------
+        OBTENER GEOLOGÍA DESDE CONT07
+        -----------------------------------------------------
+        */
+
+        let geologia =
+            null;
+
+
+        if (
+            window.CONT07 &&
+            typeof window.CONT07.obtenerGeologia ===
+            "function"
+        ) {
+
+            geologia =
+                window.CONT07.obtenerGeologia();
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        CREAR CONTENEDOR
+        -----------------------------------------------------
+        */
+
+        let contenedor =
+            document.getElementById(
+                "resultadoGeologiaCAB07"
+            );
+
+
+        if (!contenedor) {
+
+            contenedor =
+                document.createElement(
+                    "div"
+                );
+
+
+            contenedor.id =
+                "resultadoGeologiaCAB07";
+
+
+            contenedor.style.margin =
+                "12px auto";
+
+
+            contenedor.style.padding =
+                "10px";
+
+
+            contenedor.style.maxWidth =
+                "700px";
+
+
+            contenedor.style.borderRadius =
+                "10px";
+
+
+            contenedor.style.fontSize =
+                "13px";
+
+
+            const ficha =
+                document.getElementById(
+                    "ficha"
+                );
+
+
+            if (ficha) {
+
+                ficha.appendChild(
+                    contenedor
+                );
+
+            } else {
+
+                document.body.appendChild(
+                    contenedor
+                );
+
+            }
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        SIN DATOS
+        -----------------------------------------------------
+        */
+
+        if (!geologia) {
+
+            contenedor.innerHTML =
+                `
+                <strong>Geología</strong>
+                <br>
+                Sin datos geológicos.
+                `;
+
+            return;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        ARRAYS
+        -----------------------------------------------------
+        */
+
+        const codes =
+            Array.isArray(
+                geologia.codes
+            )
+                ? geologia.codes
+                : [];
+
+
+        const periodo =
+            Array.isArray(
+                geologia.periodo
+            )
+                ? geologia.periodo
+                : [];
+
+
+        const edad =
+            Array.isArray(
+                geologia.edad
+            )
+                ? geologia.edad
+                : [];
+
+
+        /*
+        -----------------------------------------------------
+        MOSTRAR RESULTADOS
+        -----------------------------------------------------
+        */
+
+        contenedor.innerHTML =
+            `
+            <strong>Geología</strong>
+
+            <br><br>
+
+            <strong>Códigos:</strong>
+            ${codes.length
+                ? codes.join(", ")
+                : "—"}
+
+            <br><br>
+
+            <strong>Períodos:</strong>
+            ${periodo.length
+                ? periodo.join(", ")
+                : "—"}
+
+            <br><br>
+
+            <strong>Edades:</strong>
+            ${edad.length
+                ? edad.join(", ")
+                : "—"}
+            `;
+
+    },
+
+
+    /* =====================================================
        CARGAR ÍNDICE
        ===================================================== */
 
@@ -253,8 +437,6 @@ const PALNAVEGADOR = {
 
         /* =================================================
            CAB07
-
-           Entregar j1 a CAB07.
            ================================================= */
 
         if (
@@ -285,9 +467,22 @@ const PALNAVEGADOR = {
         }
 
 
-        return await window.CARGACONT.cargar(
-            this.codigoActual
-        );
+        const resultado =
+            await window.CARGACONT.cargar(
+                this.codigoActual
+            );
+
+
+        /*
+        =====================================================
+        MOSTRAR GEOLOGÍA DESPUÉS DE CARGAR LA FICHA
+        =====================================================
+        */
+
+        this.mostrarGeologia();
+
+
+        return resultado;
 
     },
 
@@ -557,10 +752,7 @@ const PALNAVEGADOR = {
 
 
     /* =====================================================
-       OBTENER REGISTRO DE CONT07
-       
-       Lectura independiente.
-       No modifica CONT07.
+       OBTENER CONT07
        ===================================================== */
 
     obtenerCont07() {
