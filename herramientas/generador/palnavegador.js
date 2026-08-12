@@ -1,281 +1,607 @@
+/*
+========================================================
+PalEntropía
+PALNAVEGADOR.js
+
+Sistema de navegación de Paleofichas.
+
+Función:
+- Carga registros desde LEEPALJSON
+- Navega por los registros
+- Gestiona filtros
+- Carga la Paleoficha mediante CARGACONT
+- Entrega el j1 a CAB07 para cargar el registro completo
+  de master.csv
+========================================================
+*/
+
+
 const PALNAVEGADOR = {
-version: "1.0 LTS",
-registros: [],
-filtroActivo: null,
-indice: -1,
-codigoActual: null,
 
-async inicializar() {
-if (!window.LEEPALJSON || typeof window.LEEPALJSON.cargar !== "function") {
-throw new Error("PALNAVEGADOR: LEEPALJSON no está disponible.");
-}
+    version: "1.0 LTS",
 
-await window.LEEPALJSON.cargar();
+    registros: [],
 
-const contenedor = window.LEEPALJSON.obtener();
+    filtroActivo: null,
 
-if (!Array.isArray(contenedor) || !contenedor.length) {
-  throw new Error("PALNAVEGADOR: no hay registros en master.csv.");
-}
+    indice: -1,
 
-this.registros = contenedor.filter(
-  registro => registro && registro.codigo
-);
+    codigoActual: null,
 
-return this.registros;
 
-},
+    /* =====================================================
+       INICIALIZAR
+       ===================================================== */
 
-normalizarCodigo(codigo) {
-if (codigo === undefined || codigo === null) {
-return "";
-}
+    async inicializar() {
 
-return String(codigo).trim().toUpperCase();
+        if (
+            !window.LEEPALJSON ||
+            typeof window.LEEPALJSON.cargar !== "function"
+        ) {
 
-},
+            throw new Error(
+                "PALNAVEGADOR: LEEPALJSON no está disponible."
+            );
 
-conjuntoActivo() {
-return this.filtroActivo
-? this.filtroActivo
-: this.registros;
-},
+        }
 
-buscarIndice(codigo) {
-const j1 = this.normalizarCodigo(codigo);
-const conjunto = this.conjuntoActivo();
 
-return conjunto.findIndex(
-  registro =>
-    this.normalizarCodigo(registro.codigo) === j1
-);
+        await window.LEEPALJSON.cargar();
 
-},
 
-async posicionar(codigo) {
-const j1 = this.normalizarCodigo(codigo);
+        const contenedor =
+            window.LEEPALJSON.obtener();
 
-if (!j1) {
-  throw new Error("PALNAVEGADOR: código vacío.");
-}
 
-const indice = this.buscarIndice(j1);
+        if (
+            !Array.isArray(contenedor) ||
+            !contenedor.length
+        ) {
 
-if (indice === -1) {
-  return false;
-}
+            throw new Error(
+                "PALNAVEGADOR: no hay registros en master.csv."
+            );
 
-this.indice = indice;
-this.codigoActual = j1;
+        }
 
-return true;
 
-},
+        this.registros =
+            contenedor.filter(
+                registro =>
+                    registro &&
+                    registro.codigo
+            );
 
-async cargarIndice(indice) {
-const conjunto = this.conjuntoActivo();
 
-if (!conjunto.length) {
-  throw new Error("PALNAVEGADOR: el conjunto activo está vacío.");
-}
+        return this.registros;
 
-if (indice < 0) {
-  indice = 0;
-}
+    },
 
-if (indice >= conjunto.length) {
-  indice = conjunto.length - 1;
-}
 
-const registro = conjunto[indice];
+    /* =====================================================
+       NORMALIZAR CÓDIGO
+       ===================================================== */
 
-if (!registro || !registro.codigo) {
-  throw new Error("PALNAVEGADOR: registro inválido.");
-}
+    normalizarCodigo(codigo) {
 
-this.indice = indice;
-this.codigoActual =
-  this.normalizarCodigo(registro.codigo);
+        if (
+            codigo === undefined ||
+            codigo === null
+        ) {
 
-if (
-  !window.CARGACONT ||
-  typeof window.CARGACONT.cargar !== "function"
-) {
-  throw new Error("PALNAVEGADOR: CARGACONT no está disponible.");
-}
+            return "";
 
-return await window.CARGACONT.cargar(
-  this.codigoActual
-);
+        }
 
-},
 
-async primero() {
-return await this.cargarIndice(0);
-},
+        return String(
+            codigo
+        )
+        .trim()
+        .toUpperCase();
 
-async anterior() {
-const conjunto = this.conjuntoActivo();
+    },
 
-if (!conjunto.length) {
-  return null;
-}
 
-if (this.indice <= 0) {
-  return await this.cargarIndice(0);
-}
+    /* =====================================================
+       CONJUNTO ACTIVO
+       ===================================================== */
 
-return await this.cargarIndice(
-  this.indice - 1
-);
+    conjuntoActivo() {
 
-},
+        return this.filtroActivo
+            ? this.filtroActivo
+            : this.registros;
 
-async siguiente() {
-const conjunto = this.conjuntoActivo();
+    },
 
-if (!conjunto.length) {
-  return null;
-}
 
-if (this.indice >= conjunto.length - 1) {
-  return await this.cargarIndice(
-    conjunto.length - 1
-  );
-}
+    /* =====================================================
+       BUSCAR ÍNDICE
+       ===================================================== */
 
-return await this.cargarIndice(
-  this.indice + 1
-);
+    buscarIndice(codigo) {
 
-},
+        const j1 =
+            this.normalizarCodigo(
+                codigo
+            );
 
-async ultimo() {
-const conjunto = this.conjuntoActivo();
 
-return await this.cargarIndice(
-  conjunto.length - 1
-);
+        const conjunto =
+            this.conjuntoActivo();
 
-},
 
-async aleatorio() {
-const conjunto = this.conjuntoActivo();
+        return conjunto.findIndex(
+            registro =>
+                this.normalizarCodigo(
+                    registro.codigo
+                ) === j1
+        );
 
-if (!conjunto.length) {
-  throw new Error(
-    "PALNAVEGADOR: no hay registros disponibles."
-  );
-}
-
-const indice =
-  Math.floor(
-    Math.random() * conjunto.length
-  );
-
-return await this.cargarIndice(indice);
-
-},
-
-aplicarFiltro(registros) {
-if (!Array.isArray(registros)) {
-throw new Error(
-"PALNAVEGADOR: el filtro debe ser un array."
-);
-}
-
-this.filtroActivo = registros;
-
-if (!this.filtroActivo.length) {
-  this.indice = -1;
-  return;
-}
-
-if (this.codigoActual) {
-  const indice =
-    this.filtroActivo.findIndex(
-      registro =>
-        this.normalizarCodigo(
-          registro.codigo
-        ) === this.codigoActual
-    );
-
-  if (indice !== -1) {
-    this.indice = indice;
-    return;
-  }
-}
-
-this.indice = 0;
-
-},
-
-limpiarFiltro() {
-const codigoActual =
-this.codigoActual;
-
-this.filtroActivo = null;
-
-if (!codigoActual) {
-  this.indice = -1;
-  return;
-}
-
-const indice =
-  this.buscarIndice(
-    codigoActual
-  );
-
-this.indice = indice;
-
-},
-
-estaFiltrado() {
-return Array.isArray(
-this.filtroActivo
-);
-},
-
-obtenerActual() {
-const conjunto =
-this.conjuntoActivo();
-
-if (
-  this.indice < 0 ||
-  this.indice >= conjunto.length
-) {
-  return null;
-}
-
-return conjunto[this.indice];
-
-},
-
-estado() {
-const conjunto =
-this.conjuntoActivo();
-
-return {
-  version: this.version,
-  total: conjunto.length,
-  indice: this.indice,
-  posicion:
-    this.indice >= 0
-      ? this.indice + 1
-      : 0,
-  codigo:
-    this.codigoActual,
-  filtrado:
-    this.estaFiltrado()
+    },
+
+
+    /* =====================================================
+       POSICIONAR
+       ===================================================== */
+
+    async posicionar(codigo) {
+
+        const j1 =
+            this.normalizarCodigo(
+                codigo
+            );
+
+
+        if (!j1) {
+
+            throw new Error(
+                "PALNAVEGADOR: código vacío."
+            );
+
+        }
+
+
+        const indice =
+            this.buscarIndice(
+                j1
+            );
+
+
+        if (indice === -1) {
+
+            return false;
+
+        }
+
+
+        this.indice =
+            indice;
+
+
+        this.codigoActual =
+            j1;
+
+
+        return true;
+
+    },
+
+
+    /* =====================================================
+       CARGAR ÍNDICE
+       ===================================================== */
+
+    async cargarIndice(indice) {
+
+        const conjunto =
+            this.conjuntoActivo();
+
+
+        if (!conjunto.length) {
+
+            throw new Error(
+                "PALNAVEGADOR: el conjunto activo está vacío."
+            );
+
+        }
+
+
+        if (indice < 0) {
+
+            indice = 0;
+
+        }
+
+
+        if (indice >= conjunto.length) {
+
+            indice =
+                conjunto.length - 1;
+
+        }
+
+
+        const registro =
+            conjunto[indice];
+
+
+        if (
+            !registro ||
+            !registro.codigo
+        ) {
+
+            throw new Error(
+                "PALNAVEGADOR: registro inválido."
+            );
+
+        }
+
+
+        this.indice =
+            indice;
+
+
+        this.codigoActual =
+            this.normalizarCodigo(
+                registro.codigo
+            );
+
+
+        /* =================================================
+           CAB07
+
+           Entregar el j1 actual para que CAB07 cargue
+           desde master.csv el registro completo y lo deje
+           disponible en MASTER_ACTUAL.
+           ================================================= */
+
+        if (
+            window.CAB07 &&
+            typeof window.CAB07.procesar === "function"
+        ) {
+
+            await window.CAB07.procesar(
+                this.codigoActual
+            );
+
+        }
+
+
+        /* =================================================
+           CARGACONT
+           ================================================= */
+
+        if (
+            !window.CARGACONT ||
+            typeof window.CARGACONT.cargar !== "function"
+        ) {
+
+            throw new Error(
+                "PALNAVEGADOR: CARGACONT no está disponible."
+            );
+
+        }
+
+
+        return await window.CARGACONT.cargar(
+            this.codigoActual
+        );
+
+    },
+
+
+    /* =====================================================
+       PRIMERO
+       ===================================================== */
+
+    async primero() {
+
+        return await this.cargarIndice(
+            0
+        );
+
+    },
+
+
+    /* =====================================================
+       ANTERIOR
+       ===================================================== */
+
+    async anterior() {
+
+        const conjunto =
+            this.conjuntoActivo();
+
+
+        if (!conjunto.length) {
+
+            return null;
+
+        }
+
+
+        if (this.indice <= 0) {
+
+            return await this.cargarIndice(
+                0
+            );
+
+        }
+
+
+        return await this.cargarIndice(
+            this.indice - 1
+        );
+
+    },
+
+
+    /* =====================================================
+       SIGUIENTE
+       ===================================================== */
+
+    async siguiente() {
+
+        const conjunto =
+            this.conjuntoActivo();
+
+
+        if (!conjunto.length) {
+
+            return null;
+
+        }
+
+
+        if (
+            this.indice >=
+            conjunto.length - 1
+        ) {
+
+            return await this.cargarIndice(
+                conjunto.length - 1
+            );
+
+        }
+
+
+        return await this.cargarIndice(
+            this.indice + 1
+        );
+
+    },
+
+
+    /* =====================================================
+       ÚLTIMO
+       ===================================================== */
+
+    async ultimo() {
+
+        const conjunto =
+            this.conjuntoActivo();
+
+
+        return await this.cargarIndice(
+            conjunto.length - 1
+        );
+
+    },
+
+
+    /* =====================================================
+       ALEATORIO
+       ===================================================== */
+
+    async aleatorio() {
+
+        const conjunto =
+            this.conjuntoActivo();
+
+
+        if (!conjunto.length) {
+
+            throw new Error(
+                "PALNAVEGADOR: no hay registros disponibles."
+            );
+
+        }
+
+
+        const indice =
+            Math.floor(
+                Math.random() *
+                conjunto.length
+            );
+
+
+        return await this.cargarIndice(
+            indice
+        );
+
+    },
+
+
+    /* =====================================================
+       APLICAR FILTRO
+       ===================================================== */
+
+    aplicarFiltro(registros) {
+
+        if (!Array.isArray(registros)) {
+
+            throw new Error(
+                "PALNAVEGADOR: el filtro debe ser un array."
+            );
+
+        }
+
+
+        this.filtroActivo =
+            registros;
+
+
+        if (!this.filtroActivo.length) {
+
+            this.indice = -1;
+
+            return;
+
+        }
+
+
+        if (this.codigoActual) {
+
+            const indice =
+                this.filtroActivo.findIndex(
+                    registro =>
+                        this.normalizarCodigo(
+                            registro.codigo
+                        ) ===
+                        this.codigoActual
+                );
+
+
+            if (indice !== -1) {
+
+                this.indice =
+                    indice;
+
+                return;
+
+            }
+
+        }
+
+
+        this.indice = 0;
+
+    },
+
+
+    /* =====================================================
+       LIMPIAR FILTRO
+       ===================================================== */
+
+    limpiarFiltro() {
+
+        const codigoActual =
+            this.codigoActual;
+
+
+        this.filtroActivo =
+            null;
+
+
+        if (!codigoActual) {
+
+            this.indice = -1;
+
+            return;
+
+        }
+
+
+        const indice =
+            this.buscarIndice(
+                codigoActual
+            );
+
+
+        this.indice =
+            indice;
+
+    },
+
+
+    /* =====================================================
+       ESTÁ FILTRADO
+       ===================================================== */
+
+    estaFiltrado() {
+
+        return Array.isArray(
+            this.filtroActivo
+        );
+
+    },
+
+
+    /* =====================================================
+       OBTENER ACTUAL
+       ===================================================== */
+
+    obtenerActual() {
+
+        const conjunto =
+            this.conjuntoActivo();
+
+
+        if (
+            this.indice < 0 ||
+            this.indice >= conjunto.length
+        ) {
+
+            return null;
+
+        }
+
+
+        return conjunto[
+            this.indice
+        ];
+
+    },
+
+
+    /* =====================================================
+       ESTADO
+       ===================================================== */
+
+    estado() {
+
+        const conjunto =
+            this.conjuntoActivo();
+
+
+        return {
+
+            version:
+                this.version,
+
+            total:
+                conjunto.length,
+
+            indice:
+                this.indice,
+
+            posicion:
+                this.indice >= 0
+                    ? this.indice + 1
+                    : 0,
+
+            codigo:
+                this.codigoActual,
+
+            filtrado:
+                this.estaFiltrado()
+
+        };
+
+    }
+
 };
 
-}
-};
 
 window.PALNAVEGADOR =
-PALNAVEGADOR;
+    PALNAVEGADOR;
 
 
-
-
-
+/*
+========================================================
+FIN PALNAVEGADOR.js
+========================================================
+*/
