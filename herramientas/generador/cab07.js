@@ -4,13 +4,20 @@ PalEntropía
 CAB07.js
 Generador de Paleofichas 1.1
 
-PRIMERA FUNCIÓN
+BLOQUE:
+- Obtener registro completo desde master.csv mediante j1
+- Guardar registro en MASTER_ACTUAL
+- Obtener j3
+- Procesar j3 mediante LEEPALGEO
+- Mostrar cronología procesada en la Paleoficha
 
-- Recibe j1
-- Obtiene el registro completo desde master.csv
-- Guarda el resultado en MASTER_ACTUAL
-- Muestra j3
-- No utiliza PALGEO todavía
+CAB07 es la función maestra de cronología.
+
+NO modifica:
+- LEEPALJSON
+- CARGACONT
+- PALGEO
+- PALGEOSIMPLIFICADO
 ========================================================
 */
 
@@ -19,7 +26,7 @@ window.CAB07 = {
 
 
     /* =====================================================
-       PROCESAR
+       PROCESAR PALEOFICHA
        ===================================================== */
 
     async procesar(j1) {
@@ -27,7 +34,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        COMPROBAR FUNCIÓN MAESTRA
+        1. COMPROBAR CARGADOR DE MASTER.CSV
         -----------------------------------------------------
         */
 
@@ -47,23 +54,17 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        OBTENER REGISTRO COMPLETO
+        2. OBTENER REGISTRO COMPLETO
         -----------------------------------------------------
         */
 
-        const datos =
+        const registro =
             await window.cargarMasterPorJ1(
                 j1
             );
 
 
-        /*
-        -----------------------------------------------------
-        COMPROBAR RESULTADO
-        -----------------------------------------------------
-        */
-
-        if (!datos) {
+        if (!registro) {
 
             console.warn(
                 "CAB07: No se encontró el registro:",
@@ -77,35 +78,226 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        MOSTRAR J3
+        3. GUARDAR REGISTRO COMPLETO EN MEMORIA
         -----------------------------------------------------
         */
 
-        const cronologia =
-            document.getElementById(
-                "cronologia"
+        window.MASTER_ACTUAL =
+            registro;
+
+
+        /*
+        -----------------------------------------------------
+        4. OBTENER J3
+        -----------------------------------------------------
+        */
+
+        const j3 =
+            registro.j3;
+
+
+        if (!j3) {
+
+            console.warn(
+                "CAB07: El registro no contiene j3:",
+                j1
             );
 
+            mostrarCronologia(
+                "Cronología no disponible"
+            );
 
-        if (cronologia) {
-
-            cronologia.textContent =
-                datos.j3 || "—";
+            return registro;
 
         }
 
 
         /*
         -----------------------------------------------------
-        DEVOLVER REGISTRO COMPLETO
+        5. COMPROBAR LEEPALGEO
         -----------------------------------------------------
         */
 
-        return datos;
+        if (
+            !window.LEEPALGEO ||
+            typeof window.LEEPALGEO.leer !==
+            "function"
+        ) {
+
+            console.error(
+                "CAB07: LEEPALGEO no está disponible."
+            );
+
+            mostrarCronologia(
+                j3
+            );
+
+            return registro;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        6. PROCESAR J3 MEDIANTE LEEPALGEO
+        -----------------------------------------------------
+        */
+
+        const resultado =
+            window.LEEPALGEO.leer({
+
+                j1:
+                    registro.j1,
+
+                j2:
+                    registro.j2,
+
+                j3:
+                    j3
+
+            });
+
+
+        /*
+        -----------------------------------------------------
+        7. COMPROBAR RESULTADO
+        -----------------------------------------------------
+        */
+
+        if (!resultado) {
+
+            console.warn(
+                "CAB07: LEEPALGEO no pudo procesar:",
+                j3
+            );
+
+            mostrarCronologia(
+                j3
+            );
+
+            return registro;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        8. GUARDAR RESULTADO GEOLÓGICO
+        -----------------------------------------------------
+        */
+
+        window.MASTER_ACTUAL.intervalo =
+            resultado.intervalo || "";
+
+        window.MASTER_ACTUAL.periodo =
+            resultado.periodo || "";
+
+        window.MASTER_ACTUAL.subperiodo =
+            resultado.subperiodo || "";
+
+
+        /*
+        -----------------------------------------------------
+        9. MOSTRAR RESULTADO
+        -----------------------------------------------------
+        */
+
+        mostrarCronologia(
+            resultado
+        );
+
+
+        /*
+        -----------------------------------------------------
+        10. DEVOLVER REGISTRO COMPLETO
+        -----------------------------------------------------
+        */
+
+        return window.MASTER_ACTUAL;
 
     }
 
 };
+
+
+/*
+========================================================
+MOSTRAR CRONOLOGÍA
+========================================================
+*/
+
+function mostrarCronologia(
+    resultado
+) {
+
+
+    const elemento =
+        document.getElementById(
+            "cronologia"
+        );
+
+
+    if (!elemento) {
+
+        return;
+
+    }
+
+
+    /*
+    -----------------------------------------------------
+    SI LEEPALGEO DEVUELVE UN OBJETO
+    -----------------------------------------------------
+    */
+
+    if (
+        typeof resultado ===
+        "object"
+    ) {
+
+        const intervalo =
+            resultado.intervalo ||
+            "—";
+
+        const periodo =
+            resultado.periodo ||
+            "—";
+
+        const subperiodo =
+            resultado.subperiodo ||
+            "—";
+
+
+        elemento.innerHTML =
+
+            "<div>" +
+                intervalo +
+            "</div>" +
+
+            "<div>" +
+                periodo +
+            "</div>" +
+
+            "<div>" +
+                subperiodo +
+            "</div>";
+
+
+        return;
+
+    }
+
+
+    /*
+    -----------------------------------------------------
+    SI RECIBIMOS TEXTO
+    -----------------------------------------------------
+    */
+
+    elemento.textContent =
+        resultado || "—";
+
+}
 
 
 /*
