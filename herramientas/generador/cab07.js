@@ -10,32 +10,30 @@ FUNCIÓN:
 - Obtiene el registro completo desde master.csv.
 - Normaliza j3.
 - Guarda el registro en CONT07.
-- Consulta PALGEO mediante LEEPALGEO.
-- Guarda los datos geológicos en CONT07.
+- Envía j3 a LEEPALGEO.
+- Guarda la geología en CONT07.
+- No modifica PALGEO.
+- No interpreta cronología.
+- No rompe la ficha si la geología falla.
 - Muestra j3.
 - Devuelve el registro.
-
-NO:
-
-- interpreta cronología directamente
-- modifica PALGEO
-- modifica cargacont.js
-- modifica CAB01-CAB06
 
 FLUJO:
 
 master.csv
-   ↓
-CAB07
-   ↓
-CONT07
-   ↓
+    ↓
+  CAB07
+    ↓
+CONT07.registro
+    ↓
+     j3
+    ↓
 LEEPALGEO
-   ↓
+    ↓
 PALGEOSIMPLIFICADO
-   ↓
+    ↓
 PALGEO
-   ↓
+    ↓
 CONT07.geologia
 
 ========================================================
@@ -79,98 +77,54 @@ window.CAB07 = {
         }
 
 
-        function normalizarExtremo(valor) {
+        let inicio =
+            partes[0].trim();
 
 
-            valor =
-                String(valor).trim();
+        let fin =
+            partes[1].trim();
 
 
-            const partesValor =
-                valor.split(".");
+        /*
+        -----------------------------------------------------
+        GARANTIZAR XXXX.XXXX
+        -----------------------------------------------------
+        */
 
+        if (
+            /^\d+\.\d{4}$/.test(inicio)
+        ) {
 
-            /*
-            -------------------------------------------------
-            Si no tiene decimal,
-            no modificar.
-            -------------------------------------------------
-            */
+            const partesInicio =
+                inicio.split(".");
 
-            if (
-                partesValor.length !== 2
-            ) {
-
-                return valor;
-
-            }
-
-
-            let entero =
-                partesValor[0];
-
-
-            let decimal =
-                partesValor[1];
-
-
-            /*
-            -------------------------------------------------
-            ENTERO
-
-            Debe tener exactamente
-            cuatro cifras.
-            -------------------------------------------------
-            */
-
-            entero =
-                entero.padStart(
-                    4,
-                    "0"
-                );
-
-
-            /*
-            -------------------------------------------------
-            DECIMAL
-
-            Debe tener exactamente
-            cuatro cifras.
-            -------------------------------------------------
-            */
-
-            decimal =
-                decimal.padEnd(
-                    4,
-                    "0"
-                );
-
-
-            /*
-            -------------------------------------------------
-            RESULTADO
-            -------------------------------------------------
-            */
-
-            return (
-                entero +
-                "." +
-                decimal
-            );
+            inicio =
+                partesInicio[0]
+                .padStart(4, "0")
+                +
+                "."
+                +
+                partesInicio[1];
 
         }
 
 
-        const inicio =
-            normalizarExtremo(
-                partes[0]
-            );
+        if (
+            /^\d+\.\d{4}$/.test(fin)
+        ) {
 
+            const partesFin =
+                fin.split(".");
 
-        const fin =
-            normalizarExtremo(
-                partes[1]
-            );
+            fin =
+                partesFin[0]
+                .padStart(4, "0")
+                +
+                "."
+                +
+                partesFin[1];
+
+        }
 
 
         return (
@@ -191,7 +145,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        COMPROBAR CARGADOR MASTER
+        COMPROBAR FUNCIÓN MAESTRA
         -----------------------------------------------------
         */
 
@@ -211,7 +165,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        OBTENER REGISTRO DESDE MASTER.CSV
+        OBTENER REGISTRO COMPLETO
         -----------------------------------------------------
         */
 
@@ -253,40 +207,41 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        COMPROBAR CONT07
+        GUARDAR REGISTRO EN CONT07
         -----------------------------------------------------
         */
 
         if (
-            !window.CONT07 ||
-            typeof window.CONT07.guardar !==
+            window.CONT07 &&
+            typeof window.CONT07.guardar ===
             "function"
         ) {
 
-            console.error(
-                "CAB07: CONT07 no está disponible."
+            window.CONT07.guardar(
+                datos
             );
 
-            return null;
+        } else {
+
+            console.warn(
+                "CAB07: CONT07 no está disponible."
+            );
 
         }
 
 
         /*
-        -----------------------------------------------------
-        GUARDAR REGISTRO EN CONT07
-        -----------------------------------------------------
-        */
+        =====================================================
+        GEOLOGÍA
+        =====================================================
 
-        window.CONT07.guardar(
-            datos
-        );
+        Se utiliza el j3 ya normalizado.
 
+        Si LEEPALGEO está disponible,
+        solicitamos el análisis.
 
-        /*
-        -----------------------------------------------------
-        CONSULTAR PALGEO MEDIANTE LEEPALGEO
-        -----------------------------------------------------
+        Si falla, NO se interrumpe la ficha.
+        =====================================================
         */
 
         if (
@@ -296,21 +251,24 @@ window.CAB07 = {
         ) {
 
 
-            const geologia =
-                window.LEEPALGEO.extraer(
-                    datos.j3
-                );
+            try {
 
 
-            /*
-            -------------------------------------------------
-            GUARDAR GEOLOGÍA EN CONT07
-            -------------------------------------------------
-            */
+                const geologia =
+                    window.LEEPALGEO.extraer(
+                        datos.j3
+                    );
 
-            if (geologia) {
+
+                /*
+                -------------------------------------------------
+                GUARDAR GEOLOGÍA EN CONT07
+                -------------------------------------------------
+                */
 
                 if (
+                    geologia &&
+                    window.CONT07 &&
                     typeof window.CONT07.guardarGeologia ===
                     "function"
                 ) {
@@ -321,13 +279,26 @@ window.CAB07 = {
 
                 }
 
+
+            } catch (error) {
+
+
+                console.warn(
+                    "CAB07: Error al obtener datos geológicos.",
+                    error
+                );
+
+
             }
 
+
         } else {
+
 
             console.warn(
                 "CAB07: LEEPALGEO no está disponible."
             );
+
 
         }
 
@@ -354,26 +325,11 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        RECUPERAR REGISTRO DESDE CONT07
-        -----------------------------------------------------
-        */
-
-        const registroCont07 =
-            typeof window.CONT07.obtener ===
-            "function"
-
-                ? window.CONT07.obtener()
-
-                : datos;
-
-
-        /*
-        -----------------------------------------------------
         DEVOLVER REGISTRO
         -----------------------------------------------------
         */
 
-        return registroCont07;
+        return datos;
 
     }
 
