@@ -10,8 +10,9 @@ Función:
 - Navega por los registros
 - Gestiona filtros
 - Carga la Paleoficha mediante CARGACONT
-- Entrega el j1 a CAB07 para cargar el registro completo
-  de master.csv
+- Entrega el j1 a CAB07
+- Permite consultar el registro actual de CONT07
+
 ========================================================
 */
 
@@ -253,9 +254,7 @@ const PALNAVEGADOR = {
         /* =================================================
            CAB07
 
-           Entregar el j1 actual para que CAB07 cargue
-           desde master.csv el registro completo y lo deje
-           disponible en MASTER_ACTUAL.
+           Entregar j1 a CAB07.
            ================================================= */
 
         if (
@@ -553,6 +552,30 @@ const PALNAVEGADOR = {
         return conjunto[
             this.indice
         ];
+
+    },
+
+
+    /* =====================================================
+       OBTENER REGISTRO DE CONT07
+       
+       Lectura independiente.
+       No modifica CONT07.
+       ===================================================== */
+
+    obtenerCont07() {
+
+        if (
+            !window.CONT07 ||
+            typeof window.CONT07.obtener !== "function"
+        ) {
+
+            return null;
+
+        }
+
+
+        return window.CONT07.obtener();
 
     },
 
