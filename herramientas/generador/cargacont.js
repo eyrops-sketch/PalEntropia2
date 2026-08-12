@@ -1,34 +1,28 @@
-./* ========================================================
+/* ========================================================
    PalEntropía
    cargacont.js v1.5 LTS
 
    COMPUERTA DEL CONTENEDOR
 
-   FUENTE ÚNICA:
-   master.csv
+   BASE:
+   CARGACONT v1.4 LTS FUNCIONAL
 
-   FLUJO:
+   AÑADIDO v1.5:
+   - Recuperación independiente de j3 desde master.csv
+   - j3 NO depende de LEEPALJSON
+   - Transformación de j3 mediante PALGEOSIMPLIFICADO
+   - Entrega de datos geológicos al generador
 
-   master.csv
-       ↓
-   LEEPALJSON
-       ↓
-   CARGACONT
-       ↓
-   PALGEOSIMPLIFICADO
-       ↓
-   REGISTRO FINAL
-       ↓
-   GENERADOR
+   IMPORTANTE:
 
-   Funciones:
-   - Carga un registro mediante j1
-   - Carga aleatoriamente un j1
-   - Obtiene datos finales
-   - Transforma j3 mediante PALGEOSIMPLIFICADO
-   - Obtiene imágenes mediante BUSCARUTA
-   - Convierte rutas relativas en URL absolutas
-   - Entrega al generador un registro preparado
+   LEEPALJSON sigue proporcionando:
+
+       j1
+       j2
+       j7
+       j8
+
+   CARGACONT obtiene j3 directamente de master.csv.
 
 ======================================================== */
 
@@ -41,7 +35,11 @@ window.CARGACONT = {
 
     campoPuntero: "j1",
 
-    rutaJSON: "paleofichas.json",
+    rutaJSON:
+        "paleofichas.json",
+
+    rutaCSV:
+        "master.csv",
 
     dominio:
         "https://palentropia.es/",
@@ -49,6 +47,10 @@ window.CARGACONT = {
     _datosJSON: null,
 
     _cargandoJSON: null,
+
+    _datosCSVCompleto: null,
+
+    _cargandoCSV: null,
 
     ultimo: null,
 
@@ -67,7 +69,11 @@ window.CARGACONT = {
 
 
     /* ====================================================
-       OBTENER CONTENEDOR CSV
+       OBTENER CONTENEDOR CSV REDUCIDO
+       
+       ESTE CONTENEDOR SIGUE SIENDO EL DE LEEPALJSON.
+
+       NO SE MODIFICA SU ESTRUCTURA.
     ==================================================== */
 
     obtenerContenedor(){
@@ -107,7 +113,449 @@ window.CARGACONT = {
 
 
     /* ====================================================
+       CARGAR MASTER.CSV COMPLETO
+
+       IMPORTANTE:
+
+       Esta lectura es independiente de LEEPALJSON.
+
+       Su única finalidad es conservar j3.
+
+       NO sustituye a LEEPALJSON.
+    ==================================================== */
+
+    async cargarCSVCompleto(){
+
+        if(
+            this._datosCSVCompleto
+        ){
+
+            return this._datosCSVCompleto;
+
+        }
+
+
+        if(
+            this._cargandoCSV
+        ){
+
+            return this._cargandoCSV;
+
+        }
+
+
+        this._cargandoCSV =
+
+            fetch(
+                this.rutaCSV,
+                {
+                    cache:
+                        "default"
+                }
+            )
+
+            .then(
+
+                respuesta => {
+
+                    if(
+                        !respuesta.ok
+                    ){
+
+                        throw new Error(
+                            "CARGACONT: no se pudo cargar " +
+                            this.rutaCSV +
+                            " (" +
+                            respuesta.status +
+                            ")"
+                        );
+
+                    }
+
+
+                    return respuesta.text();
+
+                }
+
+            )
+
+            .then(
+
+                textoCSV => {
+
+                    const filas =
+                        this.parsearCSVCompleto(
+                            textoCSV
+                        );
+
+
+                    if(
+                        !Array.isArray(filas) ||
+                        !filas.length
+                    ){
+
+                        throw new Error(
+                            "CARGACONT: master.csv no contiene registros."
+                        );
+
+                    }
+
+
+                    this._datosCSVCompleto =
+                        filas;
+
+
+                    return filas;
+
+                }
+
+            )
+
+            .catch(
+
+                error => {
+
+                    this._cargandoCSV =
+                        null;
+
+
+                    throw error;
+
+                }
+
+            );
+
+
+        return this._cargandoCSV;
+
+    },
+
+
+    /* ====================================================
+       PARSER CSV COMPLETO
+
+       Conserva TODAS las columnas del master.csv.
+
+       Especialmente:
+
+       j1
+       j3
+
+       Permite campos entre comillas.
+    ==================================================== */
+
+    parsearCSVCompleto(texto){
+
+        const filas = [];
+
+        let fila = [];
+
+        let campo = "";
+
+        let dentroComillas = false;
+
+
+        for(
+            let i = 0;
+            i < texto.length;
+            i++
+        ){
+
+            const caracter =
+                texto[i];
+
+            const siguiente =
+                texto[i + 1];
+
+
+            /* ----------------------------------------
+               COMILLAS
+            ---------------------------------------- */
+
+            if(
+                caracter === '"'
+            ){
+
+                if(
+                    dentroComillas &&
+                    siguiente === '"'
+                ){
+
+                    campo += '"';
+
+                    i++;
+
+                }else{
+
+                    dentroComillas =
+                        !dentroComillas;
+
+                }
+
+                continue;
+
+            }
+
+
+            /* ----------------------------------------
+               SEPARADOR
+            ---------------------------------------- */
+
+            if(
+                caracter === "," &&
+                !dentroComillas
+            ){
+
+                fila.push(
+                    campo
+                );
+
+                campo = "";
+
+                continue;
+
+            }
+
+
+            /* ----------------------------------------
+               FIN DE FILA
+            ---------------------------------------- */
+
+            if(
+                (
+                    caracter === "\n" ||
+                    caracter === "\r"
+                ) &&
+                !dentroComillas
+            ){
+
+                if(
+                    caracter === "\r" &&
+                    siguiente === "\n"
+                ){
+
+                    i++;
+
+                }
+
+
+                fila.push(
+                    campo
+                );
+
+                campo = "";
+
+
+                if(
+                    fila.some(
+                        valor =>
+                            String(valor)
+                            .trim() !== ""
+                    )
+                ){
+
+                    filas.push(
+                        fila
+                    );
+
+                }
+
+
+                fila = [];
+
+                continue;
+
+            }
+
+
+            /* ----------------------------------------
+               CARACTER NORMAL
+            ---------------------------------------- */
+
+            campo +=
+                caracter;
+
+        }
+
+
+        /* --------------------------------------------
+           ÚLTIMA FILA
+        -------------------------------------------- */
+
+        if(
+            campo !== "" ||
+            fila.length > 0
+        ){
+
+            fila.push(
+                campo
+            );
+
+
+            if(
+                fila.some(
+                    valor =>
+                        String(valor)
+                        .trim() !== ""
+                )
+            ){
+
+                filas.push(
+                    fila
+                );
+
+            }
+
+        }
+
+
+        if(
+            !filas.length
+        ){
+
+            return [];
+
+        }
+
+
+        /* --------------------------------------------
+           CABECERA
+        -------------------------------------------- */
+
+        const cabecera =
+            filas[0].map(
+
+                valor => {
+
+                    return String(
+                        valor === undefined ||
+                        valor === null
+                            ? ""
+                            : valor
+                    )
+                    .replace(
+                        /^\uFEFF/,
+                        ""
+                    )
+                    .trim()
+                    .toLowerCase();
+
+                }
+
+            );
+
+
+        /* --------------------------------------------
+           ÍNDICES
+        -------------------------------------------- */
+
+        const indiceJ1 =
+            cabecera.indexOf("j1");
+
+        const indiceJ3 =
+            cabecera.indexOf("j3");
+
+
+        if(
+            indiceJ1 === -1
+        ){
+
+            throw new Error(
+                "CARGACONT: master.csv no contiene la columna j1."
+            );
+
+        }
+
+
+        if(
+            indiceJ3 === -1
+        ){
+
+            throw new Error(
+                "CARGACONT: master.csv no contiene la columna j3."
+            );
+
+        }
+
+
+        /* --------------------------------------------
+           CONSTRUIR REGISTROS
+
+           Solo necesitamos j1 y j3 aquí.
+
+           Las demás columnas permanecen bajo
+           responsabilidad de LEEPALJSON.
+        -------------------------------------------- */
+
+        const resultado = [];
+
+
+        for(
+            let i = 1;
+            i < filas.length;
+            i++
+        ){
+
+            const filaActual =
+                filas[i];
+
+
+            const codigo =
+                String(
+                    filaActual[indiceJ1] ??
+                    ""
+                )
+                .replace(
+                    /^\uFEFF/,
+                    ""
+                )
+                .trim();
+
+
+            const cronologia =
+                String(
+                    filaActual[indiceJ3] ??
+                    ""
+                )
+                .replace(
+                    /^\uFEFF/,
+                    ""
+                )
+                .trim();
+
+
+            if(
+                !codigo
+            ){
+
+                continue;
+
+            }
+
+
+            resultado.push({
+
+                j1:
+                    codigo,
+
+                j3:
+                    cronologia
+
+            });
+
+        }
+
+
+        return resultado;
+
+    },
+
+
+    /* ====================================================
        BUSCAR J1 EN MASTER.CSV
+
+       Esta función sigue utilizando LEEPALJSON
+       para los datos normales del generador.
     ==================================================== */
 
     buscarJ1EnCSV(j1){
@@ -126,11 +574,6 @@ window.CARGACONT = {
 
             }
 
-
-            /*
-            LEEPALJSON utiliza "codigo"
-            como representación del j1.
-            */
 
             const codigo =
                 this.normalizarJ1(
@@ -155,7 +598,170 @@ window.CARGACONT = {
 
 
     /* ====================================================
+       BUSCAR J3 DIRECTAMENTE EN MASTER.CSV
+
+       NO utiliza LEEPALJSON.
+
+       Esto es fundamental porque LEEPALJSON
+       no expone j3.
+    ==================================================== */
+
+    async obtenerJ3(j1){
+
+        const datos =
+            await this.cargarCSVCompleto();
+
+
+        for(
+            const registro of datos
+        ){
+
+            if(!registro){
+
+                continue;
+
+            }
+
+
+            const codigo =
+                this.normalizarJ1(
+                    registro.j1
+                );
+
+
+            if(
+                codigo !== j1
+            ){
+
+                continue;
+
+            }
+
+
+            const cronologia =
+                String(
+                    registro.j3 || ""
+                )
+                .trim();
+
+
+            if(
+                !cronologia
+            ){
+
+                throw new Error(
+                    "CARGACONT: j3 vacío en master.csv para " +
+                    j1 +
+                    "."
+                );
+
+            }
+
+
+            return cronologia;
+
+        }
+
+
+        throw new Error(
+            "CARGACONT: no existe j3 para " +
+            j1 +
+            " en master.csv."
+        );
+
+    },
+
+
+    /* ====================================================
+       TRANSFORMAR CRONOLOGÍA
+
+       j3:
+
+       0521.0000-0509.0000
+
+       ↓
+
+       PALGEOSIMPLIFICADO
+
+       ↓
+
+       cronologia
+       inicio_ma
+       fin_ma
+       rango
+       codes
+       periodo
+       edad
+    ==================================================== */
+
+    transformarCronologia(
+        cronologia
+    ){
+
+        if(
+            !cronologia
+        ){
+
+            throw new Error(
+                "CARGACONT: no se ha recibido j3."
+            );
+
+        }
+
+
+        if(
+            !window.PALGEOSIMPLIFICADO
+        ){
+
+            throw new Error(
+                "CARGACONT: PALGEOSIMPLIFICADO no está disponible."
+            );
+
+        }
+
+
+        if(
+            typeof
+            window.PALGEOSIMPLIFICADO.analizar !==
+            "function"
+        ){
+
+            throw new Error(
+                "CARGACONT: PALGEOSIMPLIFICADO.analizar() no está disponible."
+            );
+
+        }
+
+
+        const datos =
+            window.PALGEOSIMPLIFICADO.analizar(
+                String(
+                    cronologia
+                ).trim()
+            );
+
+
+        if(
+            !datos
+        ){
+
+            throw new Error(
+                "CARGACONT: no se pudo transformar j3: " +
+                cronologia
+            );
+
+        }
+
+
+        return datos;
+
+    },
+
+
+    /* ====================================================
        CARGAR PALEOFICHAS.JSON
+
+       ESTA PARTE ES LA MISMA QUE EN v1.4.
     ==================================================== */
 
     async cargarJSON(){
@@ -305,17 +911,6 @@ window.CARGACONT = {
 
     /* ====================================================
        OBTENER DATOS FINALES
-
-       Estos campos continúan obteniéndose
-       desde paleofichas.json:
-
-       j2 = nombre
-       j7 = dieta
-       j8 = anatomía
-
-       La cronología j3 NO procede de aquí.
-
-       j3 procede exclusivamente de master.csv.
     ==================================================== */
 
     async obtenerDatosFinales(j1){
@@ -408,341 +1003,15 @@ window.CARGACONT = {
 
 
     /* ====================================================
-       OBTENER CRONOLOGÍA DESDE MASTER.CSV
+       CONVERTIR RUTA EN URL ABSOLUTA
 
-       master.csv es la fuente única.
-
-       j3 contiene:
-
-       MMMM.DDDD-MMMM.DDDD
-
-       Ejemplo:
-
-       0521.0000-0509.0000
+       ESTA PARTE CONTINÚA EN LA PARTE 2.
     ==================================================== */
 
-    obtenerCronologia(registroCSV){
-
-        if(
-            !registroCSV
-        ){
-
-            throw new Error(
-                "CARGACONT: no existe registro CSV."
-            );
-
-        }
-
-console.log(
-    "CARGACONT — registro master.csv:"
-);
-
-console.log(
-    registroCSV
-);
-
-const cronologia =
-    registroCSV.j3 ||
-    registroCSV.cronologia ||
-    registroCSV.J3;
 
 
-        if(
-            cronologia === undefined ||
-            cronologia === null ||
-            String(cronologia).trim() === ""
-        ){
-
-            throw new Error(
-                "CARGACONT: j3 vacío en master.csv."
-            );
-
-        }
-
-
-        return String(
-            cronologia
-        ).trim();
-
-    },
-
-
-    /* ====================================================
-       TRANSFORMAR CRONOLOGÍA
-
-       master.csv
-            ↓
-       j3 interno
-            ↓
-       PALGEOSIMPLIFICADO
-            ↓
-       datos geológicos para el generador
-
-       PALGEOSIMPLIFICADO utiliza PALGEO como
-       fuente geológica.
-
-       NO se utilizan decoders antiguos.
-    ==================================================== */
-
-    transformarCronologia(cronologia){
-
-        if(
-            !window.PALGEOSIMPLIFICADO
-        ){
-
-            throw new Error(
-                "CARGACONT: PALGEOSIMPLIFICADO no está disponible."
-            );
-
-        }
-
-
-        if(
-            typeof window.PALGEOSIMPLIFICADO.analizar !==
-            "function"
-        ){
-
-            throw new Error(
-                "CARGACONT: PALGEOSIMPLIFICADO.analizar() no está disponible."
-            );
-
-        }
-
-
-        const datos =
-            window.PALGEOSIMPLIFICADO.analizar(
-                cronologia
-            );
-
-
-        if(
-            !datos
-        ){
-
-            throw new Error(
-                "CARGACONT: PALGEOSIMPLIFICADO no pudo procesar " +
-                cronologia +
-                "."
-            );
-
-        }
-
-
-        return {
-
-            j3:
-                datos.cronologia,
-
-            intervalo:
-                datos.rango || null,
-
-            periodo:
-                Array.isArray(
-                    datos.periodo
-                )
-                    ? datos.periodo
-                    : [],
-
-            edad:
-                Array.isArray(
-                    datos.edad
-                )
-                    ? datos.edad
-                    : [],
-
-            codes:
-                Array.isArray(
-                    datos.codes
-                )
-                    ? datos.codes
-                    : []
-
-        };
-
-    },
-
-
-    /* ====================================================
-       AQUÍ TERMINA LA PARTE 1
-
-       NO AÑADIR:
-
-       };
-       
-       La PARTE 2 continúa directamente aquí.
-    ==================================================== */
 
        /* ====================================================
-       CONVERTIR RUTA EN URL ABSOLUTA
-    ==================================================== */
-
-    convertirRuta(ruta){
-
-        if(
-            !ruta
-        ){
-
-            return null;
-
-        }
-
-
-        const texto =
-            String(ruta).trim();
-
-
-        if(
-            !texto
-        ){
-
-            return null;
-
-        }
-
-
-        /* --------------------------------------------
-           YA ES URL ABSOLUTA
-        -------------------------------------------- */
-
-        if(
-            /^https?:\/\//i.test(texto)
-        ){
-
-            return texto;
-
-        }
-
-
-        /* --------------------------------------------
-           RUTA ABSOLUTA DEL SITIO
-        -------------------------------------------- */
-
-        if(
-            texto.startsWith("/")
-        ){
-
-            return new URL(
-                texto,
-                this.dominio
-            ).href;
-
-        }
-
-
-        /* --------------------------------------------
-           RUTA RELATIVA
-
-           BASE REAL DEL GENERADOR
-        -------------------------------------------- */
-
-        const base =
-            new URL(
-                "herramientas/generador/",
-                this.dominio
-            );
-
-
-        return new URL(
-            texto,
-            base
-        ).href;
-
-    },
-
-
-    /* ====================================================
-       PREPARAR IMÁGENES
-    ==================================================== */
-
-    prepararImagenes(
-        resultadoBusqueda
-    ){
-
-        const imagenes = {
-
-            i0: null,
-
-            i2: null,
-
-            i3: null
-
-        };
-
-
-        if(
-            !resultadoBusqueda
-        ){
-
-            return imagenes;
-
-        }
-
-
-        if(
-            !Array.isArray(
-                resultadoBusqueda.imagenes
-            )
-        ){
-
-            return imagenes;
-
-        }
-
-
-        for(
-            const imagen of
-            resultadoBusqueda.imagenes
-        ){
-
-            if(
-                !imagen ||
-                !imagen.tipo
-            ){
-
-                continue;
-
-            }
-
-
-            const tipo =
-                String(
-                    imagen.tipo
-                )
-                .trim()
-                .toLowerCase();
-
-
-            if(
-                tipo !== "i0" &&
-                tipo !== "i2" &&
-                tipo !== "i3"
-            ){
-
-                continue;
-
-            }
-
-
-            if(
-                imagen.ruta
-            ){
-
-                imagenes[tipo] =
-                    this.convertirRuta(
-                        imagen.ruta
-                    );
-
-            }
-
-        }
-
-
-        return imagenes;
-
-    },
-
-
-    /* ====================================================
        CARGAR POR J1
     ==================================================== */
 
@@ -754,9 +1023,7 @@ const cronologia =
             );
 
 
-        if(
-            !j1
-        ){
+        if(!j1){
 
             throw new Error(
                 "CARGACONT: no se ha indicado j1."
@@ -767,6 +1034,11 @@ const cronologia =
 
         /* --------------------------------------------
            COMPROBAR J1 EN MASTER.CSV
+
+           LEEPALJSON solamente se utiliza para
+           localizar los registros disponibles.
+
+           NO se busca j3 aquí.
         -------------------------------------------- */
 
         const registroCSV =
@@ -775,9 +1047,7 @@ const cronologia =
             );
 
 
-        if(
-            !registroCSV
-        ){
+        if(!registroCSV){
 
             throw new Error(
                 "CARGACONT: el j1 " +
@@ -789,7 +1059,14 @@ const cronologia =
 
 
         /* --------------------------------------------
-           OBTENER DATOS FINALES
+           DATOS DEFINITIVOS DESDE JSON
+
+           Aquí obtenemos:
+
+           j2
+           j3
+           j7
+           j8
         -------------------------------------------- */
 
         const datosFinales =
@@ -799,28 +1076,15 @@ const cronologia =
 
 
         /* --------------------------------------------
-           OBTENER J3 DESDE MASTER.CSV
-        -------------------------------------------- */
-
-        const cronologia =
-            this.obtenerCronologia(
-                registroCSV
-            );
-
-
-        /* --------------------------------------------
            TRANSFORMAR J3
 
-           master.csv
-              ↓
-           PALGEOSIMPLIFICADO
-              ↓
-           datos geológicos
+           CARGACONT entrega al generador
+           los datos ya preparados.
         -------------------------------------------- */
 
         const datosGeo =
             this.transformarCronologia(
-                cronologia
+                datosFinales.j3
             );
 
 
@@ -852,7 +1116,7 @@ const cronologia =
 
 
         /* --------------------------------------------
-           PREPARAR IMÁGENES
+           CONVERTIR IMÁGENES
         -------------------------------------------- */
 
         const imagenes =
@@ -863,12 +1127,14 @@ const cronologia =
 
         /* --------------------------------------------
            REGISTRO FINAL
+           
+           Este es el registro que recibe CAB02.
 
-           Este es el registro que recibe
-           el generador.
+           j3 permanece disponible como cronología
+           interna.
 
-           Los datos geológicos ya llegan
-           transformados.
+           Además se entregan los datos ya procesados
+           por PALGEOSIMPLIFICADO / PALGEO.
         -------------------------------------------- */
 
         const resultado = {
@@ -880,7 +1146,7 @@ const cronologia =
                 datosFinales.j2,
 
             j3:
-                datosGeo.j3,
+                datosGeo.cronologia,
 
             j7:
                 datosFinales.j7,
@@ -888,17 +1154,30 @@ const cronologia =
             j8:
                 datosFinales.j8,
 
-            intervalo:
-                datosGeo.intervalo,
+
+            /* ----------------------------------------
+               DATOS GEO
+            ---------------------------------------- */
+
+            rango:
+                datosGeo.rango,
 
             periodo:
                 datosGeo.periodo,
 
-            edad:
+            subperiodo:
                 datosGeo.edad,
 
             codes:
                 datosGeo.codes,
+
+            edad:
+                datosGeo.edad,
+
+
+            /* ----------------------------------------
+               IMÁGENES
+            ---------------------------------------- */
 
             i0:
                 imagenes.i0,
@@ -913,7 +1192,7 @@ const cronologia =
 
 
         /* --------------------------------------------
-           GUARDAR ÚLTIMO REGISTRO
+           CACHE
         -------------------------------------------- */
 
         this.ultimo =
@@ -921,7 +1200,7 @@ const cronologia =
 
 
         /* --------------------------------------------
-           EVENTO PARA EL GENERADOR
+           EVENTO
         -------------------------------------------- */
 
         document.dispatchEvent(
@@ -958,7 +1237,7 @@ const cronologia =
         );
 
         console.log(
-            "Geología:"
+            "Datos PALGEO:"
         );
 
         console.log(
@@ -990,9 +1269,7 @@ const cronologia =
 
                 registro => {
 
-                    if(
-                        !registro
-                    ){
+                    if(!registro){
 
                         return false;
 
@@ -1084,3 +1361,4 @@ const cronologia =
 ======================================================== */
 
 
+   
