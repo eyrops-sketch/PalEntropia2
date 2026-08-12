@@ -3,419 +3,185 @@
 PalEntropía
 leepalgeo.js v1.0 LTS
 
-LECTOR CRONOLÓGICO DEL CONTENEDOR INTERMEDIO
+LECTOR DE PALGEO
 
-Función:
-- Lee j3 del registro CSV.
-- j3 contiene la cronología interna.
-- Utiliza PALGEOSIMPLIFICADO.
-- PALGEOSIMPLIFICADO consulta PALGEO.
-- Utiliza el SISTEMA B de intersección temporal.
-- Prepara los datos exclusivamente para el Generador.
+FUNCIÓN:
 
-ENTRADA CSV:
+- Recibe una cronología interna.
+- Solicita el análisis a PALGEOSIMPLIFICADO.
+- Devuelve los datos geológicos.
+- No modifica la cronología.
+- No modifica CONT07.
+- No interpreta ni inventa datos.
 
-j3
-↓
-0521.0000-0201.3000
+FLUJO:
 
-SALIDA PARA GENERADOR:
-
-intervalo
-periodo
-subperiodo
-
-Ejemplo:
-
-521 Ma - 201,3 Ma
-
-Período:
-Cámbrico · Ordovícico · ...
-
-Subperíodo:
-Terreneuviense - Serie 2 - ...
-
-IMPORTANTE:
-
-La cronología interna NO se muestra.
-
-j3 es únicamente una referencia interna.
-
-NO duplica ninguna función de:
-
-- PALGEO
-- PALGEOSIMPLIFICADO
-
-PALGEOSIMPLIFICADO es quien interpreta
-y formatea la cronología.
+CONT07
+   ↓
+LEEPALGEO
+   ↓
+PALGEOSIMPLIFICADO
+   ↓
+PALGEO
+   ↓
+LEEPALGEO
+   ↓
+CONT07
 
 ========================================================
 */
-
-window.LEEPALGEO_VERSION = "1.0 LTS";
 
 
 window.LEEPALGEO = {
 
 
-/* ======================================================
-   LEER J3
+    /* =====================================================
+       ANALIZAR CRONOLOGÍA
+       ===================================================== */
 
-   Entrada:
-   registro CSV / contenedor
-
-   Busca exclusivamente:
-
-   j3
-
-   Ejemplo:
-
-   {
-       j1: "005_15",
-       j2: "Longisquama",
-       j3: "0237.0000-0227.0000"
-   }
-
-====================================================== */
-
-leerJ3(registro){
-
-    if(
-        !registro ||
-        typeof registro !== "object"
-    ){
-
-        return null;
-
-    }
-
-
-    /*
-    J3 ES LA ÚNICA ENTRADA
-    CRONOLÓGICA DE ESTE MÓDULO
-    */
-
-    let cronologia =
-        registro.j3;
-
-
-    if(
-        cronologia === undefined ||
-        cronologia === null
-    ){
-
-        return null;
-
-    }
-
-
-    cronologia =
-        String(cronologia)
-        .trim();
-
-
-    if(
-        cronologia === ""
-    ){
-
-        return null;
-
-    }
-
-
-    return cronologia;
-
-},
-
-
-/* ======================================================
-   PREPARAR CRONOLOGÍA
-
-   Entrega j3 a PALGEOSIMPLIFICADO.
-
-   NO interpreta directamente.
-
-====================================================== */
-
-preparar(registro){
-
-    /*
-    Comprobar que existe
-    PALGEOSIMPLIFICADO.
-    */
-
-    if(
-        !window.PALGEOSIMPLIFICADO ||
-        typeof
-        window.PALGEOSIMPLIFICADO.analizar
-        !== "function"
-    ){
-
-        return null;
-
-    }
-
-
-    /*
-    LEER J3
-    */
-
-    let cronologia =
-        this.leerJ3(
-            registro
-        );
-
-
-    if(!cronologia){
-
-        return null;
-
-    }
-
-
-    /*
-    =====================================================
-    DELEGAR TODA LA INTERPRETACIÓN
-    A PALGEOSIMPLIFICADO
-    =====================================================
-    */
-
-    let datos =
-        window.PALGEOSIMPLIFICADO.analizar(
-            cronologia
-        );
-
-
-    if(!datos){
-
-        return null;
-
-    }
-
-
-    /*
-    =====================================================
-    PREPARAR SALIDA DEL GENERADOR
-    =====================================================
-
-    IMPORTANTE:
-
-    NO se devuelve:
-
-    - cronologia
-    - inicio_ma
-    - fin_ma
-    - codes
-
-    Esos datos son internos.
-
-    El generador solo necesita
-    los datos de presentación.
-    */
-
-
-    return {
-
-        /*
-        RANGO HUMANO
-
-        Ejemplo:
-
-        521 Ma - 201,3 Ma
-        */
-
-        intervalo:
-            datos.rango,
+    analizar(cronologia) {
 
 
         /*
-        PERÍODOS
-
-        Ejemplo:
-
-        [
-            "Cámbrico",
-            "Ordovícico",
-            ...
-        ]
+        -----------------------------------------------------
+        COMPROBAR CRONOLOGÍA
+        -----------------------------------------------------
         */
 
-        periodo:
-            datos.periodo || [],
+        if (
+            cronologia === undefined ||
+            cronologia === null ||
+            String(cronologia).trim() === ""
+        ) {
+
+            return null;
+
+        }
 
 
         /*
-        SUBPERÍODOS
-
-        PALGEOSIMPLIFICADO
-        los obtiene del campo
-        "edad" de PALGEO.
-
-        Aquí se renombran únicamente
-        para presentación del Generador.
+        -----------------------------------------------------
+        COMPROBAR PALGEOSIMPLIFICADO
+        -----------------------------------------------------
         */
 
-        subperiodo:
-            datos.edad || []
+        if (
+            !window.PALGEOSIMPLIFICADO ||
+            typeof window.PALGEOSIMPLIFICADO.analizar !==
+            "function"
+        ) {
 
-    };
+            console.error(
+                "LEEPALGEO: PALGEOSIMPLIFICADO no está disponible."
+            );
 
-},
+            return null;
 
-
-/* ======================================================
-   FORMATO PARA GENERADOR
-
-   Convierte los arrays en texto de presentación.
-
-   NO modifica los datos originales.
-
-====================================================== */
-
-formatearParaGenerador(datos){
-
-    if(
-        !datos ||
-        typeof datos !== "object"
-    ){
-
-        return null;
-
-    }
+        }
 
 
-    /*
-    INTERVALO
-    */
+        /*
+        -----------------------------------------------------
+        SOLICITAR ANÁLISIS
+        -----------------------------------------------------
+        */
 
-    let intervalo =
-        datos.intervalo || "";
-
-
-    /*
-    PERÍODOS
-
-    Separador visual:
-
-    ·
-    */
-
-    let periodo =
-        Array.isArray(
-            datos.periodo
-        )
-
-        ?
-
-        datos.periodo.join(
-            " · "
-        )
-
-        :
-
-        "";
+        const resultado =
+            window.PALGEOSIMPLIFICADO.analizar(
+                String(cronologia).trim()
+            );
 
 
-    /*
-    SUBPERÍODOS
+        /*
+        -----------------------------------------------------
+        COMPROBAR RESULTADO
+        -----------------------------------------------------
+        */
 
-    Separador visual:
+        if (!resultado) {
 
-    -
-    */
+            console.warn(
+                "LEEPALGEO: No se pudo analizar la cronología:",
+                cronologia
+            );
 
-    let subperiodo =
-        Array.isArray(
-            datos.subperiodo
-        )
+            return null;
 
-        ?
-
-        datos.subperiodo.join(
-            " - "
-        )
-
-        :
-
-        "";
+        }
 
 
-    /*
-    =====================================================
-    SALIDA FINAL
-    =====================================================
-    */
+        /*
+        -----------------------------------------------------
+        DEVOLVER RESULTADO
+        -----------------------------------------------------
+        */
 
-    return {
+        return resultado;
 
-        intervalo:
-            intervalo,
-
-        periodo:
-            periodo,
-
-        subperiodo:
-            subperiodo
-
-    };
-
-},
+    },
 
 
-/* ======================================================
-   FUNCIÓN PRINCIPAL
+    /* =====================================================
+       EXTRAER DATOS GEOLOGICOS
+       
+       Devuelve únicamente:
+       
+       codes
+       periodo
+       edad
+       
+       ===================================================== */
 
-   Entrada:
-
-   registro CSV
-
-   Salida:
-
-   Datos preparados para Generador.
-
-====================================================== */
-
-leer(registro){
-
-    /*
-    PREPARAR DATOS
-    */
-
-    let datos =
-        this.preparar(
-            registro
-        );
+    extraer(cronologia) {
 
 
-    if(!datos){
+        const resultado =
+            this.analizar(
+                cronologia
+            );
 
-        return null;
+
+        if (!resultado) {
+
+            return null;
+
+        }
+
+
+        return {
+
+            codes:
+                Array.isArray(
+                    resultado.codes
+                )
+                    ? [...resultado.codes]
+                    : [],
+
+
+            periodo:
+                Array.isArray(
+                    resultado.periodo
+                )
+                    ? [...resultado.periodo]
+                    : [],
+
+
+            edad:
+                Array.isArray(
+                    resultado.edad
+                )
+                    ? [...resultado.edad]
+                    : []
+
+        };
 
     }
-
-
-    /*
-    FORMATEAR PARA GENERADOR
-    */
-
-    return this.formatearParaGenerador(
-        datos
-    );
-
-}
-
 
 };
 
 
 /*
 ========================================================
-FIN LEEPALGEO v1.0 LTS
+FIN leepalgeo.js
 ========================================================
 */
-
-
-
-
-
-
