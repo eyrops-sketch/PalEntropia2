@@ -1,12 +1,13 @@
 /* ========================================================
    PalEntropía
-   cargacont.js v1.4 LTS
+   cargacont.js v1.5 LTS
 
    COMPUERTA DEL CONTENEDOR
 
    Funciones:
    - Carga un registro mediante j1
    - Carga aleatoriamente un j1
+   - Obtiene j3 directamente desde master.csv
    - Obtiene datos finales desde paleofichas.json
    - Obtiene imágenes mediante BUSCARUTA
    - Convierte correctamente las rutas relativas
@@ -18,12 +19,19 @@
    {
        j1: "...",
        j2: "...",
+       j3: "MMMM.DDDD-MMMM.DDDD",
        j7: "...",
        j8: "...",
        i0: "https://palentropia.es/...",
        i2: "https://palentropia.es/...",
        i3: "https://palentropia.es/..."
    }
+
+   IMPORTANTE:
+
+   master.csv es la FUENTE ÚNICA de datos del contenedor.
+
+   j3 procede directamente de master.csv.
 
 ======================================================== */
 
@@ -36,16 +44,20 @@ window.CARGACONT = {
 
     campoPuntero: "j1",
 
-    rutaJSON: "paleofichas.json",
+    rutaJSON:
+        "paleofichas.json",
 
     dominio:
         "https://palentropia.es/",
 
-    _datosJSON: null,
+    _datosJSON:
+        null,
 
-    _cargandoJSON: null,
+    _cargandoJSON:
+        null,
 
-    ultimo: null,
+    ultimo:
+        null,
 
 
     /* ====================================================
@@ -140,6 +152,52 @@ window.CARGACONT = {
 
 
         return null;
+
+    },
+
+
+    /* ====================================================
+       OBTENER J3 DESDE MASTER.CSV
+
+       j3 es propiedad del registro del master.csv.
+
+       NO se obtiene de paleofichas.json.
+    ==================================================== */
+
+    obtenerJ3DesdeCSV(
+        registroCSV
+    ){
+
+        if(
+            !registroCSV
+        ){
+
+            throw new Error(
+                "CARGACONT: no existe registro CSV para obtener j3."
+            );
+
+        }
+
+
+        const j3 =
+            String(
+                registroCSV.j3 || ""
+            )
+            .trim();
+
+
+        if(
+            !j3
+        ){
+
+            throw new Error(
+                "CARGACONT: j3 vacío en master.csv."
+            );
+
+        }
+
+
+        return j3;
 
     },
 
@@ -296,12 +354,13 @@ window.CARGACONT = {
     /* ====================================================
        OBTENER DATOS FINALES
 
-       Los valores definitivos proceden de
-       paleofichas.json.
-
        j2 = nombre
        j7 = dieta
        j8 = anatomia
+
+       j3 NO se obtiene aquí.
+
+       j3 procede directamente de master.csv.
     ==================================================== */
 
     async obtenerDatosFinales(j1){
@@ -395,34 +454,6 @@ window.CARGACONT = {
 
     /* ====================================================
        CONVERTIR RUTA EN URL ABSOLUTA
-
-       IMPORTANTE:
-
-       BUSCARUTA devuelve rutas relativas respecto
-       a la ubicación del generador.
-
-       Ejemplos:
-
-       ../multimedia/001_075/004_14_i0.jpg
-
-       → https://palentropia.es/
-         herramientas/multimedia/001_075/004_14_i0.jpg
-
-
-       ../multimedia/new/006_01_i0.jpg
-
-       → https://palentropia.es/
-         herramientas/multimedia/new/006_01_i0.jpg
-
-
-       ../../paleofichas/vol001/...
-
-       → https://palentropia.es/
-         paleofichas/vol001/...
-
-
-       NO se eliminan simplemente los ../.
-       Se resuelven correctamente.
     ==================================================== */
 
     convertirRuta(ruta){
@@ -480,19 +511,6 @@ window.CARGACONT = {
 
         /* --------------------------------------------
            RESOLVER RUTA RELATIVA
-
-           Las rutas que entrega BUSCARUTA están
-           construidas desde la ubicación:
-
-           /herramientas/generador/
-
-           Por tanto usamos esa ubicación como
-           base real.
-
-           Esto permite resolver correctamente:
-
-           ../multimedia/
-           ../../paleofichas/
         -------------------------------------------- */
 
         const base =
@@ -512,23 +530,6 @@ window.CARGACONT = {
 
     /* ====================================================
        PREPARAR IMÁGENES
-
-       BUSCARUTA devuelve:
-
-       {
-           j1,
-           caso,
-           imagenes: [
-               {
-                   tipo: "i0",
-                   ruta: "...",
-                   estado: "ok"
-               }
-           ]
-       }
-
-       CARGACONT transforma las rutas y entrega
-       directamente i0 / i2 / i3.
     ==================================================== */
 
     prepararImagenes(
@@ -665,6 +666,16 @@ window.CARGACONT = {
 
 
         /* --------------------------------------------
+           OBTENER J3 DESDE MASTER.CSV
+        -------------------------------------------- */
+
+        const j3 =
+            this.obtenerJ3DesdeCSV(
+                registroCSV
+            );
+
+
+        /* --------------------------------------------
            DATOS FINALES DESDE JSON
         -------------------------------------------- */
 
@@ -713,6 +724,8 @@ window.CARGACONT = {
 
         /* --------------------------------------------
            REGISTRO FINAL
+
+           j3 queda ahora disponible para CAB07.
         -------------------------------------------- */
 
         const resultado = {
@@ -722,6 +735,9 @@ window.CARGACONT = {
 
             j2:
                 datosFinales.j2,
+
+            j3:
+                j3,
 
             j7:
                 datosFinales.j7,
@@ -775,7 +791,7 @@ window.CARGACONT = {
         );
 
         console.log(
-            "PalEntropía — CARGACONT v1.4 LTS"
+            "PalEntropía — CARGACONT v1.5 LTS"
         );
 
         console.log(
@@ -784,6 +800,14 @@ window.CARGACONT = {
 
         console.log(
             resultado
+        );
+
+        console.log(
+            "j3 desde master.csv:"
+        );
+
+        console.log(
+            j3
         );
 
         console.log(
@@ -889,6 +913,11 @@ window.CARGACONT = {
             j1:
                 this.ultimo
                     ? this.ultimo.j1
+                    : null,
+
+            j3:
+                this.ultimo
+                    ? this.ultimo.j3
                     : null
 
         };
@@ -899,10 +928,5 @@ window.CARGACONT = {
 
 
 /* ========================================================
-   FIN CARGACONT v1.4 LTS
+   FIN CARGACONT v1.5 LTS
 ======================================================== */
-
-
-
-
-
