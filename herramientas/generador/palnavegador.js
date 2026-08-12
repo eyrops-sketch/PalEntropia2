@@ -1,49 +1,43 @@
 /*
 ========================================================
 PalEntropía
-PALNAVEGADOR.js v1.1 LTS
+PALNAVEGADOR.js v1.2 LTS
 
-Sistema de navegación de Paleofichas.
+SISTEMA DE NAVEGACIÓN DE PALEOFICHAS
 
-Función:
+FUNCIONES:
+
 - Carga registros desde LEEPALJSON
-- Navega por los registros
+- Mantiene un índice global
+- Navega primero / anterior / siguiente / último
+- Navega aleatoriamente
 - Gestiona filtros
-- Localiza un j1 por índice global
-- Carga una Paleoficha mediante CARGACONT
-- Entrega el j1 a CAB07
+- Localiza correctamente un j1
+- Permite al buscador cargar directamente un j1
+- Entrega j1 a CAB07
+- Carga la ficha mediante CARGACONT
 - Consulta CONT07
-- Muestra temporalmente los resultados geológicos
+- Muestra temporalmente la geología
 
-IMPORTANTE:
-
-La búsqueda por código/nombre puede entregar un j1
-a PALNAVEGADOR mediante:
-
-    PALNAVEGADOR.cargarPorCodigo(j1)
-
-De esta forma el navegador queda situado realmente
-en el índice correcto.
-
-FLUJO:
+FLUJO DE BÚSQUEDA:
 
 PALBUSCADOR
      ↓
     j1
      ↓
-PALNAVEGADOR.cargarPorCodigo()
+PALNAVEGADOR.cargarPorCodigo(j1)
      ↓
-buscarIndice()
-     ↓
-cargarIndice()
+ÍNDICE GLOBAL
      ↓
 CAB07
      ↓
 CARGACONT
      ↓
 CAB01–CAB06
-     ↓
-PALEOFICHA
+
+IMPORTANTE:
+
+La posición real siempre se determina por el j1.
 
 ========================================================
 */
@@ -51,7 +45,7 @@ PALEOFICHA
 
 const PALNAVEGADOR = {
 
-    version: "1.1 LTS",
+    version: "1.2 LTS",
 
     registros: [],
 
@@ -79,13 +73,10 @@ const PALNAVEGADOR = {
 
         }
 
-
         await window.LEEPALJSON.cargar();
-
 
         const contenedor =
             window.LEEPALJSON.obtener();
-
 
         if (
             !Array.isArray(contenedor) ||
@@ -98,7 +89,6 @@ const PALNAVEGADOR = {
 
         }
 
-
         this.registros =
             contenedor.filter(
                 registro =>
@@ -106,6 +96,11 @@ const PALNAVEGADOR = {
                     registro.codigo
             );
 
+        this.indice = -1;
+
+        this.codigoActual = null;
+
+        this.filtroActivo = null;
 
         return this.registros;
 
@@ -127,12 +122,9 @@ const PALNAVEGADOR = {
 
         }
 
-
-        return String(
-            codigo
-        )
-        .trim()
-        .toUpperCase();
+        return String(codigo)
+            .trim()
+            .toUpperCase();
 
     },
 
@@ -143,28 +135,72 @@ const PALNAVEGADOR = {
 
     conjuntoActivo() {
 
-        return this.filtroActivo
-            ? this.filtroActivo
-            : this.registros;
+        if (
+            Array.isArray(this.filtroActivo)
+        ) {
+
+            return this.filtroActivo;
+
+        }
+
+        return this.registros;
 
     },
 
 
     /* =====================================================
-       BUSCAR ÍNDICE
+       BUSCAR ÍNDICE GLOBAL
+
+       IMPORTANTE:
+
+       Esta función NO mira el filtro.
+
+       Sirve para localizar la posición real
+       del registro dentro de master.csv.
+       ===================================================== */
+
+    buscarIndiceGlobal(codigo) {
+
+        const j1 =
+            this.normalizarCodigo(codigo);
+
+        if (!j1) {
+
+            return -1;
+
+        }
+
+        return this.registros.findIndex(
+            registro =>
+                this.normalizarCodigo(
+                    registro.codigo
+                ) === j1
+        );
+
+    },
+
+
+    /* =====================================================
+       BUSCAR ÍNDICE ACTIVO
+
+       Si existe filtro busca dentro del filtro.
+
+       Si no existe filtro utiliza el índice global.
        ===================================================== */
 
     buscarIndice(codigo) {
 
         const j1 =
-            this.normalizarCodigo(
-                codigo
-            );
+            this.normalizarCodigo(codigo);
 
+        if (!j1) {
+
+            return -1;
+
+        }
 
         const conjunto =
             this.conjuntoActivo();
-
 
         return conjunto.findIndex(
             registro =>
@@ -179,37 +215,53 @@ const PALNAVEGADOR = {
     /* =====================================================
        POSICIONAR
 
-       Solo localiza el índice.
+       Localiza el j1 y actualiza la posición.
 
        NO carga la ficha.
-
-       Esto permite que otras funciones puedan
-       localizar primero el registro y después
-       decidir cómo cargarlo.
        ===================================================== */
 
-    async posicionar(codigo) {
+    posicionar(codigo) {
 
         const j1 =
-            this.normalizarCodigo(
-                codigo
-            );
-
+            this.normalizarCodigo(codigo);
 
         if (!j1) {
 
-            throw new Error(
-                "PALNAVEGADOR: código vacío."
-            );
+            return false;
 
         }
 
+        let indice;
 
-        const indice =
-            this.buscarIndice(
-                j1
-            );
+        /*
+        -----------------------------------------------------
+        SIN FILTRO
 
+        Utilizamos SIEMPRE el índice global.
+        -----------------------------------------------------
+        */
+
+        if (!this.estaFiltrado()) {
+
+            indice =
+                this.buscarIndiceGlobal(j1);
+
+        }
+
+        /*
+        -----------------------------------------------------
+        CON FILTRO
+
+        Buscamos dentro del conjunto filtrado.
+        -----------------------------------------------------
+        */
+
+        else {
+
+            indice =
+                this.buscarIndice(j1);
+
+        }
 
         if (indice === -1) {
 
@@ -217,14 +269,11 @@ const PALNAVEGADOR = {
 
         }
 
-
         this.indice =
             indice;
 
-
         this.codigoActual =
             j1;
-
 
         return true;
 
@@ -234,28 +283,18 @@ const PALNAVEGADOR = {
     /* =====================================================
        CARGAR POR CÓDIGO
 
-       FUNCIÓN PUENTE PARA EL BUSCADOR.
+       FUNCIÓN PRINCIPAL PARA PALBUSCADOR.
 
-       Recibe un j1.
+       Recibe solamente j1.
 
-       1. Localiza su índice.
-       2. Actualiza la posición global.
-       3. Ejecuta cargarIndice().
-       4. CAB07 procesa el j1.
-       5. CARGACONT carga la ficha.
-       6. Se muestran los datos geológicos.
-
-       Esto evita que PALBUSCADOR tenga que llamar
-       directamente a CARGACONT.
+       Localiza primero la posición correcta
+       y después carga ese registro.
        ===================================================== */
 
     async cargarPorCodigo(codigo) {
 
         const j1 =
-            this.normalizarCodigo(
-                codigo
-            );
-
+            this.normalizarCodigo(codigo);
 
         if (!j1) {
 
@@ -265,19 +304,17 @@ const PALNAVEGADOR = {
 
         }
 
-
         const situado =
-            await this.posicionar(
-                j1
-            );
-
+            this.posicionar(j1);
 
         if (!situado) {
 
-            return false;
+            throw new Error(
+                "PALNAVEGADOR: código no encontrado: " +
+                j1
+            );
 
         }
-
 
         return await this.cargarIndice(
             this.indice
@@ -288,21 +325,11 @@ const PALNAVEGADOR = {
 
     /* =====================================================
        MOSTRAR GEOLOGÍA
-
-       SALIDA PROVISIONAL DE PRUEBA
        ===================================================== */
 
     mostrarGeologia() {
 
-        /*
-        -----------------------------------------------------
-        OBTENER GEOLOGÍA DESDE CONT07
-        -----------------------------------------------------
-        */
-
-        let geologia =
-            null;
-
+        let geologia = null;
 
         if (
             window.CONT07 &&
@@ -315,56 +342,36 @@ const PALNAVEGADOR = {
 
         }
 
-
-        /*
-        -----------------------------------------------------
-        CREAR CONTENEDOR
-        -----------------------------------------------------
-        */
-
         let contenedor =
             document.getElementById(
                 "resultadoGeologiaCAB07"
             );
 
-
         if (!contenedor) {
 
             contenedor =
-                document.createElement(
-                    "div"
-                );
-
+                document.createElement("div");
 
             contenedor.id =
                 "resultadoGeologiaCAB07";
 
-
             contenedor.style.margin =
                 "12px auto";
-
 
             contenedor.style.padding =
                 "10px";
 
-
             contenedor.style.maxWidth =
                 "700px";
-
 
             contenedor.style.borderRadius =
                 "10px";
 
-
             contenedor.style.fontSize =
                 "13px";
 
-
             const ficha =
-                document.getElementById(
-                    "ficha"
-                );
-
+                document.getElementById("ficha");
 
             if (ficha) {
 
@@ -382,13 +389,6 @@ const PALNAVEGADOR = {
 
         }
 
-
-        /*
-        -----------------------------------------------------
-        SIN DATOS
-        -----------------------------------------------------
-        */
-
         if (!geologia) {
 
             contenedor.innerHTML =
@@ -402,42 +402,20 @@ const PALNAVEGADOR = {
 
         }
 
-
-        /*
-        -----------------------------------------------------
-        ARRAYS
-        -----------------------------------------------------
-        */
-
         const codes =
-            Array.isArray(
-                geologia.codes
-            )
+            Array.isArray(geologia.codes)
                 ? geologia.codes
                 : [];
 
-
         const periodo =
-            Array.isArray(
-                geologia.periodo
-            )
+            Array.isArray(geologia.periodo)
                 ? geologia.periodo
                 : [];
 
-
         const edad =
-            Array.isArray(
-                geologia.edad
-            )
+            Array.isArray(geologia.edad)
                 ? geologia.edad
                 : [];
-
-
-        /*
-        -----------------------------------------------------
-        MOSTRAR RESULTADOS
-        -----------------------------------------------------
-        */
 
         contenedor.innerHTML =
             `
@@ -446,23 +424,29 @@ const PALNAVEGADOR = {
             <br><br>
 
             <strong>Códigos:</strong>
-            ${codes.length
-                ? codes.join(", ")
-                : "—"}
+            ${
+                codes.length
+                    ? codes.join(", ")
+                    : "—"
+            }
 
             <br><br>
 
             <strong>Períodos:</strong>
-            ${periodo.length
-                ? periodo.join(", ")
-                : "—"}
+            ${
+                periodo.length
+                    ? periodo.join(", ")
+                    : "—"
+            }
 
             <br><br>
 
             <strong>Edades:</strong>
-            ${edad.length
-                ? edad.join(", ")
-                : "—"}
+            ${
+                edad.length
+                    ? edad.join(", ")
+                    : "—"
+            }
             `;
 
     },
@@ -477,22 +461,19 @@ const PALNAVEGADOR = {
         const conjunto =
             this.conjuntoActivo();
 
-
         if (!conjunto.length) {
 
             throw new Error(
-                "PALNAVEGADOR: el conjunto activo está vacío."
+                "PALNAVEGADOR: no hay registros."
             );
 
         }
-
 
         if (indice < 0) {
 
             indice = 0;
 
         }
-
 
         if (indice >= conjunto.length) {
 
@@ -501,10 +482,8 @@ const PALNAVEGADOR = {
 
         }
 
-
         const registro =
             conjunto[indice];
-
 
         if (
             !registro ||
@@ -517,10 +496,8 @@ const PALNAVEGADOR = {
 
         }
 
-
         this.indice =
             indice;
-
 
         this.codigoActual =
             this.normalizarCodigo(
@@ -559,18 +536,15 @@ const PALNAVEGADOR = {
 
         }
 
-
         const resultado =
             await window.CARGACONT.cargar(
                 this.codigoActual
             );
 
 
-        /*
-        =====================================================
-        MOSTRAR GEOLOGÍA DESPUÉS DE CARGAR LA FICHA
-        =====================================================
-        */
+        /* =================================================
+           GEOLOGÍA
+           ================================================= */
 
         this.mostrarGeologia();
 
@@ -586,9 +560,7 @@ const PALNAVEGADOR = {
 
     async primero() {
 
-        return await this.cargarIndice(
-            0
-        );
+        return await this.cargarIndice(0);
 
     },
 
@@ -602,22 +574,17 @@ const PALNAVEGADOR = {
         const conjunto =
             this.conjuntoActivo();
 
-
         if (!conjunto.length) {
 
             return null;
 
         }
 
-
         if (this.indice <= 0) {
 
-            return await this.cargarIndice(
-                0
-            );
+            return await this.cargarIndice(0);
 
         }
-
 
         return await this.cargarIndice(
             this.indice - 1
@@ -635,13 +602,11 @@ const PALNAVEGADOR = {
         const conjunto =
             this.conjuntoActivo();
 
-
         if (!conjunto.length) {
 
             return null;
 
         }
-
 
         if (
             this.indice >=
@@ -653,7 +618,6 @@ const PALNAVEGADOR = {
             );
 
         }
-
 
         return await this.cargarIndice(
             this.indice + 1
@@ -671,6 +635,11 @@ const PALNAVEGADOR = {
         const conjunto =
             this.conjuntoActivo();
 
+        if (!conjunto.length) {
+
+            return null;
+
+        }
 
         return await this.cargarIndice(
             conjunto.length - 1
@@ -688,7 +657,6 @@ const PALNAVEGADOR = {
         const conjunto =
             this.conjuntoActivo();
 
-
         if (!conjunto.length) {
 
             throw new Error(
@@ -697,13 +665,11 @@ const PALNAVEGADOR = {
 
         }
 
-
         const indice =
             Math.floor(
                 Math.random() *
                 conjunto.length
             );
-
 
         return await this.cargarIndice(
             indice
@@ -726,12 +692,10 @@ const PALNAVEGADOR = {
 
         }
 
-
         this.filtroActivo =
             registros;
 
-
-        if (!this.filtroActivo.length) {
+        if (!registros.length) {
 
             this.indice = -1;
 
@@ -739,18 +703,22 @@ const PALNAVEGADOR = {
 
         }
 
+        /*
+        -----------------------------------------------------
+        INTENTAR CONSERVAR EL REGISTRO ACTUAL
+        -----------------------------------------------------
+        */
 
         if (this.codigoActual) {
 
             const indice =
-                this.filtroActivo.findIndex(
+                registros.findIndex(
                     registro =>
                         this.normalizarCodigo(
                             registro.codigo
                         ) ===
                         this.codigoActual
                 );
-
 
             if (indice !== -1) {
 
@@ -763,8 +731,12 @@ const PALNAVEGADOR = {
 
         }
 
-
         this.indice = 0;
+
+        this.codigoActual =
+            this.normalizarCodigo(
+                registros[0].codigo
+            );
 
     },
 
@@ -775,15 +747,13 @@ const PALNAVEGADOR = {
 
     limpiarFiltro() {
 
-        const codigoActual =
+        const codigo =
             this.codigoActual;
-
 
         this.filtroActivo =
             null;
 
-
-        if (!codigoActual) {
+        if (!codigo) {
 
             this.indice = -1;
 
@@ -791,12 +761,8 @@ const PALNAVEGADOR = {
 
         }
 
-
         const indice =
-            this.buscarIndice(
-                codigoActual
-            );
-
+            this.buscarIndiceGlobal(codigo);
 
         this.indice =
             indice;
@@ -826,7 +792,6 @@ const PALNAVEGADOR = {
         const conjunto =
             this.conjuntoActivo();
 
-
         if (
             this.indice < 0 ||
             this.indice >= conjunto.length
@@ -835,7 +800,6 @@ const PALNAVEGADOR = {
             return null;
 
         }
-
 
         return conjunto[
             this.indice
@@ -852,13 +816,13 @@ const PALNAVEGADOR = {
 
         if (
             !window.CONT07 ||
-            typeof window.CONT07.obtener !== "function"
+            typeof window.CONT07.obtener !==
+            "function"
         ) {
 
             return null;
 
         }
-
 
         return window.CONT07.obtener();
 
@@ -873,7 +837,6 @@ const PALNAVEGADOR = {
 
         const conjunto =
             this.conjuntoActivo();
-
 
         return {
 
@@ -914,6 +877,6 @@ window.PALNAVEGADOR =
 
 /*
 ========================================================
-FIN PALNAVEGADOR.js v1.1 LTS
+FIN PALNAVEGADOR.js v1.2 LTS
 ========================================================
 */
