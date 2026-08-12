@@ -1,27 +1,27 @@
 /* ========================================================
    PalEntropía
-   cab07.js v1.0 LTS
+   cab07.js v1.1 LTS
 
    CAB07 — CRONOLOGÍA Y PRESENTACIÓN
 
-   Función:
+   FUNCIÓN:
 
-   - Recibe la Paleoficha cargada por CARGACONT.
-   - Obtiene su j3 desde CARGACONT / master.csv.
+   - Recibe el registro final de CARGACONT.
+   - Obtiene j3.
    - Procesa j3 mediante PALGEOSIMPLIFICADO.
-   - Obtiene:
-       · cronología humana
+   - Consulta PALGEO mediante PALGEOSIMPLIFICADO.
+   - Prepara:
+       · cronología
        · período
-       · subperíodo / edad
+       · subperíodo
        · códigos PALGEO
-   - Presenta los datos cronológicos en la ficha.
-   - El bloque se coloca después de img2 e img3.
+   - Presenta los datos después de las imágenes i2 e i3.
 
    IMPORTANTE:
 
    CAB07 NO modifica j3.
 
-   j3 continúa siendo el dato interno original:
+   j3 continúa siendo:
 
        MMMM.DDDD-MMMM.DDDD
 
@@ -29,9 +29,9 @@
 
        0059.2000-0041.2000
 
-   CAB07 crea los datos de presentación:
+   PRESENTACIÓN:
 
-       59,2 Ma — 41,2 Ma
+       59,2 Ma - 41,2 Ma
 
        Período
        ...
@@ -39,26 +39,26 @@
        Subperíodo
        ...
 
-   Dependencias:
+   DEPENDENCIAS:
 
    - CARGACONT
    - PALGEOSIMPLIFICADO
-   - elementos HTML del generador
+   - PALGEO
+   - HTML del generador
 
-   No contiene:
+   NO UTILIZA:
 
-   - buscador
-   - navegación
-   - imágenes
-   - vídeo
-   - lightbox
-   - estadísticas
+   - decoders antiguos
+   - PALBUSCADOR
+   - PALNAVEGADOR
+   - PALVIDEO
+   - BUSCARUTA
 
 ======================================================== */
 
 
 /* ========================================================
-   OBJETO GLOBAL
+   CAB07
 ======================================================== */
 
 window.CAB07 = {
@@ -71,9 +71,11 @@ window.CAB07 = {
     idContenedor:
         "cab07Cronologia",
 
-
     claseContenedor:
         "cab07-cronologia",
+
+    ultimo:
+        null,
 
 
     /* ====================================================
@@ -83,9 +85,9 @@ window.CAB07 = {
     inicializar(){
 
         /*
-        -----------------------------------------------
+        ------------------------------------------------
         COMPROBAR PALGEOSIMPLIFICADO
-        -----------------------------------------------
+        ------------------------------------------------
         */
 
         if(
@@ -102,9 +104,9 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        COMPROBAR FUNCIÓN ANALIZAR
-        -----------------------------------------------
+        ------------------------------------------------
+        COMPROBAR analizar()
+        ------------------------------------------------
         */
 
         if(
@@ -123,9 +125,9 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        ESCUCHAR CARGA DEL CONTENEDOR
-        -----------------------------------------------
+        ------------------------------------------------
+        ESCUCHAR CONTENEDOR
+        ------------------------------------------------
         */
 
         document.addEventListener(
@@ -144,7 +146,7 @@ window.CAB07 = {
 
 
         console.log(
-            "CAB07: módulo de cronología cargado."
+            "PalEntropía — CAB07 v1.1 LTS cargado."
         );
 
 
@@ -155,18 +157,23 @@ window.CAB07 = {
 
     /* ====================================================
        OBTENER J3
-       
-       CAB07 no busca directamente en master.csv.
 
-       Solicita el registro a CARGACONT para mantener
-       CARGACONT como puerta del contenedor.
+       PRIMERA OPCIÓN:
+
+       El registro recibido por CARGACONT ya contiene j3.
+
+       SEGUNDA OPCIÓN:
+
+       Si no existe, se consulta el registro de
+       master.csv mediante CARGACONT.
+
+       CAB07 nunca lee master.csv directamente.
     ==================================================== */
 
     obtenerJ3(ficha){
 
         if(
-            !ficha ||
-            !ficha.j1
+            !ficha
         ){
 
             return null;
@@ -175,16 +182,57 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        CARGACONT DISPONIBLE
-        -----------------------------------------------
+        ------------------------------------------------
+        OPCIÓN 1
+        J3 YA VIENE EN EL REGISTRO
+        ------------------------------------------------
         */
 
         if(
-            !window.CARGACONT ||
-            typeof
-            window.CARGACONT.buscarJ1EnCSV !==
-            "function"
+            ficha.j3 !== undefined &&
+            ficha.j3 !== null &&
+            String(ficha.j3).trim() !== ""
+        ){
+
+            return String(
+                ficha.j3
+            ).trim();
+
+        }
+
+
+        /*
+        ------------------------------------------------
+        NECESITAMOS J1
+        ------------------------------------------------
+        */
+
+        const j1 =
+            ficha.j1 ||
+            ficha.codigo;
+
+
+        if(
+            !j1
+        ){
+
+            console.error(
+                "CAB07: no se puede obtener j3 porque falta j1."
+            );
+
+            return null;
+
+        }
+
+
+        /*
+        ------------------------------------------------
+        COMPROBAR CARGACONT
+        ------------------------------------------------
+        */
+
+        if(
+            !window.CARGACONT
         ){
 
             console.error(
@@ -197,14 +245,29 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        OBTENER REGISTRO DEL CONTENEDOR
-        -----------------------------------------------
+        ------------------------------------------------
+        BUSCAR EN MASTER.CSV
+        ------------------------------------------------
         */
+
+        if(
+            typeof
+            window.CARGACONT.buscarJ1EnCSV !==
+            "function"
+        ){
+
+            console.error(
+                "CAB07: CARGACONT.buscarJ1EnCSV() no está disponible."
+            );
+
+            return null;
+
+        }
+
 
         const registro =
             window.CARGACONT.buscarJ1EnCSV(
-                ficha.j1
+                j1
             );
 
 
@@ -213,9 +276,9 @@ window.CAB07 = {
         ){
 
             console.error(
-                "CAB07: no existe registro para " +
-                ficha.j1 +
-                "."
+                "CAB07: no se encontró el registro " +
+                j1 +
+                " en master.csv."
             );
 
             return null;
@@ -224,38 +287,58 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        OBTENER J3
-        -----------------------------------------------
-
-        LEEPALJSON utiliza "codigo" para j1.
-
-        El registro puede contener j3 directamente
-        o mediante la estructura normalizada.
-        -----------------------------------------------
+        ------------------------------------------------
+        J3 DEL REGISTRO
+        ------------------------------------------------
         */
 
-        const j3 =
-            registro.j3;
-
-
         if(
-            !j3 ||
-            String(j3).trim() === ""
+            registro.j3 !== undefined &&
+            registro.j3 !== null &&
+            String(registro.j3).trim() !== ""
         ){
 
-            console.error(
-                "CAB07: j3 vacío para " +
-                ficha.j1 +
-                "."
-            );
-
-            return null;
+            return String(
+                registro.j3
+            ).trim();
 
         }
 
 
-        return String(j3).trim();
+        /*
+        ------------------------------------------------
+        POR SI EL REGISTRO UTILIZA CLAVE "J3"
+        ------------------------------------------------
+        */
+
+        if(
+            registro.J3 !== undefined &&
+            registro.J3 !== null &&
+            String(registro.J3).trim() !== ""
+        ){
+
+            return String(
+                registro.J3
+            ).trim();
+
+        }
+
+
+        /*
+        ------------------------------------------------
+        ERROR
+        ------------------------------------------------
+        */
+
+        console.error(
+            "CAB07: el registro " +
+            j1 +
+            " existe, pero no contiene j3.",
+            registro
+        );
+
+
+        return null;
 
     },
 
@@ -276,24 +359,43 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        COMPROBAR MÓDULO
-        -----------------------------------------------
+        ------------------------------------------------
+        VALIDAR FORMATO
+        ------------------------------------------------
         */
 
         if(
-            !window.PALGEOSIMPLIFICADO
+            typeof
+            window.PALGEOSIMPLIFICADO.validarCronologia ===
+            "function"
         ){
 
-            return null;
+            const valida =
+                window.PALGEOSIMPLIFICADO.validarCronologia(
+                    j3
+                );
+
+
+            if(
+                !valida
+            ){
+
+                console.error(
+                    "CAB07: j3 no tiene una cronología interna válida:",
+                    j3
+                );
+
+                return null;
+
+            }
 
         }
 
 
         /*
-        -----------------------------------------------
+        ------------------------------------------------
         ANALIZAR
-        -----------------------------------------------
+        ------------------------------------------------
         */
 
         const datos =
@@ -307,7 +409,7 @@ window.CAB07 = {
         ){
 
             console.error(
-                "CAB07: no se pudo analizar j3:",
+                "CAB07: PALGEOSIMPLIFICADO no pudo analizar:",
                 j3
             );
 
@@ -317,54 +419,45 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        NORMALIZAR SUBPERÍODO
-        -----------------------------------------------
+        ------------------------------------------------
+        SUBPERÍODO
 
-        PALGEOSIMPLIFICADO actualmente devuelve:
+        PALGEOSIMPLIFICADO v1.2 devuelve "edad".
 
-            edad
-
-        El generador utilizará:
-
-            subperiodo
-
-        No modificamos PALGEOSIMPLIFICADO.
-        -----------------------------------------------
+        CAB07 lo presenta como "subperiodo".
+        ------------------------------------------------
         */
 
-        const subperiodo =
+        let subperiodo = [];
+
+
+        if(
             Array.isArray(
                 datos.subperiodo
             )
+        ){
 
-            ?
+            subperiodo =
+                datos.subperiodo;
 
-            datos.subperiodo
+        }
 
-            :
-
-            (
-
-                Array.isArray(
-                    datos.edad
-                )
-
-                ?
-
+        else if(
+            Array.isArray(
                 datos.edad
+            )
+        ){
 
-                :
+            subperiodo =
+                datos.edad;
 
-                []
-
-            );
+        }
 
 
         /*
-        -----------------------------------------------
-        RESULTADO PARA EL GENERADOR
-        -----------------------------------------------
+        ------------------------------------------------
+        RESULTADO NORMALIZADO PARA GENERADOR
+        ------------------------------------------------
         */
 
         return {
@@ -373,7 +466,7 @@ window.CAB07 = {
                 j3,
 
             cronologia:
-                datos.rango || j3,
+                datos.rango || null,
 
             periodo:
                 Array.isArray(
@@ -408,39 +501,39 @@ window.CAB07 = {
 
 
     /* ====================================================
-       CREAR CONTENEDOR HTML
+       CREAR CONTENEDOR VISUAL
     ==================================================== */
 
     crearContenedor(){
 
         /*
-        -----------------------------------------------
+        ------------------------------------------------
         SI YA EXISTE
-        -----------------------------------------------
+        ------------------------------------------------
         */
 
-        const existente =
+        let contenedor =
             document.getElementById(
                 this.idContenedor
             );
 
 
         if(
-            existente
+            contenedor
         ){
 
-            return existente;
+            return contenedor;
 
         }
 
 
         /*
-        -----------------------------------------------
-        CREAR BLOQUE
-        -----------------------------------------------
+        ------------------------------------------------
+        CREAR CONTENEDOR
+        ------------------------------------------------
         */
 
-        const contenedor =
+        contenedor =
             document.createElement(
                 "section"
             );
@@ -455,9 +548,9 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        ESTRUCTURA
-        -----------------------------------------------
+        ------------------------------------------------
+        HTML
+        ------------------------------------------------
         */
 
         contenedor.innerHTML = `
@@ -507,9 +600,16 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
+        ------------------------------------------------
         INSERTAR DESPUÉS DE IMG3
-        -----------------------------------------------
+        ------------------------------------------------
+
+        Se intenta colocar después del contenedor
+        visual de img3.
+
+        Si img3 no tiene contenedor propio,
+        se coloca directamente después de img3.
+        ------------------------------------------------
         */
 
         const img3 =
@@ -522,24 +622,22 @@ window.CAB07 = {
             img3
         ){
 
-            /*
-            Buscamos el contenedor inmediato de img3
-            para que el bloque quede después de la
-            zona visual de la tercera imagen.
-            */
-
             const padre =
                 img3.parentElement;
 
 
             if(
                 padre &&
-                padre.parentElement
+                padre !== document.body
             ){
 
-                padre.parentElement.insertBefore(
-                    contenedor,
-                    padre.nextSibling
+                /*
+                El bloque se coloca después del
+                contenedor de img3.
+                */
+
+                padre.after(
+                    contenedor
                 );
 
             }
@@ -557,36 +655,83 @@ window.CAB07 = {
         else{
 
             /*
-            -------------------------------------------
+            ------------------------------------------------
             FALLBACK
-            -------------------------------------------
 
-            Si img3 no existe en ese momento,
-            se añade al final del contenedor principal.
-            -------------------------------------------
+            Si img3 todavía no existe, buscamos una zona
+            de imágenes mediante sus elementos conocidos.
+            ------------------------------------------------
             */
 
-            const ficha =
-                document.querySelector(
-                    ".ficha"
+            const img2 =
+                document.getElementById(
+                    "img2"
                 );
 
 
             if(
-                ficha
+                img2
             ){
 
-                ficha.appendChild(
-                    contenedor
-                );
+                const padreImg2 =
+                    img2.parentElement;
+
+
+                if(
+                    padreImg2
+                ){
+
+                    padreImg2.after(
+                        contenedor
+                    );
+
+                }
+
+                else{
+
+                    img2.after(
+                        contenedor
+                    );
+
+                }
 
             }
 
             else{
 
-                document.body.appendChild(
-                    contenedor
-                );
+                /*
+                ------------------------------------------------
+                ÚLTIMO FALLBACK
+
+                Intentar encontrar la ficha.
+                ------------------------------------------------
+                */
+
+                const ficha =
+                    document.querySelector(
+                        ".ficha"
+                    );
+
+
+                if(
+                    ficha
+                ){
+
+                    ficha.appendChild(
+                        contenedor
+                    );
+
+                }
+
+                else{
+
+                    console.error(
+                        "CAB07: no se encontró una zona válida para insertar la cronología."
+                    );
+
+                    return null;
+
+                }
 
             }
 
@@ -605,8 +750,7 @@ window.CAB07 = {
     formatearLista(lista){
 
         if(
-            !Array.isArray(lista) ||
-            !lista.length
+            !Array.isArray(lista)
         ){
 
             return "—";
@@ -615,25 +759,22 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        ELIMINAR DUPLICADOS
-        -----------------------------------------------
+        ------------------------------------------------
+        LIMPIAR
+        ------------------------------------------------
         */
 
         const valores =
-            [...new Set(
-
-                lista
-                .map(
-                    valor =>
-                        String(valor)
-                        .trim()
-                )
-                .filter(
-                    valor => valor !== ""
-                )
-
-            )];
+            lista
+            .map(
+                valor =>
+                    String(valor)
+                    .trim()
+            )
+            .filter(
+                valor =>
+                    valor !== ""
+            );
 
 
         if(
@@ -646,17 +787,26 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        PRESENTACIÓN
-        -----------------------------------------------
-
-        Si hay varios valores:
-
-        Valor 1 · Valor 2 · Valor 3
-        -----------------------------------------------
+        ------------------------------------------------
+        ELIMINAR DUPLICADOS
+        ------------------------------------------------
         */
 
-        return valores.join(
+        const unicos =
+            [
+                ...new Set(
+                    valores
+                )
+            ];
+
+
+        /*
+        ------------------------------------------------
+        PRESENTACIÓN
+        ------------------------------------------------
+        */
+
+        return unicos.join(
             " · "
         );
 
@@ -664,7 +814,7 @@ window.CAB07 = {
 
 
     /* ====================================================
-       MOSTRAR DATOS
+       MOSTRAR
     ==================================================== */
 
     mostrar(datos){
@@ -677,6 +827,12 @@ window.CAB07 = {
 
         }
 
+
+        /*
+        ------------------------------------------------
+        CREAR / OBTENER CONTENEDOR
+        ------------------------------------------------
+        */
 
         const contenedor =
             this.crearContenedor();
@@ -692,14 +848,14 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
+        ------------------------------------------------
         CRONOLOGÍA
-        -----------------------------------------------
+        ------------------------------------------------
         */
 
         const cronologia =
-            document.getElementById(
-                "cab07CronologiaValor"
+            contenedor.querySelector(
+                "#cab07CronologiaValor"
             );
 
 
@@ -708,20 +864,21 @@ window.CAB07 = {
         ){
 
             cronologia.textContent =
-                datos.cronologia || "—";
+                datos.cronologia ||
+                "—";
 
         }
 
 
         /*
-        -----------------------------------------------
+        ------------------------------------------------
         PERÍODO
-        -----------------------------------------------
+        ------------------------------------------------
         */
 
         const periodo =
-            document.getElementById(
-                "cab07PeriodoValor"
+            contenedor.querySelector(
+                "#cab07PeriodoValor"
             );
 
 
@@ -738,14 +895,14 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
+        ------------------------------------------------
         SUBPERÍODO
-        -----------------------------------------------
+        ------------------------------------------------
         */
 
         const subperiodo =
-            document.getElementById(
-                "cab07SubperiodoValor"
+            contenedor.querySelector(
+                "#cab07SubperiodoValor"
             );
 
 
@@ -762,9 +919,9 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        GUARDAR DATOS PROCESADOS
-        -----------------------------------------------
+        ------------------------------------------------
+        GUARDAR
+        ------------------------------------------------
         */
 
         this.ultimo =
@@ -772,22 +929,19 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
+        ------------------------------------------------
         EVENTO
-        -----------------------------------------------
+        ------------------------------------------------
         */
 
         document.dispatchEvent(
 
             new CustomEvent(
-
                 "palentropia:cronologia-procesada",
-
                 {
                     detail:
                         datos
                 }
-
             )
 
         );
@@ -805,9 +959,12 @@ window.CAB07 = {
     procesar(ficha){
 
         if(
-            !ficha ||
-            !ficha.j1
+            !ficha
         ){
+
+            console.error(
+                "CAB07: no se recibió ninguna ficha."
+            );
 
             return null;
 
@@ -815,9 +972,9 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
-        OBTENER J3 DESDE CARGACONT
-        -----------------------------------------------
+        ------------------------------------------------
+        OBTENER J3
+        ------------------------------------------------
         */
 
         const j3 =
@@ -830,15 +987,20 @@ window.CAB07 = {
             !j3
         ){
 
+            console.error(
+                "CAB07: no se pudo obtener j3.",
+                ficha
+            );
+
             return null;
 
         }
 
 
         /*
-        -----------------------------------------------
-        PROCESAR CON PALGEOSIMPLIFICADO
-        -----------------------------------------------
+        ------------------------------------------------
+        PROCESAR
+        ------------------------------------------------
         */
 
         const datos =
@@ -857,9 +1019,9 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
+        ------------------------------------------------
         PRESENTAR
-        -----------------------------------------------
+        ------------------------------------------------
         */
 
         this.mostrar(
@@ -868,9 +1030,9 @@ window.CAB07 = {
 
 
         /*
-        -----------------------------------------------
+        ------------------------------------------------
         CONSOLA
-        -----------------------------------------------
+        ------------------------------------------------
         */
 
         console.log(
@@ -878,14 +1040,21 @@ window.CAB07 = {
         );
 
         console.log(
-            "PalEntropía — CAB07 v1.0 LTS"
+            "PalEntropía — CAB07 v1.1 LTS"
         );
 
         console.log(
-            "Cronología procesada:"
+            "J1:",
+            ficha.j1
         );
 
         console.log(
+            "J3:",
+            j3
+        );
+
+        console.log(
+            "Datos PALGEO:",
             datos
         );
 
@@ -899,7 +1068,7 @@ window.CAB07 = {
     },
 
 
-    /* ====================================================
+   /* ====================================================
        OBTENER ÚLTIMO RESULTADO
     ==================================================== */
 
@@ -907,17 +1076,36 @@ window.CAB07 = {
 
         return this.ultimo || null;
 
+    },
+
+
+    /* ====================================================
+       LIMPIAR
+    ==================================================== */
+
+    limpiar(){
+
+        const contenedor =
+            document.getElementById(
+                this.idContenedor
+            );
+
+
+        if(
+            contenedor
+        ){
+
+            contenedor.remove();
+
+        }
+
+
+        this.ultimo =
+            null;
+
     }
 
-
 };
-
-
-/* ========================================================
-   ESTADO INTERNO
-======================================================== */
-
-window.CAB07.ultimo = null;
 
 
 /* ========================================================
@@ -951,5 +1139,10 @@ else{
 
 
 /* ========================================================
-   FIN CAB07 v1.0 LTS
+   FIN CAB07 v1.1 LTS
 ======================================================== */
+
+
+
+
+
