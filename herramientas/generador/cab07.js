@@ -1,107 +1,72 @@
-/* ========================================================
-   CAB07.js
-   PalEntropía — Obtener J3 desde master.csv
-======================================================== */
+/*
+========================================================
+PalEntropía
+CAB07.js
+Generador de Paleofichas 1.1
+
+PRIMERA FUNCIÓN
+
+- Recibe j1
+- Obtiene el registro completo desde master.csv
+- Guarda el resultado en MASTER_ACTUAL
+- Muestra j3
+- No utiliza PALGEO todavía
+========================================================
+*/
+
 
 window.CAB07 = {
 
+
+    /* =====================================================
+       PROCESAR
+       ===================================================== */
+
     async procesar(j1) {
 
-        try {
 
-            const respuesta = await fetch("master.csv");
+        /*
+        -----------------------------------------------------
+        COMPROBAR FUNCIÓN MAESTRA
+        -----------------------------------------------------
+        */
 
-            if (!respuesta.ok) {
-                console.error("CAB07: No se pudo cargar master.csv");
-                return null;
-            }
+        if (
+            typeof window.cargarMasterPorJ1 !==
+            "function"
+        ) {
 
-            const csv = await respuesta.text();
+            console.error(
+                "CAB07: cargarMasterPorJ1 no está disponible."
+            );
 
-            const lineas = csv.split(/\r?\n/);
+            return null;
 
-            for (const linea of lineas) {
-
-                const columnas = linea.split(",");
-
-                if (columnas.length < 3) continue;
-
-                const codigo =
-                    columnas[0].trim();
-
-                if (codigo === String(j1).trim()) {
-
-                    const j3 =
-                        columnas[2].trim();
-
-                    /*
-                    ========================================
-                    MOSTRAR J3
-                    ========================================
-                    */
-
-                    let salida =
-                        document.getElementById("cab07-j3");
-
-                    if (!salida) {
-
-                        salida =
-                            document.createElement("div");
-
-                        salida.id = "cab07-j3";
-
-                        salida.style.marginTop = "15px";
-
-                        const imagenes =
-                            document.querySelector(
-                                "#imagenes"
-                            ) ||
-                            document.querySelector(
-                                ".imagenes"
-                            ) ||
-                            document.querySelector(
-                                "#galeria"
-                            ) ||
-                            document.querySelector(
-                                ".galeria"
-                            );
-
-                        if (imagenes) {
-
-                            imagenes.parentNode.insertBefore(
-                                salida,
-                                imagenes.nextSibling
-                            );
-
-                        } else {
-
-                            document.body.appendChild(
-                                salida
-                            );
-
-                        }
-
-                    }
-
-                    salida.innerHTML =
-                        "<strong>Cronología:</strong> " +
-                        j3;
+        }
 
 
-                    /*
-                    ========================================
-                    DEVOLVER J3
-                    ========================================
-                    */
+        /*
+        -----------------------------------------------------
+        OBTENER REGISTRO COMPLETO
+        -----------------------------------------------------
+        */
 
-                    return j3;
+        const datos =
+            await window.cargarMasterPorJ1(
+                j1
+            );
 
-                }
 
-            }
+        /*
+        -----------------------------------------------------
+        COMPROBAR RESULTADO
+        -----------------------------------------------------
+        */
+
+        if (!datos) {
 
             console.warn(
-                "CAB07: No encontrado:",
+                "CAB07: No se encontró el registro:",
                 j1
             );
 
@@ -109,18 +74,42 @@ window.CAB07 = {
 
         }
 
-        catch (error) {
 
-            console.error(
-                "CAB07:",
-                error
+        /*
+        -----------------------------------------------------
+        MOSTRAR J3
+        -----------------------------------------------------
+        */
+
+        const cronologia =
+            document.getElementById(
+                "cronologia"
             );
 
-            return null;
+
+        if (cronologia) {
+
+            cronologia.textContent =
+                datos.j3 || "—";
 
         }
+
+
+        /*
+        -----------------------------------------------------
+        DEVOLVER REGISTRO COMPLETO
+        -----------------------------------------------------
+        */
+
+        return datos;
 
     }
 
 };
 
+
+/*
+========================================================
+FIN CAB07.js
+========================================================
+*/
