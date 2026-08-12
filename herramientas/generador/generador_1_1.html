@@ -1,1 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>PalEntropía — Generador de Paleofichas</title>
+
+<link rel="stylesheet"
+      href="style_1_1.css">
+
+
+<style>
+
+/* =====================================================
+   CONTROLES DE NAVEGACIÓN
+   ===================================================== */
+
+#controlesNavegacion {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin: 12px auto;
+
+    flex-wrap: wrap;
+
+}
+
+
+.botonNavegacion {
+
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 50%;
+
+    border: none;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+
+}
+
+
+.botonNavegacion:active {
+
+    transform: scale(0.92);
+
+}
+
+
+.botonNavegacion:disabled {
+
+    opacity: 0.35;
+
+    cursor: default;
+
+}
+
+
+#posicionNavegacion {
+
+    min-width: 70px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    opacity: 0.8;
+
+    padding: 4px 9px;
+
+    border-radius: 12px;
+
+}
+
+
+/* =====================================================
+   BOTÓN VÍDEO
+   ===================================================== */
+
+#videoFicha {
+
+    text-align: center;
+
+    margin: 12px 0;
+
+}
+
+
+#botonVideo {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-decoration: none;
+
+    padding: 9px 16px;
+
+    border-radius: 20px;
+
+    font-weight: 600;
+
+}
+
+
+/* =====================================================
+   RESULTADOS DEL BUSCADOR
+   ===================================================== */
+
+.resultadoBuscador {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    text-align: left;
+
+    padding: 10px 12px;
+
+    margin: 5px 0;
+
+    border-radius: 12px;
+
+    border: none;
+
+    cursor: pointer;
+
+}
+
+
+.resultadoCodigo {
+
+    font-weight: 700;
+
+    opacity: 0.75;
+
+}
+
+
+.resultadoNombre {
+
+    font-weight: 600;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     CABECERA MAESTRA
+     ===================================================== -->
+
+<button id="botonAleatorio"
+        type="button"
+        title="Paleoficha aleatoria"
+        aria-label="Paleoficha aleatoria">
+
+    🎲
+
+</button>
+
+
+<button id="botonMenuPrincipal"
+        class="botonCircularSuperior"
+        type="button"
+        title="Volver al menú principal"
+        aria-label="Volver al menú principal">
+
+    🏠
+
+</button>
+
+
+<header id="cabecera">
+
+    <h1>PalEntropía</h1>
+
+    <div id="subtitulo">
+        Generador de Paleofichas
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     CONTROLES DE BÚSQUEDA
+     ===================================================== -->
+
+<section id="controlesBusqueda">
+
+    <button id="botonBuscar"
+            type="button">
+
+        🔎 Explorar Paleofichas
+
+    </button>
+
+</section>
+
+
+<!-- =====================================================
+     CONTROLES DE NAVEGACIÓN
+     ===================================================== -->
+
+<section id="controlesNavegacion"
+         aria-label="Navegación de paleofichas">
+
+
+    <button id="botonPrimero"
+            class="botonNavegacion"
+            type="button"
+            title="Primera paleoficha"
+            aria-label="Primera paleoficha">
+
+        ⏮
+
+    </button>
+
+
+    <button id="botonAnterior"
+            class="botonNavegacion"
+            type="button"
+            title="Paleoficha anterior"
+            aria-label="Paleoficha anterior">
+
+        ◀
+
+    </button>
+
+
+    <span id="posicionNavegacion">
+
+        — / —
+
+    </span>
+
+
+    <button id="botonSiguiente"
+            class="botonNavegacion"
+            type="button"
+            title="Paleoficha siguiente"
+            aria-label="Paleoficha siguiente">
+
+        ▶
+
+    </button>
+
+
+    <button id="botonUltimo"
+            class="botonNavegacion"
+            type="button"
+            title="Última paleoficha"
+            aria-label="Última paleoficha">
+
+        ⏭
+
+    </button>
+
+
+</section>
+
+
+<!-- =====================================================
+     ESTADO
+     ===================================================== -->
+
+<div id="estado">
+
+    Cargando contenedor...
+
+</div>
+
+
+<!-- =====================================================
+     FICHA
+     ===================================================== -->
+
+<main id="ficha"
+      class="ficha"
+      style="display:none;">
+
+
+    <div id="titulo"></div>
+
+
+    <div id="codigoFicha"></div>
+
+
+    <!-- =================================================
+         CRONOLOGÍA
+         ================================================= -->
+
+    <div id="cronologia">
+
+    </div>
+
+
+    <!-- =================================================
+         IMAGEN PRINCIPAL
+         ================================================= -->
+
+    <div id="contenedorImagenPrincipal">
+
+        <img id="imagenPrincipal"
+             alt="Imagen principal de la paleoficha">
+
+    </div>
+
+
+    <!-- =================================================
+         VÍDEO
+         ================================================= -->
+
+    <div id="videoFicha"
+         style="display:none;">
+
+        <a id="botonVideo"
+           href="#"
+           target="_self"
+           rel="noopener">
+
+            ▶ Ver vídeo
+
+        </a>
+
+    </div>
+
+
+    <!-- =================================================
+         INFORMACIÓN
+         ================================================= -->
+
+    <section id="bloqueInfo">
+
+
+        <div class="campoInfo">
+
+            <span class="campo">
+                Dieta
+            </span>
+
+            <span id="dieta"></span>
+
+        </div>
+
+
+        <div class="campoInfo">
+
+            <span class="campo">
+                Descripción
+            </span>
+
+            <span id="descripcion"></span>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =================================================
+         GALERÍA
+         ================================================= -->
+
+    <section id="galeria">
+
+
+        <img id="img2"
+             alt="Imagen secundaria 1">
+
+
+        <img id="img3"
+             alt="Imagen secundaria 2">
+
+
+    </section>
+
+
+    <!-- =================================================
+         ESTADÍSTICAS
+         ================================================= -->
+
+    <section id="bloqueEstadisticas"
+             style="display:none;">
+
+        <h2>
+            Estadísticas
+        </h2>
+
+
+        <div id="estadisticas"
+             class="stats">
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- =====================================================
+     LIGHTBOX DE IMÁGENES
+     ===================================================== -->
+
+<div id="visorImagen"
+     class="visor"
+     aria-hidden="true">
+
+
+    <button id="cerrarImagen"
+            class="botonCerrar"
+            type="button"
+            aria-label="Cerrar imagen">
+
+        ×
+
+    </button>
+
+
+    <img id="imagenAmpliada"
+         alt="Imagen ampliada">
+
+
+</div>
+
+
+<!-- =====================================================
+     EXPLORADOR DE PALEOFICHAS
+     ===================================================== -->
+
+<div id="visorBuscador"
+     class="visor"
+     aria-hidden="true">
+
+
+    <div id="ventanaBuscador">
+
+
+        <button id="cerrarBuscador"
+                class="botonCerrar botonCerrarBuscador"
+                type="button"
+                aria-label="Cerrar buscador">
+
+            ×
+
+        </button>
+
+
+        <h2>
+            Explorador de Paleofichas
+        </h2>
+
+
+        <input id="buscarNombre"
+               type="text"
+               placeholder="Buscar por nombre o código"
+               autocomplete="off">
+
+
+        <div id="listaResultados">
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =====================================================
+     MÓDULOS EXISTENTES
+     ===================================================== -->
+
+<script src="leepaljson.js"></script>
+
+<script src="palvideo.js"></script>
+
+<script src="buscaruta.js"></script>
+
+<script src="cargacont.js"></script>
+
+<script src="palbuscador.js"></script>
+
+<script src="palnavegador.js"></script>
+
+
+<!-- =====================================================
+     CATÁLOGO DE MÓDULOS
+     ===================================================== -->
+
+<script src="palcabecera.js"></script>
+
+
+<!-- =====================================================
+     GENERADOR 1.1
+     
+     MÓDULOS FUNCIONALES CONSECUTIVOS
+     ===================================================== -->
+
+
+<!-- CAB01 — CABECERA MAESTRA -->
+<script src="cab01.js"></script>
+
+
+<!-- CAB02 — NAVEGACIÓN -->
+<script src="cab02.js"></script>
+
+
+<!-- CAB03 — CONTENEDOR -->
+<script src="cab03.js"></script>
+
+
+<!-- CAB04 — PALEOFICHA -->
+<script src="cab04.js"></script>
+
+
+<!-- CAB05 — IMÁGENES Y MULTIMEDIA -->
+<script src="cab05.js"></script>
+
+
+<!-- CAB06 — VÍDEO -->
+<script src="cab06.js"></script>
+
+
+<!-- CAB07 — INFORMACIÓN -->
+<script src="cab07.js"></script>
+
+
+<!-- CAB08 — GALERÍA -->
+<script src="cab08.js"></script>
+
+
+<!-- CAB09 — ESTADÍSTICAS -->
+<script src="cab09.js"></script>
+
+
+<!-- CAB10 — LIGHTBOX -->
+<script src="cab10.js"></script>
+
+
+<!-- CAB11 — BUSCADOR -->
+<script src="cab11.js"></script>
+
+
+<!-- CAB12 — INICIALIZACIÓN -->
+<script src="cab12.js"></script>
+
+
+</body>
+
+</html>
 
