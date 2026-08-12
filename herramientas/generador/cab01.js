@@ -7,6 +7,7 @@ Generador de Paleofichas 1.1
 PRIMER BLOQUE FUNCIONAL
 - Estado de ficha actual
 - Referencias de navegación
+- Botón menú principal
 - Actualización de controles de navegación
 
 Código procedente del generador original.
@@ -50,6 +51,30 @@ const posicionNavegacion =
     document.getElementById(
         "posicionNavegacion"
     );
+
+
+/* =====================================================
+   BOTÓN MENÚ PRINCIPAL
+   ===================================================== */
+
+const botonMenuPrincipal =
+    document.getElementById(
+        "botonMenuPrincipal"
+    );
+
+
+if (
+    botonMenuPrincipal
+) {
+
+    botonMenuPrincipal.onclick = function() {
+
+        window.location.href =
+            "https://palentropia.es";
+
+    };
+
+}
 
 
 /* =====================================================
@@ -116,7 +141,3 @@ function actualizarControlesNavegacion() {
 FIN CAB01.js
 ========================================================
 */
-
-
-
-
