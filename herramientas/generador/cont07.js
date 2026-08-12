@@ -2,30 +2,33 @@
 ========================================================
 PalEntropía
 CONT07.js
-Contenedor independiente de CAB07
 
-FUNCIÓN:
+CONTENEDOR INDEPENDIENTE DE CAB07
+
+Función:
 
 - Recibe el registro completo procedente de CAB07.
-- Conserva todos sus campos.
-- Reserva un bloque independiente para PALGEO.
-- Permite guardar datos geológicos.
-- Permite consultar el registro y la geología.
-- No interpreta datos.
-- No modifica j3.
-- No consulta PALGEO directamente.
+- Guarda el registro en memoria.
+- Permite consultar el registro actual.
+- Permite comprobar si existe.
+- Permite limpiarlo.
 
-FLUJO:
+NO:
+- Lee master.csv.
+- Lee PALGEO.
+- Interpreta cronología.
+- Modifica datos.
+- Carga Paleofichas.
+- Interfiere con CARGACONT.
+- Interfiere con PALNAVEGADOR.
 
-master.csv
-   ↓
-CAB07
-   ↓
-CONT07
-   ├── registro
-   └── geologia
-          ↓
-       PALGEO
+Flujo:
+
+MASTER.CSV
+    ↓
+  CAB07
+    ↓
+ CONT07
 
 ========================================================
 */
@@ -35,24 +38,22 @@ window.CONT07 = {
 
 
     /* =====================================================
-       REGISTRO MAESTRO
+       VERSIÓN
+       ===================================================== */
+
+    version: "1.0 LTS",
+
+
+    /* =====================================================
+       REGISTRO ACTUAL
        ===================================================== */
 
     registro: null,
 
 
     /* =====================================================
-       DATOS GEOLOGICOS
-
-       Se mantienen separados del registro maestro.
-       ===================================================== */
-
-    geologia: null,
-
-
-    /* =====================================================
-       GUARDAR REGISTRO
-
+       GUARDAR
+       
        Recibe el registro completo de CAB07.
        ===================================================== */
 
@@ -70,191 +71,69 @@ window.CONT07 = {
             typeof datos !== "object"
         ) {
 
-            this.registro = null;
+            console.warn(
+                "CONT07: registro inválido."
+            );
 
-            return null;
-
-        }
-
-
-        /*
-        -----------------------------------------------------
-        GUARDAR COPIA DEL REGISTRO
-        -----------------------------------------------------
-        */
-
-        this.registro = {
-
-            j1:
-                datos.j1 ?? "",
-
-            j2:
-                datos.j2 ?? "",
-
-            j3:
-                datos.j3 ?? "",
-
-            j4:
-                datos.j4 ?? "",
-
-            j5:
-                datos.j5 ?? "",
-
-            j6:
-                datos.j6 ?? "",
-
-            j7:
-                datos.j7 ?? "",
-
-            j8:
-                datos.j8 ?? "",
-
-            j9:
-                datos.j9 ?? "",
-
-            j10:
-                datos.j10 ?? "",
-
-
-            e1:
-                datos.e1 ?? "",
-
-            e2:
-                datos.e2 ?? "",
-
-            e3:
-                datos.e3 ?? "",
-
-            e4:
-                datos.e4 ?? "",
-
-            e5:
-                datos.e5 ?? "",
-
-            e6:
-                datos.e6 ?? "",
-
-            e7:
-                datos.e7 ?? "",
-
-            e8:
-                datos.e8 ?? "",
-
-            e9:
-                datos.e9 ?? "",
-
-            e10:
-                datos.e10 ?? "",
-
-            e11:
-                datos.e11 ?? ""
-
-        };
-
-
-        /*
-        -----------------------------------------------------
-        NUEVO REGISTRO = NUEVA GEOLOGÍA
-
-        Evita conservar datos de PALGEO
-        de la ficha anterior.
-        -----------------------------------------------------
-        */
-
-        this.geologia = null;
-
-
-        /*
-        -----------------------------------------------------
-        DEVOLVER REGISTRO
-        -----------------------------------------------------
-        */
-
-        return this.registro;
-
-    },
-
-
-    /* =====================================================
-       GUARDAR GEOLOGÍA
-
-       Recibe los datos obtenidos desde PALGEO.
-
-       No interpreta ni modifica el contenido.
-       ===================================================== */
-
-    guardarGeologia(datos) {
-
-
-        /*
-        -----------------------------------------------------
-        COMPROBAR DATOS
-        -----------------------------------------------------
-        */
-
-        if (
-            !datos ||
-            typeof datos !== "object"
-        ) {
-
-            this.geologia = null;
-
-            return null;
+            return false;
 
         }
 
 
         /*
         -----------------------------------------------------
-        GUARDAR COPIA
+        GUARDAR REFERENCIA DEL REGISTRO
         -----------------------------------------------------
+        
+        No modificamos ningún campo.
         */
 
-        this.geologia = {
+        this.registro =
+            datos;
 
 
-            codes:
-                Array.isArray(
-                    datos.codes
-                )
-                    ? [...datos.codes]
-                    : [],
-
-
-            periodo:
-                Array.isArray(
-                    datos.periodo
-                )
-                    ? [...datos.periodo]
-                    : [],
-
-
-            edad:
-                Array.isArray(
-                    datos.edad
-                )
-                    ? [...datos.edad]
-                    : []
-
-        };
-
-
-        /*
-        -----------------------------------------------------
-        DEVOLVER GEOLOGÍA
-        -----------------------------------------------------
-        */
-
-        return this.geologia;
+        return true;
 
     },
 
 
     /* =====================================================
-       OBTENER REGISTRO
+       OBTENER
+       
+       Devuelve el registro almacenado.
        ===================================================== */
 
     obtener() {
+
+
+        return this.registro;
+
+
+    },
+
+
+    /* =====================================================
+       EXISTE
+       
+       Indica si CONT07 contiene un registro.
+       ===================================================== */
+
+    existe() {
+
+
+        return (
+            this.registro !== null
+        );
+
+
+    },
+
+
+    /* =====================================================
+       OBTENER J1
+       ===================================================== */
+
+    obtenerJ1() {
 
 
         if (
@@ -266,22 +145,23 @@ window.CONT07 = {
         }
 
 
-        return this.registro;
+        return (
+            this.registro.j1 ||
+            null
+        );
 
     },
 
 
     /* =====================================================
-       OBTENER POR J1
+       OBTENER J3
        ===================================================== */
 
-    obtenerPorJ1(j1) {
+    obtenerJ3() {
 
 
         if (
-            !this.registro ||
-            j1 === undefined ||
-            j1 === null
+            !this.registro
         ) {
 
             return null;
@@ -289,83 +169,26 @@ window.CONT07 = {
         }
 
 
-        if (
-            String(
-                this.registro.j1
-            ).trim()
-            !==
-            String(j1).trim()
-        ) {
-
-            return null;
-
-        }
-
-
-        return this.registro;
-
-    },
-
-
-    /* =====================================================
-       OBTENER GEOLOGÍA
-       ===================================================== */
-
-    obtenerGeologia() {
-
-
-        if (
-            !this.geologia
-        ) {
-
-            return null;
-
-        }
-
-
-        return this.geologia;
-
-    },
-
-
-    /* =====================================================
-       OBTENER TODO
-
-       Devuelve:
-
-       {
-           registro: {...},
-           geologia: {...}
-       }
-       ===================================================== */
-
-    obtenerTodo() {
-
-
-        return {
-
-            registro:
-                this.registro,
-
-            geologia:
-                this.geologia
-
-        };
+        return (
+            this.registro.j3 ||
+            null
+        );
 
     },
 
 
     /* =====================================================
        LIMPIAR
-
-       Vacía completamente CONT07.
        ===================================================== */
 
     limpiar() {
 
-        this.registro = null;
 
-        this.geologia = null;
+        this.registro =
+            null;
+
+
+        return true;
 
     }
 
