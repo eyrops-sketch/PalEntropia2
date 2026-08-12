@@ -507,6 +507,185 @@
 
 
 <!-- =====================================================
+     ALMACÉN MAESTRO
+     
+     Recibe un j1 y carga en memoria TODO su registro
+     procedente de master.csv.
+====================================================== -->
+
+<script>
+
+window.MASTER_ACTUAL = null;
+
+
+window.cargarMasterPorJ1 =
+async function(j1) {
+
+
+    /*
+    =====================================================
+    COMPROBAR J1
+    =====================================================
+    */
+
+    if (
+        j1 === undefined ||
+        j1 === null ||
+        String(j1).trim() === ""
+    ) {
+
+        window.MASTER_ACTUAL = null;
+
+        return null;
+
+    }
+
+
+    /*
+    =====================================================
+    CARGAR MASTER.CSV
+    =====================================================
+    */
+
+    const respuesta =
+        await fetch(
+            "master.csv"
+        );
+
+
+    if (!respuesta.ok) {
+
+        throw new Error(
+            "No se pudo cargar master.csv."
+        );
+
+    }
+
+
+    const texto =
+        await respuesta.text();
+
+
+    /*
+    =====================================================
+    SEPARAR LÍNEAS
+    =====================================================
+    */
+
+    const lineas =
+        texto.split(/\r?\n/);
+
+
+    /*
+    =====================================================
+    BUSCAR J1
+    =====================================================
+    */
+
+    for (
+        const linea of lineas
+    ) {
+
+
+        if (
+            !linea.trim()
+        ) {
+
+            continue;
+
+        }
+
+
+        const columnas =
+            linea.split(",");
+
+
+        if (
+            columnas.length < 21
+        ) {
+
+            continue;
+
+        }
+
+
+        const codigo =
+            String(
+                columnas[0]
+            ).trim();
+
+
+        if (
+            codigo !==
+            String(j1).trim()
+        ) {
+
+            continue;
+
+        }
+
+
+        /*
+        =================================================
+        GUARDAR REGISTRO COMPLETO
+        =================================================
+        */
+
+        window.MASTER_ACTUAL = {
+
+            j1:  columnas[0]?.trim() || "",
+            j2:  columnas[1]?.trim() || "",
+            j3:  columnas[2]?.trim() || "",
+            j4:  columnas[3]?.trim() || "",
+            j5:  columnas[4]?.trim() || "",
+            j6:  columnas[5]?.trim() || "",
+            j7:  columnas[6]?.trim() || "",
+            j8:  columnas[7]?.trim() || "",
+            j9:  columnas[8]?.trim() || "",
+            j10: columnas[9]?.trim() || "",
+
+            e1:  columnas[10]?.trim() || "",
+            e2:  columnas[11]?.trim() || "",
+            e3:  columnas[12]?.trim() || "",
+            e4:  columnas[13]?.trim() || "",
+            e5:  columnas[14]?.trim() || "",
+            e6:  columnas[15]?.trim() || "",
+            e7:  columnas[16]?.trim() || "",
+            e8:  columnas[17]?.trim() || "",
+            e9:  columnas[18]?.trim() || "",
+            e10: columnas[19]?.trim() || "",
+            e11: columnas[20]?.trim() || ""
+
+        };
+
+
+        /*
+        =================================================
+        DEVOLVER REGISTRO
+        =================================================
+        */
+
+        return window.MASTER_ACTUAL;
+
+    }
+
+
+    /*
+    =====================================================
+    NO ENCONTRADO
+    =====================================================
+    */
+
+    window.MASTER_ACTUAL = null;
+
+    return null;
+
+};
+
+</script>
+
+
+<!-- =====================================================
      MÓDULOS EXISTENTES
      ===================================================== -->
 
@@ -546,7 +725,6 @@
 <script src="cab04.js"></script>
 
 <script src="cab07.js"></script>
-      
 
 <script src="cab05.js"></script>
 
