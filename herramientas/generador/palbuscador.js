@@ -1,1371 +1,1136 @@
 /*
-=========================================================
-PALBUSCADOR.js
-Motor de Búsqueda Universal
+
 PalEntropía
+palbuscador.js v3.1 LTS
 
-Versión: 2.2 LTS
+MOTOR DE BÚSQUEDA DEL GENERADOR
 
-Búsqueda por:
+Arquitectura actual:
 
-- Código
-- Nombre
-- Eón
-- Era
-- Período
-- Edad geológica
+MASTER.CSV
+↓
+LEEPALJSON
+↓
+PALBUSCADOR
+↓
+j1
+↓
+CARGACONT
+↓
+paleofichas.json
+↓
+BUSCARUTA
+↓
+GENERADOR
 
-Restricciones:
+BUSCA POR:
 
-- Código: desde 1 carácter
-- Nombre: desde 3 caracteres
-- Tiempo geológico: desde 4 caracteres
+Código (j1)
 
-Búsqueda por PREFIJO.
+Nombre (j2)
 
-Ejemplos:
 
-o
-ord
-hel
-003_
-003_1
-perm
-devo
-chan
+FUENTES:
 
-Compatible con:
-- Constructor 1.9
-- PALDB
-- PALGEO
-- PALDECODER
+master.csv
+→ códigos j1
+
+paleofichas.json
+→ nombre / j2
+
+PALVIDEO.js
+→ enlace de vídeo mediante j1
+
+NO DEPENDE DE:
+
+PALDB
+
+PALDECODER
+
+PALGEO
+
+PALTAXON
+
+variable global paleofichas
+
+
+=========================================================
+
+RESULTADO:
+
+[
+{
+codigo: "001_01",
+nombre: "Gastornis",
+tipo: "codigo",
+relevancia: 100
+}
+]
+
 =========================================================
 */
 
 const PALBUSCADOR = {
 
-/*=========================================================
-VERSIÓN
-=========================================================*/
+/* =====================================================  
+   VERSIÓN  
+===================================================== */  
 
-version:"2.2 LTS",
+version: "3.1 LTS",  
 
 
-/*=========================================================
-NORMALIZAR TEXTO
-=========================================================*/
+/* =====================================================  
+   DATOS INTERNOS  
+===================================================== */  
 
-normalizar(texto){
+_datosJSON: null,  
 
-if(texto===undefined || texto===null){
+_cargandoJSON: null,  
 
-return "";
 
-}
-
-return texto
-
-.toString()
-
-.toLowerCase()
-
-.normalize("NFD")
-
-.replace(/[\u0300-\u036f]/g,"")
-
-.replace(/ñ/g,"n")
-
-.replace(/[.,;:()\-\/]/g," ")
-
-.replace(/\s+/g," ")
-
-.trim();
-
-},
-
-
-/*=========================================================
-OBTENER PALABRAS
-=========================================================*/
-
-obtenerPalabras(texto){
-
-return this
-
-.normalizar(texto)
-
-.split(" ")
-
-.filter(p=>p.length>0);
-
-},
-
-
-/*=========================================================
-ELIMINAR DUPLICADOS
-=========================================================*/
-
-unicos(lista){
-
-return [...new Set(lista)];
-
-},
-
-
-/*=========================================================
-OBTENER CRONOLOGÍA
-=========================================================*/
-
-obtenerGeologia(ficha){
-
-if(
-
-typeof PALDECODER==="undefined" ||
-
-!ficha ||
-
-!ficha.cronologia
-
-){
-
-return [];
-
-}
-
-const geo=
-
-PALDECODER.decodeCronologia(
-
-ficha.cronologia
-
-);
-
-if(!geo){
-
-return [];
-
-}
-
-let terminos=[];
-
-
-/*---------------------------------------
-EÓN
----------------------------------------*/
-
-if(Array.isArray(geo.eon)){
-
-terminos.push(...geo.eon);
-
-}
-
-
-/*---------------------------------------
-ERA
----------------------------------------*/
-
-if(Array.isArray(geo.era)){
-
-terminos.push(...geo.era);
-
-}
-
-
-/*---------------------------------------
-PERÍODO
----------------------------------------*/
-
-if(Array.isArray(geo.periodo)){
-
-terminos.push(...geo.periodo);
-
-}
-
-
-/*---------------------------------------
-EDAD
----------------------------------------*/
-
-if(Array.isArray(geo.edad)){
-
-terminos.push(...geo.edad);
-
-}
-
-
-/*---------------------------------------
-TEXTOS PREPARADOS
----------------------------------------*/
-
-if(geo.periodo_texto){
-
-terminos.push(
-
-geo.periodo_texto
-
-);
-
-}
-
-if(geo.subperiodo_texto){
-
-terminos.push(
-
-geo.subperiodo_texto
-
-);
-
-}
-
-
-/*---------------------------------------
-LIMPIAR
----------------------------------------*/
-
-return this.unicos(
-
-terminos
-
-.filter(Boolean)
-
-);
-
-},
-
-/*=========================================================
-OBTENER TAXONOMÍA
-=========================================================*/
-
-obtenerTaxonomia(codigo){
-
-if(
-
-typeof PALTAXON==="undefined" ||
-
-!codigo
-
-){
-
-return [];
-
-}
-
-const taxon=
-
-PALTAXON[codigo];
-
-if(!taxon || !taxon.ta1){
-
-return [];
-
-}
-
-const terminos=
-
-taxon.ta1
-
-.split(">")
-
-.map(t=>t.trim())
-
-.filter(Boolean);
-
-return this.unicos(
-
-terminos
-
-);
-
-},
-
-
-
-
-   
-/*=========================================================
-CREAR ÍNDICE
-=========================================================*/
-
-crearIndice(codigo){
-
-const ficha=
-
-paleofichas.find(
-
-f=>f.codigo===codigo
-
-);
-
-if(!ficha){
-
-return "";
-
-}
-
-let datos=[];
-
-
-/*---------------------------------------
-CÓDIGO
----------------------------------------*/
-
-datos.push(
-
-ficha.codigo
-
-);
-
-
-/*---------------------------------------
-NOMBRE
----------------------------------------*/
-
-datos.push(
-
-ficha.nombre
-
-);
-
-
-/*---------------------------------------
-GEOLOGÍA
----------------------------------------*/
-
-const geologia=
-
-this.obtenerGeologia(
-
-ficha
+/* =====================================================  
+   NORMALIZAR TEXTO  
+===================================================== */  
 
-);
+normalizar(texto) {  
 
-datos.push(
+    if (  
+        texto === undefined ||  
+        texto === null  
+    ) {  
 
-...geologia
+        return "";  
 
-);
+    }  
 
 
-/*---------------------------------------
-ELIMINAR DUPLICADOS
----------------------------------------*/
+    return String(texto)  
 
-datos=
+        .toLowerCase()  
 
-this.unicos(datos);
+        .normalize("NFD")  
 
+        .replace(  
+            /[\u0300-\u036f]/g,  
+            ""  
+        )  
 
-/*---------------------------------------
-NORMALIZAR
----------------------------------------*/
+        .replace(  
+            /ñ/g,  
+            "n"  
+        )  
 
-return this.normalizar(
+        .replace(  
+            /[.,;:()\-\/]/g,  
+            " "  
+        )  
 
-datos.join(" ")
+        .replace(  
+            /\s+/g,  
+            " "  
+        )  
 
-);
+        .trim();  
 
-},
+},  
 
 
-/*=========================================================
-DETERMINAR TIPO DE CONSULTA
-=========================================================*/
+/* =====================================================  
+   NORMALIZAR CÓDIGO  
 
-tipoConsulta(texto){
+   Los códigos no deben perder el "_".  
 
-const consulta=
+   Ejemplo:  
 
-this.normalizar(texto);
+   001_01  
+   001_1  
+   003_  
+   005  
+===================================================== */  
 
-if(!consulta){
+normalizarCodigo(codigo) {  
 
-return "vacio";
+    if (  
+        codigo === undefined ||  
+        codigo === null  
+    ) {  
 
-}
-
-
-/*---------------------------------------
-CÓDIGO
----------------------------------------
-
-Cualquier consulta formada únicamente
-por números y guion bajo.
-
-Ejemplos:
-
-0
-00
-003
-003_
-003_1
-003_12
----------------------------------------*/
-
-if(
-
-/^[0-9_]+$/.test(consulta)
-
-){
-
-return "codigo";
-
-}
-
-
-/*---------------------------------------
-NOMBRE
----------------------------------------
-
-IMPORTANTE:
-
-Primero se intenta localizar un nombre.
-
-Esto evita que consultas normales como:
-
-ord
-hel
-pri
-sac
-
-sean interpretadas como geología.
-
----------------------------------------*/
-
-if(
-
-consulta.length>=3
-
-){
-
-for(const ficha of paleofichas){
-
-const nombre=
-
-this.normalizar(
-
-ficha.nombre
-
-);
-
-if(
-
-nombre.startsWith(consulta)
-
-){
-
-return "nombre";
-
-}
-
-}
-
-}
-
-
-
-/*---------------------------------------
-GEOLOGÍA
----------------------------------------
-
-Solo se considera geología cuando:
-
-1. Tiene mínimo 4 caracteres.
-2. Coincide realmente con un término
-   geológico existente.
-
----------------------------------------*/
-
-if(
-
-consulta.length>=4 &&
-
-this.esTerminoGeologico(consulta)
-
-){
-
-return "geologia";
-
-}
-
-
-/*---------------------------------------
-TAXONOMÍA
----------------------------------------
-
-Solo se considera taxonomía cuando:
-
-1. Tiene mínimo 5 caracteres.
-2. Coincide realmente con un término
-   taxonómico existente.
-
----------------------------------------*/
-
-if(
-
-consulta.length>=5 &&
-
-this.esTerminoTaxonomico(consulta)
-
-){
-
-return "taxon";
-
-}
-
-
-
-
-
-   
-   
-/*---------------------------------------
-OTRA CONSULTA DE NOMBRE
----------------------------------------
-
-Si no hemos encontrado un nombre pero
-tiene al menos 3 caracteres, seguimos
-tratándolo como búsqueda de nombre.
-
----------------------------------------*/
-
-if(
+        return "";  
 
-consulta.length>=3
+    }  
 
-){
 
-return "nombre";
+    return String(codigo)  
 
-}
-
-
-/*---------------------------------------
-DEMASIADO CORTA
----------------------------------------*/
-
-return "corto";
-
-},
-
-
-/*=========================================================
-COMPROBAR TÉRMINO GEOLÓGICO
-=========================================================*/
-
-esTerminoGeologico(texto){
-
-const consulta=
-
-this.normalizar(texto);
-
-if(
-
-consulta.length<4
-
-){
-
-return false;
-
-}
-
-for(const ficha of paleofichas){
-
-const terminos=
+        .trim()  
 
-this.obtenerGeologia(
+        .toUpperCase();  
 
-ficha
+},  
 
-);
 
-for(const termino of terminos){
+/* =====================================================  
+   OBTENER CONTENEDOR  
+===================================================== */  
 
-const normalizado=
+obtenerContenedor() {  
 
-this.normalizar(
+    if (  
+        !window.LEEPALJSON ||  
+        typeof window.LEEPALJSON.obtener !==  
+        "function"  
+    ) {  
 
-termino
+        throw new Error(  
+            "PALBUSCADOR: LEEPALJSON no está disponible."  
+        );  
 
-);
+    }  
 
-if(
 
-normalizado.startsWith(
+    const contenedor =  
+        window.LEEPALJSON.obtener();  
 
-consulta
 
-)
+    if (  
+        !Array.isArray(contenedor) ||  
+        !contenedor.length  
+    ) {  
 
-){
+        throw new Error(  
+            "PALBUSCADOR: master.csv está vacío."  
+        );  
 
-return true;
+    }  
 
-}
-
-}
-
-}
-
-return false;
-
-},
-
-
 
-/*=========================================================
-COMPROBAR TÉRMINO TAXONÓMICO
-=========================================================*/
+    return contenedor;  
 
-esTerminoTaxonomico(texto){
+},  
 
-const consulta=
 
-this.normalizar(texto);
+/* =====================================================  
+   CARGAR PALEOFICHAS.JSON  
+===================================================== */  
 
-if(
+async cargarJSON() {  
 
-consulta.length<5
+    if (  
+        this._datosJSON  
+    ) {  
 
-){
+        return this._datosJSON;  
 
-return false;
+    }  
 
-}
-
-for(const ficha of paleofichas){
-
-const terminos=
-
-this.obtenerTaxonomia(
 
-ficha.codigo
+    if (  
+        this._cargandoJSON  
+    ) {  
 
-);
+        return this._cargandoJSON;  
 
-for(const termino of terminos){
+    }  
 
-const normalizado=
 
-this.normalizar(
+    this._cargandoJSON =  
 
-termino
+        fetch(  
+            "paleofichas.json",  
+            {  
+                cache: "default"  
+            }  
+        )  
 
-);
+        .then(  
 
-if(
+            respuesta => {  
 
-normalizado.startsWith(
+                if (  
+                    !respuesta.ok  
+                ) {  
 
-consulta
+                    throw new Error(  
+                        "PALBUSCADOR: no se pudo cargar " +  
+                        "paleofichas.json (" +  
+                        respuesta.status +  
+                        ")"  
+                    );  
 
-)
+                }  
 
-){
 
-return true;
+                return respuesta.json();  
 
-}
+            }  
 
-}
+        )  
 
-}
+        .then(  
 
-return false;
+            datos => {  
 
-},
+                if (  
+                    !Array.isArray(datos)  
+                ) {  
 
+                    throw new Error(  
+                        "PALBUSCADOR: paleofichas.json no contiene un array válido."  
+                    );  
 
+                }  
 
-   
-/*=========================================================
-BUSCAR POR CÓDIGO
-=========================================================*/
 
-buscarPorCodigo(consulta){
+                this._datosJSON =  
+                    datos;  
 
-let resultados=[];
 
-for(const ficha of paleofichas){
+                return datos;  
 
-const codigo=
+            }  
 
-this.normalizar(
+        )  
 
-ficha.codigo
+        .catch(  
 
-);
+            error => {  
 
-if(
+                this._cargandoJSON =  
+                    null;  
 
-codigo.startsWith(
+                throw error;  
 
-consulta
+            }  
 
-)
+        );  
 
-){
 
-resultados.push({
+    return this._cargandoJSON;  
 
-codigo:ficha.codigo,
+},  
 
-nombre:ficha.nombre,
 
-tipo:"codigo",
+/* =====================================================  
+   OBTENER MAPA DE NOMBRES  
 
-relevancia:100
+   Convierte:  
 
-});
+   001_01 → Gastornis  
+   001_02 → Goniatites  
+   etc.  
+===================================================== */  
 
-}
+async obtenerMapaNombres() {  
 
-}
+    const datos =  
+        await this.cargarJSON();  
 
-return resultados;
 
-},
+    const mapa =  
+        new Map();  
 
 
-/*=========================================================
-BUSCAR POR NOMBRE
-=========================================================*/
+    for (  
+        const registro of datos  
+    ) {  
 
-buscarPorNombre(consulta){
+        if (  
+            !registro  
+        ) {  
 
-let resultados=[];
+            continue;  
 
-for(const ficha of paleofichas){
+        }  
 
-const nombre=
 
-this.normalizar(
+        const codigo =  
+            this.normalizarCodigo(  
+                registro.codigo ||  
+                registro.j1  
+            );  
 
-ficha.nombre
 
-);
+        const nombre =  
+            String(  
+                registro.nombre ||  
+                ""  
+            ).trim();  
 
-if(
 
-nombre.startsWith(
+        if (  
+            !codigo ||  
+            !nombre  
+        ) {  
 
-consulta
+            continue;  
 
-)
+        }  
 
-){
 
-resultados.push({
+        mapa.set(  
+            codigo,  
+            nombre  
+        );  
 
-codigo:ficha.codigo,
+    }  
 
-nombre:ficha.nombre,
 
-tipo:"nombre",
+    return mapa;  
 
-relevancia:100
+},  
 
-});
 
-}
+/* =====================================================  
+   OBTENER VÍDEO  
 
-}
+   Consulta PALVIDEO mediante j1.  
 
-return resultados;
+   Devuelve:  
 
-},
+   URL de YouTube  
+   o  
+   null  
 
+   PALVIDEO es la única fuente de vídeos.  
+===================================================== */  
 
-/*=========================================================
-BUSCAR POR GEOLOGÍA
-=========================================================*/
+obtenerVideo(codigo) {  
 
-buscarPorGeologia(consulta){
+    const j1 =  
+        this.normalizarCodigo(  
+            codigo  
+        );  
 
-let resultados=[];
 
-for(const ficha of paleofichas){
+    if (  
+        !j1  
+    ) {  
 
-const terminos=
+        return null;  
 
-this.obtenerGeologia(
+    }  
 
-ficha
 
-);
+    /* ---------------------------------------------  
+       PALVIDEO NO DISPONIBLE  
+    --------------------------------------------- */  
 
-let encontrado=false;
+    if (  
+        !window.PALVIDEO ||  
+        typeof window.PALVIDEO !==  
+        "object"  
+    ) {  
 
-for(const termino of terminos){
+        return null;  
 
-const normalizado=
+    }  
 
-this.normalizar(
 
-termino
+    /* ---------------------------------------------  
+       BUSCAR REGISTRO  
+    --------------------------------------------- */  
 
-);
+    const registro =  
+        window.PALVIDEO[j1];  
 
-if(
 
-normalizado.startsWith(
+    if (  
+        !registro ||  
+        typeof registro !==  
+        "object"  
+    ) {  
 
-consulta
+        return null;  
 
-)
+    }  
 
-){
 
-encontrado=true;
+    /* ---------------------------------------------  
+       OBTENER ENLACE  
+    --------------------------------------------- */  
 
-break;
+    const video =  
+        registro.video;  
 
-}
 
-}
+    if (  
+        video === undefined ||  
+        video === null  
+    ) {  
 
-if(encontrado){
+        return null;  
 
-resultados.push({
+    }  
 
-codigo:ficha.codigo,
 
-nombre:ficha.nombre,
+    const url =  
+        String(video).trim();  
 
-tipo:"geologia",
 
-relevancia:100
+    if (  
+        !url  
+    ) {  
 
-});
+        return null;  
 
-}
+    }  
 
-}
 
-return resultados;
+    return url;  
 
-},
+},  
 
 
+/* =====================================================  
+   COMPROBAR SI EXISTE VÍDEO  
+===================================================== */  
 
-/*=========================================================
-BUSCAR POR TAXONOMÍA
-=========================================================*/
+tieneVideo(codigo) {  
 
-buscarPorTaxon(consulta){
+    return !!this.obtenerVideo(  
+        codigo  
+    );  
 
-let resultados=[];
+},  
 
-for(const ficha of paleofichas){
 
-const terminos=
+/* =====================================================  
+   DETERMINAR TIPO DE CONSULTA  
+===================================================== */  
 
-this.obtenerTaxonomia(
+tipoConsulta(texto) {  
 
-ficha.codigo
+    const consulta =  
+        String(texto || "").trim();  
 
-);
 
-let encontrado=false;
+    if (  
+        !consulta  
+    ) {  
 
-for(const termino of terminos){
+        return "vacio";  
 
-const normalizado=
+    }  
 
-this.normalizar(
 
-termino
+    /* ---------------------------------------------  
+       CÓDIGO  
+    --------------------------------------------- */  
 
-);
+    if (  
+        /^[0-9_]+$/.test(  
+            consulta  
+        )  
+    ) {  
 
-if(
+        return "codigo";  
 
-normalizado.startsWith(
+    }  
 
-consulta
 
-)
+    /* ---------------------------------------------  
+       NOMBRE  
+    --------------------------------------------- */  
 
-){
+    if (  
+        this.normalizar(  
+            consulta  
+        ).length >= 3  
+    ) {  
 
-encontrado=true;
+        return "nombre";  
 
-break;
+    }  
 
-}
 
-}
+    /* ---------------------------------------------  
+       DEMASIADO CORTA  
+    --------------------------------------------- */  
 
-if(encontrado){
+    return "corto";  
 
-resultados.push({
+},  
 
-codigo:ficha.codigo,
 
-nombre:ficha.nombre,
+/* =====================================================  
+   BUSCAR POR CÓDIGO  
+===================================================== */  
 
-tipo:"taxon",
+async buscarPorCodigo(consulta) {  
 
-relevancia:100
+    const codigoConsulta =  
+        this.normalizarCodigo(  
+            consulta  
+        );  
 
-});
 
-}
+    if (  
+        !codigoConsulta  
+    ) {  
 
-}
+        return [];  
 
-return resultados;
+    }  
 
-},
 
+    const contenedor =  
+        this.obtenerContenedor();  
 
-   
 
+    const mapaNombres =  
+        await this.obtenerMapaNombres();  
 
 
-   
-/*=========================================================
-BUSCADOR PRINCIPAL
-=========================================================*/
+    const resultados = [];  
 
-buscar(texto){
 
-const consulta=
+    for (  
+        const registro of contenedor  
+    ) {  
 
-this.normalizar(texto);
+        if (  
+            !registro  
+        ) {  
 
-if(!consulta){
+            continue;  
 
-return [];
+        }  
 
-}
 
+        const codigo =  
+            this.normalizarCodigo(  
+                registro.codigo  
+            );  
 
-/*---------------------------------------
-DETERMINAR TIPO
----------------------------------------*/
 
-const tipo=
+        if (  
+            !codigo  
+        ) {  
 
-this.tipoConsulta(
+            continue;  
 
-consulta
+        }  
 
-);
 
+        if (  
+            codigo.startsWith(  
+                codigoConsulta  
+            )  
+        ) {  
 
-/*---------------------------------------
-DEMASIADO CORTO
----------------------------------------*/
+            resultados.push({  
 
-if(
+                codigo:  
+                    codigo,  
 
-tipo==="corto" ||
+                nombre:  
+                    mapaNombres.get(  
+                        codigo  
+                    ) ||  
+                    "Sin nombre",  
 
-tipo==="vacio"
+                tipo:  
+                    "codigo",  
 
-){
+                relevancia:  
+                    codigo === codigoConsulta  
+                        ? 200  
+                        : 100  
 
-return [];
+            });  
 
-}
+        }  
 
+    }  
 
-/*---------------------------------------
-CÓDIGO
----------------------------------------*/
 
-if(
+    return this.unicosResultados(  
+        resultados  
+    );  
 
-tipo==="codigo"
+},  
 
-){
 
-return this.ordenar(
+/* =====================================================  
+   BUSCAR POR NOMBRE  
+===================================================== */  
 
-this.buscarPorCodigo(
+async buscarPorNombre(consulta) {  
 
-consulta
+    const nombreConsulta =  
+        this.normalizar(  
+            consulta  
+        );  
 
-)
 
-);
+    if (  
+        nombreConsulta.length < 3  
+    ) {  
 
-}
+        return [];  
 
+    }  
 
-/*---------------------------------------
-NOMBRE
----------------------------------------*/
 
-if(
+    const datos =  
+        await this.cargarJSON();  
 
-tipo==="nombre"
 
-){
+    const resultados = [];  
 
-return this.ordenar(
 
-this.buscarPorNombre(
+    for (  
+        const registro of datos  
+    ) {  
 
-consulta
+        if (  
+            !registro  
+        ) {  
 
-)
+            continue;  
 
-);
+        }  
 
-}
 
+        const codigo =  
+            this.normalizarCodigo(  
+                registro.codigo ||  
+                registro.j1  
+            );  
 
-/*---------------------------------------
-GEOLOGÍA
----------------------------------------*/
 
-if(
+        const nombre =  
+            String(  
+                registro.nombre ||  
+                ""  
+            ).trim();  
 
-tipo==="geologia"
 
-){
+        if (  
+            !codigo ||  
+            !nombre  
+        ) {  
 
-return this.ordenar(
+            continue;  
 
-this.buscarPorGeologia(
+        }  
 
-consulta
 
-)
+        const nombreNormalizado =  
+            this.normalizar(  
+                nombre  
+            );  
 
-);
 
-}
+        if (  
+            nombreNormalizado.startsWith(  
+                nombreConsulta  
+            )  
+        ) {  
 
+            resultados.push({  
 
-/*---------------------------------------
-TAXONOMÍA
----------------------------------------*/
+                codigo:  
+                    codigo,  
 
-if(
+                nombre:  
+                    nombre,  
 
-tipo==="taxon"
+                tipo:  
+                    "nombre",  
 
-){
+                relevancia:  
+                    nombreNormalizado ===  
+                    nombreConsulta  
+                        ? 200  
+                        : 100  
 
-return this.ordenar(
+            });  
 
-this.buscarPorTaxon(
+        }  
 
-consulta
+    }  
 
-)
 
-);
+    return this.unicosResultados(  
+        resultados  
+    );  
 
-}
+},  
 
-   
-   
-return [];
 
-},
+/* =====================================================  
+   ELIMINAR RESULTADOS DUPLICADOS  
+===================================================== */  
 
+unicosResultados(resultados) {  
 
-/*=========================================================
-ORDENAR RESULTADOS
-=========================================================*/
+    const mapa =  
+        new Map();  
 
-ordenar(resultados){
 
-return resultados.sort(
+    for (  
+        const resultado of resultados  
+    ) {  
 
-(a,b)=>{
+        if (  
+            !resultado ||  
+            !resultado.codigo  
+        ) {  
 
-if(
+            continue;  
 
-b.relevancia!==a.relevancia
+        }  
 
-){
 
-return (
+        const codigo =  
+            this.normalizarCodigo(  
+                resultado.codigo  
+            );  
 
-b.relevancia-
 
-a.relevancia
+        if (  
+            !mapa.has(codigo)  
+        ) {  
 
-);
+            mapa.set(  
+                codigo,  
+                resultado  
+            );  
 
-}
+        }  
 
-return a.nombre.localeCompare(
+    }  
 
-b.nombre,
 
-"es",
+    return Array.from(  
+        mapa.values()  
+    );  
 
-{
+},  
 
-sensitivity:"base"
 
-}
+/* =====================================================  
+   ORDENAR RESULTADOS  
+===================================================== */  
 
-);
+ordenar(resultados) {  
 
-}
+    return resultados.sort(  
 
-);
+        (a, b) => {  
 
-},
+            /* -------------------------------------  
+               MAYOR RELEVANCIA PRIMERO  
+            ------------------------------------- */  
 
+            if (  
+                b.relevancia !==  
+                a.relevancia  
+            ) {  
 
-/*=========================================================
-INTERPRETAR BÚSQUEDA
-=========================================================*/
+                return (  
+                    b.relevancia -  
+                    a.relevancia  
+                );  
 
-interpretar(texto){
+            }  
 
-const consulta=
 
-this.normalizar(texto);
+            /* -------------------------------------  
+               NOMBRE  
+            ------------------------------------- */  
 
-if(!consulta){
+            return String(  
+                a.nombre || ""  
+            ).localeCompare(  
 
-return "";
+                String(  
+                    b.nombre || ""  
+                ),  
 
-}
+                "es",  
 
+                {  
+                    sensitivity:  
+                        "base"  
+                }  
 
-/*---------------------------------------
-CÓDIGO
----------------------------------------*/
+            );  
 
-if(
+        }  
 
-/^[0-9_]+$/.test(
+    );  
 
-consulta
+},  
 
-)
 
-){
+/* =====================================================  
+   BUSCADOR PRINCIPAL  
+===================================================== */  
 
-for(const ficha of paleofichas){
+async buscar(texto) {  
 
-const codigo=
+    const consultaOriginal =  
+        String(  
+            texto || ""  
+        ).trim();  
 
-this.normalizar(
 
-ficha.codigo
+    if (  
+        !consultaOriginal  
+    ) {  
 
-);
+        return [];  
 
-if(
+    }  
 
-codigo.startsWith(
 
-consulta
+    const tipo =  
+        this.tipoConsulta(  
+            consultaOriginal  
+        );  
 
-)
 
-){
+    /* ---------------------------------------------  
+       DEMASIADO CORTA  
+    --------------------------------------------- */  
 
-return ficha.codigo;
+    if (  
+        tipo === "corto" ||  
+        tipo === "vacio"  
+    ) {  
 
-}
+        return [];  
 
-}
+    }  
 
-return "";
 
-}
+    /* ---------------------------------------------  
+       CÓDIGO  
+    --------------------------------------------- */  
 
+    if (  
+        tipo === "codigo"  
+    ) {  
 
-/*---------------------------------------
-NOMBRE
----------------------------------------
+        const resultados =  
+            await this.buscarPorCodigo(  
+                consultaOriginal  
+            );  
 
-Mínimo 3 caracteres.
 
----------------------------------------*/
+        return this.ordenar(  
+            resultados  
+        );  
 
-if(
+    }  
 
-consulta.length>=3
 
-){
+    /* ---------------------------------------------  
+       NOMBRE  
+    --------------------------------------------- */  
 
-for(const ficha of paleofichas){
+    if (  
+        tipo === "nombre"  
+    ) {  
 
-const nombre=
+        const resultados =  
+            await this.buscarPorNombre(  
+                consultaOriginal  
+            );  
 
-this.normalizar(
 
-ficha.nombre
+        return this.ordenar(  
+            resultados  
+        );  
 
-);
+    }  
 
-if(
 
-nombre.startsWith(
+    return [];  
 
-consulta
+},  
 
-)
 
-){
+/* =====================================================  
+   INTERPRETAR BÚSQUEDA  
 
-return ficha.nombre;
+   Devuelve el primer código encontrado.  
 
-}
+   Útil si el buscador visual necesita  
+   convertir directamente una consulta  
+   en un j1.  
+===================================================== */  
 
-}
+async interpretar(texto) {  
 
-}
+    const resultados =  
+        await this.buscar(  
+            texto  
+        );  
 
 
-/*---------------------------------------
-GEOLOGÍA
----------------------------------------
+    if (  
+        !resultados.length  
+    ) {  
 
-Mínimo 4 caracteres.
+        return "";  
 
----------------------------------------*/
+    }  
 
-if(
 
-consulta.length>=4
+    return resultados[0].codigo;  
 
-){
+},  
 
-for(const ficha of paleofichas){
 
-const terminos=
+/* =====================================================  
+   CARGAR RESULTADO  
 
-this.obtenerGeologia(
+   Función puente con CARGACONT.  
 
-ficha
+   El buscador NO construye la ficha.  
 
-);
+   Solo entrega el j1.  
 
-for(const termino of terminos){
+   CARGACONT se encarga del resto.  
+===================================================== */  
 
-if(
+async cargarResultado(resultado) {  
 
-this.normalizar(
+    if (  
+        !resultado  
+    ) {  
 
-termino
+        throw new Error(  
+            "PALBUSCADOR: resultado vacío."  
+        );  
 
-)
+    }  
 
-.startsWith(
 
-consulta
+    const codigo =  
+        this.normalizarCodigo(  
+            resultado.codigo  
+        );  
 
-)
 
-){
+    if (  
+        !codigo  
+    ) {  
 
-return termino;
+        throw new Error(  
+            "PALBUSCADOR: el resultado no contiene j1."  
+        );  
 
-}
+    }  
 
-}
 
-}
+    if (  
+        !window.CARGACONT ||  
+        typeof window.CARGACONT.cargar !==  
+        "function"  
+    ) {  
 
-}
+        throw new Error(  
+            "PALBUSCADOR: CARGACONT no está disponible."  
+        );  
 
+    }  
 
 
-/*---------------------------------------
-TAXONOMÍA
----------------------------------------
+    return await window.CARGACONT.cargar(  
+        codigo  
+    );  
 
-Mínimo 5 caracteres.
+},  
 
----------------------------------------*/
 
-if(
+/* =====================================================  
+   CARGAR POR CÓDIGO DIRECTAMENTE  
+===================================================== */  
 
-consulta.length>=5
+async cargarPorCodigo(codigo) {  
 
-){
+    const j1 =  
+        this.normalizarCodigo(  
+            codigo  
+        );  
 
-for(const ficha of paleofichas){
 
-const terminos=
+    if (  
+        !j1  
+    ) {  
 
-this.obtenerTaxonomia(
+        throw new Error(  
+            "PALBUSCADOR: código vacío."  
+        );  
 
-ficha.codigo
+    }  
 
-);
 
-for(const termino of terminos){
+    if (  
+        !window.CARGACONT ||  
+        typeof window.CARGACONT.cargar !==  
+        "function"  
+    ) {  
 
-if(
+        throw new Error(  
+            "PALBUSCADOR: CARGACONT no está disponible."  
+        );  
 
-this.normalizar(
+    }  
 
-termino
 
-)
+    return await window.CARGACONT.cargar(  
+        j1  
+    );  
 
-.startsWith(
+},  
 
-consulta
 
-)
+/* =====================================================  
+   ESTADO  
+===================================================== */  
 
-){
+estado() {  
 
-return termino;
+    return {  
 
-}
+        disponible:  
+            !!(  
+                window.LEEPALJSON &&  
+                typeof window.LEEPALJSON.obtener ===  
+                "function"  
+            ),  
 
-}
+        jsonCargado:  
+            !!this._datosJSON,  
 
-}
+        palvideoDisponible:  
+            !!(  
+                window.PALVIDEO &&  
+                typeof window.PALVIDEO ===  
+                "object"  
+            ),  
 
-}
+        version:  
+            this.version  
 
-   
-   
-   
-return "";
+    };  
 
 }
-
-
-/*=========================================================
-FIN DEL OBJETO
-=========================================================*/
 
 };
 
+/* =========================================================
+DISPONIBILIDAD GLOBAL
+========================================================= */
 
-/*
-=========================================================
-FIN PALBUSCADOR.js
+window.PALBUSCADOR =
+PALBUSCADOR;
 
-Versión 2.2 LTS
-
-✓ Código desde 1 carácter
-✓ Nombre desde 3 caracteres
-✓ Geología desde 4 caracteres
-✓ Búsqueda por prefijo
-✓ Código independiente
-✓ Nombre independiente
-✓ Geología independiente
-✓ Ignora mayúsculas
-✓ Ignora tildes
-✓ Normaliza ñ
-✓ Orden alfabético
-✓ Autocompletado
-✓ Interpretación de búsqueda
-
-=========================================================
-*/
-
-
-
-
-    
+/* =========================================================
+FIN PALBUSCADOR.js v3.1 LTS
+========================================================= */
