@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-palgeosimplificado.js v1.2 LTS
+palgeosimplificado.js v1.3 LTS
 
 Módulo simplificado de tratamiento cronológico
 
@@ -26,23 +26,7 @@ FUNCIONES:
 
 --------------------------------------------------------
 
-ENTRADAS HUMANAS VÁLIDAS:
-
-521 Ma - 509 Ma
-
-59,2 Ma - 56 Ma
-
-11.700 a - 4.200 a
-
-11700 a - 4200 a
-
-21.700 a - Actualidad
-
-21700 a - Actualidad
-
---------------------------------------------------------
-
-FORMATO INTERNO VÁLIDO:
+FORMATO INTERNO:
 
 MMMM.DDDD-MMMM.DDDD
 
@@ -50,40 +34,29 @@ Ejemplo:
 
 0521.0000-0509.0000
 
---------------------------------------------------------
+IMPORTANTE:
 
-REGLA TEMPORAL:
+Los ceros iniciales NO representan magnitud.
 
-MÁS ANTIGUO → MÁS RECIENTE
+002.5800
+↓
+2,58 Ma
 
-521 Ma - 509 Ma     ✓
-21.700 a - Actualidad ✓
+0000.0117
+↓
+11.700 a
 
-509 Ma - 521 Ma     ✗
+0295.0000
+↓
+295 Ma
 
---------------------------------------------------------
-
-SISTEMA B
-
-Se incluyen TODOS los intervalos de PALGEO
-que intersecten temporalmente con la cronología
-consultada.
-
-Los límites exactos TAMBIÉN cuentan.
-
-PALGEO es la única fuente de datos geológicos.
-
-NO:
-
-- interpreta
-- deduce
-- completa
-- corrige
-- inventa
-- rellena huecos
+0272.3000
+↓
+272,3 Ma
 
 ========================================================
 */
+
 
 window.PALGEOSIMPLIFICADO = {
 
@@ -95,7 +68,26 @@ window.PALGEOSIMPLIFICADO = {
    millones de años
 
    Salida humana:
-   Ma / a / Actualidad
+
+   295
+   ↓
+   295 Ma
+
+   272.3
+   ↓
+   272,3 Ma
+
+   2.58
+   ↓
+   2,58 Ma
+
+   0.0117
+   ↓
+   11.700 a
+
+   0
+   ↓
+   Actualidad
 ====================================================== */
 
 formatearValor(valor){
@@ -123,47 +115,25 @@ formatearValor(valor){
 
 
     /*
-    MENOS DE 0,001 Ma
-    → años enteros
-    */
-
-    if(valor < 0.001){
-
-        return (
-
-            Math.round(
-                valor * 1000000
-            ).toLocaleString(
-                "es-ES"
-            )
-
-        ) + " a";
-
-    }
-
-
-    /*
     MENOS DE 1 Ma
     → años
-
-    Ejemplo:
-
-    0.0117 Ma
-    ↓
-    11.700 a
     */
 
     if(valor < 1){
 
-        return (
-
+        let anos =
             Math.round(
                 valor * 1000000
-            ).toLocaleString(
+            );
+
+
+        return (
+            anos.toLocaleString(
                 "es-ES"
             )
-
-        ) + " a";
+            +
+            " a"
+        );
 
     }
 
@@ -177,7 +147,7 @@ formatearValor(valor){
 
 
     /*
-    Eliminar ceros finales
+    Eliminar ceros decimales
     */
 
     texto =
@@ -188,7 +158,7 @@ formatearValor(valor){
 
 
     /*
-    Punto decimal → coma española
+    Decimal español
     */
 
     texto =
@@ -198,7 +168,98 @@ formatearValor(valor){
         );
 
 
-    return texto + " Ma";
+    return (
+        texto
+        +
+        " Ma"
+    );
+
+},
+
+
+/* ======================================================
+   DECODIFICAR UN VALOR INTERNO
+
+   Convierte explícitamente:
+
+   002.5800 → 2.58
+
+   0000.0117 → 0.0117
+
+   0295.0000 → 295
+
+   Esto evita cualquier interpretación
+   basada en los ceros iniciales.
+====================================================== */
+
+decodificarValorInterno(texto){
+
+    if(
+        texto === undefined ||
+        texto === null
+    ){
+
+        return null;
+
+    }
+
+
+    texto =
+        String(texto)
+        .trim();
+
+
+    /*
+    FORMATO EXACTO:
+
+    MMMM.DDDD
+    */
+
+    if(
+        !/^\d{4}\.\d{4}$/.test(
+            texto
+        )
+    ){
+
+        return null;
+
+    }
+
+
+    /*
+    Separar entero y decimal
+    */
+
+    let partes =
+        texto.split(".");
+
+
+    let entero =
+        Number(
+            partes[0]
+        );
+
+
+    let decimal =
+        Number(
+            partes[1]
+        ) / 10000;
+
+
+    if(
+        !Number.isFinite(entero) ||
+        !Number.isFinite(decimal)
+    ){
+
+        return null;
+
+    }
+
+
+    return (
+        entero +
+        decimal
+    );
 
 },
 
@@ -224,9 +285,28 @@ decodificarRango(cronologia){
     }
 
 
-    let partes =
+    let texto =
         String(cronologia)
-        .split("-");
+        .trim();
+
+
+    /*
+    COMPROBAR FORMATO
+    */
+
+    if(
+        !/^\d{4}\.\d{4}-\d{4}\.\d{4}$/.test(
+            texto
+        )
+    ){
+
+        return null;
+
+    }
+
+
+    let partes =
+        texto.split("-");
 
 
     if(partes.length !== 2){
@@ -236,25 +316,42 @@ decodificarRango(cronologia){
     }
 
 
+    /*
+    DECODIFICAR EXPLÍCITAMENTE
+    CADA EXTREMO
+    */
+
     let inicio =
-        Number(
-            partes[0].trim()
+        this.decodificarValorInterno(
+            partes[0]
         );
 
 
     let fin =
-        Number(
-            partes[1].trim()
+        this.decodificarValorInterno(
+            partes[1]
         );
 
 
     if(
-        !Number.isFinite(inicio) ||
-        !Number.isFinite(fin) ||
-        inicio < 0 ||
-        fin < 0 ||
-        inicio < fin
+        inicio === null ||
+        fin === null
     ){
+
+        return null;
+
+    }
+
+
+    /*
+    SENTIDO TEMPORAL
+
+    MÁS ANTIGUO
+    →
+    MÁS RECIENTE
+    */
+
+    if(inicio < fin){
 
         return null;
 
@@ -263,7 +360,9 @@ decodificarRango(cronologia){
 
     return (
 
-        this.formatearValor(inicio)
+        this.formatearValor(
+            inicio
+        )
 
         +
 
@@ -271,7 +370,9 @@ decodificarRango(cronologia){
 
         +
 
-        this.formatearValor(fin)
+        this.formatearValor(
+            fin
+        )
 
     );
 
@@ -289,12 +390,7 @@ decodificarRango(cronologia){
    11.700 a
    11700 a
 
-   21.700 a
-   21700 a
-
    Actualidad
-
-   Devuelve millones de años.
 ====================================================== */
 
 parsearValor(texto){
@@ -337,7 +433,7 @@ parsearValor(texto){
 
     /* ==================================================
        AÑOS
-    ================================================== */
+       ================================================== */
 
     if(
         /\s*a$/i.test(texto)
@@ -361,10 +457,6 @@ parsearValor(texto){
 
         /*
         Punto = separador de miles
-
-        21.700
-        ↓
-        21700
         */
 
         numero =
@@ -376,10 +468,6 @@ parsearValor(texto){
 
         /*
         Coma = decimal
-
-        21,7
-        ↓
-        21.7
         */
 
         numero =
@@ -389,12 +477,10 @@ parsearValor(texto){
             );
 
 
-        /*
-        Solo números positivos.
-        */
-
         if(
-            !/^\d+(\.\d+)?$/.test(numero)
+            !/^\d+(\.\d+)?$/.test(
+                numero
+            )
         ){
 
             return null;
@@ -416,18 +502,16 @@ parsearValor(texto){
         }
 
 
-        /*
-        Convertir años → Ma
-        */
-
-        return anos / 1000000;
+        return (
+            anos / 1000000
+        );
 
     }
 
 
     /* ==================================================
        MILLONES DE AÑOS
-    ================================================== */
+       ================================================== */
 
     if(
         /\s*Ma$/i.test(texto)
@@ -449,15 +533,6 @@ parsearValor(texto){
         }
 
 
-        /*
-        En Ma:
-
-        59,2 → 59.2
-
-        No eliminamos puntos porque
-        aquí representan decimal.
-        */
-
         numero =
             numero.replace(
                 ",",
@@ -465,12 +540,10 @@ parsearValor(texto){
             );
 
 
-        /*
-        Solo números positivos.
-        */
-
         if(
-            !/^\d+(\.\d+)?$/.test(numero)
+            !/^\d+(\.\d+)?$/.test(
+                numero
+            )
         ){
 
             return null;
@@ -498,17 +571,7 @@ parsearValor(texto){
 
 
     /*
-    SIN UNIDAD:
-
-    No se interpreta.
-
-    Evita confundir:
-
-    521 años
-
-    con:
-
-    521 Ma
+    SIN UNIDAD
     */
 
     return null;
@@ -529,9 +592,13 @@ parsearValor(texto){
    ↓
    0521.0000
 
-   0.0217
+   2.58
    ↓
-   0000.0217
+   0002.5800
+
+   0.0117
+   ↓
+   0000.0117
 
    0
    ↓
@@ -550,6 +617,11 @@ normalizarValor(valor){
 
     }
 
+
+    /*
+    Evitar pequeñas diferencias
+    de coma flotante.
+    */
 
     let texto =
         valor.toFixed(4);
@@ -570,11 +642,6 @@ normalizarValor(valor){
         partes[1] || "0000";
 
 
-    /*
-    El protocolo requiere
-    exactamente cuatro cifras decimales.
-    */
-
     decimal =
         decimal.padEnd(
             4,
@@ -585,13 +652,9 @@ normalizarValor(valor){
     return (
 
         entero
-
         +
-
         "."
-
         +
-
         decimal
 
     );
@@ -602,22 +665,9 @@ normalizarValor(valor){
 /* ======================================================
    CODIFICAR RANGO
 
-   ENTRADAS:
-
-   521 Ma - 509 Ma
-
-   11.700 a - 4.200 a
-
-   11700 a - 4200 a
-
-   21.700 a - Actualidad
-
-   21700 a - Actualidad
-
-   SALIDA:
-
-   MMMM.DDDD-MMMM.DDDD
-
+   Texto humano
+   ↓
+   Formato interno
 ====================================================== */
 
 codificarRango(texto){
@@ -629,21 +679,10 @@ codificarRango(texto){
     }
 
 
-    /*
-    Convertir a texto y eliminar
-    espacios exteriores.
-    */
-
     texto =
         String(texto)
         .trim();
 
-
-    /*
-    Separar los dos extremos.
-
-    Solo debe existir un guion.
-    */
 
     let partes =
         texto.split("-");
@@ -674,10 +713,6 @@ codificarRango(texto){
     }
 
 
-    /*
-    PARSEAR EXTREMOS
-    */
-
     let inicio =
         this.parsearValor(
             inicioTexto
@@ -701,10 +736,8 @@ codificarRango(texto){
 
 
     /*
-    VALIDAR SENTIDO TEMPORAL
-
     MÁS ANTIGUO
-    ↓
+    →
     MÁS RECIENTE
     */
 
@@ -714,10 +747,6 @@ codificarRango(texto){
 
     }
 
-
-    /*
-    NORMALIZAR
-    */
 
     let inicioNormalizado =
         this.normalizarValor(
@@ -741,20 +770,12 @@ codificarRango(texto){
     }
 
 
-    /*
-    RESULTADO
-    */
-
     return (
 
         inicioNormalizado
-
         +
-
         "-"
-
         +
-
         finNormalizado
 
     );
@@ -764,14 +785,6 @@ codificarRango(texto){
 
 /* ======================================================
    VALIDAR CRONOLOGÍA INTERNA
-
-   Formato obligatorio:
-
-   MMMM.DDDD-MMMM.DDDD
-
-   Ejemplo:
-
-   0521.0000-0509.0000
 ====================================================== */
 
 validarCronologia(cronologia){
@@ -787,18 +800,6 @@ validarCronologia(cronologia){
         String(cronologia)
         .trim();
 
-
-    /*
-    Comprobar estructura exacta.
-
-    4 cifras
-    .
-    4 cifras
-    -
-    4 cifras
-    .
-    4 cifras
-    */
 
     if(
         !/^\d{4}\.\d{4}-\d{4}\.\d{4}$/.test(
@@ -816,16 +817,20 @@ validarCronologia(cronologia){
 
 
     let inicio =
-        Number(partes[0]);
+        this.decodificarValorInterno(
+            partes[0]
+        );
 
 
     let fin =
-        Number(partes[1]);
+        this.decodificarValorInterno(
+            partes[1]
+        );
 
 
     if(
-        !Number.isFinite(inicio) ||
-        !Number.isFinite(fin)
+        inicio === null ||
+        fin === null
     ){
 
         return false;
@@ -834,7 +839,9 @@ validarCronologia(cronologia){
 
 
     /*
-    MÁS ANTIGUO → MÁS RECIENTE
+    MÁS ANTIGUO
+    →
+    MÁS RECIENTE
     */
 
     if(inicio < fin){
@@ -854,11 +861,10 @@ validarCronologia(cronologia){
 
    SISTEMA B
 
-   Se seleccionan TODOS los intervalos
-   que intersecten el rango.
+   Se incluyen TODOS los intervalos
+   que intersecten temporalmente.
 
    Los límites exactos cuentan.
-
 ====================================================== */
 
 extraerPALGEO(cronologia){
@@ -876,11 +882,6 @@ extraerPALGEO(cronologia){
     }
 
 
-    /*
-    La extracción solo trabaja
-    con cronología interna válida.
-    */
-
     if(
         !this.validarCronologia(
             cronologia
@@ -897,12 +898,34 @@ extraerPALGEO(cronologia){
         .split("-");
 
 
+    /*
+    IMPORTANTE:
+
+    Se utilizan los valores
+    numéricos reales, no el texto
+    con ceros iniciales.
+    */
+
     let inicio =
-        Number(partes[0]);
+        this.decodificarValorInterno(
+            partes[0]
+        );
 
 
     let fin =
-        Number(partes[1]);
+        this.decodificarValorInterno(
+            partes[1]
+        );
+
+
+    if(
+        inicio === null ||
+        fin === null
+    ){
+
+        return null;
+
+    }
 
 
     let resultado = {
@@ -941,26 +964,17 @@ extraerPALGEO(cronologia){
 
 
             /*
+            =================================================
             SISTEMA B
 
-            Rango consultado:
+            INTERSECCIÓN INCLUSIVA
 
-            [fin, inicio]
-
-            Intervalo PALGEO:
-
-            [intervalo.fin_ma,
-             intervalo.inicio_ma]
-
-            Intersección inclusiva:
-
-            inicio >= intervalo.fin_ma
+            inicio >= fin_ma
 
             Y
 
-            fin <= intervalo.inicio_ma
-
-            Los límites exactos cuentan.
+            fin <= inicio_ma
+            =================================================
             */
 
             let compatible = (
@@ -1003,8 +1017,6 @@ extraerPALGEO(cronologia){
 
             /*
             PERÍODO
-
-            Solo si existe en PALGEO.
             */
 
             if(
@@ -1023,8 +1035,6 @@ extraerPALGEO(cronologia){
 
             /*
             EDAD
-
-            Solo si existe en PALGEO.
             */
 
             if(
@@ -1059,7 +1069,7 @@ extraerPALGEO(cronologia){
 
    0521.0000-0509.0000
 
-   Devuelve:
+   Salida:
 
    cronologia
    inicio_ma
@@ -1068,7 +1078,6 @@ extraerPALGEO(cronologia){
    codes
    periodo
    edad
-
 ====================================================== */
 
 analizar(cronologia){
@@ -1081,11 +1090,16 @@ analizar(cronologia){
 
 
     /*
-    Solo se acepta aquí
-    cronología interna.
+    LIMPIAR
+    */
 
-    La conversión humana se realiza
-    mediante codificarRango().
+    cronologia =
+        String(cronologia)
+        .trim();
+
+
+    /*
+    VALIDAR
     */
 
     if(
@@ -1100,21 +1114,28 @@ analizar(cronologia){
 
 
     let partes =
-        String(cronologia)
-        .split("-");
+        cronologia.split("-");
 
+
+    /*
+    DECODIFICAR EXPLÍCITAMENTE
+    */
 
     let inicio =
-        Number(partes[0]);
+        this.decodificarValorInterno(
+            partes[0]
+        );
 
 
     let fin =
-        Number(partes[1]);
+        this.decodificarValorInterno(
+            partes[1]
+        );
 
 
     if(
-        !Number.isFinite(inicio) ||
-        !Number.isFinite(fin)
+        inicio === null ||
+        fin === null
     ){
 
         return null;
@@ -1178,10 +1199,6 @@ analizar(cronologia){
 
 /*
 ========================================================
-FIN PALGEOSIMPLIFICADO v1.2 LTS
+FIN PALGEOSIMPLIFICADO v1.3 LTS
 ========================================================
 */
-
-
-
-
