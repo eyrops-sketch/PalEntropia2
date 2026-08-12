@@ -8,11 +8,12 @@ FUNCIÓN:
 
 - Recibe el registro completo procedente de CAB07.
 - Conserva todos sus campos.
-- Permite consultar el registro actual.
+- Reserva un bloque independiente para PALGEO.
+- Permite guardar datos geológicos.
+- Permite consultar el registro y la geología.
 - No interpreta datos.
-- No modifica datos.
-- No utiliza PALGEO.
-- No depende de cargacont.js.
+- No modifica j3.
+- No consulta PALGEO directamente.
 
 FLUJO:
 
@@ -21,8 +22,10 @@ master.csv
 CAB07
    ↓
 CONT07
-   ↓
-Navegador / futuros filtros
+   ├── registro
+   └── geologia
+          ↓
+       PALGEO
 
 ========================================================
 */
@@ -32,14 +35,23 @@ window.CONT07 = {
 
 
     /* =====================================================
-       REGISTRO ACTUAL
+       REGISTRO MAESTRO
        ===================================================== */
 
     registro: null,
 
 
     /* =====================================================
-       GUARDAR
+       DATOS GEOLOGICOS
+
+       Se mantienen separados del registro maestro.
+       ===================================================== */
+
+    geologia: null,
+
+
+    /* =====================================================
+       GUARDAR REGISTRO
 
        Recibe el registro completo de CAB07.
        ===================================================== */
@@ -67,9 +79,7 @@ window.CONT07 = {
 
         /*
         -----------------------------------------------------
-        CONSERVAR EL REGISTRO
-
-        CONT07 mantiene su propia copia.
+        GUARDAR COPIA DEL REGISTRO
         -----------------------------------------------------
         */
 
@@ -144,7 +154,19 @@ window.CONT07 = {
 
         /*
         -----------------------------------------------------
-        DEVOLVER REGISTRO GUARDADO
+        NUEVO REGISTRO = NUEVA GEOLOGÍA
+
+        Evita conservar datos de PALGEO
+        de la ficha anterior.
+        -----------------------------------------------------
+        */
+
+        this.geologia = null;
+
+
+        /*
+        -----------------------------------------------------
+        DEVOLVER REGISTRO
         -----------------------------------------------------
         */
 
@@ -154,9 +176,82 @@ window.CONT07 = {
 
 
     /* =====================================================
-       OBTENER
+       GUARDAR GEOLOGÍA
 
-       Devuelve el registro actualmente almacenado.
+       Recibe los datos obtenidos desde PALGEO.
+
+       No interpreta ni modifica el contenido.
+       ===================================================== */
+
+    guardarGeologia(datos) {
+
+
+        /*
+        -----------------------------------------------------
+        COMPROBAR DATOS
+        -----------------------------------------------------
+        */
+
+        if (
+            !datos ||
+            typeof datos !== "object"
+        ) {
+
+            this.geologia = null;
+
+            return null;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        GUARDAR COPIA
+        -----------------------------------------------------
+        */
+
+        this.geologia = {
+
+
+            codes:
+                Array.isArray(
+                    datos.codes
+                )
+                    ? [...datos.codes]
+                    : [],
+
+
+            periodo:
+                Array.isArray(
+                    datos.periodo
+                )
+                    ? [...datos.periodo]
+                    : [],
+
+
+            edad:
+                Array.isArray(
+                    datos.edad
+                )
+                    ? [...datos.edad]
+                    : []
+
+        };
+
+
+        /*
+        -----------------------------------------------------
+        DEVOLVER GEOLOGÍA
+        -----------------------------------------------------
+        */
+
+        return this.geologia;
+
+    },
+
+
+    /* =====================================================
+       OBTENER REGISTRO
        ===================================================== */
 
     obtener() {
@@ -178,9 +273,6 @@ window.CONT07 = {
 
     /* =====================================================
        OBTENER POR J1
-
-       Comprueba si el registro almacenado
-       corresponde al código solicitado.
        ===================================================== */
 
     obtenerPorJ1(j1) {
@@ -216,14 +308,64 @@ window.CONT07 = {
 
 
     /* =====================================================
+       OBTENER GEOLOGÍA
+       ===================================================== */
+
+    obtenerGeologia() {
+
+
+        if (
+            !this.geologia
+        ) {
+
+            return null;
+
+        }
+
+
+        return this.geologia;
+
+    },
+
+
+    /* =====================================================
+       OBTENER TODO
+
+       Devuelve:
+
+       {
+           registro: {...},
+           geologia: {...}
+       }
+       ===================================================== */
+
+    obtenerTodo() {
+
+
+        return {
+
+            registro:
+                this.registro,
+
+            geologia:
+                this.geologia
+
+        };
+
+    },
+
+
+    /* =====================================================
        LIMPIAR
 
-       Vacía el contenedor.
+       Vacía completamente CONT07.
        ===================================================== */
 
     limpiar() {
 
         this.registro = null;
+
+        this.geologia = null;
 
     }
 
