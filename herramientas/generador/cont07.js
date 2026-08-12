@@ -7,13 +7,13 @@ CONTENEDOR DE CAB07
 
 Función:
 
-- Recibe el registro completo de CAB07.
+- Recibe el registro completo procedente de CAB07.
 - Lo guarda en memoria.
 - No carga CSV.
 - No interpreta datos.
 - No modifica datos.
 - No consulta PALGEO.
-- No ejecuta ninguna función externa.
+- No ejecuta funciones externas.
 
 Entrada:
 
@@ -63,12 +63,30 @@ window.CONT07 = {
         GUARDAR REGISTRO
         -----------------------------------------------------
 
-        Se conserva exactamente el registro recibido.
+        Se conserva exactamente el registro
+        recibido desde CAB07.
 
         CONT07 NO MODIFICA LOS DATOS.
         */
 
-        window.CONT07_ACTUAL = registro;
+        window.CONT07_ACTUAL =
+            registro;
+
+
+        /*
+        -----------------------------------------------------
+        PRUEBA DE RECEPCIÓN
+        -----------------------------------------------------
+
+        Permite comprobar que CAB07
+        ha entregado correctamente
+        el registro al contenedor.
+        */
+
+        console.log(
+            "CONT07: registro recibido",
+            window.CONT07_ACTUAL
+        );
 
 
         /*
@@ -99,7 +117,8 @@ window.CONT07 = {
 
     limpiar() {
 
-        window.CONT07_ACTUAL = null;
+        window.CONT07_ACTUAL =
+            null;
 
     }
 
@@ -111,8 +130,3 @@ window.CONT07 = {
 FIN cont07.js
 ========================================================
 */
-
-
-
-
-
