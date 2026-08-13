@@ -7,10 +7,16 @@ Generador de Paleofichas 1.1
 FUNCIÓN:
 
 - Recibe j1.
-- Obtiene el registro completo desde master.csv.
-- Normaliza j3.
+- Utiliza CARGACONT como fuente única del contenedor.
+- Obtiene el registro completo ya preparado.
+- La geología NO se vuelve a analizar aquí.
+- CARGACONT ya obtiene:
+      j3
+      rango
+      codes
+      periodo
+      edad
 - Guarda el registro en CONT07.
-- Envía j3 a PALGEOSIMPLIFICADO / LEEPALGEO.
 - Guarda la geología en CONT07.
 - Presenta la información geológica en formato humano.
 - NO muestra códigos internos.
@@ -18,6 +24,22 @@ FUNCIÓN:
 - NO modifica el campo superior de cronología.
 - El bloque geológico se presenta debajo de "Ver vídeo".
 - Si la geología falla, la ficha continúa funcionando.
+
+RUTA:
+
+master.csv
+    ↓
+LEEPALJSON
+    ↓
+CARGACONT
+    ↓
+PALGEOSIMPLIFICADO
+    ↓
+BUSCARUTA
+    ↓
+CAB07
+    ↓
+CONT07 / PRESENTACIÓN
 
 ========================================================
 */
@@ -79,6 +101,7 @@ window.CAB07 = {
             const partesInicio =
                 inicio.split(".");
 
+
             inicio =
                 partesInicio[0]
                 .padStart(4, "0")
@@ -96,6 +119,7 @@ window.CAB07 = {
 
             const partesFin =
                 fin.split(".");
+
 
             fin =
                 partesFin[0]
@@ -147,7 +171,9 @@ window.CAB07 = {
             );
 
 
-        if (!valores.length) {
+        if (
+            !valores.length
+        ) {
 
             return "—";
 
@@ -204,7 +230,7 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         PRIMERA OPCIÓN:
-        rango proporcionado por PALGEOSIMPLIFICADO
+        rango proporcionado directamente por CARGACONT
         -----------------------------------------------------
         */
 
@@ -223,7 +249,9 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         SEGUNDA OPCIÓN:
-        conversión mediante PALGEOSIMPLIFICADO
+        SOLO COMO PRESENTACIÓN DE RESPALDO.
+
+        NO SE ANALIZA LA GEOLOGÍA.
         -----------------------------------------------------
         */
 
@@ -231,7 +259,7 @@ window.CAB07 = {
             window.PALGEOSIMPLIFICADO &&
             typeof window.PALGEOSIMPLIFICADO
                 .decodificarRango ===
-                "function"
+            "function"
         ) {
 
             try {
@@ -267,7 +295,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        NO MOSTRAR NUNCA J3 BRUTO
+        NO MOSTRAR J3 BRUTO
         -----------------------------------------------------
         */
 
@@ -626,13 +654,13 @@ window.CAB07 = {
 
     },
 
-        /* =====================================================
+
+    /* =====================================================
        ACTUALIZAR PRESENTACIÓN
        
        Se ejecuta después de CARGACONT.
        
-       Vuelve a leer la geología almacenada en CONT07
-       y actualiza únicamente el bloque geológico.
+       Vuelve a leer la geología almacenada en CONT07.
        
        NO toca:
        - #cronologia
@@ -699,23 +727,26 @@ window.CAB07 = {
 
     /* =====================================================
        PROCESAR
+       
+       CARGACONT ES AHORA LA FUENTE ÚNICA.
        ===================================================== */
 
     async procesar(j1) {
 
         /*
         -----------------------------------------------------
-        COMPROBAR FUNCIÓN MAESTRA
+        COMPROBAR CARGACONT
         -----------------------------------------------------
         */
 
         if (
-            typeof window.cargarMasterPorJ1 !==
+            !window.CARGACONT ||
+            typeof window.CARGACONT.cargar !==
             "function"
         ) {
 
             console.error(
-                "CAB07: cargarMasterPorJ1 no está disponible."
+                "CAB07: CARGACONT no está disponible."
             );
 
             return null;
@@ -725,14 +756,38 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        OBTENER REGISTRO COMPLETO
+        OBTENER REGISTRO FINAL
+       
+        CARGACONT ya realiza:
+       
+        - búsqueda en master.csv
+        - obtención de j3
+        - análisis PALGEOSIMPLIFICADO
+        - búsqueda BUSCARUTA
+        - preparación de imágenes
         -----------------------------------------------------
         */
 
-        const datos =
-            await window.cargarMasterPorJ1(
-                j1
+        let datos = null;
+
+
+        try {
+
+            datos =
+                await window.CARGACONT.cargar(
+                    j1
+                );
+
+        } catch (error) {
+
+            console.error(
+                "CAB07: Error al cargar el registro mediante CARGACONT.",
+                error
             );
+
+            return null;
+
+        }
 
 
         /*
@@ -746,7 +801,7 @@ window.CAB07 = {
         ) {
 
             console.warn(
-                "CAB07: No se encontró el registro:",
+                "CAB07: CARGACONT no devolvió datos para:",
                 j1
             );
 
@@ -757,7 +812,9 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        NORMALIZAR J3
+        NORMALIZAR J3 ÚNICAMENTE PARA PRESENTACIÓN
+       
+        NO SE VUELVE A ANALIZAR.
         -----------------------------------------------------
         */
 
@@ -795,78 +852,49 @@ window.CAB07 = {
         /*
         =====================================================
         GEOLOGÍA
+
+        CARGACONT YA HA EJECUTADO:
+
+            j3
+             ↓
+        PALGEOSIMPLIFICADO
+             ↓
+        rango
+        codes
+        periodo
+        edad
+
+        CAB07 NO vuelve a llamar a analizar().
         =====================================================
         */
 
-        let geologia =
-            null;
+        const geologia = {
 
+            rango:
+                datos.rango,
 
-        /*
-        -----------------------------------------------------
-        PALGEOSIMPLIFICADO
-        -----------------------------------------------------
-        */
+            codes:
+                Array.isArray(
+                    datos.codes
+                )
+                    ? datos.codes
+                    : [],
 
-        if (
-            window.PALGEOSIMPLIFICADO &&
-            typeof window.PALGEOSIMPLIFICADO.analizar ===
-            "function"
-        ) {
+            periodo:
+                Array.isArray(
+                    datos.periodo
+                )
+                    ? datos.periodo
+                    : [],
 
-            try {
+            edad:
+                Array.isArray(
+                    datos.edad
+                )
+                    ? datos.edad
+                    : []
 
-                geologia =
-                    window.PALGEOSIMPLIFICADO
-                        .analizar(
-                            datos.j3
-                        );
-
-            } catch (error) {
-
-                console.warn(
-                    "CAB07: Error al analizar la geología.",
-                    error
-                );
-
-                geologia =
-                    null;
-
-            }
-
-        }
-
-
-        /*
-        -----------------------------------------------------
-        COMPATIBILIDAD CON LEEPALGEO
-        -----------------------------------------------------
-        */
-
-        if (
-            !geologia &&
-            window.LEEPALGEO &&
-            typeof window.LEEPALGEO.extraer ===
-            "function"
-        ) {
-
-            try {
-
-                geologia =
-                    window.LEEPALGEO.extraer(
-                        datos.j3
-                    );
-
-            } catch (error) {
-
-                console.warn(
-                    "CAB07: Error al obtener datos geológicos.",
-                    error
-                );
-
-            }
-
-        }
+        };
 
 
         /*
@@ -876,15 +904,25 @@ window.CAB07 = {
         */
 
         if (
-            geologia &&
             window.CONT07 &&
             typeof window.CONT07.guardarGeologia ===
             "function"
         ) {
 
-            window.CONT07.guardarGeologia(
-                geologia
-            );
+            try {
+
+                window.CONT07.guardarGeologia(
+                    geologia
+                );
+
+            } catch (error) {
+
+                console.warn(
+                    "CAB07: No se pudo guardar la geología en CONT07.",
+                    error
+                );
+
+            }
 
         }
 
@@ -926,7 +964,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        DEVOLVER REGISTRO
+        DEVOLVER REGISTRO FINAL
         -----------------------------------------------------
         */
 
@@ -953,3 +991,5 @@ FIN CAB07.js
 ========================================================
 */
 
+    
+    
