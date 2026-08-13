@@ -10,7 +10,7 @@ FUNCIÓN:
 - Obtiene el registro completo desde master.csv.
 - Normaliza j3.
 - Guarda el registro en CONT07.
-- Envía j3 a LEEPALGEO / PALGEOSIMPLIFICADO.
+- Envía j3 a PALGEOSIMPLIFICADO / LEEPALGEO.
 - Guarda la geología en CONT07.
 - Presenta la información geológica en formato humano.
 - NO muestra códigos internos.
@@ -119,27 +119,6 @@ window.CAB07 = {
 
     /* =====================================================
        FORMATEAR LISTA GEOLÓGICA
-
-       Regla visual:
-
-       1 elemento
-       → elemento
-
-       2 elementos
-       → elemento 1, elemento 2
-
-       3 elementos
-       → elemento 1, elemento 2, elemento 3
-
-       Más de 3
-       → Del primero al último
-
-       IMPORTANTE:
-
-       Esto es SOLO PRESENTACIÓN.
-
-       Los arrays completos permanecen
-       disponibles internamente.
        ===================================================== */
 
     formatearRangoLista(lista) {
@@ -192,8 +171,6 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         MÁS DE 3
-
-        PRESENTACIÓN COMPACTA
         -----------------------------------------------------
         */
 
@@ -213,12 +190,6 @@ window.CAB07 = {
         }
 
 
-        /*
-        -----------------------------------------------------
-        HASTA 3 ELEMENTOS
-        -----------------------------------------------------
-        */
-
         return unicos.join(", ");
 
     },
@@ -226,24 +197,14 @@ window.CAB07 = {
 
     /* =====================================================
        OBTENER TEXTO DEL RANGO
-
-       PRIORIDAD:
-
-       1. geologia.rango
-       2. PALGEOSIMPLIFICADO.decodificarRango(j3)
-
-       NUNCA devuelve j3 directamente como
-       texto visible.
        ===================================================== */
 
     obtenerRangoVisual(j3, geologia) {
 
         /*
         -----------------------------------------------------
-        PRIMERA OPCIÓN
-
-        El objeto geológico ya contiene el rango
-        convertido a formato humano.
+        PRIMERA OPCIÓN:
+        rango proporcionado por PALGEOSIMPLIFICADO
         -----------------------------------------------------
         */
 
@@ -261,10 +222,8 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        SEGUNDA OPCIÓN
-
-        Intentar convertir mediante
-        PALGEOSIMPLIFICADO.
+        SEGUNDA OPCIÓN:
+        conversión mediante PALGEOSIMPLIFICADO
         -----------------------------------------------------
         */
 
@@ -308,9 +267,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        SI NO SE PUEDE CONVERTIR
-
-        NO mostrar nunca j3 bruto.
+        NO MOSTRAR NUNCA J3 BRUTO
         -----------------------------------------------------
         */
 
@@ -320,7 +277,7 @@ window.CAB07 = {
 
 
     /* =====================================================
-       OBTENER CONTENEDOR VISUAL DE GEOLOGÍA
+       OBTENER CONTENEDOR VISUAL
        ===================================================== */
 
     obtenerContenedorVisual() {
@@ -371,27 +328,17 @@ window.CAB07 = {
         contenedor.style.margin =
             "12px auto";
 
-
         contenedor.style.padding =
             "10px";
-
 
         contenedor.style.maxWidth =
             "700px";
 
-
         contenedor.style.borderRadius =
             "10px";
 
-
-        /*
-        Un poco mayor que la versión anterior.
-        -----------------------------------------------------
-        */
-
         contenedor.style.fontSize =
             "15px";
-
 
         contenedor.style.lineHeight =
             "1.5";
@@ -400,9 +347,6 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         BUSCAR BOTÓN DE VÍDEO
-
-        El bloque debe quedar debajo
-        del botón "Ver vídeo".
         -----------------------------------------------------
         */
 
@@ -467,9 +411,6 @@ window.CAB07 = {
             /*
             -------------------------------------------------
             RESPALDO
-
-            Si todavía no existe el botón,
-            buscamos la zona de ficha.
             -------------------------------------------------
             */
 
@@ -535,13 +476,6 @@ window.CAB07 = {
 
     mostrarGeologia(j3) {
 
-
-        /*
-        -----------------------------------------------------
-        OBTENER CONTENEDOR
-        -----------------------------------------------------
-        */
-
         const contenedor =
             this.obtenerContenedorVisual();
 
@@ -605,21 +539,6 @@ window.CAB07 = {
         -----------------------------------------------------
         RANGO HUMANO
         -----------------------------------------------------
-
-        IMPORTANTE:
-
-        Aquí NO usamos:
-
-        geologia.cronologia
-
-        ni:
-
-        j3
-
-        directamente.
-
-        Solo utilizamos el rango ya convertido.
-        -----------------------------------------------------
         */
 
         const rango =
@@ -678,18 +597,6 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         MOSTRAR
-
-        ORDEN OBLIGATORIO:
-
-        Rango
-        Período
-        Edad
-
-        SIN:
-
-        - etiqueta "Geología"
-        - códigos PALGEO
-        - cronología interna
         -----------------------------------------------------
         */
 
@@ -719,12 +626,82 @@ window.CAB07 = {
 
     },
 
-      /* =====================================================
+        /* =====================================================
+       ACTUALIZAR PRESENTACIÓN
+       
+       Se ejecuta después de CARGACONT.
+       
+       Vuelve a leer la geología almacenada en CONT07
+       y actualiza únicamente el bloque geológico.
+       
+       NO toca:
+       - #cronologia
+       - CARGACONT
+       - PALNAVEGADOR
+       - el resto de la ficha
+       ===================================================== */
+
+    actualizarPresentacion() {
+
+        /*
+        -----------------------------------------------------
+        OBTENER J3 DESDE CONT07
+        -----------------------------------------------------
+        */
+
+        let j3 = "";
+
+
+        if (
+            window.CONT07 &&
+            typeof window.CONT07.obtenerJ3 ===
+            "function"
+        ) {
+
+            j3 =
+                window.CONT07.obtenerJ3();
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        SI NO EXISTE J3
+        -----------------------------------------------------
+        */
+
+        if (
+            !j3
+        ) {
+
+            this.limpiarPresentacion();
+
+            return;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        VOLVER A MOSTRAR GEOLOGÍA
+        -----------------------------------------------------
+        */
+
+        this.limpiarPresentacion();
+
+
+        this.mostrarGeologia(
+            j3
+        );
+
+    },
+
+
+    /* =====================================================
        PROCESAR
        ===================================================== */
 
     async procesar(j1) {
-
 
         /*
         -----------------------------------------------------
@@ -825,21 +802,17 @@ window.CAB07 = {
             null;
 
 
+        /*
+        -----------------------------------------------------
+        PALGEOSIMPLIFICADO
+        -----------------------------------------------------
+        */
+
         if (
             window.PALGEOSIMPLIFICADO &&
             typeof window.PALGEOSIMPLIFICADO.analizar ===
             "function"
         ) {
-
-            /*
-            -------------------------------------------------
-            USAR PALGEOSIMPLIFICADO
-
-            Es la fuente de interpretación del rango.
-
-            PALGEO continúa siendo la fuente de datos.
-            -------------------------------------------------
-            */
 
             try {
 
@@ -848,7 +821,6 @@ window.CAB07 = {
                         .analizar(
                             datos.j3
                         );
-
 
             } catch (error) {
 
@@ -868,12 +840,6 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         COMPATIBILIDAD CON LEEPALGEO
-
-        Si el sistema antiguo todavía está presente
-        y PALGEOSIMPLIFICADO no ha devuelto datos,
-        intentamos utilizarlo.
-
-        NO se modifica PALGEO.
         -----------------------------------------------------
         */
 
@@ -905,12 +871,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        GUARDAR GEOLOGÍA
-
-        CONT07 conserva TODOS los datos.
-
-        La reducción a "Del X al Y"
-        solo afecta a la presentación.
+        GUARDAR GEOLOGÍA EN CONT07
         -----------------------------------------------------
         */
 
@@ -931,11 +892,6 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         LIMPIAR PRESENTACIÓN ANTERIOR
-
-        Esto es importante cuando se cambia de
-        Paleoficha mediante el buscador.
-
-        Evita que quede información de la ficha anterior.
         -----------------------------------------------------
         */
 
@@ -945,14 +901,6 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         MOSTRAR GEOLOGÍA
-
-        IMPORTANTE:
-
-        Solo se pasa j3 como dato interno para que
-        PALGEOSIMPLIFICADO pueda convertirlo si fuese
-        necesario.
-
-        Nunca se escribe j3 directamente en pantalla.
         -----------------------------------------------------
         */
 
@@ -963,17 +911,15 @@ window.CAB07 = {
 
         /*
         =====================================================
-        MUY IMPORTANTE
+        IMPORTANTE
 
-        NO HACER:
+        CAB07 NO MODIFICA #cronologia.
 
-        document.getElementById("cronologia")
-            .textContent = datos.j3;
+        La cronología superior pertenece a la presentación
+        general de la Paleoficha.
 
-        La cronología interna pertenece al sistema
-        de datos y NO a la presentación visual.
-
-        CAB07 NO TOCA #cronologia.
+        La información geológica se presenta únicamente
+        en #resultadoGeologiaCAB07.
         =====================================================
         */
 
@@ -1006,3 +952,4 @@ window.CAB07 =
 FIN CAB07.js
 ========================================================
 */
+
