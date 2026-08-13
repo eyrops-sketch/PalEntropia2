@@ -1,11 +1,11 @@
 /*
-
+========================================================
 PalEntropía
-palbuscador.js v3.1 LTS
+palbuscador.js v3.2 LTS
 
 MOTOR DE BÚSQUEDA DEL GENERADOR
 
-Arquitectura actual:
+ARQUITECTURA:
 
 MASTER.CSV
 ↓
@@ -15,20 +15,22 @@ PALBUSCADOR
 ↓
 j1
 ↓
+PALNAVEGADOR
+↓
+CAB07
+↓
+CONT07
+↓
 CARGACONT
 ↓
-paleofichas.json
-↓
-BUSCARUTA
+CAB01–CAB06
 ↓
 GENERADOR
 
 BUSCA POR:
 
 Código (j1)
-
 Nombre (j2)
-
 
 FUENTES:
 
@@ -41,1096 +43,1038 @@ paleofichas.json
 PALVIDEO.js
 → enlace de vídeo mediante j1
 
-NO DEPENDE DE:
+IMPORTANTE:
 
-PALDB
+PALBUSCADOR NO CARGA DIRECTAMENTE CARGACONT.
 
-PALDECODER
+Toda selección de una búsqueda pasa por
+PALNAVEGADOR para garantizar que:
 
-PALGEO
+- se actualice el índice
+- se actualice codigoActual
+- se ejecute CAB07
+- se actualice CONT07
+- se actualice la geología
+- se cargue finalmente la ficha
 
-PALTAXON
-
-variable global paleofichas
-
-
-=========================================================
-
-RESULTADO:
-
-[
-{
-codigo: "001_01",
-nombre: "Gastornis",
-tipo: "codigo",
-relevancia: 100
-}
-]
-
-=========================================================
+========================================================
 */
+
 
 const PALBUSCADOR = {
 
-/* =====================================================  
-   VERSIÓN  
-===================================================== */  
 
-version: "3.1 LTS",  
+    /* =====================================================
+       VERSIÓN
+       ===================================================== */
 
+    version: "3.2 LTS",
 
-/* =====================================================  
-   DATOS INTERNOS  
-===================================================== */  
 
-_datosJSON: null,  
+    /* =====================================================
+       DATOS INTERNOS
+       ===================================================== */
 
-_cargandoJSON: null,  
+    _datosJSON: null,
 
+    _cargandoJSON: null,
 
-/* =====================================================  
-   NORMALIZAR TEXTO  
-===================================================== */  
 
-normalizar(texto) {  
+    /* =====================================================
+       NORMALIZAR TEXTO
+       ===================================================== */
 
-    if (  
-        texto === undefined ||  
-        texto === null  
-    ) {  
+    normalizar(texto) {
 
-        return "";  
+        if (
+            texto === undefined ||
+            texto === null
+        ) {
 
-    }  
+            return "";
 
+        }
 
-    return String(texto)  
 
-        .toLowerCase()  
+        return String(texto)
 
-        .normalize("NFD")  
+            .toLowerCase()
 
-        .replace(  
-            /[\u0300-\u036f]/g,  
-            ""  
-        )  
+            .normalize("NFD")
 
-        .replace(  
-            /ñ/g,  
-            "n"  
-        )  
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
 
-        .replace(  
-            /[.,;:()\-\/]/g,  
-            " "  
-        )  
+            .replace(
+                /ñ/g,
+                "n"
+            )
 
-        .replace(  
-            /\s+/g,  
-            " "  
-        )  
+            .replace(
+                /[.,;:()\-\/]/g,
+                " "
+            )
 
-        .trim();  
+            .replace(
+                /\s+/g,
+                " "
+            )
 
-},  
+            .trim();
 
+    },
 
-/* =====================================================  
-   NORMALIZAR CÓDIGO  
 
-   Los códigos no deben perder el "_".  
+    /* =====================================================
+       NORMALIZAR CÓDIGO
+       ===================================================== */
 
-   Ejemplo:  
+    normalizarCodigo(codigo) {
 
-   001_01  
-   001_1  
-   003_  
-   005  
-===================================================== */  
+        if (
+            codigo === undefined ||
+            codigo === null
+        ) {
 
-normalizarCodigo(codigo) {  
+            return "";
 
-    if (  
-        codigo === undefined ||  
-        codigo === null  
-    ) {  
+        }
 
-        return "";  
 
-    }  
+        return String(codigo)
 
+            .trim()
 
-    return String(codigo)  
+            .toUpperCase();
 
-        .trim()  
+    },
 
-        .toUpperCase();  
 
-},  
+    /* =====================================================
+       OBTENER CONTENEDOR
+       ===================================================== */
 
+    obtenerContenedor() {
 
-/* =====================================================  
-   OBTENER CONTENEDOR  
-===================================================== */  
+        if (
+            !window.LEEPALJSON ||
+            typeof window.LEEPALJSON.obtener !==
+            "function"
+        ) {
 
-obtenerContenedor() {  
+            throw new Error(
+                "PALBUSCADOR: LEEPALJSON no está disponible."
+            );
 
-    if (  
-        !window.LEEPALJSON ||  
-        typeof window.LEEPALJSON.obtener !==  
-        "function"  
-    ) {  
+        }
 
-        throw new Error(  
-            "PALBUSCADOR: LEEPALJSON no está disponible."  
-        );  
 
-    }  
+        const contenedor =
+            window.LEEPALJSON.obtener();
 
 
-    const contenedor =  
-        window.LEEPALJSON.obtener();  
+        if (
+            !Array.isArray(contenedor) ||
+            !contenedor.length
+        ) {
 
+            throw new Error(
+                "PALBUSCADOR: master.csv está vacío."
+            );
 
-    if (  
-        !Array.isArray(contenedor) ||  
-        !contenedor.length  
-    ) {  
+        }
 
-        throw new Error(  
-            "PALBUSCADOR: master.csv está vacío."  
-        );  
 
-    }  
+        return contenedor;
 
+    },
 
-    return contenedor;  
 
-},  
+    /* =====================================================
+       CARGAR PALEOFICHAS.JSON
+       ===================================================== */
 
+    async cargarJSON() {
 
-/* =====================================================  
-   CARGAR PALEOFICHAS.JSON  
-===================================================== */  
+        if (
+            this._datosJSON
+        ) {
 
-async cargarJSON() {  
+            return this._datosJSON;
 
-    if (  
-        this._datosJSON  
-    ) {  
+        }
 
-        return this._datosJSON;  
 
-    }  
+        if (
+            this._cargandoJSON
+        ) {
 
+            return this._cargandoJSON;
 
-    if (  
-        this._cargandoJSON  
-    ) {  
+        }
 
-        return this._cargandoJSON;  
 
-    }  
+        this._cargandoJSON =
 
+            fetch(
+                "paleofichas.json",
+                {
+                    cache: "default"
+                }
+            )
 
-    this._cargandoJSON =  
+            .then(
 
-        fetch(  
-            "paleofichas.json",  
-            {  
-                cache: "default"  
-            }  
-        )  
+                respuesta => {
 
-        .then(  
+                    if (
+                        !respuesta.ok
+                    ) {
 
-            respuesta => {  
+                        throw new Error(
+                            "PALBUSCADOR: no se pudo cargar " +
+                            "paleofichas.json (" +
+                            respuesta.status +
+                            ")"
+                        );
 
-                if (  
-                    !respuesta.ok  
-                ) {  
+                    }
 
-                    throw new Error(  
-                        "PALBUSCADOR: no se pudo cargar " +  
-                        "paleofichas.json (" +  
-                        respuesta.status +  
-                        ")"  
-                    );  
 
-                }  
+                    return respuesta.json();
 
+                }
 
-                return respuesta.json();  
+            )
 
-            }  
+            .then(
 
-        )  
+                datos => {
 
-        .then(  
+                    if (
+                        !Array.isArray(datos)
+                    ) {
 
-            datos => {  
+                        throw new Error(
+                            "PALBUSCADOR: paleofichas.json no contiene un array válido."
+                        );
 
-                if (  
-                    !Array.isArray(datos)  
-                ) {  
+                    }
 
-                    throw new Error(  
-                        "PALBUSCADOR: paleofichas.json no contiene un array válido."  
-                    );  
 
-                }  
+                    this._datosJSON =
+                        datos;
 
 
-                this._datosJSON =  
-                    datos;  
+                    return datos;
 
+                }
 
-                return datos;  
+            )
 
-            }  
+            .catch(
 
-        )  
+                error => {
 
-        .catch(  
+                    this._cargandoJSON =
+                        null;
 
-            error => {  
+                    throw error;
 
-                this._cargandoJSON =  
-                    null;  
+                }
 
-                throw error;  
+            );
 
-            }  
 
-        );  
+        return this._cargandoJSON;
 
+    },
 
-    return this._cargandoJSON;  
 
-},  
+    /* =====================================================
+       OBTENER MAPA DE NOMBRES
+       ===================================================== */
 
+    async obtenerMapaNombres() {
 
-/* =====================================================  
-   OBTENER MAPA DE NOMBRES  
+        const datos =
+            await this.cargarJSON();
 
-   Convierte:  
 
-   001_01 → Gastornis  
-   001_02 → Goniatites  
-   etc.  
-===================================================== */  
+        const mapa =
+            new Map();
 
-async obtenerMapaNombres() {  
 
-    const datos =  
-        await this.cargarJSON();  
+        for (
+            const registro of datos
+        ) {
 
+            if (
+                !registro
+            ) {
 
-    const mapa =  
-        new Map();  
+                continue;
 
+            }
 
-    for (  
-        const registro of datos  
-    ) {  
 
-        if (  
-            !registro  
-        ) {  
+            const codigo =
+                this.normalizarCodigo(
+                    registro.codigo ||
+                    registro.j1
+                );
 
-            continue;  
 
-        }  
+            const nombre =
+                String(
+                    registro.nombre ||
+                    ""
+                ).trim();
 
 
-        const codigo =  
-            this.normalizarCodigo(  
-                registro.codigo ||  
-                registro.j1  
-            );  
+            if (
+                !codigo ||
+                !nombre
+            ) {
 
+                continue;
 
-        const nombre =  
-            String(  
-                registro.nombre ||  
-                ""  
-            ).trim();  
+            }
 
 
-        if (  
-            !codigo ||  
-            !nombre  
-        ) {  
+            mapa.set(
+                codigo,
+                nombre
+            );
 
-            continue;  
+        }
 
-        }  
 
+        return mapa;
 
-        mapa.set(  
-            codigo,  
-            nombre  
-        );  
+    },
 
-    }  
 
+    /* =====================================================
+       OBTENER VÍDEO
+       ===================================================== */
 
-    return mapa;  
+    obtenerVideo(codigo) {
 
-},  
+        const j1 =
+            this.normalizarCodigo(
+                codigo
+            );
 
 
-/* =====================================================  
-   OBTENER VÍDEO  
+        if (
+            !j1
+        ) {
 
-   Consulta PALVIDEO mediante j1.  
+            return null;
 
-   Devuelve:  
+        }
 
-   URL de YouTube  
-   o  
-   null  
 
-   PALVIDEO es la única fuente de vídeos.  
-===================================================== */  
+        if (
+            !window.PALVIDEO ||
+            typeof window.PALVIDEO !==
+            "object"
+        ) {
 
-obtenerVideo(codigo) {  
+            return null;
 
-    const j1 =  
-        this.normalizarCodigo(  
-            codigo  
-        );  
+        }
 
 
-    if (  
-        !j1  
-    ) {  
+        const registro =
+            window.PALVIDEO[j1];
 
-        return null;  
 
-    }  
+        if (
+            !registro ||
+            typeof registro !==
+            "object"
+        ) {
 
+            return null;
 
-    /* ---------------------------------------------  
-       PALVIDEO NO DISPONIBLE  
-    --------------------------------------------- */  
+        }
 
-    if (  
-        !window.PALVIDEO ||  
-        typeof window.PALVIDEO !==  
-        "object"  
-    ) {  
 
-        return null;  
+        const video =
+            registro.video;
 
-    }  
 
+        if (
+            video === undefined ||
+            video === null
+        ) {
 
-    /* ---------------------------------------------  
-       BUSCAR REGISTRO  
-    --------------------------------------------- */  
+            return null;
 
-    const registro =  
-        window.PALVIDEO[j1];  
+        }
 
 
-    if (  
-        !registro ||  
-        typeof registro !==  
-        "object"  
-    ) {  
+        const url =
+            String(video).trim();
 
-        return null;  
 
-    }  
+        if (
+            !url
+        ) {
 
+            return null;
 
-    /* ---------------------------------------------  
-       OBTENER ENLACE  
-    --------------------------------------------- */  
+        }
 
-    const video =  
-        registro.video;  
 
+        return url;
 
-    if (  
-        video === undefined ||  
-        video === null  
-    ) {  
+    },
 
-        return null;  
 
-    }  
+    /* =====================================================
+       COMPROBAR SI EXISTE VÍDEO
+       ===================================================== */
 
+    tieneVideo(codigo) {
 
-    const url =  
-        String(video).trim();  
+        return !!this.obtenerVideo(
+            codigo
+        );
 
+    },
 
-    if (  
-        !url  
-    ) {  
 
-        return null;  
+    /* =====================================================
+       DETERMINAR TIPO DE CONSULTA
+       ===================================================== */
 
-    }  
+    tipoConsulta(texto) {
 
+        const consulta =
+            String(texto || "").trim();
 
-    return url;  
 
-},  
+        if (
+            !consulta
+        ) {
 
+            return "vacio";
 
-/* =====================================================  
-   COMPROBAR SI EXISTE VÍDEO  
-===================================================== */  
+        }
 
-tieneVideo(codigo) {  
 
-    return !!this.obtenerVideo(  
-        codigo  
-    );  
+        if (
+            /^[0-9_]+$/.test(
+                consulta
+            )
+        ) {
 
-},  
+            return "codigo";
 
+        }
 
-/* =====================================================  
-   DETERMINAR TIPO DE CONSULTA  
-===================================================== */  
 
-tipoConsulta(texto) {  
+        if (
+            this.normalizar(
+                consulta
+            ).length >= 3
+        ) {
 
-    const consulta =  
-        String(texto || "").trim();  
+            return "nombre";
 
+        }
 
-    if (  
-        !consulta  
-    ) {  
 
-        return "vacio";  
+        return "corto";
 
-    }  
+    },
 
 
-    /* ---------------------------------------------  
-       CÓDIGO  
-    --------------------------------------------- */  
+    /* =====================================================
+       BUSCAR POR CÓDIGO
+       ===================================================== */
 
-    if (  
-        /^[0-9_]+$/.test(  
-            consulta  
-        )  
-    ) {  
+    async buscarPorCodigo(consulta) {
 
-        return "codigo";  
+        const codigoConsulta =
+            this.normalizarCodigo(
+                consulta
+            );
 
-    }  
 
+        if (
+            !codigoConsulta
+        ) {
 
-    /* ---------------------------------------------  
-       NOMBRE  
-    --------------------------------------------- */  
+            return [];
 
-    if (  
-        this.normalizar(  
-            consulta  
-        ).length >= 3  
-    ) {  
+        }
 
-        return "nombre";  
 
-    }  
+        const contenedor =
+            this.obtenerContenedor();
 
 
-    /* ---------------------------------------------  
-       DEMASIADO CORTA  
-    --------------------------------------------- */  
+        const mapaNombres =
+            await this.obtenerMapaNombres();
 
-    return "corto";  
 
-},  
+        const resultados = [];
 
 
-/* =====================================================  
-   BUSCAR POR CÓDIGO  
-===================================================== */  
+        for (
+            const registro of contenedor
+        ) {
 
-async buscarPorCodigo(consulta) {  
+            if (
+                !registro
+            ) {
 
-    const codigoConsulta =  
-        this.normalizarCodigo(  
-            consulta  
-        );  
+                continue;
 
+            }
 
-    if (  
-        !codigoConsulta  
-    ) {  
 
-        return [];  
+            const codigo =
+                this.normalizarCodigo(
+                    registro.codigo
+                );
 
-    }  
 
+            if (
+                !codigo
+            ) {
 
-    const contenedor =  
-        this.obtenerContenedor();  
+                continue;
 
+            }
 
-    const mapaNombres =  
-        await this.obtenerMapaNombres();  
 
+            if (
+                codigo.startsWith(
+                    codigoConsulta
+                )
+            ) {
 
-    const resultados = [];  
+                resultados.push({
 
+                    codigo:
+                        codigo,
 
-    for (  
-        const registro of contenedor  
-    ) {  
+                    nombre:
+                        mapaNombres.get(
+                            codigo
+                        ) ||
+                        "Sin nombre",
 
-        if (  
-            !registro  
-        ) {  
+                    tipo:
+                        "codigo",
 
-            continue;  
+                    relevancia:
+                        codigo === codigoConsulta
+                            ? 200
+                            : 100
 
-        }  
+                });
 
+            }
 
-        const codigo =  
-            this.normalizarCodigo(  
-                registro.codigo  
-            );  
+        }
 
 
-        if (  
-            !codigo  
-        ) {  
+        return this.unicosResultados(
+            resultados
+        );
 
-            continue;  
+    },
 
-        }  
 
+    /* =====================================================
+       BUSCAR POR NOMBRE
+       ===================================================== */
 
-        if (  
-            codigo.startsWith(  
-                codigoConsulta  
-            )  
-        ) {  
+    async buscarPorNombre(consulta) {
 
-            resultados.push({  
+        const nombreConsulta =
+            this.normalizar(
+                consulta
+            );
 
-                codigo:  
-                    codigo,  
 
-                nombre:  
-                    mapaNombres.get(  
-                        codigo  
-                    ) ||  
-                    "Sin nombre",  
+        if (
+            nombreConsulta.length < 3
+        ) {
 
-                tipo:  
-                    "codigo",  
+            return [];
 
-                relevancia:  
-                    codigo === codigoConsulta  
-                        ? 200  
-                        : 100  
+        }
 
-            });  
 
-        }  
+        const datos =
+            await this.cargarJSON();
 
-    }  
 
+        const resultados = [];
 
-    return this.unicosResultados(  
-        resultados  
-    );  
 
-},  
+        for (
+            const registro of datos
+        ) {
 
+            if (
+                !registro
+            ) {
 
-/* =====================================================  
-   BUSCAR POR NOMBRE  
-===================================================== */  
+                continue;
 
-async buscarPorNombre(consulta) {  
+            }
 
-    const nombreConsulta =  
-        this.normalizar(  
-            consulta  
-        );  
 
+            const codigo =
+                this.normalizarCodigo(
+                    registro.codigo ||
+                    registro.j1
+                );
 
-    if (  
-        nombreConsulta.length < 3  
-    ) {  
 
-        return [];  
+            const nombre =
+                String(
+                    registro.nombre ||
+                    ""
+                ).trim();
 
-    }  
 
+            if (
+                !codigo ||
+                !nombre
+            ) {
 
-    const datos =  
-        await this.cargarJSON();  
+                continue;
 
+            }
 
-    const resultados = [];  
 
+            const nombreNormalizado =
+                this.normalizar(
+                    nombre
+                );
 
-    for (  
-        const registro of datos  
-    ) {  
 
-        if (  
-            !registro  
-        ) {  
+            if (
+                nombreNormalizado.startsWith(
+                    nombreConsulta
+                )
+            ) {
 
-            continue;  
+                resultados.push({
 
-        }  
+                    codigo:
+                        codigo,
 
+                    nombre:
+                        nombre,
 
-        const codigo =  
-            this.normalizarCodigo(  
-                registro.codigo ||  
-                registro.j1  
-            );  
+                    tipo:
+                        "nombre",
 
+                    relevancia:
+                        nombreNormalizado ===
+                        nombreConsulta
+                            ? 200
+                            : 100
 
-        const nombre =  
-            String(  
-                registro.nombre ||  
-                ""  
-            ).trim();  
+                });
 
+            }
 
-        if (  
-            !codigo ||  
-            !nombre  
-        ) {  
+        }
 
-            continue;  
 
-        }  
+        return this.unicosResultados(
+            resultados
+        );
 
+    },
 
-        const nombreNormalizado =  
-            this.normalizar(  
-                nombre  
-            );  
 
+    /* =====================================================
+       ELIMINAR RESULTADOS DUPLICADOS
+       ===================================================== */
 
-        if (  
-            nombreNormalizado.startsWith(  
-                nombreConsulta  
-            )  
-        ) {  
+    unicosResultados(resultados) {
 
-            resultados.push({  
+        const mapa =
+            new Map();
 
-                codigo:  
-                    codigo,  
 
-                nombre:  
-                    nombre,  
+        for (
+            const resultado of resultados
+        ) {
 
-                tipo:  
-                    "nombre",  
+            if (
+                !resultado ||
+                !resultado.codigo
+            ) {
 
-                relevancia:  
-                    nombreNormalizado ===  
-                    nombreConsulta  
-                        ? 200  
-                        : 100  
+                continue;
 
-            });  
+            }
 
-        }  
 
-    }  
+            const codigo =
+                this.normalizarCodigo(
+                    resultado.codigo
+                );
 
 
-    return this.unicosResultados(  
-        resultados  
-    );  
+            if (
+                !mapa.has(codigo)
+            ) {
 
-},  
+                mapa.set(
+                    codigo,
+                    resultado
+                );
 
+            }
 
-/* =====================================================  
-   ELIMINAR RESULTADOS DUPLICADOS  
-===================================================== */  
+        }
 
-unicosResultados(resultados) {  
 
-    const mapa =  
-        new Map();  
+        return Array.from(
+            mapa.values()
+        );
 
+    },
 
-    for (  
-        const resultado of resultados  
-    ) {  
 
-        if (  
-            !resultado ||  
-            !resultado.codigo  
-        ) {  
+    /* =====================================================
+       ORDENAR RESULTADOS
+       ===================================================== */
 
-            continue;  
+    ordenar(resultados) {
 
-        }  
+        return resultados.sort(
 
+            (a, b) => {
 
-        const codigo =  
-            this.normalizarCodigo(  
-                resultado.codigo  
-            );  
+                if (
+                    b.relevancia !==
+                    a.relevancia
+                ) {
 
+                    return (
+                        b.relevancia -
+                        a.relevancia
+                    );
 
-        if (  
-            !mapa.has(codigo)  
-        ) {  
+                }
 
-            mapa.set(  
-                codigo,  
-                resultado  
-            );  
 
-        }  
+                return String(
+                    a.nombre || ""
+                ).localeCompare(
 
-    }  
+                    String(
+                        b.nombre || ""
+                    ),
 
+                    "es",
 
-    return Array.from(  
-        mapa.values()  
-    );  
+                    {
+                        sensitivity:
+                            "base"
+                    }
 
-},  
+                );
 
+            }
 
-/* =====================================================  
-   ORDENAR RESULTADOS  
-===================================================== */  
+        );
 
-ordenar(resultados) {  
+    },
 
-    return resultados.sort(  
 
-        (a, b) => {  
+    /* =====================================================
+       BUSCADOR PRINCIPAL
+       ===================================================== */
 
-            /* -------------------------------------  
-               MAYOR RELEVANCIA PRIMERO  
-            ------------------------------------- */  
+    async buscar(texto) {
 
-            if (  
-                b.relevancia !==  
-                a.relevancia  
-            ) {  
+        const consultaOriginal =
+            String(
+                texto || ""
+            ).trim();
 
-                return (  
-                    b.relevancia -  
-                    a.relevancia  
-                );  
 
-            }  
+        if (
+            !consultaOriginal
+        ) {
 
+            return [];
 
-            /* -------------------------------------  
-               NOMBRE  
-            ------------------------------------- */  
+        }
 
-            return String(  
-                a.nombre || ""  
-            ).localeCompare(  
 
-                String(  
-                    b.nombre || ""  
-                ),  
+        const tipo =
+            this.tipoConsulta(
+                consultaOriginal
+            );
 
-                "es",  
 
-                {  
-                    sensitivity:  
-                        "base"  
-                }  
+        if (
+            tipo === "corto" ||
+            tipo === "vacio"
+        ) {
 
-            );  
+            return [];
 
-        }  
+        }
 
-    );  
 
-},  
+        if (
+            tipo === "codigo"
+        ) {
 
+            const resultados =
+                await this.buscarPorCodigo(
+                    consultaOriginal
+                );
 
-/* =====================================================  
-   BUSCADOR PRINCIPAL  
-===================================================== */  
 
-async buscar(texto) {  
+            return this.ordenar(
+                resultados
+            );
 
-    const consultaOriginal =  
-        String(  
-            texto || ""  
-        ).trim();  
+        }
 
 
-    if (  
-        !consultaOriginal  
-    ) {  
+        if (
+            tipo === "nombre"
+        ) {
 
-        return [];  
+            const resultados =
+                await this.buscarPorNombre(
+                    consultaOriginal
+                );
 
-    }  
 
+            return this.ordenar(
+                resultados
+            );
 
-    const tipo =  
-        this.tipoConsulta(  
-            consultaOriginal  
-        );  
+        }
 
 
-    /* ---------------------------------------------  
-       DEMASIADO CORTA  
-    --------------------------------------------- */  
+        return [];
 
-    if (  
-        tipo === "corto" ||  
-        tipo === "vacio"  
-    ) {  
+    },
 
-        return [];  
 
-    }  
+    /* =====================================================
+       INTERPRETAR BÚSQUEDA
+       ===================================================== */
 
+    async interpretar(texto) {
 
-    /* ---------------------------------------------  
-       CÓDIGO  
-    --------------------------------------------- */  
+        const resultados =
+            await this.buscar(
+                texto
+            );
 
-    if (  
-        tipo === "codigo"  
-    ) {  
 
-        const resultados =  
-            await this.buscarPorCodigo(  
-                consultaOriginal  
-            );  
+        if (
+            !resultados.length
+        ) {
 
+            return "";
 
-        return this.ordenar(  
-            resultados  
-        );  
+        }
 
-    }  
 
+        return resultados[0].codigo;
 
-    /* ---------------------------------------------  
-       NOMBRE  
-    --------------------------------------------- */  
+    },
 
-    if (  
-        tipo === "nombre"  
-    ) {  
 
-        const resultados =  
-            await this.buscarPorNombre(  
-                consultaOriginal  
-            );  
+    /* =====================================================
+       CARGAR RESULTADO
 
+       IMPORTANTE:
 
-        return this.ordenar(  
-            resultados  
-        );  
+       NO llama directamente a CARGACONT.
 
-    }  
+       El resultado pasa por PALNAVEGADOR.
 
+       Esto garantiza que se actualicen:
 
-    return [];  
+       - índice
+       - código actual
+       - CAB07
+       - CONT07
+       - geología
+       - CARGACONT
+       - ficha
+       ===================================================== */
 
-},  
+    async cargarResultado(resultado) {
 
+        if (
+            !resultado
+        ) {
 
-/* =====================================================  
-   INTERPRETAR BÚSQUEDA  
+            throw new Error(
+                "PALBUSCADOR: resultado vacío."
+            );
 
-   Devuelve el primer código encontrado.  
+        }
 
-   Útil si el buscador visual necesita  
-   convertir directamente una consulta  
-   en un j1.  
-===================================================== */  
 
-async interpretar(texto) {  
+        const codigo =
+            this.normalizarCodigo(
+                resultado.codigo
+            );
 
-    const resultados =  
-        await this.buscar(  
-            texto  
-        );  
 
+        if (
+            !codigo
+        ) {
 
-    if (  
-        !resultados.length  
-    ) {  
+            throw new Error(
+                "PALBUSCADOR: el resultado no contiene j1."
+            );
 
-        return "";  
+        }
 
-    }  
 
+        /*
+        =================================================
+        PASAR POR PALNAVEGADOR
+        =================================================
+        */
 
-    return resultados[0].codigo;  
+        if (
+            !window.PALNAVEGADOR ||
+            typeof window.PALNAVEGADOR.cargarPorCodigo !==
+            "function"
+        ) {
 
-},  
+            throw new Error(
+                "PALBUSCADOR: PALNAVEGADOR no está disponible."
+            );
 
+        }
 
-/* =====================================================  
-   CARGAR RESULTADO  
 
-   Función puente con CARGACONT.  
+        return await window.PALNAVEGADOR.cargarPorCodigo(
+            codigo
+        );
 
-   El buscador NO construye la ficha.  
+    },
 
-   Solo entrega el j1.  
 
-   CARGACONT se encarga del resto.  
-===================================================== */  
+    /* =====================================================
+       CARGAR POR CÓDIGO DIRECTAMENTE
 
-async cargarResultado(resultado) {  
+       También pasa obligatoriamente por PALNAVEGADOR.
+       ===================================================== */
 
-    if (  
-        !resultado  
-    ) {  
+    async cargarPorCodigo(codigo) {
 
-        throw new Error(  
-            "PALBUSCADOR: resultado vacío."  
-        );  
+        const j1 =
+            this.normalizarCodigo(
+                codigo
+            );
 
-    }  
 
+        if (
+            !j1
+        ) {
 
-    const codigo =  
-        this.normalizarCodigo(  
-            resultado.codigo  
-        );  
+            throw new Error(
+                "PALBUSCADOR: código vacío."
+            );
 
+        }
 
-    if (  
-        !codigo  
-    ) {  
 
-        throw new Error(  
-            "PALBUSCADOR: el resultado no contiene j1."  
-        );  
+        if (
+            !window.PALNAVEGADOR ||
+            typeof window.PALNAVEGADOR.cargarPorCodigo !==
+            "function"
+        ) {
 
-    }  
+            throw new Error(
+                "PALBUSCADOR: PALNAVEGADOR no está disponible."
+            );
 
+        }
 
-    if (  
-        !window.CARGACONT ||  
-        typeof window.CARGACONT.cargar !==  
-        "function"  
-    ) {  
 
-        throw new Error(  
-            "PALBUSCADOR: CARGACONT no está disponible."  
-        );  
+        return await window.PALNAVEGADOR.cargarPorCodigo(
+            j1
+        );
 
-    }  
+    },
 
 
-    return await window.CARGACONT.cargar(  
-        codigo  
-    );  
+    /* =====================================================
+       ESTADO
+       ===================================================== */
 
-},  
+    estado() {
 
+        return {
 
-/* =====================================================  
-   CARGAR POR CÓDIGO DIRECTAMENTE  
-===================================================== */  
+            disponible:
+                !!(
+                    window.LEEPALJSON &&
+                    typeof window.LEEPALJSON.obtener ===
+                    "function"
+                ),
 
-async cargarPorCodigo(codigo) {  
+            jsonCargado:
+                !!this._datosJSON,
 
-    const j1 =  
-        this.normalizarCodigo(  
-            codigo  
-        );  
+            palvideoDisponible:
+                !!(
+                    window.PALVIDEO &&
+                    typeof window.PALVIDEO ===
+                    "object"
+                ),
 
+            palnavegadorDisponible:
+                !!(
+                    window.PALNAVEGADOR &&
+                    typeof window.PALNAVEGADOR.cargarPorCodigo ===
+                    "function"
+                ),
 
-    if (  
-        !j1  
-    ) {  
+            version:
+                this.version
 
-        throw new Error(  
-            "PALBUSCADOR: código vacío."  
-        );  
+        };
 
-    }  
-
-
-    if (  
-        !window.CARGACONT ||  
-        typeof window.CARGACONT.cargar !==  
-        "function"  
-    ) {  
-
-        throw new Error(  
-            "PALBUSCADOR: CARGACONT no está disponible."  
-        );  
-
-    }  
-
-
-    return await window.CARGACONT.cargar(  
-        j1  
-    );  
-
-},  
-
-
-/* =====================================================  
-   ESTADO  
-===================================================== */  
-
-estado() {  
-
-    return {  
-
-        disponible:  
-            !!(  
-                window.LEEPALJSON &&  
-                typeof window.LEEPALJSON.obtener ===  
-                "function"  
-            ),  
-
-        jsonCargado:  
-            !!this._datosJSON,  
-
-        palvideoDisponible:  
-            !!(  
-                window.PALVIDEO &&  
-                typeof window.PALVIDEO ===  
-                "object"  
-            ),  
-
-        version:  
-            this.version  
-
-    };  
-
-}
+    }
 
 };
 
+
 /* =========================================================
-DISPONIBILIDAD GLOBAL
+   DISPONIBILIDAD GLOBAL
 ========================================================= */
 
 window.PALBUSCADOR =
-PALBUSCADOR;
+    PALBUSCADOR;
 
-/* =========================================================
-FIN PALBUSCADOR.js v3.1 LTS
-========================================================= */
+
+/*
+========================================================
+FIN PALBUSCADOR.js v3.2 LTS
+========================================================
+*/
