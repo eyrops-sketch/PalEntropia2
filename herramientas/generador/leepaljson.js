@@ -1,35 +1,22 @@
 /*
 ========================================================
-LEEPALJSON.js v1.2 LTS
+LEEPALJSON.js v1.1 LTS
 Lector / conversor de master.csv
 PalEntropía — Generador
-========================================================
 
-FUNCIÓN
--------
-Lee master.csv y extrae:
+CAMBIO v1.1
+-----------
+Se incorpora:
 
-j1 → codigo
-j2 → nombre
-j3 → cronologia
-j7 → dieta
-j8 → anatomia
+j3 → cronología
 
-COMPATIBILIDAD
---------------
-El registro entrega:
+Ahora el registro preparado contiene:
 
 codigo
 nombre
 j3
-cronologia
 dieta
 anatomia
-
-De esta forma se mantiene compatibilidad con
-los módulos que utilizan j3 y con los que utilizan
-cronologia.
-
 ========================================================
 */
 
@@ -62,10 +49,6 @@ function parseCSV(texto) {
             texto[i + 1];
 
 
-        /* ---------------------------------------------
-           COMILLAS
-        --------------------------------------------- */
-
         if (
             caracter === '"'
         ) {
@@ -87,12 +70,9 @@ function parseCSV(texto) {
             }
 
             continue;
+
         }
 
-
-        /* ---------------------------------------------
-           SEPARADOR
-        --------------------------------------------- */
 
         if (
             caracter === ',' &&
@@ -106,12 +86,9 @@ function parseCSV(texto) {
             campo = "";
 
             continue;
+
         }
 
-
-        /* ---------------------------------------------
-           FIN DE FILA
-        --------------------------------------------- */
 
         if (
             (
@@ -155,21 +132,14 @@ function parseCSV(texto) {
             fila = [];
 
             continue;
+
         }
 
-
-        /* ---------------------------------------------
-           CARÁCTER NORMAL
-        --------------------------------------------- */
 
         campo += caracter;
 
     }
 
-
-    /* ---------------------------------------------
-       ÚLTIMA FILA
-    --------------------------------------------- */
 
     if (
         campo !== "" ||
@@ -219,7 +189,10 @@ function limpiarValor(valor) {
 
 
     return String(valor)
-        .replace(/^\uFEFF/, "")
+        .replace(
+            /^\uFEFF/,
+            ""
+        )
         .trim();
 
 }
@@ -229,9 +202,7 @@ function limpiarValor(valor) {
    CONVERSIÓN CSV → PALEOFICHAS
 ===================================================== */
 
-function convertirCSV(
-    textoCSV
-) {
+function convertirCSV(textoCSV) {
 
     const filas =
         parseCSV(
@@ -249,10 +220,6 @@ function convertirCSV(
 
     }
 
-
-    /* ---------------------------------------------
-       CABECERA
-    --------------------------------------------- */
 
     const cabecera =
         filas[0].map(
@@ -292,10 +259,6 @@ function convertirCSV(
             "j8"
         );
 
-
-    /* ---------------------------------------------
-       COMPROBAR COLUMNAS
-    --------------------------------------------- */
 
     const faltantes = [];
 
@@ -361,15 +324,13 @@ function convertirCSV(
 
         throw new Error(
             "Faltan columnas obligatorias en master.csv: " +
-            faltantes.join(", ")
+            faltantes.join(
+                ", "
+            )
         );
 
     }
 
-
-    /* ---------------------------------------------
-       CONVERSIÓN
-    --------------------------------------------- */
 
     const resultado = [];
 
@@ -396,7 +357,7 @@ function convertirCSV(
             );
 
 
-        const cronologia =
+        const j3 =
             limpiarValor(
                 fila[indiceJ3]
             );
@@ -414,14 +375,10 @@ function convertirCSV(
             );
 
 
-        /* -----------------------------------------
-           IGNORAR FILAS COMPLETAMENTE VACÍAS
-        ----------------------------------------- */
-
         if (
             codigo === "" &&
             nombre === "" &&
-            cronologia === "" &&
+            j3 === "" &&
             dieta === "" &&
             anatomia === ""
         ) {
@@ -430,13 +387,6 @@ function convertirCSV(
 
         }
 
-
-        /* -----------------------------------------
-           CREAR REGISTRO
-           
-           j3 y cronologia contienen exactamente
-           el mismo valor.
-        ----------------------------------------- */
 
         resultado.push({
 
@@ -447,10 +397,7 @@ function convertirCSV(
                 nombre,
 
             j3:
-                cronologia,
-
-            cronologia:
-                cronologia,
+                j3,
 
             dieta:
                 dieta,
@@ -466,7 +413,6 @@ function convertirCSV(
     return resultado;
 
 }
-
 
 /* =====================================================
    CARGAR MASTER.CSV
@@ -513,10 +459,6 @@ async function cargarMasterCSV(
             datos;
 
 
-        /* ---------------------------------------------
-           EVENTO DE CARGA
-        --------------------------------------------- */
-
         document.dispatchEvent(
 
             new CustomEvent(
@@ -530,34 +472,32 @@ async function cargarMasterCSV(
         );
 
 
-        /* ---------------------------------------------
-           CONSOLA
-        --------------------------------------------- */
-
         console.log(
             "========================================"
         );
 
+
         console.log(
-            "PalEntropía — LEEPALJSON v1.2 LTS"
+            "PalEntropía — LEEPALJSON v1.1 LTS"
         );
+
 
         console.log(
             "master.csv cargado correctamente"
         );
+
 
         console.log(
             "Paleofichas:",
             datos.length
         );
 
-        console.log(
-            "Campos preparados:"
-        );
 
         console.log(
-            "codigo, nombre, j3, cronologia, dieta, anatomia"
+            "Campos preparados:",
+            "codigo, nombre, j3, dieta, anatomia"
         );
+
 
         console.log(
             "========================================"
@@ -604,7 +544,7 @@ async function cargarMasterCSV(
 
 
 /* =====================================================
-   FUNCIÓN DE ACCESO
+   OBTENER DATOS
 ===================================================== */
 
 function obtenerPaleofichas() {
@@ -646,8 +586,6 @@ document.addEventListener(
 );
 
 
-/*
-========================================================
-FIN LEEPALJSON.js v1.2 LTS
-========================================================
-*/
+/* =====================================================
+   FIN LEEPALJSON.js v1.1 LTS
+===================================================== */
