@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-palgeosimplificado.js v1.3 LTS
+palgeosimplificado.js v1.4 LTS
 
 Módulo simplificado de tratamiento cronológico
 
@@ -42,44 +42,26 @@ MÁS ANTIGUO → MÁS RECIENTE
 
 --------------------------------------------------------
 
-CRITERIO DE ASIGNACIÓN v1.3
+CRITERIO DE ASIGNACIÓN v1.4
 
-Se incluyen los intervalos de PALGEO
-que contienen temporalmente el rango
-de la ficha.
+Se incluyen únicamente los intervalos de PALGEO
+que tengan SOLAPAMIENTO TEMPORAL REAL con el
+rango de la ficha.
 
-Los límites compartidos entre dos
-unidades geológicas reciben un tratamiento
-especial:
+IMPORTANTE:
 
-1. Si la ficha ATRAVIESA el límite:
-   → se incluyen ambas unidades.
+Que dos intervalos compartan únicamente un límite
+NO significa que exista solapamiento.
 
-2. Si la ficha TERMINA exactamente
-   en el límite:
-   → NO se incluye la unidad posterior.
+Ejemplo:
 
-3. Si la ficha COMIENZA exactamente
-   en el límite:
-   → se incluye la unidad posterior.
-
-Esto evita que una especie cuyo rango
-termina exactamente en un límite geológico
-aparezca artificialmente dentro de la
-unidad siguiente.
-
---------------------------------------------------------
-
-EJEMPLO:
-
-Cretácico
+Cretácico:
 145 → 66 Ma
 
-Paleógeno
+Paleógeno:
 66 → 23.03 Ma
 
 Ficha:
-
 70 → 66 Ma
 
 Resultado:
@@ -90,25 +72,30 @@ NO:
 
 Cretácico + Paleógeno
 
+
 --------------------------------------------------------
 
-Ficha:
+Si la ficha atraviesa el límite:
 
+Ficha:
 70 → 65 Ma
 
 Resultado:
 
 Cretácico + Paleógeno
 
+
 --------------------------------------------------------
 
-Ficha:
+Si la ficha comienza exactamente en el límite:
 
+Ficha:
 66 → 65 Ma
 
 Resultado:
 
 Paleógeno
+
 
 --------------------------------------------------------
 
@@ -125,6 +112,7 @@ NO:
 
 ========================================================
 */
+
 
 window.PALGEOSIMPLIFICADO = {
 
@@ -147,7 +135,9 @@ formatearValor(valor){
 
 
     /*
+    ------------------------------------------------------
     ACTUALIDAD
+    ------------------------------------------------------
     */
 
     if(valor === 0){
@@ -158,8 +148,10 @@ formatearValor(valor){
 
 
     /*
+    ------------------------------------------------------
     MENOS DE 0,001 Ma
-    → años enteros
+    → AÑOS ENTEROS
+    ------------------------------------------------------
     */
 
     if(valor < 0.001){
@@ -178,8 +170,10 @@ formatearValor(valor){
 
 
     /*
+    ------------------------------------------------------
     MENOS DE 1 Ma
-    → años
+    → AÑOS
+    ------------------------------------------------------
     */
 
     if(valor < 1){
@@ -198,7 +192,9 @@ formatearValor(valor){
 
 
     /*
+    ------------------------------------------------------
     MILLONES DE AÑOS
+    ------------------------------------------------------
     */
 
     let texto =
@@ -206,7 +202,7 @@ formatearValor(valor){
 
 
     /*
-    Eliminar ceros finales
+    ELIMINAR CEROS FINALES
     */
 
     texto =
@@ -217,7 +213,7 @@ formatearValor(valor){
 
 
     /*
-    Punto decimal → coma española
+    PUNTO DECIMAL → COMA ESPAÑOLA
     */
 
     texto =
@@ -250,7 +246,9 @@ decodificarRango(cronologia){
         .split("-");
 
 
-    if(partes.length !== 2){
+    if(
+        partes.length !== 2
+    ){
 
         return null;
 
@@ -284,7 +282,9 @@ decodificarRango(cronologia){
 
     return (
 
-        this.formatearValor(inicio)
+        this.formatearValor(
+            inicio
+        )
 
         +
 
@@ -292,7 +292,9 @@ decodificarRango(cronologia){
 
         +
 
-        this.formatearValor(fin)
+        this.formatearValor(
+            fin
+        )
 
     );
 
@@ -320,7 +322,9 @@ parsearValor(texto){
         .trim();
 
 
-    if(texto === ""){
+    if(
+        texto === ""
+    ){
 
         return null;
 
@@ -328,7 +332,9 @@ parsearValor(texto){
 
 
     /*
+    ------------------------------------------------------
     ACTUALIDAD
+    ------------------------------------------------------
     */
 
     if(
@@ -358,7 +364,9 @@ parsearValor(texto){
             .trim();
 
 
-        if(numero === ""){
+        if(
+            numero === ""
+        ){
 
             return null;
 
@@ -366,7 +374,11 @@ parsearValor(texto){
 
 
         /*
-        Punto = separador de miles
+        PUNTO = SEPARADOR DE MILES
+
+        21.700
+        ↓
+        21700
         */
 
         numero =
@@ -377,7 +389,11 @@ parsearValor(texto){
 
 
         /*
-        Coma = decimal
+        COMA = DECIMAL
+
+        21,7
+        ↓
+        21.7
         */
 
         numero =
@@ -388,7 +404,9 @@ parsearValor(texto){
 
 
         if(
-            !/^\d+(\.\d+)?$/.test(numero)
+            !/^\d+(\.\d+)?$/.test(
+                numero
+            )
         ){
 
             return null;
@@ -410,7 +428,14 @@ parsearValor(texto){
         }
 
 
-        return anos / 1000000;
+        /*
+        AÑOS → Ma
+        */
+
+        return (
+            anos /
+            1000000
+        );
 
     }
 
@@ -432,12 +457,18 @@ parsearValor(texto){
             .trim();
 
 
-        if(numero === ""){
+        if(
+            numero === ""
+        ){
 
             return null;
 
         }
 
+
+        /*
+        COMA → PUNTO DECIMAL
+        */
 
         numero =
             numero.replace(
@@ -447,7 +478,9 @@ parsearValor(texto){
 
 
         if(
-            !/^\d+(\.\d+)?$/.test(numero)
+            !/^\d+(\.\d+)?$/.test(
+                numero
+            )
         ){
 
             return null;
@@ -475,9 +508,11 @@ parsearValor(texto){
 
 
     /*
+    ------------------------------------------------------
     SIN UNIDAD
 
-    No se interpreta.
+    NO SE INTERPRETA.
+    ------------------------------------------------------
     */
 
     return null;
@@ -518,7 +553,8 @@ normalizarValor(valor){
 
 
     let decimal =
-        partes[1] || "0000";
+        partes[1] ||
+        "0000";
 
 
     decimal =
@@ -531,13 +567,9 @@ normalizarValor(valor){
     return (
 
         entero
-
         +
-
         "."
-
         +
-
         decimal
 
     );
@@ -551,7 +583,9 @@ normalizarValor(valor){
 
 codificarRango(texto){
 
-    if(!texto){
+    if(
+        !texto
+    ){
 
         return null;
 
@@ -563,11 +597,19 @@ codificarRango(texto){
         .trim();
 
 
+    /*
+    ------------------------------------------------------
+    SEPARAR LOS DOS EXTREMOS
+    ------------------------------------------------------
+    */
+
     let partes =
         texto.split("-");
 
 
-    if(partes.length !== 2){
+    if(
+        partes.length !== 2
+    ){
 
         return null;
 
@@ -592,6 +634,12 @@ codificarRango(texto){
     }
 
 
+    /*
+    ------------------------------------------------------
+    PARSEAR EXTREMOS
+    ------------------------------------------------------
+    */
+
     let inicio =
         this.parsearValor(
             inicioTexto
@@ -615,15 +663,25 @@ codificarRango(texto){
 
 
     /*
+    ------------------------------------------------------
     MÁS ANTIGUO → MÁS RECIENTE
+    ------------------------------------------------------
     */
 
-    if(inicio < fin){
+    if(
+        inicio < fin
+    ){
 
         return null;
 
     }
 
+
+    /*
+    ------------------------------------------------------
+    NORMALIZAR
+    ------------------------------------------------------
+    */
 
     let inicioNormalizado =
         this.normalizarValor(
@@ -650,13 +708,9 @@ codificarRango(texto){
     return (
 
         inicioNormalizado
-
         +
-
         "-"
-
         +
-
         finNormalizado
 
     );
@@ -670,7 +724,9 @@ codificarRango(texto){
 
 validarCronologia(cronologia){
 
-    if(!cronologia){
+    if(
+        !cronologia
+    ){
 
         return false;
 
@@ -681,6 +737,14 @@ validarCronologia(cronologia){
         String(cronologia)
         .trim();
 
+
+    /*
+    ------------------------------------------------------
+    FORMATO EXACTO
+
+    MMMM.DDDD-MMMM.DDDD
+    ------------------------------------------------------
+    */
 
     if(
         !/^\d{4}\.\d{4}-\d{4}\.\d{4}$/.test(
@@ -698,11 +762,15 @@ validarCronologia(cronologia){
 
 
     let inicio =
-        Number(partes[0]);
+        Number(
+            partes[0]
+        );
 
 
     let fin =
-        Number(partes[1]);
+        Number(
+            partes[1]
+        );
 
 
     if(
@@ -716,10 +784,14 @@ validarCronologia(cronologia){
 
 
     /*
+    ------------------------------------------------------
     MÁS ANTIGUO → MÁS RECIENTE
+    ------------------------------------------------------
     */
 
-    if(inicio < fin){
+    if(
+        inicio < fin
+    ){
 
         return false;
 
@@ -732,44 +804,119 @@ validarCronologia(cronologia){
 
 
 /* ======================================================
-   COMPROBAR INTERSECCIÓN GEOLÓGICA
+   COMPROBAR SOLAPAMIENTO TEMPORAL REAL
+   ======================================================
 
-   NUEVO CRITERIO v1.3
+   ESTA ES LA PARTE IMPORTANTE DE v1.4.
 
-   Devuelve true si el intervalo PALGEO
-   debe asignarse a la ficha.
+   NO se considera suficiente que dos intervalos
+   compartan únicamente un límite.
 
-   La comparación utiliza:
+   ------------------------------------------------------
 
-   inicio = límite antiguo de la ficha
-   fin    = límite reciente de la ficha
+   FICHA:
+
+   inicio = límite antiguo
+   fin    = límite reciente
+
 
    PALGEO:
 
    inicio_ma = límite antiguo
    fin_ma    = límite reciente
 
+
    ------------------------------------------------------
 
-   CASOS:
+   EJEMPLO 1:
 
-   Ficha 70 → 66
-   Unidad 145 → 66
+   Ficha:
+   70 → 66
 
+   Cretácico:
+   145 → 66
+
+   Hay tiempo compartido:
+
+   70 → 66
+
+   RESULTADO:
    TRUE
 
-   Ficha 70 → 65
-   Unidad 145 → 66
 
-   TRUE
+   ------------------------------------------------------
 
-   Ficha 66 → 65
-   Unidad 145 → 66
+   Ejemplo 2:
 
+   Ficha:
+   70 → 66
+
+   Paleógeno:
+   66 → 23
+
+   Solo comparten:
+
+   66
+
+   RESULTADO:
    FALSE
 
-   ======================================================
-   */
+
+   ------------------------------------------------------
+
+   Ejemplo 3:
+
+   Ficha:
+   70 → 65
+
+   Paleógeno:
+   66 → 23
+
+   Comparten:
+
+   66 → 65
+
+   RESULTADO:
+   TRUE
+
+
+   ------------------------------------------------------
+
+   Ejemplo 4:
+
+   Ficha:
+   66 → 65
+
+   Cretácico:
+   145 → 66
+
+   Solo comparten:
+
+   66
+
+   RESULTADO:
+   FALSE
+
+
+   ------------------------------------------------------
+
+   Ejemplo 5:
+
+   Ficha:
+   66 → 65
+
+   Paleógeno:
+   66 → 23
+
+   Comparten:
+
+   66 → 65
+
+   RESULTADO:
+   TRUE
+
+======================================================
+*/
 
 intervaloCompatible(
     inicio,
@@ -800,7 +947,7 @@ intervaloCompatible(
 
     /*
     ------------------------------------------------------
-    VALIDACIÓN BÁSICA
+    VALIDAR INTERVALO PALGEO
     ------------------------------------------------------
     */
 
@@ -815,113 +962,60 @@ intervaloCompatible(
 
     /*
     ------------------------------------------------------
-    EL INTERVALO DE PALGEO DEBE CONTENER
-    ALGUNA PARTE DEL RANGO DE LA FICHA.
+    CALCULAR LOS EXTREMOS DEL SOLAPAMIENTO
+    ------------------------------------------------------
 
-    Condición básica de intersección:
+    El extremo antiguo común será
+    el menor de los dos extremos antiguos.
 
-        inicio >= geoFin
-        &&
-        fin <= geoInicio
+    El extremo reciente común será
+    el mayor de los dos extremos recientes.
     ------------------------------------------------------
     */
 
-    if(
-        inicio < geoFin ||
-        fin > geoInicio
-    ){
+    const extremoAntiguo =
+        Math.min(
+            inicio,
+            geoInicio
+        );
 
-        return false;
 
-    }
+    const extremoReciente =
+        Math.max(
+            fin,
+            geoFin
+        );
 
 
     /*
     ------------------------------------------------------
-    CASO ESPECIAL:
+    SOLAPAMIENTO REAL
 
-    LA FICHA TERMINA EXACTAMENTE
-    EN EL LÍMITE RECIENTE DE LA UNIDAD.
+    Tiene que existir una distancia temporal
+    mayor que cero entre ambos extremos.
 
-    Ejemplo:
+    Si son iguales:
 
-    Ficha:
-    70 → 66
+        extremoAntiguo === extremoReciente
 
-    PALGEO:
-    145 → 66
+    solo existe un punto de contacto.
 
-    Aquí la ficha ha vivido dentro
-    de la unidad, por lo que se conserva.
+    Por tanto:
 
+        FALSE
     ------------------------------------------------------
     */
 
-    if(
-        fin === geoFin
-    ){
-
-        return true;
-
-    }
-
-
-    /*
-    ------------------------------------------------------
-    SI EL INICIO DE LA FICHA COINCIDE
-    CON EL LÍMITE RECIENTE DE LA UNIDAD
-    Y LA FICHA CONTINÚA HACIA EL PRESENTE,
-    ESTE INTERVALO NO SE CONSIDERA
-    COMO PARTE DE LA UNIDAD ANTERIOR.
-
-    Ejemplo:
-
-    Ficha:
-    66 → 65
-
-    Unidad:
-    145 → 66
-
-    NO pertenece a esta unidad.
-    ------------------------------------------------------
-    */
-
-    if(
-        inicio === geoFin &&
-        fin < geoFin
-    ){
-
-        return false;
-
-    }
-
-
-    /*
-    ------------------------------------------------------
-    CASO GENERAL
-
-    El rango atraviesa o está contenido
-    dentro de la unidad.
-
-    ------------------------------------------------------
-    */
-
-    return true;
+    return (
+        extremoAntiguo >
+        extremoReciente
+    );
 
 },
 
 
 /* ======================================================
    EXTRAER DATOS DE PALGEO
-
-   SISTEMA B MODIFICADO
-
-   v1.3
-
-   Los límites compartidos se tratan
-   de forma explícita.
-
-   No se eliminan datos internos.
    ====================================================== */
 
 extraerPALGEO(cronologia){
@@ -940,8 +1034,9 @@ extraerPALGEO(cronologia){
 
 
     /*
-    La extracción solo trabaja
-    con cronología interna válida.
+    ------------------------------------------------------
+    VALIDAR CRONOLOGÍA
+    ------------------------------------------------------
     */
 
     if(
@@ -955,18 +1050,34 @@ extraerPALGEO(cronologia){
     }
 
 
+    /*
+    ------------------------------------------------------
+    OBTENER EXTREMOS
+    ------------------------------------------------------
+    */
+
     let partes =
         String(cronologia)
         .split("-");
 
 
     let inicio =
-        Number(partes[0]);
+        Number(
+            partes[0]
+        );
 
 
     let fin =
-        Number(partes[1]);
+        Number(
+            partes[1]
+        );
 
+
+    /*
+    ------------------------------------------------------
+    RESULTADO
+    ------------------------------------------------------
+    */
 
     let resultado = {
 
@@ -992,7 +1103,8 @@ extraerPALGEO(cronologia){
 
             /*
             ------------------------------------------------
-            COMPROBAR COMPATIBILIDAD
+            SOLO CONTINÚA SI EXISTE
+            SOLAPAMIENTO REAL
             ------------------------------------------------
             */
 
@@ -1011,7 +1123,7 @@ extraerPALGEO(cronologia){
 
             /*
             =================================================
-            CÓDIGO
+            CÓDIGOS INTERNOS
             =================================================
             */
 
@@ -1031,7 +1143,7 @@ extraerPALGEO(cronologia){
 
             /*
             =================================================
-            PERÍODO
+            PERÍODOS
             =================================================
             */
 
@@ -1051,7 +1163,7 @@ extraerPALGEO(cronologia){
 
             /*
             =================================================
-            EDAD
+            EDADES
             =================================================
             */
 
@@ -1080,13 +1192,13 @@ extraerPALGEO(cronologia){
 
 /* ======================================================
    ANALIZAR
-
-   FUNCIÓN PRINCIPAL
    ====================================================== */
 
 analizar(cronologia){
 
-    if(!cronologia){
+    if(
+        !cronologia
+    ){
 
         return null;
 
@@ -1094,8 +1206,9 @@ analizar(cronologia){
 
 
     /*
-    Solo se acepta aquí
-    cronología interna.
+    ------------------------------------------------------
+    VALIDAR CRONOLOGÍA
+    ------------------------------------------------------
     */
 
     if(
@@ -1109,17 +1222,27 @@ analizar(cronologia){
     }
 
 
+    /*
+    ------------------------------------------------------
+    EXTREMOS
+    ------------------------------------------------------
+    */
+
     let partes =
         String(cronologia)
         .split("-");
 
 
     let inicio =
-        Number(partes[0]);
+        Number(
+            partes[0]
+        );
 
 
     let fin =
-        Number(partes[1]);
+        Number(
+            partes[1]
+        );
 
 
     if(
@@ -1133,7 +1256,9 @@ analizar(cronologia){
 
 
     /*
+    ------------------------------------------------------
     EXTRAER PALGEO
+    ------------------------------------------------------
     */
 
     let datos =
@@ -1142,7 +1267,9 @@ analizar(cronologia){
         );
 
 
-    if(!datos){
+    if(
+        !datos
+    ){
 
         return null;
 
@@ -1150,7 +1277,9 @@ analizar(cronologia){
 
 
     /*
+    ------------------------------------------------------
     RESULTADO FINAL
+    ------------------------------------------------------
     */
 
     return {
@@ -1188,6 +1317,8 @@ analizar(cronologia){
 
 /*
 ========================================================
-FIN PALGEOSIMPLIFICADO v1.3 LTS
+FIN PALGEOSIMPLIFICADO v1.4 LTS
 ========================================================
 */
+
+
