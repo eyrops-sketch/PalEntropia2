@@ -1,44 +1,32 @@
 /*
 ========================================================
-LEEPALJSON.js v1.0
+LEEPALJSON.js v1.1 LTS
 Lector / conversor de master.csv
 PalEntropía — Generador
 ========================================================
 
 FUNCIÓN
 -------
-Lee master.csv y extrae exclusivamente:
+Lee master.csv y extrae:
 
 j1 → codigo
 j2 → nombre
+j3 → cronologia
 j7 → dieta
 j8 → anatomia
-
-El módulo convierte la estructura del CSV en objetos
-preparados para ser utilizados directamente por el
-generador.
-
-ENTRADA
--------
-master.csv
-
-Columnas utilizadas:
-j1
-j2
-j7
-j8
 
 SALIDA
 ------
 window.PALEOFICHAS
 
 [
-  {
-    codigo: "...",
-    nombre: "...",
-    dieta: "...",
-    anatomia: "..."
-  }
+    {
+        codigo: "...",
+        nombre: "...",
+        cronologia: "...",
+        dieta: "...",
+        anatomia: "..."
+    }
 ]
 
 ========================================================
@@ -49,8 +37,6 @@ window.PALEOFICHAS = [];
 
 /* =====================================================
    PARSER CSV
-   -----------------------------------------------------
-   Permite campos entre comillas y comas dentro del texto.
 ===================================================== */
 
 function parseCSV(texto) {
@@ -61,26 +47,38 @@ function parseCSV(texto) {
     let campo = "";
     let dentroComillas = false;
 
-    for (let i = 0; i < texto.length; i++) {
+
+    for (
+        let i = 0;
+        i < texto.length;
+        i++
+    ) {
 
         const caracter = texto[i];
         const siguiente = texto[i + 1];
+
 
         /* ---------------------------------------------
            COMILLAS
         --------------------------------------------- */
 
-        if (caracter === '"') {
+        if (
+            caracter === '"'
+        ) {
 
-            /* Comilla doble escapada */
-            if (dentroComillas && siguiente === '"') {
+            if (
+                dentroComillas &&
+                siguiente === '"'
+            ) {
 
                 campo += '"';
+
                 i++;
 
             } else {
 
-                dentroComillas = !dentroComillas;
+                dentroComillas =
+                    !dentroComillas;
 
             }
 
@@ -92,9 +90,13 @@ function parseCSV(texto) {
            SEPARADOR
         --------------------------------------------- */
 
-        if (caracter === ',' && !dentroComillas) {
+        if (
+            caracter === ',' &&
+            !dentroComillas
+        ) {
 
             fila.push(campo);
+
             campo = "";
 
             continue;
@@ -106,24 +108,39 @@ function parseCSV(texto) {
         --------------------------------------------- */
 
         if (
-            (caracter === '\n' || caracter === '\r') &&
+            (
+                caracter === '\n' ||
+                caracter === '\r'
+            ) &&
             !dentroComillas
         ) {
 
-            /* Evitar doble salto CRLF */
             if (
                 caracter === '\r' &&
                 siguiente === '\n'
             ) {
+
                 i++;
+
             }
+
 
             fila.push(campo);
+
             campo = "";
 
-            if (fila.some(valor => valor.trim() !== "")) {
+
+            if (
+                fila.some(
+                    valor =>
+                        valor.trim() !== ""
+                )
+            ) {
+
                 filas.push(fila);
+
             }
+
 
             fila = [];
 
@@ -132,10 +149,11 @@ function parseCSV(texto) {
 
 
         /* ---------------------------------------------
-           CARACTER NORMAL
+           CARÁCTER NORMAL
         --------------------------------------------- */
 
         campo += caracter;
+
     }
 
 
@@ -143,17 +161,30 @@ function parseCSV(texto) {
        ÚLTIMA FILA
     --------------------------------------------- */
 
-    if (campo !== "" || fila.length > 0) {
+    if (
+        campo !== "" ||
+        fila.length > 0
+    ) {
 
         fila.push(campo);
 
-        if (fila.some(valor => valor.trim() !== "")) {
+
+        if (
+            fila.some(
+                valor =>
+                    valor.trim() !== ""
+            )
+        ) {
+
             filas.push(fila);
+
         }
+
     }
 
 
     return filas;
+
 }
 
 
@@ -163,13 +194,20 @@ function parseCSV(texto) {
 
 function limpiarValor(valor) {
 
-    if (valor === undefined || valor === null) {
+    if (
+        valor === undefined ||
+        valor === null
+    ) {
+
         return "";
+
     }
+
 
     return String(valor)
         .replace(/^\uFEFF/, "")
         .trim();
+
 }
 
 
@@ -179,13 +217,18 @@ function limpiarValor(valor) {
 
 function convertirCSV(textoCSV) {
 
-    const filas = parseCSV(textoCSV);
+    const filas =
+        parseCSV(textoCSV);
 
-    if (!filas.length) {
+
+    if (
+        !filas.length
+    ) {
 
         throw new Error(
             "master.csv está vacío o no contiene datos."
         );
+
     }
 
 
@@ -193,15 +236,33 @@ function convertirCSV(textoCSV) {
        CABECERA
     --------------------------------------------- */
 
-    const cabecera = filas[0].map(
-        valor => limpiarValor(valor).toLowerCase()
-    );
+    const cabecera =
+        filas[0].map(
+            valor =>
+                limpiarValor(
+                    valor
+                ).toLowerCase()
+        );
 
 
-    const indiceJ1 = cabecera.indexOf("j1");
-    const indiceJ2 = cabecera.indexOf("j2");
-    const indiceJ7 = cabecera.indexOf("j7");
-    const indiceJ8 = cabecera.indexOf("j8");
+    const indiceJ1 =
+        cabecera.indexOf("j1");
+
+
+    const indiceJ2 =
+        cabecera.indexOf("j2");
+
+
+    const indiceJ3 =
+        cabecera.indexOf("j3");
+
+
+    const indiceJ7 =
+        cabecera.indexOf("j7");
+
+
+    const indiceJ8 =
+        cabecera.indexOf("j8");
 
 
     /* ---------------------------------------------
@@ -210,18 +271,61 @@ function convertirCSV(textoCSV) {
 
     const faltantes = [];
 
-    if (indiceJ1 === -1) faltantes.push("j1");
-    if (indiceJ2 === -1) faltantes.push("j2");
-    if (indiceJ7 === -1) faltantes.push("j7");
-    if (indiceJ8 === -1) faltantes.push("j8");
+
+    if (
+        indiceJ1 === -1
+    ) {
+
+        faltantes.push("j1");
+
+    }
 
 
-    if (faltantes.length) {
+    if (
+        indiceJ2 === -1
+    ) {
+
+        faltantes.push("j2");
+
+    }
+
+
+    if (
+        indiceJ3 === -1
+    ) {
+
+        faltantes.push("j3");
+
+    }
+
+
+    if (
+        indiceJ7 === -1
+    ) {
+
+        faltantes.push("j7");
+
+    }
+
+
+    if (
+        indiceJ8 === -1
+    ) {
+
+        faltantes.push("j8");
+
+    }
+
+
+    if (
+        faltantes.length
+    ) {
 
         throw new Error(
             "Faltan columnas obligatorias en master.csv: " +
             faltantes.join(", ")
         );
+
     }
 
 
@@ -232,26 +336,44 @@ function convertirCSV(textoCSV) {
     const resultado = [];
 
 
-    for (let i = 1; i < filas.length; i++) {
+    for (
+        let i = 1;
+        i < filas.length;
+        i++
+    ) {
 
-        const fila = filas[i];
+        const fila =
+            filas[i];
 
 
-        const codigo = limpiarValor(
-            fila[indiceJ1]
-        );
+        const codigo =
+            limpiarValor(
+                fila[indiceJ1]
+            );
 
-        const nombre = limpiarValor(
-            fila[indiceJ2]
-        );
 
-        const dieta = limpiarValor(
-            fila[indiceJ7]
-        );
+        const nombre =
+            limpiarValor(
+                fila[indiceJ2]
+            );
 
-        const anatomia = limpiarValor(
-            fila[indiceJ8]
-        );
+
+        const cronologia =
+            limpiarValor(
+                fila[indiceJ3]
+            );
+
+
+        const dieta =
+            limpiarValor(
+                fila[indiceJ7]
+            );
+
+
+        const anatomia =
+            limpiarValor(
+                fila[indiceJ8]
+            );
 
 
         /* -----------------------------------------
@@ -261,32 +383,44 @@ function convertirCSV(textoCSV) {
         if (
             codigo === "" &&
             nombre === "" &&
+            cronologia === "" &&
             dieta === "" &&
             anatomia === ""
         ) {
+
             continue;
+
         }
 
 
         /* -----------------------------------------
-           CREAR REGISTRO DEL GENERADOR
+           CREAR REGISTRO
         ----------------------------------------- */
 
         resultado.push({
 
-            codigo: codigo,
+            codigo:
+                codigo,
 
-            nombre: nombre,
+            nombre:
+                nombre,
 
-            dieta: dieta,
+            cronologia:
+                cronologia,
 
-            anatomia: anatomia
+            dieta:
+                dieta,
+
+            anatomia:
+                anatomia
 
         });
+
     }
 
 
     return resultado;
+
 }
 
 
@@ -300,10 +434,13 @@ async function cargarMasterCSV(
 
     try {
 
-        const respuesta = await fetch(ruta);
+        const respuesta =
+            await fetch(ruta);
 
 
-        if (!respuesta.ok) {
+        if (
+            !respuesta.ok
+        ) {
 
             throw new Error(
                 "No se pudo cargar " +
@@ -312,20 +449,22 @@ async function cargarMasterCSV(
                 respuesta.status +
                 ")"
             );
+
         }
 
 
-        const textoCSV = await respuesta.text();
+        const textoCSV =
+            await respuesta.text();
 
 
-        const datos = convertirCSV(textoCSV);
+        const datos =
+            convertirCSV(
+                textoCSV
+            );
 
 
-        /* ---------------------------------------------
-           ENTREGAR DATOS AL GENERADOR
-        --------------------------------------------- */
-
-        window.PALEOFICHAS = datos;
+        window.PALEOFICHAS =
+            datos;
 
 
         /* ---------------------------------------------
@@ -333,21 +472,28 @@ async function cargarMasterCSV(
         --------------------------------------------- */
 
         document.dispatchEvent(
+
             new CustomEvent(
                 "palentropia:datos-cargados",
                 {
-                    detail: datos
+                    detail:
+                        datos
                 }
             )
+
         );
 
+
+        /* ---------------------------------------------
+           CONSOLA
+        --------------------------------------------- */
 
         console.log(
             "========================================"
         );
 
         console.log(
-            "PalEntropía — LEEPALJSON"
+            "PalEntropía — LEEPALJSON v1.1 LTS"
         );
 
         console.log(
@@ -364,7 +510,7 @@ async function cargarMasterCSV(
         );
 
         console.log(
-            "codigo, nombre, dieta, anatomia"
+            "codigo, nombre, cronologia, dieta, anatomia"
         );
 
         console.log(
@@ -377,7 +523,9 @@ async function cargarMasterCSV(
     }
 
 
-    catch (error) {
+    catch (
+        error
+    ) {
 
         console.error(
             "ERROR LEEPALJSON:",
@@ -385,34 +533,38 @@ async function cargarMasterCSV(
         );
 
 
-        window.PALEOFICHAS = [];
+        window.PALEOFICHAS =
+            [];
 
 
         document.dispatchEvent(
+
             new CustomEvent(
                 "palentropia:error-carga",
                 {
-                    detail: error
+                    detail:
+                        error
                 }
             )
+
         );
 
 
         throw error;
+
     }
+
 }
 
 
 /* =====================================================
    FUNCIÓN DE ACCESO
-   -----------------------------------------------------
-   Permite al generador solicitar los datos ya
-   preparados.
 ===================================================== */
 
 function obtenerPaleofichas() {
 
     return window.PALEOFICHAS;
+
 }
 
 
@@ -422,19 +574,20 @@ function obtenerPaleofichas() {
 
 window.LEEPALJSON = {
 
-    cargar: cargarMasterCSV,
+    cargar:
+        cargarMasterCSV,
 
-    convertir: convertirCSV,
+    convertir:
+        convertirCSV,
 
-    obtener: obtenerPaleofichas
+    obtener:
+        obtenerPaleofichas
 
 };
 
 
 /* =====================================================
    CARGA AUTOMÁTICA
-   -----------------------------------------------------
-   Al cargar el módulo se intenta leer master.csv.
 ===================================================== */
 
 document.addEventListener(
@@ -447,5 +600,8 @@ document.addEventListener(
 );
 
 
-
-
+/*
+========================================================
+FIN LEEPALJSON.js v1.1 LTS
+========================================================
+*/
