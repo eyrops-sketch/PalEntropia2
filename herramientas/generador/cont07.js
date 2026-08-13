@@ -115,8 +115,27 @@ window.CONT07 = {
         geológicos hasta que PALGEO los entregue.
         */
 
-        this.geologia =
-            null;
+    this.geologia = {
+
+    rango:
+        datos.rango || null,
+
+    codes:
+        Array.isArray(datos.codes)
+            ? datos.codes
+            : [],
+
+    periodo:
+        Array.isArray(datos.periodo)
+            ? datos.periodo
+            : [],
+
+    edad:
+        Array.isArray(datos.edad)
+            ? datos.edad
+            : []
+
+};
 
 
         return true;
