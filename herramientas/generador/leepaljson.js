@@ -1,6 +1,6 @@
 /*
 ========================================================
-LEEPALJSON.js v1.1 LTS
+LEEPALJSON.js v1.2 LTS
 Lector / conversor de master.csv
 PalEntropía — Generador
 ========================================================
@@ -15,19 +15,20 @@ j3 → cronologia
 j7 → dieta
 j8 → anatomia
 
-SALIDA
-------
-window.PALEOFICHAS
+COMPATIBILIDAD
+--------------
+El registro entrega:
 
-[
-    {
-        codigo: "...",
-        nombre: "...",
-        cronologia: "...",
-        dieta: "...",
-        anatomia: "..."
-    }
-]
+codigo
+nombre
+j3
+cronologia
+dieta
+anatomia
+
+De esta forma se mantiene compatibilidad con
+los módulos que utilizan j3 y con los que utilizan
+cronologia.
 
 ========================================================
 */
@@ -54,8 +55,11 @@ function parseCSV(texto) {
         i++
     ) {
 
-        const caracter = texto[i];
-        const siguiente = texto[i + 1];
+        const caracter =
+            texto[i];
+
+        const siguiente =
+            texto[i + 1];
 
 
         /* ---------------------------------------------
@@ -95,7 +99,9 @@ function parseCSV(texto) {
             !dentroComillas
         ) {
 
-            fila.push(campo);
+            fila.push(
+                campo
+            );
 
             campo = "";
 
@@ -125,7 +131,9 @@ function parseCSV(texto) {
             }
 
 
-            fila.push(campo);
+            fila.push(
+                campo
+            );
 
             campo = "";
 
@@ -137,7 +145,9 @@ function parseCSV(texto) {
                 )
             ) {
 
-                filas.push(fila);
+                filas.push(
+                    fila
+                );
 
             }
 
@@ -166,7 +176,9 @@ function parseCSV(texto) {
         fila.length > 0
     ) {
 
-        fila.push(campo);
+        fila.push(
+            campo
+        );
 
 
         if (
@@ -176,7 +188,9 @@ function parseCSV(texto) {
             )
         ) {
 
-            filas.push(fila);
+            filas.push(
+                fila
+            );
 
         }
 
@@ -215,10 +229,14 @@ function limpiarValor(valor) {
    CONVERSIÓN CSV → PALEOFICHAS
 ===================================================== */
 
-function convertirCSV(textoCSV) {
+function convertirCSV(
+    textoCSV
+) {
 
     const filas =
-        parseCSV(textoCSV);
+        parseCSV(
+            textoCSV
+        );
 
 
     if (
@@ -246,27 +264,37 @@ function convertirCSV(textoCSV) {
 
 
     const indiceJ1 =
-        cabecera.indexOf("j1");
+        cabecera.indexOf(
+            "j1"
+        );
 
 
     const indiceJ2 =
-        cabecera.indexOf("j2");
+        cabecera.indexOf(
+            "j2"
+        );
 
 
     const indiceJ3 =
-        cabecera.indexOf("j3");
+        cabecera.indexOf(
+            "j3"
+        );
 
 
     const indiceJ7 =
-        cabecera.indexOf("j7");
+        cabecera.indexOf(
+            "j7"
+        );
 
 
     const indiceJ8 =
-        cabecera.indexOf("j8");
+        cabecera.indexOf(
+            "j8"
+        );
 
 
     /* ---------------------------------------------
-       COMPROBACIÓN DE COLUMNAS
+       COMPROBAR COLUMNAS
     --------------------------------------------- */
 
     const faltantes = [];
@@ -276,7 +304,9 @@ function convertirCSV(textoCSV) {
         indiceJ1 === -1
     ) {
 
-        faltantes.push("j1");
+        faltantes.push(
+            "j1"
+        );
 
     }
 
@@ -285,7 +315,9 @@ function convertirCSV(textoCSV) {
         indiceJ2 === -1
     ) {
 
-        faltantes.push("j2");
+        faltantes.push(
+            "j2"
+        );
 
     }
 
@@ -294,7 +326,9 @@ function convertirCSV(textoCSV) {
         indiceJ3 === -1
     ) {
 
-        faltantes.push("j3");
+        faltantes.push(
+            "j3"
+        );
 
     }
 
@@ -303,7 +337,9 @@ function convertirCSV(textoCSV) {
         indiceJ7 === -1
     ) {
 
-        faltantes.push("j7");
+        faltantes.push(
+            "j7"
+        );
 
     }
 
@@ -312,7 +348,9 @@ function convertirCSV(textoCSV) {
         indiceJ8 === -1
     ) {
 
-        faltantes.push("j8");
+        faltantes.push(
+            "j8"
+        );
 
     }
 
@@ -395,6 +433,9 @@ function convertirCSV(textoCSV) {
 
         /* -----------------------------------------
            CREAR REGISTRO
+           
+           j3 y cronologia contienen exactamente
+           el mismo valor.
         ----------------------------------------- */
 
         resultado.push({
@@ -404,6 +445,9 @@ function convertirCSV(textoCSV) {
 
             nombre:
                 nombre,
+
+            j3:
+                cronologia,
 
             cronologia:
                 cronologia,
@@ -435,7 +479,9 @@ async function cargarMasterCSV(
     try {
 
         const respuesta =
-            await fetch(ruta);
+            await fetch(
+                ruta
+            );
 
 
         if (
@@ -493,7 +539,7 @@ async function cargarMasterCSV(
         );
 
         console.log(
-            "PalEntropía — LEEPALJSON v1.1 LTS"
+            "PalEntropía — LEEPALJSON v1.2 LTS"
         );
 
         console.log(
@@ -510,7 +556,7 @@ async function cargarMasterCSV(
         );
 
         console.log(
-            "codigo, nombre, cronologia, dieta, anatomia"
+            "codigo, nombre, j3, cronologia, dieta, anatomia"
         );
 
         console.log(
@@ -602,6 +648,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN LEEPALJSON.js v1.1 LTS
+FIN LEEPALJSON.js v1.2 LTS
 ========================================================
 */
