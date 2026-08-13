@@ -505,10 +505,7 @@
 
 <!-- =====================================================
      ALMACÉN MAESTRO
-     
-     Recibe un j1 y carga en memoria TODO su registro
-     procedente de master.csv.
-====================================================== -->
+     ===================================================== -->
 
 <script>
 
@@ -517,11 +514,6 @@ window.MASTER_ACTUAL = null;
 
 window.cargarMasterPorJ1 =
 async function(j1) {
-
-
-    /* =================================================
-       COMPROBAR J1
-       ================================================= */
 
     if (
         j1 === undefined ||
@@ -535,10 +527,6 @@ async function(j1) {
 
     }
 
-
-    /* =================================================
-       CARGAR MASTER.CSV
-       ================================================= */
 
     const respuesta =
         await fetch(
@@ -559,22 +547,13 @@ async function(j1) {
         await respuesta.text();
 
 
-    /* =================================================
-       SEPARAR LÍNEAS
-       ================================================= */
-
     const lineas =
         texto.split(/\r?\n/);
 
 
-    /* =================================================
-       BUSCAR J1
-       ================================================= */
-
     for (
         const linea of lineas
     ) {
-
 
         if (
             !linea.trim()
@@ -614,10 +593,6 @@ async function(j1) {
         }
 
 
-        /* =================================================
-           GUARDAR REGISTRO COMPLETO
-           ================================================= */
-
         window.MASTER_ACTUAL = {
 
             j1:
@@ -649,7 +624,6 @@ async function(j1) {
 
             j10:
                 columnas[9]?.trim() || "",
-
 
             e1:
                 columnas[10]?.trim() || "",
@@ -692,10 +666,6 @@ async function(j1) {
     }
 
 
-    /* =================================================
-       NO ENCONTRADO
-       ================================================= */
-
     window.MASTER_ACTUAL = null;
 
     return null;
@@ -727,23 +697,17 @@ async function(j1) {
 
 <script src="leepalgeo.js"></script>
 
-
-<!-- =====================================================
-     CATÁLOGO DE CABECERAS
-     ===================================================== -->
-
 <script src="palcabecera.js"></script>
 
 
 <!-- =====================================================
      CONTENEDOR GEOLOGÍA
-     
-     CONT07 debe existir antes de que CAB07 pueda
-     utilizarlo.
+
+     MODIFICACIÓN:
+     CONT07 se carga antes de CAB07.
      ===================================================== -->
 
 <script src="cont07.js"></script>
-
 
 <!-- =====================================================
      GENERADOR 1.1
