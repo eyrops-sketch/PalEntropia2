@@ -1,6 +1,6 @@
 /* ========================================================
    PalEntropía
-   cargacont.js v1.4 LTS
+   cargacont.js v1.5 LTS
 
    COMPUERTA DEL CONTENEDOR
 
@@ -13,11 +13,16 @@
      en URL absolutas
    - Entrega al generador un registro completamente preparado
 
+   CAMBIO v1.5:
+   - Se incorpora j3 procedente de master.csv
+   - j3 se entrega ahora al CONTENEDOR FINAL
+
    SALIDA:
 
    {
        j1: "...",
        j2: "...",
+       j3: "...",
        j7: "...",
        j8: "...",
        i0: "https://palentropia.es/...",
@@ -395,34 +400,6 @@ window.CARGACONT = {
 
     /* ====================================================
        CONVERTIR RUTA EN URL ABSOLUTA
-
-       IMPORTANTE:
-
-       BUSCARUTA devuelve rutas relativas respecto
-       a la ubicación del generador.
-
-       Ejemplos:
-
-       ../multimedia/001_075/004_14_i0.jpg
-
-       → https://palentropia.es/
-         herramientas/multimedia/001_075/004_14_i0.jpg
-
-
-       ../multimedia/new/006_01_i0.jpg
-
-       → https://palentropia.es/
-         herramientas/multimedia/new/006_01_i0.jpg
-
-
-       ../../paleofichas/vol001/...
-
-       → https://palentropia.es/
-         paleofichas/vol001/...
-
-
-       NO se eliminan simplemente los ../.
-       Se resuelven correctamente.
     ==================================================== */
 
     convertirRuta(ruta){
@@ -480,19 +457,6 @@ window.CARGACONT = {
 
         /* --------------------------------------------
            RESOLVER RUTA RELATIVA
-
-           Las rutas que entrega BUSCARUTA están
-           construidas desde la ubicación:
-
-           /herramientas/generador/
-
-           Por tanto usamos esa ubicación como
-           base real.
-
-           Esto permite resolver correctamente:
-
-           ../multimedia/
-           ../../paleofichas/
         -------------------------------------------- */
 
         const base =
@@ -512,23 +476,6 @@ window.CARGACONT = {
 
     /* ====================================================
        PREPARAR IMÁGENES
-
-       BUSCARUTA devuelve:
-
-       {
-           j1,
-           caso,
-           imagenes: [
-               {
-                   tipo: "i0",
-                   ruta: "...",
-                   estado: "ok"
-               }
-           ]
-       }
-
-       CARGACONT transforma las rutas y entrega
-       directamente i0 / i2 / i3.
     ==================================================== */
 
     prepararImagenes(
@@ -621,8 +568,7 @@ window.CARGACONT = {
 
     },
 
-
-    /* ====================================================
+       /* ====================================================
        CARGAR POR J1
     ==================================================== */
 
@@ -659,6 +605,36 @@ window.CARGACONT = {
                 "CARGACONT: el j1 " +
                 j1 +
                 " no existe en master.csv."
+            );
+
+        }
+
+
+        /* --------------------------------------------
+           OBTENER J3 DESDE MASTER.CSV
+           
+           IMPORTANTE:
+           j3 es la cronología oficial del registro.
+        -------------------------------------------- */
+
+        const j3 =
+            registroCSV.j3;
+
+
+        /* --------------------------------------------
+           COMPROBAR J3
+        -------------------------------------------- */
+
+        if(
+            j3 === undefined ||
+            j3 === null ||
+            String(j3).trim() === ""
+        ){
+
+            throw new Error(
+                "CARGACONT: j3/cronología vacío para " +
+                j1 +
+                "."
             );
 
         }
@@ -713,6 +689,8 @@ window.CARGACONT = {
 
         /* --------------------------------------------
            REGISTRO FINAL
+
+           AHORA INCLUYE j3.
         -------------------------------------------- */
 
         const resultado = {
@@ -722,6 +700,9 @@ window.CARGACONT = {
 
             j2:
                 datosFinales.j2,
+
+            j3:
+                String(j3).trim(),
 
             j7:
                 datosFinales.j7,
@@ -775,7 +756,7 @@ window.CARGACONT = {
         );
 
         console.log(
-            "PalEntropía — CARGACONT v1.4 LTS"
+            "PalEntropía — CARGACONT v1.5 LTS"
         );
 
         console.log(
@@ -899,9 +880,5 @@ window.CARGACONT = {
 
 
 /* ========================================================
-   FIN CARGACONT v1.4 LTS
+   FIN CARGACONT v1.5 LTS
 ======================================================== */
-
-
-
-
