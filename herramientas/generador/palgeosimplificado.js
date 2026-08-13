@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-palgeosimplificado.js v1.2 LTS
+palgeosimplificado.js v1.3 LTS
 
 Módulo simplificado de tratamiento cronológico
 
@@ -26,23 +26,7 @@ FUNCIONES:
 
 --------------------------------------------------------
 
-ENTRADAS HUMANAS VÁLIDAS:
-
-521 Ma - 509 Ma
-
-59,2 Ma - 56 Ma
-
-11.700 a - 4.200 a
-
-11700 a - 4200 a
-
-21.700 a - Actualidad
-
-21700 a - Actualidad
-
---------------------------------------------------------
-
-FORMATO INTERNO VÁLIDO:
+FORMATO INTERNO:
 
 MMMM.DDDD-MMMM.DDDD
 
@@ -56,20 +40,77 @@ REGLA TEMPORAL:
 
 MÁS ANTIGUO → MÁS RECIENTE
 
-521 Ma - 509 Ma     ✓
-21.700 a - Actualidad ✓
+--------------------------------------------------------
 
-509 Ma - 521 Ma     ✗
+CRITERIO DE ASIGNACIÓN v1.3
+
+Se incluyen los intervalos de PALGEO
+que contienen temporalmente el rango
+de la ficha.
+
+Los límites compartidos entre dos
+unidades geológicas reciben un tratamiento
+especial:
+
+1. Si la ficha ATRAVIESA el límite:
+   → se incluyen ambas unidades.
+
+2. Si la ficha TERMINA exactamente
+   en el límite:
+   → NO se incluye la unidad posterior.
+
+3. Si la ficha COMIENZA exactamente
+   en el límite:
+   → se incluye la unidad posterior.
+
+Esto evita que una especie cuyo rango
+termina exactamente en un límite geológico
+aparezca artificialmente dentro de la
+unidad siguiente.
 
 --------------------------------------------------------
 
-SISTEMA B
+EJEMPLO:
 
-Se incluyen TODOS los intervalos de PALGEO
-que intersecten temporalmente con la cronología
-consultada.
+Cretácico
+145 → 66 Ma
 
-Los límites exactos TAMBIÉN cuentan.
+Paleógeno
+66 → 23.03 Ma
+
+Ficha:
+
+70 → 66 Ma
+
+Resultado:
+
+Cretácico
+
+NO:
+
+Cretácico + Paleógeno
+
+--------------------------------------------------------
+
+Ficha:
+
+70 → 65 Ma
+
+Resultado:
+
+Cretácico + Paleógeno
+
+--------------------------------------------------------
+
+Ficha:
+
+66 → 65 Ma
+
+Resultado:
+
+Paleógeno
+
+--------------------------------------------------------
 
 PALGEO es la única fuente de datos geológicos.
 
@@ -90,13 +131,7 @@ window.PALGEOSIMPLIFICADO = {
 
 /* ======================================================
    FORMATEAR UN VALOR
-
-   Entrada:
-   millones de años
-
-   Salida humana:
-   Ma / a / Actualidad
-====================================================== */
+   ====================================================== */
 
 formatearValor(valor){
 
@@ -145,12 +180,6 @@ formatearValor(valor){
     /*
     MENOS DE 1 Ma
     → años
-
-    Ejemplo:
-
-    0.0117 Ma
-    ↓
-    11.700 a
     */
 
     if(valor < 1){
@@ -205,15 +234,7 @@ formatearValor(valor){
 
 /* ======================================================
    DECODIFICAR RANGO INTERNO
-
-   Entrada:
-
-   0521.0000-0509.0000
-
-   Salida:
-
-   521 Ma - 509 Ma
-====================================================== */
+   ====================================================== */
 
 decodificarRango(cronologia){
 
@@ -280,22 +301,7 @@ decodificarRango(cronologia){
 
 /* ======================================================
    PARSEAR VALOR HUMANO
-
-   Acepta:
-
-   521 Ma
-   59,2 Ma
-
-   11.700 a
-   11700 a
-
-   21.700 a
-   21700 a
-
-   Actualidad
-
-   Devuelve millones de años.
-====================================================== */
+   ====================================================== */
 
 parsearValor(texto){
 
@@ -337,7 +343,7 @@ parsearValor(texto){
 
     /* ==================================================
        AÑOS
-    ================================================== */
+       ================================================== */
 
     if(
         /\s*a$/i.test(texto)
@@ -361,10 +367,6 @@ parsearValor(texto){
 
         /*
         Punto = separador de miles
-
-        21.700
-        ↓
-        21700
         */
 
         numero =
@@ -376,10 +378,6 @@ parsearValor(texto){
 
         /*
         Coma = decimal
-
-        21,7
-        ↓
-        21.7
         */
 
         numero =
@@ -388,10 +386,6 @@ parsearValor(texto){
                 "."
             );
 
-
-        /*
-        Solo números positivos.
-        */
 
         if(
             !/^\d+(\.\d+)?$/.test(numero)
@@ -416,10 +410,6 @@ parsearValor(texto){
         }
 
 
-        /*
-        Convertir años → Ma
-        */
-
         return anos / 1000000;
 
     }
@@ -427,7 +417,7 @@ parsearValor(texto){
 
     /* ==================================================
        MILLONES DE AÑOS
-    ================================================== */
+       ================================================== */
 
     if(
         /\s*Ma$/i.test(texto)
@@ -449,25 +439,12 @@ parsearValor(texto){
         }
 
 
-        /*
-        En Ma:
-
-        59,2 → 59.2
-
-        No eliminamos puntos porque
-        aquí representan decimal.
-        */
-
         numero =
             numero.replace(
                 ",",
                 "."
             );
 
-
-        /*
-        Solo números positivos.
-        */
 
         if(
             !/^\d+(\.\d+)?$/.test(numero)
@@ -498,17 +475,9 @@ parsearValor(texto){
 
 
     /*
-    SIN UNIDAD:
+    SIN UNIDAD
 
     No se interpreta.
-
-    Evita confundir:
-
-    521 años
-
-    con:
-
-    521 Ma
     */
 
     return null;
@@ -518,25 +487,7 @@ parsearValor(texto){
 
 /* ======================================================
    NORMALIZAR VALOR
-
-   Salida:
-
-   MMMM.DDDD
-
-   Ejemplos:
-
-   521
-   ↓
-   0521.0000
-
-   0.0217
-   ↓
-   0000.0217
-
-   0
-   ↓
-   0000.0000
-====================================================== */
+   ====================================================== */
 
 normalizarValor(valor){
 
@@ -570,11 +521,6 @@ normalizarValor(valor){
         partes[1] || "0000";
 
 
-    /*
-    El protocolo requiere
-    exactamente cuatro cifras decimales.
-    */
-
     decimal =
         decimal.padEnd(
             4,
@@ -601,24 +547,7 @@ normalizarValor(valor){
 
 /* ======================================================
    CODIFICAR RANGO
-
-   ENTRADAS:
-
-   521 Ma - 509 Ma
-
-   11.700 a - 4.200 a
-
-   11700 a - 4200 a
-
-   21.700 a - Actualidad
-
-   21700 a - Actualidad
-
-   SALIDA:
-
-   MMMM.DDDD-MMMM.DDDD
-
-====================================================== */
+   ====================================================== */
 
 codificarRango(texto){
 
@@ -629,21 +558,10 @@ codificarRango(texto){
     }
 
 
-    /*
-    Convertir a texto y eliminar
-    espacios exteriores.
-    */
-
     texto =
         String(texto)
         .trim();
 
-
-    /*
-    Separar los dos extremos.
-
-    Solo debe existir un guion.
-    */
 
     let partes =
         texto.split("-");
@@ -674,10 +592,6 @@ codificarRango(texto){
     }
 
 
-    /*
-    PARSEAR EXTREMOS
-    */
-
     let inicio =
         this.parsearValor(
             inicioTexto
@@ -701,11 +615,7 @@ codificarRango(texto){
 
 
     /*
-    VALIDAR SENTIDO TEMPORAL
-
-    MÁS ANTIGUO
-    ↓
-    MÁS RECIENTE
+    MÁS ANTIGUO → MÁS RECIENTE
     */
 
     if(inicio < fin){
@@ -714,10 +624,6 @@ codificarRango(texto){
 
     }
 
-
-    /*
-    NORMALIZAR
-    */
 
     let inicioNormalizado =
         this.normalizarValor(
@@ -741,10 +647,6 @@ codificarRango(texto){
     }
 
 
-    /*
-    RESULTADO
-    */
-
     return (
 
         inicioNormalizado
@@ -764,15 +666,7 @@ codificarRango(texto){
 
 /* ======================================================
    VALIDAR CRONOLOGÍA INTERNA
-
-   Formato obligatorio:
-
-   MMMM.DDDD-MMMM.DDDD
-
-   Ejemplo:
-
-   0521.0000-0509.0000
-====================================================== */
+   ====================================================== */
 
 validarCronologia(cronologia){
 
@@ -787,18 +681,6 @@ validarCronologia(cronologia){
         String(cronologia)
         .trim();
 
-
-    /*
-    Comprobar estructura exacta.
-
-    4 cifras
-    .
-    4 cifras
-    -
-    4 cifras
-    .
-    4 cifras
-    */
 
     if(
         !/^\d{4}\.\d{4}-\d{4}\.\d{4}$/.test(
@@ -850,16 +732,197 @@ validarCronologia(cronologia){
 
 
 /* ======================================================
+   COMPROBAR INTERSECCIÓN GEOLÓGICA
+
+   NUEVO CRITERIO v1.3
+
+   Devuelve true si el intervalo PALGEO
+   debe asignarse a la ficha.
+
+   La comparación utiliza:
+
+   inicio = límite antiguo de la ficha
+   fin    = límite reciente de la ficha
+
+   PALGEO:
+
+   inicio_ma = límite antiguo
+   fin_ma    = límite reciente
+
+   ------------------------------------------------------
+
+   CASOS:
+
+   Ficha 70 → 66
+   Unidad 145 → 66
+
+   TRUE
+
+   Ficha 70 → 65
+   Unidad 145 → 66
+
+   TRUE
+
+   Ficha 66 → 65
+   Unidad 145 → 66
+
+   FALSE
+
+   ======================================================
+   */
+
+intervaloCompatible(
+    inicio,
+    fin,
+    intervalo
+){
+
+    if(
+        !intervalo ||
+        typeof intervalo.inicio_ma !==
+        "number" ||
+        typeof intervalo.fin_ma !==
+        "number"
+    ){
+
+        return false;
+
+    }
+
+
+    const geoInicio =
+        intervalo.inicio_ma;
+
+
+    const geoFin =
+        intervalo.fin_ma;
+
+
+    /*
+    ------------------------------------------------------
+    VALIDACIÓN BÁSICA
+    ------------------------------------------------------
+    */
+
+    if(
+        geoInicio < geoFin
+    ){
+
+        return false;
+
+    }
+
+
+    /*
+    ------------------------------------------------------
+    EL INTERVALO DE PALGEO DEBE CONTENER
+    ALGUNA PARTE DEL RANGO DE LA FICHA.
+
+    Condición básica de intersección:
+
+        inicio >= geoFin
+        &&
+        fin <= geoInicio
+    ------------------------------------------------------
+    */
+
+    if(
+        inicio < geoFin ||
+        fin > geoInicio
+    ){
+
+        return false;
+
+    }
+
+
+    /*
+    ------------------------------------------------------
+    CASO ESPECIAL:
+
+    LA FICHA TERMINA EXACTAMENTE
+    EN EL LÍMITE RECIENTE DE LA UNIDAD.
+
+    Ejemplo:
+
+    Ficha:
+    70 → 66
+
+    PALGEO:
+    145 → 66
+
+    Aquí la ficha ha vivido dentro
+    de la unidad, por lo que se conserva.
+
+    ------------------------------------------------------
+    */
+
+    if(
+        fin === geoFin
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+    ------------------------------------------------------
+    SI EL INICIO DE LA FICHA COINCIDE
+    CON EL LÍMITE RECIENTE DE LA UNIDAD
+    Y LA FICHA CONTINÚA HACIA EL PRESENTE,
+    ESTE INTERVALO NO SE CONSIDERA
+    COMO PARTE DE LA UNIDAD ANTERIOR.
+
+    Ejemplo:
+
+    Ficha:
+    66 → 65
+
+    Unidad:
+    145 → 66
+
+    NO pertenece a esta unidad.
+    ------------------------------------------------------
+    */
+
+    if(
+        inicio === geoFin &&
+        fin < geoFin
+    ){
+
+        return false;
+
+    }
+
+
+    /*
+    ------------------------------------------------------
+    CASO GENERAL
+
+    El rango atraviesa o está contenido
+    dentro de la unidad.
+
+    ------------------------------------------------------
+    */
+
+    return true;
+
+},
+
+
+/* ======================================================
    EXTRAER DATOS DE PALGEO
 
-   SISTEMA B
+   SISTEMA B MODIFICADO
 
-   Se seleccionan TODOS los intervalos
-   que intersecten el rango.
+   v1.3
 
-   Los límites exactos cuentan.
+   Los límites compartidos se tratan
+   de forma explícita.
 
-====================================================== */
+   No se eliminan datos internos.
+   ====================================================== */
 
 extraerPALGEO(cronologia){
 
@@ -927,12 +990,18 @@ extraerPALGEO(cronologia){
         intervalo => {
 
 
+            /*
+            ------------------------------------------------
+            COMPROBAR COMPATIBILIDAD
+            ------------------------------------------------
+            */
+
             if(
-                !intervalo ||
-                typeof intervalo.inicio_ma !==
-                "number" ||
-                typeof intervalo.fin_ma !==
-                "number"
+                !this.intervaloCompatible(
+                    inicio,
+                    fin,
+                    intervalo
+                )
             ){
 
                 return;
@@ -941,50 +1010,9 @@ extraerPALGEO(cronologia){
 
 
             /*
-            SISTEMA B
-
-            Rango consultado:
-
-            [fin, inicio]
-
-            Intervalo PALGEO:
-
-            [intervalo.fin_ma,
-             intervalo.inicio_ma]
-
-            Intersección inclusiva:
-
-            inicio >= intervalo.fin_ma
-
-            Y
-
-            fin <= intervalo.inicio_ma
-
-            Los límites exactos cuentan.
-            */
-
-            let compatible = (
-
-                inicio >=
-                intervalo.fin_ma
-
-                &&
-
-                fin <=
-                intervalo.inicio_ma
-
-            );
-
-
-            if(!compatible){
-
-                return;
-
-            }
-
-
-            /*
+            =================================================
             CÓDIGO
+            =================================================
             */
 
             if(
@@ -1002,9 +1030,9 @@ extraerPALGEO(cronologia){
 
 
             /*
+            =================================================
             PERÍODO
-
-            Solo si existe en PALGEO.
+            =================================================
             */
 
             if(
@@ -1022,9 +1050,9 @@ extraerPALGEO(cronologia){
 
 
             /*
+            =================================================
             EDAD
-
-            Solo si existe en PALGEO.
+            =================================================
             */
 
             if(
@@ -1054,22 +1082,7 @@ extraerPALGEO(cronologia){
    ANALIZAR
 
    FUNCIÓN PRINCIPAL
-
-   Entrada:
-
-   0521.0000-0509.0000
-
-   Devuelve:
-
-   cronologia
-   inicio_ma
-   fin_ma
-   rango
-   codes
-   periodo
-   edad
-
-====================================================== */
+   ====================================================== */
 
 analizar(cronologia){
 
@@ -1083,9 +1096,6 @@ analizar(cronologia){
     /*
     Solo se acepta aquí
     cronología interna.
-
-    La conversión humana se realiza
-    mediante codificarRango().
     */
 
     if(
@@ -1178,10 +1188,6 @@ analizar(cronologia){
 
 /*
 ========================================================
-FIN PALGEOSIMPLIFICADO v1.2 LTS
+FIN PALGEOSIMPLIFICADO v1.3 LTS
 ========================================================
 */
-
-
-
-
