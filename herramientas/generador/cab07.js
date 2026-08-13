@@ -4,52 +4,27 @@ PalEntropía
 CAB07.js
 Generador de Paleofichas 1.1
 
+PRUEBA DIRECTA DE J3 — TELEOBLIGATORIO
+
 FUNCIÓN:
 
-- NO inicia cargas.
-- NO llama a CARGACONT.cargar().
-- NO llama a cargarMasterPorJ1().
-- NO llama a BUSCARUTA.
-- NO llama a PALGEOSIMPLIFICADO.analizar().
-- NO llama a LEEPALGEO.
+- Mantiene el funcionamiento actual de CAB07.
+- NO modifica CARGACONT.
+- NO modifica CON07.
+- NO modifica CONT07.
+- NO utiliza PALGEOSIMPLIFICADO para obtener TELEOBLIGATORIO.
+- Para códigos 001–005 mantiene el comportamiento existente.
+- Para códigos distintos de 001–005 realiza una lectura
+  directa del registro disponible en LEEPALJSON.
+- Extrae directamente registro.j3.
+- Conserva el valor bruto sin normalizar.
+- Lo muestra como TELEOBLIGATORIO.
 
-Recibe exclusivamente el registro producido por CARGACONT
-mediante el evento:
+OBJETIVO DE LA PRUEBA:
 
-    palentropia:contenedor-cargado
+Para 006_01 debe aparecer literalmente:
 
-Obtiene del registro:
-
-    j1
-    j2
-    j3
-    rango
-    codes
-    periodo
-    edad
-    j7
-    j8
-    i0
-    i2
-    i3
-
-Guarda el registro en CONT07.
-
-Guarda la geología en CONT07.
-
-Presenta:
-
-    Rango geológico
-    Período
-    Edad
-
-NO muestra códigos internos.
-
-NO muestra la cronología interna.
-
-NO modifica #cronologia.
-
-NO modifica imágenes.
+TELEOBLIGATORIO: 0068.6000-0066.0000
 
 ========================================================
 */
@@ -147,6 +122,210 @@ window.CAB07 = {
             "-" +
             fin
         );
+
+    },
+
+
+    /* =====================================================
+       OBTENER J3 DIRECTAMENTE DE MASTER.CSV
+       
+       PRUEBA TELEOBLIGATORIO
+
+       Esta función NO utiliza:
+       - CARGACONT.ultimo
+       - CON07
+       - CONT07
+       - PALGEOSIMPLIFICADO
+
+       Utiliza directamente:
+
+       LEEPALJSON.obtener()
+    ===================================================== */
+
+    obtenerTeleobligatorio(j1) {
+
+        /*
+        -----------------------------------------------------
+        VALIDAR J1
+        -----------------------------------------------------
+        */
+
+        if (
+            j1 === undefined ||
+            j1 === null
+        ) {
+
+            return "";
+
+        }
+
+
+        const codigoBuscado =
+            String(j1)
+                .trim()
+                .toUpperCase();
+
+
+        if (
+            !codigoBuscado
+        ) {
+
+            return "";
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        OBTENER CONTENEDOR ORIGINAL
+        -----------------------------------------------------
+        */
+
+        if (
+            !window.LEEPALJSON ||
+            typeof window.LEEPALJSON.obtener !==
+            "function"
+        ) {
+
+            console.warn(
+                "CAB07: LEEPALJSON no está disponible para TELEOBLIGATORIO."
+            );
+
+            return "";
+
+        }
+
+
+        let contenedor = null;
+
+
+        try {
+
+            contenedor =
+                window.LEEPALJSON.obtener();
+
+        } catch (error) {
+
+            console.warn(
+                "CAB07: no se pudo obtener master.csv para TELEOBLIGATORIO.",
+                error
+            );
+
+            return "";
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        VALIDAR CONTENEDOR
+        -----------------------------------------------------
+        */
+
+        if (
+            !Array.isArray(contenedor)
+        ) {
+
+            console.warn(
+                "CAB07: el contenedor de master.csv no es un array."
+            );
+
+            return "";
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        BUSCAR J1 DIRECTAMENTE
+        -----------------------------------------------------
+        */
+
+        for (
+            const registro of contenedor
+        ) {
+
+            if (
+                !registro
+            ) {
+
+                continue;
+
+            }
+
+
+            const codigo =
+                String(
+                    registro.codigo ||
+                    registro.j1 ||
+                    ""
+                )
+                .trim()
+                .toUpperCase();
+
+
+            if (
+                codigo !== codigoBuscado
+            ) {
+
+                continue;
+
+            }
+
+
+            /*
+            -------------------------------------------------
+            EXTRAER J3 BRUTO
+
+            IMPORTANTE:
+
+            NO NORMALIZAR.
+            NO ANALIZAR.
+            NO CONVERTIR.
+            NO PASAR POR PALGEO.
+
+            Se devuelve exactamente el valor que contiene
+            el registro original.
+            -------------------------------------------------
+            */
+
+            if (
+                registro.j3 === undefined ||
+                registro.j3 === null
+            ) {
+
+                console.warn(
+                    "CAB07: TELEOBLIGATORIO encontró " +
+                    codigoBuscado +
+                    " pero j3 no existe."
+                );
+
+                return "";
+
+            }
+
+
+            return String(
+                registro.j3
+            );
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        NO ENCONTRADO
+        -----------------------------------------------------
+        */
+
+        console.warn(
+            "CAB07: TELEOBLIGATORIO no encontró " +
+            codigoBuscado +
+            " en master.csv."
+        );
+
+
+        return "";
 
     },
 
@@ -256,8 +435,6 @@ window.CAB07 = {
         SEGUNDA OPCIÓN:
 
         Conversión puramente visual.
-
-        NO se realiza análisis geológico.
         -----------------------------------------------------
         */
 
@@ -601,9 +778,163 @@ window.CAB07 = {
 
     },
 
+
+    /* =====================================================
+       MOSTRAR TELEOBLIGATORIO
+       
+       SOLO PARA CÓDIGOS DISTINTOS DE 001–005
+       ===================================================== */
+
+    mostrarTeleobligatorio(datos) {
+
+        if (
+            !datos ||
+            !datos.j1
+        ) {
+
+            return;
+
+        }
+
+
+        const codigo =
+            String(
+                datos.j1
+            )
+            .trim()
+            .toUpperCase();
+
+
+        /*
+        -----------------------------------------------------
+        REGLA:
+
+        001–005 mantienen completamente
+        el comportamiento anterior.
+        -----------------------------------------------------
+        */
+
+        const prefijo =
+            codigo.substring(
+                0,
+                3
+            );
+
+
+        if (
+            prefijo === "001" ||
+            prefijo === "002" ||
+            prefijo === "003" ||
+            prefijo === "004" ||
+            prefijo === "005"
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        OBTENER J3 DIRECTAMENTE DEL CSV
+        -----------------------------------------------------
+        */
+
+        const teleobligatorio =
+            this.obtenerTeleobligatorio(
+                codigo
+            );
+
+
+        /*
+        -----------------------------------------------------
+        SI NO EXISTE J3
+        -----------------------------------------------------
+        */
+
+        if (
+            teleobligatorio === ""
+        ) {
+
+            return;
+
+        }
+
+
+        const contenedor =
+            this.obtenerContenedorVisual();
+
+
+        /*
+        -----------------------------------------------------
+        AÑADIR SIN TOCAR LA PRESENTACIÓN ANTERIOR
+
+        Se utiliza un bloque independiente para que
+        TELEOBLIGATORIO no sustituya ni sobrescriba
+        rango, período o edad.
+        -----------------------------------------------------
+        */
+
+        const bloque =
+            document.createElement(
+                "div"
+            );
+
+
+        bloque.id =
+            "teleobligatorioCAB07";
+
+
+        bloque.style.marginTop =
+            "12px";
+
+
+        bloque.style.paddingTop =
+            "10px";
+
+
+        bloque.style.borderTop =
+            "1px solid rgba(128,128,128,0.35)";
+
+
+        bloque.innerHTML =
+            `
+            <div>
+                <strong>
+                    TELEOBLIGATORIO:
+                </strong>
+                ${teleobligatorio}
+            </div>
+            `;
+
+
+        contenedor.appendChild(
+            bloque
+        );
+
+
+        /*
+        -----------------------------------------------------
+        CONSOLA
+
+        También dejamos el valor visible en consola
+        para comprobar que coincide exactamente con
+        master.csv.
+        -----------------------------------------------------
+        */
+
+        console.log(
+            "CAB07 — TELEOBLIGATORIO",
+            codigo,
+            teleobligatorio
+        );
+
+    },
+
+
     /* =====================================================
        PROCESAR REGISTRO RECIBIDO
-       
+
        IMPORTANTE:
 
        Esta función NO carga nada.
@@ -685,10 +1016,6 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         PREPARAR GEOLOGÍA
-
-        NO SE ANALIZA.
-
-        Ya viene preparada por CARGACONT.
         -----------------------------------------------------
         */
 
@@ -753,7 +1080,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        ACTUALIZAR PRESENTACIÓN
+        ACTUALIZAR PRESENTACIÓN NORMAL
         -----------------------------------------------------
         */
 
@@ -761,6 +1088,23 @@ window.CAB07 = {
 
 
         this.mostrarGeologia(
+            registro
+        );
+
+
+        /*
+        -----------------------------------------------------
+        PRUEBA TELEOBLIGATORIO
+
+        Se ejecuta DESPUÉS de la presentación normal.
+
+        No modifica registro.j3.
+        No modifica CONT07.
+        No modifica geología.
+        -----------------------------------------------------
+        */
+
+        this.mostrarTeleobligatorio(
             registro
         );
 
@@ -816,8 +1160,6 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         MOSTRAR
-
-        NO SE REALIZA NINGUNA CARGA.
         -----------------------------------------------------
         */
 
@@ -825,6 +1167,19 @@ window.CAB07 = {
 
 
         this.mostrarGeologia(
+            datos
+        );
+
+
+        /*
+        -----------------------------------------------------
+        TELEOBLIGATORIO
+
+        Se vuelve a consultar directamente el CSV.
+        -----------------------------------------------------
+        */
+
+        this.mostrarTeleobligatorio(
             datos
         );
 
@@ -836,20 +1191,6 @@ window.CAB07 = {
 /* ========================================================
    ESCUCHAR EVENTO DE CARGACONT
 ======================================================== */
-
-/*
---------------------------------------------------------
-IMPORTANTE:
-
-CARGACONT es quien genera este evento:
-
-    palentropia:contenedor-cargado
-
-CAB07 únicamente escucha.
-
-CAB07 NO llama a CARGACONT.
---------------------------------------------------------
-*/
 
 document.addEventListener(
     "palentropia:contenedor-cargado",
@@ -911,3 +1252,10 @@ window.CAB07 =
 FIN CAB07.js
 ========================================================
 */
+
+
+
+
+
+
+    
