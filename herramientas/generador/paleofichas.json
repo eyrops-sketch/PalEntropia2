@@ -448,7 +448,14 @@
     "nombre": "Longisquama",
     "dieta": "Insectívoro",
     "anatomia": "Reptil pequeño con estructuras dorsales alargadas, cuerpo ligero y adaptación a desplazamiento entre árboles"
-  }
+  },
+    {
+    "codigo": "006_01",
+    "nombre": "Tyrannosaurus rex",
+    "dieta": "Carnívoro depredador y carroñero",
+    "anatomia": "Terópodo gigante de cuerpo robusto, cráneo masivo, mandíbulas extremadamente potentes y extremidades posteriores adaptadas a la locomoción"
+    }
+
 ]
 
 
