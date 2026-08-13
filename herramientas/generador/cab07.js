@@ -581,7 +581,7 @@ window.CAB07 = {
             contenedor.innerHTML =
                 `
                 <div>
-                    <strong>Rango de tiempo geológico:</strong>
+                    <strong>Rango geológico:</strong>
                     —
                 </div>
 
@@ -697,7 +697,7 @@ window.CAB07 = {
             `
             <div>
                 <strong>
-                    Rango de tiempo geológico:
+                    Rango geológico:
                 </strong>
                 ${rango}
             </div>
