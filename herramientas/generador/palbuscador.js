@@ -1,38 +1,61 @@
 /*
 ========================================================
 PalEntropía
-palbuscador.js v4.0 LTS
+palbuscador.js v3.2 LTS
 
 MOTOR DE BÚSQUEDA DEL GENERADOR
 
+ARQUITECTURA:
+
+MASTER.CSV
+↓
+LEEPALJSON
+↓
+PALBUSCADOR
+↓
+j1
+↓
+PALNAVEGADOR
+↓
+CAB07
+↓
+CONT07
+↓
+CARGACONT
+↓
+CAB01–CAB06
+↓
+GENERADOR
+
 BUSCA POR:
 
-- Código
-- Nombre
-- Período
-- Edad
+Código (j1)
+Nombre (j2)
 
-GEOLOGÍA:
+FUENTES:
 
-LEEPALJSON
-    ↓
-j3
-    ↓
-PALGEOSIMPLIFICADO
-    ↓
-período / edad
-    ↓
-j1
-    ↓
-PALNAVEGADOR
+master.csv
+→ códigos j1
+
+paleofichas.json
+→ nombre / j2
+
+PALVIDEO.js
+→ enlace de vídeo mediante j1
 
 IMPORTANTE:
 
 PALBUSCADOR NO CARGA DIRECTAMENTE CARGACONT.
 
-Toda selección pasa por:
+Toda selección de una búsqueda pasa por
+PALNAVEGADOR para garantizar que:
 
-PALNAVEGADOR.cargarPorCodigo()
+- se actualice el índice
+- se actualice codigoActual
+- se ejecute CAB07
+- se actualice CONT07
+- se actualice la geología
+- se cargue finalmente la ficha
 
 ========================================================
 */
@@ -45,7 +68,7 @@ const PALBUSCADOR = {
        VERSIÓN
        ===================================================== */
 
-    version: "4.0 LTS",
+    version: "3.2 LTS",
 
 
     /* =====================================================
@@ -121,14 +144,16 @@ const PALBUSCADOR = {
 
 
         return String(codigo)
+
             .trim()
+
             .toUpperCase();
 
     },
 
 
     /* =====================================================
-       OBTENER MASTER
+       OBTENER CONTENEDOR
        ===================================================== */
 
     obtenerContenedor() {
@@ -146,13 +171,13 @@ const PALBUSCADOR = {
         }
 
 
-        const datos =
+        const contenedor =
             window.LEEPALJSON.obtener();
 
 
         if (
-            !Array.isArray(datos) ||
-            !datos.length
+            !Array.isArray(contenedor) ||
+            !contenedor.length
         ) {
 
             throw new Error(
@@ -162,7 +187,7 @@ const PALBUSCADOR = {
         }
 
 
-        return datos;
+        return contenedor;
 
     },
 
@@ -201,6 +226,7 @@ const PALBUSCADOR = {
             )
 
             .then(
+
                 respuesta => {
 
                     if (
@@ -208,7 +234,10 @@ const PALBUSCADOR = {
                     ) {
 
                         throw new Error(
-                            "PALBUSCADOR: no se pudo cargar paleofichas.json."
+                            "PALBUSCADOR: no se pudo cargar " +
+                            "paleofichas.json (" +
+                            respuesta.status +
+                            ")"
                         );
 
                     }
@@ -217,9 +246,11 @@ const PALBUSCADOR = {
                     return respuesta.json();
 
                 }
+
             )
 
             .then(
+
                 datos => {
 
                     if (
@@ -227,7 +258,7 @@ const PALBUSCADOR = {
                     ) {
 
                         throw new Error(
-                            "PALBUSCADOR: paleofichas.json inválido."
+                            "PALBUSCADOR: paleofichas.json no contiene un array válido."
                         );
 
                     }
@@ -240,9 +271,11 @@ const PALBUSCADOR = {
                     return datos;
 
                 }
+
             )
 
             .catch(
+
                 error => {
 
                     this._cargandoJSON =
@@ -251,6 +284,7 @@ const PALBUSCADOR = {
                     throw error;
 
                 }
+
             );
 
 
@@ -301,16 +335,19 @@ const PALBUSCADOR = {
 
 
             if (
-                codigo &&
-                nombre
+                !codigo ||
+                !nombre
             ) {
 
-                mapa.set(
-                    codigo,
-                    nombre
-                );
+                continue;
 
             }
+
+
+            mapa.set(
+                codigo,
+                nombre
+            );
 
         }
 
@@ -319,7 +356,8 @@ const PALBUSCADOR = {
 
     },
 
-       /* =====================================================
+
+    /* =====================================================
        OBTENER VÍDEO
        ===================================================== */
 
@@ -332,7 +370,15 @@ const PALBUSCADOR = {
 
 
         if (
-            !j1 ||
+            !j1
+        ) {
+
+            return null;
+
+        }
+
+
+        if (
             !window.PALVIDEO ||
             typeof window.PALVIDEO !==
             "object"
@@ -348,7 +394,9 @@ const PALBUSCADOR = {
 
 
         if (
-            !registro
+            !registro ||
+            typeof registro !==
+            "object"
         ) {
 
             return null;
@@ -357,19 +405,39 @@ const PALBUSCADOR = {
 
 
         const video =
-            String(
-                registro.video ||
-                ""
-            ).trim();
+            registro.video;
 
 
-        return video || null;
+        if (
+            video === undefined ||
+            video === null
+        ) {
+
+            return null;
+
+        }
+
+
+        const url =
+            String(video).trim();
+
+
+        if (
+            !url
+        ) {
+
+            return null;
+
+        }
+
+
+        return url;
 
     },
 
 
     /* =====================================================
-       COMPROBAR VÍDEO
+       COMPROBAR SI EXISTE VÍDEO
        ===================================================== */
 
     tieneVideo(codigo) {
@@ -388,9 +456,7 @@ const PALBUSCADOR = {
     tipoConsulta(texto) {
 
         const consulta =
-            String(
-                texto || ""
-            ).trim();
+            String(texto || "").trim();
 
 
         if (
@@ -402,12 +468,6 @@ const PALBUSCADOR = {
         }
 
 
-        /*
-        -----------------------------------------------------
-        CÓDIGO
-        -----------------------------------------------------
-        */
-
         if (
             /^[0-9_]+$/.test(
                 consulta
@@ -418,37 +478,6 @@ const PALBUSCADOR = {
 
         }
 
-
-        /*
-        -----------------------------------------------------
-        TEXTO
-
-        A partir de 4 caracteres puede buscar:
-
-        - nombre
-        - período
-        - edad
-        -----------------------------------------------------
-        */
-
-        if (
-            this.normalizar(
-                consulta
-            ).length >= 4
-        ) {
-
-            return "texto";
-
-        }
-
-
-        /*
-        -----------------------------------------------------
-        NOMBRE CORTO
-
-        Se mantienen 3 caracteres para nombres.
-        -----------------------------------------------------
-        */
 
         if (
             this.normalizar(
@@ -513,8 +542,7 @@ const PALBUSCADOR = {
 
             const codigo =
                 this.normalizarCodigo(
-                    registro.codigo ||
-                    registro.j1
+                    registro.codigo
                 );
 
 
@@ -548,10 +576,9 @@ const PALBUSCADOR = {
                         "codigo",
 
                     relevancia:
-                        codigo ===
-                        codigoConsulta
-                            ? 300
-                            : 200
+                        codigo === codigoConsulta
+                            ? 200
+                            : 100
 
                 });
 
@@ -573,14 +600,14 @@ const PALBUSCADOR = {
 
     async buscarPorNombre(consulta) {
 
-        const texto =
+        const nombreConsulta =
             this.normalizar(
                 consulta
             );
 
 
         if (
-            texto.length < 3
+            nombreConsulta.length < 3
         ) {
 
             return [];
@@ -640,7 +667,7 @@ const PALBUSCADOR = {
 
             if (
                 nombreNormalizado.startsWith(
-                    texto
+                    nombreConsulta
                 )
             ) {
 
@@ -657,333 +684,13 @@ const PALBUSCADOR = {
 
                     relevancia:
                         nombreNormalizado ===
-                        texto
-                            ? 300
-                            : 200
+                        nombreConsulta
+                            ? 200
+                            : 100
 
                 });
 
             }
-
-        }
-
-
-        return this.unicosResultados(
-            resultados
-        );
-
-    },
-
-        /* =====================================================
-       BUSCAR POR GEOLOGÍA
-
-       BUSCA:
-
-       - PERÍODO
-       - EDAD
-
-       MÍNIMO:
-       4 CARACTERES
-
-       FUENTE:
-
-       LEEPALJSON
-           ↓
-          j3
-           ↓
-       PALGEOSIMPLIFICADO
-           ↓
-       periodo / edad
-       ===================================================== */
-
-    async buscarPorGeologia(consulta) {
-
-        const texto =
-            this.normalizar(
-                consulta
-            );
-
-
-        if (
-            texto.length < 4
-        ) {
-
-            return [];
-
-        }
-
-
-        const contenedor =
-            this.obtenerContenedor();
-
-
-        const mapaNombres =
-            await this.obtenerMapaNombres();
-
-
-        /*
-        -----------------------------------------------------
-        COMPROBAR PALGEOSIMPLIFICADO
-        -----------------------------------------------------
-        */
-
-        if (
-            !window.PALGEOSIMPLIFICADO ||
-            typeof window.PALGEOSIMPLIFICADO.analizar !==
-            "function"
-        ) {
-
-            console.warn(
-                "PALBUSCADOR: PALGEOSIMPLIFICADO no disponible."
-            );
-
-            return [];
-
-        }
-
-
-        const resultados = [];
-
-
-        /*
-        -----------------------------------------------------
-        RECORRER MASTER.CSV
-        -----------------------------------------------------
-        */
-
-        for (
-            const registro of contenedor
-        ) {
-
-            if (
-                !registro
-            ) {
-
-                continue;
-
-            }
-
-
-            const codigo =
-                this.normalizarCodigo(
-                    registro.codigo ||
-                    registro.j1
-                );
-
-
-            /*
-            -------------------------------------------------
-            EL REGISTRO DEBE TENER J1 Y J3
-            -------------------------------------------------
-            */
-
-            if (
-                !codigo ||
-                !registro.j3
-            ) {
-
-                continue;
-
-            }
-
-
-            let analisis;
-
-
-            /*
-            -------------------------------------------------
-            ANALIZAR J3
-
-            No interpretamos nosotros la cronología.
-
-            PALGEOSIMPLIFICADO es quien determina:
-
-            - período
-            - edad
-            - rango
-            -------------------------------------------------
-            */
-
-            try {
-
-                analisis =
-                    window.PALGEOSIMPLIFICADO
-                        .analizar(
-                            String(
-                                registro.j3
-                            ).trim()
-                        );
-
-            } catch (error) {
-
-                continue;
-
-            }
-
-
-            if (
-                !analisis
-            ) {
-
-                continue;
-
-            }
-
-
-            /*
-            -------------------------------------------------
-            OBTENER PERÍODOS
-            -------------------------------------------------
-            */
-
-            const periodos =
-                Array.isArray(
-                    analisis.periodo
-                )
-                    ? analisis.periodo
-                    : [];
-
-
-            /*
-            -------------------------------------------------
-            OBTENER EDADES
-            -------------------------------------------------
-            */
-
-            const edades =
-                Array.isArray(
-                    analisis.edad
-                )
-                    ? analisis.edad
-                    : [];
-
-
-            /*
-            -------------------------------------------------
-            COMPROBAR PERÍODO
-            -------------------------------------------------
-            */
-
-            const coincidePeriodo =
-                periodos.some(
-                    valor => {
-
-                        return this.normalizar(
-                            valor
-                        ).includes(
-                            texto
-                        );
-
-                    }
-                );
-
-
-            /*
-            -------------------------------------------------
-            COMPROBAR EDAD
-            -------------------------------------------------
-            */
-
-            const coincideEdad =
-                edades.some(
-                    valor => {
-
-                        return this.normalizar(
-                            valor
-                        ).includes(
-                            texto
-                        );
-
-                    }
-                );
-
-
-            /*
-            -------------------------------------------------
-            NO COINCIDE
-            -------------------------------------------------
-            */
-
-            if (
-                !coincidePeriodo &&
-                !coincideEdad
-            ) {
-
-                continue;
-
-            }
-
-
-            /*
-            -------------------------------------------------
-            DETERMINAR TIPO
-            -------------------------------------------------
-            */
-
-            let tipo =
-                "geologia";
-
-
-            if (
-                coincidePeriodo &&
-                coincideEdad
-            ) {
-
-                tipo =
-                    "periodo-edad";
-
-            } else if (
-                coincidePeriodo
-            ) {
-
-                tipo =
-                    "periodo";
-
-            } else {
-
-                tipo =
-                    "edad";
-
-            }
-
-
-            /*
-            -------------------------------------------------
-            AÑADIR RESULTADO
-            -------------------------------------------------
-            */
-
-            resultados.push({
-
-                codigo:
-                    codigo,
-
-                nombre:
-                    mapaNombres.get(
-                        codigo
-                    ) ||
-                    "Sin nombre",
-
-                tipo:
-                    tipo,
-
-                periodo:
-                    periodos,
-
-                edad:
-                    edades,
-
-                rango:
-                    analisis.rango ||
-                    null,
-
-                relevancia:
-                    coincidePeriodo &&
-                    coincideEdad
-                        ? 250
-                        : 200
-
-            });
 
         }
 
@@ -1026,9 +733,7 @@ const PALBUSCADOR = {
 
 
             if (
-                !mapa.has(
-                    codigo
-                )
+                !mapa.has(codigo)
             ) {
 
                 mapa.set(
@@ -1095,95 +800,85 @@ const PALBUSCADOR = {
     },
 
 
-/* =====================================================
-   CARGAR RESULTADO
+    /* =====================================================
+       BUSCADOR PRINCIPAL
+       ===================================================== */
 
-   Toda selección continúa pasando por PALNAVEGADOR.
-   ===================================================== */
+    async buscar(texto) {
 
-    async cargarResultado(resultado) {
+        const consultaOriginal =
+            String(
+                texto || ""
+            ).trim();
 
-        if (!resultado) {
-
-            throw new Error(
-                "PALBUSCADOR: resultado vacío."
-            );
-
-        }
-
-        const codigo =
-            this.normalizarCodigo(
-                resultado.codigo
-            );
-
-        if (!codigo) {
-
-            throw new Error(
-                "PALBUSCADOR: resultado sin código."
-            );
-
-        }
 
         if (
-            !window.PALNAVEGADOR ||
-            typeof window.PALNAVEGADOR.cargarPorCodigo !==
-            "function"
+            !consultaOriginal
         ) {
 
-            throw new Error(
-                "PALBUSCADOR: PALNAVEGADOR no disponible."
+            return [];
+
+        }
+
+
+        const tipo =
+            this.tipoConsulta(
+                consultaOriginal
+            );
+
+
+        if (
+            tipo === "corto" ||
+            tipo === "vacio"
+        ) {
+
+            return [];
+
+        }
+
+
+        if (
+            tipo === "codigo"
+        ) {
+
+            const resultados =
+                await this.buscarPorCodigo(
+                    consultaOriginal
+                );
+
+
+            return this.ordenar(
+                resultados
             );
 
         }
 
-        return await window.PALNAVEGADOR.cargarPorCodigo(
-            codigo
-        );
+
+        if (
+            tipo === "nombre"
+        ) {
+
+            const resultados =
+                await this.buscarPorNombre(
+                    consultaOriginal
+                );
+
+
+            return this.ordenar(
+                resultados
+            );
+
+        }
+
+
+        return [];
 
     },
 
 
-/* =====================================================
-   CARGAR DIRECTAMENTE POR CÓDIGO
-   ===================================================== */
-
-    async cargarPorCodigo(codigo) {
-
-        const j1 =
-            this.normalizarCodigo(
-                codigo
-            );
-
-        if (!j1) {
-
-            throw new Error(
-                "PALBUSCADOR: código vacío."
-            );
-
-        }
-
-        if (
-            !window.PALNAVEGADOR ||
-            typeof window.PALNAVEGADOR.cargarPorCodigo !==
-            "function"
-        ) {
-
-            throw new Error(
-                "PALBUSCADOR: PALNAVEGADOR no disponible."
-            );
-
-        }
-
-        return await window.PALNAVEGADOR.cargarPorCodigo(
-            j1
-        );
-
-    },
-
-
-/* =====================================================
-   INTERPRETAR BÚSQUEDA
-   ===================================================== */
+    /* =====================================================
+       INTERPRETAR BÚSQUEDA
+       ===================================================== */
 
     async interpretar(texto) {
 
@@ -1192,20 +887,145 @@ const PALBUSCADOR = {
                 texto
             );
 
-        if (!resultados.length) {
+
+        if (
+            !resultados.length
+        ) {
 
             return "";
 
         }
+
 
         return resultados[0].codigo;
 
     },
 
 
-/* =====================================================
-   ESTADO DEL BUSCADOR
-   ===================================================== */
+    /* =====================================================
+       CARGAR RESULTADO
+
+       IMPORTANTE:
+
+       NO llama directamente a CARGACONT.
+
+       El resultado pasa por PALNAVEGADOR.
+
+       Esto garantiza que se actualicen:
+
+       - índice
+       - código actual
+       - CAB07
+       - CONT07
+       - geología
+       - CARGACONT
+       - ficha
+       ===================================================== */
+
+    async cargarResultado(resultado) {
+
+        if (
+            !resultado
+        ) {
+
+            throw new Error(
+                "PALBUSCADOR: resultado vacío."
+            );
+
+        }
+
+
+        const codigo =
+            this.normalizarCodigo(
+                resultado.codigo
+            );
+
+
+        if (
+            !codigo
+        ) {
+
+            throw new Error(
+                "PALBUSCADOR: el resultado no contiene j1."
+            );
+
+        }
+
+
+        /*
+        =================================================
+        PASAR POR PALNAVEGADOR
+        =================================================
+        */
+
+        if (
+            !window.PALNAVEGADOR ||
+            typeof window.PALNAVEGADOR.cargarPorCodigo !==
+            "function"
+        ) {
+
+            throw new Error(
+                "PALBUSCADOR: PALNAVEGADOR no está disponible."
+            );
+
+        }
+
+
+        return await window.PALNAVEGADOR.cargarPorCodigo(
+            codigo
+        );
+
+    },
+
+
+    /* =====================================================
+       CARGAR POR CÓDIGO DIRECTAMENTE
+
+       También pasa obligatoriamente por PALNAVEGADOR.
+       ===================================================== */
+
+    async cargarPorCodigo(codigo) {
+
+        const j1 =
+            this.normalizarCodigo(
+                codigo
+            );
+
+
+        if (
+            !j1
+        ) {
+
+            throw new Error(
+                "PALBUSCADOR: código vacío."
+            );
+
+        }
+
+
+        if (
+            !window.PALNAVEGADOR ||
+            typeof window.PALNAVEGADOR.cargarPorCodigo !==
+            "function"
+        ) {
+
+            throw new Error(
+                "PALBUSCADOR: PALNAVEGADOR no está disponible."
+            );
+
+        }
+
+
+        return await window.PALNAVEGADOR.cargarPorCodigo(
+            j1
+        );
+
+    },
+
+
+    /* =====================================================
+       ESTADO
+       ===================================================== */
 
     estado() {
 
@@ -1221,11 +1041,11 @@ const PALBUSCADOR = {
             jsonCargado:
                 !!this._datosJSON,
 
-            palgeoDisponible:
+            palvideoDisponible:
                 !!(
-                    window.PALGEOSIMPLIFICADO &&
-                    typeof window.PALGEOSIMPLIFICADO.analizar ===
-                    "function"
+                    window.PALVIDEO &&
+                    typeof window.PALVIDEO ===
+                    "object"
                 ),
 
             palnavegadorDisponible:
@@ -1245,9 +1065,9 @@ const PALBUSCADOR = {
 };
 
 
-/* =====================================================
+/* =========================================================
    DISPONIBILIDAD GLOBAL
-   ===================================================== */
+========================================================= */
 
 window.PALBUSCADOR =
     PALBUSCADOR;
@@ -1255,12 +1075,7 @@ window.PALBUSCADOR =
 
 /*
 ========================================================
-FIN PALBUSCADOR.js
+FIN PALBUSCADOR.js v3.2 LTS
 ========================================================
+*/
 
-
-
-
-
-
-    
