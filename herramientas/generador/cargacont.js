@@ -1,34 +1,24 @@
 /* ========================================================
    PalEntropía
-   cargacont.js v1.5 LTS
+   cargacont.js v1.6 LTS
 
-   COMPUERTA DEL CONTENEDOR
+   PARTE 1 DE 2
 
-   Funciones:
-   - Carga un registro mediante j1
-   - Carga aleatoriamente un j1
-   - Obtiene datos finales desde paleofichas.json
-   - Obtiene imágenes mediante BUSCARUTA
-   - Convierte correctamente las rutas relativas
-     en URL absolutas
-   - Entrega al generador un registro completamente preparado
+   CAMBIO:
+   - j3 sigue procediendo de master.csv
+   - Se analiza j3 mediante PALGEOSIMPLIFICADO
+   - Se preparan los datos geológicos:
+       geo.rango
+       geo.codes
+       geo.periodo
+       geo.edad
 
-   CAMBIO v1.5:
-   - Se incorpora j3 procedente de master.csv
-   - j3 se entrega ahora al CONTENEDOR FINAL
-
-   SALIDA:
-
-   {
-       j1: "...",
-       j2: "...",
-       j3: "...",
-       j7: "...",
-       j8: "...",
-       i0: "https://palentropia.es/...",
-       i2: "https://palentropia.es/...",
-       i3: "https://palentropia.es/..."
-   }
+   IMPORTANTE:
+   - PALGEO sigue siendo la fuente geológica.
+   - PALGEOSIMPLIFICADO realiza únicamente el análisis.
+   - No se modifica BUSCARUTA.
+   - No se modifica PALVIDEO.
+   - No se modifica paleofichas.json.
 
 ======================================================== */
 
@@ -300,13 +290,6 @@ window.CARGACONT = {
 
     /* ====================================================
        OBTENER DATOS FINALES
-
-       Los valores definitivos proceden de
-       paleofichas.json.
-
-       j2 = nombre
-       j7 = dieta
-       j8 = anatomia
     ==================================================== */
 
     async obtenerDatosFinales(j1){
@@ -399,6 +382,74 @@ window.CARGACONT = {
 
 
     /* ====================================================
+       ANALIZAR GEOLOGÍA
+       
+       j3 → PALGEOSIMPLIFICADO
+    ==================================================== */
+
+    analizarGeologia(j3){
+
+        if(
+            !window.PALGEOSIMPLIFICADO ||
+            typeof window.PALGEOSIMPLIFICADO.analizar !==
+            "function"
+        ){
+
+            throw new Error(
+                "CARGACONT: PALGEOSIMPLIFICADO no está disponible."
+            );
+
+        }
+
+
+        const analisis =
+            window.PALGEOSIMPLIFICADO.analizar(
+                j3
+            );
+
+
+        if(!analisis){
+
+            throw new Error(
+                "CARGACONT: no se pudo analizar la cronología j3: " +
+                j3
+            );
+
+        }
+
+
+        return {
+
+            rango:
+                analisis.rango,
+
+            codes:
+                Array.isArray(
+                    analisis.codes
+                )
+                    ? analisis.codes
+                    : [],
+
+            periodo:
+                Array.isArray(
+                    analisis.periodo
+                )
+                    ? analisis.periodo
+                    : [],
+
+            edad:
+                Array.isArray(
+                    analisis.edad
+                )
+                    ? analisis.edad
+                    : []
+
+        };
+
+    },
+
+
+    /* ====================================================
        CONVERTIR RUTA EN URL ABSOLUTA
     ==================================================== */
 
@@ -426,10 +477,6 @@ window.CARGACONT = {
         }
 
 
-        /* --------------------------------------------
-           YA ES URL ABSOLUTA
-        -------------------------------------------- */
-
         if(
             /^https?:\/\//i.test(texto)
         ){
@@ -438,10 +485,6 @@ window.CARGACONT = {
 
         }
 
-
-        /* --------------------------------------------
-           RUTAS ABSOLUTAS DEL SITIO
-        -------------------------------------------- */
 
         if(
             texto.startsWith("/")
@@ -454,10 +497,6 @@ window.CARGACONT = {
 
         }
 
-
-        /* --------------------------------------------
-           RESOLVER RUTA RELATIVA
-        -------------------------------------------- */
 
         const base =
             new URL(
@@ -568,317 +607,362 @@ window.CARGACONT = {
 
     },
 
-       /* ====================================================
-       CARGAR POR J1
-    ==================================================== */
 
-    async cargar(j1){
+/* ========================================================
+   FIN PARTE 1
+======================================================== */
 
-        j1 =
-            this.normalizarJ1(
-                j1
-            );
+/* ========================================================
+   PARTE 2 DE 2
+   CONTINUACIÓN DIRECTA DE CARGACONT v1.6 LTS
+======================================================== */
 
 
-        if(!j1){
+/* ====================================================
+   CARGAR POR J1
+==================================================== */
 
-            throw new Error(
-                "CARGACONT: no se ha indicado j1."
-            );
+async cargar(j1){
 
-        }
-
-
-        /* --------------------------------------------
-           COMPROBAR J1 EN MASTER.CSV
-        -------------------------------------------- */
-
-        const registroCSV =
-            this.buscarJ1EnCSV(
-                j1
-            );
-
-
-        if(!registroCSV){
-
-            throw new Error(
-                "CARGACONT: el j1 " +
-                j1 +
-                " no existe en master.csv."
-            );
-
-        }
-
-
-        /* --------------------------------------------
-           OBTENER J3 DESDE MASTER.CSV
-           
-           IMPORTANTE:
-           j3 es la cronología oficial del registro.
-        -------------------------------------------- */
-
-        const j3 =
-            registroCSV.j3;
-
-
-        /* --------------------------------------------
-           COMPROBAR J3
-        -------------------------------------------- */
-
-        if(
-            j3 === undefined ||
-            j3 === null ||
-            String(j3).trim() === ""
-        ){
-
-            throw new Error(
-                "CARGACONT: j3/cronología vacío para " +
-                j1 +
-                "."
-            );
-
-        }
-
-
-        /* --------------------------------------------
-           DATOS FINALES DESDE JSON
-        -------------------------------------------- */
-
-        const datosFinales =
-            await this.obtenerDatosFinales(
-                j1
-            );
-
-
-        /* --------------------------------------------
-           COMPROBAR BUSCARUTA
-        -------------------------------------------- */
-
-        if(
-            !window.BUSCARUTA ||
-            typeof window.BUSCARUTA.buscar !==
-            "function"
-        ){
-
-            throw new Error(
-                "CARGACONT: BUSCARUTA no está disponible."
-            );
-
-        }
-
-
-        /* --------------------------------------------
-           BUSCAR IMÁGENES
-        -------------------------------------------- */
-
-        const resultadoBusqueda =
-            await window.BUSCARUTA.buscar(
-                j1
-            );
-
-
-        /* --------------------------------------------
-           CONVERTIR A URL ABSOLUTAS
-        -------------------------------------------- */
-
-        const imagenes =
-            this.prepararImagenes(
-                resultadoBusqueda
-            );
-
-
-        /* --------------------------------------------
-           REGISTRO FINAL
-
-           AHORA INCLUYE j3.
-        -------------------------------------------- */
-
-        const resultado = {
-
-            j1:
-                j1,
-
-            j2:
-                datosFinales.j2,
-
-            j3:
-                String(j3).trim(),
-
-            j7:
-                datosFinales.j7,
-
-            j8:
-                datosFinales.j8,
-
-            i0:
-                imagenes.i0,
-
-            i2:
-                imagenes.i2,
-
-            i3:
-                imagenes.i3
-
-        };
-
-
-        /* --------------------------------------------
-           CACHE
-        -------------------------------------------- */
-
-        this.ultimo =
-            resultado;
-
-
-        /* --------------------------------------------
-           EVENTO
-        -------------------------------------------- */
-
-        document.dispatchEvent(
-
-            new CustomEvent(
-                "palentropia:contenedor-cargado",
-                {
-                    detail:
-                        resultado
-                }
-            )
-
-        );
-
-
-        /* --------------------------------------------
-           CONSOLA
-        -------------------------------------------- */
-
-        console.log(
-            "========================================"
-        );
-
-        console.log(
-            "PalEntropía — CARGACONT v1.5 LTS"
-        );
-
-        console.log(
-            "Registro final:"
-        );
-
-        console.log(
-            resultado
-        );
-
-        console.log(
-            "========================================"
-        );
-
-
-        return resultado;
-
-    },
-
-
-    /* ====================================================
-       CARGA ALEATORIA
-    ==================================================== */
-
-    async aleatorio(){
-
-        const contenedor =
-            this.obtenerContenedor();
-
-
-        const registros =
-            contenedor.filter(
-
-                registro => {
-
-                    if(!registro){
-
-                        return false;
-
-                    }
-
-
-                    const codigo =
-                        this.normalizarJ1(
-                            registro.codigo
-                        );
-
-
-                    return /^\d{3}_\d{2}$/.test(
-                        codigo
-                    );
-
-                }
-
-            );
-
-
-        if(
-            !registros.length
-        ){
-
-            throw new Error(
-                "CARGACONT: no existen j1 válidos."
-            );
-
-        }
-
-
-        const indice =
-            Math.floor(
-                Math.random() *
-                registros.length
-            );
-
-
-        const j1 =
-            this.normalizarJ1(
-                registros[indice].codigo
-            );
-
-
-        return await this.cargar(
+    j1 =
+        this.normalizarJ1(
             j1
         );
 
-    },
 
+    if(!j1){
 
-    /* ====================================================
-       OBTENER ÚLTIMO REGISTRO
-    ==================================================== */
-
-    obtener(){
-
-        return this.ultimo || null;
-
-    },
-
-
-    /* ====================================================
-       ESTADO
-    ==================================================== */
-
-    estado(){
-
-        return {
-
-            disponible:
-                !!this.ultimo,
-
-            j1:
-                this.ultimo
-                    ? this.ultimo.j1
-                    : null
-
-        };
+        throw new Error(
+            "CARGACONT: no se ha indicado j1."
+        );
 
     }
+
+
+    /* --------------------------------------------
+       COMPROBAR J1 EN MASTER.CSV
+    -------------------------------------------- */
+
+    const registroCSV =
+        this.buscarJ1EnCSV(
+            j1
+        );
+
+
+    if(!registroCSV){
+
+        throw new Error(
+            "CARGACONT: el j1 " +
+            j1 +
+            " no existe en master.csv."
+        );
+
+    }
+
+
+    /* --------------------------------------------
+       OBTENER J3 DESDE MASTER.CSV
+
+       j3 = cronología oficial
+    -------------------------------------------- */
+
+    const j3 =
+        registroCSV.j3;
+
+
+    /* --------------------------------------------
+       COMPROBAR J3
+    -------------------------------------------- */
+
+    if(
+        j3 === undefined ||
+        j3 === null ||
+        String(j3).trim() === ""
+    ){
+
+        throw new Error(
+            "CARGACONT: j3/cronología vacío para " +
+            j1 +
+            "."
+        );
+
+    }
+
+
+    const j3Normalizado =
+        String(j3).trim();
+
+
+    /* --------------------------------------------
+       ANALIZAR GEOLOGÍA
+
+       j3
+       ↓
+       PALGEOSIMPLIFICADO
+    -------------------------------------------- */
+
+    const geologia =
+        this.analizarGeologia(
+            j3Normalizado
+        );
+
+
+    /* --------------------------------------------
+       DATOS FINALES DESDE JSON
+    -------------------------------------------- */
+
+    const datosFinales =
+        await this.obtenerDatosFinales(
+            j1
+        );
+
+
+    /* --------------------------------------------
+       COMPROBAR BUSCARUTA
+    -------------------------------------------- */
+
+    if(
+        !window.BUSCARUTA ||
+        typeof window.BUSCARUTA.buscar !==
+        "function"
+    ){
+
+        throw new Error(
+            "CARGACONT: BUSCARUTA no está disponible."
+        );
+
+    }
+
+
+    /* --------------------------------------------
+       BUSCAR IMÁGENES
+    -------------------------------------------- */
+
+    const resultadoBusqueda =
+        await window.BUSCARUTA.buscar(
+            j1
+        );
+
+
+    /* --------------------------------------------
+       CONVERTIR A URL ABSOLUTAS
+    -------------------------------------------- */
+
+    const imagenes =
+        this.prepararImagenes(
+            resultadoBusqueda
+        );
+
+
+    /* ==================================================
+       REGISTRO FINAL
+       
+       NUEVOS DATOS GEO:
+       rango
+       codes
+       periodo
+       edad
+    ================================================== */
+
+    const resultado = {
+
+        j1:
+            j1,
+
+        j2:
+            datosFinales.j2,
+
+        j3:
+            j3Normalizado,
+
+        rango:
+            geologia.rango,
+
+        codes:
+            geologia.codes,
+
+        periodo:
+            geologia.periodo,
+
+        edad:
+            geologia.edad,
+
+        j7:
+            datosFinales.j7,
+
+        j8:
+            datosFinales.j8,
+
+        i0:
+            imagenes.i0,
+
+        i2:
+            imagenes.i2,
+
+        i3:
+            imagenes.i3
+
+    };
+
+
+    /* --------------------------------------------
+       CACHE
+    -------------------------------------------- */
+
+    this.ultimo =
+        resultado;
+
+
+    /* --------------------------------------------
+       EVENTO
+    -------------------------------------------- */
+
+    document.dispatchEvent(
+
+        new CustomEvent(
+            "palentropia:contenedor-cargado",
+            {
+                detail:
+                    resultado
+            }
+        )
+
+    );
+
+
+    /* --------------------------------------------
+       CONSOLA
+    -------------------------------------------- */
+
+    console.log(
+        "========================================"
+    );
+
+    console.log(
+        "PalEntropía — CARGACONT v1.6 LTS"
+    );
+
+    console.log(
+        "Registro final:"
+    );
+
+    console.log(
+        resultado
+    );
+
+    console.log(
+        "========================================"
+    );
+
+
+    return resultado;
+
+},
+
+
+/* ====================================================
+   CARGA ALEATORIA
+==================================================== */
+
+async aleatorio(){
+
+    const contenedor =
+        this.obtenerContenedor();
+
+
+    const registros =
+        contenedor.filter(
+
+            registro => {
+
+                if(!registro){
+
+                    return false;
+
+                }
+
+
+                const codigo =
+                    this.normalizarJ1(
+                        registro.codigo
+                    );
+
+
+                return /^\d{3}_\d{2}$/.test(
+                    codigo
+                );
+
+            }
+
+        );
+
+
+    if(
+        !registros.length
+    ){
+
+        throw new Error(
+            "CARGACONT: no existen j1 válidos."
+        );
+
+    }
+
+
+    const indice =
+        Math.floor(
+            Math.random() *
+            registros.length
+        );
+
+
+    const j1 =
+        this.normalizarJ1(
+            registros[indice].codigo
+        );
+
+
+    return await this.cargar(
+        j1
+    );
+
+},
+
+
+/* ====================================================
+   OBTENER ÚLTIMO REGISTRO
+==================================================== */
+
+obtener(){
+
+    return this.ultimo || null;
+
+},
+
+
+/* ====================================================
+   ESTADO
+==================================================== */
+
+estado(){
+
+    return {
+
+        disponible:
+            !!this.ultimo,
+
+        j1:
+            this.ultimo
+                ? this.ultimo.j1
+                : null
+
+    };
+
+}
+
 
 };
 
 
 /* ========================================================
-   FIN CARGACONT v1.5 LTS
+   FIN CARGACONT v1.6 LTS
 ======================================================== */
