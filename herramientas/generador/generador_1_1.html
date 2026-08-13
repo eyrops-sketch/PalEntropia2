@@ -328,7 +328,6 @@
          ================================================= -->
 
     <div id="cronologia">
-
     </div>
 
 
@@ -496,12 +495,10 @@
 
 
         <div id="listaResultados">
-
         </div>
 
 
     </div>
-
 
 </div>
 
@@ -522,11 +519,9 @@ window.cargarMasterPorJ1 =
 async function(j1) {
 
 
-    /*
-    =====================================================
-    COMPROBAR J1
-    =====================================================
-    */
+    /* =================================================
+       COMPROBAR J1
+       ================================================= */
 
     if (
         j1 === undefined ||
@@ -541,11 +536,9 @@ async function(j1) {
     }
 
 
-    /*
-    =====================================================
-    CARGAR MASTER.CSV
-    =====================================================
-    */
+    /* =================================================
+       CARGAR MASTER.CSV
+       ================================================= */
 
     const respuesta =
         await fetch(
@@ -566,21 +559,17 @@ async function(j1) {
         await respuesta.text();
 
 
-    /*
-    =====================================================
-    SEPARAR LÍNEAS
-    =====================================================
-    */
+    /* =================================================
+       SEPARAR LÍNEAS
+       ================================================= */
 
     const lineas =
         texto.split(/\r?\n/);
 
 
-    /*
-    =====================================================
-    BUSCAR J1
-    =====================================================
-    */
+    /* =================================================
+       BUSCAR J1
+       ================================================= */
 
     for (
         const linea of lineas
@@ -625,56 +614,87 @@ async function(j1) {
         }
 
 
-        /*
-        =================================================
-        GUARDAR REGISTRO COMPLETO
-        =================================================
-        */
+        /* =================================================
+           GUARDAR REGISTRO COMPLETO
+           ================================================= */
 
         window.MASTER_ACTUAL = {
 
-            j1:  columnas[0]?.trim() || "",
-            j2:  columnas[1]?.trim() || "",
-            j3:  columnas[2]?.trim() || "",
-            j4:  columnas[3]?.trim() || "",
-            j5:  columnas[4]?.trim() || "",
-            j6:  columnas[5]?.trim() || "",
-            j7:  columnas[6]?.trim() || "",
-            j8:  columnas[7]?.trim() || "",
-            j9:  columnas[8]?.trim() || "",
-            j10: columnas[9]?.trim() || "",
+            j1:
+                columnas[0]?.trim() || "",
 
-            e1:  columnas[10]?.trim() || "",
-            e2:  columnas[11]?.trim() || "",
-            e3:  columnas[12]?.trim() || "",
-            e4:  columnas[13]?.trim() || "",
-            e5:  columnas[14]?.trim() || "",
-            e6:  columnas[15]?.trim() || "",
-            e7:  columnas[16]?.trim() || "",
-            e8:  columnas[17]?.trim() || "",
-            e9:  columnas[18]?.trim() || "",
-            e10: columnas[19]?.trim() || "",
-            e11: columnas[20]?.trim() || ""
+            j2:
+                columnas[1]?.trim() || "",
+
+            j3:
+                columnas[2]?.trim() || "",
+
+            j4:
+                columnas[3]?.trim() || "",
+
+            j5:
+                columnas[4]?.trim() || "",
+
+            j6:
+                columnas[5]?.trim() || "",
+
+            j7:
+                columnas[6]?.trim() || "",
+
+            j8:
+                columnas[7]?.trim() || "",
+
+            j9:
+                columnas[8]?.trim() || "",
+
+            j10:
+                columnas[9]?.trim() || "",
+
+
+            e1:
+                columnas[10]?.trim() || "",
+
+            e2:
+                columnas[11]?.trim() || "",
+
+            e3:
+                columnas[12]?.trim() || "",
+
+            e4:
+                columnas[13]?.trim() || "",
+
+            e5:
+                columnas[14]?.trim() || "",
+
+            e6:
+                columnas[15]?.trim() || "",
+
+            e7:
+                columnas[16]?.trim() || "",
+
+            e8:
+                columnas[17]?.trim() || "",
+
+            e9:
+                columnas[18]?.trim() || "",
+
+            e10:
+                columnas[19]?.trim() || "",
+
+            e11:
+                columnas[20]?.trim() || ""
 
         };
 
-
-        /*
-        =================================================
-        DEVOLVER REGISTRO
-        =================================================
-        */
 
         return window.MASTER_ACTUAL;
 
     }
 
 
-    /*
-    =====================================================
-    NO ENCONTRADO
-    =====================================================
-    */
+    /* =================================================
+       NO ENCONTRADO
+       ================================================= */
 
     window.MASTER_ACTUAL = null;
 
@@ -686,7 +706,7 @@ async function(j1) {
 
 
 <!-- =====================================================
-     MÓDULOS EXISTENTES
+     MÓDULOS BASE
      ===================================================== -->
 
 <script src="leepaljson.js"></script>
@@ -716,10 +736,17 @@ async function(j1) {
 
 
 <!-- =====================================================
-     GENERADOR 1.1
+     CONTENEDOR GEOLOGÍA
      
-     SEIS MÓDULOS PROCEDENTES DEL
-     GENERADOR ORIGINAL
+     CONT07 debe existir antes de que CAB07 pueda
+     utilizarlo.
+     ===================================================== -->
+
+<script src="cont07.js"></script>
+
+
+<!-- =====================================================
+     GENERADOR 1.1
      ===================================================== -->
 
 <script src="cab01.js"></script>
@@ -730,13 +757,11 @@ async function(j1) {
 
 <script src="cab04.js"></script>
 
-<script src="cab07.js"></script>
-      
-<script src="cont07.js"></script> 
-
 <script src="cab05.js"></script>
 
 <script src="cab06.js"></script>
+
+<script src="cab07.js"></script>
 
 
 </body>
