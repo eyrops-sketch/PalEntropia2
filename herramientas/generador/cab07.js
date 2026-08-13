@@ -4,46 +4,38 @@ PalEntropía
 CAB07.js
 Generador de Paleofichas 1.1
 
-PRUEBA DIRECTA J3 — TELEOBLIGATORIO v2
+VERSIÓN FINAL — PRUEBA DIRECTA J3
 
 OBJETIVO:
 
-Para las fichas 001–005:
-    mantener comportamiento existente.
+001–005:
+    Mantener comportamiento geológico existente.
 
-Para fichas distintas de 001–005:
+006 en adelante:
+    J1
+     ↓
+    LEEPALJSON.obtener()
+     ↓
+    registro.j3
+     ↓
+    TELEOBLIGATORIO
 
-    LEEPALJSON
-        ↓
-    master.csv
-        ↓
-    buscar j1
-        ↓
-    obtener j3 BRUTO
-        ↓
-    mostrar directamente en BODY
+Para 006_01 debe mostrar:
+
+    TELEOBLIGATORIO: 0068.6000-0066.0000
 
 IMPORTANTE:
 
-Esta prueba NO utiliza para TELEOBLIGATORIO:
+TELEOBLIGATORIO NO UTILIZA:
 
 - CARGACONT
-- CON07
 - CONT07
 - PALGEOSIMPLIFICADO
 - PALGEO
-- resultadoGeologiaCAB07
 
-El valor debe salir directamente de:
+Para la lectura directa únicamente utiliza:
 
     LEEPALJSON.obtener()
-        ↓
-    registro.j3
-
-Para 006_01 esperamos:
-
-    006_01
-    TELEOBLIGATORIO: 0068.6000-0066.0000
 
 ========================================================
 */
@@ -91,12 +83,6 @@ window.CAB07 = {
         let fin =
             partes[1].trim();
 
-
-        /*
-        -----------------------------------------------------
-        GARANTIZAR XXXX.XXXX
-        -----------------------------------------------------
-        */
 
         if (
             /^\d+\.\d{4}$/.test(inicio)
@@ -148,26 +134,15 @@ window.CAB07 = {
     /* =====================================================
        OBTENER J3 DIRECTAMENTE DE LEEPALJSON
 
-       ESTA ES LA PRUEBA AISLADA.
+       NO utiliza CARGACONT.
+       NO utiliza CONT07.
+       NO utiliza PALGEO.
+       NO utiliza PALGEOSIMPLIFICADO.
 
-       No utiliza ningún dato procedente de CARGACONT.
-
-       No analiza j3.
-
-       No transforma j3.
-
-       Devuelve exactamente el contenido de:
-
-           registro.j3
+       Devuelve el j3 bruto del registro.
        ===================================================== */
 
     obtenerJ3Directo(j1) {
-
-        /*
-        -----------------------------------------------------
-        COMPROBAR J1
-        -----------------------------------------------------
-        */
 
         if (
             j1 === undefined ||
@@ -198,12 +173,6 @@ window.CAB07 = {
         }
 
 
-        /*
-        -----------------------------------------------------
-        COMPROBAR LEEPALJSON
-        -----------------------------------------------------
-        */
-
         if (
             !window.LEEPALJSON ||
             typeof window.LEEPALJSON.obtener !==
@@ -218,12 +187,6 @@ window.CAB07 = {
 
         }
 
-
-        /*
-        -----------------------------------------------------
-        OBTENER DATOS DIRECTAMENTE
-        -----------------------------------------------------
-        */
 
         let registros;
 
@@ -245,12 +208,6 @@ window.CAB07 = {
         }
 
 
-        /*
-        -----------------------------------------------------
-        COMPROBAR ARRAY
-        -----------------------------------------------------
-        */
-
         if (
             !Array.isArray(registros)
         ) {
@@ -263,12 +220,6 @@ window.CAB07 = {
 
         }
 
-
-        /*
-        -----------------------------------------------------
-        BUSCAR REGISTRO POR J1
-        -----------------------------------------------------
-        */
 
         for (
             const registro of registros
@@ -303,22 +254,6 @@ window.CAB07 = {
             }
 
 
-            /*
-            -------------------------------------------------
-            REGISTRO ENCONTRADO
-
-            NO TOCAR J3.
-
-            NO NORMALIZAR.
-
-            NO ANALIZAR.
-
-            NO CONVERTIR.
-
-            DEVOLVER BRUTO.
-            -------------------------------------------------
-            */
-
             if (
                 registro.j3 === undefined ||
                 registro.j3 === null
@@ -334,6 +269,19 @@ window.CAB07 = {
 
             }
 
+
+            /*
+            -------------------------------------------------
+            IMPORTANTE:
+
+            AQUÍ NO SE TOCA EL VALOR.
+
+            No normalizar.
+            No analizar.
+            No convertir.
+            No interpretar.
+            -------------------------------------------------
+            */
 
             const j3Bruto =
                 String(
@@ -353,12 +301,6 @@ window.CAB07 = {
         }
 
 
-        /*
-        -----------------------------------------------------
-        NO ENCONTRADO
-        -----------------------------------------------------
-        */
-
         console.error(
             "CAB07: no se encontró " +
             codigoBuscado +
@@ -372,31 +314,31 @@ window.CAB07 = {
 
 
     /* =====================================================
-       MOSTRAR J3 DIRECTO EN BODY
+       MOSTRAR J3 DIRECTO
 
-       ESTA FUNCIÓN NO DEPENDE DE NINGÚN CONTENEDOR
-       DE GEOLOGÍA.
+       001–005:
+           No interviene.
 
-       Se utiliza exclusivamente para la prueba.
+       006 en adelante:
+           muestra j3 bruto.
        ===================================================== */
 
     mostrarJ3Directo(j1) {
 
+        if (
+            !j1
+        ) {
+
+            return;
+
+        }
+
+
         const codigo =
-            String(
-                j1 || ""
-            )
-            .trim()
-            .toUpperCase();
+            String(j1)
+                .trim()
+                .toUpperCase();
 
-
-        /*
-        -----------------------------------------------------
-        REGLA 001–005
-
-        No hacer nada nuevo.
-        -----------------------------------------------------
-        */
 
         const prefijo =
             codigo.substring(
@@ -404,6 +346,14 @@ window.CAB07 = {
                 3
             );
 
+
+        /*
+        -----------------------------------------------------
+        REGLA DE COMPATIBILIDAD
+
+        Las primeras 5 series no se tocan.
+        -----------------------------------------------------
+        */
 
         if (
             prefijo === "001" ||
@@ -420,7 +370,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        OBTENER J3 BRUTO
+        OBTENER J3 DIRECTO
         -----------------------------------------------------
         */
 
@@ -429,12 +379,6 @@ window.CAB07 = {
                 codigo
             );
 
-
-        /*
-        -----------------------------------------------------
-        SI NO HAY J3
-        -----------------------------------------------------
-        */
 
         if (
             j3 === ""
@@ -447,10 +391,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        ELIMINAR PRUEBA ANTERIOR
-
-        Esto evita duplicados si la ficha se refresca
-        internamente sin reconstruir todo el DOM.
+        ELIMINAR RESULTADO ANTERIOR
         -----------------------------------------------------
         */
 
@@ -471,7 +412,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        CREAR ELEMENTO DIRECTAMENTE EN BODY
+        CREAR BLOQUE
         -----------------------------------------------------
         */
 
@@ -485,35 +426,41 @@ window.CAB07 = {
             "teleobligatorioCAB07";
 
 
-        bloque.style.position =
-            "relative";
-
         bloque.style.display =
             "block";
+
 
         bloque.style.margin =
             "20px auto";
 
+
         bloque.style.padding =
             "15px";
+
 
         bloque.style.maxWidth =
             "700px";
 
+
         bloque.style.border =
             "2px solid currentColor";
+
 
         bloque.style.borderRadius =
             "10px";
 
+
         bloque.style.fontSize =
             "18px";
+
 
         bloque.style.fontWeight =
             "bold";
 
+
         bloque.style.textAlign =
             "center";
+
 
         bloque.style.zIndex =
             "99999";
@@ -535,13 +482,12 @@ window.CAB07 = {
         -----------------------------------------------------
         INSERTAR DIRECTAMENTE EN BODY
 
-        SIN:
+        No depende de:
 
-        - CON07
         - cronologia
+        - resultadoGeologiaCAB07
+        - CONT07
         - botón vídeo
-        - contenedor geológico
-        - generador
         -----------------------------------------------------
         */
 
@@ -549,12 +495,6 @@ window.CAB07 = {
             bloque
         );
 
-
-        /*
-        -----------------------------------------------------
-        CONFIRMACIÓN
-        -----------------------------------------------------
-        */
 
         console.log(
             "========================================"
@@ -844,6 +784,7 @@ window.CAB07 = {
 
     },
 
+
     /* =====================================================
        LIMPIAR PRESENTACIÓN
        ===================================================== */
@@ -865,12 +806,6 @@ window.CAB07 = {
 
         }
 
-
-        /*
-        -----------------------------------------------------
-        ELIMINAR TAMBIÉN LA PRUEBA DIRECTA ANTERIOR
-        -----------------------------------------------------
-        */
 
         const tele =
             document.getElementById(
@@ -921,12 +856,6 @@ window.CAB07 = {
         };
 
 
-        /*
-        -----------------------------------------------------
-        RANGO
-        -----------------------------------------------------
-        */
-
         const rango =
             this.obtenerRangoVisual(
                 datos.j3,
@@ -934,35 +863,17 @@ window.CAB07 = {
             );
 
 
-        /*
-        -----------------------------------------------------
-        PERÍODO
-        -----------------------------------------------------
-        */
-
         const periodoVisual =
             this.formatearRangoLista(
                 geologia.periodo
             );
 
 
-        /*
-        -----------------------------------------------------
-        EDAD
-        -----------------------------------------------------
-        */
-
         const edadVisual =
             this.formatearRangoLista(
                 geologia.edad
             );
 
-
-        /*
-        -----------------------------------------------------
-        PRESENTACIÓN NORMAL
-        -----------------------------------------------------
-        */
 
         contenedor.innerHTML =
             `
@@ -990,8 +901,7 @@ window.CAB07 = {
 
     },
 
-
-    /* =====================================================
+        /* =====================================================
        PROCESAR REGISTRO RECIBIDO
        ===================================================== */
 
@@ -1019,7 +929,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        CREAR COPIA
+        COPIA DEL REGISTRO
 
         No modificamos el objeto original.
         -----------------------------------------------------
@@ -1034,10 +944,10 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        NORMALIZAR J3
+        J3 NORMALIZADO
 
-        Esto mantiene el comportamiento anterior
-        de CAB07 para las fichas que ya funcionan.
+        Se conserva el comportamiento anterior
+        para la presentación geológica existente.
         -----------------------------------------------------
         */
 
@@ -1080,11 +990,6 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         PREPARAR GEOLOGÍA EXISTENTE
-
-        NO TOCAMOS ESTA PARTE.
-
-        Sirve para conservar el funcionamiento
-        de las primeras 75 fichas.
         -----------------------------------------------------
         */
 
@@ -1149,12 +1054,18 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        ACTUALIZAR PRESENTACIÓN NORMAL
+        LIMPIAR PRESENTACIÓN ANTERIOR
         -----------------------------------------------------
         */
 
         this.limpiarPresentacion();
 
+
+        /*
+        -----------------------------------------------------
+        MOSTRAR GEOLOGÍA NORMAL
+        -----------------------------------------------------
+        */
 
         this.mostrarGeologia(
             registro
@@ -1162,28 +1073,19 @@ window.CAB07 = {
 
 
         /*
-        =====================================================
-        PRUEBA DIRECTA
-        =====================================================
+        -----------------------------------------------------
+        TELEOBLIGATORIO
 
         IMPORTANTE:
 
-        Se ejecuta DESPUÉS de toda la lógica anterior.
+        Esta llamada se hace AQUÍ, dentro de procesar().
 
-        Por tanto:
-
-        - no sustituye datos;
-        - no modifica registro.j3;
-        - no modifica CON07;
-        - no modifica CONT07;
-        - no depende de la geología calculada.
+        No depende de actualizarPresentacion().
 
         Para 001–005 no hace nada.
 
-        Para 006_01 y posteriores:
-
-            LEEPALJSON → j3 → BODY
-        =====================================================
+        Para 006+ lee directamente LEEPALJSON.
+        -----------------------------------------------------
         */
 
         this.mostrarJ3Directo(
@@ -1255,11 +1157,10 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        PRUEBA DIRECTA
+        TELEOBLIGATORIO
 
-        También se puede ejecutar desde aquí si
-        actualizarPresentacion() es llamada por el
-        generador después de procesar la ficha.
+        También se ejecuta aquí por si el generador
+        actualiza posteriormente la presentación.
         -----------------------------------------------------
         */
 
@@ -1284,6 +1185,7 @@ CARGACONT genera:
     palentropia:contenedor-cargado
 
 CAB07 únicamente escucha.
+
 --------------------------------------------------------
 */
 
@@ -1347,6 +1249,3 @@ window.CAB07 =
 FIN CAB07.js
 ========================================================
 */
-
-  
-  
