@@ -11,12 +11,13 @@ FUNCIÓN:
 - Normaliza j3.
 - Guarda el registro en CONT07.
 - Envía j3 a LEEPALGEO.
-- Guarda TODOS los datos geológicos en CONT07.
-- Presenta únicamente los datos geológicos necesarios.
-- No muestra códigos geológicos.
-- No muestra la cronología interna.
-- Resume períodos y edades cuando existen más de 3.
-- Limpia la geología anterior antes de cargar una nueva ficha.
+- Guarda la geología en CONT07.
+- Presenta la información geológica de forma humana.
+- Oculta los códigos geológicos internos.
+- Oculta la cronología interna.
+- Resume períodos y edades cuando hay más de 3.
+- No modifica PALGEO.
+- No interpreta cronología por sí mismo.
 - Si la geología falla, la ficha continúa funcionando.
 
 ========================================================
@@ -69,7 +70,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        GARANTIZAR XXXX.XXXX
+        GARANTIZAR FORMATO XXXX.XXXX
         -----------------------------------------------------
         */
 
@@ -119,29 +120,102 @@ window.CAB07 = {
 
 
     /* =====================================================
-       PREPARAR LISTA PARA PRESENTACIÓN
-
-       Si hay 3 elementos o menos:
-       muestra todos.
-
-       Si hay más de 3:
-       muestra únicamente:
-
-       Del primero al último
-
-       IMPORTANTE:
-
-       Esto afecta SOLO a la presentación.
-
-       Los arrays completos permanecen
-       almacenados en CONT07.
+       FORMATEAR RANGO TEMPORAL
+       
+       PALGEOSIMPLIFICADO ES LA FUENTE DE INTERPRETACIÓN.
+       
+       CAB07 no interpreta los valores geológicos.
+       Solo solicita la conversión.
        ===================================================== */
 
-    presentarRango(lista) {
+    obtenerRangoTemporal(cronologia) {
 
         if (
-            !Array.isArray(lista) ||
-            !lista.length
+            !cronologia
+        ) {
+
+            return "";
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        UTILIZAR PALGEOSIMPLIFICADO
+        -----------------------------------------------------
+        */
+
+        if (
+            window.PALGEOSIMPLIFICADO &&
+            typeof window.PALGEOSIMPLIFICADO.decodificarRango ===
+            "function"
+        ) {
+
+            try {
+
+                const rango =
+                    window.PALGEOSIMPLIFICADO.decodificarRango(
+                        cronologia
+                    );
+
+
+                if (
+                    rango
+                ) {
+
+                    return rango;
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "CAB07: No se pudo formatear el rango temporal.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        FALLBACK
+       
+        Solo se utiliza si el módulo simplificado
+        todavía no está disponible.
+        -----------------------------------------------------
+        */
+
+        return "";
+
+    },
+
+
+    /* =====================================================
+       RESUMIR LISTA GEOLÓGICA
+       
+       REGLA VISUAL:
+       
+       0 elementos → —
+       1 elemento  → elemento
+       2 elementos → elemento 1, elemento 2
+       3 elementos → elemento 1, elemento 2, elemento 3
+       >3         → Del primero al último
+       
+       IMPORTANTE:
+       
+       Esto es SOLO presentación.
+       
+       Los valores completos permanecen
+       disponibles internamente.
+       ===================================================== */
+
+    resumirLista(lista) {
+
+        if (
+            !Array.isArray(lista)
         ) {
 
             return "—";
@@ -149,16 +223,29 @@ window.CAB07 = {
         }
 
 
+        /*
+        -----------------------------------------------------
+        LIMPIAR VALORES VACÍOS
+        -----------------------------------------------------
+        */
+
         const valores =
             lista
                 .map(
                     valor =>
-                        String(valor).trim()
+                        String(
+                            valor ?? ""
+                        ).trim()
                 )
-                .filter(Boolean);
+                .filter(
+                    valor =>
+                        valor !== ""
+                );
 
 
-        if (!valores.length) {
+        if (
+            valores.length === 0
+        ) {
 
             return "—";
 
@@ -175,7 +262,9 @@ window.CAB07 = {
             valores.length <= 3
         ) {
 
-            return valores.join(", ");
+            return valores.join(
+                ", "
+            );
 
         }
 
@@ -183,6 +272,8 @@ window.CAB07 = {
         /*
         -----------------------------------------------------
         MÁS DE 3 ELEMENTOS
+       
+        PRESENTACIÓN COMPACTA
         -----------------------------------------------------
         */
 
@@ -198,9 +289,25 @@ window.CAB07 = {
 
     /* =====================================================
        MOSTRAR GEOLOGÍA
+       
+       PRESENTACIÓN FINAL
+       
+       NO SE MUESTRAN:
+       
+       - códigos geológicos
+       - cronología interna
+       - etiqueta "Geología"
+       
+       SE MUESTRAN:
+       
+       Tiempo geológico
+       Período
+       Edad
+       
        ===================================================== */
 
     mostrarGeologia() {
+
 
         /*
         -----------------------------------------------------
@@ -216,11 +323,13 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        CREAR CONTENEDOR SI NO EXISTE
+        CREAR CONTENEDOR
         -----------------------------------------------------
         */
 
-        if (!contenedor) {
+        if (
+            !contenedor
+        ) {
 
             contenedor =
                 document.createElement(
@@ -232,12 +341,18 @@ window.CAB07 = {
                 "resultadoGeologiaCAB07";
 
 
+            /*
+            -------------------------------------------------
+            ESTILO DEL PANEL
+            -------------------------------------------------
+            */
+
             contenedor.style.margin =
                 "12px auto";
 
 
             contenedor.style.padding =
-                "10px";
+                "10px 12px";
 
 
             contenedor.style.maxWidth =
@@ -248,28 +363,77 @@ window.CAB07 = {
                 "10px";
 
 
+            /*
+            -------------------------------------------------
+            LETRA
+           
+            Un poco mayor que la versión anterior.
+            -------------------------------------------------
+            */
+
             contenedor.style.fontSize =
-                "13px";
+                "14px";
 
 
-            const cronologia =
+            contenedor.style.lineHeight =
+                "1.45";
+
+
+            /*
+            -------------------------------------------------
+            INSERTAR DESPUÉS DEL BOTÓN DE VÍDEO
+           
+            Primero intentamos localizar el botón.
+            -------------------------------------------------
+            */
+
+            const botonVideo =
                 document.getElementById(
-                    "cronologia"
+                    "botonVideo"
                 );
 
 
-            if (cronologia) {
+            if (
+                botonVideo
+            ) {
 
-                cronologia.insertAdjacentElement(
+                botonVideo.insertAdjacentElement(
                     "afterend",
                     contenedor
                 );
 
             } else {
 
-                document.body.appendChild(
-                    contenedor
-                );
+                /*
+                -------------------------------------------------
+                FALLBACK:
+                Si todavía no existe el botón de vídeo,
+                se intenta utilizar el bloque de cronología.
+                -------------------------------------------------
+                */
+
+                const cronologia =
+                    document.getElementById(
+                        "cronologia"
+                    );
+
+
+                if (
+                    cronologia
+                ) {
+
+                    cronologia.insertAdjacentElement(
+                        "afterend",
+                        contenedor
+                    );
+
+                } else {
+
+                    document.body.appendChild(
+                        contenedor
+                    );
+
+                }
 
             }
 
@@ -278,7 +442,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        OBTENER GEOLOGÍA ACTUAL
+        OBTENER GEOLOGÍA DESDE CONT07
         -----------------------------------------------------
         */
 
@@ -292,8 +456,19 @@ window.CAB07 = {
             "function"
         ) {
 
-            geologia =
-                window.CONT07.obtenerGeologia();
+            try {
+
+                geologia =
+                    window.CONT07.obtenerGeologia();
+
+            } catch (error) {
+
+                console.warn(
+                    "CAB07: Error al obtener geología desde CONT07.",
+                    error
+                );
+
+            }
 
         }
 
@@ -304,18 +479,12 @@ window.CAB07 = {
         -----------------------------------------------------
         */
 
-        if (!geologia) {
+        if (
+            !geologia
+        ) {
 
             contenedor.innerHTML =
-                `
-                <div>
-                    <strong>Período:</strong> —
-                </div>
-
-                <div>
-                    <strong>Edad:</strong> —
-                </div>
-                `;
+                "";
 
             return;
 
@@ -324,7 +493,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        OBTENER PERÍODOS
+        NORMALIZAR ARRAYS
         -----------------------------------------------------
         */
 
@@ -336,12 +505,6 @@ window.CAB07 = {
                 : [];
 
 
-        /*
-        -----------------------------------------------------
-        OBTENER EDADES / SUBPERÍODOS
-        -----------------------------------------------------
-        */
-
         const edad =
             Array.isArray(
                 geologia.edad
@@ -352,54 +515,161 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        PREPARAR PRESENTACIÓN
-        -----------------------------------------------------
-
-        Los códigos NO se muestran.
-
-        Los arrays originales permanecen intactos
-        dentro de CONT07.
+        CRONOLOGÍA INTERNA
+       
+        SE CONSERVA EN LOS DATOS INTERNOS,
+        PERO NO SE PRESENTA.
         -----------------------------------------------------
         */
 
-        const periodoVisual =
-            this.presentarRango(
-                periodo
-            );
+        const cronologia =
+            geologia.cronologia ||
+            geologia.j3 ||
+            "";
 
 
-        const edadVisual =
-            this.presentarRango(
-                edad
+        /*
+        -----------------------------------------------------
+        OBTENER RANGO HUMANO
+        -----------------------------------------------------
+        */
+
+        let rangoTemporal =
+            this.obtenerRangoTemporal(
+                cronologia
             );
 
 
         /*
         -----------------------------------------------------
-        MOSTRAR ÚNICAMENTE INFORMACIÓN HUMANA
+        SI CONT07 NO GUARDA LA CRONOLOGÍA,
+        UTILIZAR EL ELEMENTO CRONOLOGÍA DE LA FICHA
+        COMO ÚLTIMO RECURSO INTERNO.
+       
+        NUNCA SE MUESTRA EL CÓDIGO BRUTO.
+        -----------------------------------------------------
+        */
+
+        if (
+            !rangoTemporal
+        ) {
+
+            const elementoCronologia =
+                document.getElementById(
+                    "cronologia"
+                );
+
+
+            if (
+                elementoCronologia &&
+                elementoCronologia.textContent
+            ) {
+
+                rangoTemporal =
+                    this.obtenerRangoTemporal(
+                        elementoCronologia.textContent.trim()
+                    );
+
+            }
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        CONSTRUIR PRESENTACIÓN
+       
+        IMPORTANTE:
+       
+        No aparece:
+       
+        "Geología"
+       
+        No aparece:
+       
+        "Cronología interna"
+       
+        No aparecen:
+       
+        códigos PALGEO.
+        -----------------------------------------------------
+        */
+
+        let html =
+            "";
+
+
+        /*
+        -----------------------------------------------------
+        TIEMPO GEOLÓGICO
+       
+        VA ENCIMA DE PERÍODO Y EDAD.
+        -----------------------------------------------------
+        */
+
+        if (
+            rangoTemporal
+        ) {
+
+            html +=
+                `
+                <div class="cab07-tiempo-geologico">
+                    <strong>Tiempo geológico:</strong>
+                    ${rangoTemporal}
+                </div>
+                `;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        PERÍODO
+        -----------------------------------------------------
+        */
+
+        html +=
+            `
+            <div class="cab07-periodo">
+                <strong>Período:</strong>
+                ${this.resumirLista(periodo)}
+            </div>
+            `;
+
+
+        /*
+        -----------------------------------------------------
+        EDAD
+        -----------------------------------------------------
+        */
+
+        html +=
+            `
+            <div class="cab07-edad">
+                <strong>Edad:</strong>
+                ${this.resumirLista(edad)}
+            </div>
+            `;
+
+
+        /*
+        -----------------------------------------------------
+        MOSTRAR
         -----------------------------------------------------
         */
 
         contenedor.innerHTML =
-            `
-            <div>
-                <strong>Período:</strong>
-                ${periodoVisual}
-            </div>
-
-            <div style="margin-top:6px;">
-                <strong>Edad:</strong>
-                ${edadVisual}
-            </div>
-            `;
+            html;
 
     },
 
-      /* =====================================================
+
+    /* =====================================================
        PROCESAR
        ===================================================== */
 
     async procesar(j1) {
+
 
         /*
         -----------------------------------------------------
@@ -439,7 +709,9 @@ window.CAB07 = {
         -----------------------------------------------------
         */
 
-        if (!datos) {
+        if (
+            !datos
+        ) {
 
             console.warn(
                 "CAB07: No se encontró el registro:",
@@ -490,37 +762,6 @@ window.CAB07 = {
 
         /*
         =====================================================
-        LIMPIAR GEOLOGÍA ANTERIOR
-        =====================================================
-
-        Esto es importante para las búsquedas.
-
-        Si la ficha anterior tenía geología y la nueva
-        no tiene datos, no debemos conservar la anterior.
-        =====================================================
-        */
-
-        if (
-            window.CONT07 &&
-            typeof window.CONT07.guardarGeologia ===
-            "function"
-        ) {
-
-            window.CONT07.guardarGeologia({
-
-                codes: [],
-
-                periodo: [],
-
-                edad: []
-
-            });
-
-        }
-
-
-        /*
-        =====================================================
         GEOLOGÍA
         =====================================================
         */
@@ -542,13 +783,12 @@ window.CAB07 = {
                 /*
                 -------------------------------------------------
                 GUARDAR GEOLOGÍA COMPLETA
-                -------------------------------------------------
-
-                Aquí se guardan TODOS los códigos,
-                períodos y edades.
-
-                La reducción a "Del X al Y" solamente
-                ocurre posteriormente en mostrarGeologia().
+               
+                No eliminamos códigos.
+                No eliminamos períodos.
+                No eliminamos edades.
+               
+                La reducción es únicamente visual.
                 -------------------------------------------------
                 */
 
@@ -585,32 +825,7 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        NO MOSTRAR CRONOLOGÍA INTERNA
-        -----------------------------------------------------
-
-        El elemento cronologia puede seguir existiendo
-        para compatibilidad, pero CAB07 ya no introduce
-        aquí el valor interno de j3.
-        -----------------------------------------------------
-        */
-
-        const cronologia =
-            document.getElementById(
-                "cronologia"
-            );
-
-
-        if (cronologia) {
-
-            cronologia.textContent =
-                "";
-
-        }
-
-
-        /*
-        -----------------------------------------------------
-        MOSTRAR GEOLOGÍA
+        ACTUALIZAR PRESENTACIÓN GEOLOGÍA
         -----------------------------------------------------
         */
 
@@ -624,6 +839,89 @@ window.CAB07 = {
         */
 
         return datos;
+
+    },
+
+        /* =====================================================
+       RECARGAR PRESENTACIÓN GEOLOGÍA
+       
+       ÚTIL CUANDO LA FICHA CAMBIA SIN RECARGAR LA PÁGINA.
+       
+       No modifica los datos internos.
+       Solo vuelve a pintar CAB07.
+       ===================================================== */
+
+    refrescar() {
+
+        try {
+
+            this.mostrarGeologia();
+
+        } catch (error) {
+
+            console.warn(
+                "CAB07: Error al refrescar la presentación geológica.",
+                error
+            );
+
+        }
+
+    },
+
+
+    /* =====================================================
+       LIMPIAR PRESENTACIÓN
+       
+       IMPORTANTE:
+       
+       Solo elimina lo que CAB07 muestra.
+       
+       NO elimina:
+       
+       - CONT07
+       - PALGEO
+       - códigos geológicos
+       - períodos internos
+       - edades internas
+       - cronología
+       
+       Esto permite que el siguiente resultado
+       sustituya correctamente al anterior.
+       ===================================================== */
+
+    limpiar() {
+
+        const contenedor =
+            document.getElementById(
+                "resultadoGeologiaCAB07"
+            );
+
+
+        if (
+            contenedor
+        ) {
+
+            contenedor.innerHTML =
+                "";
+
+        }
+
+    },
+
+
+    /* =====================================================
+       ACTUALIZAR
+       
+       Alias de refrescar().
+       
+       Permite que otros módulos puedan solicitar
+       una actualización visual de CAB07 sin conocer
+       la implementación interna.
+       ===================================================== */
+
+    actualizar() {
+
+        this.refrescar();
 
     }
 
@@ -645,7 +943,3 @@ window.CAB07 =
 FIN CAB07.js
 ========================================================
 */
-
-
-
-
