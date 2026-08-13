@@ -9,13 +9,24 @@ FUNCIÓN:
 - Recibe j1.
 - Obtiene el registro completo desde master.csv.
 - Normaliza j3.
-- Guarda el registro en CONT07.
+- Guarda el registro completo en CONT07.
 - Envía j3 a LEEPALGEO.
-- Guarda la geología en CONT07.
-- Muestra temporalmente los resultados geológicos.
-- No modifica PALGEO.
-- No interpreta cronología.
-- Si la geología falla, la ficha continúa funcionando.
+- Guarda TODA la geología en CONT07.
+- Presenta únicamente la información geológica
+  destinada al usuario.
+- No muestra códigos geológicos.
+- No muestra la cronología interna.
+- Si hay más de 3 subperíodos/series,
+  los resume visualmente como:
+
+  Del PRIMERO al ÚLTIMO
+
+IMPORTANTE:
+
+Los datos internos NO se reducen.
+
+CONT07 conserva todos los códigos,
+períodos y edades recibidos.
 
 ========================================================
 */
@@ -78,6 +89,7 @@ window.CAB07 = {
             const partesInicio =
                 inicio.split(".");
 
+
             inicio =
                 partesInicio[0]
                 .padStart(4, "0")
@@ -95,6 +107,7 @@ window.CAB07 = {
 
             const partesFin =
                 fin.split(".");
+
 
             fin =
                 partesFin[0]
@@ -117,9 +130,241 @@ window.CAB07 = {
 
 
     /* =====================================================
+       FORMATEAR RANGO TEMPORAL PARA EL USUARIO
+
+       Convierte:
+
+       0521.0000-0509.0000
+
+       en:
+
+       521 Ma – 509 Ma
+
+       Esta función es SOLO VISUAL.
+
+       El j3 interno permanece intacto.
+       ===================================================== */
+
+    formatearRangoVisual(j3) {
+
+        if (
+            !j3
+        ) {
+
+            return "—";
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        INTENTAR USAR PALGEOSIMPLIFICADO
+        -----------------------------------------------------
+        */
+
+        if (
+            window.PALGEOSIMPLIFICADO &&
+            typeof window.PALGEOSIMPLIFICADO
+                .decodificarRango === "function"
+        ) {
+
+            const rango =
+                window.PALGEOSIMPLIFICADO
+                    .decodificarRango(j3);
+
+
+            if (
+                rango
+            ) {
+
+                return rango
+                    .replace(
+                        " - ",
+                        " – "
+                    );
+
+            }
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        FALLBACK VISUAL
+        -----------------------------------------------------
+        */
+
+        const partes =
+            String(j3)
+                .split("-");
+
+
+        if (
+            partes.length !== 2
+        ) {
+
+            return j3;
+
+        }
+
+
+        const inicio =
+            Number(
+                partes[0]
+            );
+
+
+        const fin =
+            Number(
+                partes[1]
+            );
+
+
+        if (
+            !Number.isFinite(inicio) ||
+            !Number.isFinite(fin)
+        ) {
+
+            return j3;
+
+        }
+
+
+        return (
+            inicio +
+            " Ma – " +
+            fin +
+            " Ma"
+        );
+
+    },
+
+
+    /* =====================================================
+       FORMATEAR SUBPERÍODOS / SERIES
+
+       REGLA VISUAL:
+
+       0 → no mostrar
+
+       1 → elemento
+
+       2 → elemento · elemento
+
+       3 → elemento · elemento · elemento
+
+       >3 →
+
+       Del primero al último
+
+       IMPORTANTE:
+
+       SOLO afecta a la presentación.
+
+       Los datos originales permanecen completos.
+       ===================================================== */
+
+    formatearSubperiodos(edad) {
+
+        if (
+            !Array.isArray(edad)
+        ) {
+
+            return "";
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        LIMPIAR SOLO PARA PRESENTACIÓN
+        -----------------------------------------------------
+        */
+
+        const valores =
+            edad
+                .map(
+                    valor =>
+                        String(
+                            valor || ""
+                        ).trim()
+                )
+                .filter(
+                    valor =>
+                        valor !== ""
+                );
+
+
+        /*
+        -----------------------------------------------------
+        SIN DATOS
+        -----------------------------------------------------
+        */
+
+        if (
+            !valores.length
+        ) {
+
+            return "";
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        MÁS DE TRES
+        -----------------------------------------------------
+
+        Se muestra:
+
+        Del primero al último
+        -----------------------------------------------------
+        */
+
+        if (
+            valores.length > 3
+        ) {
+
+            return (
+                "Del " +
+                valores[0] +
+                " al " +
+                valores[
+                    valores.length - 1
+                ]
+            );
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        HASTA TRES
+        -----------------------------------------------------
+        */
+
+        return valores.join(
+            " · "
+        );
+
+    },
+
+
+    /* =====================================================
        MOSTRAR GEOLOGÍA
        
-       SALIDA PROVISIONAL DE PRUEBA
+       PRESENTACIÓN PARA EL USUARIO
+
+       NO MUESTRA:
+
+       - códigos PALGEO
+       - j3 interno
+
+       SÍ MUESTRA:
+
+       - rango temporal
+       - período
+       - subperíodo / serie
        ===================================================== */
 
     mostrarGeologia() {
@@ -143,7 +388,9 @@ window.CAB07 = {
         -----------------------------------------------------
         */
 
-        if (!contenedor) {
+        if (
+            !contenedor
+        ) {
 
             contenedor =
                 document.createElement(
@@ -181,7 +428,9 @@ window.CAB07 = {
                 );
 
 
-            if (cronologia) {
+            if (
+                cronologia
+            ) {
 
                 cronologia.insertAdjacentElement(
                     "afterend",
@@ -227,13 +476,15 @@ window.CAB07 = {
         -----------------------------------------------------
         */
 
-        if (!geologia) {
+        if (
+            !geologia
+        ) {
 
             contenedor.innerHTML =
                 `
                 <strong>Geología</strong>
-                <br>
-                Sin datos geológicos.
+                <br><br>
+                <span>Sin datos geológicos.</span>
                 `;
 
             return;
@@ -243,17 +494,15 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        NORMALIZAR ARRAYS
+        PERÍODOS
+
+        Los datos completos permanecen
+        en CONT07.
+
+        Aquí solo preparamos
+        la presentación.
         -----------------------------------------------------
         */
-
-        const codes =
-            Array.isArray(
-                geologia.codes
-            )
-                ? geologia.codes
-                : [];
-
 
         const periodo =
             Array.isArray(
@@ -262,6 +511,19 @@ window.CAB07 = {
                 ? geologia.periodo
                 : [];
 
+
+        /*
+        -----------------------------------------------------
+        SUBPERÍODOS / SERIES
+        -----------------------------------------------------
+
+        Internamente siguen llamándose
+        "edad" porque así los entrega
+        LEEPALGEO.
+
+        Aquí solo cambia la etiqueta visual.
+        -----------------------------------------------------
+        */
 
         const edad =
             Array.isArray(
@@ -273,35 +535,165 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        MOSTRAR RESULTADO
+        RANGO TEMPORAL
+
+        Obtener j3 desde CONT07.
+        -----------------------------------------------------
+        */
+
+        let rangoVisual =
+            "—";
+
+
+        if (
+            window.CONT07 &&
+            typeof window.CONT07.obtener ===
+            "function"
+        ) {
+
+            const registro =
+                window.CONT07.obtener();
+
+
+            if (
+                registro &&
+                registro.j3
+            ) {
+
+                rangoVisual =
+                    this.formatearRangoVisual(
+                        registro.j3
+                    );
+
+            }
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        PREPARAR PERÍODOS
+        -----------------------------------------------------
+        */
+
+        const periodoVisual =
+            periodo
+                .map(
+                    valor =>
+                        String(
+                            valor || ""
+                        ).trim()
+                )
+                .filter(
+                    valor =>
+                        valor !== ""
+                );
+
+
+        /*
+        -----------------------------------------------------
+        PREPARAR SUBPERÍODOS
+        -----------------------------------------------------
+        */
+
+        const subperiodosVisual =
+            this.formatearSubperiodos(
+                edad
+            );
+
+
+        /*
+        -----------------------------------------------------
+        CONSTRUIR HTML
+        -----------------------------------------------------
+        */
+
+        let html =
+            `
+            <div class="geologiaCAB07">
+
+                <strong>Geología</strong>
+
+                <br><br>
+
+                <div>
+                    <strong>Rango temporal</strong>
+                    <br>
+                    ${rangoVisual}
+                </div>
+            `;
+
+
+        /*
+        -----------------------------------------------------
+        PERÍODO
+        -----------------------------------------------------
+        */
+
+        if (
+            periodoVisual.length
+        ) {
+
+            html +=
+                `
+                <br>
+
+                <div>
+                    <strong>Período</strong>
+                    <br>
+                    ${periodoVisual.join(
+                        " · "
+                    )}
+                </div>
+                `;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        SUBPERÍODO / SERIE
+        -----------------------------------------------------
+        */
+
+        if (
+            subperiodosVisual
+        ) {
+
+            html +=
+                `
+                <br>
+
+                <div>
+                    <strong>Subperíodo / Serie</strong>
+                    <br>
+                    ${subperiodosVisual}
+                </div>
+                `;
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        CERRAR CONTENEDOR
+        -----------------------------------------------------
+        */
+
+        html +=
+            `
+            </div>
+            `;
+
+
+        /*
+        -----------------------------------------------------
+        MOSTRAR
         -----------------------------------------------------
         */
 
         contenedor.innerHTML =
-            `
-            <strong>Geología</strong>
-
-            <br><br>
-
-            <strong>Códigos:</strong>
-            ${codes.length
-                ? codes.join(", ")
-                : "—"}
-
-            <br><br>
-
-            <strong>Períodos:</strong>
-            ${periodo.length
-                ? periodo.join(", ")
-                : "—"}
-
-            <br><br>
-
-            <strong>Edades:</strong>
-            ${edad.length
-                ? edad.join(", ")
-                : "—"}
-            `;
+            html;
 
     },
 
@@ -351,7 +743,9 @@ window.CAB07 = {
         -----------------------------------------------------
         */
 
-        if (!datos) {
+        if (
+            !datos
+        ) {
 
             console.warn(
                 "CAB07: No se encontró el registro:",
@@ -420,6 +814,21 @@ window.CAB07 = {
                     );
 
 
+                /*
+                -------------------------------------------------
+                GUARDAR GEOLOGÍA COMPLETA
+
+                NO SE REDUCE NADA.
+
+                Los códigos siguen disponibles.
+                Los períodos siguen disponibles.
+                Las edades siguen disponibles.
+
+                La reducción solo ocurre
+                en mostrarGeologia().
+                -------------------------------------------------
+                */
+
                 if (
                     geologia &&
                     window.CONT07 &&
@@ -433,7 +842,9 @@ window.CAB07 = {
 
                 }
 
-            } catch (error) {
+            } catch (
+                error
+            ) {
 
                 console.warn(
                     "CAB07: Error al obtener datos geológicos.",
@@ -453,7 +864,13 @@ window.CAB07 = {
 
         /*
         -----------------------------------------------------
-        MOSTRAR J3
+        NO MOSTRAR J3 BRUTO
+
+        El elemento cronologia queda vacío
+        porque la cronología interna es un dato técnico.
+
+        El rango humano se presenta dentro
+        del bloque de geología.
         -----------------------------------------------------
         */
 
@@ -463,10 +880,12 @@ window.CAB07 = {
             );
 
 
-        if (cronologia) {
+        if (
+            cronologia
+        ) {
 
             cronologia.textContent =
-                datos.j3 || "—";
+                "";
 
         }
 
@@ -498,3 +917,4 @@ window.CAB07 = {
 FIN CAB07.js
 ========================================================
 */
+:::
