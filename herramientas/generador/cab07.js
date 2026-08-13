@@ -10,13 +10,14 @@ FUNCIÓN:
 - Obtiene el registro completo desde master.csv.
 - Normaliza j3.
 - Guarda el registro en CONT07.
-- Obtiene la geología mediante LEEPALGEO.
-- Guarda TODA la geología en CONT07.
-- Prepara la presentación visual.
-- NO muestra códigos geológicos.
-- Si hay más de 3 edades:
-  "Del [primera] al [última]"
-- Los datos internos permanecen completos.
+- Envía j3 a LEEPALGEO.
+- Guarda TODOS los datos geológicos en CONT07.
+- Presenta únicamente los datos geológicos necesarios.
+- No muestra códigos geológicos.
+- No muestra la cronología interna.
+- Resume períodos y edades cuando existen más de 3.
+- Limpia la geología anterior antes de cargar una nueva ficha.
+- Si la geología falla, la ficha continúa funcionando.
 
 ========================================================
 */
@@ -41,99 +42,105 @@ window.CAB07 = {
         }
 
 
+        const texto =
+            String(j3).trim();
+
+
         const partes =
-            String(j3)
-                .trim()
-                .split("-");
+            texto.split("-");
 
 
         if (
             partes.length !== 2
         ) {
 
-            return String(j3).trim();
+            return texto;
 
         }
 
 
-        const normalizar =
-            valor => {
-
-                valor =
-                    valor.trim();
+        let inicio =
+            partes[0].trim();
 
 
-                if (
-                    !/^\d+\.\d{4}$/.test(
-                        valor
-                    )
-                ) {
-
-                    return valor;
-
-                }
+        let fin =
+            partes[1].trim();
 
 
-                const partes =
-                    valor.split(".");
+        /*
+        -----------------------------------------------------
+        GARANTIZAR XXXX.XXXX
+        -----------------------------------------------------
+        */
+
+        if (
+            /^\d+\.\d{4}$/.test(inicio)
+        ) {
+
+            const partesInicio =
+                inicio.split(".");
+
+            inicio =
+                partesInicio[0]
+                .padStart(4, "0")
+                +
+                "."
+                +
+                partesInicio[1];
+
+        }
 
 
-                return (
-                    partes[0].padStart(
-                        4,
-                        "0"
-                    )
-                    +
-                    "."
-                    +
-                    partes[1]
-                );
+        if (
+            /^\d+\.\d{4}$/.test(fin)
+        ) {
 
-            };
+            const partesFin =
+                fin.split(".");
+
+            fin =
+                partesFin[0]
+                .padStart(4, "0")
+                +
+                "."
+                +
+                partesFin[1];
+
+        }
 
 
         return (
-            normalizar(partes[0])
-            +
-            "-"
-            +
-            normalizar(partes[1])
+            inicio +
+            "-" +
+            fin
         );
 
     },
 
 
     /* =====================================================
-       FORMATEAR EDADES
+       PREPARAR LISTA PARA PRESENTACIÓN
 
-       HASTA 3:
-       muestra todas.
+       Si hay 3 elementos o menos:
+       muestra todos.
 
-       MÁS DE 3:
-       muestra solo el rango visual.
+       Si hay más de 3:
+       muestra únicamente:
+
+       Del primero al último
 
        IMPORTANTE:
-       esto afecta únicamente a la presentación.
 
-       CONT07 conserva todos los valores.
+       Esto afecta SOLO a la presentación.
+
+       Los arrays completos permanecen
+       almacenados en CONT07.
        ===================================================== */
 
-    formatearEdades(edades) {
+    presentarRango(lista) {
 
         if (
-            !Array.isArray(edades)
-        ) {
-
-            return "—";
-
-        }
-
-
-        const lista =
-            edades.filter(Boolean);
-
-
-        if (
+            !Array.isArray(lista) ||
             !lista.length
         ) {
 
@@ -142,37 +149,64 @@ window.CAB07 = {
         }
 
 
-        if (
-            lista.length <= 3
-        ) {
+        const valores =
+            lista
+                .map(
+                    valor =>
+                        String(valor).trim()
+                )
+                .filter(Boolean);
 
-            return lista.join(
-                ", "
-            );
+
+        if (!valores.length) {
+
+            return "—";
 
         }
 
 
+        /*
+        -----------------------------------------------------
+        HASTA 3 ELEMENTOS
+        -----------------------------------------------------
+        */
+
+        if (
+            valores.length <= 3
+        ) {
+
+            return valores.join(", ");
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        MÁS DE 3 ELEMENTOS
+        -----------------------------------------------------
+        */
+
         return (
-            "Del "
-            +
-            lista[0]
-            +
-            " al "
-            +
-            lista[
-                lista.length - 1
-            ]
+            "Del " +
+            valores[0] +
+            " al " +
+            valores[valores.length - 1]
         );
 
     },
 
 
     /* =====================================================
-       CREAR CONTENEDOR VISUAL
+       MOSTRAR GEOLOGÍA
        ===================================================== */
 
-    prepararContenedor() {
+    mostrarGeologia() {
+
+        /*
+        -----------------------------------------------------
+        OBTENER CONTENEDOR
+        -----------------------------------------------------
+        */
 
         let contenedor =
             document.getElementById(
@@ -180,74 +214,54 @@ window.CAB07 = {
             );
 
 
-        if (
-            contenedor
-        ) {
+        /*
+        -----------------------------------------------------
+        CREAR CONTENEDOR SI NO EXISTE
+        -----------------------------------------------------
+        */
 
-            return contenedor;
+        if (!contenedor) {
 
-        }
-
-
-        contenedor =
-            document.createElement(
-                "div"
-            );
-
-
-        contenedor.id =
-            "resultadoGeologiaCAB07";
-
-
-        contenedor.style.margin =
-            "12px auto";
-
-
-        contenedor.style.padding =
-            "10px";
-
-
-        contenedor.style.maxWidth =
-            "700px";
-
-
-        contenedor.style.borderRadius =
-            "10px";
-
-
-        contenedor.style.fontSize =
-            "13px";
-
-
-        const cronologia =
-            document.getElementById(
-                "cronologia"
-            );
-
-
-        if (
-            cronologia
-        ) {
-
-            cronologia.insertAdjacentElement(
-                "afterend",
-                contenedor
-            );
-
-        } else {
-
-
-            const ficha =
-                document.getElementById(
-                    "ficha"
+            contenedor =
+                document.createElement(
+                    "div"
                 );
 
 
-            if (
-                ficha
-            ) {
+            contenedor.id =
+                "resultadoGeologiaCAB07";
 
-                ficha.appendChild(
+
+            contenedor.style.margin =
+                "12px auto";
+
+
+            contenedor.style.padding =
+                "10px";
+
+
+            contenedor.style.maxWidth =
+                "700px";
+
+
+            contenedor.style.borderRadius =
+                "10px";
+
+
+            contenedor.style.fontSize =
+                "13px";
+
+
+            const cronologia =
+                document.getElementById(
+                    "cronologia"
+                );
+
+
+            if (cronologia) {
+
+                cronologia.insertAdjacentElement(
+                    "afterend",
                     contenedor
                 );
 
@@ -262,43 +276,11 @@ window.CAB07 = {
         }
 
 
-        return contenedor;
-
-    },
-
-
-    /* =====================================================
-       MOSTRAR GEOLOGÍA
-
-       SOLO PRESENTACIÓN.
-
-       NO MUESTRA:
-
-       - códigos geológicos
-
-       SÍ MUESTRA:
-
-       - período
-       - edad / subperíodos
-
-       ===================================================== */
-
-    mostrarGeologia() {
-
-        const contenedor =
-            document.getElementById(
-                "resultadoGeologiaCAB07"
-            );
-
-
-        if (
-            !contenedor
-        ) {
-
-            return;
-
-        }
-
+        /*
+        -----------------------------------------------------
+        OBTENER GEOLOGÍA ACTUAL
+        -----------------------------------------------------
+        */
 
         let geologia =
             null;
@@ -316,15 +298,23 @@ window.CAB07 = {
         }
 
 
-        if (
-            !geologia
-        ) {
+        /*
+        -----------------------------------------------------
+        SIN DATOS
+        -----------------------------------------------------
+        */
+
+        if (!geologia) {
 
             contenedor.innerHTML =
                 `
-                <strong>Geología</strong>
-                <br>
-                Sin datos geológicos.
+                <div>
+                    <strong>Período:</strong> —
+                </div>
+
+                <div>
+                    <strong>Edad:</strong> —
+                </div>
                 `;
 
             return;
@@ -332,81 +322,90 @@ window.CAB07 = {
         }
 
 
+        /*
+        -----------------------------------------------------
+        OBTENER PERÍODOS
+        -----------------------------------------------------
+        */
+
         const periodo =
             Array.isArray(
                 geologia.periodo
             )
-                ? geologia.periodo.filter(Boolean)
+                ? geologia.periodo
                 : [];
 
+
+        /*
+        -----------------------------------------------------
+        OBTENER EDADES / SUBPERÍODOS
+        -----------------------------------------------------
+        */
 
         const edad =
             Array.isArray(
                 geologia.edad
             )
-                ? geologia.edad.filter(Boolean)
+                ? geologia.edad
                 : [];
 
 
-        const textoPeriodo =
-            periodo.length
-                ? periodo.join(", ")
-                : "—";
+        /*
+        -----------------------------------------------------
+        PREPARAR PRESENTACIÓN
+        -----------------------------------------------------
+
+        Los códigos NO se muestran.
+
+        Los arrays originales permanecen intactos
+        dentro de CONT07.
+        -----------------------------------------------------
+        */
+
+        const periodoVisual =
+            this.presentarRango(
+                periodo
+            );
 
 
-        const textoEdad =
-            this.formatearEdades(
+        const edadVisual =
+            this.presentarRango(
                 edad
             );
 
 
+        /*
+        -----------------------------------------------------
+        MOSTRAR ÚNICAMENTE INFORMACIÓN HUMANA
+        -----------------------------------------------------
+        */
+
         contenedor.innerHTML =
             `
-            <strong>Geología</strong>
+            <div>
+                <strong>Período:</strong>
+                ${periodoVisual}
+            </div>
 
-            <br><br>
-
-            <strong>Período:</strong>
-            ${textoPeriodo}
-
-            <br><br>
-
-            <strong>Edad:</strong>
-            ${textoEdad}
+            <div style="margin-top:6px;">
+                <strong>Edad:</strong>
+                ${edadVisual}
+            </div>
             `;
 
     },
 
-
-    /* =====================================================
-       ACTUALIZAR PRESENTACIÓN
-
-       ESTA ES LA FUNCIÓN QUE DEBE LLAMARSE DESPUÉS
-       DE QUE CARGACONT TERMINE DE CONSTRUIR LA FICHA.
-
-       Así evitamos que el refresco de la ficha borre
-       la presentación de CAB07.
-       ===================================================== */
-
-    actualizarPresentacion() {
-
-        this.prepararContenedor();
-
-        this.mostrarGeologia();
-
-    },
-
-
-    /* =====================================================
+      /* =====================================================
        PROCESAR
        ===================================================== */
 
     async procesar(j1) {
 
-
-        /* -------------------------------------------------
-           COMPROBAR CARGADOR MASTER
-           ------------------------------------------------- */
+        /*
+        -----------------------------------------------------
+        COMPROBAR FUNCIÓN MAESTRA
+        -----------------------------------------------------
+        */
 
         if (
             typeof window.cargarMasterPorJ1 !==
@@ -422,9 +421,11 @@ window.CAB07 = {
         }
 
 
-        /* -------------------------------------------------
-           OBTENER REGISTRO
-           ------------------------------------------------- */
+        /*
+        -----------------------------------------------------
+        OBTENER REGISTRO COMPLETO
+        -----------------------------------------------------
+        */
 
         const datos =
             await window.cargarMasterPorJ1(
@@ -432,9 +433,13 @@ window.CAB07 = {
             );
 
 
-        if (
-            !datos
-        ) {
+        /*
+        -----------------------------------------------------
+        COMPROBAR RESULTADO
+        -----------------------------------------------------
+        */
+
+        if (!datos) {
 
             console.warn(
                 "CAB07: No se encontró el registro:",
@@ -446,9 +451,11 @@ window.CAB07 = {
         }
 
 
-        /* -------------------------------------------------
-           NORMALIZAR J3
-           ------------------------------------------------- */
+        /*
+        -----------------------------------------------------
+        NORMALIZAR J3
+        -----------------------------------------------------
+        */
 
         datos.j3 =
             this.normalizarJ3(
@@ -456,9 +463,11 @@ window.CAB07 = {
             );
 
 
-        /* -------------------------------------------------
-           GUARDAR REGISTRO EN CONT07
-           ------------------------------------------------- */
+        /*
+        -----------------------------------------------------
+        GUARDAR REGISTRO EN CONT07
+        -----------------------------------------------------
+        */
 
         if (
             window.CONT07 &&
@@ -479,9 +488,42 @@ window.CAB07 = {
         }
 
 
-        /* -------------------------------------------------
-           OBTENER GEOLOGÍA
-           ------------------------------------------------- */
+        /*
+        =====================================================
+        LIMPIAR GEOLOGÍA ANTERIOR
+        =====================================================
+
+        Esto es importante para las búsquedas.
+
+        Si la ficha anterior tenía geología y la nueva
+        no tiene datos, no debemos conservar la anterior.
+        =====================================================
+        */
+
+        if (
+            window.CONT07 &&
+            typeof window.CONT07.guardarGeologia ===
+            "function"
+        ) {
+
+            window.CONT07.guardarGeologia({
+
+                codes: [],
+
+                periodo: [],
+
+                edad: []
+
+            });
+
+        }
+
+
+        /*
+        =====================================================
+        GEOLOGÍA
+        =====================================================
+        */
 
         if (
             window.LEEPALGEO &&
@@ -497,25 +539,25 @@ window.CAB07 = {
                     );
 
 
+                /*
+                -------------------------------------------------
+                GUARDAR GEOLOGÍA COMPLETA
+                -------------------------------------------------
+
+                Aquí se guardan TODOS los códigos,
+                períodos y edades.
+
+                La reducción a "Del X al Y" solamente
+                ocurre posteriormente en mostrarGeologia().
+                -------------------------------------------------
+                */
+
                 if (
                     geologia &&
                     window.CONT07 &&
                     typeof window.CONT07.guardarGeologia ===
                     "function"
                 ) {
-
-                    /*
-                    IMPORTANTE:
-
-                    Aquí se guarda TODO.
-
-                    Incluye:
-                    - codes
-                    - periodo
-                    - edad
-
-                    Nada se elimina.
-                    */
 
                     window.CONT07.guardarGeologia(
                         geologia
@@ -541,9 +583,16 @@ window.CAB07 = {
         }
 
 
-        /* -------------------------------------------------
-           MOSTRAR CRONOLOGÍA PRINCIPAL
-           ------------------------------------------------- */
+        /*
+        -----------------------------------------------------
+        NO MOSTRAR CRONOLOGÍA INTERNA
+        -----------------------------------------------------
+
+        El elemento cronologia puede seguir existiendo
+        para compatibilidad, pero CAB07 ya no introduce
+        aquí el valor interno de j3.
+        -----------------------------------------------------
+        */
 
         const cronologia =
             document.getElementById(
@@ -551,49 +600,44 @@ window.CAB07 = {
             );
 
 
-        if (
-            cronologia
-        ) {
+        if (cronologia) {
 
             cronologia.textContent =
-                datos.j3 || "—";
+                "";
 
         }
 
 
         /*
-        IMPORTANTE:
-
-        NO mostramos aquí la geología.
-
-        CARGACONT todavía tiene que terminar de cargar
-        CAB01-CAB06.
-
-        La presentación se hará mediante:
-
-        actualizarPresentacion()
-
-        después de CARGACONT.
+        -----------------------------------------------------
+        MOSTRAR GEOLOGÍA
+        -----------------------------------------------------
         */
 
+        this.mostrarGeologia();
+
+
+        /*
+        -----------------------------------------------------
+        DEVOLVER REGISTRO
+        -----------------------------------------------------
+        */
 
         return datos;
 
-    },
-
-        /* =====================================================
-       FIN DEL OBJETO CAB07
-       ===================================================== */
+    }
 
 };
 
 
-/* =========================================================
-   DISPONIBILIDAD GLOBAL
-   ========================================================= */
+/*
+========================================================
+DISPONIBILIDAD GLOBAL
+========================================================
+*/
 
 window.CAB07 =
-    CAB07;
+    window.CAB07;
 
 
 /*
@@ -601,3 +645,7 @@ window.CAB07 =
 FIN CAB07.js
 ========================================================
 */
+
+
+
+
