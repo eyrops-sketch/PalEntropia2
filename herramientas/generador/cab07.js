@@ -4,174 +4,84 @@ PalEntropía
 CAB07.js
 Generador de Paleofichas 1.1
 
-VERSIÓN FINAL — PRUEBA DIRECTA J3
+MODELO BASE PARA CAB08, CAB09...
 
-OBJETIVO:
+FUNCIÓN:
 
-001–005:
-    Mantener comportamiento geológico existente.
+001–005
+    → conserva la geología que ya llega funcionando.
 
-006 en adelante:
-    J1
-     ↓
-    LEEPALJSON.obtener()
-     ↓
-    registro.j3
-     ↓
-    TELEOBLIGATORIO
+006+
+    → obtiene j3 directamente de LEEPALJSON
+    → analiza ese j3 con PALGEOSIMPLIFICADO
+    → muestra rango / período / edad.
 
-Para 006_01 debe mostrar:
-
-    TELEOBLIGATORIO: 0068.6000-0066.0000
-
-IMPORTANTE:
-
-TELEOBLIGATORIO NO UTILIZA:
-
-- CARGACONT
-- CONT07
-- PALGEOSIMPLIFICADO
-- PALGEO
-
-Para la lectura directa únicamente utiliza:
-
-    LEEPALJSON.obtener()
+NO:
+    - carga fichas
+    - llama a CARGACONT.cargar()
+    - modifica master.csv
+    - modifica CONT07
+    - utiliza BUSCARUTA
+    - utiliza PALVIDEO
 
 ========================================================
 */
 
 window.CAB07 = {
 
+    version: "2.0 LTS",
 
     /* =====================================================
-       NORMALIZAR J3
+       SERIES ANTIGUAS
        ===================================================== */
 
-    normalizarJ3(j3) {
+    esSerieAntigua(j1) {
 
-        if (
-            j3 === undefined ||
-            j3 === null
-        ) {
+        const codigo =
+            String(j1 || "")
+                .trim()
+                .toUpperCase();
 
-            return "";
-
-        }
-
-
-        const texto =
-            String(j3).trim();
-
-
-        const partes =
-            texto.split("-");
-
-
-        if (
-            partes.length !== 2
-        ) {
-
-            return texto;
-
-        }
-
-
-        let inicio =
-            partes[0].trim();
-
-
-        let fin =
-            partes[1].trim();
-
-
-        if (
-            /^\d+\.\d{4}$/.test(inicio)
-        ) {
-
-            const partesInicio =
-                inicio.split(".");
-
-
-            inicio =
-                partesInicio[0]
-                    .padStart(4, "0")
-                +
-                "."
-                +
-                partesInicio[1];
-
-        }
-
-
-        if (
-            /^\d+\.\d{4}$/.test(fin)
-        ) {
-
-            const partesFin =
-                fin.split(".");
-
-
-            fin =
-                partesFin[0]
-                    .padStart(4, "0")
-                +
-                "."
-                +
-                partesFin[1];
-
-        }
-
+        const prefijo =
+            codigo.substring(0, 3);
 
         return (
-            inicio +
-            "-" +
-            fin
+            prefijo === "001" ||
+            prefijo === "002" ||
+            prefijo === "003" ||
+            prefijo === "004" ||
+            prefijo === "005"
         );
 
     },
 
 
     /* =====================================================
-       OBTENER J3 DIRECTAMENTE DE LEEPALJSON
-
-       NO utiliza CARGACONT.
-       NO utiliza CONT07.
-       NO utiliza PALGEO.
-       NO utiliza PALGEOSIMPLIFICADO.
-
-       Devuelve el j3 bruto del registro.
+       OBTENER J3 DIRECTO
+       
+       ÚNICA FUENTE PARA 006+
+       
+       LEEPALJSON
+           ↓
+       registro.codigo
+           ↓
+       registro.j3
+       
+       NO SE MODIFICA EL VALOR.
        ===================================================== */
 
     obtenerJ3Directo(j1) {
 
-        if (
-            j1 === undefined ||
-            j1 === null
-        ) {
-
-            console.warn(
-                "CAB07: J1 vacío en obtenerJ3Directo."
-            );
-
-            return "";
-
-        }
-
-
-        const codigoBuscado =
-            String(j1)
+        const codigo =
+            String(j1 || "")
                 .trim()
                 .toUpperCase();
 
-
-        if (
-            !codigoBuscado
-        ) {
+        if (!codigo) {
 
             return "";
 
         }
-
 
         if (
             !window.LEEPALJSON ||
@@ -180,16 +90,14 @@ window.CAB07 = {
         ) {
 
             console.error(
-                "CAB07: LEEPALJSON no está disponible."
+                "CAB07: LEEPALJSON no disponible."
             );
 
             return "";
 
         }
 
-
         let registros;
-
 
         try {
 
@@ -199,7 +107,7 @@ window.CAB07 = {
         } catch (error) {
 
             console.error(
-                "CAB07: error leyendo LEEPALJSON.",
+                "CAB07: error obteniendo master.csv.",
                 error
             );
 
@@ -207,316 +115,183 @@ window.CAB07 = {
 
         }
 
-
-        if (
-            !Array.isArray(registros)
-        ) {
+        if (!Array.isArray(registros)) {
 
             console.error(
-                "CAB07: LEEPALJSON.obtener() no devuelve un array."
+                "CAB07: LEEPALJSON no devuelve un array."
             );
 
             return "";
 
         }
 
+        const registro =
+            registros.find(
+                item => {
 
-        for (
-            const registro of registros
-        ) {
+                    if (!item) {
 
-            if (
-                !registro
-            ) {
+                        return false;
 
-                continue;
+                    }
 
-            }
+                    const codigoRegistro =
+                        String(
+                            item.codigo ||
+                            item.j1 ||
+                            ""
+                        )
+                        .trim()
+                        .toUpperCase();
 
+                    return (
+                        codigoRegistro ===
+                        codigo
+                    );
 
-            const codigoRegistro =
-                String(
-                    registro.codigo ||
-                    registro.j1 ||
-                    ""
-                )
-                .trim()
-                .toUpperCase();
-
-
-            if (
-                codigoRegistro !==
-                codigoBuscado
-            ) {
-
-                continue;
-
-            }
-
-
-            if (
-                registro.j3 === undefined ||
-                registro.j3 === null
-            ) {
-
-                console.error(
-                    "CAB07: encontrado " +
-                    codigoBuscado +
-                    " pero no contiene j3."
-                );
-
-                return "";
-
-            }
-
-
-            /*
-            -------------------------------------------------
-            IMPORTANTE:
-
-            AQUÍ NO SE TOCA EL VALOR.
-
-            No normalizar.
-            No analizar.
-            No convertir.
-            No interpretar.
-            -------------------------------------------------
-            */
-
-            const j3Bruto =
-                String(
-                    registro.j3
-                );
-
-
-            console.log(
-                "CAB07 — J3 DIRECTO DESDE CSV:",
-                codigoBuscado,
-                j3Bruto
+                }
             );
 
+        if (!registro) {
 
-            return j3Bruto;
+            console.error(
+                "CAB07: no existe " +
+                codigo +
+                " en master.csv."
+            );
+
+            return "";
 
         }
 
+        if (
+            registro.j3 === undefined ||
+            registro.j3 === null
+        ) {
 
-        console.error(
-            "CAB07: no se encontró " +
-            codigoBuscado +
-            " directamente en LEEPALJSON."
+            console.error(
+                "CAB07: " +
+                codigo +
+                " no contiene j3."
+            );
+
+            return "";
+
+        }
+
+        return String(
+            registro.j3
         );
-
-
-        return "";
 
     },
 
 
     /* =====================================================
-       MOSTRAR J3 DIRECTO
-
-       001–005:
-           No interviene.
-
-       006 en adelante:
-           muestra j3 bruto.
+       ANALIZAR J3 PARA 006+
+       
+       El j3 ya procede directamente de master.csv.
        ===================================================== */
 
-    mostrarJ3Directo(j1) {
+    analizarJ3(j3) {
 
-        if (
-            !j1
-        ) {
+        if (!j3) {
 
-            return;
+            return {
 
-        }
+                rango: null,
+                codes: [],
+                periodo: [],
+                edad: []
 
-
-        const codigo =
-            String(j1)
-                .trim()
-                .toUpperCase();
-
-
-        const prefijo =
-            codigo.substring(
-                0,
-                3
-            );
-
-
-        /*
-        -----------------------------------------------------
-        REGLA DE COMPATIBILIDAD
-
-        Las primeras 5 series no se tocan.
-        -----------------------------------------------------
-        */
-
-        if (
-            prefijo === "001" ||
-            prefijo === "002" ||
-            prefijo === "003" ||
-            prefijo === "004" ||
-            prefijo === "005"
-        ) {
-
-            return;
+            };
 
         }
 
-
-        /*
-        -----------------------------------------------------
-        OBTENER J3 DIRECTO
-        -----------------------------------------------------
-        */
-
-        const j3 =
-            this.obtenerJ3Directo(
-                codigo
-            );
-
-
         if (
-            j3 === ""
+            !window.PALGEOSIMPLIFICADO ||
+            typeof window.PALGEOSIMPLIFICADO.analizar !==
+            "function"
         ) {
 
-            return;
+            console.warn(
+                "CAB07: PALGEOSIMPLIFICADO no disponible."
+            );
+
+            return {
+
+                rango: null,
+                codes: [],
+                periodo: [],
+                edad: []
+
+            };
 
         }
 
+        try {
 
-        /*
-        -----------------------------------------------------
-        ELIMINAR RESULTADO ANTERIOR
-        -----------------------------------------------------
-        */
+            const resultado =
+                window.PALGEOSIMPLIFICADO
+                    .analizar(j3);
 
-        const anterior =
-            document.getElementById(
-                "teleobligatorioCAB07"
+            if (!resultado) {
+
+                return {
+
+                    rango: null,
+                    codes: [],
+                    periodo: [],
+                    edad: []
+
+                };
+
+            }
+
+            return {
+
+                rango:
+                    resultado.rango || null,
+
+                codes:
+                    Array.isArray(
+                        resultado.codes
+                    )
+                        ? resultado.codes
+                        : [],
+
+                periodo:
+                    Array.isArray(
+                        resultado.periodo
+                    )
+                        ? resultado.periodo
+                        : [],
+
+                edad:
+                    Array.isArray(
+                        resultado.edad
+                    )
+                        ? resultado.edad
+                        : []
+
+            };
+
+        } catch (error) {
+
+            console.warn(
+                "CAB07: error analizando j3.",
+                error
             );
 
+            return {
 
-        if (
-            anterior
-        ) {
+                rango: null,
+                codes: [],
+                periodo: [],
+                edad: []
 
-            anterior.remove();
+            };
 
         }
-
-
-        /*
-        -----------------------------------------------------
-        CREAR BLOQUE
-        -----------------------------------------------------
-        */
-
-        const bloque =
-            document.createElement(
-                "div"
-            );
-
-
-        bloque.id =
-            "teleobligatorioCAB07";
-
-
-        bloque.style.display =
-            "block";
-
-
-        bloque.style.margin =
-            "20px auto";
-
-
-        bloque.style.padding =
-            "15px";
-
-
-        bloque.style.maxWidth =
-            "700px";
-
-
-        bloque.style.border =
-            "2px solid currentColor";
-
-
-        bloque.style.borderRadius =
-            "10px";
-
-
-        bloque.style.fontSize =
-            "18px";
-
-
-        bloque.style.fontWeight =
-            "bold";
-
-
-        bloque.style.textAlign =
-            "center";
-
-
-        bloque.style.zIndex =
-            "99999";
-
-
-        bloque.innerHTML =
-            `
-            <div>
-                ${codigo}
-            </div>
-
-            <div>
-                TELEOBLIGATORIO: ${j3}
-            </div>
-            `;
-
-
-        /*
-        -----------------------------------------------------
-        INSERTAR DIRECTAMENTE EN BODY
-
-        No depende de:
-
-        - cronologia
-        - resultadoGeologiaCAB07
-        - CONT07
-        - botón vídeo
-        -----------------------------------------------------
-        */
-
-        document.body.appendChild(
-            bloque
-        );
-
-
-        console.log(
-            "========================================"
-        );
-
-        console.log(
-            "CAB07 — TELEOBLIGATORIO DIRECTO"
-        );
-
-        console.log(
-            "J1:",
-            codigo
-        );
-
-        console.log(
-            "J3:",
-            j3
-        );
-
-        console.log(
-            "========================================"
-        );
 
     },
 
@@ -525,7 +300,7 @@ window.CAB07 = {
        FORMATEAR LISTA
        ===================================================== */
 
-    formatearRangoLista(lista) {
+    formatearLista(lista) {
 
         if (
             !Array.isArray(lista) ||
@@ -536,37 +311,27 @@ window.CAB07 = {
 
         }
 
-
         const valores =
             lista
-            .filter(
-                valor =>
-                    valor !== undefined &&
-                    valor !== null &&
-                    String(valor).trim() !== ""
-            )
-            .map(
-                valor =>
-                    String(valor).trim()
-            );
+                .filter(
+                    valor =>
+                        valor !== undefined &&
+                        valor !== null &&
+                        String(valor).trim() !== ""
+                )
+                .map(
+                    valor =>
+                        String(valor).trim()
+                );
 
-
-        if (
-            !valores.length
-        ) {
+        if (!valores.length) {
 
             return "—";
 
         }
 
-
         const unicos =
-            Array.from(
-                new Set(
-                    valores
-                )
-            );
-
+            [...new Set(valores)];
 
         if (
             unicos.length > 3
@@ -583,243 +348,78 @@ window.CAB07 = {
 
         }
 
-
         return unicos.join(", ");
 
     },
 
 
     /* =====================================================
-       OBTENER RANGO VISUAL
+       CONTENEDOR VISUAL
        ===================================================== */
 
-    obtenerRangoVisual(j3, geologia) {
-
-        if (
-            geologia &&
-            typeof geologia.rango ===
-            "string" &&
-            geologia.rango.trim()
-        ) {
-
-            return geologia.rango.trim();
-
-        }
-
-
-        if (
-            window.PALGEOSIMPLIFICADO &&
-            typeof window.PALGEOSIMPLIFICADO
-                .decodificarRango ===
-            "function"
-        ) {
-
-            try {
-
-                const rango =
-                    window.PALGEOSIMPLIFICADO
-                        .decodificarRango(
-                            j3
-                        );
-
-
-                if (
-                    rango &&
-                    typeof rango ===
-                    "string"
-                ) {
-
-                    return rango;
-
-                }
-
-            } catch (error) {
-
-                console.warn(
-                    "CAB07: no se pudo convertir visualmente el rango.",
-                    error
-                );
-
-            }
-
-        }
-
-
-        return "—";
-
-    },
-
-
-    /* =====================================================
-       OBTENER CONTENEDOR VISUAL
-       ===================================================== */
-
-    obtenerContenedorVisual() {
+    obtenerContenedor() {
 
         let contenedor =
             document.getElementById(
                 "resultadoGeologiaCAB07"
             );
 
-
-        if (
-            contenedor
-        ) {
+        if (contenedor) {
 
             return contenedor;
 
         }
-
 
         contenedor =
             document.createElement(
                 "div"
             );
 
-
         contenedor.id =
             "resultadoGeologiaCAB07";
-
 
         contenedor.style.margin =
             "12px auto";
 
-
         contenedor.style.padding =
             "10px";
-
 
         contenedor.style.maxWidth =
             "700px";
 
-
         contenedor.style.borderRadius =
             "10px";
-
 
         contenedor.style.fontSize =
             "15px";
 
-
         contenedor.style.lineHeight =
             "1.5";
 
-
-        const botones =
-            document.querySelectorAll(
-                "button, a"
+        const cronologia =
+            document.getElementById(
+                "cronologia"
             );
-
-
-        let botonVideo =
-            null;
-
-
-        for (
-            const elemento of botones
-        ) {
-
-            const texto =
-                String(
-                    elemento.textContent || ""
-                )
-                .trim()
-                .toLowerCase();
-
-
-            if (
-                texto.includes("ver vídeo") ||
-                texto.includes("ver video")
-            ) {
-
-                botonVideo =
-                    elemento;
-
-                break;
-
-            }
-
-        }
-
 
         if (
-            botonVideo
+            cronologia &&
+            cronologia.parentElement
         ) {
 
-            botonVideo.insertAdjacentElement(
-                "afterend",
-                contenedor
-            );
-
-        } else {
-
-            const cronologia =
-                document.getElementById(
-                    "cronologia"
-                );
-
-
-            if (
-                cronologia &&
-                cronologia.parentElement
-            ) {
-
-                cronologia.parentElement
-                    .appendChild(
-                        contenedor
-                    );
-
-            } else {
-
-                document.body.appendChild(
+            cronologia.parentElement
+                .appendChild(
                     contenedor
                 );
 
-            }
+        } else {
+
+            document.body.appendChild(
+                contenedor
+            );
 
         }
-
 
         return contenedor;
-
-    },
-
-
-    /* =====================================================
-       LIMPIAR PRESENTACIÓN
-       ===================================================== */
-
-    limpiarPresentacion() {
-
-        const contenedor =
-            document.getElementById(
-                "resultadoGeologiaCAB07"
-            );
-
-
-        if (
-            contenedor
-        ) {
-
-            contenedor.innerHTML =
-                "";
-
-        }
-
-
-        const tele =
-            document.getElementById(
-                "teleobligatorioCAB07"
-            );
-
-
-        if (
-            tele
-        ) {
-
-            tele.remove();
-
-        }
 
     },
 
@@ -828,52 +428,24 @@ window.CAB07 = {
        MOSTRAR GEOLOGÍA
        ===================================================== */
 
-    mostrarGeologia(datos) {
+    mostrarGeologia(geologia) {
 
         const contenedor =
-            this.obtenerContenedorVisual();
-
-
-        const geologia = {
-
-            rango:
-                datos.rango,
-
-            periodo:
-                Array.isArray(
-                    datos.periodo
-                )
-                    ? datos.periodo
-                    : [],
-
-            edad:
-                Array.isArray(
-                    datos.edad
-                )
-                    ? datos.edad
-                    : []
-
-        };
-
+            this.obtenerContenedor();
 
         const rango =
-            this.obtenerRangoVisual(
-                datos.j3,
-                geologia
-            );
+            geologia.rango ||
+            "—";
 
-
-        const periodoVisual =
-            this.formatearRangoLista(
+        const periodo =
+            this.formatearLista(
                 geologia.periodo
             );
 
-
-        const edadVisual =
-            this.formatearRangoLista(
+        const edad =
+            this.formatearLista(
                 geologia.edad
             );
-
 
         contenedor.innerHTML =
             `
@@ -888,30 +460,78 @@ window.CAB07 = {
                 <strong>
                     Período:
                 </strong>
-                ${periodoVisual}
+                ${periodo}
             </div>
 
             <div>
                 <strong>
                     Edad:
                 </strong>
-                ${edadVisual}
+                ${edad}
             </div>
             `;
 
     },
 
+
+    /* =====================================================
+       LIMPIAR
+       ===================================================== */
+
+    limpiar() {
+
+        const contenedor =
+            document.getElementById(
+                "resultadoGeologiaCAB07"
+            );
+
+        if (contenedor) {
+
+            contenedor.remove();
+
+        }
+
+    },
+
+
+    /* =====================================================
+       GEOLOGÍA PARA 001–005
+       
+       Utiliza exclusivamente los datos que ya llegan
+       preparados por la cadena antigua.
+       ===================================================== */
+
+    geologiaExistente(datos) {
+
+        return {
+
+            rango:
+                datos.rango || null,
+
+            codes:
+                Array.isArray(datos.codes)
+                    ? datos.codes
+                    : [],
+
+            periodo:
+                Array.isArray(datos.periodo)
+                    ? datos.periodo
+                    : [],
+
+            edad:
+                Array.isArray(datos.edad)
+                    ? datos.edad
+                    : []
+
+        };
+
+    },
+
         /* =====================================================
-       PROCESAR REGISTRO RECIBIDO
+       PROCESAR
        ===================================================== */
 
     procesar(datos) {
-
-        /*
-        -----------------------------------------------------
-        VALIDAR DATOS
-        -----------------------------------------------------
-        */
 
         if (
             !datos ||
@@ -919,21 +539,12 @@ window.CAB07 = {
         ) {
 
             console.warn(
-                "CAB07: registro recibido no válido."
+                "CAB07: datos inválidos."
             );
 
             return null;
 
         }
-
-
-        /*
-        -----------------------------------------------------
-        COPIA DEL REGISTRO
-
-        No modificamos el objeto original.
-        -----------------------------------------------------
-        */
 
         const registro =
             Object.assign(
@@ -941,25 +552,134 @@ window.CAB07 = {
                 datos
             );
 
+        const j1 =
+            String(
+                registro.j1 || ""
+            )
+            .trim()
+            .toUpperCase();
+
+        if (!j1) {
+
+            console.warn(
+                "CAB07: registro sin j1."
+            );
+
+            return null;
+
+        }
+
+
+        /* =================================================
+           001–005
+           
+           NO TOCAR EL SISTEMA EXISTENTE.
+           ================================================= */
+
+        if (
+            this.esSerieAntigua(j1)
+        ) {
+
+            const geologia =
+                this.geologiaExistente(
+                    registro
+                );
+
+            if (
+                window.CONT07 &&
+                typeof window.CONT07.guardar ===
+                "function"
+            ) {
+
+                window.CONT07.guardar(
+                    registro
+                );
+
+            }
+
+            if (
+                window.CONT07 &&
+                typeof window.CONT07.guardarGeologia ===
+                "function"
+            ) {
+
+                window.CONT07.guardarGeologia(
+                    geologia
+                );
+
+            }
+
+            this.limpiar();
+
+            this.mostrarGeologia(
+                geologia
+            );
+
+            return registro;
+
+        }
+
+
+        /* =================================================
+           006 EN ADELANTE
+           
+           NUEVA RUTA LIMPIA:
+
+           LEEPALJSON
+               ↓
+           j3 bruto
+               ↓
+           PALGEOSIMPLIFICADO
+               ↓
+           geología
+           ================================================= */
+
+        const j3 =
+            this.obtenerJ3Directo(
+                j1
+            );
+
+        if (!j3) {
+
+            console.warn(
+                "CAB07: no se obtuvo j3 para " +
+                j1
+            );
+
+            return registro;
+
+        }
+
 
         /*
         -----------------------------------------------------
-        J3 NORMALIZADO
+        GUARDAR EL J3 DIRECTO
 
-        Se conserva el comportamiento anterior
-        para la presentación geológica existente.
+        Aquí sustituimos únicamente el j3 del registro
+        recibido para que la nueva ruta trabaje con
+        el valor real del CSV.
         -----------------------------------------------------
         */
 
         registro.j3 =
-            this.normalizarJ3(
-                registro.j3
+            j3;
+
+
+        /*
+        -----------------------------------------------------
+        ANALIZAR J3
+        -----------------------------------------------------
+        */
+
+        const geologia =
+            this.analizarJ3(
+                j3
             );
 
 
         /*
         -----------------------------------------------------
-        GUARDAR REGISTRO EN CONT07
+        GUARDAR EN CONT07
         -----------------------------------------------------
         */
 
@@ -969,64 +689,11 @@ window.CAB07 = {
             "function"
         ) {
 
-            try {
-
-                window.CONT07.guardar(
-                    registro
-                );
-
-            } catch (error) {
-
-                console.warn(
-                    "CAB07: error al guardar registro en CONT07.",
-                    error
-                );
-
-            }
+            window.CONT07.guardar(
+                registro
+            );
 
         }
-
-
-        /*
-        -----------------------------------------------------
-        PREPARAR GEOLOGÍA EXISTENTE
-        -----------------------------------------------------
-        */
-
-        const geologia = {
-
-            rango:
-                registro.rango,
-
-            codes:
-                Array.isArray(
-                    registro.codes
-                )
-                    ? registro.codes
-                    : [],
-
-            periodo:
-                Array.isArray(
-                    registro.periodo
-                )
-                    ? registro.periodo
-                    : [],
-
-            edad:
-                Array.isArray(
-                    registro.edad
-                )
-                    ? registro.edad
-                    : []
-
-        };
-
-
-        /*
-        -----------------------------------------------------
-        GUARDAR GEOLOGÍA EN CONT07
-        -----------------------------------------------------
-        */
 
         if (
             window.CONT07 &&
@@ -1034,70 +701,39 @@ window.CAB07 = {
             "function"
         ) {
 
-            try {
-
-                window.CONT07.guardarGeologia(
-                    geologia
-                );
-
-            } catch (error) {
-
-                console.warn(
-                    "CAB07: error al guardar geología en CONT07.",
-                    error
-                );
-
-            }
+            window.CONT07.guardarGeologia(
+                geologia
+            );
 
         }
 
 
         /*
         -----------------------------------------------------
-        LIMPIAR PRESENTACIÓN ANTERIOR
+        MOSTRAR
         -----------------------------------------------------
         */
 
-        this.limpiarPresentacion();
-
-
-        /*
-        -----------------------------------------------------
-        MOSTRAR GEOLOGÍA NORMAL
-        -----------------------------------------------------
-        */
+        this.limpiar();
 
         this.mostrarGeologia(
-            registro
+            geologia
         );
 
 
         /*
         -----------------------------------------------------
-        TELEOBLIGATORIO
-
-        IMPORTANTE:
-
-        Esta llamada se hace AQUÍ, dentro de procesar().
-
-        No depende de actualizarPresentacion().
-
-        Para 001–005 no hace nada.
-
-        Para 006+ lee directamente LEEPALJSON.
+        CONFIRMACIÓN DE LA NUEVA RUTA
         -----------------------------------------------------
         */
 
-        this.mostrarJ3Directo(
-            registro.j1
+        console.log(
+            "CAB07:",
+            j1,
+            "→ j3 directo:",
+            j3
         );
 
-
-        /*
-        -----------------------------------------------------
-        DEVOLVER REGISTRO
-        -----------------------------------------------------
-        */
 
         return registro;
 
@@ -1105,113 +741,69 @@ window.CAB07 = {
 
 
     /* =====================================================
-       ACTUALIZAR DESDE CONT07
+       ACTUALIZAR PRESENTACIÓN
+       
+       No vuelve a leer CSV.
+
+       Utiliza únicamente CONT07.
        ===================================================== */
 
     actualizarPresentacion() {
 
-        let datos =
-            null;
-
-
-        /*
-        -----------------------------------------------------
-        OBTENER REGISTRO
-        -----------------------------------------------------
-        */
-
         if (
-            window.CONT07 &&
-            typeof window.CONT07.obtener ===
+            !window.CONT07 ||
+            typeof window.CONT07.obtener !==
             "function"
-        ) {
-
-            datos =
-                window.CONT07.obtener();
-
-        }
-
-
-        if (
-            !datos
         ) {
 
             return;
 
         }
 
+        const datos =
+            window.CONT07.obtener();
 
-        /*
-        -----------------------------------------------------
-        MOSTRAR GEOLOGÍA NORMAL
-        -----------------------------------------------------
-        */
+        if (!datos) {
 
-        this.limpiarPresentacion();
+            return;
 
+        }
+
+        const geologia =
+            this.geologiaExistente(
+                datos
+            );
+
+        this.limpiar();
 
         this.mostrarGeologia(
-            datos
-        );
-
-
-        /*
-        -----------------------------------------------------
-        TELEOBLIGATORIO
-
-        También se ejecuta aquí por si el generador
-        actualiza posteriormente la presentación.
-        -----------------------------------------------------
-        */
-
-        this.mostrarJ3Directo(
-            datos.j1
+            geologia
         );
 
     }
-
 
 };
 
 
 /* ========================================================
-   ESCUCHAR EVENTO DE CARGACONT
+   EVENTO DE CARGACONT
 ======================================================== */
-
-/*
---------------------------------------------------------
-CARGACONT genera:
-
-    palentropia:contenedor-cargado
-
-CAB07 únicamente escucha.
-
---------------------------------------------------------
-*/
 
 document.addEventListener(
     "palentropia:contenedor-cargado",
     function(evento) {
 
+        const datos =
+            evento &&
+            evento.detail;
+
+        if (!datos) {
+
+            return;
+
+        }
+
         try {
-
-            const datos =
-                evento &&
-                evento.detail;
-
-
-            if (
-                !datos
-            ) {
-
-                console.warn(
-                    "CAB07: evento recibido sin datos."
-                );
-
-                return;
-
-            }
-
 
             window.CAB07.procesar(
                 datos
@@ -1219,14 +811,8 @@ document.addEventListener(
 
         } catch (error) {
 
-            /*
-            ------------------------------------------------
-            LA GEOLOGÍA NO DEBE ROMPER LA FICHA
-            ------------------------------------------------
-            */
-
             console.warn(
-                "CAB07: error procesando el evento geológico.",
+                "CAB07: error procesando ficha.",
                 error
             );
 
@@ -1237,15 +823,5 @@ document.addEventListener(
 
 
 /* ========================================================
-   DISPONIBILIDAD GLOBAL
+   FIN CAB07.js
 ======================================================== */
-
-window.CAB07 =
-    window.CAB07;
-
-
-/*
-========================================================
-FIN CAB07.js
-========================================================
-*/
