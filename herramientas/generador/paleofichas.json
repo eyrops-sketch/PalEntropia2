@@ -454,7 +454,13 @@
     "nombre": "Tyrannosaurus rex",
     "dieta": "Carnívoro depredador y carroñero",
     "anatomia": "Terópodo gigante de cuerpo robusto, cráneo masivo, mandíbulas extremadamente potentes y extremidades posteriores adaptadas a la locomoción"
-    }
+    },
+  {
+  "codigo": "006_02",
+  "nombre": "Kosmoceratops",
+  "dieta": "Herbívoro",
+  "anatomia": "Ceratopsio de gran tamaño con cráneo provisto de una amplia gola ósea y numerosos cuernos y estructuras ornamentales"
+  }
 
 ]
 
