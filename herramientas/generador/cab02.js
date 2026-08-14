@@ -94,21 +94,7 @@ document.addEventListener(
                 ficha.j1
             );
 
-   /* =========================================
-   GEOLOGÍA
-   ========================================= */
 
-if (
-    window.CAB07 &&
-    typeof window.CAB07.procesar ===
-    "function"
-) {
-
-    await window.CAB07.procesar(
-        ficha.j1
-    );
-
-}
 
 
             /* =========================================
