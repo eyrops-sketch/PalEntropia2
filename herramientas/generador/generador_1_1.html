@@ -741,6 +741,15 @@ document.addEventListener(
 
             /*
             -------------------------------------------------
+            INICIALIZAR PALNAVEGADOR
+            -------------------------------------------------
+            */
+
+            await window.PALNAVEGADOR.inicializar();
+
+
+            /*
+            -------------------------------------------------
             LEER CÓDIGO DE LA URL
             -------------------------------------------------
             */
@@ -756,7 +765,7 @@ document.addEventListener(
 
             /*
             -------------------------------------------------
-            SI LA URL TIENE ?codigo=
+            SI EXISTE ?codigo=
             CARGAR ESA FICHA
             -------------------------------------------------
             */
@@ -774,8 +783,7 @@ document.addEventListener(
 
             /*
             -------------------------------------------------
-            SI NO HAY CÓDIGO
-            MANTENER COMPORTAMIENTO ALEATORIO
+            SIN CÓDIGO → ALEATORIO
             -------------------------------------------------
             */
 
