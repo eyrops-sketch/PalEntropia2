@@ -727,6 +727,75 @@ async function(j1) {
 
 <script src="cab07.js"></script>
 
+<script>
+
+/* =====================================================
+   ARRANQUE DEL GENERADOR 1.1
+   ===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+
+        try {
+
+            /*
+            -------------------------------------------------
+            LEER CÓDIGO DE LA URL
+            -------------------------------------------------
+            */
+
+            const parametros =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+            const codigo =
+                parametros.get("codigo");
+
+
+            /*
+            -------------------------------------------------
+            SI LA URL TIENE ?codigo=
+            CARGAR ESA FICHA
+            -------------------------------------------------
+            */
+
+            if (codigo) {
+
+                await window.PALNAVEGADOR.cargarPorCodigo(
+                    codigo
+                );
+
+                return;
+
+            }
+
+
+            /*
+            -------------------------------------------------
+            SI NO HAY CÓDIGO
+            MANTENER COMPORTAMIENTO ALEATORIO
+            -------------------------------------------------
+            */
+
+            await window.PALNAVEGADOR.aleatorio();
+
+        } catch (error) {
+
+            console.error(
+                "GENERADOR 1.1: error durante el arranque.",
+                error
+            );
+
+        }
+
+    }
+);
+
+</script>
+      
+
 
 </body>
 
