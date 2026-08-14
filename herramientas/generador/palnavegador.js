@@ -342,26 +342,11 @@ const PALNAVEGADOR = {
             );
 
 
-        /* =================================================
-           ACTUALIZAR PRESENTACIÓN CAB07
-
-           Se ejecuta después de CARGACONT.
-
-           Así CAB07 vuelve a leer CONT07 y muestra
-           la geología correspondiente a la nueva ficha.
-           ================================================= */
-
-        if (
-            window.CAB07 &&
-            typeof window.CAB07.actualizarPresentacion ===
-            "function"
-        ) {
-
-            window.CAB07.actualizarPresentacion();
-
-        }
+        
 
 
+
+     
         return resultado;
 
     },
