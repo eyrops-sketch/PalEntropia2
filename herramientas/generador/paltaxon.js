@@ -382,9 +382,26 @@ window.PALTAXON = {
 "005_15":{
   ta1:"Animalia > Chordata > Diapsida",
   ta2:"Diápsido."
+},
+"006_01":{
+  ta1:"Animalia > Chordata > Dinosauria > Theropoda > Tyrannosauridae",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Tiranosáurido."
+},
+
+"006_02":{
+  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Ceratopsia > Chasmosauridae",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Ceratopsio. Casmosáurido."
 }
 
 };
+
+
+
+
+
+
+
+
 
 
 
