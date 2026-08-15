@@ -8,7 +8,15 @@ BLOQUE:
 - Evento: contenedor cargado
 - Actualización de vídeo
 - Carga de imágenes
+- Conexión con CAB09
 - Error del contenedor
+
+IMPORTANTE:
+- CAB02 NO selecciona fichas.
+- CAB02 NO llama a aleatorio().
+- CAB02 NO interpreta ?codigo=.
+- CAB02 recibe el registro ya seleccionado.
+- CAB09 recibe únicamente ese registro real.
 
 Código procedente del generador original.
 ========================================================
@@ -43,7 +51,50 @@ document.addEventListener(
 
 
             /* =========================================
+               CAB09 — ESTADÍSTICAS
+
+               CAB09 recibe exactamente el registro
+               entregado por CARGACONT.
+
+               CAB09 lee únicamente:
+
+               e1  = Adaptabilidad
+               e2  = Resistencia
+               e3  = Sociabilidad
+               e4  = Reproducción
+               e5  = Ofensiva
+               e6  = Defensa
+               e7  = Movilidad
+               e8  = Plasticidad ecológica
+               e9  = Tamaño
+               e10 = Velocidad
+               e11 = Inteligencia
+
+               CAB02 no modifica estos datos.
+               ========================================= */
+
+            if(
+                window.CAB09 &&
+                typeof window.CAB09.ejecutar === "function"
+            ) {
+
+                window.CAB09.ejecutar(
+                    ficha
+                );
+
+            }
+
+
+            /* =========================================
                POSICIONAR PUNTERO
+
+               IMPORTANTE:
+               Este bloque permanece intacto.
+
+               CAB02 NO selecciona la ficha.
+               PALNAVEGADOR únicamente posiciona
+               el puntero sobre la ficha que ya
+               ha sido cargada.
                ========================================= */
 
             if(
@@ -93,8 +144,6 @@ document.addEventListener(
             actualizarVideo(
                 ficha.j1
             );
-
-
 
 
             /* =========================================
@@ -358,3 +407,10 @@ function mostrarError(error) {
         "</span>";
 
 }
+
+
+/*
+========================================================
+FIN CAB02.js
+========================================================
+*/
