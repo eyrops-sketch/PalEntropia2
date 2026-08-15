@@ -1,10 +1,10 @@
-CAB08.js — Taxonomía corregida
+CAB08.js — Taxonomía
 
 /*
 ========================================================
 PalEntropía
 CAB08.js
-Generador de Paleofichas 1.1
+Generador de Paleofichas
 
 BLOQUE:
 - Taxonomía
@@ -30,6 +30,13 @@ ta2 → descripción taxonómica
 
 
 /* =====================================================
+   ÚLTIMO CÓDIGO RECIBIDO
+   ===================================================== */
+
+window.CAB08_CODIGO_ACTUAL = "";
+
+
+/* =====================================================
    EVENTO: CONTENEDOR CARGADO
    ===================================================== */
 
@@ -48,20 +55,27 @@ document.addEventListener(
         }
 
 
-        /*
-        -------------------------------------------------
-        EL CONTENEDOR NORMALIZADO USA j1
-        -------------------------------------------------
-        */
-
         const codigo =
             ficha.j1 ||
             ficha.codigo ||
             "";
 
 
+        if (!codigo) {
+
+            return;
+
+        }
+
+
+        window.CAB08_CODIGO_ACTUAL =
+            String(codigo)
+                .trim()
+                .toUpperCase();
+
+
         procesarTaxon(
-            codigo
+            window.CAB08_CODIGO_ACTUAL
         );
 
     }
@@ -119,25 +133,6 @@ function procesarTaxon(
 
     /*
     -----------------------------------------------------
-    COMPROBAR PALTAXON
-    -----------------------------------------------------
-    */
-
-    if (
-        !window.PALTAXON
-    ) {
-
-        console.warn(
-            "CAB08: PALTAXON no está disponible."
-        );
-
-        return;
-
-    }
-
-
-    /*
-    -----------------------------------------------------
     NORMALIZAR CÓDIGO
     -----------------------------------------------------
     */
@@ -152,8 +147,36 @@ function procesarTaxon(
 
     if (!codigo) {
 
-        console.warn(
-            "CAB08: no se recibió código de paleoficha."
+        return;
+
+    }
+
+
+    /*
+    -----------------------------------------------------
+    COMPROBAR PALTAXON
+    -----------------------------------------------------
+    */
+
+    if (
+        !window.PALTAXON
+    ) {
+
+        /*
+        PALTAXON todavía no está disponible.
+        Reintentamos una vez transcurrido un
+        pequeño intervalo.
+        */
+
+        setTimeout(
+            function() {
+
+                procesarTaxon(
+                    codigo
+                );
+
+            },
+            100
         );
 
         return;
@@ -163,7 +186,7 @@ function procesarTaxon(
 
     /*
     -----------------------------------------------------
-    BUSCAR REGISTRO EN PALTAXON
+    BUSCAR REGISTRO
     -----------------------------------------------------
     */
 
@@ -175,27 +198,23 @@ function procesarTaxon(
         !taxon
     ) {
 
-        console.warn(
-            "CAB08: no existe taxonomía para:",
-            codigo
-        );
-
         return;
 
     }
 
 
     /*
-    -----------------------------------------------------
+    =====================================================
     TA1
     ÁRBOL TAXONÓMICO DESCENDENTE
-    -----------------------------------------------------
+    =====================================================
     */
 
     const ta1 =
         String(
             taxon.ta1 || ""
-        ).trim();
+        )
+        .trim();
 
 
     if (ta1) {
@@ -237,7 +256,7 @@ function procesarTaxon(
 
                 /*
                 -------------------------------------------------
-                NIVEL PRINCIPAL
+                TEXTO DEL NIVEL
                 -------------------------------------------------
                 */
 
@@ -249,13 +268,6 @@ function procesarTaxon(
                         nivel;
 
                 }
-
-
-                /*
-                -------------------------------------------------
-                NIVELES DESCENDIENTES
-                -------------------------------------------------
-                */
 
                 else {
 
@@ -288,29 +300,34 @@ function procesarTaxon(
 
 
     /*
-    -----------------------------------------------------
+    =====================================================
     TA2
-    -----------------------------------------------------
+    =====================================================
     */
 
     const ta2 =
         String(
             taxon.ta2 || ""
-        ).trim();
+        )
+        .trim();
 
 
-    elementoTa2.textContent =
-        ta2;
+    if (ta2) {
+
+        elementoTa2.textContent =
+            ta2;
+
+    }
 
 
     /*
-    -----------------------------------------------------
+    =====================================================
     DIAGNÓSTICO
-    -----------------------------------------------------
+    =====================================================
     */
 
     console.log(
-        "CAB08: taxonomía cargada",
+        "CAB08: taxonomía cargada:",
         codigo,
         taxon
     );
@@ -319,6 +336,29 @@ function procesarTaxon(
 
 
 /* =====================================================
-   FIN CAB08.js
+   SEGUNDA OPORTUNIDAD AL CARGAR DOM
+   ===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        if (
+            window.CAB08_CODIGO_ACTUAL
+        ) {
+
+            procesarTaxon(
+                window.CAB08_CODIGO_ACTUAL
+            );
+
+        }
+
+    }
+);
+
+
+/*
+========================================================
+FIN CAB08.js
 ========================================================
 */
