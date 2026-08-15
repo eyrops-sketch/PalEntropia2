@@ -1,9 +1,8 @@
 /*=========================================================
 PalEntropía
 Generador de Paleofichas
-Style v2.2
+Style v2.1
 Evolución visual del Generador
-Añadido soporte visual CAB08 — Taxón
 =========================================================*/
 
 
@@ -290,54 +289,6 @@ BLOQUE INFORMACIÓN
 
 
 /*=========================================================
-TAXÓN — CAB08
-=========================================================*/
-
-#bloqueTaxon{
-    margin-top:25px;
-    margin-bottom:25px;
-    padding-bottom:15px;
-    font-size:18px;
-    line-height:1.7;
-}
-
-
-/*---------------------------------------------------------
-ENCABEZADO TAXÓN
----------------------------------------------------------*/
-
-#bloqueTaxon .tituloTaxon{
-    display:block;
-    color:#62d6ff;
-    font-size:20px;
-    font-weight:bold;
-    margin-bottom:10px;
-}
-
-
-/*---------------------------------------------------------
-CLASIFICACIÓN TAXONÓMICA
----------------------------------------------------------*/
-
-#taxonTa1{
-    color:#fff;
-    font-weight:600;
-    line-height:1.8;
-    margin-bottom:10px;
-}
-
-
-/*---------------------------------------------------------
-DESCRIPCIÓN TAXONÓMICA
----------------------------------------------------------*/
-
-#taxonTa2{
-    color:#ccc;
-    line-height:1.7;
-}
-
-
-/*=========================================================
 GALERÍA
 =========================================================*/
 
@@ -528,6 +479,12 @@ RESULTADOS DEL BUSCADOR
     margin-top:5px;
 }
 
+
+/*
+   El HTML actual utiliza .resultadoBuscador.
+   Se mantiene ese nombre para no tocar la lógica JS.
+*/
+
 .resultadoBuscador{
     width:100%;
     display:flex;
@@ -597,6 +554,7 @@ SIN RESULTADOS
 
 /*=========================================================
 FILTRO ACTIVO
+PREPARACIÓN VISUAL
 =========================================================*/
 
 #filtroActivo{
@@ -652,6 +610,7 @@ FILTRO ACTIVO
 
 /*=========================================================
 BOTÓN TODOS
+PREPARACIÓN VISUAL
 =========================================================*/
 
 #botonTodos{
@@ -906,32 +865,6 @@ RESPONSIVE
         line-height:1.7;
     }
 
-
-    /*-----------------------------------------------------
-      TAXÓN — MÓVIL
-    -----------------------------------------------------*/
-
-    #bloqueTaxon{
-        font-size:17px;
-        line-height:1.7;
-        margin-top:22px;
-        margin-bottom:22px;
-        padding-bottom:15px;
-    }
-
-    #bloqueTaxon .tituloTaxon{
-        font-size:19px;
-    }
-
-    #taxonTa1{
-        line-height:1.8;
-    }
-
-    #taxonTa2{
-        line-height:1.7;
-    }
-
-
     #imagenPrincipal{
         width:90%;
         max-width:520px;
@@ -995,6 +928,9 @@ RESPONSIVE
 
 
 /*=========================================================
-FIN STYLE_1_1.CSS v2.2
+FIN STYLE.CSS v2.1
 PalEntropía — Generador de Paleofichas
 =========================================================*/
+
+
+
