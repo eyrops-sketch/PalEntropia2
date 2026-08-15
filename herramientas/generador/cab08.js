@@ -1,10 +1,8 @@
-CAB08.js — Taxonomía
-
 /*
 ========================================================
 PalEntropía
 CAB08.js
-Generador de Paleofichas
+Generador de Paleofichas 1.1
 
 BLOQUE:
 - Taxonomía
@@ -30,13 +28,6 @@ ta2 → descripción taxonómica
 
 
 /* =====================================================
-   ÚLTIMO CÓDIGO RECIBIDO
-   ===================================================== */
-
-window.CAB08_CODIGO_ACTUAL = "";
-
-
-/* =====================================================
    EVENTO: CONTENEDOR CARGADO
    ===================================================== */
 
@@ -48,34 +39,15 @@ document.addEventListener(
             evento.detail;
 
 
-        if (!ficha) {
+        if(!ficha) {
 
             return;
 
         }
-
-
-        const codigo =
-            ficha.j1 ||
-            ficha.codigo ||
-            "";
-
-
-        if (!codigo) {
-
-            return;
-
-        }
-
-
-        window.CAB08_CODIGO_ACTUAL =
-            String(codigo)
-                .trim()
-                .toUpperCase();
 
 
         procesarTaxon(
-            window.CAB08_CODIGO_ACTUAL
+            ficha.j1
         );
 
     }
@@ -108,7 +80,7 @@ function procesarTaxon(
     -----------------------------------------------------
     */
 
-    if (
+    if(
         !elementoTa1 ||
         !elementoTa2
     ) {
@@ -120,7 +92,7 @@ function procesarTaxon(
 
     /*
     -----------------------------------------------------
-    LIMPIAR CONTENIDO ANTERIOR
+    LIMPIAR ANTES DE CARGAR
     -----------------------------------------------------
     */
 
@@ -129,6 +101,21 @@ function procesarTaxon(
 
     elementoTa2.textContent =
         "";
+
+
+    /*
+    -----------------------------------------------------
+    COMPROBAR PALTAXON
+    -----------------------------------------------------
+    */
+
+    if(
+        !window.PALTAXON
+    ) {
+
+        return;
+
+    }
 
 
     /*
@@ -145,7 +132,7 @@ function procesarTaxon(
         .toUpperCase();
 
 
-    if (!codigo) {
+    if(!codigo) {
 
         return;
 
@@ -154,39 +141,7 @@ function procesarTaxon(
 
     /*
     -----------------------------------------------------
-    COMPROBAR PALTAXON
-    -----------------------------------------------------
-    */
-
-    if (
-        !window.PALTAXON
-    ) {
-
-        /*
-        PALTAXON todavía no está disponible.
-        Reintentamos una vez transcurrido un
-        pequeño intervalo.
-        */
-
-        setTimeout(
-            function() {
-
-                procesarTaxon(
-                    codigo
-                );
-
-            },
-            100
-        );
-
-        return;
-
-    }
-
-
-    /*
-    -----------------------------------------------------
-    BUSCAR REGISTRO
+    BUSCAR REGISTRO TAXONÓMICO
     -----------------------------------------------------
     */
 
@@ -194,7 +149,7 @@ function procesarTaxon(
         window.PALTAXON[codigo];
 
 
-    if (
+    if(
         !taxon
     ) {
 
@@ -204,37 +159,31 @@ function procesarTaxon(
 
 
     /*
-    =====================================================
+    -----------------------------------------------------
     TA1
+    -----------------------------------------------------
     ÁRBOL TAXONÓMICO DESCENDENTE
-    =====================================================
+    -----------------------------------------------------
     */
 
     const ta1 =
         String(
             taxon.ta1 || ""
-        )
-        .trim();
+        ).trim();
 
 
-    if (ta1) {
+    if(ta1) {
 
         const niveles =
             ta1
                 .split(">")
                 .map(
-                    function(nivel) {
-
-                        return nivel.trim();
-
-                    }
+                    nivel =>
+                        nivel.trim()
                 )
                 .filter(
-                    function(nivel) {
-
-                        return nivel !== "";
-
-                    }
+                    nivel =>
+                        nivel !== ""
                 );
 
 
@@ -254,34 +203,11 @@ function procesarTaxon(
                     "nivelTaxon";
 
 
-                /*
-                -------------------------------------------------
-                TEXTO DEL NIVEL
-                -------------------------------------------------
-                */
-
-                if (
+                linea.textContent =
                     indice === 0
-                ) {
+                        ? nivel
+                        : "└─ " + nivel;
 
-                    linea.textContent =
-                        nivel;
-
-                }
-
-                else {
-
-                    linea.textContent =
-                        "└─ " + nivel;
-
-                }
-
-
-                /*
-                -------------------------------------------------
-                INDENTACIÓN
-                -------------------------------------------------
-                */
 
                 linea.style.paddingLeft =
                     (
@@ -300,61 +226,15 @@ function procesarTaxon(
 
 
     /*
-    =====================================================
+    -----------------------------------------------------
     TA2
-    =====================================================
+    -----------------------------------------------------
     */
 
-    const ta2 =
-        String(
-            taxon.ta2 || ""
-        )
-        .trim();
-
-
-    if (ta2) {
-
-        elementoTa2.textContent =
-            ta2;
-
-    }
-
-
-    /*
-    =====================================================
-    DIAGNÓSTICO
-    =====================================================
-    */
-
-    console.log(
-        "CAB08: taxonomía cargada:",
-        codigo,
-        taxon
-    );
+    elementoTa2.textContent =
+        taxon.ta2 || "";
 
 }
-
-
-/* =====================================================
-   SEGUNDA OPORTUNIDAD AL CARGAR DOM
-   ===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        if (
-            window.CAB08_CODIGO_ACTUAL
-        ) {
-
-            procesarTaxon(
-                window.CAB08_CODIGO_ACTUAL
-            );
-
-        }
-
-    }
-);
 
 
 /*
