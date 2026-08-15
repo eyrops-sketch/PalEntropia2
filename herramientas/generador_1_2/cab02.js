@@ -8,17 +8,21 @@ BLOQUE:
 - Evento: contenedor cargado
 - Actualización de vídeo
 - Carga de imágenes
-- Conexión con CAB09
+- Estadísticas CAB09
 - Error del contenedor
 
 IMPORTANTE:
-- CAB02 NO selecciona fichas.
+- CAB02 NO decide qué ficha cargar.
 - CAB02 NO llama a aleatorio().
 - CAB02 NO interpreta ?codigo=.
-- CAB02 recibe el registro ya seleccionado.
-- CAB09 recibe únicamente ese registro real.
+- CAB02 solo procesa la ficha que recibe.
 
-Código procedente del generador original.
+CAB09:
+- CAB02 obtiene e1-e11 desde master.csv
+- CAB02 entrega esos datos a CAB09
+- CAB09 crea el botón de información estadística
+- CAB09 controla su propio lightbox
+
 ========================================================
 */
 
@@ -46,55 +50,16 @@ document.addEventListener(
             }
 
 
+            /* =========================================
+               GUARDAR FICHA ACTUAL
+               ========================================= */
+
             fichaActual =
                 ficha;
 
 
             /* =========================================
-               CAB09 — ESTADÍSTICAS
-
-               CAB09 recibe exactamente el registro
-               entregado por CARGACONT.
-
-               CAB09 lee únicamente:
-
-               e1  = Adaptabilidad
-               e2  = Resistencia
-               e3  = Sociabilidad
-               e4  = Reproducción
-               e5  = Ofensiva
-               e6  = Defensa
-               e7  = Movilidad
-               e8  = Plasticidad ecológica
-               e9  = Tamaño
-               e10 = Velocidad
-               e11 = Inteligencia
-
-               CAB02 no modifica estos datos.
-               ========================================= */
-
-            if(
-                window.CAB09 &&
-                typeof window.CAB09.ejecutar === "function"
-            ) {
-
-                window.CAB09.ejecutar(
-                    ficha
-                );
-
-            }
-
-
-            /* =========================================
                POSICIONAR PUNTERO
-
-               IMPORTANTE:
-               Este bloque permanece intacto.
-
-               CAB02 NO selecciona la ficha.
-               PALNAVEGADOR únicamente posiciona
-               el puntero sobre la ficha que ya
-               ha sido cargada.
                ========================================= */
 
             if(
@@ -178,6 +143,69 @@ document.addEventListener(
                 "block";
 
 
+            /* =========================================
+               ESTADÍSTICAS — CAB09
+               
+               IMPORTANTE:
+               CAB02 NO calcula nada.
+               Solo obtiene el registro maestro
+               correspondiente al código actual.
+               ========================================= */
+
+            if(
+                window.CAB09 &&
+                typeof window.cargarMasterPorJ1 === "function" &&
+                ficha.j1
+            ) {
+
+                try {
+
+                    const master =
+                        await window.cargarMasterPorJ1(
+                            ficha.j1
+                        );
+
+
+                    if(master) {
+
+                        window.CAB09.ejecutar(
+                            master
+                        );
+
+                    }
+                    else {
+
+                        console.warn(
+                            "CAB02: no se encontró registro master para " +
+                            ficha.j1
+                        );
+
+                    }
+
+                }
+                catch(error) {
+
+                    console.warn(
+                        "CAB02: error cargando estadísticas CAB09.",
+                        error
+                    );
+
+                }
+
+            }
+            else {
+
+                console.warn(
+                    "CAB02: CAB09 o cargarMasterPorJ1 no disponible."
+                );
+
+            }
+
+
+            /* =========================================
+               ESTADO
+               ========================================= */
+
             document.getElementById(
                 "estado"
             ).innerHTML =
@@ -193,8 +221,16 @@ document.addEventListener(
                 "</span>";
 
 
+            /* =========================================
+               CONTROLES DE NAVEGACIÓN
+               ========================================= */
+
             actualizarControlesNavegacion();
 
+
+            /* =========================================
+               CONSOLA
+               ========================================= */
 
             console.log(
                 "PalEntropía — GENERADOR",
