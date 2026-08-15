@@ -193,10 +193,6 @@
 <body>
 
 
-<!-- =====================================================
-     CABECERA MAESTRA
-     ===================================================== -->
-
 <button id="botonAleatorio"
         type="button"
         title="Paleoficha aleatoria"
@@ -229,10 +225,6 @@
 </header>
 
 
-<!-- =====================================================
-     CONTROLES DE BÚSQUEDA
-     ===================================================== -->
-
 <section id="controlesBusqueda">
 
     <button id="botonBuscar"
@@ -244,10 +236,6 @@
 
 </section>
 
-
-<!-- =====================================================
-     CONTROLES DE NAVEGACIÓN
-     ===================================================== -->
 
 <section id="controlesNavegacion"
          aria-label="Navegación de paleofichas">
@@ -307,20 +295,12 @@
 </section>
 
 
-<!-- =====================================================
-     ESTADO
-     ===================================================== -->
-
 <div id="estado">
 
     Cargando contenedor...
 
 </div>
 
-
-<!-- =====================================================
-     FICHA
-     ===================================================== -->
 
 <main id="ficha"
       class="ficha"
@@ -331,33 +311,6 @@
 
 
     <div id="codigoFicha"></div>
-
-
-    <!-- =================================================
-         CRONOLOGÍA
-         ================================================= -->
-
-    <div id="cronologia">
-    </div>
-
-
-    <!-- =================================================
-         TAXONOMÍA
-         ================================================= -->
-
-<section id="bloqueTaxon">
-
-    <span class="campo">
-        Taxón
-    </span>
-
-    <div id="taxonTa1">
-    </div>
-
-    <div id="taxonTa2">
-    </div>
-
-</section>
 
 
     <!-- =================================================
@@ -437,6 +390,33 @@
         <img id="img3"
              alt="Imagen secundaria 2">
 
+
+    </section>
+
+
+    <!-- =================================================
+         CRONOLOGÍA
+         ================================================= -->
+
+    <div id="cronologia">
+    </div>
+
+
+    <!-- =================================================
+         TAXONOMÍA
+         ================================================= -->
+
+    <section id="bloqueTaxon">
+
+        <span class="campo">
+            Taxón
+        </span>
+
+        <div id="taxonTa1">
+        </div>
+
+        <div id="taxonTa2">
+        </div>
 
     </section>
 
@@ -766,30 +746,14 @@ async function(j1) {
 
 <script>
 
-/* =====================================================
-   ARRANQUE DEL GENERADOR 1.1
-   ===================================================== */
-
 document.addEventListener(
     "DOMContentLoaded",
     async function() {
 
         try {
 
-            /*
-            -------------------------------------------------
-            INICIALIZAR PALNAVEGADOR
-            -------------------------------------------------
-            */
-
             await window.PALNAVEGADOR.inicializar();
 
-
-            /*
-            -------------------------------------------------
-            LEER CÓDIGO DE LA URL
-            -------------------------------------------------
-            */
 
             const parametros =
                 new URLSearchParams(
@@ -801,13 +765,6 @@ document.addEventListener(
                 parametros.get("codigo");
 
 
-            /*
-            -------------------------------------------------
-            SI EXISTE ?codigo=
-            CARGAR ESA FICHA
-            -------------------------------------------------
-            */
-
             if (codigo) {
 
                 await window.PALNAVEGADOR.cargarPorCodigo(
@@ -818,12 +775,6 @@ document.addEventListener(
 
             }
 
-
-            /*
-            -------------------------------------------------
-            SIN CÓDIGO → ALEATORIO
-            -------------------------------------------------
-            */
 
             await window.PALNAVEGADOR.aleatorio();
 
@@ -840,7 +791,6 @@ document.addEventListener(
 
     }
 );
-
 
 </script>
 
