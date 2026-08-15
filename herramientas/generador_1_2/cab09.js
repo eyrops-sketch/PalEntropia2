@@ -1,12 +1,13 @@
 /*
 ========================================================
-CAB09.js v1.1
+CAB09.js v1.2
 PalEntropía
 Información avanzada
 ========================================================
 
-FUNCIÓN ACTUAL:
+FUNCIÓN:
 - Crea el botón dentro de #ficha.
+- Lo mantiene dentro de la Paleoficha.
 - Abre el lightbox al pulsarlo.
 - Permite cerrar el lightbox.
 - No lee datos.
@@ -21,11 +22,11 @@ FUNCIÓN ACTUAL:
 
 const CAB09 = {
 
-    version: "1.1",
+    version: "1.2",
 
 
     /*====================================================
-      CREAR BOTÓN DENTRO DE LA PALEOFICHA
+      CREAR BOTÓN
     ====================================================*/
 
     crearBoton(){
@@ -48,7 +49,7 @@ const CAB09 = {
 
 
         /*
-        Si ya existe, comprobamos que esté
+        Si ya existe, aseguramos que esté
         dentro de la Paleoficha.
         */
 
@@ -64,10 +65,6 @@ const CAB09 = {
 
         }
 
-
-        /*
-        Crear botón.
-        */
 
         boton =
             document.createElement("button");
@@ -87,12 +84,19 @@ const CAB09 = {
             "Abrir información estadística"
         );
 
-        boton.innerHTML =
+
+        /*
+        Icono del botón.
+        */
+
+        boton.textContent =
             "ⓘ";
 
 
         /*
-        Insertar dentro de #ficha.
+        IMPORTANTE:
+        El botón queda directamente dentro
+        de #ficha.
         */
 
         ficha.appendChild(
@@ -127,12 +131,20 @@ const CAB09 = {
         visor =
             document.createElement("div");
 
+
         visor.id =
             "visorInfoAvanzada";
 
 
+        visor.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
         const ventana =
             document.createElement("div");
+
 
         ventana.id =
             "ventanaInfoAvanzada";
@@ -141,13 +153,14 @@ const CAB09 = {
         const cerrar =
             document.createElement("button");
 
+
         cerrar.id =
             "cerrarInfoAvanzada";
 
         cerrar.type =
             "button";
 
-        cerrar.innerHTML =
+        cerrar.textContent =
             "×";
 
         cerrar.title =
@@ -162,6 +175,7 @@ const CAB09 = {
         const titulo =
             document.createElement("h2");
 
+
         titulo.textContent =
             "Información estadística";
 
@@ -169,6 +183,7 @@ const CAB09 = {
         ventana.appendChild(
             cerrar
         );
+
 
         ventana.appendChild(
             titulo
@@ -217,7 +232,7 @@ const CAB09 = {
 
 
     /*====================================================
-      ABRIR LIGHTBOX
+      ABRIR
     ====================================================*/
 
     abrirLightbox(){
@@ -238,10 +253,12 @@ const CAB09 = {
         visor.style.display =
             "flex";
 
+
         visor.setAttribute(
             "aria-hidden",
             "false"
         );
+
 
         document.body.style.overflow =
             "hidden";
@@ -250,7 +267,7 @@ const CAB09 = {
 
 
     /*====================================================
-      CERRAR LIGHTBOX
+      CERRAR
     ====================================================*/
 
     cerrarLightbox(){
@@ -271,10 +288,12 @@ const CAB09 = {
         visor.style.display =
             "none";
 
+
         visor.setAttribute(
             "aria-hidden",
             "true"
         );
+
 
         document.body.style.overflow =
             "";
@@ -283,7 +302,7 @@ const CAB09 = {
 
 
     /*====================================================
-      ACTIVAR BOTÓN
+      ACTIVAR
     ====================================================*/
 
     activar(){
@@ -340,15 +359,6 @@ window.CAB09 =
 
 /*========================================================
 ARRANQUE
-========================================================
-
-El botón se crea cuando el DOM ya existe.
-También queda disponible mediante:
-
-CAB09.activar();
-
-para que otro módulo pueda volver a colocarlo
-si la Paleoficha se reconstruye.
 ========================================================*/
 
 document.addEventListener(
