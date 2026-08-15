@@ -1,5 +1,3 @@
-Generador de Paleofichas
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -25,10 +23,15 @@ Generador de Paleofichas
 #controlesNavegacion {
 
     display: flex;
+
     justify-content: center;
+
     align-items: center;
+
     gap: 8px;
+
     margin: 12px auto;
+
     flex-wrap: wrap;
 
 }
@@ -37,14 +40,21 @@ Generador de Paleofichas
 .botonNavegacion {
 
     width: 38px;
+
     height: 38px;
+
     border-radius: 50%;
+
     border: none;
+
     cursor: pointer;
+
     font-size: 16px;
 
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
 
     transition:
@@ -64,6 +74,7 @@ Generador de Paleofichas
 .botonNavegacion:disabled {
 
     opacity: 0.35;
+
     cursor: default;
 
 }
@@ -72,66 +83,32 @@ Generador de Paleofichas
 #posicionNavegacion {
 
     min-width: 70px;
+
     text-align: center;
+
     font-size: 13px;
+
     font-weight: 600;
+
     opacity: 0.8;
+
     padding: 4px 9px;
+
     border-radius: 12px;
 
 }
 
-
 /* =====================================================
-   TAXONOMÍA
+   SEPARACIÓN TAXONOMÍA
    ===================================================== */
 
 #bloqueTaxon {
 
-    margin-top: 25px;
-    margin-bottom: 25px;
+    margin-bottom: 22px;
 
 }
 
-
-#tituloTaxon {
-
-    text-align: left;
-    color: #62d6ff;
-    font-size: 22px;
-    margin-top: 0;
-    margin-bottom: 12px;
-
-}
-
-
-#taxonTa1 {
-
-    color: #fff;
-    font-size: 18px;
-    line-height: 1.7;
-    margin-bottom: 10px;
-
-}
-
-
-.nivelTaxon {
-
-    display: block;
-    min-height: 1.7em;
-
-}
-
-
-#taxonTa2 {
-
-    color: #aaa;
-    font-size: 17px;
-    line-height: 1.6;
-    margin-bottom: 18px;
-
-}
-
+      
 
 /* =====================================================
    BOTÓN VÍDEO
@@ -140,6 +117,7 @@ Generador de Paleofichas
 #videoFicha {
 
     text-align: center;
+
     margin: 12px 0;
 
 }
@@ -148,11 +126,17 @@ Generador de Paleofichas
 #botonVideo {
 
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
+
     text-decoration: none;
+
     padding: 9px 16px;
+
     border-radius: 20px;
+
     font-weight: 600;
 
 }
@@ -165,14 +149,23 @@ Generador de Paleofichas
 .resultadoBuscador {
 
     width: 100%;
+
     display: flex;
+
     align-items: center;
+
     gap: 10px;
+
     text-align: left;
+
     padding: 10px 12px;
+
     margin: 5px 0;
+
     border-radius: 12px;
+
     border: none;
+
     cursor: pointer;
 
 }
@@ -181,6 +174,7 @@ Generador de Paleofichas
 .resultadoCodigo {
 
     font-weight: 700;
+
     opacity: 0.75;
 
 }
@@ -201,7 +195,7 @@ Generador de Paleofichas
 
 
 <!-- =====================================================
-     BOTONES SUPERIORES
+     CABECERA MAESTRA
      ===================================================== -->
 
 <button id="botonAleatorio"
@@ -224,10 +218,6 @@ Generador de Paleofichas
 
 </button>
 
-
-<!-- =====================================================
-     CABECERA
-     ===================================================== -->
 
 <header id="cabecera">
 
@@ -356,23 +346,15 @@ Generador de Paleofichas
          TAXONOMÍA
          ================================================= -->
 
-    <section id="bloqueTaxon">
+<section id="bloqueTaxon">
 
+    <div id="taxonTa1">
+    </div>
 
-        <h2 id="tituloTaxon">
-            Taxón
-        </h2>
+    <div id="taxonTa2">
+    </div>
 
-
-        <div id="taxonTa1">
-        </div>
-
-
-        <div id="taxonTa2">
-        </div>
-
-
-    </section>
+</section>
 
 
     <!-- =================================================
@@ -750,8 +732,6 @@ async function(j1) {
 
 <script src="paltaxon.js"></script>
 
-<script src="cab08.js"></script>
-
 
 <!-- =====================================================
      CONTENEDOR GEOLOGÍA
@@ -761,7 +741,7 @@ async function(j1) {
 
 
 <!-- =====================================================
-     GENERADOR
+     GENERADOR 1.1
      ===================================================== -->
 
 <script src="cab01.js"></script>
@@ -778,12 +758,14 @@ async function(j1) {
 
 <script src="cab07.js"></script>
 
+<script src="cab08.js"></script>
 
-<!-- =====================================================
-     ARRANQUE
-     ===================================================== -->
 
 <script>
+
+/* =====================================================
+   ARRANQUE DEL GENERADOR 1.1
+   ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -791,8 +773,20 @@ document.addEventListener(
 
         try {
 
+            /*
+            -------------------------------------------------
+            INICIALIZAR PALNAVEGADOR
+            -------------------------------------------------
+            */
+
             await window.PALNAVEGADOR.inicializar();
 
+
+            /*
+            -------------------------------------------------
+            LEER CÓDIGO DE LA URL
+            -------------------------------------------------
+            */
 
             const parametros =
                 new URLSearchParams(
@@ -803,6 +797,13 @@ document.addEventListener(
             const codigo =
                 parametros.get("codigo");
 
+
+            /*
+            -------------------------------------------------
+            SI EXISTE ?codigo=
+            CARGAR ESA FICHA
+            -------------------------------------------------
+            */
 
             if (codigo) {
 
@@ -815,6 +816,12 @@ document.addEventListener(
             }
 
 
+            /*
+            -------------------------------------------------
+            SIN CÓDIGO → ALEATORIO
+            -------------------------------------------------
+            */
+
             await window.PALNAVEGADOR.aleatorio();
 
         }
@@ -822,7 +829,7 @@ document.addEventListener(
         catch (error) {
 
             console.error(
-                "Error durante el arranque.",
+                "GENERADOR 1.1: error durante el arranque.",
                 error
             );
 
