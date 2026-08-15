@@ -1,473 +1,409 @@
-/* ========================================================
-   CAB09.css
-   PalEntropía — Fase 2
-   Lightbox de Información Avanzada
-   ======================================================== */
+/*
+========================================================
+CAB09.js
+PalEntropía — Fase 2
+Lightbox de Información Avanzada
+VERSIÓN 1.0 — ESTRUCTURA VISUAL
+========================================================
+*/
 
+(function(){
 
-/* ========================================================
-   BOTÓN INFORMACIÓN AVANZADA
-   ======================================================== */
+    function iniciarCAB09(){
 
-#botonInfoAvanzada{
+        const ficha =
+            document.getElementById("ficha");
 
-    position:absolute;
+        if(!ficha){
 
-    top:12px;
-    right:12px;
+            console.error(
+                "CAB09: no se encontró #ficha."
+            );
 
-    width:34px;
-    height:34px;
+            return;
+        }
 
-    padding:0;
 
-    border-radius:50%;
+        /* =================================================
+           BOTÓN INFORMACIÓN AVANZADA
+           ================================================= */
 
-    border:1px solid #62d6ff;
+        if(
+            document.getElementById(
+                "botonInfoAvanzada"
+            )
+        ){
 
-    background:#151719;
+            return;
 
-    color:#62d6ff;
+        }
 
-    font-size:17px;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
+        const boton =
+            document.createElement("button");
 
-    cursor:pointer;
 
-    box-shadow:
-        0 0 8px rgba(98,214,255,.18);
+        boton.id =
+            "botonInfoAvanzada";
 
-    transition:
-        background .20s,
-        color .20s,
-        transform .15s,
-        box-shadow .20s;
-}
+        boton.type =
+            "button";
 
+        boton.title =
+            "Información avanzada";
 
-#botonInfoAvanzada:hover{
+        boton.setAttribute(
+            "aria-label",
+            "Información avanzada"
+        );
 
-    background:#62d6ff;
+        boton.textContent =
+            "ⓘ";
 
-    color:#001018;
 
-    box-shadow:
-        0 0 14px rgba(98,214,255,.40);
-}
+        /*
+        El botón pertenece visualmente
+        al contenedor de la Paleoficha.
+        */
 
+        ficha.style.position =
+            "relative";
 
-#botonInfoAvanzada:active{
 
-    transform:scale(.90);
+        ficha.appendChild(
+            boton
+        );
 
-}
 
+        /* =================================================
+           LIGHTBOX
+           ================================================= */
 
-/* ========================================================
-   LIGHTBOX FASE 2
-   ======================================================== */
+        const visor =
+            document.createElement("div");
 
-#visorInfoAvanzada{
 
-    display:none;
+        visor.id =
+            "visorInfoAvanzada";
 
-    position:fixed;
+        visor.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
-    top:0;
-    left:0;
 
-    width:100vw;
-    height:100vh;
+        /* =================================================
+           VENTANA
+           ================================================= */
 
-    padding:20px;
+        const ventana =
+            document.createElement("div");
 
-    background:rgba(0,0,0,.94);
 
-    z-index:1000000;
+        ventana.id =
+            "ventanaInfoAvanzada";
 
-    justify-content:center;
-    align-items:center;
 
-}
+        /* =================================================
+           BOTÓN CERRAR
+           ================================================= */
 
+        const cerrar =
+            document.createElement("button");
 
-/* ========================================================
-   VENTANA PRINCIPAL
-   ======================================================== */
 
-#ventanaInfoAvanzada{
+        cerrar.id =
+            "cerrarInfoAvanzada";
 
-    position:relative;
+        cerrar.type =
+            "button";
 
-    width:94%;
+        cerrar.setAttribute(
+            "aria-label",
+            "Cerrar información avanzada"
+        );
 
-    max-width:850px;
+        cerrar.textContent =
+            "×";
 
-    max-height:90vh;
 
-    overflow-y:auto;
+        /* =================================================
+           TÍTULO
+           ================================================= */
 
-    padding:25px;
+        const titulo =
+            document.createElement("h2");
 
-    background:#181a1c;
 
-    border:2px solid #62d6ff;
+        titulo.textContent =
+            "Información avanzada";
 
-    border-radius:18px;
 
-    box-shadow:
-        0 0 25px rgba(98,214,255,.35),
-        0 10px 40px rgba(0,0,0,.55);
+        /* =================================================
+           HÁBITATS
+           ================================================= */
 
-}
+        const bloqueHabitats =
+            document.createElement("section");
 
 
-/* ========================================================
-   TÍTULO
-   ======================================================== */
+        bloqueHabitats.className =
+            "bloqueFase2";
 
-#ventanaInfoAvanzada h2{
 
-    margin-top:0;
+        bloqueHabitats.innerHTML =
 
-    margin-bottom:25px;
+            "<h3>Hábitats</h3>" +
 
-    padding-right:40px;
+            "<div id=\"fase2Habitats\"></div>";
 
-    text-align:center;
 
-    color:#62d6ff;
+        /* =================================================
+           MODO DE VIDA
+           ================================================= */
 
-    font-size:26px;
+        const bloqueModoVida =
+            document.createElement("section");
 
-}
 
+        bloqueModoVida.className =
+            "bloqueFase2";
 
-/* ========================================================
-   SECCIONES
-   ======================================================== */
 
-.bloqueFase2{
+        bloqueModoVida.innerHTML =
 
-    margin-bottom:24px;
+            "<h3>Modo de vida</h3>" +
 
-    padding:16px;
+            "<div id=\"fase2ModoVida\"></div>";
 
-    background:#151719;
 
-    border:1px solid #25292c;
+        /* =================================================
+           MEDIO DE VIDA
+           ================================================= */
 
-    border-left:4px solid #62d6ff;
+        const bloqueMedioVida =
+            document.createElement("section");
 
-    border-radius:10px;
 
-}
+        bloqueMedioVida.className =
+            "bloqueFase2";
 
 
-.bloqueFase2:last-child{
+        bloqueMedioVida.innerHTML =
 
-    margin-bottom:0;
+            "<h3>Medio de vida</h3>" +
 
-}
+            "<div id=\"fase2MedioVida\"></div>";
 
 
-.bloqueFase2 h3{
+        /* =================================================
+           ESTADÍSTICAS
+           ================================================= */
 
-    margin:0 0 14px;
+        const bloqueEstadisticas =
+            document.createElement("section");
 
-    color:#62d6ff;
 
-    font-size:20px;
+        bloqueEstadisticas.className =
+            "bloqueFase2";
 
-}
 
+        bloqueEstadisticas.innerHTML =
 
-/* ========================================================
-   HÁBITATS
-   ======================================================== */
+            "<h3>Estadísticas</h3>" +
 
-#fase2Habitats{
+            "<div id=\"fase2Estadisticas\"></div>";
 
-    display:flex;
 
-    flex-direction:column;
+        /* =================================================
+           ANÁLISIS ESTADÍSTICO
+           ================================================= */
 
-    gap:10px;
+        const bloqueAnalisis =
+            document.createElement("section");
 
-}
 
+        bloqueAnalisis.className =
+            "bloqueFase2";
 
-.fase2Habitat{
 
-    padding:10px 12px;
+        bloqueAnalisis.innerHTML =
 
-    background:#181a1c;
+            "<h3>Análisis estadístico</h3>" +
 
-    border-radius:8px;
+            "<div id=\"fase2Analisis\"></div>";
 
-}
 
+        /* =================================================
+           MONTAJE DE LA VENTANA
+           ================================================= */
 
-.fase2Habitat strong{
+        ventana.appendChild(
+            cerrar
+        );
 
-    color:#62d6ff;
 
-}
+        ventana.appendChild(
+            titulo
+        );
 
 
-/* ========================================================
-   MODO DE VIDA
-   ======================================================== */
+        ventana.appendChild(
+            bloqueHabitats
+        );
 
-#fase2ModoVida{
 
-    line-height:1.6;
+        ventana.appendChild(
+            bloqueModoVida
+        );
 
-    color:#eee;
 
-}
+        ventana.appendChild(
+            bloqueMedioVida
+        );
 
 
-/* ========================================================
-   MEDIO DE VIDA
-   ======================================================== */
+        ventana.appendChild(
+            bloqueEstadisticas
+        );
 
-#fase2MedioVida{
 
-    line-height:1.6;
+        ventana.appendChild(
+            bloqueAnalisis
+        );
 
-    color:#eee;
 
-}
+        /* =================================================
+           MONTAJE DEL LIGHTBOX
+           ================================================= */
 
+        visor.appendChild(
+            ventana
+        );
 
-/* ========================================================
-   ESTADÍSTICAS
-   ======================================================== */
 
-#fase2Estadisticas{
+        document.body.appendChild(
+            visor
+        );
 
-    display:grid;
 
-    grid-template-columns:1fr 1fr;
+        /* =================================================
+           ABRIR LIGHTBOX
+           ================================================= */
 
-    gap:9px;
+        boton.addEventListener(
+            "click",
+            function(){
 
-}
+                visor.style.display =
+                    "flex";
 
+                visor.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
 
-.fase2Stat{
+            }
+        );
 
-    padding:10px 12px;
 
-    background:#181a1c;
+        /* =================================================
+           CERRAR
+           ================================================= */
 
-    border-radius:8px;
+        cerrar.addEventListener(
+            "click",
+            function(){
 
-    border-left:3px solid #62d6ff;
+                visor.style.display =
+                    "none";
 
-}
+                visor.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
 
+            }
+        );
 
-.fase2Stat strong{
 
-    color:#62d6ff;
+        /* =================================================
+           CERRAR AL PULSAR FUERA
+           ================================================= */
 
-}
+        visor.addEventListener(
+            "click",
+            function(event){
 
+                if(
+                    event.target === visor
+                ){
 
-/* ========================================================
-   ANÁLISIS CALCULADO
-   ======================================================== */
+                    visor.style.display =
+                        "none";
 
-#fase2Analisis{
+                    visor.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
 
-    display:grid;
+                }
 
-    grid-template-columns:1fr 1fr;
+            }
+        );
 
-    gap:9px;
 
-}
+        /* =================================================
+           CERRAR CON ESC
+           ================================================= */
 
+        document.addEventListener(
+            "keydown",
+            function(event){
 
-.fase2Analisis{
+                if(
+                    event.key === "Escape"
+                ){
 
-    padding:11px 12px;
+                    visor.style.display =
+                        "none";
 
-    background:#181a1c;
+                    visor.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
 
-    border-radius:8px;
+                }
 
-    border-left:3px solid #62d6ff;
+            }
+        );
 
-}
 
-
-.fase2Analisis strong{
-
-    color:#62d6ff;
-
-}
-
-
-/* ========================================================
-   BOTÓN CERRAR
-   ======================================================== */
-
-#cerrarInfoAvanzada{
-
-    position:absolute;
-
-    top:12px;
-
-    right:12px;
-
-    width:40px;
-
-    height:40px;
-
-    padding:0;
-
-    border:none;
-
-    border-radius:50%;
-
-    background:#1d9bf0;
-
-    color:#fff;
-
-    font-size:28px;
-
-    line-height:40px;
-
-    cursor:pointer;
-
-    z-index:2;
-
-    transition:
-        background .20s,
-        transform .15s,
-        box-shadow .20s;
-}
-
-
-#cerrarInfoAvanzada:hover{
-
-    background:#62d6ff;
-
-    color:#001018;
-
-    box-shadow:
-        0 0 14px rgba(98,214,255,.40);
-
-}
-
-
-#cerrarInfoAvanzada:active{
-
-    transform:scale(.92);
-
-}
-
-
-/* ========================================================
-   SCROLL
-   ======================================================== */
-
-#ventanaInfoAvanzada::-webkit-scrollbar{
-
-    width:9px;
-
-}
-
-
-#ventanaInfoAvanzada::-webkit-scrollbar-track{
-
-    background:#101112;
-
-    border-radius:10px;
-
-}
-
-
-#ventanaInfoAvanzada::-webkit-scrollbar-thumb{
-
-    background:#62d6ff;
-
-    border-radius:10px;
-
-}
-
-
-#ventanaInfoAvanzada::-webkit-scrollbar-thumb:hover{
-
-    background:#00e5ff;
-
-}
-
-
-/* ========================================================
-   RESPONSIVE — MÓVIL
-   ======================================================== */
-
-@media (max-width:768px){
-
-    #ventanaInfoAvanzada{
-
-        width:96%;
-
-        max-height:92vh;
-
-        padding:18px;
-
-        border-radius:15px;
+        console.log(
+            "CAB09: Lightbox Fase 2 preparado."
+        );
 
     }
 
 
-    #ventanaInfoAvanzada h2{
+    /* =====================================================
+       ARRANQUE
+       ===================================================== */
 
-        font-size:22px;
+    if(
+        document.readyState === "loading"
+    ){
 
-        margin-bottom:18px;
+        document.addEventListener(
+            "DOMContentLoaded",
+            iniciarCAB09
+        );
+
+    }
+    else{
+
+        iniciarCAB09();
 
     }
 
-
-    .bloqueFase2{
-
-        padding:13px;
-
-    }
-
-
-    .bloqueFase2 h3{
-
-        font-size:18px;
-
-    }
-
-
-    #fase2Estadisticas{
-
-        grid-template-columns:1fr;
-
-    }
-
-
-    #fase2Analisis{
-
-        grid-template-columns:1fr;
-
-    }
-
-}
-
-
-/* ========================================================
-   FIN CAB09.css
-   ======================================================== */
+})();
