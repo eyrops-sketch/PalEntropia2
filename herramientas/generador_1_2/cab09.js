@@ -1,20 +1,16 @@
 /*
 ========================================================
-CAB09.js v1.0
+CAB09.js v1.1
 PalEntropía
 Información avanzada
 ========================================================
 
 FUNCIÓN ACTUAL:
-- Conecta con #botonInfoAvanzada
-- Crea el lightbox
-- Abre el lightbox al pulsar el botón
-- Permite cerrar con ×
-- Permite cerrar pulsando fuera de la ventana
-
-NO LEE DATOS.
-NO MODIFICA DATOS.
-NO CALCULA ESTADÍSTICAS.
+- Crea el botón dentro de #ficha.
+- Abre el lightbox al pulsarlo.
+- Permite cerrar el lightbox.
+- No lee datos.
+- No modifica datos.
 ========================================================
 */
 
@@ -23,13 +19,90 @@ NO CALCULA ESTADÍSTICAS.
 "use strict";
 
 
-/*========================================================
-CONFIGURACIÓN
-========================================================*/
-
 const CAB09 = {
 
-    version: "1.0",
+    version: "1.1",
+
+
+    /*====================================================
+      CREAR BOTÓN DENTRO DE LA PALEOFICHA
+    ====================================================*/
+
+    crearBoton(){
+
+        const ficha =
+            document.getElementById("ficha");
+
+
+        if(!ficha){
+
+            return null;
+
+        }
+
+
+        let boton =
+            document.getElementById(
+                "botonInfoAvanzada"
+            );
+
+
+        /*
+        Si ya existe, comprobamos que esté
+        dentro de la Paleoficha.
+        */
+
+        if(boton){
+
+            if(boton.parentElement !== ficha){
+
+                ficha.appendChild(boton);
+
+            }
+
+            return boton;
+
+        }
+
+
+        /*
+        Crear botón.
+        */
+
+        boton =
+            document.createElement("button");
+
+
+        boton.id =
+            "botonInfoAvanzada";
+
+        boton.type =
+            "button";
+
+        boton.title =
+            "Información estadística";
+
+        boton.setAttribute(
+            "aria-label",
+            "Abrir información estadística"
+        );
+
+        boton.innerHTML =
+            "ⓘ";
+
+
+        /*
+        Insertar dentro de #ficha.
+        */
+
+        ficha.appendChild(
+            boton
+        );
+
+
+        return boton;
+
+    },
 
 
     /*====================================================
@@ -51,10 +124,6 @@ const CAB09 = {
         }
 
 
-        /*================================================
-          VISOR
-        =================================================*/
-
         visor =
             document.createElement("div");
 
@@ -62,20 +131,12 @@ const CAB09 = {
             "visorInfoAvanzada";
 
 
-        /*================================================
-          VENTANA
-        =================================================*/
-
         const ventana =
             document.createElement("div");
 
         ventana.id =
             "ventanaInfoAvanzada";
 
-
-        /*================================================
-          BOTÓN CERRAR
-        =================================================*/
 
         const cerrar =
             document.createElement("button");
@@ -94,13 +155,9 @@ const CAB09 = {
 
         cerrar.setAttribute(
             "aria-label",
-            "Cerrar información avanzada"
+            "Cerrar información estadística"
         );
 
-
-        /*================================================
-          TÍTULO
-        =================================================*/
 
         const titulo =
             document.createElement("h2");
@@ -108,21 +165,6 @@ const CAB09 = {
         titulo.textContent =
             "Información estadística";
 
-
-        /*================================================
-          CONTENIDO
-        =================================================*/
-
-        const contenido =
-            document.createElement("div");
-
-        contenido.id =
-            "contenidoInfoAvanzada";
-
-
-        /*================================================
-          CONSTRUIR
-        =================================================*/
 
         ventana.appendChild(
             cerrar
@@ -132,22 +174,16 @@ const CAB09 = {
             titulo
         );
 
-        ventana.appendChild(
-            contenido
-        );
 
         visor.appendChild(
             ventana
         );
 
+
         document.body.appendChild(
             visor
         );
 
-
-        /*================================================
-          CERRAR CON BOTÓN
-        =================================================*/
 
         cerrar.addEventListener(
             "click",
@@ -158,10 +194,6 @@ const CAB09 = {
             }
         );
 
-
-        /*================================================
-          CERRAR AL PULSAR FUERA
-        =================================================*/
 
         visor.addEventListener(
             "click",
@@ -251,22 +283,16 @@ const CAB09 = {
 
 
     /*====================================================
-      INICIALIZAR
+      ACTIVAR BOTÓN
     ====================================================*/
 
-    inicializar(){
+    activar(){
 
         const boton =
-            document.getElementById(
-                "botonInfoAvanzada"
-            );
+            this.crearBoton();
 
 
         if(!boton){
-
-            console.warn(
-                "CAB09: no existe #botonInfoAvanzada."
-            );
 
             return;
 
@@ -275,10 +301,6 @@ const CAB09 = {
 
         this.crearLightbox();
 
-
-        /*===============================================
-          EVITAR EVENTOS DUPLICADOS
-        ===============================================*/
 
         if(
             boton.dataset.cab09Activo ===
@@ -318,13 +340,22 @@ window.CAB09 =
 
 /*========================================================
 ARRANQUE
+========================================================
+
+El botón se crea cuando el DOM ya existe.
+También queda disponible mediante:
+
+CAB09.activar();
+
+para que otro módulo pueda volver a colocarlo
+si la Paleoficha se reconstruye.
 ========================================================*/
 
 document.addEventListener(
     "DOMContentLoaded",
     function(){
 
-        CAB09.inicializar();
+        CAB09.activar();
 
     }
 );
