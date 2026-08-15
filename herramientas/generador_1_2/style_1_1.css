@@ -133,6 +133,7 @@ FICHA
     border:2px solid #62d6ff;
     border-radius:18px;
     padding:25px;
+    position:relative;
     box-shadow:
         0 0 20px rgba(98,214,255,.28),
         0 8px 30px rgba(0,0,0,.28);
@@ -362,7 +363,7 @@ ESTADÍSTICAS
 
 
 /*=========================================================
-LIGHTBOX IMÁGENES
+LIGHTBOX IMÁGENES ORIGINAL
 =========================================================*/
 
 #visorImagen{
@@ -488,12 +489,6 @@ RESULTADOS DEL BUSCADOR
     margin-top:5px;
 }
 
-
-/*
-   El HTML actual utiliza .resultadoBuscador.
-   Se mantiene ese nombre para no tocar la lógica JS.
-*/
-
 .resultadoBuscador{
     width:100%;
     display:flex;
@@ -563,7 +558,6 @@ SIN RESULTADOS
 
 /*=========================================================
 FILTRO ACTIVO
-PREPARACIÓN VISUAL
 =========================================================*/
 
 #filtroActivo{
@@ -619,7 +613,6 @@ PREPARACIÓN VISUAL
 
 /*=========================================================
 BOTÓN TODOS
-PREPARACIÓN VISUAL
 =========================================================*/
 
 #botonTodos{
@@ -649,7 +642,6 @@ PREPARACIÓN VISUAL
 #botonTodos:active{
     transform:scale(.95);
 }
-
 
 /*=========================================================
 GRUPO DE BOTONES SUPERIORES
@@ -826,6 +818,219 @@ SCROLL EXPLORADOR
 
 
 /*=========================================================
+CAB09 — BOTÓN LIGHTBOX
+=========================================================*/
+
+#botonLightboxCAB09{
+
+    position:absolute;
+
+    top:12px;
+    right:12px;
+
+    width:34px;
+    height:34px;
+
+    padding:0;
+
+    border:1px solid #62d6ff;
+
+    border-radius:50%;
+
+    background:#1d9bf0;
+
+    color:#fff;
+
+    font-size:18px;
+
+    line-height:32px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    z-index:20;
+
+    box-shadow:
+        0 0 10px rgba(98,214,255,.25);
+
+    transition:
+        background .20s,
+        color .20s,
+        transform .15s,
+        box-shadow .20s;
+}
+
+#botonLightboxCAB09:hover{
+
+    background:#62d6ff;
+
+    color:#001018;
+
+    box-shadow:
+        0 0 15px rgba(98,214,255,.45);
+
+}
+
+#botonLightboxCAB09:active{
+
+    transform:scale(.90);
+
+}
+
+
+/*=========================================================
+CAB09 — LIGHTBOX DE PRUEBA
+=========================================================*/
+
+#visorLightboxCAB09{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    width:100vw;
+    height:100vh;
+
+    background:rgba(0,0,0,.96);
+
+    z-index:1000000;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+}
+
+
+/*=========================================================
+CAB09 — CONTENIDO
+=========================================================*/
+
+#contenidoLightboxCAB09{
+
+    width:92vw;
+
+    max-width:800px;
+
+    max-height:90vh;
+
+    text-align:center;
+
+    position:relative;
+
+}
+
+#tituloLightboxCAB09{
+
+    color:#62d6ff;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    margin-bottom:8px;
+
+}
+
+#textoLightboxCAB09{
+
+    color:#aaa;
+
+    font-size:14px;
+
+    margin-bottom:18px;
+
+}
+
+
+/*=========================================================
+CAB09 — IMAGEN FICTICIA
+=========================================================*/
+
+#imagenPruebaCAB09{
+
+    width:100%;
+
+    max-height:70vh;
+
+}
+
+#imagenPruebaCAB09 svg{
+
+    display:block;
+
+    width:100%;
+
+    max-height:70vh;
+
+    margin:auto;
+
+}
+
+
+/*=========================================================
+CAB09 — CERRAR
+=========================================================*/
+
+#cerrarLightboxCAB09{
+
+    position:absolute;
+
+    top:14px;
+    right:16px;
+
+    width:42px;
+    height:42px;
+
+    padding:0;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#1d9bf0;
+
+    color:#fff;
+
+    font-size:30px;
+
+    line-height:40px;
+
+    cursor:pointer;
+
+    z-index:1000001;
+
+    transition:
+        background .20s,
+        transform .15s,
+        box-shadow .20s;
+}
+
+#cerrarLightboxCAB09:hover{
+
+    background:#62d6ff;
+
+    color:#001018;
+
+    box-shadow:
+        0 0 15px rgba(98,214,255,.45);
+
+}
+
+#cerrarLightboxCAB09:active{
+
+    transform:scale(.92);
+
+}
+
+
+/*=========================================================
 RESPONSIVE
 =========================================================*/
 
@@ -931,6 +1136,53 @@ RESPONSIVE
 
     #filtroActivo{
         font-size:13px;
+    }
+
+
+    /*---------------------------------------------
+      CAB09 — RESPONSIVE
+    ---------------------------------------------*/
+
+    #botonLightboxCAB09{
+
+        top:10px;
+        right:10px;
+
+        width:32px;
+        height:32px;
+
+        font-size:17px;
+
+    }
+
+    #visorLightboxCAB09{
+
+        padding:12px;
+
+    }
+
+    #contenidoLightboxCAB09{
+
+        width:96vw;
+
+    }
+
+    #tituloLightboxCAB09{
+
+        font-size:19px;
+
+    }
+
+    #textoLightboxCAB09{
+
+        font-size:13px;
+
+    }
+
+    #imagenPruebaCAB09{
+
+        max-height:65vh;
+
     }
 
 }
