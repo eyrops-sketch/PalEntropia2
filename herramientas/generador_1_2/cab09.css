@@ -1,435 +1,473 @@
-/*
-========================================================
-CAB09.js v1.1
-Estadísticas y Análisis Estadístico
-PalEntropía
-Generador de Paleofichas 1.2
-========================================================
+/* ========================================================
+   CAB09.css
+   PalEntropía — Fase 2
+   Lightbox de Información Avanzada
+   ======================================================== */
 
-FUENTE ÚNICA DE DATOS
----------------------
-e1  = Adaptabilidad
-e2  = Resistencia
-e3  = Sociabilidad
-e4  = Reproducción
-e5  = Ofensiva
-e6  = Defensa
-e7  = Movilidad
-e8  = Plasticidad ecológica
-e9  = Tamaño
-e10 = Velocidad
-e11 = Inteligencia
 
-CAB09:
-- SOLO lee e1-e11 del registro recibido.
-- NO inventa datos.
-- NO modifica el registro.
-- NO modifica el CSV.
-- Calcula únicamente las medias definidas.
-========================================================
-*/
-
-(function(){
-
-"use strict";
-
-
-/*========================================================
-CAB09
-========================================================*/
+/* ========================================================
+   BOTÓN INFORMACIÓN AVANZADA
+   ======================================================== */
 
-const CAB09 = {
+#botonInfoAvanzada{
 
-    version: "1.1",
+    position:absolute;
 
+    top:12px;
+    right:12px;
 
-    /*====================================================
-    OBTENER ESTADÍSTICAS DESDE EL REGISTRO REAL
-    ====================================================*/
+    width:34px;
+    height:34px;
 
-    obtenerEstadisticas(registro){
+    padding:0;
 
-        if(!registro){
-            console.warn(
-                "CAB09: no se recibió ningún registro."
-            );
+    border-radius:50%;
 
-            return null;
-        }
+    border:1px solid #62d6ff;
 
+    background:#151719;
 
-        const valores = [
+    color:#62d6ff;
 
-            registro.e1,
-            registro.e2,
-            registro.e3,
-            registro.e4,
-            registro.e5,
-            registro.e6,
-            registro.e7,
-            registro.e8,
-            registro.e9,
-            registro.e10,
-            registro.e11
+    font-size:17px;
 
-        ];
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
+    cursor:pointer;
 
-        /*
-        No aceptamos campos inexistentes
-        ni vacíos.
-        */
+    box-shadow:
+        0 0 8px rgba(98,214,255,.18);
 
-        if(
-            valores.some(
-                valor =>
-                    valor === undefined ||
-                    valor === null ||
-                    valor === ""
-            )
-        ){
+    transition:
+        background .20s,
+        color .20s,
+        transform .15s,
+        box-shadow .20s;
+}
 
-            console.warn(
-                "CAB09: faltan uno o varios campos e1-e11."
-            );
 
-            return null;
-        }
+#botonInfoAvanzada:hover{
 
+    background:#62d6ff;
 
-        const numeros =
-            valores.map(Number);
+    color:#001018;
 
+    box-shadow:
+        0 0 14px rgba(98,214,255,.40);
+}
 
-        /*
-        Todos deben ser valores numéricos.
-        */
 
-        if(
-            numeros.some(
-                valor => Number.isNaN(valor)
-            )
-        ){
+#botonInfoAvanzada:active{
 
-            console.warn(
-                "CAB09: uno o varios campos e1-e11 no son numéricos."
-            );
+    transform:scale(.90);
 
-            return null;
-        }
+}
 
 
-        return {
+/* ========================================================
+   LIGHTBOX FASE 2
+   ======================================================== */
 
-            adaptabilidad: numeros[0],
-            resistencia: numeros[1],
-            sociabilidad: numeros[2],
-            reproduccion: numeros[3],
-            ofensiva: numeros[4],
-            defensa: numeros[5],
-            movilidad: numeros[6],
-            plasticidad_ecologica: numeros[7],
-            tamano: numeros[8],
-            velocidad: numeros[9],
-            inteligencia: numeros[10]
+#visorInfoAvanzada{
 
-        };
+    display:none;
 
-    },
+    position:fixed;
 
+    top:0;
+    left:0;
 
-    /*====================================================
-    MEDIA
-    ====================================================*/
+    width:100vw;
+    height:100vh;
 
-    media(valores){
+    padding:20px;
 
-        if(
-            !Array.isArray(valores) ||
-            valores.length === 0
-        ){
-            return null;
-        }
+    background:rgba(0,0,0,.94);
 
+    z-index:1000000;
 
-        return Math.round(
+    justify-content:center;
+    align-items:center;
 
-            valores.reduce(
-                (suma, valor) =>
-                    suma + valor,
-                0
-            )
-            /
-            valores.length
+}
 
-        );
 
-    },
+/* ========================================================
+   VENTANA PRINCIPAL
+   ======================================================== */
 
+#ventanaInfoAvanzada{
 
-    /*====================================================
-    ANÁLISIS NIVEL 1
-    ====================================================*/
+    position:relative;
 
-    analizar(stats){
+    width:94%;
 
-        if(!stats){
-            return null;
-        }
+    max-width:850px;
 
+    max-height:90vh;
 
-        return {
+    overflow-y:auto;
 
+    padding:25px;
 
-            /*--------------------------------------------
-            ÍNDICE GLOBAL
-            --------------------------------------------*/
+    background:#181a1c;
 
-            indice_global:
+    border:2px solid #62d6ff;
 
-                this.media([
+    border-radius:18px;
 
-                    stats.adaptabilidad,
-                    stats.resistencia,
-                    stats.sociabilidad,
-                    stats.reproduccion,
-                    stats.ofensiva,
-                    stats.defensa,
-                    stats.movilidad,
-                    stats.plasticidad_ecologica,
-                    stats.tamano,
-                    stats.velocidad,
-                    stats.inteligencia
+    box-shadow:
+        0 0 25px rgba(98,214,255,.35),
+        0 10px 40px rgba(0,0,0,.55);
 
-                ]),
+}
 
 
-            /*--------------------------------------------
-            SUPERVIVENCIA
-            --------------------------------------------*/
+/* ========================================================
+   TÍTULO
+   ======================================================== */
 
-            supervivencia:
+#ventanaInfoAvanzada h2{
 
-                this.media([
+    margin-top:0;
 
-                    stats.adaptabilidad,
-                    stats.resistencia,
-                    stats.defensa,
-                    stats.plasticidad_ecologica
+    margin-bottom:25px;
 
-                ]),
+    padding-right:40px;
 
+    text-align:center;
 
-            /*--------------------------------------------
-            COMPETENCIA
-            --------------------------------------------*/
+    color:#62d6ff;
 
-            competencia:
+    font-size:26px;
 
-                this.media([
+}
 
-                    stats.ofensiva,
-                    stats.tamano,
-                    stats.velocidad,
-                    stats.inteligencia
 
-                ]),
+/* ========================================================
+   SECCIONES
+   ======================================================== */
 
+.bloqueFase2{
 
-            /*--------------------------------------------
-            MOVILIDAD
-            --------------------------------------------*/
+    margin-bottom:24px;
 
-            movilidad:
+    padding:16px;
 
-                this.media([
+    background:#151719;
 
-                    stats.movilidad,
-                    stats.velocidad
+    border:1px solid #25292c;
 
-                ]),
+    border-left:4px solid #62d6ff;
 
+    border-radius:10px;
 
-            /*--------------------------------------------
-            REPRODUCCIÓN
-            --------------------------------------------*/
+}
 
-            reproduccion:
 
-                this.media([
+.bloqueFase2:last-child{
 
-                    stats.reproduccion,
-                    stats.sociabilidad
+    margin-bottom:0;
 
-                ])
+}
 
-        };
 
-    },
+.bloqueFase2 h3{
 
+    margin:0 0 14px;
 
-    /*====================================================
-    MOSTRAR ESTADÍSTICAS
-    ====================================================*/
+    color:#62d6ff;
 
-    mostrarEstadisticas(stats){
+    font-size:20px;
 
-        const contenedor =
-            document.getElementById("estadisticas");
+}
 
 
-        if(!contenedor){
-            return;
-        }
+/* ========================================================
+   HÁBITATS
+   ======================================================== */
 
+#fase2Habitats{
 
-        contenedor.innerHTML = `
+    display:flex;
 
-            <div>Adaptabilidad: ${stats.adaptabilidad}</div>
+    flex-direction:column;
 
-            <div>Resistencia: ${stats.resistencia}</div>
+    gap:10px;
 
-            <div>Sociabilidad: ${stats.sociabilidad}</div>
+}
 
-            <div>Reproducción: ${stats.reproduccion}</div>
 
-            <div>Ofensiva: ${stats.ofensiva}</div>
+.fase2Habitat{
 
-            <div>Defensa: ${stats.defensa}</div>
+    padding:10px 12px;
 
-            <div>Movilidad: ${stats.movilidad}</div>
+    background:#181a1c;
 
-            <div>Plasticidad ecológica: ${stats.plasticidad_ecologica}</div>
+    border-radius:8px;
 
-            <div>Tamaño: ${stats.tamano}</div>
+}
 
-            <div>Velocidad: ${stats.velocidad}</div>
 
-            <div>Inteligencia: ${stats.inteligencia}</div>
+.fase2Habitat strong{
 
-        `;
+    color:#62d6ff;
 
-    },
+}
 
 
-    /*====================================================
-    MOSTRAR ANÁLISIS
-    ====================================================*/
+/* ========================================================
+   MODO DE VIDA
+   ======================================================== */
 
-    mostrarAnalisis(analisis){
+#fase2ModoVida{
 
-        const contenedor =
-            document.getElementById("bloqueAnalisis");
+    line-height:1.6;
 
+    color:#eee;
 
-        if(!contenedor){
-            return;
-        }
+}
 
 
-        contenedor.innerHTML = `
+/* ========================================================
+   MEDIO DE VIDA
+   ======================================================== */
 
-            <div>Índice global: ${analisis.indice_global}</div>
+#fase2MedioVida{
 
-            <div>Supervivencia: ${analisis.supervivencia}</div>
+    line-height:1.6;
 
-            <div>Competencia: ${analisis.competencia}</div>
+    color:#eee;
 
-            <div>Movilidad: ${analisis.movilidad}</div>
+}
 
-            <div>Reproducción: ${analisis.reproduccion}</div>
 
-        `;
+/* ========================================================
+   ESTADÍSTICAS
+   ======================================================== */
 
-    },
+#fase2Estadisticas{
 
+    display:grid;
 
-    /*====================================================
-    EJECUTAR
-    ====================================================*/
+    grid-template-columns:1fr 1fr;
 
-    ejecutar(registro){
+    gap:9px;
 
-        /*
-        El registro recibido debe ser exactamente
-        el registro procedente del contenedor.
-        */
+}
 
-        const stats =
-            this.obtenerEstadisticas(registro);
 
+.fase2Stat{
 
-        /*
-        Si no hay e1-e11 válidos,
-        no mostramos nada inventado.
-        */
+    padding:10px 12px;
 
-        if(!stats){
+    background:#181a1c;
 
-            const estadisticas =
-                document.getElementById("estadisticas");
+    border-radius:8px;
 
-            const analisis =
-                document.getElementById("bloqueAnalisis");
+    border-left:3px solid #62d6ff;
 
+}
 
-            if(estadisticas){
-                estadisticas.innerHTML = "";
-            }
 
-            if(analisis){
-                analisis.innerHTML = "";
-            }
+.fase2Stat strong{
 
+    color:#62d6ff;
 
-            return null;
-        }
+}
 
 
-        /*
-        Calcular análisis.
-        */
+/* ========================================================
+   ANÁLISIS CALCULADO
+   ======================================================== */
 
-        const resultado =
-            this.analizar(stats);
+#fase2Analisis{
 
+    display:grid;
 
-        /*
-        Mostrar datos reales.
-        */
+    grid-template-columns:1fr 1fr;
 
-        this.mostrarEstadisticas(stats);
+    gap:9px;
 
-        this.mostrarAnalisis(resultado);
+}
 
 
-        /*
-        Devolver resultado sin modificar
-        el registro original.
-        */
+.fase2Analisis{
 
-        return {
+    padding:11px 12px;
 
-            estadisticas: stats,
+    background:#181a1c;
 
-            analisis: resultado
+    border-radius:8px;
 
-        };
+    border-left:3px solid #62d6ff;
+
+}
+
+
+.fase2Analisis strong{
+
+    color:#62d6ff;
+
+}
+
+
+/* ========================================================
+   BOTÓN CERRAR
+   ======================================================== */
+
+#cerrarInfoAvanzada{
+
+    position:absolute;
+
+    top:12px;
+
+    right:12px;
+
+    width:40px;
+
+    height:40px;
+
+    padding:0;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#1d9bf0;
+
+    color:#fff;
+
+    font-size:28px;
+
+    line-height:40px;
+
+    cursor:pointer;
+
+    z-index:2;
+
+    transition:
+        background .20s,
+        transform .15s,
+        box-shadow .20s;
+}
+
+
+#cerrarInfoAvanzada:hover{
+
+    background:#62d6ff;
+
+    color:#001018;
+
+    box-shadow:
+        0 0 14px rgba(98,214,255,.40);
+
+}
+
+
+#cerrarInfoAvanzada:active{
+
+    transform:scale(.92);
+
+}
+
+
+/* ========================================================
+   SCROLL
+   ======================================================== */
+
+#ventanaInfoAvanzada::-webkit-scrollbar{
+
+    width:9px;
+
+}
+
+
+#ventanaInfoAvanzada::-webkit-scrollbar-track{
+
+    background:#101112;
+
+    border-radius:10px;
+
+}
+
+
+#ventanaInfoAvanzada::-webkit-scrollbar-thumb{
+
+    background:#62d6ff;
+
+    border-radius:10px;
+
+}
+
+
+#ventanaInfoAvanzada::-webkit-scrollbar-thumb:hover{
+
+    background:#00e5ff;
+
+}
+
+
+/* ========================================================
+   RESPONSIVE — MÓVIL
+   ======================================================== */
+
+@media (max-width:768px){
+
+    #ventanaInfoAvanzada{
+
+        width:96%;
+
+        max-height:92vh;
+
+        padding:18px;
+
+        border-radius:15px;
 
     }
 
-};
+
+    #ventanaInfoAvanzada h2{
+
+        font-size:22px;
+
+        margin-bottom:18px;
+
+    }
 
 
-/*========================================================
-EXPORTAR
-========================================================*/
+    .bloqueFase2{
 
-window.CAB09 = CAB09;
+        padding:13px;
+
+    }
 
 
-/*========================================================
-FIN CAB09
-========================================================*/
+    .bloqueFase2 h3{
 
-})();
+        font-size:18px;
+
+    }
+
+
+    #fase2Estadisticas{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    #fase2Analisis{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+
+/* ========================================================
+   FIN CAB09.css
+   ======================================================== */
