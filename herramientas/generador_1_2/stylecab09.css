@@ -1,35 +1,28 @@
 /*
 ========================================================
-STYLECAB09.css
-PalEntropía — CAB09
-Información avanzada
+PalEntropía
+stylecab09.css
+CAB09 — Información avanzada
 ========================================================
 */
 
-
-/* =====================================================
+/* ======================================================
    BOTÓN INFORMACIÓN AVANZADA
-   ===================================================== */
+   ====================================================== */
 
 #botonInfoAvanzada {
 
     position: absolute;
 
     top: 12px;
+
     right: 12px;
 
-    width: 32px;
-    height: 32px;
+    width: 34px;
+
+    height: 34px;
 
     padding: 0;
-    margin: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    box-sizing: border-box;
 
     border: 1px solid #62d6ff;
 
@@ -39,29 +32,39 @@ Información avanzada
 
     color: #62d6ff;
 
-    font-family: Arial, sans-serif;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 
     font-size: 18px;
-    font-weight: bold;
 
     line-height: 1;
 
     cursor: pointer;
 
-    z-index: 100;
+    z-index: 20;
+
+    box-sizing: border-box;
+
+    transition:
+        transform 0.15s ease,
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
 
 }
 
-
-/* =====================================================
-   EFECTO BOTÓN
-   ===================================================== */
 
 #botonInfoAvanzada:hover {
 
     background: #62d6ff;
 
-    color: #071116;
+    color: #001018;
+
+    box-shadow:
+        0 0 12px rgba(98,214,255,0.45);
 
 }
 
@@ -73,54 +76,56 @@ Información avanzada
 }
 
 
-/* =====================================================
+/* ======================================================
    LIGHTBOX
-   ===================================================== */
+   ====================================================== */
 
 #visorInfoAvanzada {
 
     position: fixed;
 
     top: 0;
+
     left: 0;
 
     width: 100vw;
+
     height: 100vh;
 
     display: none;
 
     align-items: center;
-    justify-content: center;
 
-    box-sizing: border-box;
+    justify-content: center;
 
     padding: 20px;
 
-    background: rgba(0, 0, 0, 0.94);
+    box-sizing: border-box;
+
+    background: rgba(0,0,0,0.92);
 
     z-index: 999999;
 
 }
 
 
-/* =====================================================
+/* ======================================================
    VENTANA
-   ===================================================== */
+   ====================================================== */
 
 #ventanaInfoAvanzada {
 
     position: relative;
 
-    width: 94%;
-    max-width: 850px;
+    width: min(850px, 94vw);
 
     max-height: 90vh;
 
-    box-sizing: border-box;
-
     overflow-y: auto;
 
-    padding: 25px;
+    box-sizing: border-box;
+
+    padding: 24px;
 
     background: #181a1c;
 
@@ -128,57 +133,51 @@ Información avanzada
 
     border-radius: 18px;
 
+    color: #eeeeee;
+
     box-shadow:
-        0 0 25px rgba(98, 214, 255, 0.35),
-        0 10px 40px rgba(0, 0, 0, 0.55);
+        0 0 25px rgba(98,214,255,0.30),
+        0 10px 40px rgba(0,0,0,0.60);
 
 }
 
 
-/* =====================================================
+/* ======================================================
    TÍTULO
-   ===================================================== */
+   ====================================================== */
 
 #ventanaInfoAvanzada h2 {
 
     margin: 0;
 
-    padding: 0 45px 20px 0;
+    padding: 0 45px 18px 0;
 
     text-align: center;
 
     color: #62d6ff;
-
-    font-family: Arial, sans-serif;
 
     font-size: 24px;
 
 }
 
 
-/* =====================================================
+/* ======================================================
    BOTÓN CERRAR
-   ===================================================== */
+   ====================================================== */
 
 #cerrarInfoAvanzada {
 
     position: absolute;
 
     top: 10px;
+
     right: 10px;
 
     width: 38px;
+
     height: 38px;
 
     padding: 0;
-    margin: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    box-sizing: border-box;
 
     border: none;
 
@@ -186,9 +185,13 @@ Información avanzada
 
     background: #1d9bf0;
 
-    color: white;
+    color: #ffffff;
 
-    font-family: Arial, sans-serif;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 
     font-size: 27px;
 
@@ -196,7 +199,7 @@ Información avanzada
 
     cursor: pointer;
 
-    z-index: 10;
+    z-index: 5;
 
 }
 
@@ -205,21 +208,14 @@ Información avanzada
 
     background: #62d6ff;
 
-    color: #071116;
+    color: #001018;
 
 }
 
 
-#cerrarInfoAvanzada:active {
-
-    transform: scale(0.92);
-
-}
-
-
-/* =====================================================
-   SCROLL INTERNO DEL LIGHTBOX
-   ===================================================== */
+/* ======================================================
+   SCROLL DE LA VENTANA
+   ====================================================== */
 
 #ventanaInfoAvanzada::-webkit-scrollbar {
 
@@ -239,24 +235,26 @@ Información avanzada
 
     background: #62d6ff;
 
-    border-radius: 10px;
+    border-radius: 8px;
 
 }
 
 
-/* =====================================================
+/* ======================================================
    MÓVIL
-   ===================================================== */
+   ====================================================== */
 
 @media (max-width: 768px) {
 
     #botonInfoAvanzada {
 
         top: 10px;
+
         right: 10px;
 
-        width: 30px;
-        height: 30px;
+        width: 32px;
+
+        height: 32px;
 
         font-size: 17px;
 
@@ -272,7 +270,7 @@ Información avanzada
 
     #ventanaInfoAvanzada {
 
-        width: 96%;
+        width: 96vw;
 
         max-height: 92vh;
 
@@ -295,6 +293,7 @@ Información avanzada
     #cerrarInfoAvanzada {
 
         width: 36px;
+
         height: 36px;
 
         font-size: 25px;
@@ -306,6 +305,6 @@ Información avanzada
 
 /*
 ========================================================
-FIN STYLECAB09.css
+FIN stylecab09.css
 ========================================================
 */
