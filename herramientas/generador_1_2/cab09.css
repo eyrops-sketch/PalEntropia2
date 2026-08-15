@@ -1,409 +1,435 @@
 /*
 ========================================================
-CAB09.js
-PalEntropía — Fase 2
-Lightbox de Información Avanzada
-VERSIÓN 1.0 — ESTRUCTURA VISUAL
+CAB09.js v1.1
+Estadísticas y Análisis Estadístico
+PalEntropía
+Generador de Paleofichas 1.2
+========================================================
+
+FUENTE ÚNICA DE DATOS
+---------------------
+e1  = Adaptabilidad
+e2  = Resistencia
+e3  = Sociabilidad
+e4  = Reproducción
+e5  = Ofensiva
+e6  = Defensa
+e7  = Movilidad
+e8  = Plasticidad ecológica
+e9  = Tamaño
+e10 = Velocidad
+e11 = Inteligencia
+
+CAB09:
+- SOLO lee e1-e11 del registro recibido.
+- NO inventa datos.
+- NO modifica el registro.
+- NO modifica el CSV.
+- Calcula únicamente las medias definidas.
 ========================================================
 */
 
 (function(){
 
-    function iniciarCAB09(){
+"use strict";
 
-        const ficha =
-            document.getElementById("ficha");
 
-        if(!ficha){
+/*========================================================
+CAB09
+========================================================*/
 
-            console.error(
-                "CAB09: no se encontró #ficha."
+const CAB09 = {
+
+    version: "1.1",
+
+
+    /*====================================================
+    OBTENER ESTADÍSTICAS DESDE EL REGISTRO REAL
+    ====================================================*/
+
+    obtenerEstadisticas(registro){
+
+        if(!registro){
+            console.warn(
+                "CAB09: no se recibió ningún registro."
             );
 
-            return;
+            return null;
         }
 
 
-        /* =================================================
-           BOTÓN INFORMACIÓN AVANZADA
-           ================================================= */
+        const valores = [
 
-        if(
-            document.getElementById(
-                "botonInfoAvanzada"
-            )
-        ){
+            registro.e1,
+            registro.e2,
+            registro.e3,
+            registro.e4,
+            registro.e5,
+            registro.e6,
+            registro.e7,
+            registro.e8,
+            registro.e9,
+            registro.e10,
+            registro.e11
 
-            return;
-
-        }
-
-
-        const boton =
-            document.createElement("button");
-
-
-        boton.id =
-            "botonInfoAvanzada";
-
-        boton.type =
-            "button";
-
-        boton.title =
-            "Información avanzada";
-
-        boton.setAttribute(
-            "aria-label",
-            "Información avanzada"
-        );
-
-        boton.textContent =
-            "ⓘ";
+        ];
 
 
         /*
-        El botón pertenece visualmente
-        al contenedor de la Paleoficha.
+        No aceptamos campos inexistentes
+        ni vacíos.
         */
 
-        ficha.style.position =
-            "relative";
+        if(
+            valores.some(
+                valor =>
+                    valor === undefined ||
+                    valor === null ||
+                    valor === ""
+            )
+        ){
+
+            console.warn(
+                "CAB09: faltan uno o varios campos e1-e11."
+            );
+
+            return null;
+        }
 
 
-        ficha.appendChild(
-            boton
+        const numeros =
+            valores.map(Number);
+
+
+        /*
+        Todos deben ser valores numéricos.
+        */
+
+        if(
+            numeros.some(
+                valor => Number.isNaN(valor)
+            )
+        ){
+
+            console.warn(
+                "CAB09: uno o varios campos e1-e11 no son numéricos."
+            );
+
+            return null;
+        }
+
+
+        return {
+
+            adaptabilidad: numeros[0],
+            resistencia: numeros[1],
+            sociabilidad: numeros[2],
+            reproduccion: numeros[3],
+            ofensiva: numeros[4],
+            defensa: numeros[5],
+            movilidad: numeros[6],
+            plasticidad_ecologica: numeros[7],
+            tamano: numeros[8],
+            velocidad: numeros[9],
+            inteligencia: numeros[10]
+
+        };
+
+    },
+
+
+    /*====================================================
+    MEDIA
+    ====================================================*/
+
+    media(valores){
+
+        if(
+            !Array.isArray(valores) ||
+            valores.length === 0
+        ){
+            return null;
+        }
+
+
+        return Math.round(
+
+            valores.reduce(
+                (suma, valor) =>
+                    suma + valor,
+                0
+            )
+            /
+            valores.length
+
         );
 
+    },
 
-        /* =================================================
-           LIGHTBOX
-           ================================================= */
 
-        const visor =
-            document.createElement("div");
+    /*====================================================
+    ANÁLISIS NIVEL 1
+    ====================================================*/
 
+    analizar(stats){
 
-        visor.id =
-            "visorInfoAvanzada";
+        if(!stats){
+            return null;
+        }
 
-        visor.setAttribute(
-            "aria-hidden",
-            "true"
-        );
 
+        return {
 
-        /* =================================================
-           VENTANA
-           ================================================= */
 
-        const ventana =
-            document.createElement("div");
+            /*--------------------------------------------
+            ÍNDICE GLOBAL
+            --------------------------------------------*/
 
+            indice_global:
 
-        ventana.id =
-            "ventanaInfoAvanzada";
+                this.media([
 
+                    stats.adaptabilidad,
+                    stats.resistencia,
+                    stats.sociabilidad,
+                    stats.reproduccion,
+                    stats.ofensiva,
+                    stats.defensa,
+                    stats.movilidad,
+                    stats.plasticidad_ecologica,
+                    stats.tamano,
+                    stats.velocidad,
+                    stats.inteligencia
 
-        /* =================================================
-           BOTÓN CERRAR
-           ================================================= */
+                ]),
 
-        const cerrar =
-            document.createElement("button");
 
+            /*--------------------------------------------
+            SUPERVIVENCIA
+            --------------------------------------------*/
 
-        cerrar.id =
-            "cerrarInfoAvanzada";
+            supervivencia:
 
-        cerrar.type =
-            "button";
+                this.media([
 
-        cerrar.setAttribute(
-            "aria-label",
-            "Cerrar información avanzada"
-        );
+                    stats.adaptabilidad,
+                    stats.resistencia,
+                    stats.defensa,
+                    stats.plasticidad_ecologica
 
-        cerrar.textContent =
-            "×";
+                ]),
 
 
-        /* =================================================
-           TÍTULO
-           ================================================= */
+            /*--------------------------------------------
+            COMPETENCIA
+            --------------------------------------------*/
 
-        const titulo =
-            document.createElement("h2");
+            competencia:
 
+                this.media([
 
-        titulo.textContent =
-            "Información avanzada";
+                    stats.ofensiva,
+                    stats.tamano,
+                    stats.velocidad,
+                    stats.inteligencia
 
+                ]),
 
-        /* =================================================
-           HÁBITATS
-           ================================================= */
 
-        const bloqueHabitats =
-            document.createElement("section");
+            /*--------------------------------------------
+            MOVILIDAD
+            --------------------------------------------*/
 
+            movilidad:
 
-        bloqueHabitats.className =
-            "bloqueFase2";
+                this.media([
 
+                    stats.movilidad,
+                    stats.velocidad
 
-        bloqueHabitats.innerHTML =
+                ]),
 
-            "<h3>Hábitats</h3>" +
 
-            "<div id=\"fase2Habitats\"></div>";
+            /*--------------------------------------------
+            REPRODUCCIÓN
+            --------------------------------------------*/
 
+            reproduccion:
 
-        /* =================================================
-           MODO DE VIDA
-           ================================================= */
+                this.media([
 
-        const bloqueModoVida =
-            document.createElement("section");
+                    stats.reproduccion,
+                    stats.sociabilidad
 
+                ])
 
-        bloqueModoVida.className =
-            "bloqueFase2";
+        };
 
+    },
 
-        bloqueModoVida.innerHTML =
 
-            "<h3>Modo de vida</h3>" +
+    /*====================================================
+    MOSTRAR ESTADÍSTICAS
+    ====================================================*/
 
-            "<div id=\"fase2ModoVida\"></div>";
+    mostrarEstadisticas(stats){
 
+        const contenedor =
+            document.getElementById("estadisticas");
 
-        /* =================================================
-           MEDIO DE VIDA
-           ================================================= */
 
-        const bloqueMedioVida =
-            document.createElement("section");
+        if(!contenedor){
+            return;
+        }
 
 
-        bloqueMedioVida.className =
-            "bloqueFase2";
+        contenedor.innerHTML = `
 
+            <div>Adaptabilidad: ${stats.adaptabilidad}</div>
 
-        bloqueMedioVida.innerHTML =
+            <div>Resistencia: ${stats.resistencia}</div>
 
-            "<h3>Medio de vida</h3>" +
+            <div>Sociabilidad: ${stats.sociabilidad}</div>
 
-            "<div id=\"fase2MedioVida\"></div>";
+            <div>Reproducción: ${stats.reproduccion}</div>
 
+            <div>Ofensiva: ${stats.ofensiva}</div>
 
-        /* =================================================
-           ESTADÍSTICAS
-           ================================================= */
+            <div>Defensa: ${stats.defensa}</div>
 
-        const bloqueEstadisticas =
-            document.createElement("section");
+            <div>Movilidad: ${stats.movilidad}</div>
 
+            <div>Plasticidad ecológica: ${stats.plasticidad_ecologica}</div>
 
-        bloqueEstadisticas.className =
-            "bloqueFase2";
+            <div>Tamaño: ${stats.tamano}</div>
 
+            <div>Velocidad: ${stats.velocidad}</div>
 
-        bloqueEstadisticas.innerHTML =
+            <div>Inteligencia: ${stats.inteligencia}</div>
 
-            "<h3>Estadísticas</h3>" +
+        `;
 
-            "<div id=\"fase2Estadisticas\"></div>";
+    },
 
 
-        /* =================================================
-           ANÁLISIS ESTADÍSTICO
-           ================================================= */
+    /*====================================================
+    MOSTRAR ANÁLISIS
+    ====================================================*/
 
-        const bloqueAnalisis =
-            document.createElement("section");
+    mostrarAnalisis(analisis){
 
+        const contenedor =
+            document.getElementById("bloqueAnalisis");
 
-        bloqueAnalisis.className =
-            "bloqueFase2";
 
+        if(!contenedor){
+            return;
+        }
 
-        bloqueAnalisis.innerHTML =
 
-            "<h3>Análisis estadístico</h3>" +
+        contenedor.innerHTML = `
 
-            "<div id=\"fase2Analisis\"></div>";
+            <div>Índice global: ${analisis.indice_global}</div>
 
+            <div>Supervivencia: ${analisis.supervivencia}</div>
 
-        /* =================================================
-           MONTAJE DE LA VENTANA
-           ================================================= */
+            <div>Competencia: ${analisis.competencia}</div>
 
-        ventana.appendChild(
-            cerrar
-        );
+            <div>Movilidad: ${analisis.movilidad}</div>
 
+            <div>Reproducción: ${analisis.reproduccion}</div>
 
-        ventana.appendChild(
-            titulo
-        );
+        `;
 
+    },
 
-        ventana.appendChild(
-            bloqueHabitats
-        );
 
+    /*====================================================
+    EJECUTAR
+    ====================================================*/
 
-        ventana.appendChild(
-            bloqueModoVida
-        );
+    ejecutar(registro){
 
+        /*
+        El registro recibido debe ser exactamente
+        el registro procedente del contenedor.
+        */
 
-        ventana.appendChild(
-            bloqueMedioVida
-        );
+        const stats =
+            this.obtenerEstadisticas(registro);
 
 
-        ventana.appendChild(
-            bloqueEstadisticas
-        );
+        /*
+        Si no hay e1-e11 válidos,
+        no mostramos nada inventado.
+        */
 
+        if(!stats){
 
-        ventana.appendChild(
-            bloqueAnalisis
-        );
+            const estadisticas =
+                document.getElementById("estadisticas");
 
+            const analisis =
+                document.getElementById("bloqueAnalisis");
 
-        /* =================================================
-           MONTAJE DEL LIGHTBOX
-           ================================================= */
 
-        visor.appendChild(
-            ventana
-        );
-
-
-        document.body.appendChild(
-            visor
-        );
-
-
-        /* =================================================
-           ABRIR LIGHTBOX
-           ================================================= */
-
-        boton.addEventListener(
-            "click",
-            function(){
-
-                visor.style.display =
-                    "flex";
-
-                visor.setAttribute(
-                    "aria-hidden",
-                    "false"
-                );
-
+            if(estadisticas){
+                estadisticas.innerHTML = "";
             }
-        );
 
-
-        /* =================================================
-           CERRAR
-           ================================================= */
-
-        cerrar.addEventListener(
-            "click",
-            function(){
-
-                visor.style.display =
-                    "none";
-
-                visor.setAttribute(
-                    "aria-hidden",
-                    "true"
-                );
-
+            if(analisis){
+                analisis.innerHTML = "";
             }
-        );
 
 
-        /* =================================================
-           CERRAR AL PULSAR FUERA
-           ================================================= */
-
-        visor.addEventListener(
-            "click",
-            function(event){
-
-                if(
-                    event.target === visor
-                ){
-
-                    visor.style.display =
-                        "none";
-
-                    visor.setAttribute(
-                        "aria-hidden",
-                        "true"
-                    );
-
-                }
-
-            }
-        );
+            return null;
+        }
 
 
-        /* =================================================
-           CERRAR CON ESC
-           ================================================= */
+        /*
+        Calcular análisis.
+        */
 
-        document.addEventListener(
-            "keydown",
-            function(event){
-
-                if(
-                    event.key === "Escape"
-                ){
-
-                    visor.style.display =
-                        "none";
-
-                    visor.setAttribute(
-                        "aria-hidden",
-                        "true"
-                    );
-
-                }
-
-            }
-        );
+        const resultado =
+            this.analizar(stats);
 
 
-        console.log(
-            "CAB09: Lightbox Fase 2 preparado."
-        );
+        /*
+        Mostrar datos reales.
+        */
+
+        this.mostrarEstadisticas(stats);
+
+        this.mostrarAnalisis(resultado);
+
+
+        /*
+        Devolver resultado sin modificar
+        el registro original.
+        */
+
+        return {
+
+            estadisticas: stats,
+
+            analisis: resultado
+
+        };
 
     }
 
+};
 
-    /* =====================================================
-       ARRANQUE
-       ===================================================== */
 
-    if(
-        document.readyState === "loading"
-    ){
+/*========================================================
+EXPORTAR
+========================================================*/
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            iniciarCAB09
-        );
+window.CAB09 = CAB09;
 
-    }
-    else{
 
-        iniciarCAB09();
-
-    }
+/*========================================================
+FIN CAB09
+========================================================*/
 
 })();
