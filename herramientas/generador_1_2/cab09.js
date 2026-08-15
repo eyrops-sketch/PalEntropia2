@@ -1,44 +1,20 @@
 /*
 ========================================================
-CAB09.js v1.0
-Información Avanzada — Fase 2
-PalEntropía
-========================================================
-
-FUNCIONES DE ESTA PRIMERA VERSIÓN:
-
-1. Crea el botón circular de Información Avanzada.
-2. Lo coloca dentro de la Paleoficha.
-3. Crea el Lightbox.
-4. Muestra datos ficticios de prueba.
-5. Permite abrir y cerrar el Lightbox.
-
-NO LEE:
-
-- master.csv
-- PALHAB
-- PALMEDIO
-- PALSTATS
-- PALTAXON
-- ningún otro módulo de datos.
-
+CAB09.js
+PalEntropía — Fase 2
+Información ecológica y estadística
 ========================================================
 */
 
 window.CAB09 = {
 
-    /* =================================================
-       INICIALIZACIÓN
-       ================================================= */
-
     inicializar(){
 
-        const ficha =
-            document.getElementById("ficha");
+        const ficha = document.getElementById("ficha");
 
         if(!ficha){
 
-            console.warn(
+            console.error(
                 "CAB09: no se encontró #ficha."
             );
 
@@ -47,9 +23,9 @@ window.CAB09 = {
         }
 
 
-        /* ---------------------------------------------
-           Evitar duplicados
-           --------------------------------------------- */
+        /* =================================================
+           BOTÓN INFORMACIÓN AVANZADA
+           ================================================= */
 
         if(
             document.getElementById(
@@ -62,12 +38,9 @@ window.CAB09 = {
         }
 
 
-        /* ---------------------------------------------
-           Crear botón
-           --------------------------------------------- */
-
         const boton =
             document.createElement("button");
+
 
         boton.id =
             "botonInfoAvanzada";
@@ -87,127 +60,22 @@ window.CAB09 = {
             "ⓘ";
 
 
+        ficha.style.position =
+            "relative";
+
+
         ficha.appendChild(
             boton
         );
 
 
-        /* ---------------------------------------------
-           Crear Lightbox
-           --------------------------------------------- */
-
-        this.crearLightbox();
-
-
-        /* ---------------------------------------------
-           Evento botón
-           --------------------------------------------- */
-
-        boton.addEventListener(
-            "click",
-            () => {
-
-                this.abrir();
-
-            }
-        );
-
-
-        /* ---------------------------------------------
-           Eventos cierre
-           --------------------------------------------- */
-
-        const cerrar =
-            document.getElementById(
-                "cerrarInfoAvanzada"
-            );
-
-
-        if(cerrar){
-
-            cerrar.addEventListener(
-                "click",
-                () => {
-
-                    this.cerrar();
-
-                }
-            );
-
-        }
-
-
-        /* ---------------------------------------------
-           Cerrar pulsando fuera de la ventana
-           --------------------------------------------- */
-
-        const visor =
-            document.getElementById(
-                "visorInfoAvanzada"
-            );
-
-
-        if(visor){
-
-            visor.addEventListener(
-                "click",
-                (evento) => {
-
-                    if(
-                        evento.target === visor
-                    ){
-
-                        this.cerrar();
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        /* ---------------------------------------------
-           Cerrar con ESC
-           --------------------------------------------- */
-
-        document.addEventListener(
-            "keydown",
-            (evento) => {
-
-                if(
-                    evento.key === "Escape"
-                ){
-
-                    this.cerrar();
-
-                }
-
-            }
-        );
-
-    },
-
-
-    /* =================================================
-       CREAR LIGHTBOX
-       ================================================= */
-
-    crearLightbox(){
-
-        if(
-            document.getElementById(
-                "visorInfoAvanzada"
-            )
-        ){
-
-            return;
-
-        }
-
+        /* =================================================
+           LIGHTBOX
+           ================================================= */
 
         const visor =
             document.createElement("div");
+
 
         visor.id =
             "visorInfoAvanzada";
@@ -218,219 +86,240 @@ window.CAB09 = {
         );
 
 
-        visor.innerHTML = `
+        const ventana =
+            document.createElement("div");
 
-            <div id="ventanaInfoAvanzada">
 
-                <button
-                    id="cerrarInfoAvanzada"
-                    class="botonCerrar"
-                    type="button"
-                    aria-label="Cerrar información avanzada">
+        ventana.id =
+            "ventanaInfoAvanzada";
 
-                    ×
 
-                </button>
+        const cerrar =
+            document.createElement("button");
 
 
-                <h2>
-                    Información avanzada
-                </h2>
+        cerrar.id =
+            "cerrarInfoAvanzada";
 
+        cerrar.type =
+            "button";
 
-                <!-- =================================
-                     HÁBITATS
-                     ================================= -->
+        cerrar.className =
+            "botonCerrar";
 
-                <section class="fase2Seccion">
+        cerrar.setAttribute(
+            "aria-label",
+            "Cerrar información avanzada"
+        );
 
-                    <h3>
-                        🦖 Hábitats
-                    </h3>
+        cerrar.textContent =
+            "×";
 
 
-                    <div class="fase2Bloque">
+        const titulo =
+            document.createElement("h2");
 
-                        <span class="fase2Etiqueta">
-                            Hábitat principal
-                        </span>
 
-                        <div class="fase2Dato">
-                            Bosque subtropical
-                        </div>
+        titulo.textContent =
+            "Información avanzada";
 
-                    </div>
 
+        /* =================================================
+           DATOS FICTICIOS DE PRUEBA
+           ================================================= */
 
-                    <div class="fase2Bloque">
+        const habitats =
+            document.createElement("section");
 
-                        <span class="fase2Etiqueta">
-                            Hábitats secundarios
-                        </span>
+        habitats.className =
+            "bloqueFase2";
 
-                        <div class="fase2Dato">
-                            Llanura · Ribera
-                        </div>
+        habitats.innerHTML =
 
-                    </div>
+            "<h3>Hábitats</h3>" +
 
-                </section>
+            "<div id=\"fase2Habitats\">" +
 
+                "<div class=\"fase2Habitat\">" +
+                    "<strong>Principal:</strong> Bosque" +
+                "</div>" +
 
-                <!-- =================================
-                     MODO DE VIDA
-                     ================================= -->
+                "<div class=\"fase2Habitat\">" +
+                    "<strong>Secundario:</strong> Llanura" +
+                "</div>" +
 
-                <section class="fase2Seccion">
+                "<div class=\"fase2Habitat\">" +
+                    "<strong>Secundario:</strong> Ribera" +
+                "</div>" +
 
-                    <h3>
-                        🌎 Modo de vida
-                    </h3>
+            "</div>";
 
 
-                    <div class="fase2Dato">
-                        Terrestre · Depredador
-                    </div>
+        const modoVida =
+            document.createElement("section");
 
-                </section>
+        modoVida.className =
+            "bloqueFase2";
 
+        modoVida.innerHTML =
 
-                <!-- =================================
-                     MEDIO DE VIDA
-                     ================================= -->
+            "<h3>Modo de vida</h3>" +
 
-                <section class="fase2Seccion">
+            "<div id=\"fase2ModoVida\">" +
 
-                    <h3>
-                        🌿 Medio de vida
-                    </h3>
+                "Terrestre. Activo. " +
+                "Comportamiento principalmente solitario." +
 
+            "</div>";
 
-                    <div class="fase2Dato">
-                        Medio continental
-                    </div>
 
-                </section>
+        const medioVida =
+            document.createElement("section");
 
+        medioVida.className =
+            "bloqueFase2";
 
-                <!-- =================================
-                     ESTADÍSTICAS
-                     ================================= -->
+        medioVida.innerHTML =
 
-                <section class="fase2Seccion">
+            "<h3>Medio de vida</h3>" +
 
-                    <h3>
-                        📊 Estadísticas
-                    </h3>
+            "<div id=\"fase2MedioVida\">" +
 
+                "Medio terrestre continental." +
 
-                    <div class="fase2Stats">
+            "</div>";
 
-                        <div>
-                            <span>Adaptabilidad</span>
-                            <strong>91</strong>
-                        </div>
 
-                        <div>
-                            <span>Resistencia</span>
-                            <strong>96</strong>
-                        </div>
+        const estadisticas =
+            document.createElement("section");
 
-                        <div>
-                            <span>Sociabilidad</span>
-                            <strong>72</strong>
-                        </div>
+        estadisticas.className =
+            "bloqueFase2";
 
-                        <div>
-                            <span>Reproducción</span>
-                            <strong>88</strong>
-                        </div>
+        estadisticas.innerHTML =
 
-                        <div>
-                            <span>Ofensiva</span>
-                            <strong>99</strong>
-                        </div>
+            "<h3>Estadísticas</h3>" +
 
-                        <div>
-                            <span>Defensa</span>
-                            <strong>97</strong>
-                        </div>
+            "<div id=\"fase2Estadisticas\">" +
 
-                        <div>
-                            <span>Movilidad</span>
-                            <strong>86</strong>
-                        </div>
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Adaptabilidad:</strong> 85" +
+                "</div>" +
 
-                        <div>
-                            <span>Plasticidad ecológica</span>
-                            <strong>82</strong>
-                        </div>
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Resistencia:</strong> 78" +
+                "</div>" +
 
-                        <div>
-                            <span>Tamaño</span>
-                            <strong>98</strong>
-                        </div>
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Sociabilidad:</strong> 62" +
+                "</div>" +
 
-                        <div>
-                            <span>Velocidad</span>
-                            <strong>92</strong>
-                        </div>
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Reproducción:</strong> 81" +
+                "</div>" +
 
-                        <div>
-                            <span>Inteligencia</span>
-                            <strong>94</strong>
-                        </div>
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Ofensiva:</strong> 94" +
+                "</div>" +
 
-                    </div>
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Defensa:</strong> 88" +
+                "</div>" +
 
-                </section>
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Movilidad:</strong> 76" +
+                "</div>" +
 
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Plasticidad ecológica:</strong> 72" +
+                "</div>" +
 
-                <!-- =================================
-                     ANÁLISIS
-                     ================================= -->
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Tamaño:</strong> 91" +
+                "</div>" +
 
-                <section class="fase2Seccion">
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Velocidad:</strong> 84" +
+                "</div>" +
 
-                    <h3>
-                        🔬 Análisis
-                    </h3>
+                "<div class=\"fase2Stat\">" +
+                    "<strong>Inteligencia:</strong> 79" +
+                "</div>" +
 
+            "</div>";
 
-                    <div class="fase2Analisis">
 
-                        <div>
-                            <span>Índice global</span>
-                            <strong>91</strong>
-                        </div>
+        const analisis =
+            document.createElement("section");
 
-                        <div>
-                            <span>Supervivencia</span>
-                            <strong>92</strong>
-                        </div>
+        analisis.className =
+            "bloqueFase2";
 
-                        <div>
-                            <span>Competencia</span>
-                            <strong>96</strong>
-                        </div>
+        analisis.innerHTML =
 
-                        <div>
-                            <span>Movilidad</span>
-                            <strong>89</strong>
-                        </div>
+            "<h3>Análisis estadístico</h3>" +
 
-                        <div>
-                            <span>Reproducción</span>
-                            <strong>80</strong>
-                        </div>
+            "<div id=\"fase2Analisis\">" +
 
-                    </div>
+                "<div class=\"fase2Analisis\">" +
+                    "<strong>Índice global:</strong> 82" +
+                "</div>" +
 
-                </section>
+                "<div class=\"fase2Analisis\">" +
+                    "<strong>Supervivencia:</strong> 81" +
+                "</div>" +
 
-            </div>
+                "<div class=\"fase2Analisis\">" +
+                    "<strong>Competencia:</strong> 87" +
+                "</div>" +
 
-        `;
+                "<div class=\"fase2Analisis\">" +
+                    "<strong>Movilidad:</strong> 80" +
+                "</div>" +
+
+                "<div class=\"fase2Analisis\">" +
+                    "<strong>Reproducción:</strong> 72" +
+                "</div>" +
+
+            "</div>";
+
+
+        /* =================================================
+           MONTAJE
+           ================================================= */
+
+        ventana.appendChild(
+            cerrar
+        );
+
+        ventana.appendChild(
+            titulo
+        );
+
+        ventana.appendChild(
+            habitats
+        );
+
+        ventana.appendChild(
+            modoVida
+        );
+
+        ventana.appendChild(
+            medioVida
+        );
+
+        ventana.appendChild(
+            estadisticas
+        );
+
+        ventana.appendChild(
+            analisis
+        );
+
+
+        visor.appendChild(
+            ventana
+        );
 
 
         document.body.appendChild(
@@ -438,486 +327,101 @@ window.CAB09 = {
         );
 
 
-        /* ---------------------------------------------
-           Estilos propios de CAB09
-           --------------------------------------------- */
+        /* =================================================
+           ABRIR
+           ================================================= */
 
-        this.crearEstilos();
+        boton.addEventListener(
+            "click",
+            function(){
 
-    },
+                visor.style.display =
+                    "flex";
 
-
-    /* =================================================
-       ESTILOS
-       ================================================= */
-
-    crearEstilos(){
-
-        if(
-            document.getElementById(
-                "estilosCAB09"
-            )
-        ){
-
-            return;
-
-        }
-
-
-        const estilo =
-            document.createElement("style");
-
-        estilo.id =
-            "estilosCAB09";
-
-
-        estilo.textContent = `
-
-            /* =========================================
-               BOTÓN INFORMACIÓN AVANZADA
-               ========================================= */
-
-            #botonInfoAvanzada{
-
-                position:absolute;
-
-                top:14px;
-                right:14px;
-
-                width:34px;
-                height:34px;
-
-                padding:0;
-
-                border:2px solid #62d6ff;
-
-                border-radius:50%;
-
-                background:#1d9bf0;
-
-                color:#fff;
-
-                font-size:19px;
-
-                font-weight:bold;
-
-                display:flex;
-
-                align-items:center;
-                justify-content:center;
-
-                cursor:pointer;
-
-                box-shadow:
-                    0 0 10px
-                    rgba(98,214,255,.25);
-
-                transition:
-                    background .25s,
-                    color .25s,
-                    transform .15s,
-                    box-shadow .25s;
-
-                z-index:10;
+                visor.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
 
             }
-
-
-            #botonInfoAvanzada:hover{
-
-                background:#62d6ff;
-
-                color:#001018;
-
-                box-shadow:
-                    0 0 15px
-                    rgba(98,214,255,.42);
-
-            }
-
-
-            #botonInfoAvanzada:active{
-
-                transform:scale(.92);
-
-            }
-
-
-            /* =========================================
-               LIGHTBOX
-               ========================================= */
-
-            #visorInfoAvanzada{
-
-                display:none;
-
-                position:fixed;
-
-                top:0;
-                left:0;
-
-                width:100vw;
-                height:100vh;
-
-                padding:20px;
-
-                background:
-                    rgba(0,0,0,.94);
-
-                z-index:999997;
-
-                justify-content:center;
-                align-items:center;
-
-            }
-
-
-            /* =========================================
-               VENTANA
-               ========================================= */
-
-            #ventanaInfoAvanzada{
-
-                position:relative;
-
-                width:92%;
-
-                max-width:850px;
-
-                max-height:90vh;
-
-                overflow-y:auto;
-
-                padding:25px;
-
-                background:#181a1c;
-
-                border:2px solid #62d6ff;
-
-                border-radius:18px;
-
-                box-shadow:
-                    0 0 30px
-                    rgba(98,214,255,.35),
-
-                    0 10px 40px
-                    rgba(0,0,0,.55);
-
-            }
-
-
-            #ventanaInfoAvanzada h2{
-
-                margin-top:0;
-
-                padding-right:40px;
-
-                text-align:center;
-
-                color:#62d6ff;
-
-            }
-
-
-            /* =========================================
-               SECCIONES
-               ========================================= */
-
-            .fase2Seccion{
-
-                margin-top:28px;
-
-                padding:18px;
-
-                background:#151719;
-
-                border:1px solid #25292c;
-
-                border-radius:12px;
-
-            }
-
-
-            .fase2Seccion h3{
-
-                margin-top:0;
-
-                margin-bottom:18px;
-
-                color:#62d6ff;
-
-                text-align:left;
-
-            }
-
-
-            /* =========================================
-               DATOS
-               ========================================= */
-
-            .fase2Bloque{
-
-                margin-bottom:15px;
-
-            }
-
-
-            .fase2Bloque:last-child{
-
-                margin-bottom:0;
-
-            }
-
-
-            .fase2Etiqueta{
-
-                display:block;
-
-                margin-bottom:5px;
-
-                color:#aaa;
-
-                font-size:14px;
-
-            }
-
-
-            .fase2Dato{
-
-                color:#fff;
-
-                font-size:18px;
-
-                line-height:1.5;
-
-            }
-
-
-            /* =========================================
-               ESTADÍSTICAS
-               ========================================= */
-
-            .fase2Stats{
-
-                display:grid;
-
-                grid-template-columns:
-                    1fr 1fr;
-
-                gap:9px;
-
-            }
-
-
-            .fase2Stats div,
-            .fase2Analisis div{
-
-                display:flex;
-
-                align-items:center;
-
-                justify-content:space-between;
-
-                gap:10px;
-
-                padding:11px 12px;
-
-                background:#181a1c;
-
-                border-left:4px solid #62d6ff;
-
-                border-radius:8px;
-
-            }
-
-
-            .fase2Stats span,
-            .fase2Analisis span{
-
-                color:#eee;
-
-            }
-
-
-            .fase2Stats strong,
-            .fase2Analisis strong{
-
-                color:#62d6ff;
-
-                font-size:19px;
-
-            }
-
-
-            /* =========================================
-               ANÁLISIS
-               ========================================= */
-
-            .fase2Analisis{
-
-                display:grid;
-
-                grid-template-columns:
-                    1fr 1fr;
-
-                gap:9px;
-
-            }
-
-
-            /* =========================================
-               RESPONSIVE
-               ========================================= */
-
-            @media(max-width:768px){
-
-                #botonInfoAvanzada{
-
-                    top:10px;
-                    right:10px;
-
-                    width:32px;
-                    height:32px;
-
-                    font-size:18px;
-
-                }
-
-
-                #visorInfoAvanzada{
-
-                    padding:10px;
-
-                }
-
-
-                #ventanaInfoAvanzada{
-
-                    width:96%;
-
-                    max-height:92vh;
-
-                    padding:18px;
-
-                    border-radius:15px;
-
-                }
-
-
-                .fase2Seccion{
-
-                    padding:14px;
-
-                    margin-top:20px;
-
-                }
-
-
-                .fase2Stats,
-                .fase2Analisis{
-
-                    grid-template-columns:1fr;
-
-                }
-
-
-                .fase2Dato{
-
-                    font-size:17px;
-
-                }
-
-            }
-
-        `;
-
-
-        document.head.appendChild(
-            estilo
-        );
-
-    },
-
-
-    /* =================================================
-       ABRIR
-       ================================================= */
-
-    abrir(){
-
-        const visor =
-            document.getElementById(
-                "visorInfoAvanzada"
-            );
-
-
-        if(!visor){
-
-            return;
-
-        }
-
-
-        visor.style.display =
-            "flex";
-
-        visor.setAttribute(
-            "aria-hidden",
-            "false"
         );
 
 
-        document.body.style.overflow =
-            "hidden";
+        /* =================================================
+           CERRAR
+           ================================================= */
 
-    },
+        cerrar.addEventListener(
+            "click",
+            function(){
 
+                visor.style.display =
+                    "none";
 
-    /* =================================================
-       CERRAR
-       ================================================= */
+                visor.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
 
-    cerrar(){
-
-        const visor =
-            document.getElementById(
-                "visorInfoAvanzada"
-            );
-
-
-        if(!visor){
-
-            return;
-
-        }
-
-
-        visor.style.display =
-            "none";
-
-        visor.setAttribute(
-            "aria-hidden",
-            "true"
+            }
         );
 
 
-        document.body.style.overflow =
-            "";
+        /* =================================================
+           CERRAR AL PULSAR FUERA
+           ================================================= */
+
+        visor.addEventListener(
+            "click",
+            function(event){
+
+                if(
+                    event.target === visor
+                ){
+
+                    visor.style.display =
+                        "none";
+
+                    visor.setAttribute(
+                        "aria-hidden",
+                        "true";
+
+                }
+
+            }
+        );
+
+
+        /* =================================================
+           ESC
+           ================================================= */
+
+        document.addEventListener(
+            "keydown",
+            function(event){
+
+                if(
+                    event.key === "Escape"
+                ){
+
+                    visor.style.display =
+                        "none";
+
+                    visor.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+                }
+
+            }
+        );
 
     }
 
 };
 
 
-/* ========================================================
-   ARRANQUE CAB09
-   ======================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function(){
 
-        window.CAB09.inicializar();
 
-    }
-);
