@@ -1,4 +1,4 @@
-CAB08.js — Taxonomía
+CAB08.js — Taxonomía corregida
 
 /*
 ========================================================
@@ -48,8 +48,20 @@ document.addEventListener(
         }
 
 
+        /*
+        -------------------------------------------------
+        EL CONTENEDOR NORMALIZADO USA j1
+        -------------------------------------------------
+        */
+
+        const codigo =
+            ficha.j1 ||
+            ficha.codigo ||
+            "";
+
+
         procesarTaxon(
-            ficha.j1
+            codigo
         );
 
     }
@@ -94,7 +106,7 @@ function procesarTaxon(
 
     /*
     -----------------------------------------------------
-    LIMPIAR ANTES DE CARGAR
+    LIMPIAR CONTENIDO ANTERIOR
     -----------------------------------------------------
     */
 
@@ -114,6 +126,10 @@ function procesarTaxon(
     if (
         !window.PALTAXON
     ) {
+
+        console.warn(
+            "CAB08: PALTAXON no está disponible."
+        );
 
         return;
 
@@ -136,6 +152,10 @@ function procesarTaxon(
 
     if (!codigo) {
 
+        console.warn(
+            "CAB08: no se recibió código de paleoficha."
+        );
+
         return;
 
     }
@@ -143,7 +163,7 @@ function procesarTaxon(
 
     /*
     -----------------------------------------------------
-    BUSCAR REGISTRO TAXONÓMICO
+    BUSCAR REGISTRO EN PALTAXON
     -----------------------------------------------------
     */
 
@@ -155,6 +175,11 @@ function procesarTaxon(
         !taxon
     ) {
 
+        console.warn(
+            "CAB08: no existe taxonomía para:",
+            codigo
+        );
+
         return;
 
     }
@@ -163,7 +188,6 @@ function procesarTaxon(
     /*
     -----------------------------------------------------
     TA1
-    -----------------------------------------------------
     ÁRBOL TAXONÓMICO DESCENDENTE
     -----------------------------------------------------
     */
@@ -213,7 +237,7 @@ function procesarTaxon(
 
                 /*
                 -------------------------------------------------
-                PRIMER NIVEL
+                NIVEL PRINCIPAL
                 -------------------------------------------------
                 */
 
@@ -243,7 +267,7 @@ function procesarTaxon(
 
                 /*
                 -------------------------------------------------
-                PROFUNDIDAD DEL ÁRBOL
+                INDENTACIÓN
                 -------------------------------------------------
                 */
 
@@ -279,11 +303,22 @@ function procesarTaxon(
         ta2;
 
 
+    /*
+    -----------------------------------------------------
+    DIAGNÓSTICO
+    -----------------------------------------------------
+    */
+
+    console.log(
+        "CAB08: taxonomía cargada",
+        codigo,
+        taxon
+    );
+
 }
 
 
-/*
-========================================================
-FIN CAB08.js
+/* =====================================================
+   FIN CAB08.js
 ========================================================
 */
