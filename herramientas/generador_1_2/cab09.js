@@ -1,7 +1,7 @@
 /*
 ========================================================
-CAB09.js v1.2
-Estadísticas + Análisis Estadístico + Lightbox
+CAB09.js v1.1
+Estadísticas y Análisis Estadístico
 PalEntropía
 Generador de Paleofichas 1.2
 ========================================================
@@ -20,12 +20,16 @@ e9  = Tamaño
 e10 = Velocidad
 e11 = Inteligencia
 
-CAB09:
-- SOLO lee e1-e11.
-- NO inventa datos.
-- NO modifica el registro.
-- NO modifica el CSV.
-- Calcula únicamente las fórmulas establecidas.
+CAB09 NO INVENTA DATOS.
+CAB09 NO MODIFICA EL REGISTRO.
+CAB09 SOLO LEE Y CALCULA.
+
+FUNCIONES:
+- Lee e1-e11 del registro actual.
+- Calcula las estadísticas derivadas.
+- Crea el botón circular de información avanzada.
+- Crea el lightbox.
+- Muestra estadísticas y análisis.
 ========================================================
 */
 
@@ -40,11 +44,25 @@ CONFIGURACIÓN
 
 const CAB09 = {
 
-    version: "1.2",
+    version: "1.1",
+
+    campos: [
+        "adaptabilidad",
+        "resistencia",
+        "sociabilidad",
+        "reproduccion",
+        "ofensiva",
+        "defensa",
+        "movilidad",
+        "plasticidad_ecologica",
+        "tamano",
+        "velocidad",
+        "inteligencia"
+    ],
 
 
 /*========================================================
-OBTENER ESTADÍSTICAS
+OBTENER ESTADÍSTICAS DESDE e1-e11
 ========================================================*/
 
 obtenerEstadisticas(registro){
@@ -77,10 +95,6 @@ obtenerEstadisticas(registro){
                 valor === ""
         )
     ){
-        console.warn(
-            "CAB09: faltan uno o varios campos e1-e11."
-        );
-
         return null;
     }
 
@@ -91,10 +105,6 @@ obtenerEstadisticas(registro){
             valor => Number.isNaN(valor)
         )
     ){
-        console.warn(
-            "CAB09: uno o varios campos e1-e11 no son numéricos."
-        );
-
         return null;
     }
 
@@ -127,12 +137,13 @@ media(valores){
         !Array.isArray(valores) ||
         valores.length === 0
     ){
-        return null;
+        return 0;
     }
 
     return Math.round(
         valores.reduce(
-            (suma, valor) => suma + valor,
+            (suma, valor) =>
+                suma + Number(valor),
             0
         ) / valores.length
     );
@@ -152,63 +163,53 @@ analizar(stats){
 
     return {
 
-        indice_global:
+        indice_global: this.media([
 
-            this.media([
+            stats.adaptabilidad,
+            stats.resistencia,
+            stats.sociabilidad,
+            stats.reproduccion,
+            stats.ofensiva,
+            stats.defensa,
+            stats.movilidad,
+            stats.plasticidad_ecologica,
+            stats.tamano,
+            stats.velocidad,
+            stats.inteligencia
 
-                stats.adaptabilidad,
-                stats.resistencia,
-                stats.sociabilidad,
-                stats.reproduccion,
-                stats.ofensiva,
-                stats.defensa,
-                stats.movilidad,
-                stats.plasticidad_ecologica,
-                stats.tamano,
-                stats.velocidad,
-                stats.inteligencia
+        ]),
 
-            ]),
+        supervivencia: this.media([
 
-        supervivencia:
+            stats.adaptabilidad,
+            stats.resistencia,
+            stats.defensa,
+            stats.plasticidad_ecologica
 
-            this.media([
+        ]),
 
-                stats.adaptabilidad,
-                stats.resistencia,
-                stats.defensa,
-                stats.plasticidad_ecologica
+        competencia: this.media([
 
-            ]),
+            stats.ofensiva,
+            stats.tamano,
+            stats.velocidad,
+            stats.inteligencia
 
-        competencia:
+        ]),
 
-            this.media([
+        movilidad: this.media([
 
-                stats.ofensiva,
-                stats.tamano,
-                stats.velocidad,
-                stats.inteligencia
+            stats.movilidad,
+            stats.velocidad
 
-            ]),
+        ]),
 
-        movilidad:
+        reproduccion: this.media([
 
-            this.media([
+            stats.reproduccion,
+            stats.sociabilidad
 
-                stats.movilidad,
-                stats.velocidad
-
-            ]),
-
-        reproduccion:
-
-            this.media([
-
-                stats.reproduccion,
-                stats.sociabilidad
-
-            ])
+        ])
 
     };
 
@@ -225,66 +226,49 @@ crearBoton(){
         document.getElementById("ficha");
 
     if(!ficha){
-        return;
+        console.warn(
+            "CAB09: no existe #ficha."
+        );
+        return null;
     }
 
-
-    /*
-    Evitar duplicados.
-    */
-
-    if(
+    let boton =
         document.getElementById(
-            "botonEstadisticasCAB09"
-        )
-    ){
-        return;
+            "botonInfoAvanzada"
+        );
+
+    if(boton){
+        return boton;
     }
 
-
-    const boton =
+    boton =
         document.createElement("button");
 
-
     boton.id =
-        "botonEstadisticasCAB09";
-
+        "botonInfoAvanzada";
 
     boton.type =
         "button";
 
-
     boton.title =
-        "Estadísticas";
-
+        "Información estadística";
 
     boton.setAttribute(
         "aria-label",
-        "Abrir estadísticas"
+        "Abrir información estadística"
     );
 
-
-    boton.innerHTML =
-        "Σ";
-
+    boton.innerHTML = "ⓘ";
 
     /*
-    IMPORTANTE:
-    El botón se inserta DIRECTAMENTE
-    dentro de #ficha.
+    #ficha ya es position:relative
+    mediante CAB09.css podemos colocar
+    el botón en la esquina superior derecha.
     */
 
     ficha.appendChild(boton);
 
-
-    boton.addEventListener(
-        "click",
-        () => {
-
-            this.abrirLightbox();
-
-        }
-    );
+    return boton;
 
 },
 
@@ -295,75 +279,162 @@ CREAR LIGHTBOX
 
 crearLightbox(){
 
-    if(
+    let visor =
         document.getElementById(
-            "visorEstadisticasCAB09"
-        )
-    ){
-        return;
-    }
-
-
-    const visor =
-        document.createElement("div");
-
-
-    visor.id =
-        "visorEstadisticasCAB09";
-
-
-    visor.innerHTML = `
-
-        <div
-            id="ventanaEstadisticasCAB09"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Estadísticas"
-        >
-
-            <button
-                id="cerrarEstadisticasCAB09"
-                type="button"
-                aria-label="Cerrar estadísticas"
-            >
-                ×
-            </button>
-
-
-            <h2>
-                Estadísticas
-            </h2>
-
-
-            <div
-                id="estadisticas"
-                class="stats"
-            ></div>
-
-
-            <h2>
-                Análisis estadístico
-            </h2>
-
-
-            <div
-                id="bloqueAnalisis"
-                class="analisisEstadisticoCAB09"
-            ></div>
-
-        </div>
-
-    `;
-
-
-    document.body.appendChild(visor);
-
-
-    const cerrar =
-        document.getElementById(
-            "cerrarEstadisticasCAB09"
+            "visorInfoAvanzada"
         );
 
+    if(visor){
+        return visor;
+    }
+
+    visor =
+        document.createElement("div");
+
+    visor.id =
+        "visorInfoAvanzada";
+
+
+    /*====================================================
+    VENTANA
+    ====================================================*/
+
+    const ventana =
+        document.createElement("div");
+
+    ventana.id =
+        "ventanaInfoAvanzada";
+
+
+    /*====================================================
+    BOTÓN CERRAR
+    ====================================================*/
+
+    const cerrar =
+        document.createElement("button");
+
+    cerrar.id =
+        "cerrarInfoAvanzada";
+
+    cerrar.type =
+        "button";
+
+    cerrar.title =
+        "Cerrar";
+
+    cerrar.setAttribute(
+        "aria-label",
+        "Cerrar información estadística"
+    );
+
+    cerrar.innerHTML = "×";
+
+
+    /*====================================================
+    TÍTULO
+    ====================================================*/
+
+    const titulo =
+        document.createElement("h2");
+
+    titulo.textContent =
+        "Información estadística";
+
+
+    /*====================================================
+    BLOQUE ESTADÍSTICAS
+    ====================================================*/
+
+    const bloqueStats =
+        document.createElement("div");
+
+    bloqueStats.className =
+        "bloqueFase2";
+
+    const tituloStats =
+        document.createElement("h3");
+
+    tituloStats.textContent =
+        "Estadísticas";
+
+    const estadisticas =
+        document.createElement("div");
+
+    estadisticas.id =
+        "fase2Estadisticas";
+
+    bloqueStats.appendChild(
+        tituloStats
+    );
+
+    bloqueStats.appendChild(
+        estadisticas
+    );
+
+
+    /*====================================================
+    BLOQUE ANÁLISIS
+    ====================================================*/
+
+    const bloqueAnalisis =
+        document.createElement("div");
+
+    bloqueAnalisis.className =
+        "bloqueFase2";
+
+    const tituloAnalisis =
+        document.createElement("h3");
+
+    tituloAnalisis.textContent =
+        "Análisis estadístico";
+
+    const analisis =
+        document.createElement("div");
+
+    analisis.id =
+        "fase2Analisis";
+
+    bloqueAnalisis.appendChild(
+        tituloAnalisis
+    );
+
+    bloqueAnalisis.appendChild(
+        analisis
+    );
+
+
+    /*====================================================
+    CONSTRUIR
+    ====================================================*/
+
+    ventana.appendChild(
+        cerrar
+    );
+
+    ventana.appendChild(
+        titulo
+    );
+
+    ventana.appendChild(
+        bloqueStats
+    );
+
+    ventana.appendChild(
+        bloqueAnalisis
+    );
+
+    visor.appendChild(
+        ventana
+    );
+
+    document.body.appendChild(
+        visor
+    );
+
+
+    /*====================================================
+    EVENTOS
+    ====================================================*/
 
     cerrar.addEventListener(
         "click",
@@ -375,13 +446,9 @@ crearLightbox(){
     );
 
 
-    /*
-    Cerrar pulsando fuera de la ventana.
-    */
-
     visor.addEventListener(
         "click",
-        (evento) => {
+        evento => {
 
             if(
                 evento.target === visor
@@ -395,21 +462,178 @@ crearLightbox(){
     );
 
 
-    /*
-    Cerrar con ESC.
-    */
+    return visor;
 
-    document.addEventListener(
-        "keydown",
-        (evento) => {
+},
 
-            if(
-                evento.key === "Escape"
-            ){
 
-                this.cerrarLightbox();
+/*========================================================
+MOSTRAR ESTADÍSTICAS EN LIGHTBOX
+========================================================*/
 
-            }
+mostrarEstadisticasLightbox(stats){
+
+    const contenedor =
+        document.getElementById(
+            "fase2Estadisticas"
+        );
+
+    if(!contenedor){
+        return;
+    }
+
+    contenedor.innerHTML = "";
+
+
+    const nombres = {
+
+        adaptabilidad:
+            "Adaptabilidad",
+
+        resistencia:
+            "Resistencia",
+
+        sociabilidad:
+            "Sociabilidad",
+
+        reproduccion:
+            "Reproducción",
+
+        ofensiva:
+            "Ofensiva",
+
+        defensa:
+            "Defensa",
+
+        movilidad:
+            "Movilidad",
+
+        plasticidad_ecologica:
+            "Plasticidad ecológica",
+
+        tamano:
+            "Tamaño",
+
+        velocidad:
+            "Velocidad",
+
+        inteligencia:
+            "Inteligencia"
+
+    };
+
+
+    this.campos.forEach(
+        campo => {
+
+            const bloque =
+                document.createElement("div");
+
+            bloque.className =
+                "fase2Stat";
+
+            const etiqueta =
+                document.createElement("strong");
+
+            etiqueta.textContent =
+                nombres[campo] + ":";
+
+            bloque.appendChild(
+                etiqueta
+            );
+
+            bloque.appendChild(
+                document.createTextNode(
+                    " " + stats[campo]
+                )
+            );
+
+            contenedor.appendChild(
+                bloque
+            );
+
+        }
+    );
+
+},
+
+
+/*========================================================
+MOSTRAR ANÁLISIS EN LIGHTBOX
+========================================================*/
+
+mostrarAnalisisLightbox(analisis){
+
+    const contenedor =
+        document.getElementById(
+            "fase2Analisis"
+        );
+
+    if(!contenedor){
+        return;
+    }
+
+    contenedor.innerHTML = "";
+
+
+    const datos = [
+
+        [
+            "Índice global",
+            analisis.indice_global
+        ],
+
+        [
+            "Supervivencia",
+            analisis.supervivencia
+        ],
+
+        [
+            "Competencia",
+            analisis.competencia
+        ],
+
+        [
+            "Movilidad",
+            analisis.movilidad
+        ],
+
+        [
+            "Reproducción",
+            analisis.reproduccion
+        ]
+
+    ];
+
+
+    datos.forEach(
+        dato => {
+
+            const bloque =
+                document.createElement("div");
+
+            bloque.className =
+                "fase2Analisis";
+
+            const etiqueta =
+                document.createElement("strong");
+
+            etiqueta.textContent =
+                dato[0] + ":";
+
+            bloque.appendChild(
+                etiqueta
+            );
+
+            bloque.appendChild(
+                document.createTextNode(
+                    " " + dato[1]
+                )
+            );
+
+            contenedor.appendChild(
+                bloque
+            );
 
         }
     );
@@ -425,17 +649,15 @@ abrirLightbox(){
 
     const visor =
         document.getElementById(
-            "visorEstadisticasCAB09"
+            "visorInfoAvanzada"
         );
 
     if(!visor){
         return;
     }
 
-
     visor.style.display =
         "flex";
-
 
     document.body.style.overflow =
         "hidden";
@@ -451,136 +673,18 @@ cerrarLightbox(){
 
     const visor =
         document.getElementById(
-            "visorEstadisticasCAB09"
+            "visorInfoAvanzada"
         );
 
     if(!visor){
         return;
     }
 
-
     visor.style.display =
         "none";
 
-
     document.body.style.overflow =
         "";
-
-},
-
-
-/*========================================================
-MOSTRAR ESTADÍSTICAS
-========================================================*/
-
-mostrarEstadisticas(stats){
-
-    const contenedor =
-        document.getElementById(
-            "estadisticas"
-        );
-
-    if(!contenedor){
-        return;
-    }
-
-
-    contenedor.innerHTML = `
-
-        <div>
-            Adaptabilidad: ${stats.adaptabilidad}
-        </div>
-
-        <div>
-            Resistencia: ${stats.resistencia}
-        </div>
-
-        <div>
-            Sociabilidad: ${stats.sociabilidad}
-        </div>
-
-        <div>
-            Reproducción: ${stats.reproduccion}
-        </div>
-
-        <div>
-            Ofensiva: ${stats.ofensiva}
-        </div>
-
-        <div>
-            Defensa: ${stats.defensa}
-        </div>
-
-        <div>
-            Movilidad: ${stats.movilidad}
-        </div>
-
-        <div>
-            Plasticidad ecológica:
-            ${stats.plasticidad_ecologica}
-        </div>
-
-        <div>
-            Tamaño: ${stats.tamano}
-        </div>
-
-        <div>
-            Velocidad: ${stats.velocidad}
-        </div>
-
-        <div>
-            Inteligencia: ${stats.inteligencia}
-        </div>
-
-    `;
-
-},
-
-
-/*========================================================
-MOSTRAR ANÁLISIS
-========================================================*/
-
-mostrarAnalisis(analisis){
-
-    const contenedor =
-        document.getElementById(
-            "bloqueAnalisis"
-        );
-
-    if(!contenedor){
-        return;
-    }
-
-
-    contenedor.innerHTML = `
-
-        <div>
-            Índice global:
-            ${analisis.indice_global}
-        </div>
-
-        <div>
-            Supervivencia:
-            ${analisis.supervivencia}
-        </div>
-
-        <div>
-            Competencia:
-            ${analisis.competencia}
-        </div>
-
-        <div>
-            Movilidad:
-            ${analisis.movilidad}
-        </div>
-
-        <div>
-            Reproducción:
-            ${analisis.reproduccion}
-        </div>
-
-    `;
 
 },
 
@@ -591,89 +695,76 @@ EJECUTAR
 
 ejecutar(registro){
 
-    /*
-    Crear infraestructura visual.
-    */
-
-    this.crearBoton();
-
-    this.crearLightbox();
-
-
-    /*
-    Leer e1-e11.
-    */
-
     const stats =
         this.obtenerEstadisticas(
             registro
         );
 
-
-    /*
-    Si faltan datos:
-    no mostrar datos falsos.
-    */
-
     if(!stats){
 
-        const estadisticas =
-            document.getElementById(
-                "estadisticas"
-            );
-
-        const analisis =
-            document.getElementById(
-                "bloqueAnalisis"
-            );
-
-
-        if(estadisticas){
-            estadisticas.innerHTML = "";
-        }
-
-
-        if(analisis){
-            analisis.innerHTML = "";
-        }
-
+        console.warn(
+            "CAB09: no existen e1-e11 válidos en el registro."
+        );
 
         return null;
+    }
+
+
+    const analisis =
+        this.analizar(
+            stats
+        );
+
+
+    /*
+    Crear interfaz.
+    */
+
+    const boton =
+        this.crearBoton();
+
+    this.crearLightbox();
+
+
+    /*
+    Evitar registrar el evento varias veces.
+    */
+
+    if(
+        boton &&
+        !boton.dataset.cab09Activo
+    ){
+
+        boton.addEventListener(
+            "click",
+            () => {
+
+                this.mostrarEstadisticasLightbox(
+                    stats
+                );
+
+                this.mostrarAnalisisLightbox(
+                    analisis
+                );
+
+                this.abrirLightbox();
+
+            }
+        );
+
+        boton.dataset.cab09Activo =
+            "true";
 
     }
 
 
-    /*
-    Calcular análisis.
-    */
-
-    const analisis =
-        this.analizar(stats);
-
-
-    /*
-    Mostrar datos reales.
-    */
-
-    this.mostrarEstadisticas(
-        stats
-    );
-
-
-    this.mostrarAnalisis(
-        analisis
-    );
-
-
-    /*
-    Devolver resultado.
-    */
-
     return {
 
-        estadisticas: stats,
+        estadisticas:
+            stats,
 
-        analisis: analisis
+        analisis:
+            analisis
 
     };
 
@@ -686,11 +777,20 @@ ejecutar(registro){
 EXPORTAR
 ========================================================*/
 
-window.CAB09 = CAB09;
+window.CAB09 =
+    CAB09;
 
 
 /*========================================================
-FIN CAB09
+INICIALIZACIÓN
+========================================================
+CAB09 NO inventa ni busca registros por su cuenta.
+El generador debe llamar:
+
+CAB09.ejecutar(registroActual);
+
+cuando tenga disponible el registro de la Paleoficha.
 ========================================================*/
 
-})();
+
+})(); 
