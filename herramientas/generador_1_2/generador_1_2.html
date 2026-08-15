@@ -25,90 +25,62 @@
 
 #controlesNavegacion {
 
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    gap: 8px;
-
-    margin: 12px auto;
-
-    flex-wrap: wrap;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin:12px auto;
+    flex-wrap:wrap;
 
 }
-
 
 .botonNavegacion {
 
-    width: 38px;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    font-size:16px;
 
-    height: 38px;
-
-    border-radius: 50%;
-
-    border: none;
-
-    cursor: pointer;
-
-    font-size: 16px;
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
 
     transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
+        transform .15s ease,
+        opacity .15s ease;
 
 }
-
 
 .botonNavegacion:active {
-
-    transform: scale(0.92);
-
+    transform:scale(.92);
 }
-
 
 .botonNavegacion:disabled {
-
-    opacity: 0.35;
-
-    cursor: default;
-
+    opacity:.35;
+    cursor:default;
 }
-
 
 #posicionNavegacion {
 
-    min-width: 70px;
-
-    text-align: center;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    opacity: 0.8;
-
-    padding: 4px 9px;
-
-    border-radius: 12px;
+    min-width:70px;
+    text-align:center;
+    font-size:13px;
+    font-weight:600;
+    opacity:.8;
+    padding:4px 9px;
+    border-radius:12px;
 
 }
+
 
 /* =====================================================
    SEPARACIÓN TAXONOMÍA
    ===================================================== */
 
 #bloqueTaxon {
-
-    margin-bottom: 22px;
-
+    margin-bottom:22px;
 }
 
 
@@ -118,28 +90,20 @@
 
 #videoFicha {
 
-    text-align: center;
-
-    margin: 12px 0;
+    text-align:center;
+    margin:12px 0;
 
 }
 
-
 #botonVideo {
 
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    text-decoration: none;
-
-    padding: 9px 16px;
-
-    border-radius: 20px;
-
-    font-weight: 600;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    padding:9px 16px;
+    border-radius:20px;
+    font-weight:600;
 
 }
 
@@ -150,42 +114,26 @@
 
 .resultadoBuscador {
 
-    width: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    text-align: left;
-
-    padding: 10px 12px;
-
-    margin: 5px 0;
-
-    border-radius: 12px;
-
-    border: none;
-
-    cursor: pointer;
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-align:left;
+    padding:10px 12px;
+    margin:5px 0;
+    border-radius:12px;
+    border:none;
+    cursor:pointer;
 
 }
-
 
 .resultadoCodigo {
-
-    font-weight: 700;
-
-    opacity: 0.75;
-
+    font-weight:700;
+    opacity:.75;
 }
 
-
 .resultadoNombre {
-
-    font-weight: 600;
-
+    font-weight:600;
 }
 
 </style>
@@ -195,6 +143,10 @@
 
 <body>
 
+
+<!-- =====================================================
+     BOTONES SUPERIORES
+     ===================================================== -->
 
 <button id="botonAleatorio"
         type="button"
@@ -217,6 +169,10 @@
 </button>
 
 
+<!-- =====================================================
+     CABECERA
+     ===================================================== -->
+
 <header id="cabecera">
 
     <h1>PalEntropía</h1>
@@ -227,6 +183,10 @@
 
 </header>
 
+
+<!-- =====================================================
+     BUSCADOR
+     ===================================================== -->
 
 <section id="controlesBusqueda">
 
@@ -239,6 +199,10 @@
 
 </section>
 
+
+<!-- =====================================================
+     NAVEGACIÓN
+     ===================================================== -->
 
 <section id="controlesNavegacion"
          aria-label="Navegación de paleofichas">
@@ -267,9 +231,7 @@
 
 
     <span id="posicionNavegacion">
-
         — / —
-
     </span>
 
 
@@ -298,12 +260,18 @@
 </section>
 
 
+<!-- =====================================================
+     ESTADO
+     ===================================================== -->
+
 <div id="estado">
-
     Cargando contenedor...
-
 </div>
 
+
+<!-- =====================================================
+     PALEOFICHA
+     ===================================================== -->
 
 <main id="ficha"
       class="ficha"
@@ -316,9 +284,7 @@
     <div id="codigoFicha"></div>
 
 
-    <!-- =================================================
-         IMAGEN PRINCIPAL
-         ================================================= -->
+    <!-- IMAGEN PRINCIPAL -->
 
     <div id="contenedorImagenPrincipal">
 
@@ -328,9 +294,7 @@
     </div>
 
 
-    <!-- =================================================
-         VÍDEO
-         ================================================= -->
+    <!-- VÍDEO -->
 
     <div id="videoFicha"
          style="display:none;">
@@ -347,9 +311,7 @@
     </div>
 
 
-    <!-- =================================================
-         INFORMACIÓN
-         ================================================= -->
+    <!-- INFORMACIÓN -->
 
     <section id="bloqueInfo">
 
@@ -379,35 +341,25 @@
     </section>
 
 
-    <!-- =================================================
-         GALERÍA
-         ================================================= -->
+    <!-- GALERÍA -->
 
     <section id="galeria">
-
 
         <img id="img2"
              alt="Imagen secundaria 1">
 
-
         <img id="img3"
              alt="Imagen secundaria 2">
-
 
     </section>
 
 
-    <!-- =================================================
-         CRONOLOGÍA
-         ================================================= -->
+    <!-- CRONOLOGÍA -->
 
-    <div id="cronologia">
-    </div>
+    <div id="cronologia"></div>
 
 
-    <!-- =================================================
-         TAXONOMÍA
-         ================================================= -->
+    <!-- TAXONOMÍA -->
 
     <section id="bloqueTaxon">
 
@@ -415,18 +367,14 @@
             Taxón
         </span>
 
-        <div id="taxonTa1">
-        </div>
+        <div id="taxonTa1"></div>
 
-        <div id="taxonTa2">
-        </div>
+        <div id="taxonTa2"></div>
 
     </section>
 
 
-    <!-- =================================================
-         ESTADÍSTICAS
-         ================================================= -->
+    <!-- ESTADÍSTICAS ORIGINALES -->
 
     <section id="bloqueEstadisticas"
              style="display:none;">
@@ -435,10 +383,8 @@
             Estadísticas
         </h2>
 
-
         <div id="estadisticas"
              class="stats">
-
         </div>
 
     </section>
@@ -448,7 +394,7 @@
 
 
 <!-- =====================================================
-     LIGHTBOX DE IMÁGENES
+     LIGHTBOX IMAGEN
      ===================================================== -->
 
 <div id="visorImagen"
@@ -474,7 +420,7 @@
 
 
 <!-- =====================================================
-     EXPLORADOR DE PALEOFICHAS
+     EXPLORADOR
      ===================================================== -->
 
 <div id="visorBuscador"
@@ -506,8 +452,7 @@
                autocomplete="off">
 
 
-        <div id="listaResultados">
-        </div>
+        <div id="listaResultados"></div>
 
 
     </div>
@@ -523,30 +468,25 @@
 
 window.MASTER_ACTUAL = null;
 
+window.cargarMasterPorJ1 = async function(j1) {
 
-window.cargarMasterPorJ1 =
-async function(j1) {
-
-    if (
+    if(
         j1 === undefined ||
         j1 === null ||
         String(j1).trim() === ""
-    ) {
+    ){
 
         window.MASTER_ACTUAL = null;
-
         return null;
 
     }
 
 
     const respuesta =
-        await fetch(
-            "master.csv"
-        );
+        await fetch("master.csv");
 
 
-    if (!respuesta.ok) {
+    if(!respuesta.ok){
 
         throw new Error(
             "No se pudo cargar master.csv."
@@ -563,16 +503,10 @@ async function(j1) {
         texto.split(/\r?\n/);
 
 
-    for (
-        const linea of lineas
-    ) {
+    for(const linea of lineas){
 
-        if (
-            !linea.trim()
-        ) {
-
+        if(!linea.trim()){
             continue;
-
         }
 
 
@@ -580,12 +514,8 @@ async function(j1) {
             linea.split(",");
 
 
-        if (
-            columnas.length < 21
-        ) {
-
+        if(columnas.length < 21){
             continue;
-
         }
 
 
@@ -595,10 +525,10 @@ async function(j1) {
             ).trim();
 
 
-        if (
+        if(
             codigo !==
             String(j1).trim()
-        ) {
+        ){
 
             continue;
 
@@ -607,68 +537,28 @@ async function(j1) {
 
         window.MASTER_ACTUAL = {
 
-            j1:
-                columnas[0]?.trim() || "",
+            j1: columnas[0]?.trim() || "",
+            j2: columnas[1]?.trim() || "",
+            j3: columnas[2]?.trim() || "",
+            j4: columnas[3]?.trim() || "",
+            j5: columnas[4]?.trim() || "",
+            j6: columnas[5]?.trim() || "",
+            j7: columnas[6]?.trim() || "",
+            j8: columnas[7]?.trim() || "",
+            j9: columnas[8]?.trim() || "",
+            j10: columnas[9]?.trim() || "",
 
-            j2:
-                columnas[1]?.trim() || "",
-
-            j3:
-                columnas[2]?.trim() || "",
-
-            j4:
-                columnas[3]?.trim() || "",
-
-            j5:
-                columnas[4]?.trim() || "",
-
-            j6:
-                columnas[5]?.trim() || "",
-
-            j7:
-                columnas[6]?.trim() || "",
-
-            j8:
-                columnas[7]?.trim() || "",
-
-            j9:
-                columnas[8]?.trim() || "",
-
-            j10:
-                columnas[9]?.trim() || "",
-
-            e1:
-                columnas[10]?.trim() || "",
-
-            e2:
-                columnas[11]?.trim() || "",
-
-            e3:
-                columnas[12]?.trim() || "",
-
-            e4:
-                columnas[13]?.trim() || "",
-
-            e5:
-                columnas[14]?.trim() || "",
-
-            e6:
-                columnas[15]?.trim() || "",
-
-            e7:
-                columnas[16]?.trim() || "",
-
-            e8:
-                columnas[17]?.trim() || "",
-
-            e9:
-                columnas[18]?.trim() || "",
-
-            e10:
-                columnas[19]?.trim() || "",
-
-            e11:
-                columnas[20]?.trim() || ""
+            e1: columnas[10]?.trim() || "",
+            e2: columnas[11]?.trim() || "",
+            e3: columnas[12]?.trim() || "",
+            e4: columnas[13]?.trim() || "",
+            e5: columnas[14]?.trim() || "",
+            e6: columnas[15]?.trim() || "",
+            e7: columnas[16]?.trim() || "",
+            e8: columnas[17]?.trim() || "",
+            e9: columnas[18]?.trim() || "",
+            e10: columnas[19]?.trim() || "",
+            e11: columnas[20]?.trim() || ""
 
         };
 
@@ -692,23 +582,14 @@ async function(j1) {
      ===================================================== -->
 
 <script src="leepaljson.js"></script>
-
 <script src="palvideo.js"></script>
-
 <script src="buscaruta.js"></script>
-
 <script src="cargacont.js"></script>
-
 <script src="palbuscador.js"></script>
-
 <script src="palnavegador.js"></script>
-
 <script src="palgeo.js"></script>
-
 <script src="palgeosimplificado.js"></script>
-
 <script src="leepalgeo.js"></script>
-
 <script src="palcabecera.js"></script>
 
 
@@ -727,35 +608,31 @@ async function(j1) {
 
 
 <!-- =====================================================
-     GENERADOR 1.1
+     GENERADOR
      ===================================================== -->
 
 <script src="cab01.js"></script>
-
 <script src="cab02.js"></script>
-
 <script src="cab03.js"></script>
-
 <script src="cab04.js"></script>
-
 <script src="cab05.js"></script>
-
 <script src="cab06.js"></script>
-
 <script src="cab07.js"></script>
-
 <script src="cab08.js"></script>
-
 <script src="cab09.js"></script>
 
+
+<!-- =====================================================
+     ARRANQUE
+     ===================================================== -->
 
 <script>
 
 document.addEventListener(
     "DOMContentLoaded",
-    async function() {
+    async function(){
 
-        try {
+        try{
 
             await window.PALNAVEGADOR.inicializar();
 
@@ -770,7 +647,7 @@ document.addEventListener(
                 parametros.get("codigo");
 
 
-            if (codigo) {
+            if(codigo){
 
                 await window.PALNAVEGADOR.cargarPorCodigo(
                     codigo
@@ -784,8 +661,7 @@ document.addEventListener(
             await window.PALNAVEGADOR.aleatorio();
 
         }
-
-        catch (error) {
+        catch(error){
 
             console.error(
                 "GENERADOR 1.1: error durante el arranque.",
@@ -801,5 +677,4 @@ document.addEventListener(
 
 
 </body>
-
 </html>
