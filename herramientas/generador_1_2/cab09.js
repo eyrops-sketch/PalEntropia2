@@ -1,18 +1,20 @@
 /*
 ========================================================
-CAB09.js v1.2
 PalEntropía
-Información avanzada
-========================================================
+CAB09.js
+Información avanzada — Fase 2
 
 FUNCIÓN:
-- Utiliza el botón #botonInfoAvanzada del HTML.
-- Abre un lightbox.
-- Permite cerrar el lightbox.
-- NO lee datos.
-- NO calcula estadísticas.
-- NO modifica la Paleoficha.
-- NO bloquea el scroll de la página.
+- Crear botón de Información avanzada.
+- Abrir lightbox.
+- Cerrar lightbox.
+- Preparado para recibir estadísticas posteriormente.
+
+NO:
+- No modifica CAB02.
+- No modifica style_1_1.css.
+- No calcula estadísticas.
+- No lee CSV.
 ========================================================
 */
 
@@ -23,16 +25,38 @@ FUNCIÓN:
 
 const CAB09 = {
 
-    version: "1.2",
+    version: "1.0",
 
 
-    /*====================================================
-      INICIALIZAR
-    ====================================================*/
+    /* ==================================================
+       INICIALIZAR
+       ================================================== */
 
-    activar(){
+    inicializar(){
 
-        const boton =
+        this.crearBoton();
+
+    },
+
+
+    /* ==================================================
+       CREAR BOTÓN
+       ================================================== */
+
+    crearBoton(){
+
+        const ficha =
+            document.getElementById("ficha");
+
+
+        if(!ficha){
+
+            return;
+
+        }
+
+
+        let boton =
             document.getElementById(
                 "botonInfoAvanzada"
             );
@@ -40,26 +64,38 @@ const CAB09 = {
 
         if(!boton){
 
-            console.warn(
-                "CAB09: no se encontró #botonInfoAvanzada."
+            boton =
+                document.createElement("button");
+
+
+            boton.id =
+                "botonInfoAvanzada";
+
+
+            boton.type =
+                "button";
+
+
+            boton.title =
+                "Información avanzada";
+
+
+            boton.setAttribute(
+                "aria-label",
+                "Abrir información avanzada"
             );
 
-            return;
+
+            boton.textContent =
+                "ⓘ";
+
+
+            ficha.appendChild(
+                boton
+            );
 
         }
 
-
-        /*
-        Crear el lightbox.
-        */
-
-        this.crearLightbox();
-
-
-        /*
-        Evitar registrar el evento
-        más de una vez.
-        */
 
         if(
             boton.dataset.cab09Activo ===
@@ -75,7 +111,7 @@ const CAB09 = {
             "click",
             () => {
 
-                this.abrirLightbox();
+                this.abrir();
 
             }
         );
@@ -87,9 +123,9 @@ const CAB09 = {
     },
 
 
-    /*====================================================
-      CREAR LIGHTBOX
-    ====================================================*/
+    /* ==================================================
+       CREAR LIGHTBOX
+       ================================================== */
 
     crearLightbox(){
 
@@ -99,10 +135,6 @@ const CAB09 = {
             );
 
 
-        /*
-        Si ya existe no lo duplicamos.
-        */
-
         if(visor){
 
             return visor;
@@ -110,14 +142,8 @@ const CAB09 = {
         }
 
 
-        /*================================================
-          VISOR
-        =================================================*/
-
         visor =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
 
         visor.id =
@@ -130,28 +156,16 @@ const CAB09 = {
         );
 
 
-        /*================================================
-          VENTANA
-        =================================================*/
-
         const ventana =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
 
         ventana.id =
             "ventanaInfoAvanzada";
 
 
-        /*================================================
-          BOTÓN CERRAR
-        =================================================*/
-
         const cerrar =
-            document.createElement(
-                "button"
-            );
+            document.createElement("button");
 
 
         cerrar.id =
@@ -160,6 +174,10 @@ const CAB09 = {
 
         cerrar.type =
             "button";
+
+
+        cerrar.textContent =
+            "×";
 
 
         cerrar.title =
@@ -172,27 +190,13 @@ const CAB09 = {
         );
 
 
-        cerrar.textContent =
-            "×";
-
-
-        /*================================================
-          TÍTULO
-        =================================================*/
-
         const titulo =
-            document.createElement(
-                "h2"
-            );
+            document.createElement("h2");
 
 
         titulo.textContent =
             "Información estadística";
 
-
-        /*================================================
-          CONSTRUIR
-        =================================================*/
 
         ventana.appendChild(
             cerrar
@@ -214,23 +218,23 @@ const CAB09 = {
         );
 
 
-        /*================================================
-          CERRAR CON BOTÓN
-        =================================================*/
+        /* =============================================
+           CERRAR CON BOTÓN
+           ============================================= */
 
         cerrar.addEventListener(
             "click",
             () => {
 
-                this.cerrarLightbox();
+                this.cerrar();
 
             }
         );
 
 
-        /*================================================
-          CERRAR PULSANDO FUERA
-        =================================================*/
+        /* =============================================
+           CERRAR PULSANDO FUERA
+           ============================================= */
 
         visor.addEventListener(
             "click",
@@ -240,27 +244,7 @@ const CAB09 = {
                     evento.target === visor
                 ){
 
-                    this.cerrarLightbox();
-
-                }
-
-            }
-        );
-
-
-        /*================================================
-          CERRAR CON ESC
-        =================================================*/
-
-        document.addEventListener(
-            "keydown",
-            evento => {
-
-                if(
-                    evento.key === "Escape"
-                ){
-
-                    this.cerrarLightbox();
+                    this.cerrar();
 
                 }
 
@@ -273,16 +257,14 @@ const CAB09 = {
     },
 
 
-    /*====================================================
-      ABRIR LIGHTBOX
-    ====================================================*/
+    /* ==================================================
+       ABRIR
+       ================================================== */
 
-    abrirLightbox(){
+    abrir(){
 
         const visor =
-            document.getElementById(
-                "visorInfoAvanzada"
-            );
+            this.crearLightbox();
 
 
         if(!visor){
@@ -301,26 +283,14 @@ const CAB09 = {
             "false"
         );
 
-
-        /*
-        IMPORTANTE:
-
-        CAB09 NO modifica:
-
-        document.body.style.overflow
-
-        Por tanto el scroll de la página
-        no queda bloqueado.
-        */
-
     },
 
 
-    /*====================================================
-      CERRAR LIGHTBOX
-    ====================================================*/
+    /* ==================================================
+       CERRAR
+       ================================================== */
 
-    cerrarLightbox(){
+    cerrar(){
 
         const visor =
             document.getElementById(
@@ -349,23 +319,26 @@ const CAB09 = {
 };
 
 
-/*========================================================
-EXPORTAR
-========================================================*/
+/* ======================================================
+   EXPORTAR
+   ====================================================== */
 
 window.CAB09 =
     CAB09;
 
 
-/*========================================================
-ARRANQUE
-========================================================*/
+/* ======================================================
+   ARRANQUE
+
+   Importante:
+   CAB09 se inicializa cuando existe el DOM.
+   ====================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     function(){
 
-        CAB09.activar();
+        CAB09.inicializar();
 
     }
 );
