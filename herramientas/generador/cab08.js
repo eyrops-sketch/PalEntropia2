@@ -1,3 +1,5 @@
+CAB08.js — Taxonomía
+
 /*
 ========================================================
 PalEntropía
@@ -39,7 +41,7 @@ document.addEventListener(
             evento.detail;
 
 
-        if(!ficha) {
+        if (!ficha) {
 
             return;
 
@@ -80,7 +82,7 @@ function procesarTaxon(
     -----------------------------------------------------
     */
 
-    if(
+    if (
         !elementoTa1 ||
         !elementoTa2
     ) {
@@ -109,7 +111,7 @@ function procesarTaxon(
     -----------------------------------------------------
     */
 
-    if(
+    if (
         !window.PALTAXON
     ) {
 
@@ -132,7 +134,7 @@ function procesarTaxon(
         .toUpperCase();
 
 
-    if(!codigo) {
+    if (!codigo) {
 
         return;
 
@@ -149,7 +151,7 @@ function procesarTaxon(
         window.PALTAXON[codigo];
 
 
-    if(
+    if (
         !taxon
     ) {
 
@@ -172,18 +174,24 @@ function procesarTaxon(
         ).trim();
 
 
-    if(ta1) {
+    if (ta1) {
 
         const niveles =
             ta1
                 .split(">")
                 .map(
-                    nivel =>
-                        nivel.trim()
+                    function(nivel) {
+
+                        return nivel.trim();
+
+                    }
                 )
                 .filter(
-                    nivel =>
-                        nivel !== ""
+                    function(nivel) {
+
+                        return nivel !== "";
+
+                    }
                 );
 
 
@@ -203,11 +211,41 @@ function procesarTaxon(
                     "nivelTaxon";
 
 
-                linea.textContent =
-                    indice === 0
-                        ? nivel
-                        : "└─ " + nivel;
+                /*
+                -------------------------------------------------
+                PRIMER NIVEL
+                -------------------------------------------------
+                */
 
+                if (
+                    indice === 0
+                ) {
+
+                    linea.textContent =
+                        nivel;
+
+                }
+
+
+                /*
+                -------------------------------------------------
+                NIVELES DESCENDIENTES
+                -------------------------------------------------
+                */
+
+                else {
+
+                    linea.textContent =
+                        "└─ " + nivel;
+
+                }
+
+
+                /*
+                -------------------------------------------------
+                PROFUNDIDAD DEL ÁRBOL
+                -------------------------------------------------
+                */
 
                 linea.style.paddingLeft =
                     (
@@ -231,8 +269,15 @@ function procesarTaxon(
     -----------------------------------------------------
     */
 
+    const ta2 =
+        String(
+            taxon.ta2 || ""
+        ).trim();
+
+
     elementoTa2.textContent =
-        taxon.ta2 || "";
+        ta2;
+
 
 }
 
