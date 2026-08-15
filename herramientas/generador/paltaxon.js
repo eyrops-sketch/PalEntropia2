@@ -96,11 +96,11 @@ window.PALTAXON = {
 "002_03":{
   ta1:"Animalia > Chordata > Craniata",
   ta2:"Cordado. Craneado. Vertebrado basal."
-},
+ },   
 
 "002_04":{
-  ta1:"Fungi > Basidiomycota",
-  ta2:"Hongo. Basidiomiceto."
+  ta1:"Animalia > Chordata > Vertebrata > Osteostraci > Thyestidae > Thyestes",
+  ta2:"Cordado. Vertebrado. Osteóstraco. Pez sin mandíbulas."
 },
 
 "002_05":{
