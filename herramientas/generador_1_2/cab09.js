@@ -2,15 +2,17 @@
 ========================================================
 CAB09.js
 PalEntropía — Fase 2
-Información ecológica y estadística
+Lightbox de Información Avanzada
+VERSIÓN DE PRUEBA
 ========================================================
 */
 
-window.CAB09 = {
+(function(){
 
-    inicializar(){
+    function iniciarCAB09(){
 
-        const ficha = document.getElementById("ficha");
+        const ficha =
+            document.getElementById("ficha");
 
         if(!ficha){
 
@@ -24,7 +26,7 @@ window.CAB09 = {
 
 
         /* =================================================
-           BOTÓN INFORMACIÓN AVANZADA
+           EVITAR DUPLICADOS
            ================================================= */
 
         if(
@@ -38,9 +40,12 @@ window.CAB09 = {
         }
 
 
+        /* =================================================
+           BOTÓN
+           ================================================= */
+
         const boton =
             document.createElement("button");
-
 
         boton.id =
             "botonInfoAvanzada";
@@ -56,9 +61,13 @@ window.CAB09 = {
             "Información avanzada"
         );
 
-        boton.textContent =
-            "ⓘ";
+        boton.textContent = "ⓘ";
 
+
+        /*
+        La ficha necesita posición relativa
+        para colocar el botón dentro de ella.
+        */
 
         ficha.style.position =
             "relative";
@@ -76,7 +85,6 @@ window.CAB09 = {
         const visor =
             document.createElement("div");
 
-
         visor.id =
             "visorInfoAvanzada";
 
@@ -89,23 +97,22 @@ window.CAB09 = {
         const ventana =
             document.createElement("div");
 
-
         ventana.id =
             "ventanaInfoAvanzada";
 
 
+        /* =================================================
+           BOTÓN CERRAR
+           ================================================= */
+
         const cerrar =
             document.createElement("button");
-
 
         cerrar.id =
             "cerrarInfoAvanzada";
 
         cerrar.type =
             "button";
-
-        cerrar.className =
-            "botonCerrar";
 
         cerrar.setAttribute(
             "aria-label",
@@ -116,52 +123,59 @@ window.CAB09 = {
             "×";
 
 
+        /* =================================================
+           TÍTULO
+           ================================================= */
+
         const titulo =
             document.createElement("h2");
-
 
         titulo.textContent =
             "Información avanzada";
 
 
         /* =================================================
-           DATOS FICTICIOS DE PRUEBA
+           HÁBITATS — DATOS FICTICIOS
            ================================================= */
 
-        const habitats =
+        const bloqueHabitats =
             document.createElement("section");
 
-        habitats.className =
+        bloqueHabitats.className =
             "bloqueFase2";
 
-        habitats.innerHTML =
+        bloqueHabitats.innerHTML =
 
             "<h3>Hábitats</h3>" +
 
             "<div id=\"fase2Habitats\">" +
 
                 "<div class=\"fase2Habitat\">" +
-                    "<strong>Principal:</strong> Bosque" +
+                    "<strong>Hábitat principal:</strong> Bosque" +
                 "</div>" +
 
                 "<div class=\"fase2Habitat\">" +
-                    "<strong>Secundario:</strong> Llanura" +
+                    "<strong>Hábitat secundario:</strong> Llanura" +
                 "</div>" +
 
                 "<div class=\"fase2Habitat\">" +
-                    "<strong>Secundario:</strong> Ribera" +
+                    "<strong>Hábitat secundario:</strong> Ribera" +
                 "</div>" +
 
             "</div>";
 
 
-        const modoVida =
+        /* =================================================
+           MODO DE VIDA — DATO FICTICIO
+           ================================================= */
+
+        const bloqueModo =
             document.createElement("section");
 
-        modoVida.className =
+        bloqueModo.className =
             "bloqueFase2";
 
-        modoVida.innerHTML =
+        bloqueModo.innerHTML =
 
             "<h3>Modo de vida</h3>" +
 
@@ -173,13 +187,17 @@ window.CAB09 = {
             "</div>";
 
 
-        const medioVida =
+        /* =================================================
+           MEDIO DE VIDA — DATO FICTICIO
+           ================================================= */
+
+        const bloqueMedio =
             document.createElement("section");
 
-        medioVida.className =
+        bloqueMedio.className =
             "bloqueFase2";
 
-        medioVida.innerHTML =
+        bloqueMedio.innerHTML =
 
             "<h3>Medio de vida</h3>" +
 
@@ -190,13 +208,17 @@ window.CAB09 = {
             "</div>";
 
 
-        const estadisticas =
+        /* =================================================
+           ESTADÍSTICAS — DATOS FICTICIOS
+           ================================================= */
+
+        const bloqueStats =
             document.createElement("section");
 
-        estadisticas.className =
+        bloqueStats.className =
             "bloqueFase2";
 
-        estadisticas.innerHTML =
+        bloqueStats.innerHTML =
 
             "<h3>Estadísticas</h3>" +
 
@@ -249,13 +271,17 @@ window.CAB09 = {
             "</div>";
 
 
-        const analisis =
+        /* =================================================
+           ANÁLISIS — DATOS FICTICIOS
+           ================================================= */
+
+        const bloqueAnalisis =
             document.createElement("section");
 
-        analisis.className =
+        bloqueAnalisis.className =
             "bloqueFase2";
 
-        analisis.innerHTML =
+        bloqueAnalisis.innerHTML =
 
             "<h3>Análisis estadístico</h3>" +
 
@@ -297,23 +323,23 @@ window.CAB09 = {
         );
 
         ventana.appendChild(
-            habitats
+            bloqueHabitats
         );
 
         ventana.appendChild(
-            modoVida
+            bloqueModo
         );
 
         ventana.appendChild(
-            medioVida
+            bloqueMedio
         );
 
         ventana.appendChild(
-            estadisticas
+            bloqueStats
         );
 
         ventana.appendChild(
-            analisis
+            bloqueAnalisis
         );
 
 
@@ -384,7 +410,8 @@ window.CAB09 = {
 
                     visor.setAttribute(
                         "aria-hidden",
-                        "true";
+                        "true"
+                    );
 
                 }
 
@@ -417,11 +444,33 @@ window.CAB09 = {
             }
         );
 
+
+        console.log(
+            "CAB09: Lightbox de Fase 2 inicializado."
+        );
+
     }
 
-};
+
+    /* =====================================================
+       INICIALIZACIÓN
+       ===================================================== */
+
+    if(
+        document.readyState === "loading"
+    ){
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            iniciarCAB09
+        );
+
+    }
+    else{
+
+        iniciarCAB09();
+
+    }
 
 
-
-
-
+})();
