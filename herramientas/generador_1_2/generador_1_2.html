@@ -101,6 +101,7 @@
 
 }
 
+
 /* =====================================================
    SEPARACIÓN TAXONOMÍA
    ===================================================== */
@@ -145,7 +146,7 @@
 
 
 /* =====================================================
-   RESULTADOS DEL BUSCADOR
+   RESULTADOS BUSCADOR
    ===================================================== */
 
 .resultadoBuscador {
@@ -196,6 +197,10 @@
 <body>
 
 
+<!-- =====================================================
+     BOTONES SUPERIORES
+     ===================================================== -->
+
 <button id="botonAleatorio"
         type="button"
         title="Paleoficha aleatoria"
@@ -218,18 +223,8 @@
 
 
 <!-- =====================================================
-     CAB09 — BOTÓN INFORMACIÓN AVANZADA
+     CABECERA
      ===================================================== -->
-
-<button id="botonInfoAvanzada"
-        type="button"
-        title="Información estadística"
-        aria-label="Abrir información estadística">
-
-    ⓘ
-
-</button>
-
 
 <header id="cabecera">
 
@@ -242,6 +237,10 @@
 </header>
 
 
+<!-- =====================================================
+     BUSCADOR
+     ===================================================== -->
+
 <section id="controlesBusqueda">
 
     <button id="botonBuscar"
@@ -253,6 +252,10 @@
 
 </section>
 
+
+<!-- =====================================================
+     NAVEGACIÓN
+     ===================================================== -->
 
 <section id="controlesNavegacion"
          aria-label="Navegación de paleofichas">
@@ -312,12 +315,20 @@
 </section>
 
 
+<!-- =====================================================
+     ESTADO
+     ===================================================== -->
+
 <div id="estado">
 
     Cargando contenedor...
 
 </div>
 
+
+<!-- =====================================================
+     PALEOFICHA
+     ===================================================== -->
 
 <main id="ficha"
       class="ficha"
@@ -555,9 +566,7 @@ async function(j1) {
 
 
     const respuesta =
-        await fetch(
-            "master.csv"
-        );
+        await fetch("master.csv");
 
 
     if (!respuesta.ok) {
@@ -577,13 +586,9 @@ async function(j1) {
         texto.split(/\r?\n/);
 
 
-    for (
-        const linea of lineas
-    ) {
+    for (const linea of lineas) {
 
-        if (
-            !linea.trim()
-        ) {
+        if (!linea.trim()) {
 
             continue;
 
@@ -594,9 +599,7 @@ async function(j1) {
             linea.split(",");
 
 
-        if (
-            columnas.length < 21
-        ) {
+        if (columnas.length < 21) {
 
             continue;
 
@@ -604,9 +607,7 @@ async function(j1) {
 
 
         const codigo =
-            String(
-                columnas[0]
-            ).trim();
+            String(columnas[0]).trim();
 
 
         if (
@@ -621,68 +622,28 @@ async function(j1) {
 
         window.MASTER_ACTUAL = {
 
-            j1:
-                columnas[0]?.trim() || "",
+            j1: columnas[0]?.trim() || "",
+            j2: columnas[1]?.trim() || "",
+            j3: columnas[2]?.trim() || "",
+            j4: columnas[3]?.trim() || "",
+            j5: columnas[4]?.trim() || "",
+            j6: columnas[5]?.trim() || "",
+            j7: columnas[6]?.trim() || "",
+            j8: columnas[7]?.trim() || "",
+            j9: columnas[8]?.trim() || "",
+            j10: columnas[9]?.trim() || "",
 
-            j2:
-                columnas[1]?.trim() || "",
-
-            j3:
-                columnas[2]?.trim() || "",
-
-            j4:
-                columnas[3]?.trim() || "",
-
-            j5:
-                columnas[4]?.trim() || "",
-
-            j6:
-                columnas[5]?.trim() || "",
-
-            j7:
-                columnas[6]?.trim() || "",
-
-            j8:
-                columnas[7]?.trim() || "",
-
-            j9:
-                columnas[8]?.trim() || "",
-
-            j10:
-                columnas[9]?.trim() || "",
-
-            e1:
-                columnas[10]?.trim() || "",
-
-            e2:
-                columnas[11]?.trim() || "",
-
-            e3:
-                columnas[12]?.trim() || "",
-
-            e4:
-                columnas[13]?.trim() || "",
-
-            e5:
-                columnas[14]?.trim() || "",
-
-            e6:
-                columnas[15]?.trim() || "",
-
-            e7:
-                columnas[16]?.trim() || "",
-
-            e8:
-                columnas[17]?.trim() || "",
-
-            e9:
-                columnas[18]?.trim() || "",
-
-            e10:
-                columnas[19]?.trim() || "",
-
-            e11:
-                columnas[20]?.trim() || ""
+            e1: columnas[10]?.trim() || "",
+            e2: columnas[11]?.trim() || "",
+            e3: columnas[12]?.trim() || "",
+            e4: columnas[13]?.trim() || "",
+            e5: columnas[14]?.trim() || "",
+            e6: columnas[15]?.trim() || "",
+            e7: columnas[16]?.trim() || "",
+            e8: columnas[17]?.trim() || "",
+            e9: columnas[18]?.trim() || "",
+            e10: columnas[19]?.trim() || "",
+            e11: columnas[20]?.trim() || ""
 
         };
 
@@ -762,11 +723,15 @@ async function(j1) {
 
 
 <!-- =====================================================
-     CAB09
+     CAB09 — INFORMACIÓN AVANZADA
      ===================================================== -->
 
 <script src="cab09.js"></script>
 
+
+<!-- =====================================================
+     ARRANQUE
+     ===================================================== -->
 
 <script>
 
