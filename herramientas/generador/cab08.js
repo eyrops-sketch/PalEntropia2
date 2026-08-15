@@ -7,7 +7,8 @@ Generador de Paleofichas 1.1
 BLOQUE:
 - Taxonomía
 - Lectura de PALTAXON
-- Presentación de ta1 y ta2
+- Presentación de ta1 como árbol descendente
+- Presentación de ta2
 
 CRITERIO:
 - Injerencia mínima
@@ -95,7 +96,7 @@ function procesarTaxon(
     -----------------------------------------------------
     */
 
-    elementoTa1.textContent =
+    elementoTa1.innerHTML =
         "";
 
     elementoTa2.textContent =
@@ -161,10 +162,67 @@ function procesarTaxon(
     -----------------------------------------------------
     TA1
     -----------------------------------------------------
+    ÁRBOL TAXONÓMICO DESCENDENTE
+    -----------------------------------------------------
     */
 
-    elementoTa1.textContent =
-        taxon.ta1 || "";
+    const ta1 =
+        String(
+            taxon.ta1 || ""
+        ).trim();
+
+
+    if(ta1) {
+
+        const niveles =
+            ta1
+                .split(">")
+                .map(
+                    nivel =>
+                        nivel.trim()
+                )
+                .filter(
+                    nivel =>
+                        nivel !== ""
+                );
+
+
+        niveles.forEach(
+            function(
+                nivel,
+                indice
+            ) {
+
+                const linea =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                linea.className =
+                    "nivelTaxon";
+
+
+                linea.textContent =
+                    indice === 0
+                        ? nivel
+                        : "└─ " + nivel;
+
+
+                linea.style.paddingLeft =
+                    (
+                        indice * 18
+                    ) + "px";
+
+
+                elementoTa1.appendChild(
+                    linea
+                );
+
+            }
+        );
+
+    }
 
 
     /*
@@ -184,8 +242,3 @@ function procesarTaxon(
 FIN CAB08.js
 ========================================================
 */
-
-
-
-
-
