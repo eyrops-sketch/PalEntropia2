@@ -275,8 +275,8 @@
     <button id="botonSiguiente"
             class="botonNavegacion"
             type="button"
-            title="Paleoficha siguiente"
-            aria-label="Paleoficha siguiente">
+            title="Siguiente paleoficha"
+            aria-label="Siguiente paleoficha">
 
         ▶
 
@@ -329,6 +329,24 @@
 
     <div id="cronologia">
     </div>
+
+
+    <!-- =================================================
+         TAXONOMÍA
+         ================================================= -->
+
+    <section id="bloqueTaxon">
+
+
+        <div id="taxon">
+        </div>
+
+
+        <div id="taxonDescripcion">
+        </div>
+
+
+    </section>
 
 
     <!-- =================================================
@@ -701,13 +719,18 @@ async function(j1) {
 
 
 <!-- =====================================================
-     CONTENEDOR GEOLOGÍA
+     TAXONOMÍA
+     ===================================================== -->
 
-     MODIFICACIÓN:
-     CONT07 se carga antes de CAB07.
+<script src="paltaxon.js"></script>
+
+
+<!-- =====================================================
+     CONTENEDOR GEOLOGÍA
      ===================================================== -->
 
 <script src="cont07.js"></script>
+
 
 <!-- =====================================================
      GENERADOR 1.1
@@ -726,6 +749,9 @@ async function(j1) {
 <script src="cab06.js"></script>
 
 <script src="cab07.js"></script>
+
+<script src="cab08.js"></script>
+
 
 <script>
 
@@ -759,6 +785,7 @@ document.addEventListener(
                     window.location.search
                 );
 
+
             const codigo =
                 parametros.get("codigo");
 
@@ -789,7 +816,9 @@ document.addEventListener(
 
             await window.PALNAVEGADOR.aleatorio();
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(
                 "GENERADOR 1.1: error durante el arranque.",
@@ -802,7 +831,6 @@ document.addEventListener(
 );
 
 </script>
-      
 
 
 </body>
