@@ -2,16 +2,17 @@
 ========================================================
 CAB09.js v1.2
 PalEntropía
-Información estadística avanzada
+Información avanzada
 ========================================================
 
 FUNCIÓN:
-- Recibe e1-e11 desde CAB02.
-- Crea el botón dentro de #ficha.
+- Utiliza el botón #botonInfoAvanzada del HTML.
 - Abre un lightbox.
-- No modifica CAB02.
-- No modifica style_1_1.css.
-- No calcula estadísticas todavía.
+- Permite cerrar el lightbox.
+- NO lee datos.
+- NO calcula estadísticas.
+- NO modifica la Paleoficha.
+- NO bloquea el scroll de la página.
 ========================================================
 */
 
@@ -24,44 +25,45 @@ const CAB09 = {
 
     version: "1.2",
 
-    datos: null,
-
 
     /*====================================================
-      EJECUTAR
-      CAB02 llama directamente a esta función
+      INICIALIZAR
     ====================================================*/
 
-    ejecutar(master){
-
-        this.datos = master || null;
-
-        const ficha =
-            document.getElementById("ficha");
-
-        if(!ficha){
-
-            return;
-
-        }
-
+    activar(){
 
         const boton =
-            this.crearBoton(ficha);
+            document.getElementById(
+                "botonInfoAvanzada"
+            );
 
 
         if(!boton){
 
+            console.warn(
+                "CAB09: no se encontró #botonInfoAvanzada."
+            );
+
             return;
 
         }
 
 
+        /*
+        Crear el lightbox.
+        */
+
         this.crearLightbox();
 
 
+        /*
+        Evitar registrar el evento
+        más de una vez.
+        */
+
         if(
-            boton.dataset.cab09Activo === "true"
+            boton.dataset.cab09Activo ===
+            "true"
         ){
 
             return;
@@ -86,82 +88,6 @@ const CAB09 = {
 
 
     /*====================================================
-      CREAR BOTÓN
-    ====================================================*/
-
-    crearBoton(ficha){
-
-        let boton =
-            document.getElementById(
-                "botonInfoAvanzada"
-            );
-
-
-        if(boton){
-
-            /*
-            Aseguramos que pertenece
-            a la Paleoficha actual.
-            */
-
-            if(
-                boton.parentElement !== ficha
-            ){
-
-                ficha.appendChild(
-                    boton
-                );
-
-            }
-
-            return boton;
-
-        }
-
-
-        boton =
-            document.createElement("button");
-
-
-        boton.id =
-            "botonInfoAvanzada";
-
-
-        boton.type =
-            "button";
-
-
-        boton.title =
-            "Información estadística";
-
-
-        boton.setAttribute(
-            "aria-label",
-            "Abrir información estadística"
-        );
-
-
-        boton.textContent =
-            "ⓘ";
-
-
-        /*
-        IMPORTANTE:
-        Se inserta directamente dentro
-        de #ficha.
-        */
-
-        ficha.appendChild(
-            boton
-        );
-
-
-        return boton;
-
-    },
-
-
-    /*====================================================
       CREAR LIGHTBOX
     ====================================================*/
 
@@ -173,6 +99,10 @@ const CAB09 = {
             );
 
 
+        /*
+        Si ya existe no lo duplicamos.
+        */
+
         if(visor){
 
             return visor;
@@ -180,8 +110,14 @@ const CAB09 = {
         }
 
 
+        /*================================================
+          VISOR
+        =================================================*/
+
         visor =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         visor.id =
@@ -194,16 +130,28 @@ const CAB09 = {
         );
 
 
+        /*================================================
+          VENTANA
+        =================================================*/
+
         const ventana =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         ventana.id =
             "ventanaInfoAvanzada";
 
 
+        /*================================================
+          BOTÓN CERRAR
+        =================================================*/
+
         const cerrar =
-            document.createElement("button");
+            document.createElement(
+                "button"
+            );
 
 
         cerrar.id =
@@ -214,23 +162,37 @@ const CAB09 = {
             "button";
 
 
-        cerrar.textContent =
-            "×";
+        cerrar.title =
+            "Cerrar";
 
 
         cerrar.setAttribute(
             "aria-label",
-            "Cerrar información estadística"
+            "Cerrar información avanzada"
         );
 
 
+        cerrar.textContent =
+            "×";
+
+
+        /*================================================
+          TÍTULO
+        =================================================*/
+
         const titulo =
-            document.createElement("h2");
+            document.createElement(
+                "h2"
+            );
 
 
         titulo.textContent =
             "Información estadística";
 
+
+        /*================================================
+          CONSTRUIR
+        =================================================*/
 
         ventana.appendChild(
             cerrar
@@ -252,6 +214,10 @@ const CAB09 = {
         );
 
 
+        /*================================================
+          CERRAR CON BOTÓN
+        =================================================*/
+
         cerrar.addEventListener(
             "click",
             () => {
@@ -262,12 +228,36 @@ const CAB09 = {
         );
 
 
+        /*================================================
+          CERRAR PULSANDO FUERA
+        =================================================*/
+
         visor.addEventListener(
             "click",
             evento => {
 
                 if(
                     evento.target === visor
+                ){
+
+                    this.cerrarLightbox();
+
+                }
+
+            }
+        );
+
+
+        /*================================================
+          CERRAR CON ESC
+        =================================================*/
+
+        document.addEventListener(
+            "keydown",
+            evento => {
+
+                if(
+                    evento.key === "Escape"
                 ){
 
                     this.cerrarLightbox();
@@ -312,8 +302,16 @@ const CAB09 = {
         );
 
 
-        document.body.style.overflow =
-            "hidden";
+        /*
+        IMPORTANTE:
+
+        CAB09 NO modifica:
+
+        document.body.style.overflow
+
+        Por tanto el scroll de la página
+        no queda bloqueado.
+        */
 
     },
 
@@ -346,10 +344,6 @@ const CAB09 = {
             "true"
         );
 
-
-        document.body.style.overflow =
-            "";
-
     }
 
 };
@@ -363,17 +357,18 @@ window.CAB09 =
     CAB09;
 
 
-/*
-========================================================
-IMPORTANTE
+/*========================================================
+ARRANQUE
+========================================================*/
 
-CAB09 NO se ejecuta automáticamente.
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
 
-CAB02 lo llama mediante:
+        CAB09.activar();
 
-CAB09.ejecutar(master)
+    }
+);
 
-========================================================
-*/
 
 })();
