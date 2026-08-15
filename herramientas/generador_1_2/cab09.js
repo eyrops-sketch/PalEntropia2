@@ -1,6 +1,6 @@
 /*
 ========================================================
-CAB09.js v1.0
+CAB09.js v1.1
 Estadísticas y Análisis Estadístico
 PalEntropía
 Generador de Paleofichas 1.2
@@ -37,7 +37,7 @@ CONFIGURACIÓN
 
 const CAB09 = {
 
-    version: "1.0",
+    version: "1.1",
 
     campos: [
         "adaptabilidad",
@@ -55,7 +55,7 @@ const CAB09 = {
 
 
 /*========================================================
-OBTENER VALORES E1-E11
+OBTENER ESTADÍSTICAS E1-E11
 ========================================================*/
 
 obtenerEstadisticas(registro){
@@ -80,18 +80,23 @@ obtenerEstadisticas(registro){
 
     ];
 
-    /*
-    Todos los valores deben existir
-    y ser numéricos.
-    */
-
-    if(valores.some(v => v === undefined || v === null || v === "")){
+    if(
+        valores.some(
+            v => v === undefined ||
+                 v === null ||
+                 v === ""
+        )
+    ){
         return null;
     }
 
     const numeros = valores.map(Number);
 
-    if(numeros.some(v => Number.isNaN(v))){
+    if(
+        numeros.some(
+            v => Number.isNaN(v)
+        )
+    ){
         return null;
     }
 
@@ -121,8 +126,10 @@ MEDIA
 media(valores){
 
     return Math.round(
-        valores.reduce((suma, valor) => suma + valor, 0)
-        / valores.length
+        valores.reduce(
+            (suma, valor) => suma + valor,
+            0
+        ) / valores.length
     );
 
 },
@@ -156,7 +163,6 @@ analizar(stats){
 
         ]),
 
-
         supervivencia: this.media([
 
             stats.adaptabilidad,
@@ -165,7 +171,6 @@ analizar(stats){
             stats.plasticidad_ecologica
 
         ]),
-
 
         competencia: this.media([
 
@@ -176,14 +181,12 @@ analizar(stats){
 
         ]),
 
-
         movilidad: this.media([
 
             stats.movilidad,
             stats.velocidad
 
         ]),
-
 
         reproduccion: this.media([
 
@@ -198,13 +201,197 @@ analizar(stats){
 
 
 /*========================================================
+CREAR BOTÓN ESTADÍSTICAS
+========================================================*/
+
+crearBoton(){
+
+    if(
+        document.getElementById(
+            "botonEstadisticasCAB09"
+        )
+    ){
+        return;
+    }
+
+    const ficha =
+        document.getElementById("ficha");
+
+    if(!ficha){
+        return;
+    }
+
+    const boton =
+        document.createElement("button");
+
+    boton.id =
+        "botonEstadisticasCAB09";
+
+    boton.type =
+        "button";
+
+    boton.title =
+        "Estadísticas";
+
+    boton.setAttribute(
+        "aria-label",
+        "Abrir estadísticas"
+    );
+
+    boton.innerHTML = "Σ";
+
+    boton.addEventListener(
+        "click",
+        () => {
+
+            const visor =
+                document.getElementById(
+                    "visorEstadisticasCAB09"
+                );
+
+            if(visor){
+                visor.style.display =
+                    "flex";
+            }
+
+        }
+    );
+
+    ficha.appendChild(boton);
+
+},
+
+
+/*========================================================
+CREAR VISOR ESTADÍSTICO
+========================================================*/
+
+crearVisor(){
+
+    if(
+        document.getElementById(
+            "visorEstadisticasCAB09"
+        )
+    ){
+        return;
+    }
+
+    const visor =
+        document.createElement("div");
+
+    visor.id =
+        "visorEstadisticasCAB09";
+
+    visor.innerHTML = `
+
+        <div
+            id="ventanaEstadisticasCAB09"
+        >
+
+            <button
+                type="button"
+                id="cerrarEstadisticasCAB09"
+                class="botonCerrarEstadisticasCAB09"
+                aria-label="Cerrar estadísticas"
+            >
+                ×
+            </button>
+
+            <h2>Estadísticas</h2>
+
+            <div
+                id="estadisticasCAB09"
+                class="stats"
+            ></div>
+
+            <h2>Análisis estadístico</h2>
+
+            <div
+                id="bloqueAnalisisCAB09"
+                class="analisisCAB09"
+            ></div>
+
+        </div>
+
+    `;
+
+    document.body.appendChild(visor);
+
+
+    /*----------------------------------------------
+    CERRAR
+    ----------------------------------------------*/
+
+    const cerrar =
+        document.getElementById(
+            "cerrarEstadisticasCAB09"
+        );
+
+    cerrar.addEventListener(
+        "click",
+        () => {
+
+            visor.style.display =
+                "none";
+
+        }
+    );
+
+
+    /*----------------------------------------------
+    CERRAR AL PULSAR FUERA
+    ----------------------------------------------*/
+
+    visor.addEventListener(
+        "click",
+        (evento) => {
+
+            if(
+                evento.target === visor
+            ){
+
+                visor.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+
+    /*----------------------------------------------
+    ESC
+    ----------------------------------------------*/
+
+    document.addEventListener(
+        "keydown",
+        (evento) => {
+
+            if(
+                evento.key === "Escape"
+            ){
+
+                visor.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+},
+
+
+/*========================================================
 MOSTRAR ESTADÍSTICAS
 ========================================================*/
 
 mostrarEstadisticas(stats){
 
     const contenedor =
-        document.getElementById("estadisticas");
+        document.getElementById(
+            "estadisticasCAB09"
+        );
 
     if(!contenedor){
         return;
@@ -212,27 +399,60 @@ mostrarEstadisticas(stats){
 
     contenedor.innerHTML = `
 
-        <div>Adaptabilidad: ${stats.adaptabilidad}</div>
+        <div>
+            Adaptabilidad:
+            ${stats.adaptabilidad}
+        </div>
 
-        <div>Resistencia: ${stats.resistencia}</div>
+        <div>
+            Resistencia:
+            ${stats.resistencia}
+        </div>
 
-        <div>Sociabilidad: ${stats.sociabilidad}</div>
+        <div>
+            Sociabilidad:
+            ${stats.sociabilidad}
+        </div>
 
-        <div>Reproducción: ${stats.reproduccion}</div>
+        <div>
+            Reproducción:
+            ${stats.reproduccion}
+        </div>
 
-        <div>Ofensiva: ${stats.ofensiva}</div>
+        <div>
+            Ofensiva:
+            ${stats.ofensiva}
+        </div>
 
-        <div>Defensa: ${stats.defensa}</div>
+        <div>
+            Defensa:
+            ${stats.defensa}
+        </div>
 
-        <div>Movilidad: ${stats.movilidad}</div>
+        <div>
+            Movilidad:
+            ${stats.movilidad}
+        </div>
 
-        <div>Plasticidad ecológica: ${stats.plasticidad_ecologica}</div>
+        <div>
+            Plasticidad ecológica:
+            ${stats.plasticidad_ecologica}
+        </div>
 
-        <div>Tamaño: ${stats.tamano}</div>
+        <div>
+            Tamaño:
+            ${stats.tamano}
+        </div>
 
-        <div>Velocidad: ${stats.velocidad}</div>
+        <div>
+            Velocidad:
+            ${stats.velocidad}
+        </div>
 
-        <div>Inteligencia: ${stats.inteligencia}</div>
+        <div>
+            Inteligencia:
+            ${stats.inteligencia}
+        </div>
 
     `;
 
@@ -246,7 +466,9 @@ MOSTRAR ANÁLISIS
 mostrarAnalisis(analisis){
 
     const contenedor =
-        document.getElementById("bloqueAnalisis");
+        document.getElementById(
+            "bloqueAnalisisCAB09"
+        );
 
     if(!contenedor){
         return;
@@ -254,15 +476,30 @@ mostrarAnalisis(analisis){
 
     contenedor.innerHTML = `
 
-        <div>Índice global: ${analisis.indice_global}</div>
+        <div>
+            Índice global:
+            ${analisis.indice_global}
+        </div>
 
-        <div>Supervivencia: ${analisis.supervivencia}</div>
+        <div>
+            Supervivencia:
+            ${analisis.supervivencia}
+        </div>
 
-        <div>Competencia: ${analisis.competencia}</div>
+        <div>
+            Competencia:
+            ${analisis.competencia}
+        </div>
 
-        <div>Movilidad: ${analisis.movilidad}</div>
+        <div>
+            Movilidad:
+            ${analisis.movilidad}
+        </div>
 
-        <div>Reproducción: ${analisis.reproduccion}</div>
+        <div>
+            Reproducción:
+            ${analisis.reproduccion}
+        </div>
 
     `;
 
@@ -276,27 +513,53 @@ EJECUTAR
 ejecutar(registro){
 
     const stats =
-        this.obtenerEstadisticas(registro);
+        this.obtenerEstadisticas(
+            registro
+        );
 
     if(!stats){
+
         console.warn(
             "CAB09: no existen e1-e11 válidos en el registro."
         );
+
         return null;
     }
+
 
     const analisis =
         this.analizar(stats);
 
-    this.mostrarEstadisticas(stats);
 
-    this.mostrarAnalisis(analisis);
+    /*
+    Crear elementos visuales
+    */
+
+    this.crearBoton();
+
+    this.crearVisor();
+
+
+    /*
+    Mostrar datos
+    */
+
+    this.mostrarEstadisticas(
+        stats
+    );
+
+    this.mostrarAnalisis(
+        analisis
+    );
+
 
     return {
 
-        estadisticas: stats,
+        estadisticas:
+            stats,
 
-        analisis: analisis
+        analisis:
+            analisis
 
     };
 
@@ -309,7 +572,8 @@ ejecutar(registro){
 EXPORTAR
 ========================================================*/
 
-window.CAB09 = CAB09;
+window.CAB09 =
+    CAB09;
 
 
 /*========================================================
@@ -317,3 +581,4 @@ FIN CAB09
 ========================================================*/
 
 })();
+
