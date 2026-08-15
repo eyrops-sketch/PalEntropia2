@@ -1,476 +1,367 @@
 /*
 ========================================================
-CAB09.js
-PalEntropía — Fase 2
-Lightbox de Información Avanzada
-VERSIÓN DE PRUEBA
+CAB09.js v1.0
+LIGHTBOX DE PRUEBA
+PalEntropía — Generador 1.2
+========================================================
+
+FUNCIÓN:
+
+- Crea un pequeño botón circular dentro de #ficha
+- Lo coloca en la esquina superior derecha
+- Abre un Lightbox independiente
+- Utiliza una imagen de prueba ficticia
+- NO lee datos de master.csv
+- NO lee PALSTATS
+- NO modifica otros CAB
+- NO modifica la Paleoficha
+
 ========================================================
 */
 
 (function(){
 
-    function iniciarCAB09(){
+"use strict";
 
-        const ficha =
-            document.getElementById("ficha");
 
-        if(!ficha){
+/* =====================================================
+   ESPERAR A QUE EXISTA LA PALEOFICHA
+   ===================================================== */
 
-            console.error(
-                "CAB09: no se encontró #ficha."
+function iniciarCAB09(){
+
+    const ficha =
+        document.getElementById("ficha");
+
+    if(!ficha){
+
+        console.warn(
+            "CAB09: no existe #ficha."
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       EVITAR DUPLICADOS
+       ================================================= */
+
+    if(
+        document.getElementById(
+            "botonLightboxCAB09"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    /* =================================================
+       BOTÓN LIGHTBOX
+       ================================================= */
+
+    const boton =
+        document.createElement("button");
+
+    boton.id =
+        "botonLightboxCAB09";
+
+    boton.type =
+        "button";
+
+    boton.title =
+        "Ampliar imagen";
+
+    boton.setAttribute(
+        "aria-label",
+        "Ampliar imagen"
+    );
+
+    boton.innerHTML =
+        "⛶";
+
+
+    ficha.appendChild(
+        boton
+    );
+
+
+    /* =================================================
+       LIGHTBOX
+       ================================================= */
+
+    const visor =
+        document.createElement("div");
+
+    visor.id =
+        "visorLightboxCAB09";
+
+    visor.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    /* =================================================
+       BOTÓN CERRAR
+       ================================================= */
+
+    const cerrar =
+        document.createElement("button");
+
+    cerrar.id =
+        "cerrarLightboxCAB09";
+
+    cerrar.type =
+        "button";
+
+    cerrar.title =
+        "Cerrar";
+
+    cerrar.setAttribute(
+        "aria-label",
+        "Cerrar Lightbox"
+    );
+
+    cerrar.innerHTML =
+        "×";
+
+
+    /* =================================================
+       CONTENIDO DE PRUEBA
+       ================================================= */
+
+    const contenido =
+        document.createElement("div");
+
+    contenido.id =
+        "contenidoLightboxCAB09";
+
+
+    const titulo =
+        document.createElement("div");
+
+    titulo.id =
+        "tituloLightboxCAB09";
+
+    titulo.textContent =
+        "LIGHTBOX DE PRUEBA";
+
+
+    const texto =
+        document.createElement("div");
+
+    texto.id =
+        "textoLightboxCAB09";
+
+    texto.textContent =
+        "Visor independiente — datos ficticios";
+
+
+    /*
+    Imagen SVG ficticia.
+
+    No depende de ningún archivo externo.
+    */
+
+    const imagen =
+        document.createElement("div");
+
+    imagen.id =
+        "imagenPruebaCAB09";
+
+    imagen.innerHTML =
+        `
+        <svg
+            viewBox="0 0 600 400"
+            role="img"
+            aria-label="Imagen ficticia de prueba">
+
+            <rect
+                x="0"
+                y="0"
+                width="600"
+                height="400"
+                rx="20"
+                fill="#151719"/>
+
+            <circle
+                cx="300"
+                cy="200"
+                r="110"
+                fill="#62d6ff"
+                opacity="0.18"/>
+
+            <circle
+                cx="300"
+                cy="200"
+                r="70"
+                fill="none"
+                stroke="#62d6ff"
+                stroke-width="4"/>
+
+            <text
+                x="300"
+                y="210"
+                text-anchor="middle"
+                fill="#62d6ff"
+                font-size="28"
+                font-family="Arial">
+
+                IMAGEN DE PRUEBA
+
+            </text>
+
+        </svg>
+        `;
+
+
+    contenido.appendChild(
+        titulo
+    );
+
+    contenido.appendChild(
+        texto
+    );
+
+    contenido.appendChild(
+        imagen
+    );
+
+
+    visor.appendChild(
+        cerrar
+    );
+
+    visor.appendChild(
+        contenido
+    );
+
+
+    document.body.appendChild(
+        visor
+    );
+
+
+    /* =================================================
+       ABRIR
+       ================================================= */
+
+    boton.addEventListener(
+        "click",
+        function(){
+
+            visor.style.display =
+                "flex";
+
+            visor.setAttribute(
+                "aria-hidden",
+                "false"
             );
 
-            return;
+            document.body.style.overflow =
+                "hidden";
 
         }
+    );
 
 
-        /* =================================================
-           EVITAR DUPLICADOS
-           ================================================= */
+    /* =================================================
+       CERRAR
+       ================================================= */
 
-        if(
-            document.getElementById(
-                "botonInfoAvanzada"
-            )
-        ){
+    cerrar.addEventListener(
+        "click",
+        cerrarLightbox
+    );
 
-            return;
+
+    /* =================================================
+       CERRAR PULSANDO FUERA
+       ================================================= */
+
+    visor.addEventListener(
+        "click",
+        function(event){
+
+            if(
+                event.target === visor
+            ){
+
+                cerrarLightbox();
+
+            }
 
         }
+    );
 
 
-        /* =================================================
-           BOTÓN
-           ================================================= */
+    /* =================================================
+       CERRAR CON ESC
+       ================================================= */
 
-        const boton =
-            document.createElement("button");
+    document.addEventListener(
+        "keydown",
+        function(event){
 
-        boton.id =
-            "botonInfoAvanzada";
+            if(
+                event.key === "Escape" &&
+                visor.style.display === "flex"
+            ){
 
-        boton.type =
-            "button";
+                cerrarLightbox();
 
-        boton.title =
-            "Información avanzada";
+            }
 
-        boton.setAttribute(
-            "aria-label",
-            "Información avanzada"
-        );
-
-        boton.textContent = "ⓘ";
+        }
+    );
 
 
-        /*
-        La ficha necesita posición relativa
-        para colocar el botón dentro de ella.
-        */
+    function cerrarLightbox(){
 
-        ficha.style.position =
-            "relative";
-
-
-        ficha.appendChild(
-            boton
-        );
-
-
-        /* =================================================
-           LIGHTBOX
-           ================================================= */
-
-        const visor =
-            document.createElement("div");
-
-        visor.id =
-            "visorInfoAvanzada";
+        visor.style.display =
+            "none";
 
         visor.setAttribute(
             "aria-hidden",
             "true"
         );
 
-
-        const ventana =
-            document.createElement("div");
-
-        ventana.id =
-            "ventanaInfoAvanzada";
-
-
-        /* =================================================
-           BOTÓN CERRAR
-           ================================================= */
-
-        const cerrar =
-            document.createElement("button");
-
-        cerrar.id =
-            "cerrarInfoAvanzada";
-
-        cerrar.type =
-            "button";
-
-        cerrar.setAttribute(
-            "aria-label",
-            "Cerrar información avanzada"
-        );
-
-        cerrar.textContent =
-            "×";
-
-
-        /* =================================================
-           TÍTULO
-           ================================================= */
-
-        const titulo =
-            document.createElement("h2");
-
-        titulo.textContent =
-            "Información avanzada";
-
-
-        /* =================================================
-           HÁBITATS — DATOS FICTICIOS
-           ================================================= */
-
-        const bloqueHabitats =
-            document.createElement("section");
-
-        bloqueHabitats.className =
-            "bloqueFase2";
-
-        bloqueHabitats.innerHTML =
-
-            "<h3>Hábitats</h3>" +
-
-            "<div id=\"fase2Habitats\">" +
-
-                "<div class=\"fase2Habitat\">" +
-                    "<strong>Hábitat principal:</strong> Bosque" +
-                "</div>" +
-
-                "<div class=\"fase2Habitat\">" +
-                    "<strong>Hábitat secundario:</strong> Llanura" +
-                "</div>" +
-
-                "<div class=\"fase2Habitat\">" +
-                    "<strong>Hábitat secundario:</strong> Ribera" +
-                "</div>" +
-
-            "</div>";
-
-
-        /* =================================================
-           MODO DE VIDA — DATO FICTICIO
-           ================================================= */
-
-        const bloqueModo =
-            document.createElement("section");
-
-        bloqueModo.className =
-            "bloqueFase2";
-
-        bloqueModo.innerHTML =
-
-            "<h3>Modo de vida</h3>" +
-
-            "<div id=\"fase2ModoVida\">" +
-
-                "Terrestre. Activo. " +
-                "Comportamiento principalmente solitario." +
-
-            "</div>";
-
-
-        /* =================================================
-           MEDIO DE VIDA — DATO FICTICIO
-           ================================================= */
-
-        const bloqueMedio =
-            document.createElement("section");
-
-        bloqueMedio.className =
-            "bloqueFase2";
-
-        bloqueMedio.innerHTML =
-
-            "<h3>Medio de vida</h3>" +
-
-            "<div id=\"fase2MedioVida\">" +
-
-                "Medio terrestre continental." +
-
-            "</div>";
-
-
-        /* =================================================
-           ESTADÍSTICAS — DATOS FICTICIOS
-           ================================================= */
-
-        const bloqueStats =
-            document.createElement("section");
-
-        bloqueStats.className =
-            "bloqueFase2";
-
-        bloqueStats.innerHTML =
-
-            "<h3>Estadísticas</h3>" +
-
-            "<div id=\"fase2Estadisticas\">" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Adaptabilidad:</strong> 85" +
-                "</div>" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Resistencia:</strong> 78" +
-                "</div>" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Sociabilidad:</strong> 62" +
-                "</div>" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Reproducción:</strong> 81" +
-                "</div>" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Ofensiva:</strong> 94" +
-                "</div>" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Defensa:</strong> 88" +
-                "</div>" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Movilidad:</strong> 76" +
-                "</div>" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Plasticidad ecológica:</strong> 72" +
-                "</div>" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Tamaño:</strong> 91" +
-                "</div>" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Velocidad:</strong> 84" +
-                "</div>" +
-
-                "<div class=\"fase2Stat\">" +
-                    "<strong>Inteligencia:</strong> 79" +
-                "</div>" +
-
-            "</div>";
-
-
-        /* =================================================
-           ANÁLISIS — DATOS FICTICIOS
-           ================================================= */
-
-        const bloqueAnalisis =
-            document.createElement("section");
-
-        bloqueAnalisis.className =
-            "bloqueFase2";
-
-        bloqueAnalisis.innerHTML =
-
-            "<h3>Análisis estadístico</h3>" +
-
-            "<div id=\"fase2Analisis\">" +
-
-                "<div class=\"fase2Analisis\">" +
-                    "<strong>Índice global:</strong> 82" +
-                "</div>" +
-
-                "<div class=\"fase2Analisis\">" +
-                    "<strong>Supervivencia:</strong> 81" +
-                "</div>" +
-
-                "<div class=\"fase2Analisis\">" +
-                    "<strong>Competencia:</strong> 87" +
-                "</div>" +
-
-                "<div class=\"fase2Analisis\">" +
-                    "<strong>Movilidad:</strong> 80" +
-                "</div>" +
-
-                "<div class=\"fase2Analisis\">" +
-                    "<strong>Reproducción:</strong> 72" +
-                "</div>" +
-
-            "</div>";
-
-
-        /* =================================================
-           MONTAJE
-           ================================================= */
-
-        ventana.appendChild(
-            cerrar
-        );
-
-        ventana.appendChild(
-            titulo
-        );
-
-        ventana.appendChild(
-            bloqueHabitats
-        );
-
-        ventana.appendChild(
-            bloqueModo
-        );
-
-        ventana.appendChild(
-            bloqueMedio
-        );
-
-        ventana.appendChild(
-            bloqueStats
-        );
-
-        ventana.appendChild(
-            bloqueAnalisis
-        );
-
-
-        visor.appendChild(
-            ventana
-        );
-
-
-        document.body.appendChild(
-            visor
-        );
-
-
-        /* =================================================
-           ABRIR
-           ================================================= */
-
-        boton.addEventListener(
-            "click",
-            function(){
-
-                visor.style.display =
-                    "flex";
-
-                visor.setAttribute(
-                    "aria-hidden",
-                    "false"
-                );
-
-            }
-        );
-
-
-        /* =================================================
-           CERRAR
-           ================================================= */
-
-        cerrar.addEventListener(
-            "click",
-            function(){
-
-                visor.style.display =
-                    "none";
-
-                visor.setAttribute(
-                    "aria-hidden",
-                    "true"
-                );
-
-            }
-        );
-
-
-        /* =================================================
-           CERRAR AL PULSAR FUERA
-           ================================================= */
-
-        visor.addEventListener(
-            "click",
-            function(event){
-
-                if(
-                    event.target === visor
-                ){
-
-                    visor.style.display =
-                        "none";
-
-                    visor.setAttribute(
-                        "aria-hidden",
-                        "true"
-                    );
-
-                }
-
-            }
-        );
-
-
-        /* =================================================
-           ESC
-           ================================================= */
-
-        document.addEventListener(
-            "keydown",
-            function(event){
-
-                if(
-                    event.key === "Escape"
-                ){
-
-                    visor.style.display =
-                        "none";
-
-                    visor.setAttribute(
-                        "aria-hidden",
-                        "true"
-                    );
-
-                }
-
-            }
-        );
-
-
-        console.log(
-            "CAB09: Lightbox de Fase 2 inicializado."
-        );
+        document.body.style.overflow =
+            "";
 
     }
 
 
-    /* =====================================================
-       INICIALIZACIÓN
-       ===================================================== */
+    console.log(
+        "CAB09: Lightbox de prueba iniciado correctamente."
+    );
 
-    if(
-        document.readyState === "loading"
-    ){
+}
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            iniciarCAB09
-        );
 
-    }
-    else{
+/* =====================================================
+   INICIO
+   ===================================================== */
 
-        iniciarCAB09();
+if(
+    document.readyState === "loading"
+){
 
-    }
+    document.addEventListener(
+        "DOMContentLoaded",
+        iniciarCAB09
+    );
+
+}
+else{
+
+    iniciarCAB09();
+
+}
 
 
 })();
