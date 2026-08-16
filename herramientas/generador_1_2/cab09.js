@@ -166,6 +166,7 @@ document.addEventListener(
                     ) {
 
                         campo += '"';
+
                         i++;
 
                     } else {
@@ -186,6 +187,7 @@ document.addEventListener(
                 ) {
 
                     fila.push(campo);
+
                     campo = "";
 
                     continue;
@@ -212,6 +214,7 @@ document.addEventListener(
 
 
                     fila.push(campo);
+
                     campo = "";
 
 
@@ -312,7 +315,10 @@ document.addEventListener(
                 filas[0].map(
                     valor =>
                         valor
-                            .replace(/^\uFEFF/, "")
+                            .replace(
+                                /^\uFEFF/,
+                                ""
+                            )
                             .trim()
                             .toLowerCase()
                 );
@@ -320,6 +326,10 @@ document.addEventListener(
 
             const indiceJ1 =
                 cabecera.indexOf("j1");
+
+
+            const indiceJ2 =
+                cabecera.indexOf("j2");
 
 
             const indiceE1 =
@@ -368,6 +378,7 @@ document.addEventListener(
 
             if (
                 indiceJ1 === -1 ||
+                indiceJ2 === -1 ||
                 indiceE1 === -1 ||
                 indiceE2 === -1 ||
                 indiceE3 === -1 ||
@@ -383,7 +394,7 @@ document.addEventListener(
 
                 throw new Error(
                     "No se encontraron las columnas " +
-                    "j1/e1-e11 en master.csv"
+                    "j1/j2/e1-e11 en master.csv"
                 );
 
             }
@@ -419,43 +430,71 @@ document.addEventListener(
 
 
             /* -------------------------------------
-               CONSTRUIR ESTADÍSTICAS
+               CONSTRUIR DATOS
                ------------------------------------- */
 
             return {
 
+                codigo:
+                    fila[indiceJ1].trim(),
+
+                nombre:
+                    fila[indiceJ2].trim(),
+
                 adaptabilidad:
-                    Number(fila[indiceE1]),
+                    Number(
+                        fila[indiceE1]
+                    ),
 
                 sociabilidad:
-                    Number(fila[indiceE2]),
+                    Number(
+                        fila[indiceE2]
+                    ),
 
                 resistencia:
-                    Number(fila[indiceE3]),
+                    Number(
+                        fila[indiceE3]
+                    ),
 
                 reproduccion:
-                    Number(fila[indiceE4]),
+                    Number(
+                        fila[indiceE4]
+                    ),
 
                 ofensiva:
-                    Number(fila[indiceE5]),
+                    Number(
+                        fila[indiceE5]
+                    ),
 
                 defensa:
-                    Number(fila[indiceE6]),
+                    Number(
+                        fila[indiceE6]
+                    ),
 
                 movilidad:
-                    Number(fila[indiceE7]),
+                    Number(
+                        fila[indiceE7]
+                    ),
 
                 plasticidad_ecologica:
-                    Number(fila[indiceE8]),
+                    Number(
+                        fila[indiceE8]
+                    ),
 
                 tamano:
-                    Number(fila[indiceE9]),
+                    Number(
+                        fila[indiceE9]
+                    ),
 
                 velocidad:
-                    Number(fila[indiceE10]),
+                    Number(
+                        fila[indiceE10]
+                    ),
 
                 inteligencia:
-                    Number(fila[indiceE11])
+                    Number(
+                        fila[indiceE11]
+                    )
 
             };
 
@@ -463,7 +502,7 @@ document.addEventListener(
 
 
         /* =========================================
-           CÁLCULOS NIVEL 1
+           CÁLCULOS — INDICADORES GENERALES
            ========================================= */
 
         function calcularNivel1(stats) {
@@ -545,7 +584,9 @@ document.addEventListener(
                         "lightboxEstadisticas"
                     )
                 ) {
+
                     return;
+
                 }
 
 
@@ -567,11 +608,19 @@ document.addEventListener(
 
                 try {
 
+                    /* =============================
+                       DATOS MASTER
+                       ============================= */
+
                     const stats =
                         await obtenerEstadisticasCSV(
                             codigo
                         );
 
+
+                    /* =============================
+                       INDICADORES
+                       ============================= */
 
                     const nivel1 =
                         calcularNivel1(
@@ -587,7 +636,7 @@ document.addEventListener(
 
 
                     console.log(
-                        "CAB09 — Nivel 1:",
+                        "CAB09 — Indicadores generales:",
                         nivel1
                     );
 
@@ -598,6 +647,7 @@ document.addEventListener(
 
                     const lightbox =
                         document.createElement("div");
+
 
                     lightbox.id =
                         "lightboxEstadisticas";
@@ -616,7 +666,11 @@ document.addEventListener(
                         "<h2>Estadísticas</h2>" +
 
                         "<p><strong>" +
-                        codigo +
+                        stats.codigo +
+                        "</strong></p>" +
+
+                        "<p><strong>" +
+                        stats.nombre +
                         "</strong></p>" +
 
                         "<h3>Estadísticas base</h3>" +
@@ -665,7 +719,7 @@ document.addEventListener(
                         stats.inteligencia +
                         "</p>" +
 
-                        "<h3>Nivel 1</h3>" +
+                        "<h3>Indicadores generales</h3>" +
 
                         "<p>Índice global: " +
                         nivel1.indice_global +
