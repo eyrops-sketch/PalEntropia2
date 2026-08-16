@@ -9,7 +9,7 @@ Extensión visual de Style v2.1
 
 
 /*=========================================================
-BOTÓN ESTADÍSTICAS
+BOTONES ESTADÍSTICAS + ECOLOGÍA
 =========================================================*/
 
 #botonesCAB09{
@@ -20,16 +20,20 @@ BOTÓN ESTADÍSTICAS
 
     align-items:center;
 
-    gap:8px;
+    gap:12px;
 
     flex-wrap:wrap;
 
-    margin-top:25px;
+    width:100%;
 
-    margin-bottom:10px;
+    margin:28px auto 10px;
 
 }
 
+
+/*=========================================================
+BOTÓN ESTADÍSTICAS
+=========================================================*/
 
 #botonEstadisticas{
 
@@ -39,19 +43,21 @@ BOTÓN ESTADÍSTICAS
 
     justify-content:center;
 
+    min-width:145px;
+
     min-height:44px;
 
     padding:10px 20px;
 
-    margin:8px 5px;
+    margin:0;
 
-    background:#1d9bf0 !important;
+    background:#151719 !important;
 
-    color:#fff !important;
+    color:#62d6ff !important;
 
-    border:1px solid #62d6ff !important;
+    border:2px solid #62d6ff !important;
 
-    border-radius:22px;
+    border-radius:22px !important;
 
     font-family:Arial,Helvetica,sans-serif;
 
@@ -64,8 +70,7 @@ BOTÓN ESTADÍSTICAS
     cursor:pointer;
 
     box-shadow:
-        0 0 12px rgba(98,214,255,.30),
-        0 4px 12px rgba(0,0,0,.22);
+        0 0 10px rgba(98,214,255,.18);
 
     transition:
         background .25s,
@@ -83,8 +88,7 @@ BOTÓN ESTADÍSTICAS
     color:#001018 !important;
 
     box-shadow:
-        0 0 18px rgba(98,214,255,.50),
-        0 5px 15px rgba(0,0,0,.28);
+        0 0 18px rgba(98,214,255,.42);
 
 }
 
@@ -198,7 +202,7 @@ TEXTO
 
 
 /*=========================================================
-BOTÓN CERRAR
+BOTÓN CERRAR — CIRCULAR
 =========================================================*/
 
 #lightboxEstadisticas button{
@@ -312,20 +316,20 @@ RESPONSIVE
 
     #botonesCAB09{
 
-        gap:5px;
+        gap:10px;
 
-        margin-top:20px;
+        margin-top:24px;
 
     }
 
 
     #botonEstadisticas{
 
+        min-width:130px;
+
         min-height:42px;
 
-        padding:9px 18px;
-
-        margin:6px 3px;
+        padding:9px 16px;
 
         font-size:15px;
 
