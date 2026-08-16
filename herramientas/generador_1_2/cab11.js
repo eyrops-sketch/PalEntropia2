@@ -1,23 +1,19 @@
 /*
 ========================================================
 PalEntropía
-CAB11.js v1.2
+CAB11.js v1.3
 ECOLOGÍA
-
-Coordinador de la sección de Ecología.
 
 CAB11
  ├── CAB12 → Modo de vida
  ├── CAB13 → Medio de vida
  └── CAB14 → Hábitats
 
-CAB11 NO muestra Ecología automáticamente.
-
-La sección solamente se abre cuando
-el usuario pulsa el botón Ecología.
-
-CAB11 no contiene la lógica específica
-de cada módulo.
+CAB11:
+- No muestra Ecología automáticamente.
+- Se actualiza cuando cambia MASTER_ACTUAL.
+- Solo muestra el botón 🌿 Ecología.
+- Los módulos se ejecutan al pulsar el botón.
 ========================================================
 */
 
@@ -26,33 +22,54 @@ window.CAB11 = {
 
     /*
     ====================================================
-    INICIALIZAR
+    ACTUALIZAR
     ====================================================
     */
 
-    inicializar: function() {
+    actualizar: function() {
 
 
         /*
         ----------------------------------------
-        COMPROBAR SI YA EXISTE EL BOTÓN
+        ELIMINAR BLOQUE ANTERIOR
         ----------------------------------------
         */
 
-        if (
+        const bloqueAnterior =
             document.getElementById(
-                "botonEcologia"
-            )
-        ) {
+                "bloqueEcologia"
+            );
 
-            return;
+
+        if (bloqueAnterior) {
+
+            bloqueAnterior.remove();
 
         }
 
 
         /*
         ----------------------------------------
-        COMPROBAR PALEOFICHA
+        ELIMINAR BOTÓN ANTERIOR
+        ----------------------------------------
+        */
+
+        const botonAnterior =
+            document.getElementById(
+                "botonEcologia"
+            );
+
+
+        if (botonAnterior) {
+
+            botonAnterior.remove();
+
+        }
+
+
+        /*
+        ----------------------------------------
+        COMPROBAR FICHA
         ----------------------------------------
         */
 
@@ -63,10 +80,6 @@ window.CAB11 = {
 
 
         if (!ficha) {
-
-            console.warn(
-                "CAB11: #ficha todavía no existe."
-            );
 
             return;
 
@@ -103,6 +116,24 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
+        ESTILO BÁSICO
+
+        Se fuerza una línea independiente.
+        ----------------------------------------
+        */
+
+        boton.style.display =
+            "block";
+
+        boton.style.width =
+            "fit-content";
+
+        boton.style.margin =
+            "14px auto";
+
+
+        /*
+        ----------------------------------------
         EVENTO
         ----------------------------------------
         */
@@ -119,7 +150,8 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        INSERTAR DESPUÉS DE ESTADÍSTICAS
+        INSERTAR DESPUÉS
+        DE ESTADÍSTICAS
         ----------------------------------------
         */
 
@@ -147,7 +179,8 @@ window.CAB11 = {
 
 
         console.log(
-            "CAB11: botón Ecología preparado."
+            "CAB11: preparado para",
+            window.MASTER_ACTUAL.j1
         );
 
     },
@@ -164,30 +197,7 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        COMPROBAR PALEOFICHA
-        ----------------------------------------
-        */
-
-        const ficha =
-            document.getElementById(
-                "ficha"
-            );
-
-
-        if (!ficha) {
-
-            console.error(
-                "CAB11: no existe #ficha."
-            );
-
-            return;
-
-        }
-
-
-        /*
-        ----------------------------------------
-        COMPROBAR MASTER_ACTUAL
+        COMPROBAR MASTER
         ----------------------------------------
         */
 
@@ -196,7 +206,7 @@ window.CAB11 = {
         ) {
 
             console.warn(
-                "CAB11: MASTER_ACTUAL todavía no está disponible."
+                "CAB11: MASTER_ACTUAL no disponible."
             );
 
             return;
@@ -206,42 +216,30 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        BUSCAR BLOQUE EXISTENTE
+        EVITAR DUPLICADO
         ----------------------------------------
         */
 
-        let bloque =
+        const existente =
             document.getElementById(
                 "bloqueEcologia"
             );
 
 
-        /*
-        ----------------------------------------
-        SI YA EXISTE
-        ----------------------------------------
-        */
-
-        if (bloque) {
-
-            /*
-            Alternar visibilidad.
-            */
+        if (existente) {
 
             if (
-                bloque.style.display ===
+                existente.style.display ===
                 "none"
             ) {
 
-                bloque.style.display =
+                existente.style.display =
                     "";
-
-                this.cargarModulos();
 
             }
             else {
 
-                bloque.style.display =
+                existente.style.display =
                     "none";
 
             }
@@ -253,11 +251,11 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        CREAR BLOQUE ECOLOGÍA
+        CREAR BLOQUE
         ----------------------------------------
         */
 
-        bloque =
+        const bloque =
             document.createElement(
                 "section"
             );
@@ -290,7 +288,7 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        CONTENEDOR GENERAL
+        CONTENEDOR
         ----------------------------------------
         */
 
@@ -369,13 +367,25 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        INSERTAR CONTENIDO
+        AÑADIR CONTENIDO
         ----------------------------------------
         */
 
         bloque.appendChild(
             contenido
         );
+
+
+        /*
+        ----------------------------------------
+        INSERTAR
+        ----------------------------------------
+        */
+
+        const ficha =
+            document.getElementById(
+                "ficha"
+            );
 
 
         ficha.appendChild(
@@ -385,8 +395,7 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        AHORA SÍ:
-        CARGAR LOS MÓDULOS
+        CARGAR MÓDULOS
         ----------------------------------------
         */
 
@@ -394,7 +403,8 @@ window.CAB11 = {
 
 
         console.log(
-            "CAB11: Ecología abierta."
+            "CAB11: Ecología abierta para",
+            window.MASTER_ACTUAL.j1
         );
 
     },
@@ -411,7 +421,7 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        CAB12 — MODO DE VIDA
+        CAB12
         ----------------------------------------
         */
 
@@ -428,7 +438,7 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        CAB13 — MEDIO DE VIDA
+        CAB13
         ----------------------------------------
         */
 
@@ -445,7 +455,7 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        CAB14 — HÁBITATS
+        CAB14
         ----------------------------------------
         */
 
@@ -466,20 +476,15 @@ window.CAB11 = {
 
 /*
 ========================================================
-INICIALIZACIÓN SEGURA
-========================================================
-
-CAB11 solamente prepara el botón.
-
-NO abre Ecología.
+ESCUCHAR CAMBIO DE PALEOFICHA
 ========================================================
 */
 
 document.addEventListener(
-    "DOMContentLoaded",
+    "masterActualizado",
     function() {
 
-        window.CAB11.inicializar();
+        window.CAB11.actualizar();
 
     }
 );
