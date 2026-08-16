@@ -10,15 +10,31 @@ FASE 4B — ESTADÍSTICAS
 - Lightbox independiente
 - Lectura directa de master.csv
 - e1 → e11
-- Cálculos Nivel 1
+- Cálculos de indicadores generales
+- Nombre desde ficha.j2
 - Sin modificar CAB10
 ========================================================
 */
 
 
+/* =====================================================
+   FICHA ACTUAL
+===================================================== */
+
+let fichaActualCAB09 = null;
+
+
+/* =====================================================
+   EVENTO: CONTENEDOR CARGADO
+===================================================== */
+
 document.addEventListener(
     "palentropia:contenedor-cargado",
-    function() {
+    function(evento) {
+
+        fichaActualCAB09 =
+            evento.detail || null;
+
 
         const ficha =
             document.getElementById("ficha");
@@ -31,18 +47,22 @@ document.addEventListener(
 
         /* =========================================
            EVITAR DUPLICADOS
-           ========================================= */
+        ========================================= */
 
         if (
-            document.getElementById("botonEstadisticas")
+            document.getElementById(
+                "botonEstadisticas"
+            )
         ) {
+
             return;
+
         }
 
 
         /* =========================================
            CONTENEDOR
-           ========================================= */
+        ========================================= */
 
         const contenedor =
             document.createElement("div");
@@ -53,16 +73,19 @@ document.addEventListener(
 
         /* =========================================
            BOTÓN ESTADÍSTICAS
-           ========================================= */
+        ========================================= */
 
         const botonEstadisticas =
             document.createElement("button");
 
+
         botonEstadisticas.id =
             "botonEstadisticas";
 
+
         botonEstadisticas.type =
             "button";
+
 
         botonEstadisticas.textContent =
             "Estadísticas";
@@ -80,9 +103,21 @@ document.addEventListener(
 
         /* =========================================
            OBTENER CÓDIGO ACTUAL
-           ========================================= */
+        ========================================= */
 
         function obtenerCodigoActual() {
+
+            if (
+                fichaActualCAB09 &&
+                fichaActualCAB09.j1
+            ) {
+
+                return String(
+                    fichaActualCAB09.j1
+                ).trim();
+
+            }
+
 
             const parametros =
                 new URLSearchParams(
@@ -130,8 +165,31 @@ document.addEventListener(
 
 
         /* =========================================
+           OBTENER NOMBRE ACTUAL
+        ========================================= */
+
+        function obtenerNombreActual() {
+
+            if (
+                fichaActualCAB09 &&
+                fichaActualCAB09.j2
+            ) {
+
+                return String(
+                    fichaActualCAB09.j2
+                ).trim();
+
+            }
+
+
+            return "";
+
+        }
+
+
+        /* =========================================
            PARSER CSV
-           ========================================= */
+        ========================================= */
 
         function parseCSV(texto) {
 
@@ -186,7 +244,9 @@ document.addEventListener(
                     !dentroComillas
                 ) {
 
-                    fila.push(campo);
+                    fila.push(
+                        campo
+                    );
 
                     campo = "";
 
@@ -213,7 +273,9 @@ document.addEventListener(
                     }
 
 
-                    fila.push(campo);
+                    fila.push(
+                        campo
+                    );
 
                     campo = "";
 
@@ -225,7 +287,9 @@ document.addEventListener(
                         )
                     ) {
 
-                        filas.push(fila);
+                        filas.push(
+                            fila
+                        );
 
                     }
 
@@ -247,7 +311,9 @@ document.addEventListener(
                 fila.length > 0
             ) {
 
-                fila.push(campo);
+                fila.push(
+                    campo
+                );
 
 
                 if (
@@ -257,7 +323,9 @@ document.addEventListener(
                     )
                 ) {
 
-                    filas.push(fila);
+                    filas.push(
+                        fila
+                    );
 
                 }
 
@@ -271,14 +339,16 @@ document.addEventListener(
 
         /* =========================================
            OBTENER ESTADÍSTICAS DESDE MASTER.CSV
-           ========================================= */
+        ========================================= */
 
         async function obtenerEstadisticasCSV(
             codigo
         ) {
 
             const respuesta =
-                await fetch("master.csv");
+                await fetch(
+                    "master.csv"
+                );
 
 
             if (!respuesta.ok) {
@@ -295,7 +365,9 @@ document.addEventListener(
 
 
             const filas =
-                parseCSV(texto);
+                parseCSV(
+                    texto
+                );
 
 
             if (!filas.length) {
@@ -309,7 +381,7 @@ document.addEventListener(
 
             /* -------------------------------------
                CABECERA
-               ------------------------------------- */
+            ------------------------------------- */
 
             const cabecera =
                 filas[0].map(
@@ -325,60 +397,79 @@ document.addEventListener(
 
 
             const indiceJ1 =
-                cabecera.indexOf("j1");
-
-
-            const indiceJ2 =
-                cabecera.indexOf("j2");
+                cabecera.indexOf(
+                    "j1"
+                );
 
 
             const indiceE1 =
-                cabecera.indexOf("e1");
+                cabecera.indexOf(
+                    "e1"
+                );
 
 
             const indiceE2 =
-                cabecera.indexOf("e2");
+                cabecera.indexOf(
+                    "e2"
+                );
 
 
             const indiceE3 =
-                cabecera.indexOf("e3");
+                cabecera.indexOf(
+                    "e3"
+                );
 
 
             const indiceE4 =
-                cabecera.indexOf("e4");
+                cabecera.indexOf(
+                    "e4"
+                );
 
 
             const indiceE5 =
-                cabecera.indexOf("e5");
+                cabecera.indexOf(
+                    "e5"
+                );
 
 
             const indiceE6 =
-                cabecera.indexOf("e6");
+                cabecera.indexOf(
+                    "e6"
+                );
 
 
             const indiceE7 =
-                cabecera.indexOf("e7");
+                cabecera.indexOf(
+                    "e7"
+                );
 
 
             const indiceE8 =
-                cabecera.indexOf("e8");
+                cabecera.indexOf(
+                    "e8"
+                );
 
 
             const indiceE9 =
-                cabecera.indexOf("e9");
+                cabecera.indexOf(
+                    "e9"
+                );
 
 
             const indiceE10 =
-                cabecera.indexOf("e10");
+                cabecera.indexOf(
+                    "e10"
+                );
 
 
             const indiceE11 =
-                cabecera.indexOf("e11");
+                cabecera.indexOf(
+                    "e11"
+                );
 
 
             if (
                 indiceJ1 === -1 ||
-                indiceJ2 === -1 ||
                 indiceE1 === -1 ||
                 indiceE2 === -1 ||
                 indiceE3 === -1 ||
@@ -394,7 +485,7 @@ document.addEventListener(
 
                 throw new Error(
                     "No se encontraron las columnas " +
-                    "j1/j2/e1-e11 en master.csv"
+                    "j1/e1-e11 en master.csv"
                 );
 
             }
@@ -402,7 +493,7 @@ document.addEventListener(
 
             /* -------------------------------------
                BUSCAR REGISTRO
-               ------------------------------------- */
+            ------------------------------------- */
 
             const fila =
                 filas.find(
@@ -410,7 +501,8 @@ document.addEventListener(
 
                         return (
                             registro[indiceJ1] &&
-                            registro[indiceJ1].trim() ===
+                            registro[indiceJ1]
+                                .trim() ===
                             codigo
                         );
 
@@ -430,16 +522,10 @@ document.addEventListener(
 
 
             /* -------------------------------------
-               CONSTRUIR DATOS
-               ------------------------------------- */
+               ESTADÍSTICAS
+            ------------------------------------- */
 
             return {
-
-                codigo:
-                    fila[indiceJ1].trim(),
-
-                nombre:
-                    fila[indiceJ2].trim(),
 
                 adaptabilidad:
                     Number(
@@ -501,11 +587,13 @@ document.addEventListener(
         }
 
 
-        /* =========================================
+         /* =========================================
            CÁLCULOS — INDICADORES GENERALES
-           ========================================= */
+        ========================================= */
 
-        function calcularNivel1(stats) {
+        function calcularIndicadores(
+            stats
+        ) {
 
             return {
 
@@ -573,11 +661,10 @@ document.addEventListener(
 
         /* =========================================
            ABRIR LIGHTBOX
-           ========================================= */
+        ========================================= */
 
         botonEstadisticas.onclick =
             async function() {
-
 
                 if (
                     document.getElementById(
@@ -592,6 +679,10 @@ document.addEventListener(
 
                 const codigo =
                     obtenerCodigoActual();
+
+
+                const nombre =
+                    obtenerNombreActual();
 
 
                 if (!codigo) {
@@ -610,7 +701,7 @@ document.addEventListener(
 
                     /* =============================
                        DATOS MASTER
-                       ============================= */
+                    ============================= */
 
                     const stats =
                         await obtenerEstadisticasCSV(
@@ -620,10 +711,10 @@ document.addEventListener(
 
                     /* =============================
                        INDICADORES
-                       ============================= */
+                    ============================= */
 
-                    const nivel1 =
-                        calcularNivel1(
+                    const indicadores =
+                        calcularIndicadores(
                             stats
                         );
 
@@ -637,16 +728,18 @@ document.addEventListener(
 
                     console.log(
                         "CAB09 — Indicadores generales:",
-                        nivel1
+                        indicadores
                     );
 
 
                     /* =============================
                        LIGHTBOX
-                       ============================= */
+                    ============================= */
 
                     const lightbox =
-                        document.createElement("div");
+                        document.createElement(
+                            "div"
+                        );
 
 
                     lightbox.id =
@@ -655,10 +748,12 @@ document.addEventListener(
 
                     /* =============================
                        VENTANA
-                       ============================= */
+                    ============================= */
 
                     const ventana =
-                        document.createElement("div");
+                        document.createElement(
+                            "div"
+                        );
 
 
                     ventana.innerHTML =
@@ -666,11 +761,11 @@ document.addEventListener(
                         "<h2>Estadísticas</h2>" +
 
                         "<p><strong>" +
-                        stats.codigo +
+                        codigo +
                         "</strong></p>" +
 
                         "<p><strong>" +
-                        stats.nombre +
+                        nombre +
                         "</strong></p>" +
 
                         "<h3>Estadísticas base</h3>" +
@@ -722,32 +817,34 @@ document.addEventListener(
                         "<h3>Indicadores generales</h3>" +
 
                         "<p>Índice global: " +
-                        nivel1.indice_global +
+                        indicadores.indice_global +
                         "</p>" +
 
                         "<p>Supervivencia: " +
-                        nivel1.supervivencia +
+                        indicadores.supervivencia +
                         "</p>" +
 
                         "<p>Competencia: " +
-                        nivel1.competencia +
+                        indicadores.competencia +
                         "</p>" +
 
                         "<p>Movilidad: " +
-                        nivel1.movilidad +
+                        indicadores.movilidad +
                         "</p>" +
 
                         "<p>Reproducción: " +
-                        nivel1.reproduccion +
+                        indicadores.reproduccion +
                         "</p>";
 
 
                     /* =============================
                        CERRAR
-                       ============================= */
+                    ============================= */
 
                     const cerrar =
-                        document.createElement("button");
+                        document.createElement(
+                            "button"
+                        );
 
 
                     cerrar.type =
@@ -786,11 +883,10 @@ document.addEventListener(
                         lightbox
                     );
 
-
                 }
-                catch (
-                    error
-                ) {
+
+
+                catch(error) {
 
                     console.error(
                         "CAB09 — Error estadísticas:",
@@ -807,4 +903,4 @@ document.addEventListener(
         );
 
     }
-);
+);       
