@@ -4,6 +4,12 @@ PalEntropía
 stylecab09.css
 CAB09 — ESTADÍSTICAS
 Extensión visual de Style v2.1
+
+FASE 4C
+- Filas estadísticas
+- Barra normalizada 0–100
+- Valor numérico en celeste
+- Indicadores generales
 ========================================================
 */
 
@@ -123,6 +129,7 @@ LIGHTBOX ESTADÍSTICAS
     display:flex !important;
 
     justify-content:center !important;
+
     align-items:center !important;
 
     box-sizing:border-box !important;
@@ -131,7 +138,7 @@ LIGHTBOX ESTADÍSTICAS
 
 
 /*=========================================================
-VENTANA ESTADÍSTICAS
+VENTANA
 =========================================================*/
 
 #lightboxEstadisticas > div{
@@ -150,7 +157,7 @@ VENTANA ESTADÍSTICAS
 
     background:#181a1c !important;
 
-    color:#eee !important;
+    color:#fff !important;
 
     border:2px solid #62d6ff;
 
@@ -173,9 +180,7 @@ TÍTULO PRINCIPAL
 
 #lightboxEstadisticas h2{
 
-    margin-top:0;
-
-    margin-bottom:10px;
+    margin:0 0 8px;
 
     color:#62d6ff !important;
 
@@ -197,11 +202,11 @@ TÍTULO PRINCIPAL
 CÓDIGO
 =========================================================*/
 
-#lightboxEstadisticas p:nth-of-type(1){
+.codigoEstadisticasCAB09{
 
     margin:0 0 3px;
 
-    color:#777 !important;
+    color:#8c959a !important;
 
     font-size:13px;
 
@@ -215,10 +220,10 @@ CÓDIGO
 
 
 /*=========================================================
-NOMBRE DE LA PALEOFICHA
+NOMBRE
 =========================================================*/
 
-#lightboxEstadisticas p:nth-of-type(2){
+.nombreEstadisticasCAB09{
 
     margin:0 0 25px;
 
@@ -237,16 +242,16 @@ NOMBRE DE LA PALEOFICHA
 
 
 /*=========================================================
-SUBCABECERAS
+TÍTULOS DE SECCIÓN
 =========================================================*/
 
-#lightboxEstadisticas h3{
+.tituloSeccionCAB09{
 
-    margin:24px 0 12px;
+    margin:24px 0 14px;
 
     padding-bottom:8px;
 
-    color:#62d6ff !important;
+    color:#fff !important;
 
     font-size:18px;
 
@@ -263,57 +268,157 @@ SUBCABECERAS
 
 
 /*=========================================================
-BLOQUE DE ESTADÍSTICAS
+CONTENEDOR DE ESTADÍSTICAS
 =========================================================*/
 
-#lightboxEstadisticas p{
+.contenedorEstadisticasCAB09{
+
+    width:100%;
+
+    margin:0;
+
+}
+
+
+/*=========================================================
+FILA DE ESTADÍSTICA
+=========================================================*/
+
+.filaEstadisticaCAB09{
 
     display:flex;
 
     align-items:center;
 
-    justify-content:space-between;
+    width:100%;
 
-    gap:15px;
+    min-height:34px;
 
     margin:0;
 
-    padding:9px 4px;
+    padding:7px 4px;
 
-    color:#b8bec2 !important;
+    box-sizing:border-box;
 
-    font-size:16px;
+    border-bottom:1px solid
+        rgba(255,255,255,.07);
 
-    line-height:1.4;
+    gap:10px;
+
+}
+
+
+/*=========================================================
+ETIQUETA
+=========================================================*/
+
+.etiquetaEstadisticaCAB09{
+
+    flex:0 0 175px;
+
+    color:#fff !important;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    line-height:1.2;
 
     text-align:left;
 
-    border-bottom:1px solid
-        rgba(255,255,255,.06);
+    white-space:nowrap;
 
 }
 
 
 /*=========================================================
-VALORES NUMÉRICOS
+BARRA
 =========================================================*/
 
-#lightboxEstadisticas p:not(:nth-of-type(1)):not(:nth-of-type(2)){
+.barraEstadisticaCAB09{
 
-    font-variant-numeric:tabular-nums;
+    flex:1;
+
+    height:9px;
+
+    min-width:60px;
+
+    overflow:hidden;
+
+    background:#292d30;
+
+    border:1px solid
+        rgba(98,214,255,.20);
+
+    border-radius:10px;
+
+    box-shadow:
+        inset 0 0 4px rgba(0,0,0,.7);
 
 }
 
 
 /*=========================================================
-DESTACAR VALORES
-
-El texto completo sigue siendo generado por CAB09.
-El valor queda visualmente más destacado mediante
-alineación y peso general del bloque.
+PROGRESO
 =========================================================*/
 
-#lightboxEstadisticas h3 + p{
+.progresoEstadisticaCAB09{
+
+    height:100%;
+
+    min-width:0;
+
+    background:#62d6ff;
+
+    border-radius:10px;
+
+    box-shadow:
+        0 0 8px rgba(98,214,255,.45);
+
+    transition:
+        width .45s ease;
+
+}
+
+
+/*=========================================================
+VALOR NUMÉRICO
+=========================================================*/
+
+.valorEstadisticaCAB09{
+
+    flex:0 0 35px;
+
+    color:#62d6ff !important;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    line-height:1;
+
+    text-align:right;
+
+    font-variant-numeric:
+        tabular-nums;
+
+    text-shadow:
+        0 0 7px rgba(98,214,255,.25);
+
+}
+
+
+/*=========================================================
+INDICADORES GENERALES
+=========================================================*/
+
+.contenedorIndicadoresCAB09{
+
+    width:100%;
 
     margin-top:0;
 
@@ -321,18 +426,59 @@ alineación y peso general del bloque.
 
 
 /*=========================================================
-SEGUNDO BLOQUE — INDICADORES GENERALES
+INDICADORES — DIFERENCIACIÓN VISUAL
 =========================================================*/
 
-#lightboxEstadisticas h3:nth-of-type(2){
+.indicadorGeneralCAB09{
 
-    margin-top:30px;
+    padding-top:9px;
+
+    padding-bottom:9px;
 
 }
 
 
 /*=========================================================
-BOTÓN CERRAR — CIRCULAR
+INDICADORES — ETIQUETA
+=========================================================*/
+
+.indicadorGeneralCAB09
+.etiquetaEstadisticaCAB09{
+
+    color:#fff !important;
+
+}
+
+
+/*=========================================================
+INDICADORES — VALOR
+=========================================================*/
+
+.indicadorGeneralCAB09
+.valorEstadisticaCAB09{
+
+    color:#62d6ff !important;
+
+    font-size:17px;
+
+}
+
+
+/*=========================================================
+INDICADORES — BARRA
+=========================================================*/
+
+.indicadorGeneralCAB09
+.progresoEstadisticaCAB09{
+
+    box-shadow:
+        0 0 10px rgba(98,214,255,.55);
+
+}
+
+
+/*=========================================================
+BOTÓN CERRAR
 =========================================================*/
 
 #lightboxEstadisticas button{
@@ -493,7 +639,7 @@ RESPONSIVE
     }
 
 
-    #lightboxEstadisticas p:nth-of-type(2){
+    .nombreEstadisticasCAB09{
 
         font-size:21px;
 
@@ -502,18 +648,45 @@ RESPONSIVE
     }
 
 
-    #lightboxEstadisticas h3{
+    .tituloSeccionCAB09{
 
         font-size:17px;
+
+        margin-top:22px;
 
     }
 
 
-    #lightboxEstadisticas p{
+    .filaEstadisticaCAB09{
+
+        gap:8px;
+
+        padding:7px 2px;
+
+    }
+
+
+    .etiquetaEstadisticaCAB09{
+
+        flex:0 0 125px;
+
+        font-size:13px;
+
+    }
+
+
+    .barraEstadisticaCAB09{
+
+        height:8px;
+
+    }
+
+
+    .valorEstadisticaCAB09{
+
+        flex:0 0 30px;
 
         font-size:15px;
-
-        padding:8px 3px;
 
     }
 
