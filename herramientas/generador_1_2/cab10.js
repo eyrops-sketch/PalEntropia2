@@ -1,259 +1,160 @@
 /*
 ========================================================
 PalEntropía
-stylecab10.css
-CAB10 — ECOLOGÍA
-Extensión visual de Style v2.1
+CAB10.js
+Generador de Paleofichas 1.1
+
+FASE 4A — LIGHTBOX ECOLOGÍA
 ========================================================
 */
 
+document.addEventListener(
+    "palentropia:contenedor-cargado",
+    function() {
 
-/*=========================================================
-LIGHTBOX ECOLOGÍA
-=========================================================*/
+        const botonEcologia =
+            document.getElementById("botonEcologia");
 
-#lightboxEcologia{
 
-    position:fixed !important;
+        if (!botonEcologia) {
 
-    top:0 !important;
-    left:0 !important;
+            console.warn(
+                "CAB10: no se encontró el botón Ecología."
+            );
 
-    width:100vw !important;
-    height:100vh !important;
+            return;
 
-    padding:20px !important;
+        }
 
-    background:rgba(0,0,0,.90) !important;
 
-    z-index:999998 !important;
+        /* =========================================
+           EVITAR DUPLICAR EL EVENTO
+           ========================================= */
 
-    display:flex !important;
+        if (
+            botonEcologia.dataset.cab10Activo === "true"
+        ) {
 
-    justify-content:center !important;
-    align-items:center !important;
+            return;
 
-    box-sizing:border-box !important;
+        }
 
-}
 
+        botonEcologia.dataset.cab10Activo =
+            "true";
 
-/*=========================================================
-VENTANA ECOLOGÍA
-=========================================================*/
 
-#lightboxEcologia > div{
+        /* =========================================
+           ABRIR LIGHTBOX ECOLOGÍA
+           ========================================= */
 
-    position:relative;
+        botonEcologia.onclick =
+            function() {
 
-    width:90%;
+                const lightbox =
+                    document.createElement("div");
 
-    max-width:700px;
 
-    max-height:80vh;
+                lightbox.id =
+                    "lightboxEcologia";
 
-    overflow:auto;
 
-    padding:25px;
+                /* =================================
+                   FONDO
+                   ================================= */
 
-    background:#181a1c !important;
+                lightbox.style.position =
+                    "fixed";
 
-    color:#eee !important;
+                lightbox.style.inset =
+                    "0";
 
-    border:2px solid #62d6ff;
+                lightbox.style.background =
+                    "rgba(0,0,0,0.75)";
 
-    border-radius:18px;
+                lightbox.style.zIndex =
+                    "99999";
 
-    box-shadow:
-        0 0 25px rgba(98,214,255,.35),
-        0 10px 35px rgba(0,0,0,.45);
+                lightbox.style.display =
+                    "flex";
 
-    text-align:center;
+                lightbox.style.alignItems =
+                    "center";
 
-    box-sizing:border-box;
+                lightbox.style.justifyContent =
+                    "center";
 
-}
 
+                /* =================================
+                   VENTANA
+                   ================================= */
 
-/*=========================================================
-TÍTULO
-=========================================================*/
+                const ventana =
+                    document.createElement("div");
 
-#lightboxEcologia h2{
 
-    margin-top:0;
+                ventana.style.background =
+                    "white";
 
-    margin-bottom:20px;
+                ventana.style.padding =
+                    "25px";
 
-    color:#62d6ff !important;
+                ventana.style.borderRadius =
+                    "16px";
 
-    text-align:center;
+                ventana.style.textAlign =
+                    "center";
 
-    font-size:28px;
 
-}
+                ventana.innerHTML =
+                    "<h2>Ecología</h2>" +
+                    "<p>Lightbox funcionando.</p>";
 
 
-/*=========================================================
-TEXTO
-=========================================================*/
+                /* =================================
+                   BOTÓN CERRAR
+                   ================================= */
 
-#lightboxEcologia p{
+                const cerrar =
+                    document.createElement("button");
 
-    color:#aaa !important;
 
-    font-size:16px;
+                cerrar.type =
+                    "button";
 
-    line-height:1.6;
 
-}
+                cerrar.textContent =
+                    "Cerrar";
 
 
-/*=========================================================
-BOTÓN CERRAR
-=========================================================*/
+                cerrar.onclick =
+                    function() {
 
-#lightboxEcologia button{
+                        lightbox.remove();
 
-    min-height:42px;
+                    };
 
-    padding:9px 20px;
 
-    margin-top:18px;
+                ventana.appendChild(
+                    cerrar
+                );
 
-    background:#1d9bf0 !important;
 
-    color:#fff !important;
+                lightbox.appendChild(
+                    ventana
+                );
 
-    border:1px solid #62d6ff;
 
-    border-radius:22px;
+                document.body.appendChild(
+                    lightbox
+                );
 
-    font-size:16px;
+            };
 
-    font-weight:bold;
 
-    cursor:pointer;
-
-    box-shadow:
-        0 0 10px rgba(98,214,255,.25);
-
-    transition:
-        background .25s,
-        transform .15s,
-        box-shadow .25s;
-
-}
-
-
-#lightboxEcologia button:hover{
-
-    background:#62d6ff !important;
-
-    color:#001018 !important;
-
-    box-shadow:
-        0 0 15px rgba(98,214,255,.42);
-
-}
-
-
-#lightboxEcologia button:active{
-
-    transform:scale(.94);
-
-}
-
-
-/*=========================================================
-SCROLL INTERNO
-=========================================================*/
-
-#lightboxEcologia > div::-webkit-scrollbar{
-
-    width:10px;
-
-}
-
-
-#lightboxEcologia > div::-webkit-scrollbar-track{
-
-    background:#151719;
-
-    border-radius:10px;
-
-}
-
-
-#lightboxEcologia > div::-webkit-scrollbar-thumb{
-
-    background:#62d6ff;
-
-    border-radius:10px;
-
-}
-
-
-#lightboxEcologia > div::-webkit-scrollbar-thumb:hover{
-
-    background:#00e5ff;
-
-}
-
-
-/*=========================================================
-RESPONSIVE
-=========================================================*/
-
-@media (max-width:768px){
-
-    #lightboxEcologia{
-
-        padding:15px !important;
+        console.log(
+            "CAB10 — Ecología preparado."
+        );
 
     }
-
-
-    #lightboxEcologia > div{
-
-        width:95%;
-
-        max-height:85vh;
-
-        padding:18px;
-
-        border-radius:15px;
-
-    }
-
-
-    #lightboxEcologia h2{
-
-        font-size:24px;
-
-    }
-
-
-    #lightboxEcologia p{
-
-        font-size:15px;
-
-    }
-
-
-    #lightboxEcologia button{
-
-        min-height:42px;
-
-        padding:9px 18px;
-
-        font-size:15px;
-
-    }
-
-}
-
-
-/*=========================================================
-FIN STYLECAB10.CSS
-=========================================================*/
+);
