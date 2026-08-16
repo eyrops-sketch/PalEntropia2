@@ -9,6 +9,65 @@ Extensión visual de Style v2.1
 
 
 /*=========================================================
+BOTÓN ECOLOGÍA
+=========================================================*/
+
+#botonEcologia{
+
+    min-width:145px;
+
+    min-height:44px;
+
+    padding:10px 20px;
+
+    background:#151719 !important;
+
+    color:#62d6ff !important;
+
+    border:2px solid #62d6ff !important;
+
+    border-radius:22px !important;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 10px rgba(98,214,255,.18);
+
+    transition:
+        background .25s,
+        color .25s,
+        transform .15s,
+        box-shadow .25s;
+
+}
+
+
+#botonEcologia:hover{
+
+    background:#62d6ff !important;
+
+    color:#001018 !important;
+
+    box-shadow:
+        0 0 18px rgba(98,214,255,.42);
+
+}
+
+
+#botonEcologia:active{
+
+    transform:scale(.95);
+
+}
+
+
+/*=========================================================
 LIGHTBOX ECOLOGÍA
 =========================================================*/
 
@@ -210,6 +269,19 @@ MÓVIL
 =========================================================*/
 
 @media (max-width:768px){
+
+    #botonEcologia{
+
+        min-width:130px;
+
+        min-height:42px;
+
+        padding:9px 16px;
+
+        font-size:15px;
+
+    }
+
 
     #lightboxEcologia{
 
