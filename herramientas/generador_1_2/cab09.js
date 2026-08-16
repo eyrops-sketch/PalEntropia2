@@ -4,13 +4,7 @@ PalEntropía
 CAB09.js
 Generador de Paleofichas 1.1
 
-FASE 3 — PULSACIÓN
-
-- Estadísticas
-- Ecología
-
-Todavía sin lightbox.
-Todavía sin datos.
+FASE 3 — PRUEBA VISIBLE DE PULSACIÓN
 ========================================================
 */
 
@@ -23,22 +17,20 @@ document.addEventListener(
 
 
         if (!ficha) {
-
-            console.warn(
-                "CAB09: no se encontró #ficha."
-            );
-
             return;
-
         }
 
 
-        if (
-            document.getElementById("botonesCAB09")
-        ) {
+        /* =========================================
+           EVITAR DUPLICADOS
+           ========================================= */
 
+        let contenedor =
+            document.getElementById("botonesCAB09");
+
+
+        if (contenedor) {
             return;
-
         }
 
 
@@ -46,9 +38,8 @@ document.addEventListener(
            CONTENEDOR
            ========================================= */
 
-        const contenedor =
+        contenedor =
             document.createElement("div");
-
 
         contenedor.id =
             "botonesCAB09";
@@ -61,29 +52,33 @@ document.addEventListener(
         const botonEstadisticas =
             document.createElement("button");
 
-
         botonEstadisticas.id =
             "botonEstadisticas";
 
-
         botonEstadisticas.type =
             "button";
-
 
         botonEstadisticas.textContent =
             "Estadísticas";
 
 
-        botonEstadisticas.addEventListener(
-            "click",
+        botonEstadisticas.onclick =
             function() {
 
-                console.log(
-                    "CAB09 — Estadísticas pulsado."
+                botonEstadisticas.textContent =
+                    "✓ Estadísticas";
+
+                setTimeout(
+                    function() {
+
+                        botonEstadisticas.textContent =
+                            "Estadísticas";
+
+                    },
+                    1000
                 );
 
-            }
-        );
+            };
 
 
         /* =========================================
@@ -93,39 +88,42 @@ document.addEventListener(
         const botonEcologia =
             document.createElement("button");
 
-
         botonEcologia.id =
             "botonEcologia";
 
-
         botonEcologia.type =
             "button";
-
 
         botonEcologia.textContent =
             "Ecología";
 
 
-        botonEcologia.addEventListener(
-            "click",
+        botonEcologia.onclick =
             function() {
 
-                console.log(
-                    "CAB09 — Ecología pulsado."
+                botonEcologia.textContent =
+                    "✓ Ecología";
+
+                setTimeout(
+                    function() {
+
+                        botonEcologia.textContent =
+                            "Ecología";
+
+                    },
+                    1000
                 );
 
-            }
-        );
+            };
 
 
         /* =========================================
-           AÑADIR BOTONES
+           AÑADIR
            ========================================= */
 
         contenedor.appendChild(
             botonEstadisticas
         );
-
 
         contenedor.appendChild(
             botonEcologia
@@ -133,16 +131,11 @@ document.addEventListener(
 
 
         /* =========================================
-           COLOCAR AL FINAL
+           INSERTAR AL FINAL DE LA FICHA
            ========================================= */
 
         ficha.appendChild(
             contenedor
-        );
-
-
-        console.log(
-            "CAB09 — botones creados y eventos preparados."
         );
 
     }
