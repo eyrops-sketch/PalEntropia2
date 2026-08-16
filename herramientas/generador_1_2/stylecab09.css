@@ -2,94 +2,197 @@
 ========================================================
 PalEntropía
 stylecab09.css
-Generador de Paleofichas 1.1
-
 CAB09 — ESTADÍSTICAS
-FASE 4B — DISEÑO DEL LIGHTBOX
-
-Solo presentación.
-Sin datos.
+Extensión visual de Style v2.1
 ========================================================
 */
 
 
-/* =====================================================
-   LIGHTBOX ESTADÍSTICAS
-   ===================================================== */
+/*=========================================================
+LIGHTBOX ESTADÍSTICAS
+=========================================================*/
 
-#lightboxEstadisticas {
+#lightboxEstadisticas{
 
-    position: fixed;
+    position:fixed !important;
 
-    inset: 0;
+    top:0 !important;
+    left:0 !important;
 
-    display: flex;
+    width:100vw !important;
+    height:100vh !important;
 
-    align-items: center;
+    padding:20px !important;
 
-    justify-content: center;
+    background:rgba(0,0,0,.90) !important;
 
-    background: rgba(0, 0, 0, 0.75);
+    z-index:999999 !important;
 
-    z-index: 99999;
+    display:flex !important;
 
-    padding: 20px;
+    justify-content:center !important;
+    align-items:center !important;
 
-    box-sizing: border-box;
-
-}
-
-
-/* =====================================================
-   VENTANA
-   ===================================================== */
-
-#lightboxEstadisticas > div {
-
-    width: min(92vw, 520px);
-
-    max-height: 85vh;
-
-    overflow-y: auto;
-
-    box-sizing: border-box;
-
-    padding: 24px;
-
-    border-radius: 18px;
-
-    background: white;
-
-    text-align: center;
+    box-sizing:border-box !important;
 
 }
 
 
-/* =====================================================
-   TÍTULO
-   ===================================================== */
+/*=========================================================
+VENTANA ESTADÍSTICAS
+=========================================================*/
 
-#lightboxEstadisticas h2 {
+#lightboxEstadisticas > div{
 
-    margin-top: 0;
+    position:relative;
+
+    width:90%;
+
+    max-width:700px;
+
+    max-height:80vh;
+
+    overflow:auto;
+
+    padding:25px;
+
+    background:#181a1c;
+
+    color:#eee;
+
+    border:2px solid #62d6ff;
+
+    border-radius:18px;
+
+    box-shadow:
+        0 0 25px rgba(98,214,255,.35),
+        0 10px 35px rgba(0,0,0,.45);
+
+    text-align:center;
+
+    box-sizing:border-box;
 
 }
 
 
-/* =====================================================
-   BOTÓN CERRAR
-   ===================================================== */
+/*=========================================================
+TÍTULO
+=========================================================*/
 
-#lightboxEstadisticas button {
+#lightboxEstadisticas h2{
 
-    margin-top: 18px;
+    margin-top:0;
 
-    padding: 9px 18px;
+    margin-bottom:20px;
 
-    border: none;
+    color:#62d6ff;
 
-    border-radius: 20px;
+    text-align:center;
 
-    cursor: pointer;
+}
+
+
+/*=========================================================
+TEXTO TEMPORAL
+=========================================================*/
+
+#lightboxEstadisticas p{
+
+    color:#aaa;
+
+    font-size:16px;
+
+    line-height:1.6;
+
+}
+
+
+/*=========================================================
+BOTÓN CERRAR
+=========================================================*/
+
+#lightboxEstadisticas button{
+
+    min-height:42px;
+
+    padding:9px 20px;
+
+    margin-top:18px;
+
+    background:#1d9bf0;
+
+    color:#fff;
+
+    border:1px solid #62d6ff;
+
+    border-radius:22px;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 10px rgba(98,214,255,.25);
+
+    transition:
+        background .25s,
+        transform .15s,
+        box-shadow .25s;
+
+}
+
+
+#lightboxEstadisticas button:hover{
+
+    background:#62d6ff;
+
+    color:#001018;
+
+    box-shadow:
+        0 0 15px rgba(98,214,255,.42);
+
+}
+
+
+#lightboxEstadisticas button:active{
+
+    transform:scale(.94);
+
+}
+
+
+/*=========================================================
+RESPONSIVE
+=========================================================*/
+
+@media (max-width:768px){
+
+    #lightboxEstadisticas{
+
+        padding:15px !important;
+
+    }
+
+
+    #lightboxEstadisticas > div{
+
+        width:95%;
+
+        max-height:85vh;
+
+        padding:18px;
+
+        border-radius:15px;
+
+    }
+
+
+    #lightboxEstadisticas h2{
+
+        font-size:24px;
+
+    }
 
 }
