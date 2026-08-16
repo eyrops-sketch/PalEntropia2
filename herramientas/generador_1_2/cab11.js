@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-CAB11.js v1.1
+CAB11.js v1.2
 ECOLOGÍA
 
 Coordinador de la sección de Ecología.
@@ -11,12 +11,146 @@ CAB11
  ├── CAB13 → Medio de vida
  └── CAB14 → Hábitats
 
+CAB11 NO muestra Ecología automáticamente.
+
+La sección solamente se abre cuando
+el usuario pulsa el botón Ecología.
+
 CAB11 no contiene la lógica específica
 de cada módulo.
 ========================================================
 */
 
 window.CAB11 = {
+
+
+    /*
+    ====================================================
+    INICIALIZAR
+    ====================================================
+    */
+
+    inicializar: function() {
+
+
+        /*
+        ----------------------------------------
+        COMPROBAR SI YA EXISTE EL BOTÓN
+        ----------------------------------------
+        */
+
+        if (
+            document.getElementById(
+                "botonEcologia"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+        ----------------------------------------
+        COMPROBAR PALEOFICHA
+        ----------------------------------------
+        */
+
+        const ficha =
+            document.getElementById(
+                "ficha"
+            );
+
+
+        if (!ficha) {
+
+            console.warn(
+                "CAB11: #ficha todavía no existe."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        ----------------------------------------
+        CREAR BOTÓN
+        ----------------------------------------
+        */
+
+        const boton =
+            document.createElement(
+                "button"
+            );
+
+
+        boton.id =
+            "botonEcologia";
+
+
+        boton.type =
+            "button";
+
+
+        boton.textContent =
+            "🌿 Ecología";
+
+
+        boton.title =
+            "Información ecológica";
+
+
+        /*
+        ----------------------------------------
+        EVENTO
+        ----------------------------------------
+        */
+
+        boton.addEventListener(
+            "click",
+            function() {
+
+                window.CAB11.mostrar();
+
+            }
+        );
+
+
+        /*
+        ----------------------------------------
+        INSERTAR DESPUÉS DE ESTADÍSTICAS
+        ----------------------------------------
+        */
+
+        const estadisticas =
+            document.getElementById(
+                "bloqueEstadisticas"
+            );
+
+
+        if (estadisticas) {
+
+            estadisticas.insertAdjacentElement(
+                "afterend",
+                boton
+            );
+
+        }
+        else {
+
+            ficha.appendChild(
+                boton
+            );
+
+        }
+
+
+        console.log(
+            "CAB11: botón Ecología preparado."
+        );
+
+    },
 
 
     /*
@@ -72,7 +206,7 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        EVITAR DUPLICADOS
+        BUSCAR BLOQUE EXISTENTE
         ----------------------------------------
         */
 
@@ -82,14 +216,35 @@ window.CAB11 = {
             );
 
 
+        /*
+        ----------------------------------------
+        SI YA EXISTE
+        ----------------------------------------
+        */
+
         if (bloque) {
 
             /*
-            Si ya existe, simplemente
-            volvemos a cargar sus módulos.
+            Alternar visibilidad.
             */
 
-            this.cargarModulos();
+            if (
+                bloque.style.display ===
+                "none"
+            ) {
+
+                bloque.style.display =
+                    "";
+
+                this.cargarModulos();
+
+            }
+            else {
+
+                bloque.style.display =
+                    "none";
+
+            }
 
             return;
 
@@ -230,7 +385,8 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        CARGAR MÓDULOS
+        AHORA SÍ:
+        CARGAR LOS MÓDULOS
         ----------------------------------------
         */
 
@@ -238,7 +394,7 @@ window.CAB11 = {
 
 
         console.log(
-            "CAB11: Ecología creada."
+            "CAB11: Ecología abierta."
         );
 
     },
@@ -274,11 +430,7 @@ window.CAB11 = {
         ----------------------------------------
         CAB13 — MEDIO DE VIDA
         ----------------------------------------
-
-        Se activará cuando CAB13 exista.
-        ----------------------------------------
         */
-
 
         if (
             window.CAB13 &&
@@ -295,11 +447,7 @@ window.CAB11 = {
         ----------------------------------------
         CAB14 — HÁBITATS
         ----------------------------------------
-
-        Se activará cuando CAB14 exista.
-        ----------------------------------------
         */
-
 
         if (
             window.CAB14 &&
@@ -314,3 +462,24 @@ window.CAB11 = {
     }
 
 };
+
+
+/*
+========================================================
+INICIALIZACIÓN SEGURA
+========================================================
+
+CAB11 solamente prepara el botón.
+
+NO abre Ecología.
+========================================================
+*/
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        window.CAB11.inicializar();
+
+    }
+);
