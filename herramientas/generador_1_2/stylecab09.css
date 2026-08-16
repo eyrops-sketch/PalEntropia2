@@ -56,9 +56,9 @@ VENTANA ESTADÍSTICAS
 
     padding:25px;
 
-    background:#181a1c;
+    background:#181a1c !important;
 
-    color:#eee;
+    color:#eee !important;
 
     border:2px solid #62d6ff;
 
@@ -85,20 +85,22 @@ TÍTULO
 
     margin-bottom:20px;
 
-    color:#62d6ff;
+    color:#62d6ff !important;
 
     text-align:center;
+
+    font-size:28px;
 
 }
 
 
 /*=========================================================
-TEXTO TEMPORAL
+TEXTO
 =========================================================*/
 
 #lightboxEstadisticas p{
 
-    color:#aaa;
+    color:#aaa !important;
 
     font-size:16px;
 
@@ -119,9 +121,9 @@ BOTÓN CERRAR
 
     margin-top:18px;
 
-    background:#1d9bf0;
+    background:#1d9bf0 !important;
 
-    color:#fff;
+    color:#fff !important;
 
     border:1px solid #62d6ff;
 
@@ -146,9 +148,9 @@ BOTÓN CERRAR
 
 #lightboxEstadisticas button:hover{
 
-    background:#62d6ff;
+    background:#62d6ff !important;
 
-    color:#001018;
+    color:#001018 !important;
 
     box-shadow:
         0 0 15px rgba(98,214,255,.42);
@@ -159,6 +161,42 @@ BOTÓN CERRAR
 #lightboxEstadisticas button:active{
 
     transform:scale(.94);
+
+}
+
+
+/*=========================================================
+SCROLL INTERNO
+=========================================================*/
+
+#lightboxEstadisticas > div::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+
+#lightboxEstadisticas > div::-webkit-scrollbar-track{
+
+    background:#151719;
+
+    border-radius:10px;
+
+}
+
+
+#lightboxEstadisticas > div::-webkit-scrollbar-thumb{
+
+    background:#62d6ff;
+
+    border-radius:10px;
+
+}
+
+
+#lightboxEstadisticas > div::-webkit-scrollbar-thumb:hover{
+
+    background:#00e5ff;
 
 }
 
@@ -195,4 +233,27 @@ RESPONSIVE
 
     }
 
+
+    #lightboxEstadisticas p{
+
+        font-size:15px;
+
+    }
+
+
+    #lightboxEstadisticas button{
+
+        min-height:42px;
+
+        padding:9px 18px;
+
+        font-size:15px;
+
+    }
+
 }
+
+
+/*=========================================================
+FIN STYLECAB09.CSS
+=========================================================*/
