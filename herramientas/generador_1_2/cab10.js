@@ -5,38 +5,34 @@ CAB10.js
 Generador de Paleofichas 1.1
 
 FASE 4A — LIGHTBOX ECOLOGÍA
-
-- Botón Ecología
-- Lightbox independiente
-
-SIN:
-- datos ecológicos
-- master.csv
-- CSS externo
-- lógica de CAB09
 ========================================================
 */
-
 
 document.addEventListener(
     "palentropia:contenedor-cargado",
     function() {
 
-        const ficha =
-            document.getElementById("ficha");
+        const botonEcologia =
+            document.getElementById("botonEcologia");
 
 
-        if (!ficha) {
+        if (!botonEcologia) {
+
+            console.warn(
+                "CAB10: no se encontró el botón Ecología."
+            );
+
             return;
+
         }
 
 
         /* =========================================
-           COMPROBAR SI EL BOTÓN YA EXISTE
+           EVITAR DUPLICAR EL EVENTO
            ========================================= */
 
         if (
-            document.getElementById("botonEcologia")
+            botonEcologia.dataset.cab10Activo === "true"
         ) {
 
             return;
@@ -44,56 +40,12 @@ document.addEventListener(
         }
 
 
-        /* =========================================
-           CREAR BOTÓN ECOLOGÍA
-           ========================================= */
-
-        const botonEcologia =
-            document.createElement("button");
-
-
-        botonEcologia.id =
-            "botonEcologia";
-
-
-        botonEcologia.type =
-            "button";
-
-
-        botonEcologia.textContent =
-            "Ecología";
+        botonEcologia.dataset.cab10Activo =
+            "true";
 
 
         /* =========================================
-           INSERTAR BOTÓN
-           ========================================= */
-
-        let contenedor =
-            document.getElementById("botonesCAB09");
-
-
-        if (!contenedor) {
-
-            contenedor =
-                document.createElement("div");
-
-            contenedor.id =
-                "botonesCAB09";
-
-            ficha.appendChild(
-                contenedor
-            );
-
-        }
-
-
-        contenedor.appendChild(
-            botonEcologia
-        );
-
-
-        /* =========================================
-           ABRIR LIGHTBOX
+           ABRIR LIGHTBOX ECOLOGÍA
            ========================================= */
 
         botonEcologia.onclick =
@@ -198,6 +150,11 @@ document.addEventListener(
                 );
 
             };
+
+
+        console.log(
+            "CAB10 — Ecología preparado."
+        );
 
     }
 );
