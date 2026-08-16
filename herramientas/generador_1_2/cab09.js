@@ -4,14 +4,15 @@ PalEntropía
 CAB09.js
 Generador de Paleofichas 1.1
 
-FASE 1 — PRUEBA DEL BOTÓN
+FASE 1 — BOTONES
 
-OBJETIVO:
-- Crear únicamente el botón CAB09.
-- No estadísticas.
-- No lightbox.
-- No master.csv.
-- No CSS externo.
+- Estadísticas
+- Ecología
+
+Sin lightbox.
+Sin estadísticas.
+Sin datos.
+Sin master.csv.
 ========================================================
 */
 
@@ -20,40 +21,7 @@ document.addEventListener(
     function() {
 
         /* =========================================
-           COMPROBAR SI YA EXISTE
-           ========================================= */
-
-        if (
-            document.getElementById("botonCAB09")
-        ) {
-
-            return;
-
-        }
-
-
-        /* =========================================
-           CREAR BOTÓN
-           ========================================= */
-
-        const boton =
-            document.createElement("button");
-
-
-        boton.id =
-            "botonCAB09";
-
-
-        boton.type =
-            "button";
-
-
-        boton.textContent =
-            "Estadísticas";
-
-
-        /* =========================================
-           INSERTAR EN LA FICHA
+           COMPROBAR FICHA
            ========================================= */
 
         const ficha =
@@ -63,7 +31,7 @@ document.addEventListener(
         if (!ficha) {
 
             console.warn(
-                "CAB09: no se encontró el contenedor #ficha."
+                "CAB09: no se encontró #ficha."
             );
 
             return;
@@ -71,13 +39,96 @@ document.addEventListener(
         }
 
 
+        /* =========================================
+           EVITAR DUPLICADOS
+           ========================================= */
+
+        if (
+            document.getElementById("botonesCAB09")
+        ) {
+
+            return;
+
+        }
+
+
+        /* =========================================
+           CONTENEDOR
+           ========================================= */
+
+        const contenedor =
+            document.createElement("div");
+
+
+        contenedor.id =
+            "botonesCAB09";
+
+
+        /* =========================================
+           BOTÓN ESTADÍSTICAS
+           ========================================= */
+
+        const botonEstadisticas =
+            document.createElement("button");
+
+
+        botonEstadisticas.id =
+            "botonEstadisticas";
+
+
+        botonEstadisticas.type =
+            "button";
+
+
+        botonEstadisticas.textContent =
+            "Estadísticas";
+
+
+        /* =========================================
+           BOTÓN ECOLOGÍA
+           ========================================= */
+
+        const botonEcologia =
+            document.createElement("button");
+
+
+        botonEcologia.id =
+            "botonEcologia";
+
+
+        botonEcologia.type =
+            "button";
+
+
+        botonEcologia.textContent =
+            "Ecología";
+
+
+        /* =========================================
+           AÑADIR BOTONES
+           ========================================= */
+
+        contenedor.appendChild(
+            botonEstadisticas
+        );
+
+
+        contenedor.appendChild(
+            botonEcologia
+        );
+
+
+        /* =========================================
+           COLOCAR AL FINAL DE LA PALEOFICHA
+           ========================================= */
+
         ficha.appendChild(
-            boton
+            contenedor
         );
 
 
         console.log(
-            "CAB09 — botón creado correctamente."
+            "CAB09 — botones Estadísticas y Ecología creados."
         );
 
     }
