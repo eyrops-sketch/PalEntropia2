@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-CAB11.js v1.0
+CAB11.js v1.1
 ECOLOGÍA
 
 Coordinador de la sección de Ecología.
@@ -11,24 +11,22 @@ CAB11
  ├── CAB13 → Medio de vida
  └── CAB14 → Hábitats
 
-CAB11 no contiene la lógica específica de cada módulo.
+CAB11 no contiene la lógica específica
+de cada módulo.
 ========================================================
 */
 
 window.CAB11 = {
 
-    inicializar: function() {
 
-        console.log(
-            "CAB11: inicializando Ecología."
-        );
-
-        return true;
-
-    },
-
+    /*
+    ====================================================
+    MOSTRAR ECOLOGÍA
+    ====================================================
+    */
 
     mostrar: function() {
+
 
         /*
         ----------------------------------------
@@ -41,10 +39,30 @@ window.CAB11 = {
                 "ficha"
             );
 
+
         if (!ficha) {
 
             console.error(
                 "CAB11: no existe #ficha."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        ----------------------------------------
+        COMPROBAR MASTER_ACTUAL
+        ----------------------------------------
+        */
+
+        if (
+            !window.MASTER_ACTUAL
+        ) {
+
+            console.warn(
+                "CAB11: MASTER_ACTUAL todavía no está disponible."
             );
 
             return;
@@ -65,6 +83,13 @@ window.CAB11 = {
 
 
         if (bloque) {
+
+            /*
+            Si ya existe, simplemente
+            volvemos a cargar sus módulos.
+            */
+
+            this.cargarModulos();
 
             return;
 
@@ -110,7 +135,7 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        CONTENEDOR DE LOS TRES MÓDULOS
+        CONTENEDOR GENERAL
         ----------------------------------------
         */
 
@@ -189,7 +214,7 @@ window.CAB11 = {
 
         /*
         ----------------------------------------
-        INSERTAR
+        INSERTAR CONTENIDO
         ----------------------------------------
         */
 
@@ -203,26 +228,89 @@ window.CAB11 = {
         );
 
 
+        /*
+        ----------------------------------------
+        CARGAR MÓDULOS
+        ----------------------------------------
+        */
+
+        this.cargarModulos();
+
+
         console.log(
             "CAB11: Ecología creada."
         );
 
+    },
+
+
+    /*
+    ====================================================
+    CARGAR MÓDULOS
+    ====================================================
+    */
+
+    cargarModulos: function() {
+
+
+        /*
+        ----------------------------------------
+        CAB12 — MODO DE VIDA
+        ----------------------------------------
+        */
+
+        if (
+            window.CAB12 &&
+            typeof window.CAB12.mostrar ===
+                "function"
+        ) {
+
+            window.CAB12.mostrar();
+
+        }
+
+
+        /*
+        ----------------------------------------
+        CAB13 — MEDIO DE VIDA
+        ----------------------------------------
+
+        Se activará cuando CAB13 exista.
+        ----------------------------------------
+        */
+
+
+        if (
+            window.CAB13 &&
+            typeof window.CAB13.mostrar ===
+                "function"
+        ) {
+
+            window.CAB13.mostrar();
+
+        }
+
+
+        /*
+        ----------------------------------------
+        CAB14 — HÁBITATS
+        ----------------------------------------
+
+        Se activará cuando CAB14 exista.
+        ----------------------------------------
+        */
+
+
+        if (
+            window.CAB14 &&
+            typeof window.CAB14.mostrar ===
+                "function"
+        ) {
+
+            window.CAB14.mostrar();
+
+        }
+
     }
 
 };
-
-
-/*
-========================================================
-INICIALIZACIÓN
-========================================================
-*/
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        window.CAB11.inicializar();
-
-    }
-);
