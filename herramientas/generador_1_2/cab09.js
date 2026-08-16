@@ -8,8 +8,9 @@ FASE 4B — ESTADÍSTICAS
 
 - Botón Estadísticas
 - Lightbox independiente
-- Lectura de e1-e11 desde master.csv
-- Cálculo de indicadores Nivel 1
+- Lectura directa de master.csv
+- e1 → e11
+- Cálculos Nivel 1
 - Sin modificar CAB10
 ========================================================
 */
@@ -83,26 +84,20 @@ document.addEventListener(
 
         function obtenerCodigoActual() {
 
-            /* -------------------------------------
-               1. URL
-               ------------------------------------- */
-
             const parametros =
                 new URLSearchParams(
                     window.location.search
                 );
 
+
             const codigoURL =
                 parametros.get("codigo");
+
 
             if (codigoURL) {
                 return codigoURL;
             }
 
-
-            /* -------------------------------------
-               2. DATASET DE LA FICHA
-               ------------------------------------- */
 
             if (
                 ficha.dataset &&
@@ -113,10 +108,6 @@ document.addEventListener(
 
             }
 
-
-            /* -------------------------------------
-               3. BUSCAR CÓDIGO EN LA FICHA
-               ------------------------------------- */
 
             const texto =
                 ficha.innerText || "";
@@ -139,133 +130,332 @@ document.addEventListener(
 
 
         /* =========================================
-           OBTENER REGISTRO MASTER
+           PARSER CSV
            ========================================= */
 
-        function obtenerRegistro(codigo) {
+        function parseCSV(texto) {
 
-            if (
-                !window.LEEPALJSON ||
-                typeof window.LEEPALJSON.obtener !==
-                "function"
+            const filas = [];
+
+            let fila = [];
+            let campo = "";
+            let dentroComillas = false;
+
+
+            for (
+                let i = 0;
+                i < texto.length;
+                i++
             ) {
 
-                console.error(
-                    "CAB09: LEEPALJSON no disponible."
-                );
-
-                return null;
-
-            }
+                const caracter =
+                    texto[i];
 
 
-            const datos =
-                window.LEEPALJSON.obtener();
+                const siguiente =
+                    texto[i + 1];
 
 
-            if (!datos) {
-                return null;
-            }
+                if (
+                    caracter === '"'
+                ) {
 
+                    if (
+                        dentroComillas &&
+                        siguiente === '"'
+                    ) {
 
-            /* -------------------------------------
-               Si devuelve un array
-               ------------------------------------- */
+                        campo += '"';
+                        i++;
 
-            if (Array.isArray(datos)) {
+                    } else {
 
-                return datos.find(
-                    function(registro) {
-
-                        return (
-                            registro &&
-                            (
-                                registro.j1 === codigo ||
-                                registro.codigo === codigo
-                            )
-                        );
+                        dentroComillas =
+                            !dentroComillas;
 
                     }
-                ) || null;
 
-            }
+                    continue;
 
-
-            /* -------------------------------------
-               Si devuelve un objeto indexado
-               ------------------------------------- */
-
-            if (
-                typeof datos === "object"
-            ) {
-
-                if (datos[codigo]) {
-                    return datos[codigo];
                 }
 
 
                 if (
-                    datos.j1 === codigo ||
-                    datos.codigo === codigo
+                    caracter === "," &&
+                    !dentroComillas
                 ) {
 
-                    return datos;
+                    fila.push(campo);
+                    campo = "";
+
+                    continue;
+
+                }
+
+
+                if (
+                    (
+                        caracter === "\n" ||
+                        caracter === "\r"
+                    ) &&
+                    !dentroComillas
+                ) {
+
+                    if (
+                        caracter === "\r" &&
+                        siguiente === "\n"
+                    ) {
+
+                        i++;
+
+                    }
+
+
+                    fila.push(campo);
+                    campo = "";
+
+
+                    if (
+                        fila.some(
+                            valor =>
+                                valor.trim() !== ""
+                        )
+                    ) {
+
+                        filas.push(fila);
+
+                    }
+
+
+                    fila = [];
+
+                    continue;
+
+                }
+
+
+                campo += caracter;
+
+            }
+
+
+            if (
+                campo !== "" ||
+                fila.length > 0
+            ) {
+
+                fila.push(campo);
+
+
+                if (
+                    fila.some(
+                        valor =>
+                            valor.trim() !== ""
+                    )
+                ) {
+
+                    filas.push(fila);
 
                 }
 
             }
 
 
-            return null;
+            return filas;
 
         }
 
 
         /* =========================================
-           CONVERTIR VALORES ESTADÍSTICOS
+           OBTENER ESTADÍSTICAS DESDE MASTER.CSV
            ========================================= */
 
-        function obtenerStats(registro) {
+        async function obtenerEstadisticasCSV(
+            codigo
+        ) {
 
-            if (!registro) {
-                return null;
+            const respuesta =
+                await fetch("master.csv");
+
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    "No se pudo cargar master.csv"
+                );
+
             }
 
+
+            const texto =
+                await respuesta.text();
+
+
+            const filas =
+                parseCSV(texto);
+
+
+            if (!filas.length) {
+
+                throw new Error(
+                    "master.csv está vacío"
+                );
+
+            }
+
+
+            /* -------------------------------------
+               CABECERA
+               ------------------------------------- */
+
+            const cabecera =
+                filas[0].map(
+                    valor =>
+                        valor
+                            .replace(/^\uFEFF/, "")
+                            .trim()
+                            .toLowerCase()
+                );
+
+
+            const indiceJ1 =
+                cabecera.indexOf("j1");
+
+
+            const indiceE1 =
+                cabecera.indexOf("e1");
+
+
+            const indiceE2 =
+                cabecera.indexOf("e2");
+
+
+            const indiceE3 =
+                cabecera.indexOf("e3");
+
+
+            const indiceE4 =
+                cabecera.indexOf("e4");
+
+
+            const indiceE5 =
+                cabecera.indexOf("e5");
+
+
+            const indiceE6 =
+                cabecera.indexOf("e6");
+
+
+            const indiceE7 =
+                cabecera.indexOf("e7");
+
+
+            const indiceE8 =
+                cabecera.indexOf("e8");
+
+
+            const indiceE9 =
+                cabecera.indexOf("e9");
+
+
+            const indiceE10 =
+                cabecera.indexOf("e10");
+
+
+            const indiceE11 =
+                cabecera.indexOf("e11");
+
+
+            if (
+                indiceJ1 === -1 ||
+                indiceE1 === -1 ||
+                indiceE2 === -1 ||
+                indiceE3 === -1 ||
+                indiceE4 === -1 ||
+                indiceE5 === -1 ||
+                indiceE6 === -1 ||
+                indiceE7 === -1 ||
+                indiceE8 === -1 ||
+                indiceE9 === -1 ||
+                indiceE10 === -1 ||
+                indiceE11 === -1
+            ) {
+
+                throw new Error(
+                    "No se encontraron las columnas " +
+                    "j1/e1-e11 en master.csv"
+                );
+
+            }
+
+
+            /* -------------------------------------
+               BUSCAR REGISTRO
+               ------------------------------------- */
+
+            const fila =
+                filas.find(
+                    function(registro) {
+
+                        return (
+                            registro[indiceJ1] &&
+                            registro[indiceJ1].trim() ===
+                            codigo
+                        );
+
+                    }
+                );
+
+
+            if (!fila) {
+
+                throw new Error(
+                    "No se encontró " +
+                    codigo +
+                    " en master.csv"
+                );
+
+            }
+
+
+            /* -------------------------------------
+               CONSTRUIR ESTADÍSTICAS
+               ------------------------------------- */
 
             return {
 
                 adaptabilidad:
-                    Number(registro.e1),
+                    Number(fila[indiceE1]),
 
                 sociabilidad:
-                    Number(registro.e2),
+                    Number(fila[indiceE2]),
 
                 resistencia:
-                    Number(registro.e3),
+                    Number(fila[indiceE3]),
 
                 reproduccion:
-                    Number(registro.e4),
+                    Number(fila[indiceE4]),
 
                 ofensiva:
-                    Number(registro.e5),
+                    Number(fila[indiceE5]),
 
                 defensa:
-                    Number(registro.e6),
+                    Number(fila[indiceE6]),
 
                 movilidad:
-                    Number(registro.e7),
+                    Number(fila[indiceE7]),
 
                 plasticidad_ecologica:
-                    Number(registro.e8),
+                    Number(fila[indiceE8]),
 
                 tamano:
-                    Number(registro.e9),
+                    Number(fila[indiceE9]),
 
                 velocidad:
-                    Number(registro.e10),
+                    Number(fila[indiceE10]),
 
                 inteligencia:
-                    Number(registro.e11)
+                    Number(fila[indiceE11])
 
             };
 
@@ -347,10 +537,8 @@ document.addEventListener(
            ========================================= */
 
         botonEstadisticas.onclick =
-            function() {
+            async function() {
 
-
-                /* Evitar duplicado */
 
                 if (
                     document.getElementById(
@@ -361,10 +549,6 @@ document.addEventListener(
                 }
 
 
-                /* =================================
-                   CÓDIGO ACTUAL
-                   ================================= */
-
                 const codigo =
                     obtenerCodigoActual();
 
@@ -373,7 +557,7 @@ document.addEventListener(
 
                     console.error(
                         "CAB09: No se pudo determinar " +
-                        "el código de la paleoficha."
+                        "el código actual."
                     );
 
                     return;
@@ -381,211 +565,185 @@ document.addEventListener(
                 }
 
 
-                /* =================================
-                   REGISTRO MASTER
-                   ================================= */
+                try {
 
-                const registro =
-                    obtenerRegistro(codigo);
+                    const stats =
+                        await obtenerEstadisticasCSV(
+                            codigo
+                        );
 
 
-                if (!registro) {
+                    const nivel1 =
+                        calcularNivel1(
+                            stats
+                        );
+
+
+                    console.log(
+                        "CAB09 — Estadísticas:",
+                        codigo,
+                        stats
+                    );
+
+
+                    console.log(
+                        "CAB09 — Nivel 1:",
+                        nivel1
+                    );
+
+
+                    /* =============================
+                       LIGHTBOX
+                       ============================= */
+
+                    const lightbox =
+                        document.createElement("div");
+
+                    lightbox.id =
+                        "lightboxEstadisticas";
+
+
+                    /* =============================
+                       VENTANA
+                       ============================= */
+
+                    const ventana =
+                        document.createElement("div");
+
+
+                    ventana.innerHTML =
+
+                        "<h2>Estadísticas</h2>" +
+
+                        "<p><strong>" +
+                        codigo +
+                        "</strong></p>" +
+
+                        "<h3>Estadísticas base</h3>" +
+
+                        "<p>Adaptabilidad: " +
+                        stats.adaptabilidad +
+                        "</p>" +
+
+                        "<p>Sociabilidad: " +
+                        stats.sociabilidad +
+                        "</p>" +
+
+                        "<p>Resistencia: " +
+                        stats.resistencia +
+                        "</p>" +
+
+                        "<p>Reproducción: " +
+                        stats.reproduccion +
+                        "</p>" +
+
+                        "<p>Ofensiva: " +
+                        stats.ofensiva +
+                        "</p>" +
+
+                        "<p>Defensa: " +
+                        stats.defensa +
+                        "</p>" +
+
+                        "<p>Movilidad: " +
+                        stats.movilidad +
+                        "</p>" +
+
+                        "<p>Plasticidad ecológica: " +
+                        stats.plasticidad_ecologica +
+                        "</p>" +
+
+                        "<p>Tamaño: " +
+                        stats.tamano +
+                        "</p>" +
+
+                        "<p>Velocidad: " +
+                        stats.velocidad +
+                        "</p>" +
+
+                        "<p>Inteligencia: " +
+                        stats.inteligencia +
+                        "</p>" +
+
+                        "<h3>Nivel 1</h3>" +
+
+                        "<p>Índice global: " +
+                        nivel1.indice_global +
+                        "</p>" +
+
+                        "<p>Supervivencia: " +
+                        nivel1.supervivencia +
+                        "</p>" +
+
+                        "<p>Competencia: " +
+                        nivel1.competencia +
+                        "</p>" +
+
+                        "<p>Movilidad: " +
+                        nivel1.movilidad +
+                        "</p>" +
+
+                        "<p>Reproducción: " +
+                        nivel1.reproduccion +
+                        "</p>";
+
+
+                    /* =============================
+                       CERRAR
+                       ============================= */
+
+                    const cerrar =
+                        document.createElement("button");
+
+
+                    cerrar.type =
+                        "button";
+
+
+                    cerrar.textContent =
+                        "×";
+
+
+                    cerrar.setAttribute(
+                        "aria-label",
+                        "Cerrar estadísticas"
+                    );
+
+
+                    cerrar.onclick =
+                        function() {
+
+                            lightbox.remove();
+
+                        };
+
+
+                    ventana.appendChild(
+                        cerrar
+                    );
+
+
+                    lightbox.appendChild(
+                        ventana
+                    );
+
+
+                    document.body.appendChild(
+                        lightbox
+                    );
+
+
+                }
+                catch (
+                    error
+                ) {
 
                     console.error(
-                        "CAB09: No se encontró el " +
-                        "registro " + codigo +
-                        " en los datos."
+                        "CAB09 — Error estadísticas:",
+                        error
                     );
 
-                    return;
-
                 }
-
-
-                /* =================================
-                   ESTADÍSTICAS
-                   ================================= */
-
-                const stats =
-                    obtenerStats(registro);
-
-
-                if (!stats) {
-
-                    console.error(
-                        "CAB09: No se pudieron obtener " +
-                        "las estadísticas."
-                    );
-
-                    return;
-
-                }
-
-
-                /* =================================
-                   COMPROBAR DATOS
-                   ================================= */
-
-                console.log(
-                    "CAB09 — Estadísticas:",
-                    codigo,
-                    stats
-                );
-
-
-                /* =================================
-                   CÁLCULOS
-                   ================================= */
-
-                const nivel1 =
-                    calcularNivel1(stats);
-
-
-                console.log(
-                    "CAB09 — Nivel 1:",
-                    nivel1
-                );
-
-
-                /* =================================
-                   LIGHTBOX
-                   ================================= */
-
-                const lightbox =
-                    document.createElement("div");
-
-                lightbox.id =
-                    "lightboxEstadisticas";
-
-
-                /* =================================
-                   VENTANA
-                   ================================= */
-
-                const ventana =
-                    document.createElement("div");
-
-
-                ventana.innerHTML =
-
-                    "<h2>Estadísticas</h2>" +
-
-                    "<p><strong>" +
-                    codigo +
-                    "</strong></p>" +
-
-                    "<h3>Estadísticas base</h3>" +
-
-                    "<p>Adaptabilidad: " +
-                    stats.adaptabilidad +
-                    "</p>" +
-
-                    "<p>Sociabilidad: " +
-                    stats.sociabilidad +
-                    "</p>" +
-
-                    "<p>Resistencia: " +
-                    stats.resistencia +
-                    "</p>" +
-
-                    "<p>Reproducción: " +
-                    stats.reproduccion +
-                    "</p>" +
-
-                    "<p>Ofensiva: " +
-                    stats.ofensiva +
-                    "</p>" +
-
-                    "<p>Defensa: " +
-                    stats.defensa +
-                    "</p>" +
-
-                    "<p>Movilidad: " +
-                    stats.movilidad +
-                    "</p>" +
-
-                    "<p>Plasticidad ecológica: " +
-                    stats.plasticidad_ecologica +
-                    "</p>" +
-
-                    "<p>Tamaño: " +
-                    stats.tamano +
-                    "</p>" +
-
-                    "<p>Velocidad: " +
-                    stats.velocidad +
-                    "</p>" +
-
-                    "<p>Inteligencia: " +
-                    stats.inteligencia +
-                    "</p>" +
-
-                    "<h3>Nivel 1</h3>" +
-
-                    "<p>Índice global: " +
-                    nivel1.indice_global +
-                    "</p>" +
-
-                    "<p>Supervivencia: " +
-                    nivel1.supervivencia +
-                    "</p>" +
-
-                    "<p>Competencia: " +
-                    nivel1.competencia +
-                    "</p>" +
-
-                    "<p>Movilidad: " +
-                    nivel1.movilidad +
-                    "</p>" +
-
-                    "<p>Reproducción: " +
-                    nivel1.reproduccion +
-                    "</p>";
-
-
-                /* =================================
-                   CERRAR
-                   ================================= */
-
-                const cerrar =
-                    document.createElement("button");
-
-
-                cerrar.type =
-                    "button";
-
-
-                cerrar.textContent =
-                    "×";
-
-
-                cerrar.setAttribute(
-                    "aria-label",
-                    "Cerrar estadísticas"
-                );
-
-
-                cerrar.onclick =
-                    function() {
-
-                        lightbox.remove();
-
-                    };
-
-
-                ventana.appendChild(
-                    cerrar
-                );
-
-
-                lightbox.appendChild(
-                    ventana
-                );
-
-
-                document.body.appendChild(
-                    lightbox
-                );
 
             };
 
