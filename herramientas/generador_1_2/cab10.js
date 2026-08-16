@@ -5,22 +5,25 @@ CAB10.js
 Generador de Paleofichas 1.1
 
 FASE 4A — LIGHTBOX ECOLOGÍA
+
+- Crea botón Ecología
+- Se integra con CAB09
+- Lightbox independiente
+- Sin datos todavía
+- Sin master.csv
 ========================================================
 */
+
 
 document.addEventListener(
     "palentropia:contenedor-cargado",
     function() {
 
-        const botonEcologia =
-            document.getElementById("botonEcologia");
+        const ficha =
+            document.getElementById("ficha");
 
 
-        if (!botonEcologia) {
-
-            console.warn(
-                "CAB10: no se encontró el botón Ecología."
-            );
+        if (!ficha) {
 
             return;
 
@@ -28,17 +31,79 @@ document.addEventListener(
 
 
         /* =========================================
-           EVITAR DUPLICAR EL EVENTO
+           BUSCAR CONTENEDOR DE BOTONES
+           ========================================= */
+
+        let contenedor =
+            document.getElementById(
+                "botonesCAB09"
+            );
+
+
+        /*
+           CAB09 crea primero el contenedor.
+           Si por cualquier motivo todavía no existe,
+           CAB10 crea uno propio.
+        */
+
+        if (!contenedor) {
+
+            contenedor =
+                document.createElement("div");
+
+            contenedor.id =
+                "botonesCAB09";
+
+            ficha.appendChild(
+                contenedor
+            );
+
+        }
+
+
+        /* =========================================
+           EVITAR DUPLICADO
            ========================================= */
 
         if (
-            botonEcologia.dataset.cab10Activo === "true"
+            document.getElementById(
+                "botonEcologia"
+            )
         ) {
 
             return;
 
         }
 
+
+        /* =========================================
+           CREAR BOTÓN ECOLOGÍA
+           ========================================= */
+
+        const botonEcologia =
+            document.createElement("button");
+
+
+        botonEcologia.id =
+            "botonEcologia";
+
+
+        botonEcologia.type =
+            "button";
+
+
+        botonEcologia.textContent =
+            "Ecología";
+
+
+        contenedor.appendChild(
+            botonEcologia
+        );
+
+
+        /* =========================================
+           MARCADOR
+           ========================================= */
 
         botonEcologia.dataset.cab10Activo =
             "true";
@@ -51,6 +116,26 @@ document.addEventListener(
         botonEcologia.onclick =
             function() {
 
+
+                /* ================================
+                   EVITAR DUPLICADO
+                   ================================ */
+
+                if (
+                    document.getElementById(
+                        "lightboxEcologia"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                /* ================================
+                   LIGHTBOX
+                   ================================ */
+
                 const lightbox =
                     document.createElement("div");
 
@@ -59,61 +144,26 @@ document.addEventListener(
                     "lightboxEcologia";
 
 
-                /* =================================
-                   FONDO
-                   ================================= */
-
-                lightbox.style.position =
-                    "fixed";
-
-                lightbox.style.inset =
-                    "0";
-
-                lightbox.style.background =
-                    "rgba(0,0,0,0.75)";
-
-                lightbox.style.zIndex =
-                    "99999";
-
-                lightbox.style.display =
-                    "flex";
-
-                lightbox.style.alignItems =
-                    "center";
-
-                lightbox.style.justifyContent =
-                    "center";
-
-
-                /* =================================
+                /* ================================
                    VENTANA
-                   ================================= */
+                   ================================ */
 
                 const ventana =
                     document.createElement("div");
 
 
-                ventana.style.background =
-                    "white";
-
-                ventana.style.padding =
-                    "25px";
-
-                ventana.style.borderRadius =
-                    "16px";
-
-                ventana.style.textAlign =
-                    "center";
-
-
                 ventana.innerHTML =
+
                     "<h2>Ecología</h2>" +
-                    "<p>Lightbox funcionando.</p>";
+
+                    "<p>" +
+                    "Información ecológica de la paleoficha." +
+                    "</p>";
 
 
-                /* =================================
+                /* ================================
                    BOTÓN CERRAR
-                   ================================= */
+                   ================================ */
 
                 const cerrar =
                     document.createElement("button");
@@ -124,7 +174,13 @@ document.addEventListener(
 
 
                 cerrar.textContent =
-                    "Cerrar";
+                    "×";
+
+
+                cerrar.setAttribute(
+                    "aria-label",
+                    "Cerrar ecología"
+                );
 
 
                 cerrar.onclick =
@@ -140,6 +196,10 @@ document.addEventListener(
                 );
 
 
+                /* ================================
+                   CONSTRUIR LIGHTBOX
+                   ================================ */
+
                 lightbox.appendChild(
                     ventana
                 );
@@ -148,6 +208,7 @@ document.addEventListener(
                 document.body.appendChild(
                     lightbox
                 );
+
 
             };
 
