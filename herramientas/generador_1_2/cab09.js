@@ -4,15 +4,16 @@ PalEntropía
 CAB09.js
 Generador de Paleofichas 1.1
 
-FASE 4A — PRUEBA LIGHTBOX ESTADÍSTICAS
+FASE 4A — ESTADÍSTICAS
 
-- Dos botones
-- Estadísticas abre lightbox
-- Ecología todavía independiente
-- Sin datos
-- Sin CSS externo
+- Botón Estadísticas
+- Lightbox independiente
+- Sin datos todavía
+- Sin master.csv
+- Ecología pertenece exclusivamente a CAB10
 ========================================================
 */
+
 
 document.addEventListener(
     "palentropia:contenedor-cargado",
@@ -23,7 +24,9 @@ document.addEventListener(
 
 
         if (!ficha) {
+
             return;
+
         }
 
 
@@ -32,9 +35,11 @@ document.addEventListener(
            ========================================= */
 
         if (
-            document.getElementById("botonesCAB09")
+            document.getElementById("botonEstadisticas")
         ) {
+
             return;
+
         }
 
 
@@ -56,44 +61,27 @@ document.addEventListener(
         const botonEstadisticas =
             document.createElement("button");
 
+
         botonEstadisticas.id =
             "botonEstadisticas";
 
+
         botonEstadisticas.type =
             "button";
+
 
         botonEstadisticas.textContent =
             "Estadísticas";
 
 
         /* =========================================
-           BOTÓN ECOLOGÍA
-           ========================================= */
-
-        const botonEcologia =
-            document.createElement("button");
-
-        botonEcologia.id =
-            "botonEcologia";
-
-        botonEcologia.type =
-            "button";
-
-        botonEcologia.textContent =
-            "Ecología";
-
-
-        /* =========================================
-           INSERTAR BOTONES
+           INSERTAR
            ========================================= */
 
         contenedor.appendChild(
             botonEstadisticas
         );
 
-        contenedor.appendChild(
-            botonEcologia
-        );
 
         ficha.appendChild(
             contenedor
@@ -101,43 +89,36 @@ document.addEventListener(
 
 
         /* =========================================
-           ESTADÍSTICAS — ABRIR LIGHTBOX
+           ABRIR LIGHTBOX
            ========================================= */
 
         botonEstadisticas.onclick =
             function() {
 
-                /* Crear lightbox */
+
+                /* Evitar duplicado */
+
+                if (
+                    document.getElementById(
+                        "lightboxEstadisticas"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                /* =================================
+                   LIGHTBOX
+                   ================================= */
 
                 const lightbox =
                     document.createElement("div");
 
+
                 lightbox.id =
                     "lightboxEstadisticas";
-
-
-                /* Fondo */
-
-                lightbox.style.position =
-                    "fixed";
-
-                lightbox.style.inset =
-                    "0";
-
-                lightbox.style.background =
-                    "rgba(0,0,0,0.75)";
-
-                lightbox.style.zIndex =
-                    "99999";
-
-                lightbox.style.display =
-                    "flex";
-
-                lightbox.style.alignItems =
-                    "center";
-
-                lightbox.style.justifyContent =
-                    "center";
 
 
                 /* =================================
@@ -147,22 +128,14 @@ document.addEventListener(
                 const ventana =
                     document.createElement("div");
 
-                ventana.style.background =
-                    "white";
-
-                ventana.style.padding =
-                    "25px";
-
-                ventana.style.borderRadius =
-                    "16px";
-
-                ventana.style.textAlign =
-                    "center";
-
 
                 ventana.innerHTML =
+
                     "<h2>Estadísticas</h2>" +
-                    "<p>Lightbox funcionando.</p>";
+
+                    "<p>" +
+                    "Información estadística de la paleoficha." +
+                    "</p>";
 
 
                 /* =================================
@@ -172,11 +145,19 @@ document.addEventListener(
                 const cerrar =
                     document.createElement("button");
 
+
                 cerrar.type =
                     "button";
 
+
                 cerrar.textContent =
-                    "Cerrar";
+                    "×";
+
+
+                cerrar.setAttribute(
+                    "aria-label",
+                    "Cerrar estadísticas"
+                );
 
 
                 cerrar.onclick =
@@ -201,31 +182,13 @@ document.addEventListener(
                     lightbox
                 );
 
-            };
-
-
-        /* =========================================
-           ECOLOGÍA — TODAVÍA SIN LIGHTBOX
-           ========================================= */
-
-        botonEcologia.onclick =
-            function() {
-
-                botonEcologia.textContent =
-                    "✓ Ecología";
-
-
-                setTimeout(
-                    function() {
-
-                        botonEcologia.textContent =
-                            "Ecología";
-
-                    },
-                    1000
-                );
 
             };
+
+
+        console.log(
+            "CAB09 — Estadísticas preparado."
+        );
 
     }
 );
