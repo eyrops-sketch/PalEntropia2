@@ -10,6 +10,7 @@
 
 <title>PalEntropía — Generador de Paleofichas</title>
 
+
 <link rel="stylesheet"
       href="style_1_1.css">
 
@@ -18,7 +19,8 @@
 
 <link rel="stylesheet"
       href="stylecab10.css">
-      
+
+
 <style>
 
 /* =====================================================
@@ -102,6 +104,7 @@
     border-radius: 12px;
 
 }
+
 
 /* =====================================================
    SEPARACIÓN TAXONOMÍA
@@ -748,14 +751,26 @@ async function(j1) {
 
 <script src="cab08.js"></script>
 
-      
-<script src="cab09.js"></script>      
+<script src="cab09.js"></script>
 
 <script src="cab10.js"></script>
 
+
+<!-- =====================================================
+     FASE 2 — ECOLOGÍA
+     ===================================================== -->
+
+<script src="palmodo.js"></script>
+
 <script src="cab11.js"></script>
 
-      
+<script src="cab12.js"></script>
+
+
+<!-- =====================================================
+     ARRANQUE DEL GENERADOR
+     ===================================================== -->
+
 <script>
 
 document.addEventListener(
@@ -777,18 +792,137 @@ document.addEventListener(
                 parametros.get("codigo");
 
 
+            /*
+            ================================================
+            CARGA POR CÓDIGO
+            ================================================
+            */
+
             if (codigo) {
 
                 await window.PALNAVEGADOR.cargarPorCodigo(
                     codigo
                 );
 
+
+                /*
+                --------------------------------------------
+                Cargar datos de master.csv
+                --------------------------------------------
+                */
+
+                await window.cargarMasterPorJ1(
+                    codigo
+                );
+
+
+                /*
+                --------------------------------------------
+                Mostrar Ecología
+                --------------------------------------------
+                */
+
+                if (
+                    window.CAB11 &&
+                    typeof window.CAB11.mostrar ===
+                        "function"
+                ) {
+
+                    window.CAB11.mostrar();
+
+                }
+
+
                 return;
 
             }
 
 
+            /*
+            ================================================
+            CARGA ALEATORIA
+            ================================================
+            */
+
             await window.PALNAVEGADOR.aleatorio();
+
+
+            /*
+            --------------------------------------------
+            Obtener código actual
+            --------------------------------------------
+            */
+
+            let codigoActual = null;
+
+
+            if (
+                window.MASTER_ACTUAL &&
+                window.MASTER_ACTUAL.j1
+            ) {
+
+                codigoActual =
+                    window.MASTER_ACTUAL.j1;
+
+            }
+
+
+            /*
+            --------------------------------------------
+            Si todavía no existe MASTER_ACTUAL,
+            intentar obtener el código desde la ficha.
+            --------------------------------------------
+            */
+
+            if (!codigoActual) {
+
+                const elementoCodigo =
+                    document.getElementById(
+                        "codigoFicha"
+                    );
+
+
+                if (elementoCodigo) {
+
+                    codigoActual =
+                        elementoCodigo.textContent
+                            .trim();
+
+                }
+
+            }
+
+
+            /*
+            --------------------------------------------
+            Cargar master.csv
+            --------------------------------------------
+            */
+
+            if (codigoActual) {
+
+                await window.cargarMasterPorJ1(
+                    codigoActual
+                );
+
+            }
+
+
+            /*
+            --------------------------------------------
+            Mostrar Ecología
+            --------------------------------------------
+            */
+
+            if (
+                window.CAB11 &&
+                typeof window.CAB11.mostrar ===
+                    "function"
+            ) {
+
+                window.CAB11.mostrar();
+
+            }
 
         }
 
