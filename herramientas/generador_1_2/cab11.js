@@ -15,99 +15,112 @@ CAB11
   ├── CAB13 → Medio de vida
   └── CAB14 → Hábitats
 
-CAB11 NO crea el botón.
-CAB11 NO crea el lightbox.
-CAB11 solo coordina los módulos.
+CAB11 NO muestra nada en la paleoficha principal.
 ========================================================
 */
 
 window.CAB11 = {
 
-    mostrar: function() {
-
-        const lightbox =
-            document.getElementById(
-                "lightboxEcologia"
-            );
-
-
-        if (!lightbox) {
-
-            console.warn(
-                "CAB11: lightboxEcologia no disponible."
-            );
-
-            return;
-
-        }
-
-
-        const ventana =
-            lightbox.querySelector(
-                "div"
-            );
-
-
-        if (!ventana) {
-
-            return;
-
-        }
-
+    mostrar: function(contenedor) {
 
         /*
-        ----------------------------------------
-        LIMPIAR CONTENIDO DE CAB10
-        ----------------------------------------
+        ====================================================
+        COMPROBAR CONTENEDOR
+        ====================================================
         */
 
-        ventana.innerHTML = "";
+        if (!contenedor) {
+
+            console.error(
+                "CAB11: no existe el contenedor de Ecología."
+            );
+
+            return;
+
+        }
 
 
         /*
-        ----------------------------------------
+        ====================================================
+        LIMPIAR CONTENIDO ANTERIOR
+        ====================================================
+        */
+
+        contenedor.innerHTML = "";
+
+
+        /*
+        ====================================================
         TÍTULO
-        ----------------------------------------
+        ====================================================
         */
 
         const titulo =
-            document.createElement(
-                "h2"
-            );
+            document.createElement("h2");
 
         titulo.textContent =
             "Ecología";
 
-
-        ventana.appendChild(
+        contenedor.appendChild(
             titulo
         );
 
 
         /*
-        ----------------------------------------
-        CONTENEDOR
-        ----------------------------------------
+        ====================================================
+        CONTENEDOR CAB12
+        ====================================================
         */
 
-        const contenido =
-            document.createElement(
-                "div"
-            );
+        const bloque12 =
+            document.createElement("div");
 
-        contenido.id =
-            "contenidoCAB11";
+        bloque12.id =
+            "cab12Ecologia";
 
-
-        ventana.appendChild(
-            contenido
+        contenedor.appendChild(
+            bloque12
         );
 
 
         /*
-        ----------------------------------------
-        CAB12
-        ----------------------------------------
+        ====================================================
+        CONTENEDOR CAB13
+        ====================================================
+        */
+
+        const bloque13 =
+            document.createElement("div");
+
+        bloque13.id =
+            "cab13Ecologia";
+
+        contenedor.appendChild(
+            bloque13
+        );
+
+
+        /*
+        ====================================================
+        CONTENEDOR CAB14
+        ====================================================
+        */
+
+        const bloque14 =
+            document.createElement("div");
+
+        bloque14.id =
+            "cab14Ecologia";
+
+        contenedor.appendChild(
+            bloque14
+        );
+
+
+        /*
+        ====================================================
+        LLAMAR CAB12
+        ====================================================
         */
 
         if (
@@ -117,16 +130,16 @@ window.CAB11 = {
         ) {
 
             window.CAB12.mostrar(
-                contenido
+                bloque12
             );
 
         }
 
 
         /*
-        ----------------------------------------
-        CAB13
-        ----------------------------------------
+        ====================================================
+        LLAMAR CAB13
+        ====================================================
         */
 
         if (
@@ -136,16 +149,16 @@ window.CAB11 = {
         ) {
 
             window.CAB13.mostrar(
-                contenido
+                bloque13
             );
 
         }
 
 
         /*
-        ----------------------------------------
-        CAB14
-        ----------------------------------------
+        ====================================================
+        LLAMAR CAB14
+        ====================================================
         */
 
         if (
@@ -155,14 +168,14 @@ window.CAB11 = {
         ) {
 
             window.CAB14.mostrar(
-                contenido
+                bloque14
             );
 
         }
 
 
         console.log(
-            "CAB11 — Ecología preparada."
+            "CAB11: Ecología cargada."
         );
 
     }
