@@ -9,7 +9,7 @@ FASE 4A — LIGHTBOX ECOLOGÍA
 - Crea botón Ecología
 - Se integra junto a Estadísticas
 - Lightbox independiente
-- Sin datos todavía
+- Coordina CAB12, CAB13 y CAB14
 ========================================================
 */
 
@@ -44,7 +44,7 @@ function inicializarCAB10() {
        BUSCAR CONTENEDOR DE BOTONES
        ========================================= */
 
-    let contenedor =
+    const contenedor =
         document.getElementById(
             "botonesCAB09"
         );
@@ -74,7 +74,7 @@ function inicializarCAB10() {
 
 
     botonEcologia.textContent =
-        "Ecología";
+        "🌿 Ecología";
 
 
     contenedor.appendChild(
@@ -121,13 +121,42 @@ function inicializarCAB10() {
                 document.createElement("div");
 
 
-            ventana.innerHTML =
+            ventana.id =
+                "ventanaEcologia";
 
-                "<h2>Ecología</h2>" +
 
-                "<p>" +
-                "Información ecológica de la paleoficha." +
-                "</p>";
+            /* ================================
+               CABECERA
+               ================================ */
+
+            const titulo =
+                document.createElement("h2");
+
+
+            titulo.textContent =
+                "Ecología";
+
+
+            ventana.appendChild(
+                titulo
+            );
+
+
+            /* ================================
+               CONTENIDO ECOLOGÍA
+               ================================ */
+
+            const contenidoEcologia =
+                document.createElement("div");
+
+
+            contenidoEcologia.id =
+                "contenidoEcologia";
+
+
+            ventana.appendChild(
+                contenidoEcologia
+            );
 
 
             /* ================================
@@ -166,7 +195,7 @@ function inicializarCAB10() {
 
 
             /* ================================
-               MOSTRAR
+               MOSTRAR LIGHTBOX
                ================================ */
 
             lightbox.appendChild(
@@ -177,6 +206,57 @@ function inicializarCAB10() {
             document.body.appendChild(
                 lightbox
             );
+
+
+            /* ================================
+               CAB12 — MODO DE VIDA
+               ================================ */
+
+            if (
+                window.CAB12 &&
+                typeof window.CAB12.mostrar ===
+                    "function"
+            ) {
+
+                window.CAB12.mostrar(
+                    contenidoEcologia
+                );
+
+            }
+
+
+            /* ================================
+               CAB13 — MEDIO DE VIDA
+               ================================ */
+
+            if (
+                window.CAB13 &&
+                typeof window.CAB13.mostrar ===
+                    "function"
+            ) {
+
+                window.CAB13.mostrar(
+                    contenidoEcologia
+                );
+
+            }
+
+
+            /* ================================
+               CAB14 — HÁBITATS
+               ================================ */
+
+            if (
+                window.CAB14 &&
+                typeof window.CAB14.mostrar ===
+                    "function"
+            ) {
+
+                window.CAB14.mostrar(
+                    contenidoEcologia
+                );
+
+            }
 
         };
 
