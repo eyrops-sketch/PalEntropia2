@@ -4,12 +4,20 @@ PalEntropía
 CAB11.js v1.0
 ECOLOGÍA
 
-Coordinador de la sección de Ecología.
+Coordinador de Ecología.
 
+CAB10
+  ↓
+Lightbox Ecología
+  ↓
 CAB11
- ├── CAB12 → Modo de vida
- ├── CAB13 → Medio de vida
- └── CAB14 → Hábitats
+  ├── CAB12 → Modo de vida
+  ├── CAB13 → Medio de vida
+  └── CAB14 → Hábitats
+
+CAB11 NO crea el botón.
+CAB11 NO crea el lightbox.
+CAB11 solo coordina los módulos.
 ========================================================
 */
 
@@ -17,56 +25,145 @@ window.CAB11 = {
 
     mostrar: function() {
 
-        console.log(
-            "CAB11: Ecología iniciada."
-        );
+        const lightbox =
+            document.getElementById(
+                "lightboxEcologia"
+            );
+
+
+        if (!lightbox) {
+
+            console.warn(
+                "CAB11: lightboxEcologia no disponible."
+            );
+
+            return;
+
+        }
+
+
+        const ventana =
+            lightbox.querySelector(
+                "div"
+            );
+
+
+        if (!ventana) {
+
+            return;
+
+        }
+
 
         /*
         ----------------------------------------
-        CAB12 — MODO DE VIDA
+        LIMPIAR CONTENIDO DE CAB10
+        ----------------------------------------
+        */
+
+        ventana.innerHTML = "";
+
+
+        /*
+        ----------------------------------------
+        TÍTULO
+        ----------------------------------------
+        */
+
+        const titulo =
+            document.createElement(
+                "h2"
+            );
+
+        titulo.textContent =
+            "Ecología";
+
+
+        ventana.appendChild(
+            titulo
+        );
+
+
+        /*
+        ----------------------------------------
+        CONTENEDOR
+        ----------------------------------------
+        */
+
+        const contenido =
+            document.createElement(
+                "div"
+            );
+
+        contenido.id =
+            "contenidoCAB11";
+
+
+        ventana.appendChild(
+            contenido
+        );
+
+
+        /*
+        ----------------------------------------
+        CAB12
         ----------------------------------------
         */
 
         if (
             window.CAB12 &&
-            typeof window.CAB12.mostrar === "function"
+            typeof window.CAB12.mostrar ===
+                "function"
         ) {
 
-            window.CAB12.mostrar();
+            window.CAB12.mostrar(
+                contenido
+            );
 
         }
 
 
         /*
         ----------------------------------------
-        CAB13 — MEDIO DE VIDA
+        CAB13
         ----------------------------------------
         */
 
         if (
             window.CAB13 &&
-            typeof window.CAB13.mostrar === "function"
+            typeof window.CAB13.mostrar ===
+                "function"
         ) {
 
-            window.CAB13.mostrar();
+            window.CAB13.mostrar(
+                contenido
+            );
 
         }
 
 
         /*
         ----------------------------------------
-        CAB14 — HÁBITATS
+        CAB14
         ----------------------------------------
         */
 
         if (
             window.CAB14 &&
-            typeof window.CAB14.mostrar === "function"
+            typeof window.CAB14.mostrar ===
+                "function"
         ) {
 
-            window.CAB14.mostrar();
+            window.CAB14.mostrar(
+                contenido
+            );
 
         }
+
+
+        console.log(
+            "CAB11 — Ecología preparada."
+        );
 
     }
 
