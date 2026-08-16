@@ -4,25 +4,19 @@ PalEntropía
 CAB09.js
 Generador de Paleofichas 1.1
 
-FASE 1 — BOTONES
+FASE 3 — PULSACIÓN
 
 - Estadísticas
 - Ecología
 
-Sin lightbox.
-Sin estadísticas.
-Sin datos.
-Sin master.csv.
+Todavía sin lightbox.
+Todavía sin datos.
 ========================================================
 */
 
 document.addEventListener(
     "palentropia:contenedor-cargado",
     function() {
-
-        /* =========================================
-           COMPROBAR FICHA
-           ========================================= */
 
         const ficha =
             document.getElementById("ficha");
@@ -38,10 +32,6 @@ document.addEventListener(
 
         }
 
-
-        /* =========================================
-           EVITAR DUPLICADOS
-           ========================================= */
 
         if (
             document.getElementById("botonesCAB09")
@@ -65,7 +55,7 @@ document.addEventListener(
 
 
         /* =========================================
-           BOTÓN ESTADÍSTICAS
+           ESTADÍSTICAS
            ========================================= */
 
         const botonEstadisticas =
@@ -84,8 +74,20 @@ document.addEventListener(
             "Estadísticas";
 
 
+        botonEstadisticas.addEventListener(
+            "click",
+            function() {
+
+                console.log(
+                    "CAB09 — Estadísticas pulsado."
+                );
+
+            }
+        );
+
+
         /* =========================================
-           BOTÓN ECOLOGÍA
+           ECOLOGÍA
            ========================================= */
 
         const botonEcologia =
@@ -104,6 +106,18 @@ document.addEventListener(
             "Ecología";
 
 
+        botonEcologia.addEventListener(
+            "click",
+            function() {
+
+                console.log(
+                    "CAB09 — Ecología pulsado."
+                );
+
+            }
+        );
+
+
         /* =========================================
            AÑADIR BOTONES
            ========================================= */
@@ -119,7 +133,7 @@ document.addEventListener(
 
 
         /* =========================================
-           COLOCAR AL FINAL DE LA PALEOFICHA
+           COLOCAR AL FINAL
            ========================================= */
 
         ficha.appendChild(
@@ -128,7 +142,7 @@ document.addEventListener(
 
 
         console.log(
-            "CAB09 — botones Estadísticas y Ecología creados."
+            "CAB09 — botones creados y eventos preparados."
         );
 
     }
