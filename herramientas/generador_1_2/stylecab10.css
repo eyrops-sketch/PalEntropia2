@@ -4,6 +4,12 @@ PalEntropía
 stylecab10.css
 CAB10 — ECOLOGÍA
 Extensión visual de Style v2.1
+
+Incluye:
+- Botón Ecología
+- Lightbox Ecología
+- Contenido CAB12 — Modo de vida
+- Sin mostrar código interno MV
 ========================================================
 */
 
@@ -92,7 +98,6 @@ LIGHTBOX ECOLOGÍA
     display:flex !important;
 
     align-items:center !important;
-
     justify-content:center !important;
 
     box-sizing:border-box !important;
@@ -116,7 +121,7 @@ VENTANA ECOLOGÍA
 
     overflow:auto;
 
-    padding:30px 25px;
+    padding:25px;
 
     background:#181a1c !important;
 
@@ -143,47 +148,28 @@ TÍTULO ECOLOGÍA
 
 #lightboxEcologia h2{
 
-    margin:0 0 25px 0;
+    margin-top:0;
+
+    margin-bottom:20px;
 
     color:#62d6ff !important;
 
     font-size:28px;
 
-    font-weight:bold;
-
     text-align:center;
 
 }
 
 
 /*=========================================================
-NOMBRE DE LA PALEOFICHA — j2
+CAB12 — TÍTULO MODO DE VIDA
 =========================================================*/
 
-.nombreFichaCAB12{
+#lightboxEcologia .tituloModoVidaCAB12{
 
-    margin:0 0 25px 0;
+    margin-top:10px;
 
-    color:#ffffff !important;
-
-    font-size:20px;
-
-    font-weight:bold;
-
-    line-height:1.4;
-
-    text-align:center;
-
-}
-
-
-/*=========================================================
-TÍTULO MODO DE VIDA
-=========================================================*/
-
-#lightboxEcologia h3{
-
-    margin:0 0 14px 0;
+    margin-bottom:18px;
 
     color:#62d6ff !important;
 
@@ -197,39 +183,44 @@ TÍTULO MODO DE VIDA
 
 
 /*=========================================================
-NOMBRE DEL MODO DE VIDA
+CAB12 — NOMBRE MODO DE VIDA
 =========================================================*/
 
-.nombreModoVidaCAB12{
+#lightboxEcologia .nombreModoVidaCAB12{
 
-    margin:5px 0 15px 0;
+    margin-top:5px;
+
+    margin-bottom:14px;
 
     color:#ffffff !important;
 
-    font-size:24px;
+    font-size:25px;
 
     font-weight:bold;
 
     text-align:center;
 
+    text-shadow:
+        0 0 8px rgba(98,214,255,.18);
+
 }
 
 
 /*=========================================================
-DESCRIPCIÓN DEL MODO DE VIDA
+CAB12 — DESCRIPCIÓN
 =========================================================*/
 
-.descripcionModoVidaCAB12{
+#lightboxEcologia .descripcionModoVidaCAB12{
 
-    margin:0 auto 20px auto;
+    margin:0 auto;
 
     max-width:600px;
 
-    color:#bfc4c8 !important;
+    color:#ffffff !important;
 
     font-size:16px;
 
-    line-height:1.65;
+    line-height:1.7;
 
     text-align:center;
 
@@ -242,7 +233,9 @@ TEXTO GENERAL ECOLOGÍA
 
 #lightboxEcologia p{
 
-    color:#aaa !important;
+    margin:0;
+
+    color:#ffffff !important;
 
     font-size:16px;
 
@@ -375,7 +368,7 @@ MÓVIL
 
         max-height:85vh;
 
-        padding:22px 18px;
+        padding:18px;
 
         border-radius:15px;
 
@@ -386,39 +379,35 @@ MÓVIL
 
         font-size:24px;
 
-        margin-bottom:22px;
-
     }
 
 
-    .nombreFichaCAB12{
+    #lightboxEcologia .tituloModoVidaCAB12{
 
         font-size:18px;
 
-        margin-bottom:22px;
-
     }
 
 
-    #lightboxEcologia h3{
-
-        font-size:19px;
-
-    }
-
-
-    .nombreModoVidaCAB12{
+    #lightboxEcologia .nombreModoVidaCAB12{
 
         font-size:22px;
 
     }
 
 
-    .descripcionModoVidaCAB12{
+    #lightboxEcologia .descripcionModoVidaCAB12{
 
         font-size:15px;
 
         line-height:1.6;
+
+    }
+
+
+    #lightboxEcologia p{
+
+        font-size:15px;
 
     }
 
