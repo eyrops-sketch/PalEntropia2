@@ -6,34 +6,30 @@ Generador de Paleofichas 1.1
 
 ECOLOGÍA — MEDIO DE VIDA
 
-FASE 2 — DECODIFICACIÓN j10
-
-CAB13:
+CAB13
 
 - Obtiene el código actual j1
 - Lee master.csv directamente
-- Obtiene j2
 - Obtiene j10
-- Extrae j10 mediante slots de 3 caracteres
-- Consulta PALMEDIO
-- Muestra:
-    SM → Medio general
-    L  → Localización ecológica
-    ES → Estrato ecológico
-    C  → Comportamiento espacial
+- j10 contiene cuatro slots de 3 caracteres
 
-El código interno NO se muestra.
+j10 = SM L ES C
 
-Formato j10:
+Ejemplo:
 
-xxxxxxxxxxxx
-
-001001002002
+002001002001
 
 ↓
 
-001 | 001 | 002 | 002
-SM    L    ES    C
+SM002
+L001
+ES002
+C001
+
+- Utiliza PALMEDIO
+- Decodifica cada bloque
+- NO muestra los códigos internos
+- NO muestra j2
 ========================================================
 */
 
@@ -275,10 +271,10 @@ function obtenerCodigoCAB13() {
 
 
 /* =====================================================
-   OBTENER DATOS DESDE MASTER.CSV
+   OBTENER j10 DESDE MASTER.CSV
    ===================================================== */
 
-async function obtenerDatosCAB13(
+async function obtenerJ10CAB13(
     codigo
 ) {
 
@@ -339,12 +335,6 @@ async function obtenerDatosCAB13(
         );
 
 
-    const indiceJ2 =
-        cabecera.indexOf(
-            "j2"
-        );
-
-
     const indiceJ10 =
         cabecera.indexOf(
             "j10"
@@ -352,13 +342,22 @@ async function obtenerDatosCAB13(
 
 
     if (
-        indiceJ1 === -1 ||
-        indiceJ2 === -1 ||
+        indiceJ1 === -1
+    ) {
+
+        throw new Error(
+            "CAB13: no existe j1 en master.csv"
+        );
+
+    }
+
+
+    if (
         indiceJ10 === -1
     ) {
 
         throw new Error(
-            "CAB13: faltan columnas j1, j2 o j10."
+            "CAB13: no existe j10 en master.csv"
         );
 
     }
@@ -395,14 +394,8 @@ async function obtenerDatosCAB13(
 
 
     /* -----------------------------------------
-       DATOS
+       OBTENER j10
     ----------------------------------------- */
-
-    const j2 =
-        String(
-            registro[indiceJ2] || ""
-        ).trim();
-
 
     const j10 =
         String(
@@ -410,13 +403,108 @@ async function obtenerDatosCAB13(
         ).trim();
 
 
+    if (!j10) {
+
+        throw new Error(
+            "CAB13: j10 está vacío para " +
+            codigo
+        );
+
+    }
+
+
+    console.log(
+        "CAB13: j10 bruto:",
+        j10
+    );
+
+
+    return j10;
+
+}
+
+
+/* =====================================================
+   DECODIFICAR j10
+===================================================== */
+
+function decodificarJ10CAB13(
+    j10
+) {
+
+
+    /*
+    -----------------------------------------
+    j10 debe contener 12 caracteres
+
+    001001002002
+
+    001 | 001 | 002 | 002
+     SM    L     ES    C
+    -----------------------------------------
+    */
+
+
+    if (
+        j10.length !== 12
+    ) {
+
+        throw new Error(
+            "CAB13: j10 no tiene 12 caracteres: " +
+            j10
+        );
+
+    }
+
+
+    const sm =
+        j10.substring(
+            0,
+            3
+        );
+
+
+    const l =
+        j10.substring(
+            3,
+            6
+        );
+
+
+    const es =
+        j10.substring(
+            6,
+            9
+        );
+
+
+    const c =
+        j10.substring(
+            9,
+            12
+        );
+
+
+    console.log(
+        "CAB13: slots:",
+        {
+            SM: sm,
+            L: l,
+            ES: es,
+            C: c
+        }
+    );
+
+
     return {
 
-        j1: codigo,
+        sm: sm,
 
-        j2: j2,
+        l: l,
 
-        j10: j10
+        es: es,
+
+        c: c
 
     };
 
@@ -424,80 +512,108 @@ async function obtenerDatosCAB13(
 
 
 /* =====================================================
-   DECODIFICAR j10
-   ===================================================== */
+   BUSCAR EN PALMEDIO
+===================================================== */
 
-function decodificarJ10CAB13(
-    j10
+function obtenerMedioCAB13(
+    slots
 ) {
 
 
-    const codigo =
-        String(
-            j10 || ""
-        ).trim();
-
-
-    /* -----------------------------------------
-       VALIDACIÓN
-    ----------------------------------------- */
-
-    if (
-        codigo.length !== 12
-    ) {
+    if (!window.PALMEDIO) {
 
         throw new Error(
-            "CAB13: j10 debe contener exactamente 12 caracteres."
+            "PALMEDIO no está cargado."
         );
 
     }
 
 
-    /* -----------------------------------------
-       EXTRACCIÓN POR SLOTS
-    ----------------------------------------- */
+    const medioGeneral =
+        window.PALMEDIO[
+            "SM" +
+            slots.sm
+        ];
 
-    const sm =
-        codigo.substring(
-            0,
-            3
+
+    const localizacion =
+        window.PALMEDIO[
+            "L" +
+            slots.l
+        ];
+
+
+    const estrato =
+        window.PALMEDIO[
+            "ES" +
+            slots.es
+        ];
+
+
+    const comportamiento =
+        window.PALMEDIO[
+            "C" +
+            slots.c
+        ];
+
+
+    if (!medioGeneral) {
+
+        throw new Error(
+            "CAB13: no existe SM" +
+            slots.sm +
+            " en PALMEDIO."
         );
 
+    }
 
-    const l =
-        codigo.substring(
-            3,
-            6
+
+    if (!localizacion) {
+
+        throw new Error(
+            "CAB13: no existe L" +
+            slots.l +
+            " en PALMEDIO."
         );
 
+    }
 
-    const es =
-        codigo.substring(
-            6,
-            9
+
+    if (!estrato) {
+
+        throw new Error(
+            "CAB13: no existe ES" +
+            slots.es +
+            " en PALMEDIO."
         );
 
+    }
 
-    const c =
-        codigo.substring(
-            9,
-            12
+
+    if (!comportamiento) {
+
+        throw new Error(
+            "CAB13: no existe C" +
+            slots.c +
+            " en PALMEDIO."
         );
+
+    }
 
 
     return {
 
-        sm:
-            "SM" + sm,
+        medioGeneral:
+            medioGeneral,
 
-        l:
-            "L" + l,
+        localizacion:
+            localizacion,
 
-        es:
-            "ES" + es,
+        estrato:
+            estrato,
 
-        c:
-            "C" + c
+        comportamiento:
+            comportamiento
 
     };
 
@@ -506,9 +622,10 @@ function decodificarJ10CAB13(
 
 /* =====================================================
    CREAR BLOQUE ECOLÓGICO
-   ===================================================== */
+===================================================== */
 
 function crearBloqueCAB13(
+    contenedor,
     etiqueta,
     dato
 ) {
@@ -521,77 +638,112 @@ function crearBloqueCAB13(
 
 
     bloque.className =
-        "bloqueMedioCAB13";
+        "bloqueMedioVidaCAB13";
 
 
-    const titulo =
+    /* -----------------------------------------
+       LÍNEA ETIQUETA + VALOR
+    ----------------------------------------- */
+
+    const linea =
         document.createElement(
             "div"
         );
 
 
-    titulo.className =
-        "etiquetaMedioCAB13";
+    linea.className =
+        "lineaMedioVidaCAB13";
 
 
-    titulo.textContent =
+    const etiquetaElemento =
+        document.createElement(
+            "span"
+        );
+
+
+    etiquetaElemento.className =
+        "etiquetaMedioVidaCAB13";
+
+
+    etiquetaElemento.textContent =
         etiqueta;
 
 
-    bloque.appendChild(
-        titulo
-    );
-
-
-    const nombre =
+    const valorElemento =
         document.createElement(
-            "div"
+            "span"
         );
 
 
-    nombre.className =
-        "nombreMedioCAB13";
+    valorElemento.className =
+        "valorMedioVidaCAB13";
 
 
-    nombre.textContent =
+    valorElemento.textContent =
         dato.nombre;
 
 
-    bloque.appendChild(
-        nombre
+    linea.appendChild(
+        etiquetaElemento
     );
 
 
-    const descripcion =
-        document.createElement(
-            "p"
+    linea.appendChild(
+        valorElemento
+    );
+
+
+    bloque.appendChild(
+        linea
+    );
+
+
+    /* -----------------------------------------
+       DESCRIPCIÓN
+    ----------------------------------------- */
+
+    if (
+        dato.descripcion
+    ) {
+
+        const descripcion =
+            document.createElement(
+                "p"
+            );
+
+
+        descripcion.className =
+            "descripcionMedioVidaCAB13";
+
+
+        descripcion.textContent =
+            dato.descripcion;
+
+
+        bloque.appendChild(
+            descripcion
         );
 
-
-    descripcion.className =
-        "descripcionMedioCAB13";
+    }
 
 
-    descripcion.textContent =
-        dato.descripcion;
-
-
-    bloque.appendChild(
-        descripcion
+    contenedor.appendChild(
+        bloque
     );
-
-
-    return bloque;
 
 }
 
 
 /* =====================================================
    CAB13
-   ===================================================== */
+===================================================== */
 
 window.CAB13 = {
 
+
+    /* =================================================
+       MOSTRAR
+       ================================================= */
 
     mostrar: async function(
         contenedor
@@ -602,6 +754,10 @@ window.CAB13 = {
             "CAB13: mostrando medio de vida."
         );
 
+
+        /* -----------------------------------------
+           COMPROBAR CONTENEDOR
+        ----------------------------------------- */
 
         if (!contenedor) {
 
@@ -625,116 +781,80 @@ window.CAB13 = {
         if (!codigo) {
 
             console.error(
-                "CAB13: no se pudo determinar el código actual."
+                "CAB13: no se pudo determinar " +
+                "el código actual."
             );
+
+            contenedor.innerHTML =
+                "<h3>Medio de vida</h3>" +
+                "<p>No se ha podido obtener " +
+                "la paleoficha.</p>";
 
             return;
 
         }
 
 
+        /* -----------------------------------------
+           MENSAJE TEMPORAL
+        ----------------------------------------- */
+
+        contenedor.innerHTML =
+            "<h3>Medio de vida</h3>" +
+            "<p>Cargando información...</p>";
+
+
         try {
 
 
             /* =====================================
-               OBTENER DATOS
+               OBTENER j10
             ===================================== */
 
-            const datos =
-                await obtenerDatosCAB13(
+            const j10 =
+                await obtenerJ10CAB13(
                     codigo
                 );
 
 
             console.log(
-                "CAB13: datos master.csv:",
-                datos
+                "CAB13: j10 recibido:",
+                j10
             );
 
 
             /* =====================================
-               COMPROBAR PALMEDIO
+               DECODIFICAR SLOTS
             ===================================== */
 
-            if (!window.PALMEDIO) {
-
-                throw new Error(
-                    "PALMEDIO no está cargado."
+            const slots =
+                decodificarJ10CAB13(
+                    j10
                 );
-
-            }
 
 
             /* =====================================
-               DECODIFICAR j10
+               OBTENER DATOS PALMEDIO
             ===================================== */
 
-            const codigos =
-                decodificarJ10CAB13(
-                    datos.j10
+            const medio =
+                obtenerMedioCAB13(
+                    slots
                 );
 
 
             console.log(
-                "CAB13: j10 decodificado:",
-                codigos
+                "CAB13: datos PALMEDIO:",
+                medio
             );
 
 
             /* =====================================
-               BUSCAR EN PALMEDIO
+               LIMPIAR
             ===================================== */
 
-            const medioGeneral =
-                window.PALMEDIO[
-                    codigos.sm
-                ];
-
-
-            const localizacion =
-                window.PALMEDIO[
-                    codigos.l
-                ];
-
-
-            const estrato =
-                window.PALMEDIO[
-                    codigos.es
-                ];
-
-
-            const comportamiento =
-                window.PALMEDIO[
-                    codigos.c
-                ];
-
-
-            if (
-                !medioGeneral ||
-                !localizacion ||
-                !estrato ||
-                !comportamiento
-            ) {
-
-                throw new Error(
-                    "CAB13: uno o más códigos de PALMEDIO no existen."
-                );
-
-            }
-
-
-            /* =====================================
-               CREAR CONTENEDOR
-            ===================================== */
-
-            const bloquePrincipal =
-                document.createElement(
-                    "div"
-                );
-
-
-            bloquePrincipal.className =
-                "contenedorMedioCAB13";
+            contenedor.innerHTML =
+                "";
 
 
             /* =====================================
@@ -751,51 +871,19 @@ window.CAB13 = {
                 "Medio de vida";
 
 
-            bloquePrincipal.appendChild(
+            contenedor.appendChild(
                 titulo
             );
-
-
-            /* =====================================
-               NOMBRE PALEOFICHA
-            ===================================== */
-
-            if (
-                datos.j2
-            ) {
-
-                const nombreFicha =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                nombreFicha.className =
-                    "nombreFichaMedioCAB13";
-
-
-                nombreFicha.textContent =
-                    datos.j2;
-
-
-                bloquePrincipal.appendChild(
-                    nombreFicha
-                );
-
-            }
 
 
             /* =====================================
                MEDIO GENERAL
             ===================================== */
 
-            bloquePrincipal.appendChild(
-
-                crearBloqueCAB13(
-                    "Medio general",
-                    medioGeneral
-                )
-
+            crearBloqueCAB13(
+                contenedor,
+                "Medio general",
+                medio.medioGeneral
             );
 
 
@@ -803,13 +891,10 @@ window.CAB13 = {
                LOCALIZACIÓN
             ===================================== */
 
-            bloquePrincipal.appendChild(
-
-                crearBloqueCAB13(
-                    "Localización ecológica",
-                    localizacion
-                )
-
+            crearBloqueCAB13(
+                contenedor,
+                "Localización ecológica",
+                medio.localizacion
             );
 
 
@@ -817,13 +902,10 @@ window.CAB13 = {
                ESTRATO
             ===================================== */
 
-            bloquePrincipal.appendChild(
-
-                crearBloqueCAB13(
-                    "Estrato ecológico",
-                    estrato
-                )
-
+            crearBloqueCAB13(
+                contenedor,
+                "Estrato ecológico",
+                medio.estrato
             );
 
 
@@ -831,27 +913,20 @@ window.CAB13 = {
                COMPORTAMIENTO
             ===================================== */
 
-            bloquePrincipal.appendChild(
-
-                crearBloqueCAB13(
-                    "Comportamiento espacial",
-                    comportamiento
-                )
-
+            crearBloqueCAB13(
+                contenedor,
+                "Comportamiento espacial",
+                medio.comportamiento
             );
 
 
             /* =====================================
-               AÑADIR AL LIGHTBOX
+               CONFIRMACIÓN
             ===================================== */
 
-            contenedor.appendChild(
-                bloquePrincipal
-            );
-
-
             console.log(
-                "CAB13: medio de vida decodificado correctamente."
+                "CAB13: mostrado correctamente:",
+                codigo
             );
 
 
@@ -866,19 +941,10 @@ window.CAB13 = {
             );
 
 
-            const errorBloque =
-                document.createElement(
-                    "p"
-                );
-
-
-            errorBloque.textContent =
-                "No se ha podido obtener la información del medio de vida.";
-
-
-            contenedor.appendChild(
-                errorBloque
-            );
+            contenedor.innerHTML =
+                "<h3>Medio de vida</h3>" +
+                "<p>No se ha podido obtener " +
+                "la información del medio de vida.</p>";
 
         }
 
@@ -889,4 +955,4 @@ window.CAB13 = {
 
 /* =====================================================
    FIN CAB13
-   ===================================================== */
+===================================================== */
