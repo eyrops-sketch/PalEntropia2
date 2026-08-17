@@ -8,12 +8,13 @@ ECOLOGÍA
 
 CAB10:
 - Crea botón Ecología
-- Abre el lightbox
-- Coordina los módulos de Ecología
+- Abre lightbox
+- Coordina CAB12
+- CAB12 → Modo de vida
 
-CAB12 → Modo de vida
-CAB13 → Medio de vida
-CAB14 → Hábitats
+Más adelante:
+- CAB13 → Medio de vida
+- CAB14 → Hábitats
 ========================================================
 */
 
@@ -46,7 +47,7 @@ function inicializarCAB10() {
 
 
     /* =========================================
-       BUSCAR CONTENEDOR DE BOTONES
+       BUSCAR CONTENEDOR DE ESTADÍSTICAS
        ========================================= */
 
     const contenedor =
@@ -63,7 +64,7 @@ function inicializarCAB10() {
 
 
     /* =========================================
-       CREAR BOTÓN ECOLOGÍA
+       CREAR BOTÓN
        ========================================= */
 
     const botonEcologia =
@@ -79,7 +80,7 @@ function inicializarCAB10() {
 
 
     botonEcologia.textContent =
-        "🌿 Ecología";
+        "Ecología";
 
 
     contenedor.appendChild(
@@ -88,7 +89,7 @@ function inicializarCAB10() {
 
 
     /* =========================================
-       ABRIR ECOLOGÍA
+       CLICK ECOLOGÍA
        ========================================= */
 
     botonEcologia.onclick =
@@ -119,9 +120,7 @@ function inicializarCAB10() {
             */
 
             const lightbox =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
 
             lightbox.id =
@@ -135,9 +134,7 @@ function inicializarCAB10() {
             */
 
             const ventana =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
 
             /*
@@ -147,9 +144,7 @@ function inicializarCAB10() {
             */
 
             const titulo =
-                document.createElement(
-                    "h2"
-                );
+                document.createElement("h2");
 
 
             titulo.textContent =
@@ -168,9 +163,7 @@ function inicializarCAB10() {
             */
 
             const contenidoCAB12 =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
 
             contenidoCAB12.id =
@@ -189,9 +182,7 @@ function inicializarCAB10() {
             */
 
             const cerrar =
-                document.createElement(
-                    "button"
-                );
+                document.createElement("button");
 
 
             cerrar.type =
@@ -223,7 +214,7 @@ function inicializarCAB10() {
 
             /*
             -------------------------------------
-            MOSTRAR LIGHTBOX
+            INSERTAR LIGHTBOX
             -------------------------------------
             */
 
@@ -239,7 +230,7 @@ function inicializarCAB10() {
 
             /*
             -------------------------------------
-            CAB12
+            LLAMAR A CAB12
             -------------------------------------
             */
 
@@ -254,6 +245,11 @@ function inicializarCAB10() {
                 );
 
             } else {
+
+                contenidoCAB12.innerHTML =
+                    "<p>" +
+                    "CAB12 no está disponible." +
+                    "</p>";
 
                 console.error(
                     "CAB10: CAB12 no está disponible."
