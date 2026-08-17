@@ -6,315 +6,329 @@ Generador de Paleofichas 1.1
 
 ECOLOGÍA — MODO DE VIDA
 
-CAB12 recibe la ficha actual directamente desde CAB10.
-
-j9 → PALMODO
+CAB12
+- Obtiene j1 de la ficha actual
+- Lee j9 directamente de master.csv
+- j9 → PALMODO
 ========================================================
 */
 
-
-let fichaActualCAB12 = null;
-
-
-/* =====================================================
-   RECIBIR FICHA ACTUAL
-   ===================================================== */
-
-document.addEventListener(
-    "palentropia:contenedor-cargado",
-    function(evento) {
-
-        fichaActualCAB12 =
-            evento.detail || null;
-
-
-        console.log(
-            "CAB12: ficha recibida:",
-            fichaActualCAB12
-        );
-
-    }
-);
-
-
-/* =====================================================
-   CAB12
-   ===================================================== */
-
 window.CAB12 = {
 
-
-    /* =================================================
-       MOSTRAR MODO DE VIDA
-       ================================================= */
-
-    mostrar: function(
-        contenedor,
-        ficha
-    ) {
-
-
-        console.log(
-            "CAB12: mostrando modo de vida."
-        );
-
+    mostrar: async function(contenedor, ficha) {
 
         if (!contenedor) {
-
-            console.error(
-                "CAB12: no existe contenedor."
-            );
-
+            console.error("CAB12: no existe contenedor.");
             return;
-
         }
 
+        contenedor.innerHTML =
+            "<h3>Modo de vida</h3>" +
+            "<p>Cargando...</p>";
 
-        /*
-        ----------------------------------------
-        USAR FICHA ENTREGADA POR CAB10
-        ----------------------------------------
-        */
+        /* =========================================
+           OBTENER CÓDIGO
+        ========================================= */
 
-        const fichaActual =
-            ficha ||
-            fichaActualCAB12;
+        let codigo = null;
 
+        if (ficha && ficha.j1) {
+            codigo = String(ficha.j1).trim();
+        }
 
-        if (!fichaActual) {
+        if (!codigo) {
 
-            console.error(
-                "CAB12: no se ha recibido la ficha actual."
-            );
+            const parametros =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+            codigo =
+                parametros.get("codigo");
+        }
+
+        if (!codigo) {
 
             contenedor.innerHTML =
                 "<h3>Modo de vida</h3>" +
-                "<p>No se ha podido obtener la ficha actual.</p>";
+                "<p>No se ha podido obtener el código.</p>";
 
             return;
-
         }
 
 
         console.log(
-            "CAB12: ficha utilizada:",
-            fichaActual
+            "CAB12: código actual =",
+            codigo
         );
 
 
-        /*
-        ----------------------------------------
-        LEER j9
-        ----------------------------------------
-        */
-
-        const j9 =
-            String(
-                fichaActual.j9 || ""
-            ).trim();
-
-
-        console.log(
-            "CAB12: j9 =",
-            j9
-        );
-
-
-        if (!j9) {
-
-            contenedor.innerHTML =
-                "<h3>Modo de vida</h3>" +
-                "<p>Modo de vida no definido.</p>";
-
-            return;
-
-        }
-
-
-        /*
-        ----------------------------------------
-        COMPROBAR PALMODO
-        ----------------------------------------
-        */
+        /* =========================================
+           COMPROBAR PALMODO
+        ========================================= */
 
         if (!window.PALMODO) {
-
-            console.error(
-                "CAB12: PALMODO no está cargado."
-            );
 
             contenedor.innerHTML =
                 "<h3>Modo de vida</h3>" +
                 "<p>No se ha podido cargar el catálogo.</p>";
 
-            return;
+            console.error(
+                "CAB12: PALMODO no está cargado."
+            );
 
+            return;
         }
 
 
-        /*
-        ----------------------------------------
-        CONSTRUIR CLAVE
-        ----------------------------------------
+        /* =========================================
+           LEER MASTER.CSV
+        ========================================= */
 
-        j9 = 001
+        try {
 
-        PALMODO = MV001
-        ----------------------------------------
-        */
+            const respuesta =
+                await fetch("master.csv");
 
-        const clave =
-            "MV" +
-            j9.padStart(
-                3,
-                "0"
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    "No se pudo cargar master.csv"
+                );
+
+            }
+
+
+            const texto =
+                await respuesta.text();
+
+
+            const filas =
+                texto
+                    .trim()
+                    .split(/\r?\n/)
+                    .map(
+                        fila =>
+                            fila.split(",")
+                    );
+
+
+            if (!filas.length) {
+
+                throw new Error(
+                    "master.csv está vacío"
+                );
+
+            }
+
+
+            /* =====================================
+               CABECERA
+            ===================================== */
+
+            const cabecera =
+                filas[0].map(
+                    campo =>
+                        campo
+                            .replace(
+                                /^\uFEFF/,
+                                ""
+                            )
+                            .trim()
+                            .toLowerCase()
+                );
+
+
+            const indiceJ1 =
+                cabecera.indexOf("j1");
+
+
+            const indiceJ9 =
+                cabecera.indexOf("j9");
+
+
+            if (
+                indiceJ1 === -1 ||
+                indiceJ9 === -1
+            ) {
+
+                throw new Error(
+                    "No se encontraron j1 y/o j9 en master.csv"
+                );
+
+            }
+
+
+            /* =====================================
+               BUSCAR FICHA
+            ===================================== */
+
+            const registro =
+                filas.find(
+                    fila =>
+                        fila[indiceJ1] &&
+                        fila[indiceJ1].trim() ===
+                        codigo
+                );
+
+
+            if (!registro) {
+
+                throw new Error(
+                    "No se encontró " +
+                    codigo +
+                    " en master.csv"
+                );
+
+            }
+
+
+            /* =====================================
+               OBTENER j9
+            ===================================== */
+
+            const j9 =
+                String(
+                    registro[indiceJ9] || ""
+                ).trim();
+
+
+            console.log(
+                "CAB12: j9 =",
+                j9
             );
 
 
-        console.log(
-            "CAB12: clave PALMODO =",
-            clave
-        );
+            if (!j9) {
+
+                contenedor.innerHTML =
+                    "<h3>Modo de vida</h3>" +
+                    "<p>Modo de vida no definido.</p>";
+
+                return;
+            }
 
 
-        /*
-        ----------------------------------------
-        BUSCAR MODO
-        ----------------------------------------
-        */
+            /* =====================================
+               CONSTRUIR CLAVE PALMODO
+            ===================================== */
 
-        const modo =
-            window.PALMODO[
+            const clave =
+                "MV" +
+                j9.padStart(3, "0");
+
+
+            console.log(
+                "CAB12: buscando",
                 clave
-            ];
+            );
 
 
-        if (!modo) {
+            const modo =
+                window.PALMODO[clave];
+
+
+            if (!modo) {
+
+                contenedor.innerHTML =
+                    "<h3>Modo de vida</h3>" +
+                    "<p>Modo de vida no definido.</p>";
+
+                console.error(
+                    "CAB12: no existe",
+                    clave
+                );
+
+                return;
+            }
+
+
+            /* =====================================
+               MOSTRAR
+            ===================================== */
+
+            contenedor.innerHTML = "";
+
+
+            const titulo =
+                document.createElement("h3");
+
+            titulo.textContent =
+                "Modo de vida";
+
+
+            contenedor.appendChild(
+                titulo
+            );
+
+
+            const codigoModo =
+                document.createElement("div");
+
+            codigoModo.className =
+                "codigoModoVidaCAB12";
+
+            codigoModo.textContent =
+                modo.codigo;
+
+
+            contenedor.appendChild(
+                codigoModo
+            );
+
+
+            const nombre =
+                document.createElement("div");
+
+            nombre.className =
+                "nombreModoVidaCAB12";
+
+            nombre.textContent =
+                modo.nombre;
+
+
+            contenedor.appendChild(
+                nombre
+            );
+
+
+            const descripcion =
+                document.createElement("p");
+
+            descripcion.className =
+                "descripcionModoVidaCAB12";
+
+            descripcion.textContent =
+                modo.descripcion;
+
+
+            contenedor.appendChild(
+                descripcion
+            );
+
+
+            console.log(
+                "CAB12: mostrado correctamente:",
+                codigo,
+                j9,
+                modo.nombre
+            );
+
+
+        } catch (error) {
 
             console.error(
-                "CAB12: no existe:",
-                clave
+                "CAB12:",
+                error
             );
+
 
             contenedor.innerHTML =
                 "<h3>Modo de vida</h3>" +
-                "<p>Modo de vida no definido.</p>";
-
-            return;
+                "<p>No se ha podido obtener el modo de vida.</p>";
 
         }
-
-
-        /*
-        ----------------------------------------
-        LIMPIAR
-        ----------------------------------------
-        */
-
-        contenedor.innerHTML = "";
-
-
-        /*
-        ----------------------------------------
-        TÍTULO
-        ----------------------------------------
-        */
-
-        const titulo =
-            document.createElement(
-                "h3"
-            );
-
-
-        titulo.textContent =
-            "Modo de vida";
-
-
-        contenedor.appendChild(
-            titulo
-        );
-
-
-        /*
-        ----------------------------------------
-        CÓDIGO
-        ----------------------------------------
-        */
-
-        const codigo =
-            document.createElement(
-                "div"
-            );
-
-
-        codigo.className =
-            "codigoModoVidaCAB12";
-
-
-        codigo.textContent =
-            modo.codigo;
-
-
-        contenedor.appendChild(
-            codigo
-        );
-
-
-        /*
-        ----------------------------------------
-        NOMBRE
-        ----------------------------------------
-        */
-
-        const nombre =
-            document.createElement(
-                "div"
-            );
-
-
-        nombre.className =
-            "nombreModoVidaCAB12";
-
-
-        nombre.textContent =
-            modo.nombre;
-
-
-        contenedor.appendChild(
-            nombre
-        );
-
-
-        /*
-        ----------------------------------------
-        DESCRIPCIÓN
-        ----------------------------------------
-        */
-
-        const descripcion =
-            document.createElement(
-                "p"
-            );
-
-
-        descripcion.className =
-            "descripcionModoVidaCAB12";
-
-
-        descripcion.textContent =
-            modo.descripcion;
-
-
-        contenedor.appendChild(
-            descripcion
-        );
-
-
-        console.log(
-            "CAB12: mostrado correctamente:",
-            modo.codigo,
-            modo.nombre
-        );
 
     }
 
