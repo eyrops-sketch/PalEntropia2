@@ -527,5 +527,222 @@ MÓVIL
 
 
 /*=========================================================
+CAB13 — MEDIO DE VIDA
+=========================================================*/
+
+/*
+   Estructura visual:
+
+   Medio general: Especialista
+   Descripción...
+
+   Localización ecológica: Orilla
+   Descripción...
+
+   Estrato ecológico: Superficie
+   Descripción...
+
+   Comportamiento espacial: Residente
+   Descripción...
+*/
+
+
+/*=========================================================
+BLOQUE INDIVIDUAL
+=========================================================*/
+
+#lightboxEcologia .bloqueMedioVidaCAB13{
+
+    display:block;
+
+    width:100%;
+
+    max-width:620px;
+
+    margin:0 auto 22px auto;
+
+    padding:0 0 18px 0;
+
+    border-bottom:1px solid rgba(98,214,255,.18);
+
+    box-sizing:border-box;
+
+}
+
+
+#lightboxEcologia .bloqueMedioVidaCAB13:last-child{
+
+    margin-bottom:0;
+
+    padding-bottom:0;
+
+    border-bottom:none;
+
+}
+
+
+/*=========================================================
+LÍNEA ETIQUETA + VALOR
+=========================================================*/
+
+#lightboxEcologia .lineaMedioVidaCAB13{
+
+    display:flex;
+
+    align-items:baseline;
+
+    justify-content:center;
+
+    gap:10px;
+
+    width:100%;
+
+    line-height:1.4;
+
+}
+
+
+/*=========================================================
+ETIQUETA
+=========================================================*/
+
+#lightboxEcologia .etiquetaMedioVidaCAB13{
+
+    color:#62d6ff !important;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    line-height:1.4;
+
+}
+
+
+/*=========================================================
+VALOR
+=========================================================*/
+
+#lightboxEcologia .valorMedioVidaCAB13{
+
+    color:#ffffff !important;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    line-height:1.4;
+
+}
+
+
+/*=========================================================
+DESCRIPCIÓN
+=========================================================*/
+
+#lightboxEcologia .descripcionMedioVidaCAB13{
+
+    display:block;
+
+    max-width:600px;
+
+    margin:9px auto 0 auto;
+
+    padding:0;
+
+    color:#ffffff !important;
+
+    font-size:15px;
+
+    font-weight:normal;
+
+    line-height:1.65;
+
+    text-align:center;
+
+}
+
+
+/*=========================================================
+SEPARACIÓN DEL PRIMER BLOQUE
+=========================================================*/
+
+#lightboxEcologia h3 + .bloqueMedioVidaCAB13{
+
+    margin-top:8px;
+
+}
+
+
+/*=========================================================
+MÓVIL
+=========================================================*/
+
+@media (max-width:768px){
+
+    #lightboxEcologia .bloqueMedioVidaCAB13{
+
+        margin-bottom:20px;
+
+        padding-bottom:16px;
+
+    }
+
+
+    #lightboxEcologia .lineaMedioVidaCAB13{
+
+        gap:8px;
+
+        line-height:1.4;
+
+    }
+
+
+    #lightboxEcologia .etiquetaMedioVidaCAB13{
+
+        font-size:15px;
+
+        line-height:1.4;
+
+    }
+
+
+    #lightboxEcologia .valorMedioVidaCAB13{
+
+        font-size:15px;
+
+        line-height:1.4;
+
+    }
+
+
+    #lightboxEcologia .descripcionMedioVidaCAB13{
+
+        margin-top:8px;
+
+        font-size:14px;
+
+        line-height:1.6;
+
+    }
+
+}
+
+
+
+
+
+/*=========================================================
 FIN STYLECAB10.CSS
 =========================================================*/
+
+
+
+
+
+
+
+
+
+
+
