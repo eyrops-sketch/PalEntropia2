@@ -16,6 +16,7 @@ PRESENTACIÓN VISUAL
 - Etiquetas celestes
 - Valores destacados
 - Descripciones blancas
+- Cabeceras moradas
 - Separación visual entre bloques
 
 CAB10
@@ -208,7 +209,7 @@ NOMBRE DE LA PALEOFICHA
 
 
 /*=========================================================
-CABECERAS ECOLÓGICAS
+CABECERAS ECOLÓGICAS — MORADO
 =========================================================*/
 
 #lightboxEcologia h3{
@@ -219,7 +220,7 @@ CABECERAS ECOLÓGICAS
 
     padding:0;
 
-    color:#62d6ff !important;
+    color:#b56cff !important;
 
     font-size:20px;
 
@@ -348,6 +349,17 @@ CAB13 — MEDIO DE VIDA
 
 
 /*=========================================================
+SEPARACIÓN CABECERA → PRIMER REGISTRO MEDIO
+=========================================================*/
+
+#lightboxEcologia h3 + .bloqueMedioVidaCAB13{
+
+    margin-top:20px;
+
+}
+
+
+/*=========================================================
 LÍNEA ETIQUETA + VALOR CAB13
 =========================================================*/
 
@@ -446,23 +458,6 @@ SEPARACIÓN MEDIO → HÁBITATS
 CAB14 — HÁBITATS
 =========================================================*/
 
-/*
-   CAB14 genera directamente:
-
-   <h3>Hábitats</h3>
-
-   <div class="bloqueHabitatCAB14">...</div>
-
-   <div class="seccionHabitatCAB14">
-       <h4 class="tituloHabitatCAB14">...</h4>
-       <div class="bloqueHabitatCAB14">...</div>
-       ...
-   </div>
-
-   Por tanto se trabaja directamente
-   sobre #cab14Ecologia.
-*/
-
 
 /*=========================================================
 CABECERA HÁBITATS
@@ -476,7 +471,7 @@ CABECERA HÁBITATS
 
     padding:0;
 
-    color:#62d6ff !important;
+    color:#b56cff !important;
 
     font-size:20px;
 
@@ -491,9 +486,6 @@ CABECERA HÁBITATS
 
 /*=========================================================
 OCULTAR TÍTULOS INTERNOS
-
-Hábitats principales
-Hábitats secundarios
 =========================================================*/
 
 #lightboxEcologia #cab14Ecologia .tituloHabitatCAB14{
@@ -505,10 +497,6 @@ Hábitats secundarios
 
 /*=========================================================
 OCULTAR ETIQUETAS REDUNDANTES
-
-Hábitat predominante
-Hábitat principal
-Hábitat secundario
 =========================================================*/
 
 #lightboxEcologia #cab14Ecologia .etiquetaHabitatCAB14{
@@ -554,15 +542,7 @@ BLOQUE INDIVIDUAL DE HÁBITAT
 
 
 /*=========================================================
-LÍNEA HÁBITAT + DESCRIPCIÓN
-
-Todo seguido en la misma línea.
-
-Nombre:
-CELESTE
-
-Descripción:
-BLANCO
+LÍNEA HÁBITAT
 =========================================================*/
 
 #lightboxEcologia #cab14Ecologia .lineaHabitatCAB14{
@@ -583,7 +563,7 @@ BLANCO
 
 
 /*=========================================================
-NOMBRE DEL HÁBITAT
+NOMBRE HÁBITAT — CELESTE
 =========================================================*/
 
 #lightboxEcologia #cab14Ecologia .nombreHabitatCAB14{
@@ -606,10 +586,10 @@ NOMBRE DEL HÁBITAT
 
 
 /*=========================================================
-DESCRIPCIÓN DEL HÁBITAT
+DESCRIPCIÓN HÁBITAT — BLANCO
 
-Se coloca al lado del nombre,
-separada únicamente por un espacio.
+Queda inmediatamente después del nombre,
+separada por un espacio.
 =========================================================*/
 
 #lightboxEcologia #cab14Ecologia .descripcionHabitatCAB14{
@@ -638,21 +618,8 @@ separada únicamente por un espacio.
 
 
 /*=========================================================
-SEPARACIÓN ENTRE PRINCIPALES Y SECUNDARIOS
+SEPARACIÓN PRINCIPALES → SECUNDARIOS
 =========================================================*/
-
-/*
-   CAB14 mantiene las dos secciones separadas:
-
-   .seccionHabitatCAB14
-       principales
-
-   .seccionHabitatCAB14
-       secundarios
-
-   Se añade únicamente separación visual
-   entre ambas.
-*/
 
 #lightboxEcologia #cab14Ecologia
 .seccionHabitatCAB14 + .seccionHabitatCAB14{
@@ -779,6 +746,7 @@ MÓVIL
 
 @media (max-width:768px){
 
+
     /*---------------------------------------------
       BOTÓN
     ---------------------------------------------*/
@@ -860,6 +828,8 @@ MÓVIL
 
         line-height:1.4;
 
+        color:#b56cff !important;
+
     }
 
 
@@ -904,6 +874,17 @@ MÓVIL
         margin-bottom:19px;
 
         padding-bottom:15px;
+
+    }
+
+
+    /*---------------------------------------------
+      SEPARACIÓN MEDIO → PRIMER REGISTRO
+    ---------------------------------------------*/
+
+    #lightboxEcologia h3 + .bloqueMedioVidaCAB13{
+
+        margin-top:18px;
 
     }
 
@@ -970,6 +951,8 @@ MÓVIL
         margin-bottom:26px;
 
         font-size:18px;
+
+        color:#b56cff !important;
 
     }
 
