@@ -1,0 +1,1058 @@
+/*
+========================================================
+PalEntropía
+stylecab10.css
+CAB10 — ECOLOGÍA
+Extensión visual de Style v2.1
+
+PRESENTACIÓN VISUAL
+
+- Botón Ecología
+- Lightbox independiente
+- Nombre de la paleoficha
+- Modo de vida
+- Medio de vida
+- Hábitats
+- Etiquetas celestes
+- Valores destacados
+- Descripciones blancas
+- Cabeceras moradas
+- Separación visual entre bloques
+
+CAB10
+ ├── CAB12 → Modo de vida
+ ├── CAB13 → Medio de vida
+ └── CAB14 → Hábitats
+
+========================================================
+*/
+
+
+/*=========================================================
+BOTÓN ECOLOGÍA
+=========================================================*/
+
+#botonEcologia{
+
+    min-width:145px;
+
+    min-height:44px;
+
+    padding:10px 20px;
+
+    background:#151719 !important;
+
+    color:#62d6ff !important;
+
+    border:2px solid #62d6ff !important;
+
+    border-radius:22px !important;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 10px rgba(98,214,255,.18);
+
+    transition:
+        background .25s,
+        color .25s,
+        transform .15s,
+        box-shadow .25s;
+
+}
+
+
+#botonEcologia:hover{
+
+    background:#62d6ff !important;
+
+    color:#001018 !important;
+
+    box-shadow:
+        0 0 18px rgba(98,214,255,.42);
+
+}
+
+
+#botonEcologia:active{
+
+    transform:scale(.95);
+
+}
+
+
+/*=========================================================
+LIGHTBOX ECOLOGÍA
+=========================================================*/
+
+#lightboxEcologia{
+
+    position:fixed !important;
+
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    width:100vw !important;
+    height:100vh !important;
+
+    padding:20px !important;
+
+    background:rgba(0,0,0,.90) !important;
+
+    z-index:999999 !important;
+
+    display:flex !important;
+
+    align-items:center !important;
+
+    justify-content:center !important;
+
+    box-sizing:border-box !important;
+
+}
+
+
+/*=========================================================
+VENTANA ECOLOGÍA
+=========================================================*/
+
+#lightboxEcologia > div{
+
+    position:relative;
+
+    width:90%;
+
+    max-width:700px;
+
+    max-height:80vh;
+
+    overflow:auto;
+
+    padding:25px;
+
+    background:#181a1c !important;
+
+    color:#eee !important;
+
+    border:2px solid #62d6ff !important;
+
+    border-radius:18px !important;
+
+    box-shadow:
+        0 0 25px rgba(98,214,255,.35),
+        0 10px 35px rgba(0,0,0,.45);
+
+    text-align:center;
+
+    box-sizing:border-box;
+
+}
+
+
+/*=========================================================
+TÍTULO PRINCIPAL — ECOLOGÍA
+=========================================================*/
+
+#lightboxEcologia h2{
+
+    margin-top:0;
+
+    margin-bottom:20px;
+
+    color:#62d6ff !important;
+
+    font-size:28px;
+
+    font-weight:bold;
+
+    line-height:1.2;
+
+    text-align:center;
+
+}
+
+
+/*=========================================================
+NOMBRE DE LA PALEOFICHA
+=========================================================*/
+
+#lightboxEcologia .nombreFichaCAB12{
+
+    display:block;
+
+    margin-top:0;
+
+    margin-bottom:20px;
+
+    color:#ffffff !important;
+
+    font-size:28px;
+
+    font-weight:bold;
+
+    line-height:1.2;
+
+    text-align:center;
+
+    text-shadow:
+        0 0 8px rgba(98,214,255,.18);
+
+}
+
+
+/*=========================================================
+CABECERAS ECOLÓGICAS — MORADO
+=========================================================*/
+
+#lightboxEcologia h3{
+
+    display:block;
+
+    margin:0;
+
+    padding:0;
+
+    color:#b56cff !important;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    line-height:1.4;
+
+    text-align:center;
+
+}
+
+
+/*=========================================================
+MODO DE VIDA
+=========================================================*/
+
+#lightboxEcologia h3:first-of-type{
+
+    display:inline;
+
+}
+
+
+#lightboxEcologia .nombreModoVidaCAB12{
+
+    display:inline;
+
+    margin-left:9px;
+
+    color:#ffffff !important;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    line-height:1.4;
+
+}
+
+
+/*=========================================================
+DESCRIPCIÓN MODO DE VIDA
+=========================================================*/
+
+#lightboxEcologia .descripcionModoVidaCAB12{
+
+    display:block;
+
+    margin:10px auto 0 auto;
+
+    max-width:600px;
+
+    color:#ffffff !important;
+
+    font-size:15px;
+
+    font-weight:normal;
+
+    line-height:1.65;
+
+    text-align:center;
+
+}
+
+
+/*=========================================================
+SEPARACIÓN MODO → MEDIO
+=========================================================*/
+
+#lightboxEcologia .descripcionModoVidaCAB12{
+
+    margin-bottom:32px;
+
+}
+
+
+/*=========================================================
+PÁRRAFOS GENERALES
+=========================================================*/
+
+#lightboxEcologia p{
+
+    margin:0;
+
+    color:#ffffff !important;
+
+    font-size:15px;
+
+    line-height:1.65;
+
+}
+
+
+/*=========================================================
+CAB13 — MEDIO DE VIDA
+=========================================================*/
+
+#lightboxEcologia .bloqueMedioVidaCAB13{
+
+    display:block;
+
+    width:100%;
+
+    max-width:620px;
+
+    margin:0 auto 22px auto;
+
+    padding:0 0 18px 0;
+
+    border-bottom:1px solid rgba(98,214,255,.18);
+
+    box-sizing:border-box;
+
+}
+
+
+#lightboxEcologia .bloqueMedioVidaCAB13:last-child{
+
+    margin-bottom:0;
+
+    padding-bottom:0;
+
+    border-bottom:none;
+
+}
+
+
+/*=========================================================
+SEPARACIÓN CABECERA → PRIMER REGISTRO MEDIO
+=========================================================*/
+
+#lightboxEcologia h3 + .bloqueMedioVidaCAB13{
+
+    margin-top:20px;
+
+}
+
+
+/*=========================================================
+LÍNEA ETIQUETA + VALOR CAB13
+=========================================================*/
+
+#lightboxEcologia .lineaMedioVidaCAB13{
+
+    display:flex;
+
+    align-items:baseline;
+
+    justify-content:center;
+
+    width:100%;
+
+    gap:8px;
+
+    line-height:1.4;
+
+}
+
+
+/*=========================================================
+ETIQUETA CAB13
+=========================================================*/
+
+#lightboxEcologia .etiquetaMedioVidaCAB13{
+
+    color:#62d6ff !important;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    line-height:1.4;
+
+}
+
+
+/*=========================================================
+VALOR CAB13
+=========================================================*/
+
+#lightboxEcologia .valorMedioVidaCAB13{
+
+    color:#ffffff !important;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    line-height:1.4;
+
+}
+
+
+/*=========================================================
+DESCRIPCIÓN CAB13
+=========================================================*/
+
+#lightboxEcologia .descripcionMedioVidaCAB13{
+
+    display:block;
+
+    width:100%;
+
+    max-width:600px;
+
+    margin:9px auto 0 auto;
+
+    padding:0;
+
+    color:#ffffff !important;
+
+    font-size:15px;
+
+    font-weight:normal;
+
+    line-height:1.65;
+
+    text-align:center;
+
+}
+
+
+/*=========================================================
+SEPARACIÓN MEDIO → HÁBITATS
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia{
+
+    margin-top:42px;
+
+}
+
+
+/*=========================================================
+CAB14 — HÁBITATS
+=========================================================*/
+
+
+/*=========================================================
+CABECERA HÁBITATS
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia > h3{
+
+    display:block;
+
+    margin:0 0 30px 0;
+
+    padding:0;
+
+    color:#b56cff !important;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    line-height:1.4;
+
+    text-align:center;
+
+}
+
+
+/*=========================================================
+OCULTAR TÍTULOS INTERNOS
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia .tituloHabitatCAB14{
+
+    display:none !important;
+
+}
+
+
+/*=========================================================
+OCULTAR ETIQUETAS REDUNDANTES
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia .etiquetaHabitatCAB14{
+
+    display:none !important;
+
+}
+
+
+/*=========================================================
+BLOQUE INDIVIDUAL DE HÁBITAT
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia .bloqueHabitatCAB14{
+
+    display:block;
+
+    width:100%;
+
+    max-width:620px;
+
+    margin:0 auto 20px auto;
+
+    padding:0 0 16px 0;
+
+    border-bottom:1px solid rgba(98,214,255,.18);
+
+    box-sizing:border-box;
+
+}
+
+
+/*=========================================================
+ÚLTIMO HÁBITAT DE CADA SECCIÓN
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia .seccionHabitatCAB14
+.bloqueHabitatCAB14:last-child{
+
+    margin-bottom:0;
+
+}
+
+
+/*=========================================================
+LÍNEA HÁBITAT
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia .lineaHabitatCAB14{
+
+    display:inline;
+
+    width:auto;
+
+    margin:0;
+
+    padding:0;
+
+    text-align:center;
+
+    line-height:1.65;
+
+}
+
+
+/*=========================================================
+NOMBRE HÁBITAT — CELESTE
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia .nombreHabitatCAB14{
+
+    display:inline;
+
+    margin:0;
+
+    padding:0;
+
+    color:#62d6ff !important;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    line-height:1.65;
+
+}
+
+
+/*=========================================================
+DESCRIPCIÓN HÁBITAT — BLANCO
+
+Queda inmediatamente después del nombre,
+separada por un espacio.
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia .descripcionHabitatCAB14{
+
+    display:inline;
+
+    width:auto;
+
+    max-width:none;
+
+    margin:0 0 0 7px;
+
+    padding:0;
+
+    color:#ffffff !important;
+
+    font-size:15px;
+
+    font-weight:normal;
+
+    line-height:1.65;
+
+    text-align:center;
+
+}
+
+
+/*=========================================================
+SEPARACIÓN PRINCIPALES → SECUNDARIOS
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia
+.seccionHabitatCAB14 + .seccionHabitatCAB14{
+
+    margin-top:30px;
+
+}
+
+
+/*=========================================================
+SIN HÁBITAT
+=========================================================*/
+
+#lightboxEcologia #cab14Ecologia .sinHabitatCAB14{
+
+    color:#ffffff !important;
+
+    font-size:15px;
+
+    line-height:1.65;
+
+    text-align:center;
+
+    padding:10px 0;
+
+}
+
+
+/*=========================================================
+BOTÓN CERRAR
+=========================================================*/
+
+#lightboxEcologia button{
+
+    min-height:42px;
+
+    margin-top:20px;
+
+    padding:9px 20px;
+
+    background:#1d9bf0 !important;
+
+    color:#ffffff !important;
+
+    border:1px solid #62d6ff !important;
+
+    border-radius:22px !important;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 10px rgba(98,214,255,.25);
+
+    transition:
+        background .25s,
+        transform .15s,
+        box-shadow .25s;
+
+}
+
+
+#lightboxEcologia button:hover{
+
+    background:#62d6ff !important;
+
+    color:#001018 !important;
+
+    box-shadow:
+        0 0 15px rgba(98,214,255,.42);
+
+}
+
+
+#lightboxEcologia button:active{
+
+    transform:scale(.94);
+
+}
+
+
+/*=========================================================
+SCROLL
+=========================================================*/
+
+#lightboxEcologia > div::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+
+#lightboxEcologia > div::-webkit-scrollbar-track{
+
+    background:#151719;
+
+    border-radius:10px;
+
+}
+
+
+#lightboxEcologia > div::-webkit-scrollbar-thumb{
+
+    background:#62d6ff;
+
+    border-radius:10px;
+
+}
+
+
+#lightboxEcologia > div::-webkit-scrollbar-thumb:hover{
+
+    background:#00e5ff;
+
+}
+
+
+/*=========================================================
+MÓVIL
+=========================================================*/
+
+@media (max-width:768px){
+
+
+    /*---------------------------------------------
+      BOTÓN
+    ---------------------------------------------*/
+
+    #botonEcologia{
+
+        min-width:130px;
+
+        min-height:42px;
+
+        padding:9px 16px;
+
+        font-size:15px;
+
+    }
+
+
+    /*---------------------------------------------
+      LIGHTBOX
+    ---------------------------------------------*/
+
+    #lightboxEcologia{
+
+        padding:15px !important;
+
+    }
+
+
+    /*---------------------------------------------
+      VENTANA
+    ---------------------------------------------*/
+
+    #lightboxEcologia > div{
+
+        width:95%;
+
+        max-height:85vh;
+
+        padding:18px;
+
+        border-radius:15px;
+
+    }
+
+
+    /*---------------------------------------------
+      ECOLOGÍA
+    ---------------------------------------------*/
+
+    #lightboxEcologia h2{
+
+        font-size:24px;
+
+        margin-bottom:18px;
+
+    }
+
+
+    /*---------------------------------------------
+      NOMBRE PALEOFICHA
+    ---------------------------------------------*/
+
+    #lightboxEcologia .nombreFichaCAB12{
+
+        font-size:24px;
+
+        margin-bottom:18px;
+
+    }
+
+
+    /*---------------------------------------------
+      CABECERAS MODO / MEDIO / HÁBITATS
+    ---------------------------------------------*/
+
+    #lightboxEcologia h3{
+
+        font-size:18px;
+
+        line-height:1.4;
+
+        color:#b56cff !important;
+
+    }
+
+
+    /*---------------------------------------------
+      VALOR MODO DE VIDA
+    ---------------------------------------------*/
+
+    #lightboxEcologia .nombreModoVidaCAB12{
+
+        margin-left:7px;
+
+        font-size:15px;
+
+        line-height:1.4;
+
+    }
+
+
+    /*---------------------------------------------
+      DESCRIPCIÓN MODO
+    ---------------------------------------------*/
+
+    #lightboxEcologia .descripcionModoVidaCAB12{
+
+        margin-top:9px;
+
+        margin-bottom:28px;
+
+        font-size:14px;
+
+        line-height:1.6;
+
+    }
+
+
+    /*---------------------------------------------
+      BLOQUES MEDIO
+    ---------------------------------------------*/
+
+    #lightboxEcologia .bloqueMedioVidaCAB13{
+
+        margin-bottom:19px;
+
+        padding-bottom:15px;
+
+    }
+
+
+    /*---------------------------------------------
+      SEPARACIÓN MEDIO → PRIMER REGISTRO
+    ---------------------------------------------*/
+
+    #lightboxEcologia h3 + .bloqueMedioVidaCAB13{
+
+        margin-top:18px;
+
+    }
+
+
+    #lightboxEcologia .lineaMedioVidaCAB13{
+
+        gap:7px;
+
+        line-height:1.4;
+
+    }
+
+
+    #lightboxEcologia .etiquetaMedioVidaCAB13{
+
+        font-size:15px;
+
+        line-height:1.4;
+
+    }
+
+
+    #lightboxEcologia .valorMedioVidaCAB13{
+
+        font-size:15px;
+
+        line-height:1.4;
+
+    }
+
+
+    /*---------------------------------------------
+      DESCRIPCIÓN MEDIO
+    ---------------------------------------------*/
+
+    #lightboxEcologia .descripcionMedioVidaCAB13{
+
+        margin-top:8px;
+
+        font-size:14px;
+
+        line-height:1.6;
+
+    }
+
+
+    /*---------------------------------------------
+      SEPARACIÓN MEDIO → HÁBITATS
+    ---------------------------------------------*/
+
+    #lightboxEcologia #cab14Ecologia{
+
+        margin-top:36px;
+
+    }
+
+
+    /*---------------------------------------------
+      CABECERA HÁBITATS
+    ---------------------------------------------*/
+
+    #lightboxEcologia #cab14Ecologia > h3{
+
+        margin-bottom:26px;
+
+        font-size:18px;
+
+        color:#b56cff !important;
+
+    }
+
+
+    /*---------------------------------------------
+      BLOQUES HÁBITAT
+    ---------------------------------------------*/
+
+    #lightboxEcologia #cab14Ecologia .bloqueHabitatCAB14{
+
+        margin-bottom:18px;
+
+        padding-bottom:14px;
+
+    }
+
+
+    /*---------------------------------------------
+      NOMBRE HÁBITAT
+    ---------------------------------------------*/
+
+    #lightboxEcologia #cab14Ecologia .nombreHabitatCAB14{
+
+        font-size:15px;
+
+        line-height:1.6;
+
+    }
+
+
+    /*---------------------------------------------
+      DESCRIPCIÓN HÁBITAT
+    ---------------------------------------------*/
+
+    #lightboxEcologia #cab14Ecologia .descripcionHabitatCAB14{
+
+        margin-left:6px;
+
+        font-size:14px;
+
+        line-height:1.6;
+
+    }
+
+
+    /*---------------------------------------------
+      SEPARACIÓN PRINCIPALES → SECUNDARIOS
+    ---------------------------------------------*/
+
+    #lightboxEcologia #cab14Ecologia
+    .seccionHabitatCAB14 + .seccionHabitatCAB14{
+
+        margin-top:26px;
+
+    }
+
+
+    /*---------------------------------------------
+      SIN HÁBITAT
+    ---------------------------------------------*/
+
+    #lightboxEcologia #cab14Ecologia .sinHabitatCAB14{
+
+        font-size:14px;
+
+        line-height:1.6;
+
+    }
+
+
+    /*---------------------------------------------
+      PÁRRAFOS
+    ---------------------------------------------*/
+
+    #lightboxEcologia p{
+
+        font-size:14px;
+
+        line-height:1.6;
+
+    }
+
+
+    /*---------------------------------------------
+      BOTÓN CERRAR
+    ---------------------------------------------*/
+
+    #lightboxEcologia button{
+
+        min-height:42px;
+
+        padding:9px 18px;
+
+        font-size:15px;
+
+    }
+
+}
+
+
+/*=========================================================
+FIN STYLECAB10.CSS
+=========================================================*/

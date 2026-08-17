@@ -1,0 +1,711 @@
+/*
+========================================================
+PalEntropía
+stylecab09.css
+CAB09 — ESTADÍSTICAS
+Extensión visual de Style v2.1
+
+FASE 4C
+- Filas estadísticas
+- Barra normalizada 0–100
+- Valor numérico en celeste
+- Indicadores generales
+========================================================
+*/
+
+
+/*=========================================================
+BOTONES ESTADÍSTICAS + ECOLOGÍA
+=========================================================*/
+
+#botonesCAB09{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+
+    width:100%;
+
+    margin:28px auto 10px;
+
+}
+
+
+/*=========================================================
+BOTÓN ESTADÍSTICAS
+=========================================================*/
+
+#botonEstadisticas{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    min-width:145px;
+
+    min-height:44px;
+
+    padding:10px 20px;
+
+    margin:0;
+
+    background:#151719 !important;
+
+    color:#62d6ff !important;
+
+    border:2px solid #62d6ff !important;
+
+    border-radius:22px !important;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    line-height:1;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 10px rgba(98,214,255,.18);
+
+    transition:
+        background .25s,
+        color .25s,
+        transform .15s,
+        box-shadow .25s;
+
+}
+
+
+#botonEstadisticas:hover{
+
+    background:#62d6ff !important;
+
+    color:#001018 !important;
+
+    box-shadow:
+        0 0 18px rgba(98,214,255,.42);
+
+}
+
+
+#botonEstadisticas:active{
+
+    transform:scale(.95);
+
+}
+
+
+/*=========================================================
+LIGHTBOX ESTADÍSTICAS
+=========================================================*/
+
+#lightboxEstadisticas{
+
+    position:fixed !important;
+
+    top:0 !important;
+    left:0 !important;
+
+    width:100vw !important;
+    height:100vh !important;
+
+    padding:20px !important;
+
+    background:rgba(0,0,0,.90) !important;
+
+    z-index:999999 !important;
+
+    display:flex !important;
+
+    justify-content:center !important;
+
+    align-items:center !important;
+
+    box-sizing:border-box !important;
+
+}
+
+
+/*=========================================================
+VENTANA
+=========================================================*/
+
+#lightboxEstadisticas > div{
+
+    position:relative;
+
+    width:90%;
+
+    max-width:700px;
+
+    max-height:80vh;
+
+    overflow:auto;
+
+    padding:25px;
+
+    background:#181a1c !important;
+
+    color:#fff !important;
+
+    border:2px solid #62d6ff;
+
+    border-radius:18px;
+
+    box-shadow:
+        0 0 25px rgba(98,214,255,.35),
+        0 10px 35px rgba(0,0,0,.45);
+
+    text-align:center;
+
+    box-sizing:border-box;
+
+}
+
+
+/*=========================================================
+TÍTULO PRINCIPAL
+=========================================================*/
+
+#lightboxEstadisticas h2{
+
+    margin:0 0 8px;
+
+    color:#62d6ff !important;
+
+    text-align:center;
+
+    font-size:30px;
+
+    font-weight:bold;
+
+    letter-spacing:.5px;
+
+    text-shadow:
+        0 0 10px rgba(98,214,255,.30);
+
+}
+
+
+/*=========================================================
+CÓDIGO
+=========================================================*/
+
+.codigoEstadisticasCAB09{
+
+    margin:0 0 3px;
+
+    color:#8c959a !important;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+
+}
+
+
+/*=========================================================
+NOMBRE
+=========================================================*/
+
+.nombreEstadisticasCAB09{
+
+    margin:0 0 25px;
+
+    color:#62d6ff !important;
+
+    font-size:25px;
+
+    font-weight:bold;
+
+    line-height:1.2;
+
+    text-shadow:
+        0 0 12px rgba(98,214,255,.25);
+
+}
+
+
+/*=========================================================
+TÍTULOS DE SECCIÓN
+=========================================================*/
+
+.tituloSeccionCAB09{
+
+    margin:24px 0 14px;
+
+    padding-bottom:8px;
+
+    color:#fff !important;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    text-align:left;
+
+    letter-spacing:.5px;
+
+    border-bottom:1px solid
+        rgba(98,214,255,.35);
+
+}
+
+
+/*=========================================================
+CONTENEDOR DE ESTADÍSTICAS
+=========================================================*/
+
+.contenedorEstadisticasCAB09{
+
+    width:100%;
+
+    margin:0;
+
+}
+
+
+/*=========================================================
+FILA DE ESTADÍSTICA
+=========================================================*/
+
+.filaEstadisticaCAB09{
+
+    display:flex;
+
+    align-items:center;
+
+    width:100%;
+
+    min-height:34px;
+
+    margin:0;
+
+    padding:7px 4px;
+
+    box-sizing:border-box;
+
+    border-bottom:1px solid
+        rgba(255,255,255,.07);
+
+    gap:10px;
+
+}
+
+
+/*=========================================================
+ETIQUETA
+=========================================================*/
+
+.etiquetaEstadisticaCAB09{
+
+    flex:0 0 175px;
+
+    color:#fff !important;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    line-height:1.2;
+
+    text-align:left;
+
+    white-space:nowrap;
+
+}
+
+
+/*=========================================================
+BARRA
+=========================================================*/
+
+.barraEstadisticaCAB09{
+
+    flex:1;
+
+    height:9px;
+
+    min-width:60px;
+
+    overflow:hidden;
+
+    background:#292d30;
+
+    border:1px solid
+        rgba(98,214,255,.20);
+
+    border-radius:10px;
+
+    box-shadow:
+        inset 0 0 4px rgba(0,0,0,.7);
+
+}
+
+
+/*=========================================================
+PROGRESO
+=========================================================*/
+
+.progresoEstadisticaCAB09{
+
+    height:100%;
+
+    min-width:0;
+
+    background:#62d6ff;
+
+    border-radius:10px;
+
+    box-shadow:
+        0 0 8px rgba(98,214,255,.45);
+
+    transition:
+        width .45s ease;
+
+}
+
+
+/*=========================================================
+VALOR NUMÉRICO
+=========================================================*/
+
+.valorEstadisticaCAB09{
+
+    flex:0 0 35px;
+
+    color:#62d6ff !important;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    line-height:1;
+
+    text-align:right;
+
+    font-variant-numeric:
+        tabular-nums;
+
+    text-shadow:
+        0 0 7px rgba(98,214,255,.25);
+
+}
+
+
+/*=========================================================
+INDICADORES GENERALES
+=========================================================*/
+
+.contenedorIndicadoresCAB09{
+
+    width:100%;
+
+    margin-top:0;
+
+}
+
+
+/*=========================================================
+INDICADORES — DIFERENCIACIÓN VISUAL
+=========================================================*/
+
+.indicadorGeneralCAB09{
+
+    padding-top:9px;
+
+    padding-bottom:9px;
+
+}
+
+
+/*=========================================================
+INDICADORES — ETIQUETA
+=========================================================*/
+
+.indicadorGeneralCAB09
+.etiquetaEstadisticaCAB09{
+
+    color:#fff !important;
+
+}
+
+
+/*=========================================================
+INDICADORES — VALOR
+=========================================================*/
+
+.indicadorGeneralCAB09
+.valorEstadisticaCAB09{
+
+    color:#62d6ff !important;
+
+    font-size:17px;
+
+}
+
+
+/*=========================================================
+INDICADORES — BARRA
+=========================================================*/
+
+.indicadorGeneralCAB09
+.progresoEstadisticaCAB09{
+
+    box-shadow:
+        0 0 10px rgba(98,214,255,.55);
+
+}
+
+
+/*=========================================================
+BOTÓN CERRAR
+=========================================================*/
+
+#lightboxEstadisticas button{
+
+    width:42px;
+
+    height:42px;
+
+    min-height:42px;
+
+    padding:0;
+
+    margin-top:18px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#1d9bf0 !important;
+
+    color:#fff !important;
+
+    border:2px solid #62d6ff !important;
+
+    border-radius:50%;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:25px;
+
+    font-weight:normal;
+
+    line-height:1;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 10px rgba(98,214,255,.25);
+
+    transition:
+        background .25s,
+        color .25s,
+        transform .15s,
+        box-shadow .25s;
+
+}
+
+
+#lightboxEstadisticas button:hover{
+
+    background:#62d6ff !important;
+
+    color:#001018 !important;
+
+    box-shadow:
+        0 0 15px rgba(98,214,255,.42);
+
+}
+
+
+#lightboxEstadisticas button:active{
+
+    transform:scale(.94);
+
+}
+
+
+/*=========================================================
+SCROLL INTERNO
+=========================================================*/
+
+#lightboxEstadisticas > div::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+
+#lightboxEstadisticas > div::-webkit-scrollbar-track{
+
+    background:#151719;
+
+    border-radius:10px;
+
+}
+
+
+#lightboxEstadisticas > div::-webkit-scrollbar-thumb{
+
+    background:#62d6ff;
+
+    border-radius:10px;
+
+}
+
+
+#lightboxEstadisticas > div::-webkit-scrollbar-thumb:hover{
+
+    background:#00e5ff;
+
+}
+
+
+/*=========================================================
+RESPONSIVE
+=========================================================*/
+
+@media (max-width:768px){
+
+    #botonesCAB09{
+
+        gap:10px;
+
+        margin-top:24px;
+
+    }
+
+
+    #botonEstadisticas{
+
+        min-width:130px;
+
+        min-height:42px;
+
+        padding:9px 16px;
+
+        font-size:15px;
+
+    }
+
+
+    #lightboxEstadisticas{
+
+        padding:15px !important;
+
+    }
+
+
+    #lightboxEstadisticas > div{
+
+        width:95%;
+
+        max-height:85vh;
+
+        padding:18px;
+
+        border-radius:15px;
+
+    }
+
+
+    #lightboxEstadisticas h2{
+
+        font-size:25px;
+
+    }
+
+
+    .nombreEstadisticasCAB09{
+
+        font-size:21px;
+
+        margin-bottom:20px;
+
+    }
+
+
+    .tituloSeccionCAB09{
+
+        font-size:17px;
+
+        margin-top:22px;
+
+    }
+
+
+    .filaEstadisticaCAB09{
+
+        gap:8px;
+
+        padding:7px 2px;
+
+    }
+
+
+    .etiquetaEstadisticaCAB09{
+
+        flex:0 0 125px;
+
+        font-size:13px;
+
+    }
+
+
+    .barraEstadisticaCAB09{
+
+        height:8px;
+
+    }
+
+
+    .valorEstadisticaCAB09{
+
+        flex:0 0 30px;
+
+        font-size:15px;
+
+    }
+
+
+    #lightboxEstadisticas button{
+
+        width:42px;
+
+        height:42px;
+
+        min-height:42px;
+
+        font-size:24px;
+
+    }
+
+}
+
+
+/*=========================================================
+FIN STYLECAB09.CSS
+=========================================================*/
