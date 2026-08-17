@@ -1,100 +1,510 @@
 /*
 ========================================================
 PalEntropía
-CAB14.js v1.0
-HÁBITATS DE LA PALEOFICHA
-========================================================
+CAB14.js v1.1
+Generador de Paleofichas 1.1
 
-FUNCIÓN
---------------------------------------------------------
-Presenta los hábitats de una Paleoficha utilizando:
+ECOLOGÍA — HÁBITATS
 
-    j5
-    j6
+CAB14
 
-El procesamiento de j5/j6 NO se realiza aquí.
+- Obtiene el código actual j1
+- Lee master.csv directamente
+- Obtiene j5 y j6
+- Utiliza PALHABDECODER
+- Utiliza PALHAB
+- Aplica la regla de predominancia
+- Elimina duplicados entre j5 y j6
+- No modifica master.csv
+- No modifica CARGACONT
+- No modifica CAB10
+- No crea ningún lightbox
 
-La arquitectura es:
+Arquitectura:
 
+    CAB10
+       ↓
+    CAB14.mostrar(contenedor)
+       ↓
+    j1
+       ↓
+    master.csv
+       ↓
     j5 + j6
        ↓
     PALHABDECODER
        ↓
-    CAB14
-       ↓
     PALHAB
        ↓
-    nombre + descripción
-
-
-DEPENDENCIAS
---------------------------------------------------------
-
-    PALHABDECODER.js
-    PALHAB.js
-
-CAB14 NO modifica:
-
-    CAB12
-    CAB13
-    PALHAB
-    PALHABDECODER
-
-
-REGLAS VISUALES
---------------------------------------------------------
-
-    Hábitat predominante
-    Nombre
-    Descripción
-
-    Hábitats principales
-    Nombre
-    Descripción
-
-    Hábitats secundarios
-    Nombre
-    Descripción
-
+    cab14Ecologia
 
 ========================================================
 */
 
 
-window.CAB14 = {
+let fichaActualCAB14 = null;
 
 
-/*=========================================================
-  01 — OBTENER DATOS DEL HÁBITAT
-=========================================================*/
+/* =====================================================
+   RECIBIR FICHA ACTUAL
+   ===================================================== */
 
-/*
----------------------------------------------------------
-obtenerHabitat(codigo)
+document.addEventListener(
+    "palentropia:contenedor-cargado",
+    function(evento) {
 
-Consulta PALHAB utilizando el código:
+        fichaActualCAB14 =
+            evento.detail || null;
 
-    H100
 
-Devuelve el objeto correspondiente.
+        console.log(
+            "CAB14: ficha recibida:",
+            fichaActualCAB14
+        );
 
-Si no existe, devuelve null.
----------------------------------------------------------
-*/
+    }
+);
 
-obtenerHabitat:function(codigo){
 
-    if(!codigo){
+/* =====================================================
+   PARSER CSV
+   ===================================================== */
 
-        return null;
+function parseCSVCAB14(texto) {
+
+    const filas = [];
+
+    let fila = [];
+
+    let campo = "";
+
+    let dentroComillas = false;
+
+
+    for (
+        let i = 0;
+        i < texto.length;
+        i++
+    ) {
+
+        const caracter =
+            texto[i];
+
+        const siguiente =
+            texto[i + 1];
+
+
+        if (
+            caracter === '"'
+        ) {
+
+            if (
+                dentroComillas &&
+                siguiente === '"'
+            ) {
+
+                campo += '"';
+
+                i++;
+
+            } else {
+
+                dentroComillas =
+                    !dentroComillas;
+
+            }
+
+            continue;
+
+        }
+
+
+        if (
+            caracter === "," &&
+            !dentroComillas
+        ) {
+
+            fila.push(
+                campo
+            );
+
+            campo = "";
+
+            continue;
+
+        }
+
+
+        if (
+            (
+                caracter === "\n" ||
+                caracter === "\r"
+            ) &&
+            !dentroComillas
+        ) {
+
+            if (
+                caracter === "\r" &&
+                siguiente === "\n"
+            ) {
+
+                i++;
+
+            }
+
+
+            fila.push(
+                campo
+            );
+
+            campo = "";
+
+
+            if (
+                fila.some(
+                    valor =>
+                        valor.trim() !== ""
+                )
+            ) {
+
+                filas.push(
+                    fila
+                );
+
+            }
+
+
+            fila = [];
+
+            continue;
+
+        }
+
+
+        campo += caracter;
 
     }
 
 
-    if(!window.PALHAB){
+    if (
+        campo !== "" ||
+        fila.length > 0
+    ) {
+
+        fila.push(
+            campo
+        );
+
+
+        if (
+            fila.some(
+                valor =>
+                    valor.trim() !== ""
+            )
+        ) {
+
+            filas.push(
+                fila
+            );
+
+        }
+
+    }
+
+
+    return filas;
+
+}
+
+
+/* =====================================================
+   OBTENER CÓDIGO ACTUAL
+   ===================================================== */
+
+function obtenerCodigoCAB14() {
+
+
+    /* -----------------------------------------
+       1 — Ficha recibida
+    ----------------------------------------- */
+
+    if (
+        fichaActualCAB14 &&
+        fichaActualCAB14.j1
+    ) {
+
+        return String(
+            fichaActualCAB14.j1
+        ).trim();
+
+    }
+
+
+    /* -----------------------------------------
+       2 — URL
+    ----------------------------------------- */
+
+    const parametros =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const codigoURL =
+        parametros.get("codigo");
+
+
+    if (codigoURL) {
+
+        return String(
+            codigoURL
+        ).trim();
+
+    }
+
+
+    /* -----------------------------------------
+       3 — Dataset de la ficha
+    ----------------------------------------- */
+
+    const ficha =
+        document.getElementById(
+            "ficha"
+        );
+
+
+    if (
+        ficha &&
+        ficha.dataset &&
+        ficha.dataset.codigo
+    ) {
+
+        return String(
+            ficha.dataset.codigo
+        ).trim();
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =====================================================
+   OBTENER j5 Y j6 DESDE MASTER.CSV
+   ===================================================== */
+
+async function obtenerJ5J6CAB14(
+    codigo
+) {
+
+
+    const respuesta =
+        await fetch(
+            "master.csv"
+        );
+
+
+    if (!respuesta.ok) {
+
+        throw new Error(
+            "CAB14: no se pudo cargar master.csv"
+        );
+
+    }
+
+
+    const texto =
+        await respuesta.text();
+
+
+    const filas =
+        parseCSVCAB14(
+            texto
+        );
+
+
+    if (!filas.length) {
+
+        throw new Error(
+            "CAB14: master.csv está vacío"
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       CABECERA
+    ----------------------------------------- */
+
+    const cabecera =
+        filas[0].map(
+            valor =>
+                valor
+                    .replace(
+                        /^\uFEFF/,
+                        ""
+                    )
+                    .trim()
+                    .toLowerCase()
+        );
+
+
+    const indiceJ1 =
+        cabecera.indexOf(
+            "j1"
+        );
+
+
+    const indiceJ5 =
+        cabecera.indexOf(
+            "j5"
+        );
+
+
+    const indiceJ6 =
+        cabecera.indexOf(
+            "j6"
+        );
+
+
+    if (
+        indiceJ1 === -1
+    ) {
+
+        throw new Error(
+            "CAB14: no existe j1 en master.csv"
+        );
+
+    }
+
+
+    if (
+        indiceJ5 === -1
+    ) {
+
+        throw new Error(
+            "CAB14: no existe j5 en master.csv"
+        );
+
+    }
+
+
+    if (
+        indiceJ6 === -1
+    ) {
+
+        throw new Error(
+            "CAB14: no existe j6 en master.csv"
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       BUSCAR PALEOFICHA
+    ----------------------------------------- */
+
+    const registro =
+        filas.find(
+            function(fila) {
+
+                return (
+                    fila[indiceJ1] &&
+                    fila[indiceJ1]
+                        .trim() ===
+                    codigo
+                );
+
+            }
+        );
+
+
+    if (!registro) {
+
+        throw new Error(
+            "CAB14: no se encontró " +
+            codigo +
+            " en master.csv"
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       OBTENER j5
+    ----------------------------------------- */
+
+    const j5 =
+        String(
+            registro[indiceJ5] || ""
+        ).trim();
+
+
+    /* -----------------------------------------
+       OBTENER j6
+    ----------------------------------------- */
+
+    const j6 =
+        String(
+            registro[indiceJ6] || ""
+        ).trim();
+
+
+    console.log(
+        "CAB14: j5 bruto:",
+        j5
+    );
+
+
+    console.log(
+        "CAB14: j6 bruto:",
+        j6
+    );
+
+
+    return {
+
+        j5: j5,
+
+        j6: j6
+
+    };
+
+}
+
+
+/* =====================================================
+   OBTENER DATOS PALHAB
+   ===================================================== */
+
+function obtenerHabitatCAB14(
+    codigo
+) {
+
+
+    if (!window.PALHAB) {
+
+        throw new Error(
+            "CAB14: PALHAB.js no está cargado."
+        );
+
+    }
+
+
+    const habitat =
+        window.PALHAB[
+            codigo
+        ];
+
+
+    if (!habitat) {
 
         console.warn(
-            "CAB14: PALHAB.js no está disponible."
+            "CAB14: no existe " +
+            codigo +
+            " en PALHAB."
         );
 
         return null;
@@ -102,48 +512,42 @@ obtenerHabitat:function(codigo){
     }
 
 
-    return PALHAB[codigo] || null;
+    return habitat;
 
-},
-
-
-/*=========================================================
-  02 — CREAR BLOQUE DE HÁBITAT
-=========================================================*/
-
-/*
----------------------------------------------------------
-crearBloque(codigo,tipo)
-
-Construye visualmente un hábitat.
-
-tipo puede ser:
-
-    predominante
-    principal
-    secundario
----------------------------------------------------------
-*/
-
-crearBloque:function(codigo,tipo){
-
-    var habitat=this.obtenerHabitat(codigo);
+}
 
 
-    /*-----------------------------------------------
-      Si no existe el código en PALHAB
-    -----------------------------------------------*/
+/* =====================================================
+   CREAR BLOQUE DE HÁBITAT
+   ===================================================== */
 
-    if(!habitat){
+function crearBloqueCAB14(
+    contenedor,
+    etiqueta,
+    codigo
+) {
 
-        return null;
+
+    const habitat =
+        obtenerHabitatCAB14(
+            codigo
+        );
+
+
+    if (!habitat) {
+
+        return;
 
     }
 
 
-    var bloque=document.createElement("div");
+    const bloque =
+        document.createElement(
+            "div"
+        );
 
-    bloque.className=
+
+    bloque.className =
         "bloqueHabitatCAB14";
 
 
@@ -153,143 +557,142 @@ crearBloque:function(codigo,tipo){
     );
 
 
-    bloque.setAttribute(
-        "data-tipo",
-        tipo
-    );
+    /* -----------------------------------------
+       LÍNEA
+    ----------------------------------------- */
+
+    const linea =
+        document.createElement(
+            "div"
+        );
 
 
-    /*-----------------------------------------------
-      Línea etiqueta + nombre
-    -----------------------------------------------*/
-
-    var linea=document.createElement("div");
-
-    linea.className=
+    linea.className =
         "lineaHabitatCAB14";
 
 
-    var etiqueta=document.createElement("span");
+    const etiquetaElemento =
+        document.createElement(
+            "span"
+        );
 
-    etiqueta.className=
+
+    etiquetaElemento.className =
         "etiquetaHabitatCAB14";
 
 
-    var nombreTipo="Hábitat";
+    etiquetaElemento.textContent =
+        etiqueta;
 
 
-    if(tipo==="predominante"){
-
-        nombreTipo="Hábitat predominante";
-
-    }
-
-
-    if(tipo==="principal"){
-
-        nombreTipo="Hábitat principal";
-
-    }
+    const nombre =
+        document.createElement(
+            "span"
+        );
 
 
-    if(tipo==="secundario"){
-
-        nombreTipo="Hábitat secundario";
-
-    }
-
-
-    etiqueta.textContent=
-        nombreTipo+":";
-
-
-    var nombre=document.createElement("span");
-
-    nombre.className=
+    nombre.className =
         "nombreHabitatCAB14";
 
 
-    nombre.textContent=
+    nombre.textContent =
         habitat.nombre;
 
 
-    linea.appendChild(etiqueta);
-
-    linea.appendChild(nombre);
-
-
-    /*-----------------------------------------------
-      Descripción
-    -----------------------------------------------*/
-
-    var descripcion=document.createElement("div");
-
-    descripcion.className=
-        "descripcionHabitatCAB14";
+    linea.appendChild(
+        etiquetaElemento
+    );
 
 
-    descripcion.textContent=
-        habitat.descripcion;
+    linea.appendChild(
+        nombre
+    );
 
 
-    /*-----------------------------------------------
-      Montaje
-    -----------------------------------------------*/
-
-    bloque.appendChild(linea);
-
-    bloque.appendChild(descripcion);
+    bloque.appendChild(
+        linea
+    );
 
 
-    return bloque;
+    /* -----------------------------------------
+       DESCRIPCIÓN
+    ----------------------------------------- */
 
-},
+    if (
+        habitat.descripcion
+    ) {
+
+        const descripcion =
+            document.createElement(
+                "p"
+            );
 
 
-/*=========================================================
-  03 — CREAR SECCIÓN
-=========================================================*/
+        descripcion.className =
+            "descripcionHabitatCAB14";
 
-/*
----------------------------------------------------------
-crearSeccion(titulo,lista,tipo)
 
-Construye una sección completa de hábitats.
+        descripcion.textContent =
+            habitat.descripcion;
 
-Ejemplo:
 
-    Hábitats principales
-
-        Bosque templado
-        Descripción...
-
-        Llanura
-        Descripción...
----------------------------------------------------------
-*/
-
-crearSeccion:function(titulo,lista,tipo){
-
-    if(!lista || lista.length===0){
-
-        return null;
+        bloque.appendChild(
+            descripcion
+        );
 
     }
 
 
-    var seccion=document.createElement("div");
+    contenedor.appendChild(
+        bloque
+    );
 
-    seccion.className=
+}
+
+
+/* =====================================================
+   CREAR SECCIÓN
+   ===================================================== */
+
+function crearSeccionCAB14(
+    contenedor,
+    titulo,
+    lista,
+    etiqueta
+) {
+
+
+    if (
+        !lista ||
+        lista.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    const seccion =
+        document.createElement(
+            "div"
+        );
+
+
+    seccion.className =
         "seccionHabitatCAB14";
 
 
-    var tituloElemento=document.createElement("h4");
+    const tituloElemento =
+        document.createElement(
+            "h4"
+        );
 
-    tituloElemento.className=
+
+    tituloElemento.className =
         "tituloHabitatCAB14";
 
 
-    tituloElemento.textContent=
+    tituloElemento.textContent =
         titulo;
 
 
@@ -298,313 +701,395 @@ crearSeccion:function(titulo,lista,tipo){
     );
 
 
-    for(var i=0;i<lista.length;i++){
+    for (
+        let i = 0;
+        i < lista.length;
+        i++
+    ) {
 
-        var bloque=this.crearBloque(
-            lista[i],
-            tipo
+        const habitat =
+            obtenerHabitatCAB14(
+                lista[i]
+            );
+
+
+        if (!habitat) {
+
+            continue;
+
+        }
+
+
+        const bloque =
+            document.createElement(
+                "div"
+            );
+
+
+        bloque.className =
+            "bloqueHabitatCAB14";
+
+
+        bloque.setAttribute(
+            "data-codigo",
+            lista[i]
         );
 
 
-        if(bloque){
+        const linea =
+            document.createElement(
+                "div"
+            );
 
-            seccion.appendChild(
-                bloque
+
+        linea.className =
+            "lineaHabitatCAB14";
+
+
+        const etiquetaElemento =
+            document.createElement(
+                "span"
+            );
+
+
+        etiquetaElemento.className =
+            "etiquetaHabitatCAB14";
+
+
+        etiquetaElemento.textContent =
+            etiqueta;
+
+
+        const nombre =
+            document.createElement(
+                "span"
+            );
+
+
+        nombre.className =
+            "nombreHabitatCAB14";
+
+
+        nombre.textContent =
+            habitat.nombre;
+
+
+        linea.appendChild(
+            etiquetaElemento
+        );
+
+
+        linea.appendChild(
+            nombre
+        );
+
+
+        bloque.appendChild(
+            linea
+        );
+
+
+        if (
+            habitat.descripcion
+        ) {
+
+            const descripcion =
+                document.createElement(
+                    "p"
+                );
+
+
+            descripcion.className =
+                "descripcionHabitatCAB14";
+
+
+            descripcion.textContent =
+                habitat.descripcion;
+
+
+            bloque.appendChild(
+                descripcion
             );
 
         }
 
-    }
 
-
-    return seccion;
-
-},
-
-
-/*=========================================================
-  04 — CREAR CONTENIDO COMPLETO
-=========================================================*/
-
-/*
----------------------------------------------------------
-crearContenido(j5,j6)
-
-Decodifica j5/j6 y genera el contenido completo.
-
-Devuelve un elemento DIV.
----------------------------------------------------------
-*/
-
-crearContenido:function(j5,j6){
-
-    /*-----------------------------------------------
-      Comprobar decodificador
-    -----------------------------------------------*/
-
-    if(!window.PALHABDECODER){
-
-        console.warn(
-            "CAB14: palhabdecoder.js no está disponible."
+        seccion.appendChild(
+            bloque
         );
-
-        return null;
 
     }
 
 
-    /*-----------------------------------------------
-      Decodificar
-    -----------------------------------------------*/
-
-    var datos=
-        PALHABDECODER.decodificar(
-            j5,
-            j6
-        );
-
-
-    /*-----------------------------------------------
-      Contenedor
-    -----------------------------------------------*/
-
-    var contenedor=document.createElement("div");
-
-    contenedor.className=
-        "contenedorHabitatCAB14";
-
-
-    /*=================================================
-      PREDOMINANTE
-    =================================================*/
-
-    if(datos.predominante){
-
-        var bloquePredominante=
-            this.crearBloque(
-                datos.predominante,
-                "predominante"
-            );
-
-
-        if(bloquePredominante){
-
-            contenedor.appendChild(
-                bloquePredominante
-            );
-
-        }
-
-    }
-
-
-    /*=================================================
-      PRINCIPALES
-    =================================================*/
-
-    var principales=
-        this.crearSeccion(
-            "Hábitats principales",
-            datos.principales,
-            "principal"
-        );
-
-
-    if(principales){
+    if (
+        seccion.children.length > 1
+    ) {
 
         contenedor.appendChild(
-            principales
+            seccion
         );
-
-    }
-
-
-    /*=================================================
-      SECUNDARIOS
-    =================================================*/
-
-    var secundarios=
-        this.crearSeccion(
-            "Hábitats secundarios",
-            datos.secundarios,
-            "secundario"
-        );
-
-
-    if(secundarios){
-
-        contenedor.appendChild(
-            secundarios
-        );
-
-    }
-
-
-    /*=================================================
-      SIN HÁBITATS
-    =================================================*/
-
-    if(
-        !datos.predominante &&
-        datos.principales.length===0 &&
-        datos.secundarios.length===0
-    ){
-
-        var vacio=
-            document.createElement("div");
-
-
-        vacio.className=
-            "sinHabitatCAB14";
-
-
-        vacio.textContent=
-            "Hábitat no definido.";
-
-
-        contenedor.appendChild(
-            vacio
-        );
-
-    }
-
-
-    return contenedor;
-
-},
-
-
-/*=========================================================
-  05 — MOSTRAR HÁBITATS
-=========================================================*/
-
-/*
----------------------------------------------------------
-mostrar(j5,j6)
-
-Busca el lightbox de Ecología y añade el contenido
-de hábitats.
-
-No crea ni modifica el lightbox.
-
-El lightbox debe existir previamente.
----------------------------------------------------------
-*/
-
-mostrar:function(j5,j6){
-
-    var lightbox=
-        document.getElementById(
-            "lightboxEcologia"
-        );
-
-
-    if(!lightbox){
-
-        console.warn(
-            "CAB14: No existe #lightboxEcologia."
-        );
-
-        return;
-
-    }
-
-
-    var contenido=
-        this.crearContenido(
-            j5,
-            j6
-        );
-
-
-    if(!contenido){
-
-        return;
-
-    }
-
-
-    /*-----------------------------------------------
-      Buscar contenedor específico de hábitats
-    -----------------------------------------------*/
-
-    var zona=
-        lightbox.querySelector(
-            ".contenidoHabitatCAB14"
-        );
-
-
-    /*-----------------------------------------------
-      Si no existe, crearlo
-    -----------------------------------------------*/
-
-    if(!zona){
-
-        zona=document.createElement("div");
-
-        zona.className=
-            "contenidoHabitatCAB14";
-
-
-        lightbox.appendChild(
-            zona
-        );
-
-    }
-
-
-    /*-----------------------------------------------
-      Limpiar contenido anterior
-    -----------------------------------------------*/
-
-    zona.innerHTML="";
-
-
-    /*-----------------------------------------------
-      Insertar contenido nuevo
-    -----------------------------------------------*/
-
-    zona.appendChild(
-        contenido
-    );
-
-},
-
-
-/*=========================================================
-  06 — LIMPIAR
-=========================================================*/
-
-/*
----------------------------------------------------------
-limpiar()
-
-Elimina los hábitats actualmente mostrados.
----------------------------------------------------------
-*/
-
-limpiar:function(){
-
-    var zonas=
-        document.querySelectorAll(
-            ".contenidoHabitatCAB14"
-        );
-
-
-    for(var i=0;i<zonas.length;i++){
-
-        zonas[i].innerHTML="";
 
     }
 
 }
 
 
+/* =====================================================
+   MOSTRAR CAB14
+   ===================================================== */
+
+window.CAB14 = {
+
+
+    mostrar: async function(
+        contenedor
+    ) {
+
+
+        console.log(
+            "CAB14: mostrando hábitats."
+        );
+
+
+        /* -----------------------------------------
+           COMPROBAR CONTENEDOR
+        ----------------------------------------- */
+
+        if (!contenedor) {
+
+            console.error(
+                "CAB14: no existe contenedor."
+            );
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------
+           OBTENER CÓDIGO
+        ----------------------------------------- */
+
+        const codigo =
+            obtenerCodigoCAB14();
+
+
+        if (!codigo) {
+
+            contenedor.innerHTML =
+                "<h3>Hábitats</h3>" +
+                "<p>No se ha podido obtener " +
+                "la paleoficha.</p>";
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------
+           MENSAJE TEMPORAL
+        ----------------------------------------- */
+
+        contenedor.innerHTML =
+            "<h3>Hábitats</h3>" +
+            "<p>Cargando información...</p>";
+
+
+        try {
+
+
+            /* =====================================
+               COMPROBAR DECODIFICADOR
+            ===================================== */
+
+            if (
+                !window.PALHABDECODER
+            ) {
+
+                throw new Error(
+                    "CAB14: PALHABDECODER.js " +
+                    "no está cargado."
+                );
+
+            }
+
+
+            /* =====================================
+               OBTENER j5 + j6
+            ===================================== */
+
+            const datosCSV =
+                await obtenerJ5J6CAB14(
+                    codigo
+                );
+
+
+            /* =====================================
+               DECODIFICAR
+            ===================================== */
+
+            const datos =
+                PALHABDECODER.decodificar(
+                    datosCSV.j5,
+                    datosCSV.j6
+                );
+
+
+            console.log(
+                "CAB14: datos decodificados:",
+                datos
+            );
+
+
+            /* =====================================
+               LIMPIAR
+            ===================================== */
+
+            contenedor.innerHTML =
+                "";
+
+
+            /* =====================================
+               TÍTULO
+            ===================================== */
+
+            const titulo =
+                document.createElement(
+                    "h3"
+                );
+
+
+            titulo.textContent =
+                "Hábitats";
+
+
+            contenedor.appendChild(
+                titulo
+            );
+
+
+            /* =====================================
+               PREDOMINANTE
+            ===================================== */
+
+            if (
+                datos.predominante
+            ) {
+
+                crearBloqueCAB14(
+                    contenedor,
+                    "Hábitat predominante",
+                    datos.predominante
+                );
+
+            }
+
+
+            /* =====================================
+               PRINCIPALES
+            ===================================== */
+
+            crearSeccionCAB14(
+                contenedor,
+                "Hábitats principales",
+                datos.principales,
+                "Hábitat principal"
+            );
+
+
+            /* =====================================
+               SECUNDARIOS
+            ===================================== */
+
+            crearSeccionCAB14(
+                contenedor,
+                "Hábitats secundarios",
+                datos.secundarios,
+                "Hábitat secundario"
+            );
+
+
+            /* =====================================
+               SIN HÁBITATS
+            ===================================== */
+
+            if (
+                !datos.predominante &&
+                datos.principales.length === 0 &&
+                datos.secundarios.length === 0
+            ) {
+
+                const vacio =
+                    document.createElement(
+                        "p"
+                    );
+
+
+                vacio.className =
+                    "sinHabitatCAB14";
+
+
+                vacio.textContent =
+                    "Hábitat no definido.";
+
+
+                contenedor.appendChild(
+                    vacio
+                );
+
+            }
+
+
+            /* =====================================
+               CONFIRMACIÓN
+            ===================================== */
+
+            console.log(
+                "CAB14: mostrado correctamente:",
+                codigo
+            );
+
+        } catch (
+            error
+        ) {
+
+
+            console.error(
+                "CAB14:",
+                error
+            );
+
+
+            contenedor.innerHTML =
+                "<h3>Hábitats</h3>" +
+                "<p>No se ha podido obtener " +
+                "la información de los hábitats.</p>";
+
+        }
+
+    },
+
+
+    /* =================================================
+       LIMPIAR
+       ================================================= */
+
+    limpiar: function(
+        contenedor
+    ) {
+
+        if (contenedor) {
+
+            contenedor.innerHTML =
+                "";
+
+        }
+
+    }
+
 };
 
 
-/*
-========================================================
-FIN CAB14.js v1.0
-========================================================
-*/
+/* =====================================================
+   FIN CAB14.js v1.1
+===================================================== */
