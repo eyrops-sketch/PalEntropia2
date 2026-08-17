@@ -10,9 +10,10 @@ CAB12
 
 - Obtiene el código actual j1
 - Lee master.csv directamente
-- Obtiene j2 y j9
+- Obtiene j9
 - j9 → PALMODO
 - El código MV es interno
+- Obtiene el nombre real desde la ficha actual
 - Muestra nombre de la paleoficha
 - Muestra modo de vida
 - Muestra descripción
@@ -257,6 +258,111 @@ function obtenerCodigoCAB12() {
 
 
 /* =====================================================
+   OBTENER NOMBRE REAL DE LA FICHA
+   ===================================================== */
+
+function obtenerNombreCAB12() {
+
+    /*
+    -----------------------------------------
+    PRIMERO: ficha recibida
+    -----------------------------------------
+    */
+
+    if (
+        fichaActualCAB12 &&
+        fichaActualCAB12.j2
+    ) {
+
+        const nombre =
+            String(
+                fichaActualCAB12.j2
+            ).trim();
+
+
+        /*
+        El CSV utiliza "j2" como marcador.
+        No debemos mostrarlo.
+        */
+
+        if (
+            nombre &&
+            nombre.toLowerCase() !== "j2"
+        ) {
+
+            return nombre;
+
+        }
+
+    }
+
+
+    /*
+    -----------------------------------------
+    SEGUNDO: buscar el nombre en la ficha
+    -----------------------------------------
+    */
+
+    const ficha =
+        document.getElementById(
+            "ficha"
+        );
+
+
+    if (ficha) {
+
+        /*
+        Intentamos localizar elementos
+        habituales que contienen el nombre.
+        */
+
+        const selectores = [
+
+            ".nombre",
+
+            "#nombre",
+
+            ".nombreEspecie",
+
+            "#nombreEspecie",
+
+            ".tituloFicha",
+
+            "h1"
+
+        ];
+
+
+        for (
+            const selector of selectores
+        ) {
+
+            const elemento =
+                ficha.querySelector(
+                    selector
+                );
+
+
+            if (
+                elemento &&
+                elemento.textContent.trim()
+            ) {
+
+                return elemento.textContent.trim();
+
+            }
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =====================================================
    OBTENER DATOS ECOLÓGICOS DESDE MASTER.CSV
    ===================================================== */
 
@@ -322,12 +428,6 @@ async function obtenerDatosCAB12(
         );
 
 
-    const indiceJ2 =
-        cabecera.indexOf(
-            "j2"
-        );
-
-
     const indiceJ9 =
         cabecera.indexOf(
             "j9"
@@ -340,17 +440,6 @@ async function obtenerDatosCAB12(
 
         throw new Error(
             "CAB12: no existe j1 en master.csv"
-        );
-
-    }
-
-
-    if (
-        indiceJ2 === -1
-    ) {
-
-        throw new Error(
-            "CAB12: no existe j2 en master.csv"
         );
 
     }
@@ -398,14 +487,8 @@ async function obtenerDatosCAB12(
 
 
     /* -----------------------------------------
-       DATOS
+       j9
     ----------------------------------------- */
-
-    const j2 =
-        String(
-            registro[indiceJ2] || ""
-        ).trim();
-
 
     const j9 =
         String(
@@ -416,8 +499,6 @@ async function obtenerDatosCAB12(
     return {
 
         j1: codigo,
-
-        j2: j2,
 
         j9: j9
 
@@ -486,6 +567,14 @@ window.CAB12 = {
 
 
         /* -----------------------------------------
+           OBTENER NOMBRE REAL
+        ----------------------------------------- */
+
+        const nombreFicha =
+            obtenerNombreCAB12();
+
+
+        /* -----------------------------------------
            MENSAJE TEMPORAL
         ----------------------------------------- */
 
@@ -498,7 +587,7 @@ window.CAB12 = {
 
 
             /* =====================================
-               OBTENER j1, j2 Y j9
+               OBTENER j1 Y j9
             ===================================== */
 
             const datos =
@@ -508,7 +597,7 @@ window.CAB12 = {
 
 
             console.log(
-                "CAB12: datos master.csv:",
+                "CAB12: datos ecológicos:",
                 datos
             );
 
@@ -580,29 +669,29 @@ window.CAB12 = {
 
 
             /* =====================================
-               NOMBRE PALEOFICHA — j2
+               NOMBRE PALEOFICHA
             ===================================== */
 
             if (
-                datos.j2
+                nombreFicha
             ) {
 
-                const nombreFicha =
+                const nombre =
                     document.createElement(
                         "div"
                     );
 
 
-                nombreFicha.className =
+                nombre.className =
                     "nombreFichaCAB12";
 
 
-                nombreFicha.textContent =
-                    datos.j2;
+                nombre.textContent =
+                    nombreFicha;
 
 
                 contenedor.appendChild(
-                    nombreFicha
+                    nombre
                 );
 
             }
@@ -622,6 +711,10 @@ window.CAB12 = {
                 "Modo de vida";
 
 
+            titulo.className =
+                "tituloModoVidaCAB12";
+
+
             contenedor.appendChild(
                 titulo
             );
@@ -631,22 +724,22 @@ window.CAB12 = {
                NOMBRE MODO DE VIDA
             ===================================== */
 
-            const nombre =
+            const nombreModo =
                 document.createElement(
                     "div"
                 );
 
 
-            nombre.className =
+            nombreModo.className =
                 "nombreModoVidaCAB12";
 
 
-            nombre.textContent =
+            nombreModo.textContent =
                 modo.nombre;
 
 
             contenedor.appendChild(
-                nombre
+                nombreModo
             );
 
 
@@ -680,7 +773,7 @@ window.CAB12 = {
             console.log(
                 "CAB12: mostrado correctamente:",
                 datos.j1,
-                datos.j2,
+                nombreFicha,
                 modo.nombre
             );
 
@@ -709,4 +802,5 @@ window.CAB12 = {
 
 /* =====================================================
    FIN CAB12
-   ===================================================== */
+   =====================================================
+*/
