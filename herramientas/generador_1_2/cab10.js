@@ -4,17 +4,22 @@ PalEntropía
 CAB10.js
 Generador de Paleofichas 1.1
 
-FASE 4A — LIGHTBOX ECOLOGÍA
+ECOLOGÍA
 
+CAB10:
 - Crea botón Ecología
-- Se integra junto a Estadísticas
-- Lightbox independiente
-- Coordina CAB12, CAB13 y CAB14
+- Abre el lightbox
+- Coordina los módulos de Ecología
+
+CAB12 → Modo de vida
+CAB13 → Medio de vida
+CAB14 → Hábitats
 ========================================================
 */
 
 
 function inicializarCAB10() {
+
 
     const ficha =
         document.getElementById("ficha");
@@ -83,12 +88,18 @@ function inicializarCAB10() {
 
 
     /* =========================================
-       LIGHTBOX ECOLOGÍA
+       ABRIR ECOLOGÍA
        ========================================= */
 
     botonEcologia.onclick =
         function() {
 
+
+            /*
+            -------------------------------------
+            EVITAR DUPLICADO
+            -------------------------------------
+            */
 
             if (
                 document.getElementById(
@@ -101,36 +112,44 @@ function inicializarCAB10() {
             }
 
 
-            /* ================================
-               LIGHTBOX
-               ================================ */
+            /*
+            -------------------------------------
+            LIGHTBOX
+            -------------------------------------
+            */
 
             const lightbox =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
             lightbox.id =
                 "lightboxEcologia";
 
 
-            /* ================================
-               VENTANA
-               ================================ */
+            /*
+            -------------------------------------
+            VENTANA
+            -------------------------------------
+            */
 
             const ventana =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
 
-            ventana.id =
-                "ventanaEcologia";
-
-
-            /* ================================
-               CABECERA
-               ================================ */
+            /*
+            -------------------------------------
+            TÍTULO
+            -------------------------------------
+            */
 
             const titulo =
-                document.createElement("h2");
+                document.createElement(
+                    "h2"
+                );
 
 
             titulo.textContent =
@@ -142,29 +161,37 @@ function inicializarCAB10() {
             );
 
 
-            /* ================================
-               CONTENIDO ECOLOGÍA
-               ================================ */
+            /*
+            -------------------------------------
+            CONTENEDOR CAB12
+            -------------------------------------
+            */
 
-            const contenidoEcologia =
-                document.createElement("div");
+            const contenidoCAB12 =
+                document.createElement(
+                    "div"
+                );
 
 
-            contenidoEcologia.id =
-                "contenidoEcologia";
+            contenidoCAB12.id =
+                "contenidoCAB12";
 
 
             ventana.appendChild(
-                contenidoEcologia
+                contenidoCAB12
             );
 
 
-            /* ================================
-               CERRAR
-               ================================ */
+            /*
+            -------------------------------------
+            BOTÓN CERRAR
+            -------------------------------------
+            */
 
             const cerrar =
-                document.createElement("button");
+                document.createElement(
+                    "button"
+                );
 
 
             cerrar.type =
@@ -194,9 +221,11 @@ function inicializarCAB10() {
             );
 
 
-            /* ================================
-               MOSTRAR LIGHTBOX
-               ================================ */
+            /*
+            -------------------------------------
+            MOSTRAR LIGHTBOX
+            -------------------------------------
+            */
 
             lightbox.appendChild(
                 ventana
@@ -208,9 +237,11 @@ function inicializarCAB10() {
             );
 
 
-            /* ================================
-               CAB12 — MODO DE VIDA
-               ================================ */
+            /*
+            -------------------------------------
+            CAB12
+            -------------------------------------
+            */
 
             if (
                 window.CAB12 &&
@@ -219,41 +250,13 @@ function inicializarCAB10() {
             ) {
 
                 window.CAB12.mostrar(
-                    contenidoEcologia
+                    contenidoCAB12
                 );
 
-            }
+            } else {
 
-
-            /* ================================
-               CAB13 — MEDIO DE VIDA
-               ================================ */
-
-            if (
-                window.CAB13 &&
-                typeof window.CAB13.mostrar ===
-                    "function"
-            ) {
-
-                window.CAB13.mostrar(
-                    contenidoEcologia
-                );
-
-            }
-
-
-            /* ================================
-               CAB14 — HÁBITATS
-               ================================ */
-
-            if (
-                window.CAB14 &&
-                typeof window.CAB14.mostrar ===
-                    "function"
-            ) {
-
-                window.CAB14.mostrar(
-                    contenidoEcologia
+                console.error(
+                    "CAB10: CAB12 no está disponible."
                 );
 
             }
