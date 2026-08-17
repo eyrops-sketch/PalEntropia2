@@ -1,1 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>PalEntropía — Test PALHABDECODER</title>
+
+<style>
+
+body{
+
+    margin:0;
+
+    padding:20px;
+
+    background:#101214;
+
+    color:#ffffff;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+}
+
+h1{
+
+    color:#62d6ff;
+
+    text-align:center;
+
+    margin-bottom:10px;
+
+}
+
+.subtitulo{
+
+    text-align:center;
+
+    color:#aaa;
+
+    margin-bottom:25px;
+
+}
+
+.contenedor{
+
+    max-width:700px;
+
+    margin:auto;
+
+}
+
+.prueba{
+
+    background:#181a1c;
+
+    border:1px solid #333;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    margin-bottom:18px;
+
+}
+
+.prueba h2{
+
+    margin-top:0;
+
+    color:#62d6ff;
+
+    font-size:20px;
+
+}
+
+.datos{
+
+    background:#0b0d0f;
+
+    border-radius:8px;
+
+    padding:12px;
+
+    margin:10px 0;
+
+    font-family:monospace;
+
+    overflow-x:auto;
+
+}
+
+.resultado{
+
+    background:#11191d;
+
+    border-left:3px solid #62d6ff;
+
+    padding:12px;
+
+    border-radius:6px;
+
+    line-height:1.7;
+
+}
+
+.ok{
+
+    color:#6cff9b;
+
+    font-weight:bold;
+
+}
+
+.vacio{
+
+    color:#888;
+
+}
+
+button{
+
+    display:block;
+
+    margin:20px auto;
+
+    padding:11px 22px;
+
+    border:2px solid #62d6ff;
+
+    border-radius:22px;
+
+    background:#151719;
+
+    color:#62d6ff;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+button:hover{
+
+    background:#62d6ff;
+
+    color:#001018;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="contenedor">
+
+
+<h1>PALHABDECODER</h1>
+
+<div class="subtitulo">
+Prueba independiente — v1.0
+</div>
+
+
+<button onclick="ejecutarPruebas()">
+Ejecutar pruebas
+</button>
+
+
+<div id="resultados"></div>
+
+
+</div>
+
+
+<!-- =====================================================
+     PALHABDECODER
+===================================================== -->
+
+<script src="palhabdecoder.js"></script>
+
+
+<script>
+
+
+/*=========================================================
+  MOSTRAR LISTA
+=========================================================*/
+
+function mostrarLista(lista){
+
+    if(!lista || lista.length===0){
+
+        return '<span class="vacio">Ninguno</span>';
+
+    }
+
+    return lista.join(" · ");
+
+}
+
+
+/*=========================================================
+  MOSTRAR RESULTADO
+=========================================================*/
+
+function mostrarResultado(numero,titulo,j5,j6,resultado){
+
+    var contenedor=document.getElementById("resultados");
+
+
+    var bloque=document.createElement("div");
+
+    bloque.className="prueba";
+
+
+    bloque.innerHTML=
+
+        "<h2>Prueba "+numero+" — "+titulo+"</h2>"+
+
+        '<div class="datos">'+
+        "j5 = "+j5+
+        "<br>"+
+        "j6 = "+j6+
+        "</div>"+
+
+        '<div class="resultado">'+
+
+        "<strong>Predominante:</strong> "+
+        (resultado.predominante || "Ninguno")+
+
+        "<br><br>"+
+
+        "<strong>Principales:</strong><br>"+
+        mostrarLista(resultado.principales)+
+
+        "<br><br>"+
+
+        "<strong>Secundarios:</strong><br>"+
+        mostrarLista(resultado.secundarios)+
+
+        "<br><br>"+
+
+        "<strong>Origen:</strong> "+
+        (resultado.origenPredominante || "Ninguno")+
+
+        "</div>";
+
+
+    contenedor.appendChild(bloque);
+
+}
+
+
+/*=========================================================
+  EJECUTAR PRUEBAS
+=========================================================*/
+
+function ejecutarPruebas(){
+
+
+    var contenedor=document.getElementById("resultados");
+
+    contenedor.innerHTML="";
+
+
+    /*=====================================================
+      COMPROBACIÓN DE LA LIBRERÍA
+    =====================================================*/
+
+    if(!window.PALHABDECODER){
+
+        contenedor.innerHTML=
+
+            '<div class="prueba">'+
+
+            '<h2>Error</h2>'+
+
+            '<div class="resultado">'+
+
+            "No se ha encontrado "+
+            "<strong>palhabdecoder.js</strong>."+
+
+            "<br><br>"+
+
+            "Comprueba que este HTML está en la misma "+
+            "carpeta que el archivo."
+
+            +"</div></div>";
+
+        return;
+
+    }
+
+
+    /*=====================================================
+      PRUEBA 1
+      CASO NORMAL — 001_01
+    =====================================================*/
+
+    var j5_1="100097147000000";
+
+    var j6_1="090062000000000";
+
+
+    var resultado1=
+
+        PALHABDECODER.decodificar(
+
+            j5_1,
+
+            j6_1
+
+        );
+
+
+    mostrarResultado(
+
+        "1",
+
+        "Caso normal — 001_01",
+
+        j5_1,
+
+        j6_1,
+
+        resultado1
+
+    );
+
+
+    /*=====================================================
+      PRUEBA 2
+      DUPLICADO ENTRE J5 Y J6
+    =====================================================*/
+
+    var j5_2="100097147000000";
+
+    var j6_2="097062090000000";
+
+
+    var resultado2=
+
+        PALHABDECODER.decodificar(
+
+            j5_2,
+
+            j6_2
+
+        );
+
+
+    mostrarResultado(
+
+        "2",
+
+        "Duplicado entre J5 y J6",
+
+        j5_2,
+
+        j6_2,
+
+        resultado2
+
+    );
+
+
+    /*=====================================================
+      PRUEBA 3
+      J5 COMPLETAMENTE VACÍO
+    =====================================================*/
+
+    var j5_3="000000000000000";
+
+    var j6_3="097147062090000";
+
+
+    var resultado3=
+
+        PALHABDECODER.decodificar(
+
+            j5_3,
+
+            j6_3
+
+        );
+
+
+    mostrarResultado(
+
+        "3",
+
+        "J5 vacío — promoción desde J6",
+
+        j5_3,
+
+        j6_3,
+
+        resultado3
+
+    );
+
+
+    /*=====================================================
+      PRUEBA 4
+      J5 Y J6 VACÍOS
+    =====================================================*/
+
+    var j5_4="000000000000000";
+
+    var j6_4="000000000000000";
+
+
+    var resultado4=
+
+        PALHABDECODER.decodificar(
+
+            j5_4,
+
+            j6_4
+
+        );
+
+
+    mostrarResultado(
+
+        "4",
+
+        "J5 y J6 vacíos",
+
+        j5_4,
+
+        j6_4,
+
+        resultado4
+
+    );
+
+
+}
+
+
+/*=========================================================
+  EJECUCIÓN AUTOMÁTICA
+=========================================================*/
+
+ejecutarPruebas();
+
+
+</script>
+
+
+</body>
+
+</html>
