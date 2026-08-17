@@ -6,41 +6,59 @@ Generador de Paleofichas 1.1
 
 ECOLOGÍA — MODO DE VIDA
 
-Lee directamente:
+CAB12 recibe la ficha actual mediante:
 
-MASTER_ACTUAL.j9
+palentropia:contenedor-cargado
 
-y consulta:
+y utiliza:
 
-PALMODO
-
-No crea botones.
-No crea lightbox.
-No modifica CAB10.
+j9 → PALMODO
 ========================================================
 */
 
+
+let fichaActualCAB12 = null;
+
+
+/* =====================================================
+   RECIBIR FICHA ACTUAL
+   ===================================================== */
+
+document.addEventListener(
+    "palentropia:contenedor-cargado",
+    function(evento) {
+
+        fichaActualCAB12 =
+            evento.detail || null;
+
+
+        console.log(
+            "CAB12: ficha recibida:",
+            fichaActualCAB12
+        );
+
+    }
+);
+
+
+/* =====================================================
+   CAB12
+   ===================================================== */
 
 window.CAB12 = {
 
 
     /* =================================================
-       MOSTRAR MODO DE VIDA
+       MOSTRAR
        ================================================= */
 
     mostrar: function(contenedor) {
 
 
         console.log(
-            "CAB12: iniciado."
+            "CAB12: mostrando modo de vida."
         );
 
-
-        /*
-        ----------------------------------------
-        COMPROBAR CONTENEDOR
-        ----------------------------------------
-        */
 
         if (!contenedor) {
 
@@ -55,15 +73,19 @@ window.CAB12 = {
 
         /*
         ----------------------------------------
-        COMPROBAR MASTER
+        COMPROBAR FICHA
         ----------------------------------------
         */
 
-        if (!window.MASTER_ACTUAL) {
+        if (!fichaActualCAB12) {
 
             console.error(
-                "CAB12: MASTER_ACTUAL no disponible."
+                "CAB12: no se ha recibido la ficha actual."
             );
+
+            contenedor.innerHTML =
+                "<h3>Modo de vida</h3>" +
+                "<p>No se ha podido obtener la ficha actual.</p>";
 
             return;
 
@@ -78,25 +100,20 @@ window.CAB12 = {
 
         const j9 =
             String(
-                window.MASTER_ACTUAL.j9 || ""
+                fichaActualCAB12.j9 || ""
             ).trim();
 
 
         console.log(
-            "CAB12: j9 recibido =",
+            "CAB12: j9 =",
             j9
         );
 
 
-        /*
-        ----------------------------------------
-        COMPROBAR j9
-        ----------------------------------------
-        */
-
         if (!j9) {
 
             contenedor.innerHTML =
+                "<h3>Modo de vida</h3>" +
                 "<p>Modo de vida no definido.</p>";
 
             return;
@@ -117,7 +134,8 @@ window.CAB12 = {
             );
 
             contenedor.innerHTML =
-                "<p>Error: catálogo de modos de vida no disponible.</p>";
+                "<h3>Modo de vida</h3>" +
+                "<p>No se ha podido cargar el catálogo.</p>";
 
             return;
 
@@ -126,20 +144,16 @@ window.CAB12 = {
 
         /*
         ----------------------------------------
-        CONSTRUIR CLAVE DEL CATÁLOGO
+        CONSTRUIR CLAVE
         ----------------------------------------
 
-        j9:
+        j9 = 001
 
-        001
-
-        se convierte en:
-
-        MV001
+        PALMODO = MV001
         ----------------------------------------
         */
 
-        const codigo =
+        const clave =
             "MV" +
             j9.padStart(
                 3,
@@ -148,43 +162,33 @@ window.CAB12 = {
 
 
         console.log(
-            "CAB12: buscando =",
-            codigo
+            "CAB12: clave PALMODO =",
+            clave
         );
 
 
         /*
         ----------------------------------------
-        BUSCAR MODO DE VIDA
+        BUSCAR
         ----------------------------------------
         */
 
         const modo =
             window.PALMODO[
-                codigo
+                clave
             ];
 
-
-        /*
-        ----------------------------------------
-        SI NO EXISTE
-        ----------------------------------------
-        */
 
         if (!modo) {
 
             console.error(
                 "CAB12: no existe:",
-                codigo
+                clave
             );
 
             contenedor.innerHTML =
-
                 "<h3>Modo de vida</h3>" +
-
-                "<p>" +
-                "Modo de vida no definido." +
-                "</p>";
+                "<p>Modo de vida no definido.</p>";
 
             return;
 
@@ -271,33 +275,8 @@ window.CAB12 = {
         );
 
 
-        /*
-        ----------------------------------------
-        CÓDIGO
-        ----------------------------------------
-        */
-
-        const codigoElemento =
-            document.createElement(
-                "div"
-            );
-
-
-        codigoElemento.className =
-            "codigoModoVidaCAB12";
-
-
-        codigoElemento.textContent =
-            codigo;
-
-
-        contenedor.appendChild(
-            codigoElemento
-        );
-
-
         console.log(
-            "CAB12: modo de vida mostrado:",
+            "CAB12: mostrado correctamente:",
             modo.nombre
         );
 
