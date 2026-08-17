@@ -6,11 +6,7 @@ Generador de Paleofichas 1.1
 
 ECOLOGÍA — MODO DE VIDA
 
-CAB12 recibe la ficha actual mediante:
-
-palentropia:contenedor-cargado
-
-y utiliza:
+CAB12 recibe la ficha actual directamente desde CAB10.
 
 j9 → PALMODO
 ========================================================
@@ -49,10 +45,13 @@ window.CAB12 = {
 
 
     /* =================================================
-       MOSTRAR
+       MOSTRAR MODO DE VIDA
        ================================================= */
 
-    mostrar: function(contenedor) {
+    mostrar: function(
+        contenedor,
+        ficha
+    ) {
 
 
         console.log(
@@ -73,11 +72,16 @@ window.CAB12 = {
 
         /*
         ----------------------------------------
-        COMPROBAR FICHA
+        USAR FICHA ENTREGADA POR CAB10
         ----------------------------------------
         */
 
-        if (!fichaActualCAB12) {
+        const fichaActual =
+            ficha ||
+            fichaActualCAB12;
+
+
+        if (!fichaActual) {
 
             console.error(
                 "CAB12: no se ha recibido la ficha actual."
@@ -92,6 +96,12 @@ window.CAB12 = {
         }
 
 
+        console.log(
+            "CAB12: ficha utilizada:",
+            fichaActual
+        );
+
+
         /*
         ----------------------------------------
         LEER j9
@@ -100,7 +110,7 @@ window.CAB12 = {
 
         const j9 =
             String(
-                fichaActualCAB12.j9 || ""
+                fichaActual.j9 || ""
             ).trim();
 
 
@@ -169,7 +179,7 @@ window.CAB12 = {
 
         /*
         ----------------------------------------
-        BUSCAR
+        BUSCAR MODO
         ----------------------------------------
         */
 
@@ -227,6 +237,31 @@ window.CAB12 = {
 
         /*
         ----------------------------------------
+        CÓDIGO
+        ----------------------------------------
+        */
+
+        const codigo =
+            document.createElement(
+                "div"
+            );
+
+
+        codigo.className =
+            "codigoModoVidaCAB12";
+
+
+        codigo.textContent =
+            modo.codigo;
+
+
+        contenedor.appendChild(
+            codigo
+        );
+
+
+        /*
+        ----------------------------------------
         NOMBRE
         ----------------------------------------
         */
@@ -277,6 +312,7 @@ window.CAB12 = {
 
         console.log(
             "CAB12: mostrado correctamente:",
+            modo.codigo,
             modo.nombre
         );
 
