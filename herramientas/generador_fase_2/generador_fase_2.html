@@ -393,7 +393,7 @@
 
 
 /* =====================================================
-   BOTONES DE BÚSQUEDA SUPERIOR
+   CONTROLES DE BÚSQUEDA
    ===================================================== */
 
 #controlesBusqueda {
@@ -404,73 +404,68 @@
 
     align-items:center;
 
-    gap:8px;
+    gap:12px;
 
     flex-wrap:nowrap;
 
 }
 
 
-#controlesBusqueda #botonBuscar {
+#controlesBusqueda button {
 
-    min-height:38px;
+    width:34px;
+    height:34px;
 
-    padding:7px 12px;
+    min-width:34px;
 
-    font-size:14px;
+    padding:0;
 
-    border-radius:8px;
+    border-radius:50%;
+
+    border:none;
+
+    cursor:pointer;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:16px;
+
+    line-height:1;
 
 }
 
 
 #botonBuscarNuevo {
 
-    min-height:38px;
-
-    padding:7px 12px;
-
     background:#1d9bf0;
 
     color:#fff;
 
-    border:none;
+}
 
-    border-radius:8px;
+
+#botonLimpiarFiltros {
+
+    background:#33383c;
+
+    color:#fff;
+
+}
+
+
+#labelBusquedaAvanzada {
 
     font-size:14px;
 
-    font-weight:bold;
+    font-weight:600;
 
-    cursor:pointer;
+    white-space:nowrap;
 
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    transition:
-        background .25s,
-        transform .15s,
-        box-shadow .25s;
-
-}
-
-
-#botonBuscarNuevo:hover {
-
-    background:#62d6ff;
-
-    box-shadow:
-        0 0 14px rgba(98,214,255,.28);
-
-}
-
-
-#botonBuscarNuevo:active {
-
-    transform:scale(.97);
+    opacity:.85;
 
 }
 
@@ -483,17 +478,24 @@
 
     #controlesBusqueda {
 
-        gap:6px;
+        gap:8px;
 
     }
 
 
-    #controlesBusqueda #botonBuscar,
-    #botonBuscarNuevo {
+    #controlesBusqueda button {
 
-        min-height:36px;
+        width:32px;
+        height:32px;
 
-        padding:7px 9px;
+        min-width:32px;
+
+        font-size:15px;
+
+    }
+
+
+    #labelBusquedaAvanzada {
 
         font-size:13px;
 
@@ -584,22 +586,33 @@
 
 <section id="controlesBusqueda">
 
-    <button id="botonBuscar"
-            type="button">
-
-        🔎 Explorar
-
-    </button>
-
 
     <button id="botonBuscarNuevo"
             type="button"
-            title="Buscador modular"
-            aria-label="Abrir buscador modular">
+            title="Búsqueda avanzada"
+            aria-label="Abrir búsqueda avanzada">
 
-        🔍 Nuevo
+        🔍
 
     </button>
+
+
+    <span id="labelBusquedaAvanzada">
+
+        Búsqueda avanzada
+
+    </span>
+
+
+    <button id="botonLimpiarFiltros"
+            type="button"
+            title="Limpiar filtros"
+            aria-label="Limpiar filtros">
+
+        ×
+
+    </button>
+
 
 </section>
 
@@ -782,6 +795,7 @@
 
 </main>
 
+
 <!-- =====================================================
      LIGHTBOX DE IMÁGENES
      ===================================================== -->
@@ -909,7 +923,6 @@
     </div>
 
 </div>
-
 
 <!-- =====================================================
      ALMACÉN MAESTRO
@@ -1139,6 +1152,7 @@ async function(j1) {
 
 <script src="cab10.js"></script>
 
+
 <!-- =====================================================
      ARRANQUE DEL GENERADOR
      ===================================================== -->
@@ -1167,8 +1181,14 @@ document.addEventListener(
                 );
 
 
+            const botonLimpiar =
+                document.getElementById(
+                    "botonLimpiarFiltros"
+                );
+
+
             /* ---------------------------------------------
-               ABRIR BUSCADOR NUEVO
+               ABRIR BÚSQUEDA AVANZADA
                --------------------------------------------- */
 
             if (
@@ -1202,6 +1222,34 @@ document.addEventListener(
                     function() {
 
                         window.palbuscadornuevo.cerrar();
+
+                    }
+                );
+
+            }
+
+
+            /* ---------------------------------------------
+               LIMPIAR FILTROS
+               
+               El comportamiento real de este botón
+               será gestionado por CAB15.
+               Aquí solamente se conecta el botón
+               cuando CAB15 expone la función.
+               --------------------------------------------- */
+
+            if (
+                botonLimpiar &&
+                window.CAB15 &&
+                typeof window.CAB15.limpiarFiltros ===
+                "function"
+            ) {
+
+                botonLimpiar.addEventListener(
+                    "click",
+                    function() {
+
+                        window.CAB15.limpiarFiltros();
 
                     }
                 );
@@ -1261,7 +1309,3 @@ document.addEventListener(
 </html>
 
 
-
-
-
-      
