@@ -934,7 +934,145 @@ RESPONSIVE
     }
 
 }
+/*=========================================================
+CAB15
+CONTROLES DEL BUSCADOR UNIVERSAL
+=========================================================*/
 
+#controlesBusquedaUniversal{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin:10px auto 12px;
+
+}
+
+
+.botonBusquedaUniversal{
+
+    width:36px;
+
+    height:36px;
+
+    min-width:36px;
+
+    padding:0;
+
+    border:2px solid #62d6ff;
+
+    border-radius:50%;
+
+    background:#1d9bf0;
+
+    color:#fff;
+
+    font-size:17px;
+
+    line-height:32px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 8px rgba(98,214,255,.18);
+
+    transition:
+        background .20s ease,
+        color .20s ease,
+        transform .15s ease,
+        box-shadow .20s ease;
+
+}
+
+
+.botonBusquedaUniversal:hover{
+
+    background:#62d6ff;
+
+    color:#001018;
+
+    box-shadow:
+        0 0 14px rgba(98,214,255,.30);
+
+}
+
+
+.botonBusquedaUniversal:active{
+
+    transform:scale(.90);
+
+}
+
+
+#labelBusquedaUniversal{
+
+    min-width:0;
+
+    padding:6px 12px;
+
+    text-align:center;
+
+    color:#aaa;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    white-space:nowrap;
+
+}
+
+
+/*=========================================================
+CAB15 — RESPONSIVE
+=========================================================*/
+
+@media (max-width:768px){
+
+    #controlesBusquedaUniversal{
+
+        gap:8px;
+
+        margin:8px auto 10px;
+
+    }
+
+
+    .botonBusquedaUniversal{
+
+        width:34px;
+
+        height:34px;
+
+        min-width:34px;
+
+        font-size:16px;
+
+    }
+
+
+    #labelBusquedaUniversal{
+
+        font-size:13px;
+
+        padding:5px 8px;
+
+    }
+
+}
 
 /*=========================================================
 FIN STYLE.CSS v2.1
