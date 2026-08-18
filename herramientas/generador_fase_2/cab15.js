@@ -1,25 +1,28 @@
 /*
 ========================================================
 cab15.js v1.2
-controles del buscador universal
+motor de datos y controles del buscador universal
 palentropía — generador
 
 objetivo:
 - reutilizar los datos de leepaljson
 - crear caché local
-- crear los controles visuales del buscador
+- crear controles del buscador
+- guardar la posición actual del puntero
+- restaurar la posición si una búsqueda falla
 - no bloquear el arranque
 - no realizar cargas adicionales
-- esperar a que leepaljson tenga datos
 
 no modifica:
 - cab12
 - cab14
 - cargacont
 - palbuscador
+- palnavegador
 - leepaljson
 ========================================================
 */
+
 
 window.cab15 = {
 
@@ -41,21 +44,38 @@ window.cab15 = {
 
 
     /*====================================================
+      posición guardada
+    ====================================================*/
+
+    posicionGuardada: null,
+
+    codigoGuardado: null,
+
+    filtroGuardado: null,
+
+
+    /*====================================================
       inicializar
     ====================================================*/
 
     inicializar: function(){
 
         /*
-        crear controles primero.
+        crear controles.
         */
 
         this.crearControles();
 
 
         /*
-        después intentamos obtener
-        los datos de leepaljson.
+        conectar controles.
+        */
+
+        this.conectarControles();
+
+
+        /*
+        evitar reinicialización.
         */
 
         if(this.inicializado){
@@ -103,7 +123,7 @@ window.cab15 = {
 
 
     /*====================================================
-      CREAR CONTROLES
+      crear controles
     ====================================================*/
 
     crearControles: function(){
@@ -124,7 +144,9 @@ window.cab15 = {
 
 
         const controles =
-            document.createElement("section");
+            document.createElement(
+                "section"
+            );
 
 
         controles.id =
@@ -137,12 +159,14 @@ window.cab15 = {
         );
 
 
-        /*
-        botón búsqueda.
-        */
+        /*------------------------------------------------
+          botón búsqueda
+        ------------------------------------------------*/
 
         const botonBuscar =
-            document.createElement("button");
+            document.createElement(
+                "button"
+            );
 
 
         botonBuscar.id =
@@ -171,12 +195,14 @@ window.cab15 = {
             "🔍";
 
 
-        /*
-        etiqueta central.
-        */
+        /*------------------------------------------------
+          etiqueta
+        ------------------------------------------------*/
 
         const etiqueta =
-            document.createElement("span");
+            document.createElement(
+                "span"
+            );
 
 
         etiqueta.id =
@@ -187,12 +213,14 @@ window.cab15 = {
             "búsqueda avanzada";
 
 
-        /*
-        botón limpiar.
-        */
+        /*------------------------------------------------
+          botón limpiar
+        ------------------------------------------------*/
 
         const botonLimpiar =
-            document.createElement("button");
+            document.createElement(
+                "button"
+            );
 
 
         botonLimpiar.id =
@@ -221,9 +249,9 @@ window.cab15 = {
             "×";
 
 
-        /*
-        montar controles.
-        */
+        /*------------------------------------------------
+          montar
+        ------------------------------------------------*/
 
         controles.appendChild(
             botonBuscar
@@ -240,9 +268,9 @@ window.cab15 = {
         );
 
 
-        /*
-        colocar antes de la navegación.
-        */
+        /*------------------------------------------------
+          insertar antes de navegación
+        ------------------------------------------------*/
 
         const navegacion =
             document.getElementById(
@@ -293,14 +321,381 @@ window.cab15 = {
 
 
     /*====================================================
-      OBTENER DATOS BASE
+      conectar controles
+    ====================================================*/
+
+    conectarControles: function(){
+
+        const botonBuscar =
+            document.getElementById(
+                "botonBuscarUniversal"
+            );
+
+
+        const botonLimpiar =
+            document.getElementById(
+                "botonLimpiarBusquedaUniversal"
+            );
+
+
+        /*------------------------------------------------
+          botón búsqueda
+        ------------------------------------------------*/
+
+        if(botonBuscar){
+
+            botonBuscar.onclick =
+                () => {
+
+                    /*
+                    primero guardamos
+                    la posición actual.
+                    */
+
+                    this.guardarPosicion();
+
+
+                    /*
+                    el motor de búsqueda se
+                    conectará posteriormente.
+                    */
+
+                    if(
+                        window.PALBUSCADORNUEVO &&
+                        typeof
+                        window.PALBUSCADORNUEVO.abrir
+                        === "function"
+                    ){
+
+                        window.PALBUSCADORNUEVO.abrir();
+
+                        return;
+
+                    }
+
+
+                    if(
+                        window.palbuscador &&
+                        typeof
+                        window.palbuscador.abrir
+                        === "function"
+                    ){
+
+                        window.palbuscador.abrir();
+
+                        return;
+
+                    }
+
+
+                    console.warn(
+                        "cab15: motor de búsqueda no disponible."
+                    );
+
+                };
+
+        }
+
+
+        /*------------------------------------------------
+          botón limpiar
+        ------------------------------------------------*/
+
+        if(botonLimpiar){
+
+            botonLimpiar.onclick =
+                () => {
+
+                    /*
+                    Limpiar únicamente el campo
+                    del buscador nuevo si existe.
+                    */
+
+                    const campo =
+                        document.getElementById(
+                            "buscarNuevo"
+                        );
+
+
+                    if(campo){
+
+                        campo.value = "";
+
+                        campo.dispatchEvent(
+                            new Event(
+                                "input",
+                                {
+                                    bubbles:true
+                                }
+                            )
+                        );
+
+                    }
+
+
+                    /*
+                    Restaurar posición.
+                    */
+
+                    this.restaurarPosicion();
+
+                };
+
+        }
+
+    },
+
+
+    /*====================================================
+      guardar posición
+    ====================================================*/
+
+    guardarPosicion: function(){
+
+        if(
+            !window.PALNAVEGADOR
+        ){
+
+            this.posicionGuardada =
+                null;
+
+            this.codigoGuardado =
+                null;
+
+            this.filtroGuardado =
+                null;
+
+            return null;
+
+        }
+
+
+        /*
+        guardar índice.
+        */
+
+        this.posicionGuardada =
+            typeof
+            window.PALNAVEGADOR.indice
+            === "number"
+                ? window.PALNAVEGADOR.indice
+                : null;
+
+
+        /*
+        guardar código.
+        */
+
+        this.codigoGuardado =
+            window.PALNAVEGADOR.codigoActual
+            || null;
+
+
+        /*
+        guardar filtro.
+
+        No copiamos ni modificamos
+        el filtro original.
+        */
+
+        this.filtroGuardado =
+            Array.isArray(
+                window.PALNAVEGADOR.filtroActivo
+            )
+                ? window.PALNAVEGADOR.filtroActivo
+                : null;
+
+
+        console.log(
+            "cab15: posición guardada.",
+            {
+                indice:
+                    this.posicionGuardada,
+
+                codigo:
+                    this.codigoGuardado,
+
+                filtrado:
+                    !!this.filtroGuardado
+            }
+        );
+
+
+        return {
+
+            indice:
+                this.posicionGuardada,
+
+            codigo:
+                this.codigoGuardado,
+
+            filtro:
+                this.filtroGuardado
+
+        };
+
+    },
+
+
+    /*====================================================
+      obtener posición guardada
+    ====================================================*/
+
+    obtenerPosicionGuardada: function(){
+
+        return {
+
+            indice:
+                this.posicionGuardada,
+
+            codigo:
+                this.codigoGuardado,
+
+            filtro:
+                this.filtroGuardado
+
+        };
+
+    },
+
+
+    /*====================================================
+      restaurar posición
+    ====================================================*/
+
+    async restaurarPosicion(){
+
+        /*
+        No existe posición guardada.
+        */
+
+        if(
+            !this.codigoGuardado &&
+            this.posicionGuardada === null
+        ){
+
+            return false;
+
+        }
+
+
+        if(
+            !window.PALNAVEGADOR
+        ){
+
+            return false;
+
+        }
+
+
+        /*
+        Si tenemos código, es la referencia
+        más segura para restaurar.
+        */
+
+        if(
+            this.codigoGuardado &&
+            typeof
+            window.PALNAVEGADOR.cargarPorCodigo
+            === "function"
+        ){
+
+            try{
+
+                const resultado =
+                    await
+                    window.PALNAVEGADOR.cargarPorCodigo(
+                        this.codigoGuardado
+                    );
+
+
+                if(resultado !== false){
+
+                    return true;
+
+                }
+
+            }
+            catch(error){
+
+                console.warn(
+                    "cab15: no se pudo restaurar por código.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /*
+        Como segunda opción usamos
+        el índice guardado.
+        */
+
+        if(
+            this.posicionGuardada !== null &&
+            typeof
+            window.PALNAVEGADOR.cargarIndice
+            === "function"
+        ){
+
+            try{
+
+                await
+                window.PALNAVEGADOR.cargarIndice(
+                    this.posicionGuardada
+                );
+
+
+                return true;
+
+            }
+            catch(error){
+
+                console.warn(
+                    "cab15: no se pudo restaurar por índice.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        return false;
+
+    },
+
+
+    /*====================================================
+      borrar posición guardada
+    ====================================================*/
+
+    borrarPosicionGuardada: function(){
+
+        this.posicionGuardada =
+            null;
+
+        this.codigoGuardado =
+            null;
+
+        this.filtroGuardado =
+            null;
+
+    },
+
+
+    /*====================================================
+      obtener datos base
     ====================================================*/
 
     obtenerDatosBase: function(){
 
         if(
             !window.leepaljson ||
-            typeof window.leepaljson.obtener !==
+            typeof
+            window.leepaljson.obtener !==
             "function"
         ){
 
@@ -328,7 +723,7 @@ window.cab15 = {
 
 
     /*====================================================
-      ESPERAR DATOS
+      esperar datos
     ====================================================*/
 
     esperarDatos: function(){
@@ -413,14 +808,16 @@ window.cab15 = {
 
 
     /*====================================================
-      OBTENER DATOS
+      obtener datos
     ====================================================*/
 
     obtenerDatos: function(){
 
         if(
             this.inicializado &&
-            Array.isArray(this.datos)
+            Array.isArray(
+                this.datos
+            )
         ){
 
             return this.datos;
@@ -454,7 +851,7 @@ window.cab15 = {
 
 
     /*====================================================
-      ACTUALIZAR
+      actualizar
     ====================================================*/
 
     actualizar: function(){
@@ -485,7 +882,7 @@ window.cab15 = {
 
 
     /*====================================================
-      LIMPIAR
+      limpiar caché
     ====================================================*/
 
     limpiar: function(){
@@ -506,7 +903,7 @@ window.cab15 = {
 
 
     /*====================================================
-      CANTIDAD
+      cantidad
     ====================================================*/
 
     cantidad: function(){
@@ -530,3 +927,10 @@ document.addEventListener(
 
     }
 );
+
+
+/*
+========================================================
+FIN cab15.js v1.2
+========================================================
+*/
