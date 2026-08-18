@@ -56,44 +56,170 @@ h1{
 
 /*=========================================================
 CONTROLES DEL BUSCADOR
+NUEVO DISEÑO DEFINITIVO
 =========================================================*/
 
 #controlesBusqueda{
+
     display:flex;
+
     justify-content:center;
+
     align-items:center;
+
     gap:10px;
-    flex-wrap:wrap;
-    margin:25px 0 18px;
+
+    width:100%;
+
+    margin:25px auto 18px;
+
 }
+
+
+/*---------------------------------------------------------
+LABEL CENTRAL
+---------------------------------------------------------*/
+
+#labelBusquedaAvanzada{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    min-width:0;
+
+    padding:7px 12px;
+
+    color:#aaa;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    line-height:1.2;
+
+    text-align:center;
+
+    white-space:nowrap;
+
+    border-radius:14px;
+
+}
+
+
+/*---------------------------------------------------------
+BOTONES CIRCULARES DE BÚSQUEDA
+---------------------------------------------------------*/
 
 #controlesBusqueda button{
-    min-height:48px;
-    box-sizing:border-box;
-    padding:10px 22px;
-    background:#1d9bf0;
-    color:#fff;
-    border:none;
-    border-radius:10px;
-    font-size:18px;
+
+    flex:0 0 auto;
+
+    width:34px;
+
+    height:34px;
+
+    min-width:34px;
+
+    min-height:34px;
+
+    padding:0;
+
+    border:1px solid #62d6ff;
+
+    border-radius:50%;
+
+    background:#151719;
+
+    color:#62d6ff;
+
+    font-size:16px;
+
     font-weight:bold;
+
+    line-height:1;
+
     cursor:pointer;
-    transition:
-        background .25s,
-        transform .15s,
-        box-shadow .25s;
-    display:flex;
+
+    display:inline-flex;
+
     align-items:center;
+
     justify-content:center;
+
+    box-shadow:
+        0 0 8px rgba(98,214,255,.15);
+
+    transition:
+        background .20s,
+        color .20s,
+        transform .15s,
+        box-shadow .20s;
+
 }
+
+
+/*---------------------------------------------------------
+HOVER
+---------------------------------------------------------*/
 
 #controlesBusqueda button:hover{
+
     background:#62d6ff;
-    box-shadow:0 0 14px rgba(98,214,255,.28);
+
+    color:#001018;
+
+    box-shadow:
+        0 0 14px rgba(98,214,255,.38);
+
 }
 
+
+/*---------------------------------------------------------
+CLICK
+---------------------------------------------------------*/
+
 #controlesBusqueda button:active{
-    transform:scale(.97);
+
+    transform:scale(.88);
+
+}
+
+
+/*---------------------------------------------------------
+BOTÓN ABRIR BUSCADOR
+---------------------------------------------------------*/
+
+#botonBuscarNuevo{
+
+    display:inline-flex !important;
+
+}
+
+
+/*---------------------------------------------------------
+BOTÓN LIMPIAR FILTROS
+---------------------------------------------------------*/
+
+#botonLimpiarFiltros{
+
+    display:inline-flex;
+
+}
+
+
+/*---------------------------------------------------------
+ANTIGUO BOTÓN EXPLORAR
+LO MANTENEMOS OCULTO PARA NO ROMPER
+EL CÓDIGO ANTIGUO
+---------------------------------------------------------*/
+
+#botonBuscar{
+
+    display:none !important;
+
 }
 
 
@@ -557,7 +683,6 @@ SIN RESULTADOS
 
 /*=========================================================
 FILTRO ACTIVO
-PREPARACIÓN VISUAL
 =========================================================*/
 
 #filtroActivo{
@@ -613,7 +738,6 @@ PREPARACIÓN VISUAL
 
 /*=========================================================
 BOTÓN TODOS
-PREPARACIÓN VISUAL
 =========================================================*/
 
 #botonTodos{
@@ -698,7 +822,7 @@ BOTONES CIRCULARES SUPERIORES
 
 
 /*=========================================================
-COMPATIBILIDAD CON EL BOTÓN ALEATORIO ACTUAL
+BOTÓN ALEATORIO
 =========================================================*/
 
 #botonAleatorio{
@@ -837,14 +961,43 @@ RESPONSIVE
         font-size:16px;
     }
 
+
+    /*-----------------------------------------------
+      BUSCADOR SUPERIOR
+      -----------------------------------------------*/
+
     #controlesBusqueda{
-        margin:20px 0 15px;
+
+        gap:8px;
+
+        margin:20px auto 15px;
+
+        width:100%;
+
+    }
+
+    #labelBusquedaAvanzada{
+
+        font-size:13px;
+
+        padding:6px 8px;
+
     }
 
     #controlesBusqueda button{
-        width:100%;
-        max-width:420px;
+
+        width:32px;
+
+        height:32px;
+
+        min-width:32px;
+
+        min-height:32px;
+
+        font-size:15px;
+
     }
+
 
     #estado{
         font-size:13px;
