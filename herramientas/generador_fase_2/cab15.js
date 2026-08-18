@@ -1,18 +1,20 @@
 /*
 ========================================================
 cab15.js v1.4
-controles y visor del buscador universal
+controles y memoria de posición
 palentropía — generador
 
-objetivo:
-- crear controles del buscador
+funciones:
+- crear controles del buscador universal
 - crear visor de búsqueda
 - abrir y cerrar el visor
-- guardar posición actual
-- guardar posición también al entrar en el buscador antiguo
-- restaurar posición exacta después de una búsqueda
-- devolver el label a "búsqueda avanzada"
-- preparar la base para cab16
+- memorizar la última paleoficha mostrada
+- restaurar la posición
+- preparar la base para el buscador universal
+
+importante:
+la posición se actualiza automáticamente cada vez que
+cambia la paleoficha mostrada.
 
 no modifica:
 - cab12
@@ -23,6 +25,7 @@ no modifica:
 - leepaljson
 ========================================================
 */
+
 
 window.cab15 = {
 
@@ -40,9 +43,7 @@ window.cab15 = {
 
     filtroGuardado: null,
 
-    codigoAntesBusquedaAntigua: null,
-
-    observadorBusquedaAntigua: null,
+    observador: null,
 
 
     /*====================================================
@@ -57,17 +58,19 @@ window.cab15 = {
 
         }
 
+
         this.crearControles();
 
         this.crearVisor();
 
         this.conectarControles();
 
-        this.conectarBuscadorAntiguo();
+        this.vigilarFicha();
 
         this.obtenerDatos();
 
         this.inicializado = true;
+
 
         console.log(
             "cab15 v1.4: controles preparados."
@@ -118,24 +121,19 @@ window.cab15 = {
         botonBuscar.id =
             "botonBuscarUniversal";
 
-
         botonBuscar.type =
             "button";
-
 
         botonBuscar.className =
             "botonBusquedaUniversal";
 
-
         botonBuscar.title =
             "búsqueda avanzada";
-
 
         botonBuscar.setAttribute(
             "aria-label",
             "abrir búsqueda avanzada"
         );
-
 
         botonBuscar.textContent =
             "🔍";
@@ -150,7 +148,6 @@ window.cab15 = {
         etiqueta.id =
             "labelBusquedaUniversal";
 
-
         etiqueta.textContent =
             "búsqueda avanzada";
 
@@ -164,24 +161,19 @@ window.cab15 = {
         botonLimpiar.id =
             "botonLimpiarBusquedaUniversal";
 
-
         botonLimpiar.type =
             "button";
-
 
         botonLimpiar.className =
             "botonBusquedaUniversal";
 
-
         botonLimpiar.title =
             "mostrar todos los registros";
-
 
         botonLimpiar.setAttribute(
             "aria-label",
             "mostrar todos los registros"
         );
-
 
         botonLimpiar.textContent =
             "×";
@@ -191,11 +183,9 @@ window.cab15 = {
             botonBuscar
         );
 
-
         controles.appendChild(
             etiqueta
         );
-
 
         controles.appendChild(
             botonLimpiar
@@ -271,36 +261,28 @@ window.cab15 = {
         visor.id =
             "visorBuscadorUniversal";
 
-
         visor.setAttribute(
             "aria-hidden",
             "true"
         );
 
-
         visor.style.display =
             "none";
-
 
         visor.style.position =
             "fixed";
 
-
         visor.style.inset =
             "0";
-
 
         visor.style.zIndex =
             "999997";
 
-
         visor.style.background =
             "rgba(0,0,0,.92)";
 
-
         visor.style.justifyContent =
             "center";
-
 
         visor.style.alignItems =
             "center";
@@ -315,42 +297,32 @@ window.cab15 = {
         ventana.id =
             "ventanaBuscadorUniversal";
 
-
         ventana.style.position =
             "relative";
-
 
         ventana.style.width =
             "90%";
 
-
         ventana.style.maxWidth =
             "700px";
-
 
         ventana.style.maxHeight =
             "80vh";
 
-
         ventana.style.overflow =
             "auto";
-
 
         ventana.style.padding =
             "25px";
 
-
         ventana.style.background =
             "#181a1c";
-
 
         ventana.style.border =
             "2px solid #62d6ff";
 
-
         ventana.style.borderRadius =
             "18px";
-
 
         ventana.style.boxShadow =
             "0 0 25px rgba(98,214,255,.35)";
@@ -365,48 +337,37 @@ window.cab15 = {
         cerrar.id =
             "cerrarBuscadorUniversal";
 
-
         cerrar.type =
             "button";
 
-
         cerrar.textContent =
             "×";
-
 
         cerrar.setAttribute(
             "aria-label",
             "cerrar búsqueda avanzada"
         );
 
-
         cerrar.style.position =
             "absolute";
-
 
         cerrar.style.top =
             "10px";
 
-
         cerrar.style.right =
             "12px";
-
 
         cerrar.style.fontSize =
             "28px";
 
-
         cerrar.style.background =
             "none";
-
 
         cerrar.style.border =
             "none";
 
-
         cerrar.style.color =
             "#fff";
-
 
         cerrar.style.cursor =
             "pointer";
@@ -421,7 +382,6 @@ window.cab15 = {
         titulo.textContent =
             "búsqueda avanzada";
 
-
         titulo.style.marginTop =
             "0";
 
@@ -435,91 +395,44 @@ window.cab15 = {
         campo.id =
             "buscarUniversal";
 
-
         campo.type =
             "text";
-
 
         campo.placeholder =
             "código, nombre, tiempo geológico o taxón";
 
-
         campo.autocomplete =
             "off";
-
 
         campo.style.display =
             "block";
 
-
         campo.style.width =
             "90%";
-
 
         campo.style.margin =
             "20px auto";
 
-
         campo.style.padding =
             "10px";
-
 
         campo.style.fontSize =
             "18px";
 
-
         campo.style.textAlign =
             "center";
-
 
         campo.style.background =
             "#151719";
 
-
         campo.style.color =
             "#fff";
-
 
         campo.style.border =
             "2px solid #62d6ff";
 
-
         campo.style.borderRadius =
             "10px";
-
-
-        const labelResultados =
-            document.createElement(
-                "div"
-            );
-
-
-        labelResultados.id =
-            "labelResultadosBuscadorUniversal";
-
-
-        labelResultados.textContent =
-            "introduce un criterio de búsqueda";
-
-
-        labelResultados.style.textAlign =
-            "center";
-
-
-        labelResultados.style.color =
-            "#aaa";
-
-
-        labelResultados.style.fontSize =
-            "14px";
-
-
-        labelResultados.style.minHeight =
-            "20px";
-
-
-        labelResultados.style.margin =
-            "0 auto 12px";
 
 
         const resultados =
@@ -536,21 +449,13 @@ window.cab15 = {
             cerrar
         );
 
-
         ventana.appendChild(
             titulo
         );
 
-
         ventana.appendChild(
             campo
         );
-
-
-        ventana.appendChild(
-            labelResultados
-        );
-
 
         ventana.appendChild(
             resultados
@@ -567,6 +472,7 @@ window.cab15 = {
         );
 
     },
+
 
     /*====================================================
       conectar controles
@@ -592,14 +498,16 @@ window.cab15 = {
             );
 
 
-        /*------------------------------------------------
-          abrir
-        ------------------------------------------------*/
-
         if (botonBuscar) {
 
             botonBuscar.onclick =
                 () => {
+
+                    /*
+                    Guardamos únicamente como respaldo.
+                    Si posteriormente se muestra otra ficha,
+                    vigilarFicha() sustituirá esta posición.
+                    */
 
                     this.guardarPosicion();
 
@@ -609,10 +517,6 @@ window.cab15 = {
 
         }
 
-
-        /*------------------------------------------------
-          cerrar
-        ------------------------------------------------*/
 
         if (cerrar) {
 
@@ -625,10 +529,6 @@ window.cab15 = {
 
         }
 
-
-        /*------------------------------------------------
-          limpiar
-        ------------------------------------------------*/
 
         if (botonLimpiar) {
 
@@ -658,18 +558,18 @@ window.cab15 = {
 
 
     /*====================================================
-      conectar buscador antiguo
+      vigilar ficha actual
     ====================================================*/
 
-    conectarBuscadorAntiguo: function() {
+    vigilarFicha: function() {
 
-        const botonAntiguo =
+        const ficha =
             document.getElementById(
-                "botonBuscar"
+                "codigoFicha"
             );
 
 
-        if (!botonAntiguo) {
+        if (!ficha) {
 
             return;
 
@@ -677,139 +577,93 @@ window.cab15 = {
 
 
         /*
-        Guardamos la posición ANTES de que
-        palbuscador pueda cambiar la ficha.
+        Observamos solamente el contenido del código
+        de la paleoficha.
+
+        Cuando CAB01/CARGACONT/CAB02/etc. muestran
+        otro registro, el código cambia y actualizamos
+        automáticamente la posición memorizada.
         */
 
-        botonAntiguo.addEventListener(
-            "click",
-            () => {
+        this.observador =
+            new MutationObserver(
+                () => {
 
-                this.guardarPosicion();
+                    this.actualizarPosicionActual();
 
-                this.codigoAntesBusquedaAntigua =
-                    this.codigoGuardado;
+                }
+            );
 
-            },
-            true
+
+        this.observador.observe(
+            ficha,
+            {
+                childList: true,
+                characterData: true,
+                subtree: true
+            }
         );
 
 
         /*
-        Vigilar el visor antiguo.
+        También comprobamos el estado inicial.
         */
 
-        this.iniciarVigilanciaBuscadorAntiguo();
+        this.actualizarPosicionActual();
 
     },
 
 
     /*====================================================
-      vigilar buscador antiguo
+      actualizar posición actual
     ====================================================*/
 
-    iniciarVigilanciaBuscadorAntiguo: function() {
+    actualizarPosicionActual: function() {
 
-        if (this.observadorBusquedaAntigua) {
+        if (!window.PALNAVEGADOR) {
 
-            return;
+            return false;
 
         }
 
 
-        let visorAbiertoAnterior =
-            false;
+        const codigo =
+            window.PALNAVEGADOR.codigoActual;
 
 
-        let codigoAnterior =
-            this.codigoGuardado;
+        if (!codigo) {
 
-
-        this.observadorBusquedaAntigua =
-            setInterval(
-                () => {
-
-                    const visor =
-                        document.getElementById(
-                            "visorBuscador"
-                        );
-
-
-                    if (!visor) {
-
-                        return;
-
-                    }
-
-
-                    const estilo =
-                        window.getComputedStyle(
-                            visor
-                        );
-
-
-                    const abierto =
-                        visor.getAttribute(
-                            "aria-hidden"
-                        ) === "false" ||
-                        estilo.display !== "none";
-
-
-                    const codigoActual =
-                        window.PALNAVEGADOR
-                            ? window.PALNAVEGADOR.codigoActual
-                            : null;
-
-
-                    /*
-                    El visor acaba de cerrarse.
-                    */
-
-                    if (
-                        visorAbiertoAnterior &&
-                        !abierto &&
-                        codigoActual &&
-                        codigoActual !== codigoAnterior
-                    ) {
-
-                        this.restablecerLabel();
-
-                    }
-
-
-                    visorAbiertoAnterior =
-                        abierto;
-
-
-                    codigoAnterior =
-                        codigoActual ||
-                        codigoAnterior;
-
-                },
-                100
-            );
-
-    },
-
-
-    /*====================================================
-      restablecer label
-    ====================================================*/
-
-    restablecerLabel: function() {
-
-        const label =
-            document.getElementById(
-                "labelBusquedaUniversal"
-            );
-
-
-        if (label) {
-
-            label.textContent =
-                "búsqueda avanzada";
+            return false;
 
         }
+
+
+        /*
+        La ficha que acaba de mostrarse pasa a ser
+        automáticamente la nueva posición guardada.
+        */
+
+        this.posicionGuardada =
+            typeof
+            window.PALNAVEGADOR.indice
+            === "number"
+                ? window.PALNAVEGADOR.indice
+                : null;
+
+
+        this.codigoGuardado =
+            codigo;
+
+
+        this.filtroGuardado =
+            Array.isArray(
+                window.PALNAVEGADOR.filtroActivo
+            )
+                ? window.PALNAVEGADOR.filtroActivo
+                : null;
+
+
+        return true;
 
     },
 
@@ -968,6 +822,7 @@ window.cab15 = {
     async restaurarPosicion() {
 
         if (
+            !this.codigoGuardado &&
             this.posicionGuardada === null
         ) {
 
@@ -984,48 +839,8 @@ window.cab15 = {
 
 
         /*
-        Primero restauramos por índice.
-
-        Esto evita que cargarPorCodigo()
-        pueda localizar la ficha dentro de
-        otro conjunto y producir un desplazamiento.
-        */
-
-        if (
-            typeof
-            window.PALNAVEGADOR.cargarIndice
-            === "function"
-        ) {
-
-            try {
-
-                await
-                window.PALNAVEGADOR.cargarIndice(
-                    this.posicionGuardada
-                );
-
-
-                this.restablecerLabel();
-
-
-                return true;
-
-            }
-            catch (error) {
-
-                console.warn(
-                    "cab15: no se pudo restaurar por índice.",
-                    error
-                );
-
-            }
-
-        }
-
-
-        /*
-        Segunda opción:
-        restaurar por código.
+        Primero intentamos por código porque es la
+        referencia más segura.
         */
 
         if (
@@ -1046,8 +861,6 @@ window.cab15 = {
 
                 if (resultado !== false) {
 
-                    this.restablecerLabel();
-
                     return true;
 
                 }
@@ -1057,6 +870,40 @@ window.cab15 = {
 
                 console.warn(
                     "cab15: no se pudo restaurar por código.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /*
+        Segunda opción: índice.
+        */
+
+        if (
+            this.posicionGuardada !== null &&
+            typeof
+            window.PALNAVEGADOR.cargarIndice
+            === "function"
+        ) {
+
+            try {
+
+                await
+                window.PALNAVEGADOR.cargarIndice(
+                    this.posicionGuardada
+                );
+
+
+                return true;
+
+            }
+            catch (error) {
+
+                console.warn(
+                    "cab15: no se pudo restaurar por índice.",
                     error
                 );
 
