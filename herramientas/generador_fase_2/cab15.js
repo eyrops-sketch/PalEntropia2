@@ -1,19 +1,20 @@
 /*
 ========================================================
 cab15.js v1.2
-motor de datos del buscador universal
+controles del buscador universal
 palentropía — generador
 
 objetivo:
 - reutilizar los datos de leepaljson
 - crear caché local
+- crear los controles visuales del buscador
 - no bloquear el arranque
 - no realizar cargas adicionales
 - esperar a que leepaljson tenga datos
-- proporcionar datos al buscador nuevo
-- limpiar filtros y restaurar todos los registros
 
 no modifica:
+- cab12
+- cab14
 - cargacont
 - palbuscador
 - leepaljson
@@ -23,7 +24,7 @@ no modifica:
 window.cab15 = {
 
     /*====================================================
-      ESTADO
+      estado
     ====================================================*/
 
     datos: [],
@@ -40,10 +41,22 @@ window.cab15 = {
 
 
     /*====================================================
-      INICIALIZAR
+      inicializar
     ====================================================*/
 
     inicializar: function(){
+
+        /*
+        crear controles primero.
+        */
+
+        this.crearControles();
+
+
+        /*
+        después intentamos obtener
+        los datos de leepaljson.
+        */
 
         if(this.inicializado){
 
@@ -85,6 +98,196 @@ window.cab15 = {
 
 
         return [];
+
+    },
+
+
+    /*====================================================
+      CREAR CONTROLES
+    ====================================================*/
+
+    crearControles: function(){
+
+        /*
+        evitar duplicados.
+        */
+
+        if(
+            document.getElementById(
+                "controlesBusquedaUniversal"
+            )
+        ){
+
+            return;
+
+        }
+
+
+        const controles =
+            document.createElement("section");
+
+
+        controles.id =
+            "controlesBusquedaUniversal";
+
+
+        controles.setAttribute(
+            "aria-label",
+            "Controles de búsqueda universal"
+        );
+
+
+        /*
+        botón búsqueda.
+        */
+
+        const botonBuscar =
+            document.createElement("button");
+
+
+        botonBuscar.id =
+            "botonBuscarUniversal";
+
+
+        botonBuscar.type =
+            "button";
+
+
+        botonBuscar.className =
+            "botonBusquedaUniversal";
+
+
+        botonBuscar.title =
+            "Búsqueda avanzada";
+
+
+        botonBuscar.setAttribute(
+            "aria-label",
+            "Abrir búsqueda avanzada"
+        );
+
+
+        botonBuscar.textContent =
+            "🔍";
+
+
+        /*
+        etiqueta central.
+        */
+
+        const etiqueta =
+            document.createElement("span");
+
+
+        etiqueta.id =
+            "labelBusquedaUniversal";
+
+
+        etiqueta.textContent =
+            "búsqueda avanzada";
+
+
+        /*
+        botón limpiar.
+        */
+
+        const botonLimpiar =
+            document.createElement("button");
+
+
+        botonLimpiar.id =
+            "botonLimpiarBusquedaUniversal";
+
+
+        botonLimpiar.type =
+            "button";
+
+
+        botonLimpiar.className =
+            "botonBusquedaUniversal";
+
+
+        botonLimpiar.title =
+            "Mostrar todos los registros";
+
+
+        botonLimpiar.setAttribute(
+            "aria-label",
+            "Mostrar todos los registros"
+        );
+
+
+        botonLimpiar.textContent =
+            "×";
+
+
+        /*
+        montar controles.
+        */
+
+        controles.appendChild(
+            botonBuscar
+        );
+
+
+        controles.appendChild(
+            etiqueta
+        );
+
+
+        controles.appendChild(
+            botonLimpiar
+        );
+
+
+        /*
+        colocar antes de la navegación.
+        */
+
+        const navegacion =
+            document.getElementById(
+                "controlesNavegacion"
+            );
+
+
+        if(navegacion){
+
+            navegacion.parentNode.insertBefore(
+                controles,
+                navegacion
+            );
+
+        }
+        else{
+
+            const cabecera =
+                document.getElementById(
+                    "cabecera"
+                );
+
+
+            if(cabecera){
+
+                cabecera.insertAdjacentElement(
+                    "afterend",
+                    controles
+                );
+
+            }
+            else{
+
+                document.body.prepend(
+                    controles
+                );
+
+            }
+
+        }
+
+
+        console.log(
+            "cab15 v1.2: controles creados."
+        );
 
     },
 
@@ -282,107 +485,22 @@ window.cab15 = {
 
 
     /*====================================================
-      LIMPIAR FILTROS
-      -----------------------------------------------
-      Restaura todos los registros originales.
-      
-      No realiza ninguna carga.
-      No modifica leepaljson.
-      No modifica cargacont.
-      ====================================================*/
+      LIMPIAR
+    ====================================================*/
 
-    limpiarFiltros: function(){
-
-        const datos =
-            this.obtenerDatosBase();
-
-
-        if(
-            !Array.isArray(datos)
-        ){
-
-            return [];
-
-        }
-
+    limpiar: function(){
 
         this.datos =
-            datos;
+            [];
 
         this.inicializado =
-            true;
+            false;
 
+        this.esperando =
+            false;
 
-        /*
-        Si el buscador nuevo está abierto,
-        limpiamos también su interfaz.
-        */
-
-        if(
-            window.palbuscadornuevo
-        ){
-
-            if(
-                typeof
-                window.palbuscadornuevo.limpiar
-                === "function"
-            ){
-
-                window.palbuscadornuevo.limpiar();
-
-            }
-
-
-            if(
-                typeof
-                window.palbuscadornuevo.actualizarLabel
-                === "function"
-            ){
-
-                window.palbuscadornuevo.actualizarLabel(
-                    "Búsqueda avanzada"
-                );
-
-            }
-
-
-            const entrada =
-                document.getElementById(
-                    "buscarNuevo"
-                );
-
-
-            if(entrada){
-
-                entrada.value = "";
-
-            }
-
-
-            const check =
-                document.getElementById(
-                    "checkRango"
-                );
-
-
-            if(check){
-
-                check.checked =
-                    false;
-
-            }
-
-        }
-
-
-        console.log(
-            "cab15: filtros limpiados.",
-            this.datos.length,
-            "registros disponibles."
-        );
-
-
-        return this.datos;
+        this.intentos =
+            0;
 
     },
 
@@ -407,13 +525,6 @@ ARRANQUE NO BLOQUEANTE
 document.addEventListener(
     "DOMContentLoaded",
     function(){
-
-        /*
-        No hacemos ninguna carga.
-
-        cab15 solamente intenta reutilizar
-        los datos que leepaljson ya tenga.
-        */
 
         window.cab15.inicializar();
 
