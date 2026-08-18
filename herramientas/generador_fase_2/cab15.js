@@ -1,17 +1,18 @@
 /*
 ========================================================
-cab15.js v1.2
-motor de datos y controles del buscador universal
+cab15.js v1.3
+controles y visor del buscador universal
 palentropía — generador
 
-objetivo:
-- reutilizar los datos de leepaljson
-- crear caché local
+objetivo de esta versión:
 - crear controles del buscador
-- guardar la posición actual del puntero
-- restaurar la posición si una búsqueda falla
-- no bloquear el arranque
-- no realizar cargas adicionales
+- crear visor de búsqueda
+- abrir y cerrar el visor
+- guardar posición actual
+- restaurar posición
+- preparar la base para el buscador universal
+
+no realiza todavía búsquedas.
 
 no modifica:
 - cab12
@@ -23,7 +24,6 @@ no modifica:
 ========================================================
 */
 
-
 window.cab15 = {
 
     /*====================================================
@@ -33,19 +33,6 @@ window.cab15 = {
     datos: [],
 
     inicializado: false,
-
-    esperando: false,
-
-    intentos: 0,
-
-    maximoIntentos: 40,
-
-    intervalo: 50,
-
-
-    /*====================================================
-      posición guardada
-    ====================================================*/
 
     posicionGuardada: null,
 
@@ -58,66 +45,27 @@ window.cab15 = {
       inicializar
     ====================================================*/
 
-    inicializar: function(){
+    inicializar: function() {
 
-        /*
-        crear controles.
-        */
+        if (this.inicializado) {
+
+            return;
+
+        }
 
         this.crearControles();
 
-
-        /*
-        conectar controles.
-        */
+        this.crearVisor();
 
         this.conectarControles();
 
+        this.obtenerDatos();
 
-        /*
-        evitar reinicialización.
-        */
+        this.inicializado = true;
 
-        if(this.inicializado){
-
-            return this.datos;
-
-        }
-
-
-        const datos =
-            this.obtenerDatosBase();
-
-
-        if(
-            Array.isArray(datos) &&
-            datos.length
-        ){
-
-            this.datos =
-                datos;
-
-            this.inicializado =
-                true;
-
-            this.esperando =
-                false;
-
-            console.log(
-                "cab15 v1.2:",
-                this.datos.length,
-                "registros en caché."
-            );
-
-            return this.datos;
-
-        }
-
-
-        this.esperarDatos();
-
-
-        return [];
+        console.log(
+            "cab15 v1.3: controles preparados."
+        );
 
     },
 
@@ -126,17 +74,13 @@ window.cab15 = {
       crear controles
     ====================================================*/
 
-    crearControles: function(){
+    crearControles: function() {
 
-        /*
-        evitar duplicados.
-        */
-
-        if(
+        if (
             document.getElementById(
                 "controlesBusquedaUniversal"
             )
-        ){
+        ) {
 
             return;
 
@@ -155,7 +99,7 @@ window.cab15 = {
 
         controles.setAttribute(
             "aria-label",
-            "Controles de búsqueda universal"
+            "controles de búsqueda universal"
         );
 
 
@@ -182,12 +126,12 @@ window.cab15 = {
 
 
         botonBuscar.title =
-            "Búsqueda avanzada";
+            "búsqueda avanzada";
 
 
         botonBuscar.setAttribute(
             "aria-label",
-            "Abrir búsqueda avanzada"
+            "abrir búsqueda avanzada"
         );
 
 
@@ -236,12 +180,12 @@ window.cab15 = {
 
 
         botonLimpiar.title =
-            "Mostrar todos los registros";
+            "mostrar todos los registros";
 
 
         botonLimpiar.setAttribute(
             "aria-label",
-            "Mostrar todos los registros"
+            "mostrar todos los registros"
         );
 
 
@@ -257,11 +201,9 @@ window.cab15 = {
             botonBuscar
         );
 
-
         controles.appendChild(
             etiqueta
         );
-
 
         controles.appendChild(
             botonLimpiar
@@ -278,7 +220,7 @@ window.cab15 = {
             );
 
 
-        if(navegacion){
+        if (navegacion) {
 
             navegacion.parentNode.insertBefore(
                 controles,
@@ -286,7 +228,7 @@ window.cab15 = {
             );
 
         }
-        else{
+        else {
 
             const cabecera =
                 document.getElementById(
@@ -294,7 +236,7 @@ window.cab15 = {
                 );
 
 
-            if(cabecera){
+            if (cabecera) {
 
                 cabecera.insertAdjacentElement(
                     "afterend",
@@ -302,7 +244,7 @@ window.cab15 = {
                 );
 
             }
-            else{
+            else {
 
                 document.body.prepend(
                     controles
@@ -312,9 +254,310 @@ window.cab15 = {
 
         }
 
+    },
 
-        console.log(
-            "cab15 v1.2: controles creados."
+
+    /*====================================================
+      crear visor
+    ====================================================*/
+
+    crearVisor: function() {
+
+        if (
+            document.getElementById(
+                "visorBuscadorUniversal"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        const visor =
+            document.createElement(
+                "div"
+            );
+
+
+        visor.id =
+            "visorBuscadorUniversal";
+
+
+        visor.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        visor.style.display =
+            "none";
+
+
+        visor.style.position =
+            "fixed";
+
+
+        visor.style.inset =
+            "0";
+
+
+        visor.style.zIndex =
+            "999997";
+
+
+        visor.style.background =
+            "rgba(0,0,0,.92)";
+
+
+        visor.style.justifyContent =
+            "center";
+
+
+        visor.style.alignItems =
+            "center";
+
+
+        /*------------------------------------------------
+          ventana
+        ------------------------------------------------*/
+
+        const ventana =
+            document.createElement(
+                "div"
+            );
+
+
+        ventana.id =
+            "ventanaBuscadorUniversal";
+
+
+        ventana.style.position =
+            "relative";
+
+
+        ventana.style.width =
+            "90%";
+
+
+        ventana.style.maxWidth =
+            "700px";
+
+
+        ventana.style.maxHeight =
+            "80vh";
+
+
+        ventana.style.overflow =
+            "auto";
+
+
+        ventana.style.padding =
+            "25px";
+
+
+        ventana.style.background =
+            "#181a1c";
+
+
+        ventana.style.border =
+            "2px solid #62d6ff";
+
+
+        ventana.style.borderRadius =
+            "18px";
+
+
+        ventana.style.boxShadow =
+            "0 0 25px rgba(98,214,255,.35)";
+
+
+        /*------------------------------------------------
+          botón cerrar
+        ------------------------------------------------*/
+
+        const cerrar =
+            document.createElement(
+                "button"
+            );
+
+
+        cerrar.id =
+            "cerrarBuscadorUniversal";
+
+
+        cerrar.type =
+            "button";
+
+
+        cerrar.textContent =
+            "×";
+
+
+        cerrar.setAttribute(
+            "aria-label",
+            "cerrar búsqueda avanzada"
+        );
+
+
+        cerrar.style.position =
+            "absolute";
+
+
+        cerrar.style.top =
+            "10px";
+
+
+        cerrar.style.right =
+            "12px";
+
+
+        cerrar.style.fontSize =
+            "28px";
+
+
+        cerrar.style.background =
+            "none";
+
+
+        cerrar.style.border =
+            "none";
+
+
+        cerrar.style.color =
+            "#fff";
+
+
+        cerrar.style.cursor =
+            "pointer";
+
+
+        /*------------------------------------------------
+          título
+        ------------------------------------------------*/
+
+        const titulo =
+            document.createElement(
+                "h2"
+            );
+
+
+        titulo.textContent =
+            "búsqueda avanzada";
+
+
+        titulo.style.marginTop =
+            "0";
+
+
+        /*------------------------------------------------
+          campo
+        ------------------------------------------------*/
+
+        const campo =
+            document.createElement(
+                "input"
+            );
+
+
+        campo.id =
+            "buscarUniversal";
+
+
+        campo.type =
+            "text";
+
+
+        campo.placeholder =
+            "código, nombre, tiempo geológico o taxón";
+
+
+        campo.autocomplete =
+            "off";
+
+
+        campo.style.display =
+            "block";
+
+
+        campo.style.width =
+            "90%";
+
+
+        campo.style.margin =
+            "20px auto";
+
+
+        campo.style.padding =
+            "10px";
+
+
+        campo.style.fontSize =
+            "18px";
+
+
+        campo.style.textAlign =
+            "center";
+
+
+        campo.style.background =
+            "#151719";
+
+
+        campo.style.color =
+            "#fff";
+
+
+        campo.style.border =
+            "2px solid #62d6ff";
+
+
+        campo.style.borderRadius =
+            "10px";
+
+
+        /*------------------------------------------------
+          resultados
+        ------------------------------------------------*/
+
+        const resultados =
+            document.createElement(
+                "div"
+            );
+
+
+        resultados.id =
+            "resultadosBuscadorUniversal";
+
+
+        /*------------------------------------------------
+          montar ventana
+        ------------------------------------------------*/
+
+        ventana.appendChild(
+            cerrar
+        );
+
+        ventana.appendChild(
+            titulo
+        );
+
+        ventana.appendChild(
+            campo
+        );
+
+        ventana.appendChild(
+            resultados
+        );
+
+
+        visor.appendChild(
+            ventana
+        );
+
+
+        document.body.appendChild(
+            visor
         );
 
     },
@@ -324,7 +567,7 @@ window.cab15 = {
       conectar controles
     ====================================================*/
 
-    conectarControles: function(){
+    conectarControles: function() {
 
         const botonBuscar =
             document.getElementById(
@@ -338,59 +581,24 @@ window.cab15 = {
             );
 
 
+        const cerrar =
+            document.getElementById(
+                "cerrarBuscadorUniversal"
+            );
+
+
         /*------------------------------------------------
-          botón búsqueda
+          abrir
         ------------------------------------------------*/
 
-        if(botonBuscar){
+        if (botonBuscar) {
 
             botonBuscar.onclick =
                 () => {
 
-                    /*
-                    primero guardamos
-                    la posición actual.
-                    */
-
                     this.guardarPosicion();
 
-
-                    /*
-                    el motor de búsqueda se
-                    conectará posteriormente.
-                    */
-
-                    if(
-                        window.PALBUSCADORNUEVO &&
-                        typeof
-                        window.PALBUSCADORNUEVO.abrir
-                        === "function"
-                    ){
-
-                        window.PALBUSCADORNUEVO.abrir();
-
-                        return;
-
-                    }
-
-
-                    if(
-                        window.palbuscador &&
-                        typeof
-                        window.palbuscador.abrir
-                        === "function"
-                    ){
-
-                        window.palbuscador.abrir();
-
-                        return;
-
-                    }
-
-
-                    console.warn(
-                        "cab15: motor de búsqueda no disponible."
-                    );
+                    this.abrir();
 
                 };
 
@@ -398,46 +606,44 @@ window.cab15 = {
 
 
         /*------------------------------------------------
-          botón limpiar
+          cerrar
         ------------------------------------------------*/
 
-        if(botonLimpiar){
+        if (cerrar) {
 
-            botonLimpiar.onclick =
+            cerrar.onclick =
                 () => {
 
-                    /*
-                    Limpiar únicamente el campo
-                    del buscador nuevo si existe.
-                    */
+                    this.cerrar();
+
+                };
+
+        }
+
+
+        /*------------------------------------------------
+          limpiar
+        ------------------------------------------------*/
+
+        if (botonLimpiar) {
+
+            botonLimpiar.onclick =
+                async () => {
 
                     const campo =
                         document.getElementById(
-                            "buscarNuevo"
+                            "buscarUniversal"
                         );
 
 
-                    if(campo){
+                    if (campo) {
 
                         campo.value = "";
-
-                        campo.dispatchEvent(
-                            new Event(
-                                "input",
-                                {
-                                    bubbles:true
-                                }
-                            )
-                        );
 
                     }
 
 
-                    /*
-                    Restaurar posición.
-                    */
-
-                    this.restaurarPosicion();
+                    await this.restaurarPosicion();
 
                 };
 
@@ -447,14 +653,110 @@ window.cab15 = {
 
 
     /*====================================================
+      abrir
+    ====================================================*/
+
+    abrir: function() {
+
+        const visor =
+            document.getElementById(
+                "visorBuscadorUniversal"
+            );
+
+
+        if (!visor) {
+
+            return false;
+
+        }
+
+
+        visor.style.display =
+            "flex";
+
+
+        visor.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
+            );
+
+
+        if (campo) {
+
+            setTimeout(
+                () => {
+
+                    campo.focus();
+
+                },
+                50
+            );
+
+        }
+
+
+        console.log(
+            "cab15: buscador universal abierto."
+        );
+
+
+        return true;
+
+    },
+
+
+    /*====================================================
+      cerrar
+    ====================================================*/
+
+    cerrar: function() {
+
+        const visor =
+            document.getElementById(
+                "visorBuscadorUniversal"
+            );
+
+
+        if (!visor) {
+
+            return false;
+
+        }
+
+
+        visor.style.display =
+            "none";
+
+
+        visor.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        console.log(
+            "cab15: buscador universal cerrado."
+        );
+
+
+        return true;
+
+    },
+
+
+    /*====================================================
       guardar posición
     ====================================================*/
 
-    guardarPosicion: function(){
+    guardarPosicion: function() {
 
-        if(
-            !window.PALNAVEGADOR
-        ){
+        if (!window.PALNAVEGADOR) {
 
             this.posicionGuardada =
                 null;
@@ -470,10 +772,6 @@ window.cab15 = {
         }
 
 
-        /*
-        guardar índice.
-        */
-
         this.posicionGuardada =
             typeof
             window.PALNAVEGADOR.indice
@@ -482,21 +780,10 @@ window.cab15 = {
                 : null;
 
 
-        /*
-        guardar código.
-        */
-
         this.codigoGuardado =
             window.PALNAVEGADOR.codigoActual
             || null;
 
-
-        /*
-        guardar filtro.
-
-        No copiamos ni modificamos
-        el filtro original.
-        */
 
         this.filtroGuardado =
             Array.isArray(
@@ -513,35 +800,10 @@ window.cab15 = {
                     this.posicionGuardada,
 
                 codigo:
-                    this.codigoGuardado,
-
-                filtrado:
-                    !!this.filtroGuardado
+                    this.codigoGuardado
             }
         );
 
-
-        return {
-
-            indice:
-                this.posicionGuardada,
-
-            codigo:
-                this.codigoGuardado,
-
-            filtro:
-                this.filtroGuardado
-
-        };
-
-    },
-
-
-    /*====================================================
-      obtener posición guardada
-    ====================================================*/
-
-    obtenerPosicionGuardada: function(){
 
         return {
 
@@ -563,44 +825,33 @@ window.cab15 = {
       restaurar posición
     ====================================================*/
 
-    async restaurarPosicion(){
+    async restaurarPosicion() {
 
-        /*
-        No existe posición guardada.
-        */
-
-        if(
+        if (
             !this.codigoGuardado &&
             this.posicionGuardada === null
-        ){
+        ) {
 
             return false;
 
         }
 
 
-        if(
-            !window.PALNAVEGADOR
-        ){
+        if (!window.PALNAVEGADOR) {
 
             return false;
 
         }
 
 
-        /*
-        Si tenemos código, es la referencia
-        más segura para restaurar.
-        */
-
-        if(
+        if (
             this.codigoGuardado &&
             typeof
             window.PALNAVEGADOR.cargarPorCodigo
             === "function"
-        ){
+        ) {
 
-            try{
+            try {
 
                 const resultado =
                     await
@@ -609,14 +860,14 @@ window.cab15 = {
                     );
 
 
-                if(resultado !== false){
+                if (resultado !== false) {
 
                     return true;
 
                 }
 
             }
-            catch(error){
+            catch (error) {
 
                 console.warn(
                     "cab15: no se pudo restaurar por código.",
@@ -628,19 +879,14 @@ window.cab15 = {
         }
 
 
-        /*
-        Como segunda opción usamos
-        el índice guardado.
-        */
-
-        if(
+        if (
             this.posicionGuardada !== null &&
             typeof
             window.PALNAVEGADOR.cargarIndice
             === "function"
-        ){
+        ) {
 
-            try{
+            try {
 
                 await
                 window.PALNAVEGADOR.cargarIndice(
@@ -651,7 +897,7 @@ window.cab15 = {
                 return true;
 
             }
-            catch(error){
+            catch (error) {
 
                 console.warn(
                     "cab15: no se pudo restaurar por índice.",
@@ -669,246 +915,33 @@ window.cab15 = {
 
 
     /*====================================================
-      borrar posición guardada
-    ====================================================*/
-
-    borrarPosicionGuardada: function(){
-
-        this.posicionGuardada =
-            null;
-
-        this.codigoGuardado =
-            null;
-
-        this.filtroGuardado =
-            null;
-
-    },
-
-
-    /*====================================================
-      obtener datos base
-    ====================================================*/
-
-    obtenerDatosBase: function(){
-
-        if(
-            !window.leepaljson ||
-            typeof
-            window.leepaljson.obtener !==
-            "function"
-        ){
-
-            return [];
-
-        }
-
-
-        const datos =
-            window.leepaljson.obtener();
-
-
-        if(
-            !Array.isArray(datos)
-        ){
-
-            return [];
-
-        }
-
-
-        return datos;
-
-    },
-
-
-    /*====================================================
-      esperar datos
-    ====================================================*/
-
-    esperarDatos: function(){
-
-        if(this.esperando){
-
-            return;
-
-        }
-
-
-        this.esperando =
-            true;
-
-        this.intentos =
-            0;
-
-
-        const comprobar =
-            () => {
-
-                const datos =
-                    this.obtenerDatosBase();
-
-
-                if(
-                    Array.isArray(datos) &&
-                    datos.length
-                ){
-
-                    this.datos =
-                        datos;
-
-                    this.inicializado =
-                        true;
-
-                    this.esperando =
-                        false;
-
-                    console.log(
-                        "cab15 v1.2:",
-                        this.datos.length,
-                        "registros preparados."
-                    );
-
-                    return;
-
-                }
-
-
-                this.intentos++;
-
-
-                if(
-                    this.intentos >=
-                    this.maximoIntentos
-                ){
-
-                    this.esperando =
-                        false;
-
-                    console.warn(
-                        "cab15: no se pudieron obtener los datos."
-                    );
-
-                    return;
-
-                }
-
-
-                setTimeout(
-                    comprobar,
-                    this.intervalo
-                );
-
-            };
-
-
-        comprobar();
-
-    },
-
-
-    /*====================================================
       obtener datos
     ====================================================*/
 
-    obtenerDatos: function(){
+    obtenerDatos: function() {
 
-        if(
-            this.inicializado &&
-            Array.isArray(
-                this.datos
-            )
-        ){
+        if (
+            window.LEEPALJSON &&
+            typeof
+            window.LEEPALJSON.obtener
+            === "function"
+        ) {
 
-            return this.datos;
-
-        }
-
-
-        const datos =
-            this.obtenerDatosBase();
+            const datos =
+                window.LEEPALJSON.obtener();
 
 
-        if(
-            Array.isArray(datos) &&
-            datos.length
-        ){
+            if (Array.isArray(datos)) {
 
-            this.datos =
-                datos;
+                this.datos =
+                    datos;
 
-            this.inicializado =
-                true;
-
-            return this.datos;
+            }
 
         }
 
-
-        return [];
-
-    },
-
-
-    /*====================================================
-      actualizar
-    ====================================================*/
-
-    actualizar: function(){
-
-        const datos =
-            this.obtenerDatosBase();
-
-
-        if(
-            !Array.isArray(datos) ||
-            !datos.length
-        ){
-
-            return [];
-
-        }
-
-
-        this.datos =
-            datos;
-
-        this.inicializado =
-            true;
 
         return this.datos;
-
-    },
-
-
-    /*====================================================
-      limpiar caché
-    ====================================================*/
-
-    limpiar: function(){
-
-        this.datos =
-            [];
-
-        this.inicializado =
-            false;
-
-        this.esperando =
-            false;
-
-        this.intentos =
-            0;
-
-    },
-
-
-    /*====================================================
-      cantidad
-    ====================================================*/
-
-    cantidad: function(){
-
-        return this.obtenerDatos().length;
 
     }
 
@@ -916,12 +949,12 @@ window.cab15 = {
 
 
 /*========================================================
-ARRANQUE NO BLOQUEANTE
+ARRANQUE
 ========================================================*/
 
 document.addEventListener(
     "DOMContentLoaded",
-    function(){
+    function() {
 
         window.cab15.inicializar();
 
@@ -931,6 +964,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab15.js v1.2
+FIN cab15.js v1.3
 ========================================================
 */
