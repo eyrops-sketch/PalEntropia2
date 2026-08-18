@@ -393,10 +393,12 @@
 
 
 /* =====================================================
-   CONTROLES DE BÚSQUEDA
+   NUEVOS CONTROLES DE BÚSQUEDA
    ===================================================== */
 
 #controlesBusqueda {
+
+    width:100%;
 
     display:flex;
 
@@ -404,84 +406,105 @@
 
     align-items:center;
 
-    gap:8px;
+    gap:12px;
 
-    flex-wrap:nowrap;
-
-}
-
-
-/*
-   Botón de búsqueda actual.
-   Se mantiene aquí para no romper
-   el HTML existente mientras se termina
-   la nueva interfaz.
-*/
-
-#controlesBusqueda #botonBuscar {
-
-    min-height:38px;
-
-    padding:7px 12px;
-
-    font-size:14px;
-
-    border-radius:8px;
+    margin:10px auto;
 
 }
 
 
-/*
-   Botón del buscador nuevo.
-*/
+/* =====================================================
+   BOTONES CIRCULARES
+   ===================================================== */
 
-#botonBuscarNuevo {
+.botonBusquedaCircular {
 
-    min-height:38px;
+    width:36px;
 
-    padding:7px 12px;
+    height:36px;
 
-    background:#1d9bf0;
+    min-width:36px;
 
-    color:#fff;
+    padding:0;
 
     border:none;
 
-    border-radius:8px;
+    border-radius:50%;
 
-    font-size:14px;
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:16px;
 
     font-weight:bold;
 
     cursor:pointer;
 
-    display:flex;
+    background:#1d9bf0;
 
-    align-items:center;
+    color:#fff;
 
-    justify-content:center;
+    box-shadow:
+        0 0 8px rgba(98,214,255,.18);
 
     transition:
-        background .25s,
-        transform .15s,
-        box-shadow .25s;
+        background .20s ease,
+        transform .15s ease,
+        box-shadow .20s ease;
 
 }
 
 
-#botonBuscarNuevo:hover {
+.botonBusquedaCircular:hover {
 
     background:#62d6ff;
 
     box-shadow:
-        0 0 14px rgba(98,214,255,.28);
+        0 0 14px rgba(98,214,255,.30);
 
 }
 
 
-#botonBuscarNuevo:active {
+.botonBusquedaCircular:active {
 
-    transform:scale(.97);
+    transform:scale(.90);
+
+}
+
+
+/* =====================================================
+   BOTÓN LIMPIAR FILTROS
+   ===================================================== */
+
+#botonLimpiarFiltros {
+
+    font-size:20px;
+
+}
+
+
+/* =====================================================
+   LABEL CENTRAL
+   ===================================================== */
+
+#labelBusqueda {
+
+    min-width:0;
+
+    padding:6px 12px;
+
+    text-align:center;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#aaa;
+
+    white-space:nowrap;
 
 }
 
@@ -494,19 +517,36 @@
 
     #controlesBusqueda {
 
-        gap:6px;
+        gap:8px;
 
     }
 
 
-    #controlesBusqueda #botonBuscar,
-    #botonBuscarNuevo {
+    .botonBusquedaCircular {
 
-        min-height:36px;
+        width:34px;
 
-        padding:7px 9px;
+        height:34px;
+
+        min-width:34px;
+
+        font-size:15px;
+
+    }
+
+
+    #botonLimpiarFiltros {
+
+        font-size:19px;
+
+    }
+
+
+    #labelBusqueda {
 
         font-size:13px;
+
+        padding:5px 8px;
 
     }
 
@@ -593,24 +633,41 @@
 </header>
 
 
+<!-- =====================================================
+     CONTROLES DE BÚSQUEDA
+     ===================================================== -->
+
 <section id="controlesBusqueda">
-
-    <button id="botonBuscar"
-            type="button">
-
-        🔎 Explorar
-
-    </button>
 
 
     <button id="botonBuscarNuevo"
+            class="botonBusquedaCircular"
             type="button"
-            title="Buscador modular"
-            aria-label="Abrir buscador modular">
+            title="Búsqueda avanzada"
+            aria-label="Abrir búsqueda avanzada">
 
-        🔍 Nuevo
+        🔍
 
     </button>
+
+
+    <span id="labelBusqueda">
+
+        Búsqueda avanzada
+
+    </span>
+
+
+    <button id="botonLimpiarFiltros"
+            class="botonBusquedaCircular"
+            type="button"
+            title="Mostrar todos los registros"
+            aria-label="Mostrar todos los registros">
+
+        ×
+
+    </button>
+
 
 </section>
 
@@ -885,7 +942,7 @@
 
 
         <h2>
-            Buscador modular
+            Búsqueda avanzada
         </h2>
 
 
@@ -921,6 +978,7 @@
     </div>
 
 </div>
+
 
 <!-- =====================================================
      ALMACÉN MAESTRO
@@ -1053,104 +1111,6 @@ async function(j1) {
 
 </script>
 
-
-<!-- =====================================================
-     MÓDULOS BASE
-     ===================================================== -->
-
-<script src="leepaljson.js"></script>
-
-<script src="palvideo.js"></script>
-
-<script src="buscaruta.js"></script>
-
-<script src="cargacont.js"></script>
-
-<script src="palbuscador.js"></script>
-
-<script src="palbuscadornuevo.js"></script>
-
-<script src="palnavegador.js"></script>
-
-<script src="palgeo.js"></script>
-
-<script src="palgeosimplificado.js"></script>
-
-<script src="leepalgeo.js"></script>
-
-<script src="palcabecera.js"></script>
-
-
-<!-- =====================================================
-     TAXONOMÍA
-     ===================================================== -->
-
-<script src="paltaxon.js"></script>
-
-
-<!-- =====================================================
-     CONTENEDOR GEOLOGÍA
-     ===================================================== -->
-
-<script src="cont07.js"></script>
-
-
-<!-- =====================================================
-     GENERADOR 1.1
-     ===================================================== -->
-
-<script src="cab01.js"></script>
-
-<script src="cab02.js"></script>
-
-<script src="cab03.js"></script>
-
-<script src="cab04.js"></script>
-
-<script src="cab05.js"></script>
-
-<script src="cab06.js"></script>
-
-<script src="cab07.js"></script>
-
-<script src="cab08.js"></script>
-
-<script src="cab09.js"></script>
-
-
-<!-- =====================================================
-     ECOLOGÍA
-     ===================================================== -->
-
-<script src="palmodo.js"></script>
-
-<script src="cab12.js"></script>
-
-<script src="palmedio.js"></script>
-
-<script src="cab13.js"></script>
-
-<script src="palhab.js"></script>
-
-<script src="palhabdecoder.js"></script>
-
-<script src="cab14.js"></script>
-
-
-<!-- =====================================================
-     BUSCADOR NUEVO
-     ===================================================== -->
-
-<script src="cab15.js"></script>
-
-
-<!-- =====================================================
-     ESTADÍSTICAS
-     ===================================================== -->
-
-<script src="cab10.js"></script>
-
-
 <!-- =====================================================
      ARRANQUE DEL GENERADOR
      ===================================================== -->
@@ -1164,28 +1124,28 @@ document.addEventListener(
         try {
 
             /* =============================================
-               CAB15
-               Motor de datos del buscador universal.
-
-               Se inicializa de forma no bloqueante.
-               No esperamos a que termine para arrancar
-               el generador.
+               BUSCADOR NUEVO
                ============================================= */
 
+            /*
+             * cab15 NO abre el buscador.
+             * cab15 solamente proporciona la caché de datos.
+             *
+             * La apertura sigue correspondiendo a
+             * PALBUSCADORNUEVO.
+             */
+
             if (
-                window.cab15 &&
-                typeof window.cab15.inicializar ===
-                "function"
+                window.PALBUSCADORNUEVO &&
+                typeof
+                window.PALBUSCADORNUEVO.inicializar
+                === "function"
             ) {
 
-                window.cab15.inicializar();
+                window.PALBUSCADORNUEVO.inicializar();
 
             }
 
-
-            /* =============================================
-               BUSCADOR NUEVO
-               ============================================= */
 
             const botonNuevo =
                 document.getElementById(
@@ -1200,22 +1160,25 @@ document.addEventListener(
 
 
             /* ---------------------------------------------
-               ABRIR BUSCADOR NUEVO
+               ABRIR BÚSQUEDA AVANZADA
                --------------------------------------------- */
 
-            if (
-                botonNuevo &&
-                window.palbuscadornuevo &&
-                typeof
-                window.palbuscadornuevo.abrir ===
-                "function"
-            ) {
+            if (botonNuevo) {
 
                 botonNuevo.addEventListener(
                     "click",
                     function() {
 
-                        window.palbuscadornuevo.abrir();
+                        if (
+                            window.PALBUSCADORNUEVO &&
+                            typeof
+                            window.PALBUSCADORNUEVO.abrir
+                            === "function"
+                        ) {
+
+                            window.PALBUSCADORNUEVO.abrir();
+
+                        }
 
                     }
                 );
@@ -1224,22 +1187,99 @@ document.addEventListener(
 
 
             /* ---------------------------------------------
-               CERRAR BUSCADOR NUEVO
+               CERRAR BÚSQUEDA AVANZADA
                --------------------------------------------- */
 
-            if (
-                cerrarNuevo &&
-                window.palbuscadornuevo &&
-                typeof
-                window.palbuscadornuevo.cerrar ===
-                "function"
-            ) {
+            if (cerrarNuevo) {
 
                 cerrarNuevo.addEventListener(
                     "click",
                     function() {
 
-                        window.palbuscadornuevo.cerrar();
+                        if (
+                            window.PALBUSCADORNUEVO &&
+                            typeof
+                            window.PALBUSCADORNUEVO.cerrar
+                            === "function"
+                        ) {
+
+                            window.PALBUSCADORNUEVO.cerrar();
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+            /* =============================================
+               LIMPIAR FILTROS
+               ============================================= */
+
+            const botonLimpiar =
+                document.getElementById(
+                    "botonBuscar"
+                );
+
+
+            if (botonLimpiar) {
+
+                botonLimpiar.addEventListener(
+                    "click",
+                    function() {
+
+                        const campo =
+                            document.getElementById(
+                                "buscarNuevo"
+                            );
+
+
+                        const resultados =
+                            document.getElementById(
+                                "resultadosNuevo"
+                            );
+
+
+                        const label =
+                            document.getElementById(
+                                "labelResultadosNuevo"
+                            );
+
+
+                        const check =
+                            document.getElementById(
+                                "checkRango"
+                            );
+
+
+                        if (campo) {
+
+                            campo.value = "";
+
+                        }
+
+
+                        if (check) {
+
+                            check.checked = false;
+
+                        }
+
+
+                        if (resultados) {
+
+                            resultados.innerHTML = "";
+
+                        }
+
+
+                        if (label) {
+
+                            label.textContent =
+                                "Introduce al menos 3 caracteres";
+
+                        }
 
                     }
                 );
