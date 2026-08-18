@@ -203,8 +203,8 @@ IMAGEN PRINCIPAL
 
 #imagenPrincipal{
     display:block;
-    width:78%;
-    max-width:540px;
+    width:auto;
+    max-width:78%;
     max-height:620px;
     object-fit:contain;
     margin:0 auto 20px;
@@ -487,12 +487,6 @@ RESULTADOS DEL BUSCADOR
     gap:9px;
     margin-top:5px;
 }
-
-
-/*
-   El HTML actual utiliza .resultadoBuscador.
-   Se mantiene ese nombre para no tocar la lógica JS.
-*/
 
 .resultadoBuscador{
     width:100%;
