@@ -1031,12 +1031,12 @@ document.addEventListener(
                         ],
 
                         [
-                            "Movilidad",
+                            "Indicador movilidad",
                             indicadores.movilidad
                         ],
 
                         [
-                            "Reproducción",
+                            "Indicador reproductor",
                             indicadores.reproduccion
                         ]
 
