@@ -259,7 +259,7 @@
 
 
 /* =====================================================
-   label RESULTADOS BUSCADOR NUEVO
+   LABEL RESULTADOS BUSCADOR NUEVO
    ===================================================== */
 
 #labelResultadosNuevo {
@@ -282,7 +282,7 @@
 
 
 /* =====================================================
-   check rango
+   CHECK RANGO
    ===================================================== */
 
 #checkRangoNuevo {
@@ -393,7 +393,7 @@
 
 
 /* =====================================================
-   BOTONES BUSQUEDA SUPERIOR
+   BOTONES DE BÚSQUEDA SUPERIOR
    ===================================================== */
 
 #controlesBusqueda {
@@ -411,11 +411,6 @@
 }
 
 
-/*
-   Botón antiguo reducido aproximadamente
-   a la mitad de su tamaño actual.
-*/
-
 #controlesBusqueda #botonBuscar {
 
     min-height:38px;
@@ -428,10 +423,6 @@
 
 }
 
-
-/*
-   Nuevo botón paralelo.
-*/
 
 #botonBuscarNuevo {
 
@@ -791,7 +782,6 @@
 
 </main>
 
-
 <!-- =====================================================
      LIGHTBOX DE IMÁGENES
      ===================================================== -->
@@ -858,6 +848,7 @@
     </div>
 
 </div>
+
 
 <!-- =====================================================
      NUEVO BUSCADOR MODULAR
@@ -1115,6 +1106,11 @@ async function(j1) {
 
 <script src="cab09.js"></script>
 
+
+<!-- =====================================================
+     ECOLOGÍA
+     ===================================================== -->
+
 <script src="palmodo.js"></script>
 
 <script src="cab12.js"></script>
@@ -1129,11 +1125,23 @@ async function(j1) {
 
 <script src="cab14.js"></script>
 
+
+<!-- =====================================================
+     BUSCADOR NUEVO
+     ===================================================== -->
+
+<script src="cab15.js"></script>
+
+
+<!-- =====================================================
+     ESTADÍSTICAS
+     ===================================================== -->
+
 <script src="cab10.js"></script>
 
 
 <!-- =====================================================
-     ARRANQUE
+     ARRANQUE DEL GENERADOR
      ===================================================== -->
 
 <script>
@@ -1143,70 +1151,6 @@ document.addEventListener(
     async function() {
 
         try {
-
-            /*
-            -----------------------------------------------
-            BUSCADOR NUEVO
-            -----------------------------------------------
-            */
-
-            if (
-                window.PALBUSCADORNUEVO &&
-                typeof
-                window.PALBUSCADORNUEVO.inicializar
-                === "function"
-            ) {
-
-                window.PALBUSCADORNUEVO.inicializar();
-
-            }
-
-
-            const botonNuevo =
-                document.getElementById(
-                    "botonBuscarNuevo"
-                );
-
-
-            if (botonNuevo) {
-
-                botonNuevo.addEventListener(
-                    "click",
-                    function() {
-
-                        window.PALBUSCADORNUEVO.abrir();
-
-                    }
-                );
-
-            }
-
-
-            const cerrarNuevo =
-                document.getElementById(
-                    "cerrarBuscadorNuevo"
-                );
-
-
-            if (cerrarNuevo) {
-
-                cerrarNuevo.addEventListener(
-                    "click",
-                    function() {
-
-                        window.PALBUSCADORNUEVO.cerrar();
-
-                    }
-                );
-
-            }
-
-
-            /*
-            -----------------------------------------------
-            GENERADOR ORIGINAL
-            -----------------------------------------------
-            */
 
             await window.PALNAVEGADOR.inicializar();
 
@@ -1254,4 +1198,3 @@ document.addEventListener(
 </body>
 
 </html>
-
