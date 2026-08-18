@@ -1139,7 +1139,6 @@ async function(j1) {
 
 <script src="cab10.js"></script>
 
-
 <!-- =====================================================
      ARRANQUE DEL GENERADOR
      ===================================================== -->
@@ -1151,6 +1150,68 @@ document.addEventListener(
     async function() {
 
         try {
+
+            /* =============================================
+               BUSCADOR NUEVO
+               ============================================= */
+
+            const botonNuevo =
+                document.getElementById(
+                    "botonBuscarNuevo"
+                );
+
+
+            const cerrarNuevo =
+                document.getElementById(
+                    "cerrarBuscadorNuevo"
+                );
+
+
+            /* ---------------------------------------------
+               ABRIR BUSCADOR NUEVO
+               --------------------------------------------- */
+
+            if (
+                botonNuevo &&
+                window.palbuscadornuevo
+            ) {
+
+                botonNuevo.addEventListener(
+                    "click",
+                    function() {
+
+                        window.palbuscadornuevo.abrir();
+
+                    }
+                );
+
+            }
+
+
+            /* ---------------------------------------------
+               CERRAR BUSCADOR NUEVO
+               --------------------------------------------- */
+
+            if (
+                cerrarNuevo &&
+                window.palbuscadornuevo
+            ) {
+
+                cerrarNuevo.addEventListener(
+                    "click",
+                    function() {
+
+                        window.palbuscadornuevo.cerrar();
+
+                    }
+                );
+
+            }
+
+
+            /* =============================================
+               GENERADOR ORIGINAL
+               ============================================= */
 
             await window.PALNAVEGADOR.inicializar();
 
@@ -1198,3 +1259,9 @@ document.addEventListener(
 </body>
 
 </html>
+
+
+
+
+
+      
