@@ -1,457 +1,301 @@
-<!DOCTYPE html><html lang="es">
-<head><meta charset="UTF-8"><meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="es">
 
-<title>PalEntropía — Test Generador Aleatorio</title><style>
+<head>
 
-    body {
-        margin: 0;
-        padding: 20px;
-        background: #111;
-        color: #eee;
-        font-family: Arial, sans-serif;
-    }
+<meta charset="utf-8">
 
-    h1 {
-        margin-top: 0;
-    }
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    #estado {
-        padding: 12px;
-        margin-bottom: 20px;
-        border-radius: 6px;
-        background: #222;
-    }
+<title>PalEntropía — Generador de Paleofichas</title>
 
-    .ok {
-        color: #7CFF7C;
-    }
+<meta name="description"
+      content="Explora las Paleofichas de PalEntropía. Consulta información sobre especies, cronología geológica, taxonomía, ecología y estadísticas.">
 
-    .error {
-        color: #FF7777;
-    }
+<link rel="stylesheet"
+      href="style_1_1.css">
 
-    .ficha {
-        max-width: 900px;
-        margin: auto;
-        padding: 20px;
-        background: #181818;
-        border-radius: 10px;
-    }
 
-    .datos {
-        margin-bottom: 20px;
-        line-height: 1.6;
-    }
-
-    .imagenes {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-    }
-
-    .imagen {
-        background: #222;
-        padding: 10px;
-        border-radius: 8px;
-    }
-
-    .imagen img {
-        display: block;
-        width: 100%;
-        height: 220px;
-        object-fit: contain;
-        background: #000;
-        border-radius: 5px;
-    }
-
-    .imagen p {
-        font-size: 13px;
-        word-break: break-all;
-    }
-
-    @media (max-width: 700px) {
-
-        .imagenes {
-            grid-template-columns: 1fr;
-        }
-
-    }
-
-</style></head><body><div class="ficha"><h1>PalEntropía — Test Generador Aleatorio</h1>
-
-<div id="estado">
-    Cargando contenedor...
-</div>
-
-
-<div id="contenido" style="display:none;">
-
-    <div class="datos">
-
-        <div>
-            <strong>j1:</strong>
-            <span id="j1"></span>
-        </div>
-
-        <div>
-            <strong>j2:</strong>
-            <span id="j2"></span>
-        </div>
-
-        <div>
-            <strong>j7:</strong>
-            <span id="j7"></span>
-        </div>
-
-        <div>
-            <strong>j8:</strong>
-            <span id="j8"></span>
-        </div>
-
-    </div>
-
-
-    <h2>Imágenes</h2>
-
-    <div class="imagenes">
-
-        <div class="imagen">
-
-            <strong>i0</strong>
-
-            <img id="imagen_i0"
-                 alt="Imagen i0">
-
-            <p id="ruta_i0"></p>
-
-        </div>
-
-
-        <div class="imagen">
-
-            <strong>i2</strong>
-
-            <img id="imagen_i2"
-                 alt="Imagen i2">
-
-            <p id="ruta_i2"></p>
-
-        </div>
-
-
-        <div class="imagen">
-
-            <strong>i3</strong>
-
-            <img id="imagen_i3"
-                 alt="Imagen i3">
-
-            <p id="ruta_i3"></p>
-
-        </div>
-
-    </div>
-
-</div>
-
-</div><!-- =====================================================
-     MÓDULOS DEL CONTENEDOR
-===================================================== --><script src="leepaljson.js"></script><script src="buscaruta.js"></script><script src="cargacont.js"></script><!-- =====================================================
-     TEST DEL GENERADOR
-===================================================== --><script>
-
-document.addEventListener(
-    "palentropia:contenedor-cargado",
-    function(evento) {
-
-        try {
-
-            const ficha =
-                evento.detail;
-
-
-            if(!ficha) {
-
-                throw new Error(
-                    "CARGACONT no entregó ningún registro."
-                );
-
-            }
-
-
-            /* =========================================
-               DATOS FINALES
-            ========================================= */
-
-            document.getElementById("j1")
-                .textContent =
-                ficha.j1 || "";
-
-            document.getElementById("j2")
-                .textContent =
-                ficha.j2 || "";
-
-            document.getElementById("j7")
-                .textContent =
-                ficha.j7 || "";
-
-            document.getElementById("j8")
-                .textContent =
-                ficha.j8 || "";
-
-
-            /* =========================================
-               IMÁGENES
-            ========================================= */
-
-            cargarImagen(
-                "imagen_i0",
-                "ruta_i0",
-                ficha.i0
-            );
-
-            cargarImagen(
-                "imagen_i2",
-                "ruta_i2",
-                ficha.i2
-            );
-
-            cargarImagen(
-                "imagen_i3",
-                "ruta_i3",
-                ficha.i3
-            );
-
-
-            /* =========================================
-               MOSTRAR RESULTADO
-            ========================================= */
-
-            document.getElementById(
-                "contenido"
-            ).style.display = "block";
-
-
-            document.getElementById(
-                "estado"
-            ).innerHTML =
-                '<span class="ok">' +
-                "✓ CONTENEDOR ALEATORIO RECIBIDO — FICHA " +
-                ficha.j1 +
-                " CARGADA" +
-                "</span>";
-
-
-            console.log(
-                "========================================"
-            );
-
-            console.log(
-                "PalEntropía — TEST GENERADOR ALEATORIO"
-            );
-
-            console.log(
-                "Registro final recibido:"
-            );
-
-            console.log(
-                ficha
-            );
-
-            console.log(
-                "========================================"
-            );
-
-        }
-
-
-        catch(error) {
-
-            mostrarError(error);
-
-        }
-
-    }
-);
-
+<style>
 
 /* =====================================================
-   FUNCIÓN CARGAR IMAGEN
-===================================================== */
+   PÁGINA DE ENTRADA AL GENERADOR
+   ===================================================== */
 
-function cargarImagen(
-    idImagen,
-    idRuta,
-    ruta
-) {
+#entradaGenerador {
 
-    const imagen =
-        document.getElementById(
-            idImagen
-        );
+    max-width: 760px;
 
-    const textoRuta =
-        document.getElementById(
-            idRuta
-        );
+    margin: 70px auto 40px;
 
+    padding: 30px 20px;
 
-    if(!ruta) {
-
-        imagen.style.display =
-            "none";
-
-        textoRuta.innerHTML =
-            "<strong>Sin imagen</strong>";
-
-        return;
-
-    }
-
-
-    textoRuta.textContent =
-        ruta;
-
-
-    imagen.src =
-        ruta;
-
-
-    imagen.onload =
-        function() {
-
-            textoRuta.innerHTML =
-                ruta +
-                "<br><strong>✓ Imagen encontrada</strong>";
-
-        };
-
-
-    imagen.onerror =
-        function() {
-
-            textoRuta.innerHTML =
-                ruta +
-                "<br><strong>✗ Imagen no encontrada</strong>";
-
-            imagen.style.display =
-                "none";
-
-        };
+    text-align: center;
 
 }
 
 
 /* =====================================================
-   ERROR DEL CONTENEDOR
-===================================================== */
+   CABECERA
+   ===================================================== */
 
-document.addEventListener(
-    "palentropia:error-carga",
-    function(evento) {
+#entradaGenerador h1 {
 
-        mostrarError(
-            evento.detail
-        );
+    margin: 0 0 10px;
 
-    }
-);
+}
 
 
-/* =====================================================
-   MOSTRAR ERROR
-===================================================== */
+#subtitulo {
 
-function mostrarError(error) {
+    margin-bottom: 30px;
 
-    console.error(
-        "ERROR TEST GENERADOR:",
-        error
-    );
-
-
-    document.getElementById(
-        "estado"
-    ).innerHTML =
-        '<span class="error">' +
-        "✗ ERROR: " +
-        (
-            error.message ||
-            error
-        ) +
-        "</span>";
+    font-size: 18px;
 
 }
 
 
 /* =====================================================
-   INICIAR PRUEBA ALEATORIA
-===================================================== */
+   TEXTO INTRODUCTORIO
+   ===================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async function() {
+#entradaGenerador p {
 
-        try {
+    max-width: 620px;
 
-            /* -----------------------------------------
-               COMPROBAR LEEPALJSON
-            ----------------------------------------- */
+    margin: 0 auto 28px;
 
-            if(
-                !window.LEEPALJSON
-            ) {
+    line-height: 1.6;
 
-                throw new Error(
-                    "LEEPALJSON no está disponible."
-                );
-
-            }
+}
 
 
-            /* -----------------------------------------
-               COMPROBAR CARGACONT
-            ----------------------------------------- */
+/* =====================================================
+   ENLACE PRINCIPAL
+   ===================================================== */
 
-            if(
-                !window.CARGACONT
-            ) {
+#enlaceGenerador {
 
-                throw new Error(
-                    "CARGACONT no está disponible."
-                );
+    display: inline-flex;
 
-            }
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 14px 24px;
+
+    border-radius: 24px;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    font-size: 16px;
+
+}
 
 
-            /* -----------------------------------------
-               PRIMERO:
+/* =====================================================
+   INFORMACIÓN DEL GENERADOR
+   ===================================================== */
 
-               Cargar master.csv
-            ----------------------------------------- */
+#informacionGenerador {
 
-            await window.LEEPALJSON.cargar();
+    max-width: 620px;
+
+    margin: 45px auto 0;
+
+    text-align: left;
+
+}
 
 
-            /* -----------------------------------------
-               SEGUNDO:
+#informacionGenerador h2 {
 
-               Cargar una ficha ALEATORIA
-            ----------------------------------------- */
+    text-align: center;
 
-            await window.CARGACONT.aleatorio();
+    margin-bottom: 20px;
 
-        }
+}
 
-        catch(error) {
 
-            mostrarError(error);
+#informacionGenerador ul {
 
-        }
+    line-height: 1.8;
 
-    }
-);
+    padding-left: 24px;
 
-</script></body>
+}
+
+
+/* =====================================================
+   BOTÓN MENÚ PRINCIPAL
+   ===================================================== */
+
+#botonMenuPrincipal {
+
+    position: fixed;
+
+    top: 12px;
+
+    right: 12px;
+
+    z-index: 20;
+
+}
+
+
+/* =====================================================
+   PIE
+   ===================================================== */
+
+#pieGenerador {
+
+    margin: 45px auto 20px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    opacity: 0.7;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     MENÚ PRINCIPAL
+     ===================================================== -->
+
+<a id="botonMenuPrincipal"
+   class="botonCircularSuperior"
+   href="https://palentropia.es/"
+   title="volver al menú principal"
+   aria-label="volver al menú principal">
+
+    🏠
+
+</a>
+
+
+<!-- =====================================================
+     CONTENIDO PRINCIPAL
+     ===================================================== -->
+
+<main id="entradaGenerador">
+
+
+    <header>
+
+        <h1>
+            PalEntropía
+        </h1>
+
+
+        <div id="subtitulo">
+
+            Generador de Paleofichas
+
+        </div>
+
+    </header>
+
+
+    <p>
+
+        Explora las Paleofichas de PalEntropía y descubre
+        información sobre especies, cronología geológica,
+        taxonomía, ecología y estadísticas.
+
+    </p>
+
+
+    <!-- =================================================
+         ENLACE AL GENERADOR REAL
+         ================================================= -->
+
+    <a id="enlaceGenerador"
+       href="https://palentropia.es/herramientas/generador_1_2/generador_1_2.html">
+
+        🔎 entrar al generador de paleofichas
+
+    </a>
+
+
+    <!-- =================================================
+         INFORMACIÓN
+         ================================================= -->
+
+    <section id="informacionGenerador">
+
+
+        <h2>
+            Explora las Paleofichas
+        </h2>
+
+
+        <p>
+
+            El Generador de Paleofichas permite consultar
+            diferentes especies del registro paleontológico
+            y acceder a su información organizada.
+
+        </p>
+
+
+        <ul>
+
+            <li>
+                información básica de cada especie
+            </li>
+
+            <li>
+                cronología y tiempo geológico
+            </li>
+
+            <li>
+                clasificación taxonómica
+            </li>
+
+            <li>
+                modo de vida y medio ecológico
+            </li>
+
+            <li>
+                hábitat
+            </li>
+
+            <li>
+                estadísticas paleobiológicas
+            </li>
+
+        </ul>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- =====================================================
+     PIE
+     ===================================================== -->
+
+<footer id="pieGenerador">
+
+    PalEntropía · Generador de Paleofichas
+
+</footer>
+
+
+</body>
+
 </html>
