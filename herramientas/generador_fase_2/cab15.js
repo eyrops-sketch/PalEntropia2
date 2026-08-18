@@ -1,6 +1,6 @@
 /*
 ========================================================
-cab15.js v1.1
+cab15.js v1.2
 motor de datos del buscador universal
 palentropía — generador
 
@@ -11,6 +11,7 @@ objetivo:
 - no realizar cargas adicionales
 - esperar a que leepaljson tenga datos
 - proporcionar datos al buscador nuevo
+- limpiar filtros y restaurar todos los registros
 
 no modifica:
 - cargacont
@@ -22,7 +23,7 @@ no modifica:
 window.cab15 = {
 
     /*====================================================
-      estado
+      ESTADO
     ====================================================*/
 
     datos: [],
@@ -39,7 +40,7 @@ window.cab15 = {
 
 
     /*====================================================
-      inicializar
+      INICIALIZAR
     ====================================================*/
 
     inicializar: function(){
@@ -70,7 +71,7 @@ window.cab15 = {
                 false;
 
             console.log(
-                "cab15 v1.1:",
+                "cab15 v1.2:",
                 this.datos.length,
                 "registros en caché."
             );
@@ -89,7 +90,7 @@ window.cab15 = {
 
 
     /*====================================================
-      obtener datos base
+      OBTENER DATOS BASE
     ====================================================*/
 
     obtenerDatosBase: function(){
@@ -124,7 +125,7 @@ window.cab15 = {
 
 
     /*====================================================
-      esperar datos
+      ESPERAR DATOS
     ====================================================*/
 
     esperarDatos: function(){
@@ -165,7 +166,7 @@ window.cab15 = {
                         false;
 
                     console.log(
-                        "cab15 v1.1:",
+                        "cab15 v1.2:",
                         this.datos.length,
                         "registros preparados."
                     );
@@ -209,7 +210,7 @@ window.cab15 = {
 
 
     /*====================================================
-      obtener datos
+      OBTENER DATOS
     ====================================================*/
 
     obtenerDatos: function(){
@@ -250,7 +251,7 @@ window.cab15 = {
 
 
     /*====================================================
-      actualizar
+      ACTUALIZAR
     ====================================================*/
 
     actualizar: function(){
@@ -281,28 +282,113 @@ window.cab15 = {
 
 
     /*====================================================
-      limpiar
-    ====================================================*/
+      LIMPIAR FILTROS
+      -----------------------------------------------
+      Restaura todos los registros originales.
+      
+      No realiza ninguna carga.
+      No modifica leepaljson.
+      No modifica cargacont.
+      ====================================================*/
 
-    limpiar: function(){
+    limpiarFiltros: function(){
+
+        const datos =
+            this.obtenerDatosBase();
+
+
+        if(
+            !Array.isArray(datos)
+        ){
+
+            return [];
+
+        }
+
 
         this.datos =
-            [];
+            datos;
 
         this.inicializado =
-            false;
+            true;
 
-        this.esperando =
-            false;
 
-        this.intentos =
-            0;
+        /*
+        Si el buscador nuevo está abierto,
+        limpiamos también su interfaz.
+        */
+
+        if(
+            window.palbuscadornuevo
+        ){
+
+            if(
+                typeof
+                window.palbuscadornuevo.limpiar
+                === "function"
+            ){
+
+                window.palbuscadornuevo.limpiar();
+
+            }
+
+
+            if(
+                typeof
+                window.palbuscadornuevo.actualizarLabel
+                === "function"
+            ){
+
+                window.palbuscadornuevo.actualizarLabel(
+                    "Búsqueda avanzada"
+                );
+
+            }
+
+
+            const entrada =
+                document.getElementById(
+                    "buscarNuevo"
+                );
+
+
+            if(entrada){
+
+                entrada.value = "";
+
+            }
+
+
+            const check =
+                document.getElementById(
+                    "checkRango"
+                );
+
+
+            if(check){
+
+                check.checked =
+                    false;
+
+            }
+
+        }
+
+
+        console.log(
+            "cab15: filtros limpiados.",
+            this.datos.length,
+            "registros disponibles."
+        );
+
+
+        return this.datos;
 
     },
 
 
     /*====================================================
-      cantidad
+      CANTIDAD
     ====================================================*/
 
     cantidad: function(){
@@ -323,7 +409,7 @@ document.addEventListener(
     function(){
 
         /*
-        no hacemos ninguna carga.
+        No hacemos ninguna carga.
 
         cab15 solamente intenta reutilizar
         los datos que leepaljson ya tenga.
