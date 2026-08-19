@@ -15,21 +15,15 @@ CAMBIOS v1.5
 - Cada resultado ocupa una fila completa.
 - La fila completa es seleccionable.
 - Al seleccionar un código:
-    1. se cierra el buscador;
-    2. se carga inmediatamente la paleoficha;
-    3. se actualiza el label principal.
-- Si se cierra el buscador sin seleccionar resultado:
-    el label principal toma el contenido de la caja
-    de búsqueda.
-- El label no cambia mientras se escribe.
-- No modifica CAB15.
-
-EJEMPLOS:
----------
-001     → códigos 001_xx
-006     → 006_01, 006_02
-003_10  → 003_10
-000     → 0 resultados
+    1. se escribe en la caja;
+    2. se guarda como última consulta;
+    3. se actualiza el label principal;
+    4. se cierra el buscador;
+    5. se carga inmediatamente la paleoficha.
+- Si se cierra sin seleccionar resultado:
+    se conserva la última consulta escrita.
+- La última consulta permanece hasta una nueva consulta.
+- CAB15 permanece independiente.
 
 NO MODIFICA:
 - cab15
@@ -53,6 +47,16 @@ window.cab16 = {
     datos: [],
 
     buscarTodos: false,
+
+    /*
+    Última consulta realizada en CAB16.
+
+    Puede ser:
+    - texto escrito en la caja
+    - código seleccionado
+    */
+
+    ultimaConsulta: "",
 
 
     /*====================================================
@@ -339,6 +343,30 @@ window.cab16 = {
         campo.addEventListener(
             "input",
             () => {
+
+                /*
+                Guardamos únicamente el texto
+                introducido por el usuario.
+
+                Todavía no modificamos el label
+                principal.
+
+                El label cambiará al cerrar CAB16
+                o al seleccionar un resultado.
+                */
+
+                const texto =
+                    campo.value
+                        .trim();
+
+
+                if(texto){
+
+                    this.ultimaConsulta =
+                        texto;
+
+                }
+
 
                 this.ejecutarBusqueda();
 
@@ -697,6 +725,14 @@ window.cab16 = {
 
 
         /*----------------------------------------------
+          GUARDAR ÚLTIMA CONSULTA
+        ----------------------------------------------*/
+
+        this.ultimaConsulta =
+            codigo;
+
+
+        /*----------------------------------------------
           ESCRIBIR CÓDIGO EN EL CAMPO
         ----------------------------------------------*/
 
@@ -749,250 +785,310 @@ window.cab16 = {
 
     },
 
-
     /*====================================================
-      CERRAR BUSCADOR
-    ====================================================*/
+  CERRAR BUSCADOR
+====================================================*/
 
-    cerrarBuscador: function(){
+cerrarBuscador: function(){
 
-        /*
-        Si NO se ha seleccionado una fila,
-        el label principal recibe exactamente
-        el contenido actual de la caja de búsqueda.
+    /*
+    ----------------------------------------------------
+    GUARDAR LA ÚLTIMA CONSULTA
+    ----------------------------------------------------
 
-        Esto permite conservar la última consulta
-        aunque no se haya seleccionado ningún resultado.
-        */
+    Si el usuario escribió una consulta y no seleccionó
+    ningún resultado, también la conservamos.
 
-        const campo =
-            document.getElementById(
-                "buscarUniversal"
-            );
+    No modificamos CAB15.
+    No modificamos PALNAVEGADOR.
+    */
 
-
-        const labelPrincipal =
-            document.getElementById(
-                "labelBusquedaUniversal"
-            );
-
-
-        if(
-            campo &&
-            labelPrincipal &&
-            campo.value.trim()
-        ){
-
-            labelPrincipal.textContent =
-                campo.value.trim();
-
-        }
-
-
-        /*
-        Buscamos primero las funciones conocidas
-        del sistema actual.
-        */
-
-        if(
-            window.PALBUSCADOR
-        ){
-
-            if(
-                typeof window.PALBUSCADOR.cerrar ===
-                "function"
-            ){
-
-                window.PALBUSCADOR.cerrar();
-
-                return;
-
-            }
-
-
-            if(
-                typeof window.PALBUSCADOR.cerrarBusqueda ===
-                "function"
-            ){
-
-                window.PALBUSCADOR.cerrarBusqueda();
-
-                return;
-
-            }
-
-        }
-
-
-        /*
-        Respaldo visual:
-        buscar elementos habituales del lightbox.
-        */
-
-        const posibles = [
-
-            "lightboxBuscador",
-
-            "buscadorLightbox",
-
-            "lightboxBusqueda",
-
-            "modalBuscador"
-
-        ];
-
-
-        for(
-            const id of posibles
-        ){
-
-            const elemento =
-                document.getElementById(
-                    id
-                );
-
-
-            if(elemento){
-
-                elemento.style.display =
-                    "none";
-
-                elemento.classList.remove(
-                    "activo"
-                );
-
-                elemento.classList.remove(
-                    "visible"
-                );
-
-            }
-
-        }
-
-    },
-
-
-    /*====================================================
-      CARGAR PALEOFICHA
-    ====================================================*/
-
-    cargarPaleoficha: async function(
-        codigo
-    ){
-
-        /*
-        PALNAVEGADOR es el sistema responsable
-        de la navegación de las paleofichas.
-        */
-
-        if(
-            window.PALNAVEGADOR
-        ){
-
-            /*------------------------------------------
-              MÉTODO 1
-            ------------------------------------------*/
-
-            if(
-                typeof window.PALNAVEGADOR.cargar ===
-                "function"
-            ){
-
-                try{
-
-                    await window.PALNAVEGADOR.cargar(
-                        codigo
-                    );
-
-                    return;
-
-                }
-                catch(error){
-
-                    console.warn(
-                        "cab16: PALNAVEGADOR.cargar falló.",
-                        error
-                    );
-
-                }
-
-            }
-
-
-            /*------------------------------------------
-              MÉTODO 2
-            ------------------------------------------*/
-
-            if(
-                typeof window.PALNAVEGADOR.irA ===
-                "function"
-            ){
-
-                try{
-
-                    await window.PALNAVEGADOR.irA(
-                        codigo
-                    );
-
-                    return;
-
-                }
-                catch(error){
-
-                    console.warn(
-                        "cab16: PALNAVEGADOR.irA falló.",
-                        error
-                    );
-
-                }
-
-            }
-
-
-            /*------------------------------------------
-              MÉTODO 3
-            ------------------------------------------*/
-
-            if(
-                typeof window.PALNAVEGADOR.cargarPorCodigo ===
-                "function"
-            ){
-
-                try{
-
-                    await window.PALNAVEGADOR.cargarPorCodigo(
-                        codigo
-                    );
-
-                    return;
-
-                }
-                catch(error){
-
-                    console.warn(
-                        "cab16: PALNAVEGADOR.cargarPorCodigo falló.",
-                        error
-                    );
-
-                }
-
-            }
-
-        }
-
-
-        /*
-        Si no existe un método compatible,
-        no inventamos una ruta ni modificamos
-        otros módulos.
-        */
-
-        console.warn(
-            "cab16: no se encontró un método de carga compatible para",
-            codigo
+    const campo =
+        document.getElementById(
+            "buscarUniversal"
         );
 
+
+    if(campo){
+
+        const consulta =
+            campo.value
+                .trim();
+
+
+        if(consulta){
+
+            this.ultimaConsulta =
+                consulta;
+
+        }
+
     }
+
+
+    /*
+    ----------------------------------------------------
+    ACTUALIZAR LABEL PRINCIPAL
+    ----------------------------------------------------
+    */
+
+    const labelPrincipal =
+        document.getElementById(
+            "labelBusquedaUniversal"
+        );
+
+
+    if(
+        labelPrincipal &&
+        this.ultimaConsulta
+    ){
+
+        labelPrincipal.textContent =
+            this.ultimaConsulta;
+
+    }
+
+
+    /*
+    ----------------------------------------------------
+    CERRAR VISOR
+    ----------------------------------------------------
+    */
+
+    const visor =
+        document.getElementById(
+            "visorBuscadorUniversal"
+        );
+
+
+    if(visor){
+
+        visor.style.display =
+            "none";
+
+
+        visor.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        return true;
+
+    }
+
+
+    /*
+    ----------------------------------------------------
+    RESPALDO PARA EL BUSCADOR ANTIGUO
+    ----------------------------------------------------
+    */
+
+    if(
+        window.PALBUSCADOR
+    ){
+
+        if(
+            typeof window.PALBUSCADOR.cerrar ===
+            "function"
+        ){
+
+            window.PALBUSCADOR.cerrar();
+
+            return true;
+
+        }
+
+
+        if(
+            typeof window.PALBUSCADOR.cerrarBusqueda ===
+            "function"
+        ){
+
+            window.PALBUSCADOR.cerrarBusqueda();
+
+            return true;
+
+        }
+
+    }
+
+
+    /*
+    ----------------------------------------------------
+    RESPALDO VISUAL
+    ----------------------------------------------------
+    */
+
+    const posibles = [
+
+        "lightboxBuscador",
+
+        "buscadorLightbox",
+
+        "lightboxBusqueda",
+
+        "modalBuscador"
+
+    ];
+
+
+    for(
+        const id of posibles
+    ){
+
+        const elemento =
+            document.getElementById(
+                id
+            );
+
+
+        if(elemento){
+
+            elemento.style.display =
+                "none";
+
+
+            elemento.classList.remove(
+                "activo"
+            );
+
+
+            elemento.classList.remove(
+                "visible"
+            );
+
+        }
+
+    }
+
+
+    return true;
+
+},
+
+
+/*====================================================
+  CARGAR PALEOFICHA
+====================================================*/
+
+cargarPaleoficha: async function(
+    codigo
+){
+
+    /*
+    PALNAVEGADOR es el sistema responsable
+    de la navegación de las paleofichas.
+    */
+
+    if(
+        window.PALNAVEGADOR
+    ){
+
+        /*------------------------------------------
+          MÉTODO 1
+        ------------------------------------------*/
+
+        if(
+            typeof window.PALNAVEGADOR.cargar ===
+            "function"
+        ){
+
+            try{
+
+                await window.PALNAVEGADOR.cargar(
+                    codigo
+                );
+
+                return;
+
+            }
+            catch(error){
+
+                console.warn(
+                    "cab16: PALNAVEGADOR.cargar falló.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /*------------------------------------------
+          MÉTODO 2
+        ------------------------------------------*/
+
+        if(
+            typeof window.PALNAVEGADOR.irA ===
+            "function"
+        ){
+
+            try{
+
+                await window.PALNAVEGADOR.irA(
+                    codigo
+                );
+
+                return;
+
+            }
+            catch(error){
+
+                console.warn(
+                    "cab16: PALNAVEGADOR.irA falló.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /*------------------------------------------
+          MÉTODO 3
+        ------------------------------------------*/
+
+        if(
+            typeof window.PALNAVEGADOR.cargarPorCodigo ===
+            "function"
+        ){
+
+            try{
+
+                await window.PALNAVEGADOR.cargarPorCodigo(
+                    codigo
+                );
+
+                return;
+
+            }
+            catch(error){
+
+                console.warn(
+                    "cab16: PALNAVEGADOR.cargarPorCodigo falló.",
+                    error
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /*
+    ----------------------------------------------------
+    SIN MÉTODO COMPATIBLE
+    ----------------------------------------------------
+    */
+
+    console.warn(
+        "cab16: no se encontró un método de carga compatible para",
+        codigo
+    );
+
+}
 
 };
 
