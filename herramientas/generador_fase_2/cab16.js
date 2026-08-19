@@ -228,7 +228,7 @@ window.cab16 = {
 
 
         texto.textContent =
-            "Buscar en todos los registros";
+            "Mostrar seleccionado/toda la consulta";
 
 
         checkLabel.appendChild(
