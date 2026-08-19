@@ -1,42 +1,25 @@
 /*
 ========================================================
 PalEntropía
-PALNAVEGADOR.js v1.2
+PALNAVEGADOR.js v1.2 LTS
 
 Sistema de navegación de Paleofichas.
 
-v1.2 — CIRCUITO MATRIX
-----------------------
-
-Añadido:
-
-- Compatibilidad con MatrixFiltro.
-- Compatibilidad con MatrixNavegador.
-- Navegación sobre un conjunto filtrado.
-- Conservación del código actualmente seleccionado.
-- Cambio limpio entre:
-      TODOS LOS REGISTROS
-      y
-      MATRIZ FILTRADA.
-
-NO MODIFICA:
-
-- CARGACONT
-- CAB07
-- CAB01-CAB06
-- LEEPALJSON
-- MatrixFiltro
-- MatrixNavegador
-
-El navegador continúa funcionando normalmente
-cuando no existe ningún filtro activo.
+NUEVO v1.2
+----------
+- Puede recibir una matriz completa desde MATRIXNAVEGADOR.
+- Esa matriz pasa a ser el rango de navegación.
+- Mantiene separado el conjunto completo de registros.
+- Permite limpiar el rango matricial y volver al conjunto total.
+- No modifica CAB16.
+- No modifica MATRIXFILTRO.
+- No modifica MATRIXNAVEGADOR.
 ========================================================
 */
 
-
 const PALNAVEGADOR = {
 
-    version: "1.2",
+    version: "1.2 LTS",
 
     registros: [],
 
@@ -45,6 +28,8 @@ const PALNAVEGADOR = {
     indice: -1,
 
     codigoActual: null,
+
+    matrizActiva: false,
 
 
     /* =====================================================
@@ -92,6 +77,15 @@ const PALNAVEGADOR = {
             );
 
 
+        this.filtroActivo = null;
+
+        this.matrizActiva = false;
+
+        this.indice = -1;
+
+        this.codigoActual = null;
+
+
         return this.registros;
 
     },
@@ -127,9 +121,7 @@ const PALNAVEGADOR = {
     conjuntoActivo() {
 
         if (
-            Array.isArray(
-                this.filtroActivo
-            )
+            Array.isArray(this.filtroActivo)
         ) {
 
             return this.filtroActivo;
@@ -138,6 +130,140 @@ const PALNAVEGADOR = {
 
 
         return this.registros;
+
+    },
+
+
+    /* =====================================================
+       APLICAR FILTRO
+       ===================================================== */
+
+    aplicarFiltro(registros) {
+
+        if (!Array.isArray(registros)) {
+
+            throw new Error(
+                "PALNAVEGADOR: el filtro debe ser un array."
+            );
+
+        }
+
+
+        this.filtroActivo =
+            registros.filter(
+                registro =>
+                    registro &&
+                    registro.codigo
+            );
+
+
+        this.matrizActiva = true;
+
+
+        if (!this.filtroActivo.length) {
+
+            this.indice = -1;
+
+            return [];
+
+        }
+
+
+        /*
+        Intentamos conservar la ficha actual
+        si también existe dentro del nuevo filtro.
+        */
+
+        if (this.codigoActual) {
+
+            const indice =
+                this.filtroActivo.findIndex(
+                    registro =>
+                        this.normalizarCodigo(
+                            registro.codigo
+                        ) ===
+                        this.codigoActual
+                );
+
+
+            if (indice !== -1) {
+
+                this.indice = indice;
+
+                return this.filtroActivo;
+
+            }
+
+        }
+
+
+        /*
+        Si la ficha actual no está dentro
+        del filtro, empezamos por la primera.
+        */
+
+        this.indice = 0;
+
+
+        return this.filtroActivo;
+
+    },
+
+
+    /* =====================================================
+       APLICAR MATRIZ DE MATRIXNAVEGADOR
+       ===================================================== */
+
+    aplicarMatriz(registros) {
+
+        return this.aplicarFiltro(
+            registros
+        );
+
+    },
+
+
+    /* =====================================================
+       LIMPIAR FILTRO
+       ===================================================== */
+
+    limpiarFiltro() {
+
+        this.filtroActivo = null;
+
+        this.matrizActiva = false;
+
+
+        if (!this.registros.length) {
+
+            this.indice = -1;
+
+            return;
+
+        }
+
+
+        if (this.codigoActual) {
+
+            const indice =
+                this.registros.findIndex(
+                    registro =>
+                        this.normalizarCodigo(
+                            registro.codigo
+                        ) ===
+                        this.codigoActual
+                );
+
+
+            this.indice =
+                indice;
+
+            return;
+
+        }
+
+
+        this.indice = -1;
 
     },
 
@@ -254,9 +380,7 @@ const PALNAVEGADOR = {
         );
 
     },
-
-
-    /* =====================================================
+/* =====================================================
        CARGAR ÍNDICE
        ===================================================== */
 
@@ -483,219 +607,6 @@ const PALNAVEGADOR = {
 
 
     /* =====================================================
-       APLICAR FILTRO
-       ===================================================== */
-
-    aplicarFiltro(registros) {
-
-        if (!Array.isArray(registros)) {
-
-            throw new Error(
-                "PALNAVEGADOR: el filtro debe ser un array."
-            );
-
-        }
-
-
-        /*
-        Guardamos exactamente los registros
-        proporcionados por MatrixNavegador.
-
-        No modificamos sus datos.
-        */
-
-        this.filtroActivo =
-            registros.slice();
-
-
-        /*
-        Si la matriz está vacía,
-        no existe navegación filtrada.
-        */
-
-        if (!this.filtroActivo.length) {
-
-            this.indice = -1;
-
-            return;
-
-        }
-
-
-        /*
-        Intentamos conservar la paleoficha
-        actualmente cargada.
-
-        Esto es lo importante para el circuito:
-
-        si estamos en 004_07 y el filtro contiene
-        004_03, 004_07, 004_11 y 005_02,
-
-        el índice pasa a ser el correspondiente
-        a 004_07 dentro de esa nueva matriz.
-        */
-
-        if (this.codigoActual) {
-
-            const indice =
-                this.filtroActivo.findIndex(
-                    registro =>
-                        this.normalizarCodigo(
-                            registro.codigo
-                        ) ===
-                        this.codigoActual
-                );
-
-
-            if (indice !== -1) {
-
-                this.indice =
-                    indice;
-
-                return;
-
-            }
-
-        }
-
-
-        /*
-        Si la paleoficha actual no pertenece
-        al nuevo filtro, situamos el puntero
-        en el primer registro disponible.
-        */
-
-        this.indice = 0;
-
-
-        this.codigoActual =
-            this.normalizarCodigo(
-                this.filtroActivo[0].codigo
-            );
-
-    },
-
-
-    /* =====================================================
-       APLICAR MATRIZ DE MATRIXNAVEGADOR
-       ===================================================== */
-
-    aplicarMatriz(matriz) {
-
-        if (!Array.isArray(matriz)) {
-
-            throw new Error(
-                "PALNAVEGADOR: la matriz debe ser un array."
-            );
-
-        }
-
-
-        this.aplicarFiltro(
-            matriz
-        );
-
-
-        return this.filtroActivo;
-
-    },
-
-
-    /* =====================================================
-       ACTIVAR CIRCUITO MATRIX
-       ===================================================== */
-
-    async activarMatriz(matriz) {
-
-        this.aplicarMatriz(
-            matriz
-        );
-
-
-        /*
-        Si la matriz contiene la paleoficha actual,
-        simplemente mantenemos su posición.
-
-        No recargamos la ficha innecesariamente.
-        */
-
-        if (
-            this.codigoActual &&
-            this.buscarIndice(
-                this.codigoActual
-            ) !== -1
-        ) {
-
-            return this.obtenerActual();
-
-        }
-
-
-        /*
-        Si no existe una paleoficha actual,
-        cargamos el primer registro disponible.
-        */
-
-        if (
-            this.filtroActivo &&
-            this.filtroActivo.length
-        ) {
-
-            return await this.cargarIndice(
-                this.indice
-            );
-
-        }
-
-
-        return null;
-
-    },
-
-
-    /* =====================================================
-       LIMPIAR FILTRO
-       ===================================================== */
-
-    limpiarFiltro() {
-
-        const codigoActual =
-            this.codigoActual;
-
-
-        this.filtroActivo =
-            null;
-
-
-        /*
-        Recuperamos la posición equivalente
-        dentro de TODOS los registros.
-
-        El código actual permanece.
-        */
-
-        if (!codigoActual) {
-
-            this.indice = -1;
-
-            return;
-
-        }
-
-
-        const indice =
-            this.buscarIndice(
-                codigoActual
-            );
-
-
-        this.indice =
-            indice;
-
-    },
-
-
-    /* =====================================================
        ESTÁ FILTRADO
        ===================================================== */
 
@@ -704,6 +615,17 @@ const PALNAVEGADOR = {
         return Array.isArray(
             this.filtroActivo
         );
+
+    },
+
+
+    /* =====================================================
+       MATRIZ ACTIVA
+       ===================================================== */
+
+    estaEnMatriz() {
+
+        return this.matrizActiva === true;
 
     },
 
@@ -774,6 +696,9 @@ const PALNAVEGADOR = {
             total:
                 conjunto.length,
 
+            totalGeneral:
+                this.registros.length,
+
             indice:
                 this.indice,
 
@@ -786,7 +711,10 @@ const PALNAVEGADOR = {
                 this.codigoActual,
 
             filtrado:
-                this.estaFiltrado()
+                this.estaFiltrado(),
+
+            matrizActiva:
+                this.estaEnMatriz()
 
         };
 
@@ -805,6 +733,6 @@ window.PALNAVEGADOR =
 
 /*
 ========================================================
-FIN PALNAVEGADOR.js v1.2
+FIN PALNAVEGADOR.js v1.2 LTS
 ========================================================
 */
