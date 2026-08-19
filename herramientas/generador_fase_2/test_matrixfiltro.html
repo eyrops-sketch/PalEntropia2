@@ -2,98 +2,177 @@
 <html lang="es">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Test MatrixFiltro</title>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Test MatrixNavegador</title>
+
+<style>
+
+body {
+
+    margin: 0;
+
+    padding: 20px;
+
+    background: #0b0d0f;
+
+    color: #ffffff;
+
+    font-family: Arial, sans-serif;
+
+}
+
+
+h1 {
+
+    text-align: center;
+
+}
+
+
+#resultado {
+
+    margin-top: 20px;
+
+    padding: 15px;
+
+    background: #15191d;
+
+    border: 1px solid #62d6ff;
+
+    border-radius: 12px;
+
+    overflow-x: auto;
+
+}
+
+
+pre {
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+
+    color: #62d6ff;
+
+}
+
+
+.estado {
+
+    text-align: center;
+
+    margin: 15px 0;
+
+    opacity: 0.8;
+
+}
+
+</style>
 
 </head>
 
+
 <body>
 
-<h1>Test MatrixFiltro</h1>
 
-<label>
-
-    <input
-        type="checkbox"
-        id="buscarTodosCab16"
-        checked
-    >
-
-    Buscar en todos los registros
-
-</label>
+<h1>
+    Test MatrixNavegador
+</h1>
 
 
-<div id="resultadosCab16">
+<div class="estado">
 
-    <div
-        class="resultadoCab16"
-        data-codigo="004_03">
-        004_03
-    </div>
+    Códigos de prueba:
 
-    <div
-        class="resultadoCab16"
-        data-codigo="004_07">
-        004_07
-    </div>
-
-    <div
-        class="resultadoCab16"
-        data-codigo="004_11">
-        004_11
-    </div>
-
-    <div
-        class="resultadoCab16"
-        data-codigo="005_02">
-        005_02
-    </div>
+    004_03 · 004_07 · 004_11 · 005_02
 
 </div>
 
 
-<button
-    type="button"
-    onclick="probarMatrix()">
+<div id="resultado">
 
-    PROBAR MATRIXFILTRO
+    Cargando...
 
-</button>
+</div>
 
 
-<pre id="salida"></pre>
-
-
-<script src="matrixfiltro.js"></script>
+<script src="matrixnavegador.js"></script>
 
 
 <script>
 
-function probarMatrix(){
+document.addEventListener(
+    "DOMContentLoaded",
+    async function() {
 
-    const matriz =
-        MATRIXFILTRO.actualizar();
+        const codigos = [
+
+            "004_03",
+            "004_07",
+            "004_11",
+            "005_02"
+
+        ];
 
 
-    document.getElementById(
-        "salida"
-    ).textContent =
-        JSON.stringify(
-            matriz,
-            null,
-            4
-        );
+        const salida =
+            document.getElementById(
+                "resultado"
+            );
 
-}
+
+        try {
+
+            const matriz =
+                await window.MATRIXNAVEGADOR.obtener(
+                    codigos
+                );
+
+
+            console.log(
+                "MATRIXNAVEGADOR:",
+                matriz
+            );
+
+
+            salida.innerHTML =
+                "<pre>" +
+                JSON.stringify(
+                    matriz,
+                    null,
+                    4
+                ) +
+                "</pre>";
+
+        }
+
+        catch(error) {
+
+            console.error(
+                "ERROR TEST MATRIXNAVEGADOR:",
+                error
+            );
+
+
+            salida.innerHTML =
+                "<pre>" +
+                "ERROR: " +
+                error.message +
+                "</pre>";
+
+        }
+
+    }
+);
 
 </script>
+
 
 </body>
 
 </html>
-
-
-
