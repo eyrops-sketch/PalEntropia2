@@ -1,10 +1,10 @@
 /*
 ========================================================
-cab16.js v1.3
+cab16.js v1.4
 autocompletado del buscador avanzado
 palentropía — generador
 
-FUNCIÓN v1.3
+FUNCIÓN v1.4
 ------------
 CAB16 BUSCADOR EXCLUSIVO POR CÓDIGO
 
@@ -15,14 +15,12 @@ CAB16 BUSCADOR EXCLUSIVO POR CÓDIGO
 - No busca en taxon
 - 000 no produce falsos resultados
 - El check cambia el conjunto de búsqueda
-- No carga paleofichas todavía
-
-EJEMPLOS:
----------
-001     → códigos 001_xx
-006     → 006_01, 006_02
-003_10  → 003_10
-000     → 0 resultados
+- Resultado seleccionable
+- Con check desactivado:
+    selecciona y carga la paleoficha
+    mediante PALNAVEGADOR.cargarPorCodigo()
+- Con check activado:
+    selecciona el resultado pero no carga ficha
 
 NO MODIFICA:
 - cab15
@@ -74,7 +72,7 @@ window.cab16 = {
 
 
         console.log(
-            "cab16 v1.3: buscador exclusivo por código preparado."
+            "cab16 v1.4: buscador exclusivo por código preparado."
         );
 
     },
@@ -631,12 +629,7 @@ window.cab16 = {
 
 
                 /*
-                CAB16 solo necesita
-                mostrar el código.
-
-                El nombre pertenece
-                a la futura búsqueda
-                de CAB17.
+                Mostrar únicamente el código.
                 */
 
                 boton.textContent =
@@ -645,11 +638,27 @@ window.cab16 = {
 
                 /*
                 Guardar código para
-                el siguiente módulo.
+                el siguiente paso.
                 */
 
                 boton.dataset.codigo =
                     codigo;
+
+
+                /*----------------------------------------
+                  SELECCIÓN DEL RESULTADO
+                ----------------------------------------*/
+
+                boton.addEventListener(
+                    "click",
+                    () => {
+
+                        this.seleccionarResultado(
+                            codigo
+                        );
+
+                    }
+                );
 
 
                 contenedor.appendChild(
@@ -658,6 +667,96 @@ window.cab16 = {
 
             }
         );
+
+    },
+
+
+    /*====================================================
+      SELECCIONAR RESULTADO
+    ====================================================*/
+
+    seleccionarResultado: function(
+        codigo
+    ){
+
+        codigo =
+            String(
+                codigo || ""
+            )
+            .trim()
+            .toUpperCase();
+
+
+        if(!codigo){
+
+            return;
+
+        }
+
+
+        /*
+        Guardamos siempre el código
+        seleccionado.
+
+        Esto permite que el siguiente módulo
+        pueda reutilizarlo.
+        */
+
+        this.codigoSeleccionado =
+            codigo;
+
+
+        /*
+        Con "Buscar en todos los registros"
+        activado todavía NO cargamos la ficha.
+
+        CAB16 solamente selecciona.
+        */
+
+        if(
+            this.buscarTodos
+        ){
+
+            console.log(
+                "cab16: resultado seleccionado:",
+                codigo
+            );
+
+            return;
+
+        }
+
+
+        /*
+        Con el check desactivado:
+        cargar mediante PALNAVEGADOR.
+        */
+
+        if(
+            !window.PALNAVEGADOR ||
+            typeof window.PALNAVEGADOR.cargarPorCodigo !==
+            "function"
+        ){
+
+            console.error(
+                "cab16: PALNAVEGADOR.cargarPorCodigo() no está disponible."
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "cab16: cargando paleoficha:",
+            codigo
+        );
+
+
+        window.PALNAVEGADOR
+            .cargarPorCodigo(
+                codigo
+            );
 
     }
 
@@ -680,6 +779,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab16.js v1.3
+FIN cab16.js v1.4
 ========================================================
 */
