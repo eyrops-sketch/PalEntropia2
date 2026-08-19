@@ -1,18 +1,17 @@
 /*
 ========================================================
-cab16.js v1.0
-base del buscador avanzado
+cab16.js v1.1
+autocompletado del buscador avanzado
 palentropía — generador
 
 funciones:
-- preparar interfaz del buscador avanzado
 - campo de búsqueda
 - label de resultados
 - selector registro activo / todos los registros
-- contenedor de resultados
-- lectura de datos desde cab15
+- autocompletado
+- resultados coincidentes
 
-todavía NO realiza búsquedas.
+todavía NO carga paleofichas.
 
 no modifica:
 - cab15
@@ -22,7 +21,6 @@ no modifica:
 - cab14
 ========================================================
 */
-
 
 window.cab16 = {
 
@@ -56,11 +54,13 @@ window.cab16 = {
 
         this.conectarCheck();
 
+        this.conectarBusqueda();
+
         this.inicializado = true;
 
 
         console.log(
-            "cab16 v1.0: base del buscador preparada."
+            "cab16 v1.1: autocompletado preparado."
         );
 
     },
@@ -113,7 +113,24 @@ window.cab16 = {
         if (!ventana) {
 
             console.warn(
-                "cab16: no existe la ventana de cab15."
+                "cab16: ventana de cab15 no disponible."
+            );
+
+            return;
+
+        }
+
+
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
+            );
+
+
+        if (!campo) {
+
+            console.warn(
+                "cab16: campo de búsqueda no disponible."
             );
 
             return;
@@ -127,7 +144,7 @@ window.cab16 = {
 
         if (
             document.getElementById(
-                "controlesBusquedaCab16"
+                "labelResultadosCab16"
             )
         ) {
 
@@ -136,18 +153,8 @@ window.cab16 = {
         }
 
 
-        const controles =
-            document.createElement(
-                "div"
-            );
-
-
-        controles.id =
-            "controlesBusquedaCab16";
-
-
         /*------------------------------------------------
-          label de resultados
+          label
         ------------------------------------------------*/
 
         const label =
@@ -227,67 +234,34 @@ window.cab16 = {
 
 
         /*------------------------------------------------
-          insertar después del campo
+          insertar
         ------------------------------------------------*/
 
-        const campo =
-            document.getElementById(
-                "buscarUniversal"
-            );
+        campo.insertAdjacentElement(
+            "afterend",
+            label
+        );
 
 
-        if (campo) {
-
-            campo.insertAdjacentElement(
-                "afterend",
-                label
-            );
+        label.insertAdjacentElement(
+            "afterend",
+            etiquetaCheck
+        );
 
 
-            label.insertAdjacentElement(
-                "afterend",
-                etiquetaCheck
-            );
+        etiquetaCheck.insertAdjacentElement(
+            "afterend",
+            resultados
+        );
 
-
-            etiquetaCheck.insertAdjacentElement(
-                "afterend",
-                resultados
-            );
-
-        }
-        else {
-
-            ventana.appendChild(
-                controles
-            );
-
-            controles.appendChild(
-                label
-            );
-
-            controles.appendChild(
-                etiquetaCheck
-            );
-
-            controles.appendChild(
-                resultados
-            );
-
-            return;
-
-        }
-
-
-        /*
-        Guardamos referencia lógica de los controles.
-        */
 
         this.label =
             label;
 
+
         this.check =
             check;
+
 
         this.resultados =
             resultados;
@@ -322,12 +296,7 @@ window.cab16 = {
                     check.checked;
 
 
-                console.log(
-                    "cab16: modo de búsqueda:",
-                    this.buscarTodos
-                        ? "todos los registros"
-                        : "registro activo"
-                );
+                this.ejecutarBusqueda();
 
             }
         );
@@ -336,25 +305,282 @@ window.cab16 = {
 
 
     /*====================================================
-      modo actual
+      conectar búsqueda
     ====================================================*/
 
-    obtenerModo: function() {
+    conectarBusqueda: function() {
 
-        return this.buscarTodos
-            ? "todos"
-            : "activo";
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
+            );
+
+
+        if (!campo) {
+
+            return;
+
+        }
+
+
+        campo.addEventListener(
+            "input",
+            () => {
+
+                this.ejecutarBusqueda();
+
+            }
+        );
 
     },
 
 
     /*====================================================
-      cantidad
+      ejecutar búsqueda
     ====================================================*/
 
-    cantidad: function() {
+    ejecutarBusqueda: function() {
 
-        return this.datos.length;
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
+            );
+
+
+        const resultados =
+            document.getElementById(
+                "resultadosCab16"
+            );
+
+
+        const label =
+            document.getElementById(
+                "labelResultadosCab16"
+            );
+
+
+        if (
+            !campo ||
+            !resultados ||
+            !label
+        ) {
+
+            return;
+
+        }
+
+
+        const texto =
+            campo.value
+                .trim()
+                .toLowerCase();
+
+
+        resultados.innerHTML =
+            "";
+
+
+        if (texto.length < 3) {
+
+            label.textContent =
+                "Introduce al menos 3 caracteres";
+
+            return;
+
+        }
+
+
+        /*
+        Obtener datos actualizados.
+        */
+
+        this.obtenerDatos();
+
+
+        let conjunto =
+            this.datos;
+
+
+        /*
+        Si no está marcado "todos",
+        intentamos trabajar con el registro/conjunto activo.
+        */
+
+        if (!this.buscarTodos) {
+
+            conjunto =
+                this.obtenerConjuntoActivo();
+
+        }
+
+
+        const coincidencias =
+            conjunto.filter(
+                registro =>
+                    this.coincide(
+                        registro,
+                        texto
+                    )
+            );
+
+
+        label.textContent =
+            coincidencias.length +
+            (
+                coincidencias.length === 1
+                    ? " resultado"
+                    : " resultados"
+            );
+
+
+        this.mostrarResultados(
+            coincidencias
+        );
+
+    },
+
+
+    /*====================================================
+      obtener conjunto activo
+    ====================================================*/
+
+    obtenerConjuntoActivo: function() {
+
+        if (
+            window.PALNAVEGADOR &&
+            typeof
+            window.PALNAVEGADOR.conjuntoActivo
+            === "function"
+        ) {
+
+            const conjunto =
+                window.PALNAVEGADOR.conjuntoActivo();
+
+
+            if (Array.isArray(conjunto)) {
+
+                return conjunto;
+
+            }
+
+        }
+
+
+        return this.datos;
+
+    },
+
+
+    /*====================================================
+      comprobar coincidencia
+    ====================================================*/
+
+    coincide: function(
+        registro,
+        texto
+    ) {
+
+        if (!registro) {
+
+            return false;
+
+        }
+
+
+        const codigo =
+            String(
+                registro.codigo || ""
+            ).toLowerCase();
+
+
+        const nombre =
+            String(
+                registro.nombre || ""
+            ).toLowerCase();
+
+
+        const j3 =
+            String(
+                registro.j3 || ""
+            ).toLowerCase();
+
+
+        const taxon =
+            String(
+                registro.taxon || ""
+            ).toLowerCase();
+
+
+        return (
+            codigo.includes(texto) ||
+            nombre.includes(texto) ||
+            j3.includes(texto) ||
+            taxon.includes(texto)
+        );
+
+    },
+
+
+    /*====================================================
+      mostrar resultados
+    ====================================================*/
+
+    mostrarResultados: function(
+        coincidencias
+    ) {
+
+        const contenedor =
+            document.getElementById(
+                "resultadosCab16"
+            );
+
+
+        if (!contenedor) {
+
+            return;
+
+        }
+
+
+        coincidencias.forEach(
+            registro => {
+
+                const boton =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                boton.type =
+                    "button";
+
+
+                boton.className =
+                    "resultadoCab16";
+
+
+                const codigo =
+                    registro.codigo ||
+                    "";
+
+
+                const nombre =
+                    registro.nombre ||
+                    "";
+
+
+                boton.textContent =
+                    codigo +
+                    " — " +
+                    nombre;
+
+
+                contenedor.appendChild(
+                    boton
+                );
+
+            }
+        );
 
     }
 
@@ -377,6 +603,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab16.js v1.0
+FIN cab16.js v1.1
 ========================================================
 */
