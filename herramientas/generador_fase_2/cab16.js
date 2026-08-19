@@ -1,74 +1,54 @@
 /*
 ========================================================
-cab16.js v1.2 LTS
+cab16.js v1.2
 autocompletado del buscador avanzado
-PalEntropía — Generador
+palentropía — generador
 
 CAMBIO v1.2
 -----------
-- Lee directamente desde LEEPALJSON
-- Espera a que master.csv esté cargado
-- No depende de PALNAVEGADOR para buscar
-- Evita el problema con 000
-- El check no cambia el origen de datos
-- Búsqueda por:
-    código
+- Fuente principal: window.PALEOFICHAS
+- No depende de cab15.obtenerDatos()
+- 000 no produce falsos resultados
+- Búsqueda estable por:
+    codigo
     nombre
-    j3 / tiempo geológico
-    taxón
+    j3
+    taxon
+- El check solo cambia el conjunto de búsqueda
+- No carga paleofichas todavía
 
-NO CARGA PALEOFICHAS TODAVÍA.
-NO MODIFICA CAB15.
-NO MODIFICA LEEPALJSON.
+NO MODIFICA:
+- cab15
+- palbuscador
+- palnavegador
+- cab12
+- cab14
+- cargacont
 ========================================================
 */
 
 window.cab16 = {
 
-    /* ==================================================
-       ESTADO
-    ================================================== */
-
     inicializado: false,
 
     datos: [],
 
-    buscarTodos: true,
-
-    campo: null,
-
-    label: null,
-
-    check: null,
-
-    resultados: null,
+    buscarTodos: false,
 
 
-    /* ==================================================
-       INICIALIZAR
-    ================================================== */
+    /*====================================================
+      INICIALIZAR
+    ====================================================*/
 
-    inicializar: function() {
+    inicializar: function(){
 
-        if (this.inicializado) {
-
+        if(this.inicializado){
             return;
-
         }
 
+        this.obtenerDatos();
 
         this.crearInterfaz();
-
-        if (!this.campo) {
-
-            console.warn(
-                "cab16: campo de búsqueda no disponible."
-            );
-
-            return;
-
-        }
-
 
         this.conectarCheck();
 
@@ -76,257 +56,142 @@ window.cab16 = {
 
         this.inicializado = true;
 
-
-        /*
-        Intentar obtener datos inmediatamente.
-        */
-
-        this.obtenerDatos();
-
-
-        /*
-        Si LEEPALJSON todavía no ha cargado
-        master.csv, esperamos el evento.
-        */
-
-        document.addEventListener(
-            "palentropia:datos-cargados",
-            () => {
-
-                this.obtenerDatos();
-
-                this.ejecutarBusqueda();
-
-            }
-        );
-
-
         console.log(
-            "cab16 v1.2 LTS: preparado."
+            "cab16 v1.2: autocompletado preparado."
         );
 
     },
 
 
-    /* ==================================================
-       OBTENER DATOS
+    /*====================================================
+      OBTENER DATOS
+      Fuente estable: LEEPALJSON
+    ====================================================*/
 
-       FUENTE ÚNICA:
-       LEEPALJSON
-    ================================================== */
+    obtenerDatos: function(){
 
-    obtenerDatos: function() {
-
-        if (
-            !window.LEEPALJSON ||
-            typeof window.LEEPALJSON.obtener !==
+        if(
+            window.LEEPALJSON &&
+            typeof window.LEEPALJSON.obtener ===
             "function"
-        ) {
+        ){
 
-            this.datos = [];
+            const datos =
+                window.LEEPALJSON.obtener();
 
-            return this.datos;
+            if(Array.isArray(datos)){
+
+                this.datos = datos;
+
+            }
 
         }
 
+        /*
+        Respaldo directo.
+        */
 
-        const datos =
-            window.LEEPALJSON.obtener();
-
-
-        if (
-            Array.isArray(datos)
-        ) {
+        if(
+            (!Array.isArray(this.datos) ||
+            !this.datos.length) &&
+            Array.isArray(window.PALEOFICHAS)
+        ){
 
             this.datos =
-                datos;
-
-        } else {
-
-            this.datos = [];
+                window.PALEOFICHAS;
 
         }
-
 
         return this.datos;
 
     },
 
 
-    /* ==================================================
-       CREAR INTERFAZ
-    ================================================== */
+    /*====================================================
+      CREAR INTERFAZ
+    ====================================================*/
 
-    crearInterfaz: function() {
+    crearInterfaz: function(){
 
         const campo =
             document.getElementById(
                 "buscarUniversal"
             );
 
-
-        if (!campo) {
-
+        if(!campo){
             return;
-
         }
 
-
-        this.campo =
-            campo;
-
-
-        /*
-        Evitar duplicados.
-        */
-
-        const interfazExistente =
+        if(
             document.getElementById(
-                "cab16Interfaz"
-            );
-
-
-        if (interfazExistente) {
-
-            this.label =
-                document.getElementById(
-                    "labelResultadosCab16"
-                );
-
-            this.check =
-                document.getElementById(
-                    "buscarTodosCab16"
-                );
-
-            this.resultados =
-                document.getElementById(
-                    "resultadosCab16"
-                );
-
+                "labelResultadosCab16"
+            )
+        ){
             return;
-
         }
 
-
-        const interfaz =
-            document.createElement(
-                "div"
-            );
-
-
-        interfaz.id =
-            "cab16Interfaz";
-
-
-        /* --------------------------------------------
-           LABEL
-        -------------------------------------------- */
 
         const label =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         label.id =
             "labelResultadosCab16";
-
 
         label.textContent =
             "Introduce al menos 3 caracteres";
 
 
-        /* --------------------------------------------
-           CHECK
-        -------------------------------------------- */
-
         const etiquetaCheck =
-            document.createElement(
-                "label"
-            );
-
+            document.createElement("label");
 
         etiquetaCheck.id =
             "checkBusquedaCab16";
 
 
         const check =
-            document.createElement(
-                "input"
-            );
-
+            document.createElement("input");
 
         check.type =
             "checkbox";
-
 
         check.id =
             "buscarTodosCab16";
 
 
-        /*
-        Siempre empieza buscando en todos
-        los registros.
-        */
-
-        check.checked =
-            true;
-
-
         const textoCheck =
-            document.createElement(
-                "span"
-            );
-
+            document.createElement("span");
 
         textoCheck.textContent =
             "Buscar en todos los registros";
 
 
-        etiquetaCheck.appendChild(
-            check
-        );
-
+        etiquetaCheck.appendChild(check);
 
         etiquetaCheck.appendChild(
             textoCheck
         );
 
 
-        /* --------------------------------------------
-           RESULTADOS
-        -------------------------------------------- */
-
         const resultados =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         resultados.id =
             "resultadosCab16";
 
 
-        /* --------------------------------------------
-           CONSTRUIR
-        -------------------------------------------- */
-
-        interfaz.appendChild(
+        campo.insertAdjacentElement(
+            "afterend",
             label
         );
 
-        interfaz.appendChild(
+        label.insertAdjacentElement(
+            "afterend",
             etiquetaCheck
         );
 
-        interfaz.appendChild(
-            resultados
-        );
-
-
-        campo.insertAdjacentElement(
+        etiquetaCheck.insertAdjacentElement(
             "afterend",
-            interfaz
+            resultados
         );
 
 
@@ -342,33 +207,28 @@ window.cab16 = {
     },
 
 
-    /* ==================================================
-       CONECTAR CHECK
-    ================================================== */
+    /*====================================================
+      CHECK
+    ====================================================*/
 
-    conectarCheck: function() {
+    conectarCheck: function(){
 
-        if (!this.check) {
+        const check =
+            document.getElementById(
+                "buscarTodosCab16"
+            );
 
+        if(!check){
             return;
-
         }
 
 
-        this.check.addEventListener(
+        check.addEventListener(
             "change",
             () => {
 
-                /*
-                El check NO modifica el conjunto de datos.
-
-                Lo mantenemos por compatibilidad visual
-                mientras construimos la siguiente fase.
-                */
-
                 this.buscarTodos =
-                    this.check.checked;
-
+                    check.checked;
 
                 this.ejecutarBusqueda();
 
@@ -378,20 +238,23 @@ window.cab16 = {
     },
 
 
-    /* ==================================================
-       CONECTAR CAMPO DE BÚSQUEDA
-    ================================================== */
+    /*====================================================
+      CAMPO DE BÚSQUEDA
+    ====================================================*/
 
-    conectarBusqueda: function() {
+    conectarBusqueda: function(){
 
-        if (!this.campo) {
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
+            );
 
+        if(!campo){
             return;
-
         }
 
 
-        this.campo.addEventListener(
+        campo.addEventListener(
             "input",
             () => {
 
@@ -403,49 +266,49 @@ window.cab16 = {
     },
 
 
-    /* ==================================================
-       EJECUTAR BÚSQUEDA
-    ================================================== */
+    /*====================================================
+      EJECUTAR BÚSQUEDA
+    ====================================================*/
 
-    ejecutarBusqueda: function() {
+    ejecutarBusqueda: function(){
 
-        if (
-            !this.campo ||
-            !this.label ||
-            !this.resultados
-        ) {
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
+            );
 
+        const resultados =
+            document.getElementById(
+                "resultadosCab16"
+            );
+
+        const label =
+            document.getElementById(
+                "labelResultadosCab16"
+            );
+
+
+        if(
+            !campo ||
+            !resultados ||
+            !label
+        ){
             return;
-
         }
 
 
         const texto =
-            String(
-                this.campo.value || ""
-            )
-            .trim()
-            .toLowerCase();
+            campo.value
+                .trim()
+                .toLowerCase();
 
 
-        /*
-        Limpiar resultados anteriores.
-        */
-
-        this.resultados.innerHTML =
-            "";
+        resultados.innerHTML = "";
 
 
-        /*
-        Menos de 3 caracteres:
-        no buscar.
-        */
+        if(texto.length < 3){
 
-        if (
-            texto.length < 3
-        ) {
-
-            this.label.textContent =
+            label.textContent =
                 "Introduce al menos 3 caracteres";
 
             return;
@@ -454,61 +317,67 @@ window.cab16 = {
 
 
         /*
-        OBTENER DATOS DIRECTAMENTE
+        Refrescar datos.
         */
 
-        const datos =
-            this.obtenerDatos();
+        this.obtenerDatos();
 
 
-        /*
-        Si todavía no hay datos,
-        no damos falsos resultados.
-        */
+        if(
+            !Array.isArray(this.datos) ||
+            !this.datos.length
+        ){
 
-        if (
-            !Array.isArray(datos) ||
-            !datos.length
-        ) {
-
-            this.label.textContent =
-                "Preparando búsqueda...";
+            label.textContent =
+                "No hay datos disponibles.";
 
             return;
 
         }
 
 
+        let conjunto =
+            this.datos;
+
+
         /*
-        IMPORTANTE:
+        Si el check está desactivado,
+        se mantiene el comportamiento
+        de búsqueda sobre el conjunto activo
+        cuando existe.
 
-        CAB16 trabaja directamente sobre
-        todos los registros de LEEPALJSON.
-
-        No usamos:
-        PALNAVEGADOR
-        cab15.obtenerDatos()
-        conjuntoActivo()
+        Si no existe, se usa todo el conjunto.
         */
 
-        const coincidencias =
-            datos.filter(
-                registro => {
+        if(!this.buscarTodos){
 
-                    return this.coincide(
+            const activo =
+                this.obtenerConjuntoActivo();
+
+            if(
+                Array.isArray(activo) &&
+                activo.length
+            ){
+
+                conjunto =
+                    activo;
+
+            }
+
+        }
+
+
+        const coincidencias =
+            conjunto.filter(
+                registro =>
+                    this.coincide(
                         registro,
                         texto
-                    );
-
-                }
+                    )
             );
 
 
-        /*
-        CONTADOR
-        */
-
-        this.label.textContent =
+        label.textContent =
             coincidencias.length +
             (
                 coincidencias.length === 1
@@ -517,10 +386,6 @@ window.cab16 = {
             );
 
 
-        /*
-        MOSTRAR
-        */
-
         this.mostrarResultados(
             coincidencias
         );
@@ -528,19 +393,43 @@ window.cab16 = {
     },
 
 
-    /* ==================================================
-       COMPROBAR COINCIDENCIA
-    ================================================== */
+    /*====================================================
+      CONJUNTO ACTIVO
+    ====================================================*/
+
+    obtenerConjuntoActivo: function(){
+
+        if(
+            window.PALNAVEGADOR &&
+            typeof window.PALNAVEGADOR.conjuntoActivo ===
+            "function"
+        ){
+
+            const conjunto =
+                window.PALNAVEGADOR.conjuntoActivo();
+
+            if(Array.isArray(conjunto)){
+                return conjunto;
+            }
+
+        }
+
+        return this.datos;
+
+    },
+
+
+    /*====================================================
+      COINCIDENCIA
+    ====================================================*/
 
     coincide: function(
         registro,
         texto
-    ) {
+    ){
 
-        if (!registro) {
-
+        if(!registro){
             return false;
-
         }
 
 
@@ -582,56 +471,23 @@ window.cab16 = {
     },
 
 
-    /* ==================================================
-       MOSTRAR RESULTADOS
-    ================================================== */
+    /*====================================================
+      MOSTRAR RESULTADOS
+    ====================================================*/
 
     mostrarResultados: function(
         coincidencias
-    ) {
+    ){
 
-        if (!this.resultados) {
-
-            return;
-
-        }
-
-
-        /*
-        Sin coincidencias.
-        */
-
-        if (
-            !coincidencias.length
-        ) {
-
-            const vacio =
-                document.createElement(
-                    "div"
-                );
-
-
-            vacio.className =
-                "sinResultadosCab16";
-
-
-            vacio.textContent =
-                "No se encontraron resultados.";
-
-
-            this.resultados.appendChild(
-                vacio
+        const contenedor =
+            document.getElementById(
+                "resultadosCab16"
             );
 
-
+        if(!contenedor){
             return;
-
         }
 
-
-        /*
-        Crear resultados.
-        */
 
         coincidencias.forEach(
             registro => {
@@ -641,25 +497,19 @@ window.cab16 = {
                         "button"
                     );
 
-
                 boton.type =
                     "button";
-
 
                 boton.className =
                     "resultadoCab16";
 
 
                 const codigo =
-                    String(
-                        registro.codigo || ""
-                    );
+                    registro.codigo || "";
 
 
                 const nombre =
-                    String(
-                        registro.nombre || ""
-                    );
+                    registro.nombre || "";
 
 
                 boton.textContent =
@@ -669,15 +519,15 @@ window.cab16 = {
 
 
                 /*
-                De momento SOLO mostramos
-                el resultado.
-
-                La carga de paleoficha vendrá
-                en la siguiente fase.
+                Guardamos el código para
+                el siguiente paso.
                 */
 
+                boton.dataset.codigo =
+                    codigo;
 
-                this.resultados.appendChild(
+
+                contenedor.appendChild(
                     boton
                 );
 
@@ -689,13 +539,13 @@ window.cab16 = {
 };
 
 
-/* ========================================================
-   ARRANQUE
-======================================================== */
+/*========================================================
+ARRANQUE
+========================================================*/
 
 document.addEventListener(
     "DOMContentLoaded",
-    function() {
+    function(){
 
         window.cab16.inicializar();
 
@@ -703,6 +553,8 @@ document.addEventListener(
 );
 
 
-/* ========================================================
-   FIN cab16.js v1.2 LTS
-======================================================== */
+/*
+========================================================
+FIN cab16.js v1.2
+========================================================
+*/
