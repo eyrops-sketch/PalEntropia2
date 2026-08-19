@@ -8,19 +8,24 @@ FUNCIÓN v1.4
 ------------
 CAB16 BUSCADOR EXCLUSIVO POR CÓDIGO
 
-- Fuente: window.PALEOFICHAS / LEEPALJSON
-- Busca ÚNICAMENTE en codigo
-- No busca en nombre
-- No busca en j3
-- No busca en taxon
-- 000 no produce falsos resultados
-- El check cambia el conjunto de búsqueda
-- Resultado seleccionable
-- Con check desactivado:
-    selecciona y carga la paleoficha
-    mediante PALNAVEGADOR.cargarPorCodigo()
-- Con check activado:
-    selecciona el resultado pero no carga ficha
+CAMBIOS v1.4
+------------
+- Búsqueda únicamente por código.
+- Resultados mostrados en lista vertical.
+- Cada resultado ocupa una fila completa.
+- La fila completa es seleccionable.
+- Al seleccionar un código:
+    1. se cierra el buscador;
+    2. se carga inmediatamente la paleoficha.
+- No es necesario pulsar la X.
+- El código seleccionado se entrega al navegador.
+
+EJEMPLOS:
+---------
+001     → códigos 001_xx
+006     → 006_01, 006_02
+003_10  → 003_10
+000     → 0 resultados
 
 NO MODIFICA:
 - cab15
@@ -72,7 +77,7 @@ window.cab16 = {
 
 
         console.log(
-            "cab16 v1.4: buscador exclusivo por código preparado."
+            "cab16 v1.4: buscador por código preparado."
         );
 
     },
@@ -103,10 +108,6 @@ window.cab16 = {
 
         }
 
-
-        /*
-        Respaldo directo.
-        */
 
         if(
             (
@@ -384,10 +385,6 @@ window.cab16 = {
                 .toLowerCase();
 
 
-        /*
-        Limpiar resultados anteriores.
-        */
-
         resultados.innerHTML =
             "";
 
@@ -440,10 +437,10 @@ window.cab16 = {
 
         /*
         Check desactivado:
-        conjunto activo.
+        se utiliza el conjunto activo.
 
         Check activado:
-        todos los registros.
+        se utilizan todos los registros.
         */
 
         if(
@@ -566,11 +563,6 @@ window.cab16 = {
             .toLowerCase();
 
 
-        /*
-        ÚNICO CAMPO CONSULTADO:
-        codigo
-        */
-
         if(!codigo){
 
             return false;
@@ -609,51 +601,51 @@ window.cab16 = {
         coincidencias.forEach(
             registro => {
 
-                const boton =
+                const codigo =
+                    String(
+                        registro.codigo || ""
+                    )
+                    .trim();
+
+
+                if(!codigo){
+
+                    return;
+
+                }
+
+
+                /*----------------------------------------
+                  FILA COMPLETA
+                ----------------------------------------*/
+
+                const fila =
                     document.createElement(
-                        "button"
+                        "div"
                     );
 
 
-                boton.type =
-                    "button";
-
-
-                boton.className =
+                fila.className =
                     "resultadoCab16";
 
 
-                const codigo =
-                    registro.codigo ||
-                    "";
-
-
-                /*
-                Mostrar únicamente el código.
-                */
-
-                boton.textContent =
+                fila.dataset.codigo =
                     codigo;
 
 
-                /*
-                Guardar código para
-                el siguiente paso.
-                */
-
-                boton.dataset.codigo =
+                fila.textContent =
                     codigo;
 
 
                 /*----------------------------------------
-                  SELECCIÓN DEL RESULTADO
+                  SELECCIÓN
                 ----------------------------------------*/
 
-                boton.addEventListener(
+                fila.addEventListener(
                     "click",
                     () => {
 
-                        this.seleccionarResultado(
+                        this.seleccionarCodigo(
                             codigo
                         );
 
@@ -662,7 +654,7 @@ window.cab16 = {
 
 
                 contenedor.appendChild(
-                    boton
+                    fila
                 );
 
             }
@@ -672,10 +664,10 @@ window.cab16 = {
 
 
     /*====================================================
-      SELECCIONAR RESULTADO
+      SELECCIONAR CÓDIGO
     ====================================================*/
 
-    seleccionarResultado: function(
+    seleccionarCodigo: function(
         codigo
     ){
 
@@ -694,69 +686,256 @@ window.cab16 = {
         }
 
 
-        /*
-        Guardamos siempre el código
-        seleccionado.
-
-        Esto permite que el siguiente módulo
-        pueda reutilizarlo.
-        */
-
-        this.codigoSeleccionado =
-            codigo;
-
-
-        /*
-        Con "Buscar en todos los registros"
-        activado todavía NO cargamos la ficha.
-
-        CAB16 solamente selecciona.
-        */
-
-        if(
-            this.buscarTodos
-        ){
-
-            console.log(
-                "cab16: resultado seleccionado:",
-                codigo
-            );
-
-            return;
-
-        }
-
-
-        /*
-        Con el check desactivado:
-        cargar mediante PALNAVEGADOR.
-        */
-
-        if(
-            !window.PALNAVEGADOR ||
-            typeof window.PALNAVEGADOR.cargarPorCodigo !==
-            "function"
-        ){
-
-            console.error(
-                "cab16: PALNAVEGADOR.cargarPorCodigo() no está disponible."
-            );
-
-            return;
-
-        }
-
-
         console.log(
-            "cab16: cargando paleoficha:",
+            "cab16: código seleccionado:",
             codigo
         );
 
 
-        window.PALNAVEGADOR
-            .cargarPorCodigo(
-                codigo
+        /*----------------------------------------------
+          ESCRIBIR CÓDIGO EN EL CAMPO
+        ----------------------------------------------*/
+
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
             );
+
+
+        if(campo){
+
+            campo.value =
+                codigo;
+
+        }
+
+
+        /*----------------------------------------------
+          CERRAR BUSCADOR
+        ----------------------------------------------*/
+
+        this.cerrarBuscador();
+
+
+        /*----------------------------------------------
+          CARGAR PALEOFICHA
+        ----------------------------------------------*/
+
+        this.cargarPaleoficha(
+            codigo
+        );
+
+    },
+
+
+    /*====================================================
+      CERRAR BUSCADOR
+    ====================================================*/
+
+    cerrarBuscador: function(){
+
+        /*
+        Buscamos primero las funciones conocidas
+        del sistema actual.
+        */
+
+        if(
+            window.PALBUSCADOR
+        ){
+
+            if(
+                typeof window.PALBUSCADOR.cerrar ===
+                "function"
+            ){
+
+                window.PALBUSCADOR.cerrar();
+
+                return;
+
+            }
+
+
+            if(
+                typeof window.PALBUSCADOR.cerrarBusqueda ===
+                "function"
+            ){
+
+                window.PALBUSCADOR.cerrarBusqueda();
+
+                return;
+
+            }
+
+        }
+
+
+        /*
+        Respaldo visual:
+        buscar elementos habituales del lightbox.
+        */
+
+        const posibles = [
+
+            "lightboxBuscador",
+
+            "buscadorLightbox",
+
+            "lightboxBusqueda",
+
+            "modalBuscador"
+
+        ];
+
+
+        for(
+            const id of posibles
+        ){
+
+            const elemento =
+                document.getElementById(
+                    id
+                );
+
+
+            if(elemento){
+
+                elemento.style.display =
+                    "none";
+
+                elemento.classList.remove(
+                    "activo"
+                );
+
+                elemento.classList.remove(
+                    "visible"
+                );
+
+            }
+
+        }
+
+    },
+
+
+    /*====================================================
+      CARGAR PALEOFICHA
+    ====================================================*/
+
+    cargarPaleoficha: async function(
+        codigo
+    ){
+
+        /*
+        PALNAVEGADOR es el sistema responsable
+        de la navegación de las paleofichas.
+        */
+
+        if(
+            window.PALNAVEGADOR
+        ){
+
+            /*------------------------------------------
+              MÉTODO 1
+            ------------------------------------------*/
+
+            if(
+                typeof window.PALNAVEGADOR.cargar ===
+                "function"
+            ){
+
+                try{
+
+                    await window.PALNAVEGADOR.cargar(
+                        codigo
+                    );
+
+                    return;
+
+                }
+                catch(error){
+
+                    console.warn(
+                        "cab16: PALNAVEGADOR.cargar falló.",
+                        error
+                    );
+
+                }
+
+            }
+
+
+            /*------------------------------------------
+              MÉTODO 2
+            ------------------------------------------*/
+
+            if(
+                typeof window.PALNAVEGADOR.irA ===
+                "function"
+            ){
+
+                try{
+
+                    await window.PALNAVEGADOR.irA(
+                        codigo
+                    );
+
+                    return;
+
+                }
+                catch(error){
+
+                    console.warn(
+                        "cab16: PALNAVEGADOR.irA falló.",
+                        error
+                    );
+
+                }
+
+            }
+
+
+            /*------------------------------------------
+              MÉTODO 3
+            ------------------------------------------*/
+
+            if(
+                typeof window.PALNAVEGADOR.cargarPorCodigo ===
+                "function"
+            ){
+
+                try{
+
+                    await window.PALNAVEGADOR.cargarPorCodigo(
+                        codigo
+                    );
+
+                    return;
+
+                }
+                catch(error){
+
+                    console.warn(
+                        "cab16: PALNAVEGADOR.cargarPorCodigo falló.",
+                        error
+                    );
+
+                }
+
+            }
+
+        }
+
+
+        /*
+        Si no existe un método compatible,
+        no inventamos una ruta ni modificamos
+        otros módulos.
+        */
+
+        console.warn(
+            "cab16: no se encontró un método de carga compatible para",
+            codigo
+        );
 
     }
 
