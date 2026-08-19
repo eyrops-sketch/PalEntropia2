@@ -1,17 +1,18 @@
 /*
 ========================================================
 PalEntropía
-cab16.js v1.8 COMPACTA
+cab16.js v1.9
 
 BUSCADOR AVANZADO POR CÓDIGO
 
-LÓGICA DEFINITIVA DEL CHECK
----------------------------
-☐ CHECK DESMARCADO
-    → TODOS LOS REGISTROS
-
-☑ CHECK MARCADO
-    → RANGO DEL FILTRO
+FUNCIÓN
+-------
+- Busca exclusivamente por J1 / código.
+- Check DESACTIVADO:
+    todos los registros.
+- Check ACTIVADO:
+    los resultados de la consulta forman
+    el rango activo de navegación.
 
 CIRCUITO
 --------
@@ -23,26 +24,31 @@ MATRIXNAVEGADOR
   ↓
 PALNAVEGADOR.aplicarFiltro()
 
-AL DESMARCAR
-------------
-CAB16
-  ↓
-PALNAVEGADOR.limpiarFiltro()
-  ↓
-TODOS LOS REGISTROS
+COMPORTAMIENTO DEL CHECK
+------------------------
+☐ Mostrar seleccionado/Consulta completa
+    → todos los registros.
 
-IMPORTANTE
-----------
-El label NO controla el rango.
+☑ Mostrar seleccionado/Consulta completa
+    → rango de resultados de la consulta.
 
-El estado real del rango depende
-exclusivamente del check.
+AL CERRAR SIN SELECCIONAR
+-------------------------
+Si el check está activado y no se seleccionó
+ningún resultado:
+
+    → se carga el primer registro real
+      del rango filtrado.
+
+Si se seleccionó un resultado:
+
+    → se carga exactamente ese registro.
+
 ========================================================
 */
 
 
 window.cab16 = {
-
 
     inicializado: false,
 
@@ -51,13 +57,11 @@ window.cab16 = {
     buscarTodos: false,
 
     /*
-    Control de búsquedas asíncronas.
-    Evita que una búsqueda anterior
-    vuelva a aplicar un filtro después
-    de cambiar el check.
+    Indica si durante la apertura actual
+    se ha seleccionado realmente un resultado.
     */
 
-    busquedaID: 0,
+    seleccionRealizada: false,
 
 
     /*====================================================
@@ -80,20 +84,11 @@ window.cab16 = {
         this.conectar();
 
 
-        /*
-        Estado inicial:
-
-        ☐ = TODOS LOS REGISTROS
-        */
-
-        this.buscarTodos = false;
-
-
         this.inicializado = true;
 
 
         console.log(
-            "cab16 v1.8: buscador preparado."
+            "cab16 v1.9: buscador avanzado preparado."
         );
 
     },
@@ -160,9 +155,9 @@ window.cab16 = {
         }
 
 
-        /*
-        LABEL
-        */
+        /*------------------------------------------------
+          LABEL RESULTADOS
+        ------------------------------------------------*/
 
         const label =
             document.createElement(
@@ -178,9 +173,9 @@ window.cab16 = {
             "Introduce al menos 3 caracteres";
 
 
-        /*
-        CHECK
-        */
+        /*------------------------------------------------
+          CHECK
+        ------------------------------------------------*/
 
         const checkLabel =
             document.createElement(
@@ -207,18 +202,7 @@ window.cab16 = {
 
 
         /*
-        IMPORTANTE:
-
-        El texto puede mantenerse como
-        "Buscar en todos los registros"
-        porque:
-
-        ☐ → todos
-        ☑ → filtro
-
-        Pero el comportamiento real
-        lo controla exclusivamente
-        la lógica de arriba.
+        Texto definitivo del check.
         */
 
         const texto =
@@ -228,7 +212,7 @@ window.cab16 = {
 
 
         texto.textContent =
-            "Mostrar seleccionado/toda la consulta";
+            "Mostrar seleccionado/Consulta completa";
 
 
         checkLabel.appendChild(
@@ -241,9 +225,9 @@ window.cab16 = {
         );
 
 
-        /*
-        RESULTADOS
-        */
+        /*------------------------------------------------
+          RESULTADOS
+        ------------------------------------------------*/
 
         const resultados =
             document.createElement(
@@ -255,9 +239,9 @@ window.cab16 = {
             "resultadosCab16";
 
 
-        /*
-        INSERTAR
-        */
+        /*------------------------------------------------
+          INSERTAR
+        ------------------------------------------------*/
 
         campo.insertAdjacentElement(
             "afterend",
@@ -303,11 +287,9 @@ window.cab16 = {
             );
 
 
-        /*
-        -----------------------------------------------
-        CAMPO DE BÚSQUEDA
-        -----------------------------------------------
-        */
+        /*------------------------------------------------
+          ESCRIBIR CONSULTA
+        ------------------------------------------------*/
 
         if(campo){
 
@@ -315,6 +297,16 @@ window.cab16 = {
                 "input",
                 () => {
 
+                    /*
+                    Una nueva consulta significa
+                    que todavía no se ha seleccionado
+                    ningún resultado.
+                    */
+
+                    this.seleccionRealizada =
+                        false;
+
+
                     this.buscar();
 
                 }
@@ -323,75 +315,46 @@ window.cab16 = {
         }
 
 
-        /*
-        -----------------------------------------------
-        CHECK
-        -----------------------------------------------
-        */
+        /*------------------------------------------------
+          CHECK
+        ------------------------------------------------*/
 
         if(check){
 
-            check.checked =
-                false;
-
-
             check.addEventListener(
                 "change",
-                () => {
-
-                    /*
-                    Guardamos exactamente
-                    el estado físico del check.
-                    */
+                async () => {
 
                     this.buscarTodos =
                         check.checked;
 
 
                     /*
-                    =====================================
-                    DESMARCADO
-                    =====================================
-
-                    ☐ = TODOS
-
-                    Limpiamos inmediatamente
-                    cualquier filtro activo.
+                    CHECK DESACTIVADO
+                    -----------------
+                    Volvemos inmediatamente
+                    al conjunto completo.
                     */
 
-                    if(!check.checked){
-
-                        this.busquedaID++;
-
+                    if(
+                        !this.buscarTodos
+                    ){
 
                         this.limpiarFiltro();
-
-
-                        /*
-                        Volvemos a ejecutar la búsqueda
-                        pero SIN volver a crear filtro.
-                        */
-
-                        this.buscar();
-
-
-                        return;
 
                     }
 
 
                     /*
-                    =====================================
-                    MARCADO
-                    =====================================
-
-                    ☑ = FILTRO
-
-                    Ejecutamos búsqueda para construir
-                    la nueva matriz.
+                    Nueva situación de búsqueda:
+                    todavía no hay selección.
                     */
 
-                    this.buscar();
+                    this.seleccionRealizada =
+                        false;
+
+
+                    await this.buscar();
 
                 }
             );
@@ -399,17 +362,15 @@ window.cab16 = {
         }
 
 
-        /*
-        -----------------------------------------------
-        CIERRE
-        -----------------------------------------------
-        */
+        /*------------------------------------------------
+          CERRAR
+        ------------------------------------------------*/
 
         if(cerrar){
 
             cerrar.addEventListener(
                 "click",
-                () => {
+                async () => {
 
                     const texto =
                         campo
@@ -417,23 +378,44 @@ window.cab16 = {
                             : "";
 
 
-                    if(!texto){
+                    /*
+                    Actualizar label principal
+                    con la consulta.
+                    */
 
-                        return;
+                    if(texto){
+
+                        const label =
+                            document.getElementById(
+                                "labelBusquedaUniversal"
+                            );
+
+
+                        if(label){
+
+                            label.textContent =
+                                texto;
+
+                        }
 
                     }
 
 
-                    const label =
-                        document.getElementById(
-                            "labelBusquedaUniversal"
-                        );
+                    /*
+                    Si el check está ACTIVADO
+                    y NO se ha seleccionado ningún
+                    resultado:
 
+                    cargar el primer registro real
+                    del filtro.
+                    */
 
-                    if(label){
+                    if(
+                        this.buscarTodos &&
+                        !this.seleccionRealizada
+                    ){
 
-                        label.textContent =
-                            texto;
+                        await this.cargarPrimerFiltrado();
 
                     }
 
@@ -480,14 +462,6 @@ window.cab16 = {
         }
 
 
-        /*
-        Cada búsqueda recibe un ID.
-        */
-
-        const id =
-            ++this.busquedaID;
-
-
         const texto =
             campo.value
                 .trim()
@@ -498,24 +472,26 @@ window.cab16 = {
             "";
 
 
-        /*
-        -----------------------------------------------
-        MÍNIMO 3 CARACTERES
-        -----------------------------------------------
-        */
+        /*------------------------------------------------
+          MÍNIMO
+        ------------------------------------------------*/
 
-        if(texto.length < 3){
+        if(
+            texto.length < 3
+        ){
 
             label.textContent =
                 "Introduce al menos 3 caracteres";
 
 
             /*
-            Si estamos desmarcados,
-            garantizamos TODOS.
+            Si estamos en modo consulta,
+            no debe quedar un filtro antiguo.
             */
 
-            if(!this.buscarTodos){
+            if(
+                this.buscarTodos
+            ){
 
                 this.limpiarFiltro();
 
@@ -527,11 +503,9 @@ window.cab16 = {
         }
 
 
-        /*
-        -----------------------------------------------
-        DATOS
-        -----------------------------------------------
-        */
+        /*------------------------------------------------
+          ACTUALIZAR DATOS
+        ------------------------------------------------*/
 
         this.obtenerDatos();
 
@@ -546,39 +520,70 @@ window.cab16 = {
             label.textContent =
                 "No hay datos disponibles.";
 
-
             return;
 
         }
 
 
-        /*
-        ===============================================
-        IMPORTANTE
-        ===============================================
+        /*------------------------------------------------
+          CONJUNTO DE BÚSQUEDA
+        ------------------------------------------------*/
 
-        LA BÚSQUEDA SIEMPRE SE HACE SOBRE
-        LOS DATOS GENERALES.
-
-        No usamos conjuntoActivo() aquí.
-
-        Así evitamos que un filtro anterior
-        contamine una búsqueda nueva.
-        */
-
-        const conjunto =
-            this.datos;
+        let conjunto;
 
 
         /*
-        -----------------------------------------------
-        BUSCAR SOLO POR CÓDIGO
-        -----------------------------------------------
+        CHECK ACTIVADO
+        ---------------
+        La consulta SIEMPRE se hace sobre
+        todos los registros.
+
+        Después los resultados pasan a ser
+        el rango de navegación.
         */
+
+        if(
+            this.buscarTodos
+        ){
+
+            conjunto =
+                this.datos;
+
+        }
+
+
+        /*
+        CHECK DESACTIVADO
+        -----------------
+        Se buscan coincidencias dentro
+        del conjunto completo.
+
+        Importante:
+        aquí NO utilizamos un filtro anterior.
+        */
+
+        else{
+
+            conjunto =
+                this.datos;
+
+        }
+
+
+        /*------------------------------------------------
+          COINCIDENCIAS POR CÓDIGO
+        ------------------------------------------------*/
 
         const coincidencias =
             conjunto.filter(
                 registro => {
+
+                    if(!registro){
+
+                        return false;
+
+                    }
+
 
                     const codigo =
                         String(
@@ -596,11 +601,9 @@ window.cab16 = {
             );
 
 
-        /*
-        -----------------------------------------------
-        CONTADOR
-        -----------------------------------------------
-        */
+        /*------------------------------------------------
+          CONTADOR
+        ------------------------------------------------*/
 
         label.textContent =
             coincidencias.length +
@@ -611,98 +614,76 @@ window.cab16 = {
             );
 
 
-        /*
-        -----------------------------------------------
-        MOSTRAR
-        -----------------------------------------------
-        */
+        /*------------------------------------------------
+          MOSTRAR
+        ------------------------------------------------*/
 
         this.mostrar(
             coincidencias
         );
 
 
-        /*
-        ===============================================
-        CHECK MARCADO
-        ===============================================
+        /*------------------------------------------------
+          CHECK ACTIVADO
+          → CREAR RANGO
+        ------------------------------------------------*/
 
-        ☑ = FILTRO
-
-        Construimos el rango.
-        */
-
-        if(this.buscarTodos){
+        if(
+            this.buscarTodos
+        ){
 
             await this.aplicarMatrix(
-                coincidencias,
-                id
+                coincidencias
             );
-
-
-            return;
 
         }
 
 
         /*
-        ===============================================
-        CHECK DESMARCADO
-        ===============================================
-
-        ☐ = TODOS
-
-        No se aplica ninguna matriz.
-
-        Nos aseguramos de que PALNAVEGADOR
-        permanezca en el conjunto completo.
+        CHECK DESACTIVADO
+        -----------------
+        No existe rango especial.
         */
-
-        this.limpiarFiltro();
 
     },
 
 
     /*====================================================
-      APLICAR MATRIX
+      MATRIX
     ====================================================*/
 
     aplicarMatrix: async function(
-        coincidencias,
-        id
+        coincidencias
     ){
 
         /*
-        Si durante la operación cambió el check
-        o comenzó otra búsqueda, abortamos.
+        Si no hay coincidencias,
+        limpiamos el rango.
         */
 
         if(
-            id !== this.busquedaID ||
-            !this.buscarTodos
+            !Array.isArray(
+                coincidencias
+            ) ||
+            !coincidencias.length
         ){
+
+            this.limpiarFiltro();
 
             return;
 
         }
 
 
-        /*
-        -----------------------------------------------
-        MATRIXFILTRO
-        -----------------------------------------------
-        */
+        /*------------------------------------------------
+          MATRIXFILTRO
+        ------------------------------------------------*/
 
         if(
             !window.MATRIXFILTRO ||
             typeof window.MATRIXFILTRO.actualizar !==
             "function"
         ){
-
-            console.warn(
-                "cab16: MATRIXFILTRO no disponible."
-            );
-
 
             return;
 
@@ -721,21 +702,14 @@ window.cab16 = {
             )
         ){
 
-            console.warn(
-                "cab16: MATRIXFILTRO no devolvió J1."
-            );
-
-
             return;
 
         }
 
 
-        /*
-        -----------------------------------------------
-        MATRIXNAVEGADOR
-        -----------------------------------------------
-        */
+        /*------------------------------------------------
+          MATRIXNAVEGADOR
+        ------------------------------------------------*/
 
         if(
             !window.MatrixNavegador ||
@@ -743,33 +717,28 @@ window.cab16 = {
             "function"
         ){
 
-            console.warn(
-                "cab16: MatrixNavegador no disponible."
-            );
-
-
             return;
 
         }
 
 
-        const registros =
-            await window.MatrixNavegador.obtener(
-                matrizJ1
+        let registros;
+
+
+        try{
+
+            registros =
+                await window.MatrixNavegador.obtener(
+                    matrizJ1
+                );
+
+        }
+        catch(error){
+
+            console.warn(
+                "cab16: error en MatrixNavegador.",
+                error
             );
-
-
-        /*
-        Comprobamos nuevamente el estado.
-
-        Es importante porque la operación
-        anterior es asíncrona.
-        */
-
-        if(
-            id !== this.busquedaID ||
-            !this.buscarTodos
-        ){
 
             return;
 
@@ -779,7 +748,8 @@ window.cab16 = {
         if(
             !Array.isArray(
                 registros
-            )
+            ) ||
+            !registros.length
         ){
 
             return;
@@ -787,13 +757,9 @@ window.cab16 = {
         }
 
 
-        /*
-        -----------------------------------------------
-        PALNAVEGADOR
-        -----------------------------------------------
-
-        ☑ = aplicar rango filtrado.
-        */
+        /*------------------------------------------------
+          PALNAVEGADOR
+        ------------------------------------------------*/
 
         if(
             window.PALNAVEGADOR &&
@@ -811,7 +777,115 @@ window.cab16 = {
 
 
     /*====================================================
-      MOSTRAR
+      CARGAR PRIMER FILTRADO
+    ====================================================*/
+
+    cargarPrimerFiltrado: async function(){
+
+        if(
+            !window.PALNAVEGADOR
+        ){
+
+            return;
+
+        }
+
+
+        /*
+        El filtro ya debería existir porque
+        aplicarMatrix() lo creó mientras se
+        escribía la consulta.
+        */
+
+        if(
+            typeof window.PALNAVEGADOR.conjuntoActivo !==
+            "function"
+        ){
+
+            return;
+
+        }
+
+
+        const conjunto =
+            window.PALNAVEGADOR.conjuntoActivo();
+
+
+        if(
+            !Array.isArray(
+                conjunto
+            ) ||
+            !conjunto.length
+        ){
+
+            return;
+
+        }
+
+
+        /*
+        Obtenemos el PRIMER registro REAL
+        del filtro.
+        */
+
+        const primero =
+            conjunto[0];
+
+
+        if(
+            !primero ||
+            !primero.codigo
+        ){
+
+            return;
+
+        }
+
+
+        const codigo =
+            String(
+                primero.codigo
+            )
+            .trim()
+            .toUpperCase();
+
+
+        /*
+        Posicionamos el navegador
+        en ese primer registro.
+        */
+
+        if(
+            typeof window.PALNAVEGADOR.posicionar ===
+            "function"
+        ){
+
+            await window.PALNAVEGADOR.posicionar(
+                codigo
+            );
+
+        }
+
+
+        /*
+        Y lo cargamos realmente.
+        */
+
+        if(
+            typeof window.PALNAVEGADOR.cargarIndice ===
+            "function"
+        ){
+
+            await window.PALNAVEGADOR.cargarIndice(
+                0
+            );
+
+        }
+
+    },
+
+        /*====================================================
+      MOSTRAR RESULTADOS
     ====================================================*/
 
     mostrar: function(
@@ -833,6 +907,13 @@ window.cab16 = {
 
         coincidencias.forEach(
             registro => {
+
+                if(!registro){
+
+                    return;
+
+                }
+
 
                 const codigo =
                     String(
@@ -911,6 +992,21 @@ window.cab16 = {
         }
 
 
+        /*
+        MUY IMPORTANTE:
+
+        Registramos que existe una selección
+        REAL.
+
+        Esto impide que cerrar() cargue
+        posteriormente el primer registro
+        del filtro.
+        */
+
+        this.seleccionRealizada =
+            true;
+
+
         const campo =
             document.getElementById(
                 "buscarUniversal"
@@ -939,23 +1035,16 @@ window.cab16 = {
         }
 
 
-        /*
-        Cerramos buscador.
-        */
+        /*------------------------------------------------
+          CERRAR
+        ------------------------------------------------*/
 
         this.cerrar();
 
 
-        /*
-        Cargamos la ficha.
-
-        Si el check está marcado,
-        PALNAVEGADOR permanece dentro
-        del filtro.
-
-        Si está desmarcado,
-        PALNAVEGADOR está en TODOS.
-        */
+        /*------------------------------------------------
+          CARGAR CÓDIGO SELECCIONADO
+        ------------------------------------------------*/
 
         if(
             window.PALNAVEGADOR &&
@@ -1040,10 +1129,7 @@ window.cab16 = {
     limpiarFiltro: function(){
 
         /*
-        Primero PALNAVEGADOR.
-
-        Esto es lo que realmente devuelve
-        la navegación a TODOS.
+        PALNAVEGADOR vuelve al conjunto completo.
         */
 
         if(
@@ -1058,10 +1144,7 @@ window.cab16 = {
 
 
         /*
-        Después limpiamos MatrixNavegador.
-
-        No es el que controla la navegación,
-        pero eliminamos su matriz almacenada.
+        MATRIXNAVEGADOR también se limpia.
         */
 
         if(
@@ -1071,23 +1154,6 @@ window.cab16 = {
         ){
 
             window.MatrixNavegador.limpiar();
-
-        }
-
-
-        /*
-        MATRIXFILTRO también puede conservar
-        su última matriz. Si dispone de método
-        limpiar, lo vaciamos.
-        */
-
-        if(
-            window.MATRIXFILTRO &&
-            typeof window.MATRIXFILTRO.limpiar ===
-            "function"
-        ){
-
-            window.MATRIXFILTRO.limpiar();
 
         }
 
@@ -1112,6 +1178,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab16.js v1.8 COMPACTA
+FIN cab16.js v1.9
 ========================================================
 */
