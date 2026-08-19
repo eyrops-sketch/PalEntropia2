@@ -1,25 +1,31 @@
 /*
 ========================================================
 PalEntropía
-PALNAVEGADOR.js v1.2 LTS
+PALNAVEGADOR.js v1.3 LTS
 
 Sistema de navegación de Paleofichas.
 
-NUEVO v1.2
-----------
-- Puede recibir una matriz completa desde MATRIXNAVEGADOR.
-- Esa matriz pasa a ser el rango de navegación.
-- Mantiene separado el conjunto completo de registros.
-- Permite limpiar el rango matricial y volver al conjunto total.
+CORRECCIÓN v1.3
+---------------
+- Acepta registros con "codigo".
+- Acepta registros con "j1".
+- MATRIXNAVEGADOR entrega j1.
+- PALNAVEGADOR utiliza j1 como código cuando no existe
+  codigo.
+- Mantiene separado el conjunto general del rango filtrado.
+- aplicarMatriz() activa el rango recibido.
+- limpiarFiltro() devuelve al conjunto general.
+- La navegación permanece limitada al rango cuando existe.
 - No modifica CAB16.
 - No modifica MATRIXFILTRO.
 - No modifica MATRIXNAVEGADOR.
 ========================================================
 */
 
+
 const PALNAVEGADOR = {
 
-    version: "1.2 LTS",
+    version: "1.3 LTS",
 
     registros: [],
 
@@ -69,11 +75,20 @@ const PALNAVEGADOR = {
         }
 
 
+        /*
+        El conjunto general procede de LEEPALJSON.
+
+        Aquí mantenemos únicamente registros que
+        dispongan de codigo o j1.
+        */
+
         this.registros =
             contenedor.filter(
                 registro =>
                     registro &&
-                    registro.codigo
+                    this.obtenerCodigoRegistro(
+                        registro
+                    )
             );
 
 
@@ -87,6 +102,43 @@ const PALNAVEGADOR = {
 
 
         return this.registros;
+
+    },
+
+
+    /* =====================================================
+       OBTENER CÓDIGO DEL REGISTRO
+       
+       Acepta:
+       - registro.codigo
+       - registro.j1
+       ===================================================== */
+
+    obtenerCodigoRegistro(registro) {
+
+        if (!registro) {
+
+            return "";
+
+        }
+
+
+        /*
+        Prioridad:
+        1. codigo
+        2. j1
+        */
+
+        const codigo =
+            registro.codigo !== undefined &&
+            registro.codigo !== null
+                ? registro.codigo
+                : registro.j1;
+
+
+        return this.normalizarCodigo(
+            codigo
+        );
 
     },
 
@@ -121,7 +173,9 @@ const PALNAVEGADOR = {
     conjuntoActivo() {
 
         if (
-            Array.isArray(this.filtroActivo)
+            Array.isArray(
+                this.filtroActivo
+            )
         ) {
 
             return this.filtroActivo;
@@ -149,18 +203,31 @@ const PALNAVEGADOR = {
         }
 
 
+        /*
+        Aceptamos tanto registros normales
+        como registros procedentes de MATRIXNAVEGADOR.
+        */
+
         this.filtroActivo =
             registros.filter(
                 registro =>
-                    registro &&
-                    registro.codigo
+                    this.obtenerCodigoRegistro(
+                        registro
+                    ) !== ""
             );
 
 
         this.matrizActiva = true;
 
 
-        if (!this.filtroActivo.length) {
+        /*
+        Si el filtro está vacío,
+        no existe rango navegable.
+        */
+
+        if (
+            !this.filtroActivo.length
+        ) {
 
             this.indice = -1;
 
@@ -171,24 +238,29 @@ const PALNAVEGADOR = {
 
         /*
         Intentamos conservar la ficha actual
-        si también existe dentro del nuevo filtro.
+        dentro del nuevo rango.
         */
 
-        if (this.codigoActual) {
+        if (
+            this.codigoActual
+        ) {
 
             const indice =
                 this.filtroActivo.findIndex(
                     registro =>
-                        this.normalizarCodigo(
-                            registro.codigo
+                        this.obtenerCodigoRegistro(
+                            registro
                         ) ===
                         this.codigoActual
                 );
 
 
-            if (indice !== -1) {
+            if (
+                indice !== -1
+            ) {
 
-                this.indice = indice;
+                this.indice =
+                    indice;
 
                 return this.filtroActivo;
 
@@ -198,8 +270,8 @@ const PALNAVEGADOR = {
 
 
         /*
-        Si la ficha actual no está dentro
-        del filtro, empezamos por la primera.
+        Si la ficha actual no pertenece
+        al filtro, comenzamos por la primera.
         */
 
         this.indice = 0;
@@ -211,7 +283,7 @@ const PALNAVEGADOR = {
 
 
     /* =====================================================
-       APLICAR MATRIZ DE MATRIXNAVEGADOR
+       APLICAR MATRIZ
        ===================================================== */
 
     aplicarMatriz(registros) {
@@ -234,7 +306,9 @@ const PALNAVEGADOR = {
         this.matrizActiva = false;
 
 
-        if (!this.registros.length) {
+        if (
+            !this.registros.length
+        ) {
 
             this.indice = -1;
 
@@ -243,13 +317,20 @@ const PALNAVEGADOR = {
         }
 
 
-        if (this.codigoActual) {
+        /*
+        Al volver al conjunto general,
+        intentamos conservar la ficha actual.
+        */
+
+        if (
+            this.codigoActual
+        ) {
 
             const indice =
                 this.registros.findIndex(
                     registro =>
-                        this.normalizarCodigo(
-                            registro.codigo
+                        this.obtenerCodigoRegistro(
+                            registro
                         ) ===
                         this.codigoActual
                 );
@@ -286,9 +367,10 @@ const PALNAVEGADOR = {
 
         return conjunto.findIndex(
             registro =>
-                this.normalizarCodigo(
-                    registro.codigo
-                ) === j1
+                this.obtenerCodigoRegistro(
+                    registro
+                ) ===
+                j1
         );
 
     },
@@ -321,7 +403,9 @@ const PALNAVEGADOR = {
             );
 
 
-        if (indice === -1) {
+        if (
+            indice === -1
+        ) {
 
             return false;
 
@@ -380,7 +464,9 @@ const PALNAVEGADOR = {
         );
 
     },
-/* =====================================================
+
+
+    /* =====================================================
        CARGAR ÍNDICE
        ===================================================== */
 
@@ -390,7 +476,9 @@ const PALNAVEGADOR = {
             this.conjuntoActivo();
 
 
-        if (!conjunto.length) {
+        if (
+            !conjunto.length
+        ) {
 
             throw new Error(
                 "PALNAVEGADOR: el conjunto activo está vacío."
@@ -399,14 +487,22 @@ const PALNAVEGADOR = {
         }
 
 
-        if (indice < 0) {
+        /*
+        Límites del rango.
+        */
+
+        if (
+            indice < 0
+        ) {
 
             indice = 0;
 
         }
 
 
-        if (indice >= conjunto.length) {
+        if (
+            indice >= conjunto.length
+        ) {
 
             indice =
                 conjunto.length - 1;
@@ -418,13 +514,25 @@ const PALNAVEGADOR = {
             conjunto[indice];
 
 
-        if (
-            !registro ||
-            !registro.codigo
-        ) {
+        if (!registro) {
 
             throw new Error(
                 "PALNAVEGADOR: registro inválido."
+            );
+
+        }
+
+
+        const codigo =
+            this.obtenerCodigoRegistro(
+                registro
+            );
+
+
+        if (!codigo) {
+
+            throw new Error(
+                "PALNAVEGADOR: registro sin código."
             );
 
         }
@@ -435,9 +543,7 @@ const PALNAVEGADOR = {
 
 
         this.codigoActual =
-            this.normalizarCodigo(
-                registro.codigo
-            );
+            codigo;
 
 
         /* =================================================
@@ -490,14 +596,18 @@ const PALNAVEGADOR = {
             this.conjuntoActivo();
 
 
-        if (!conjunto.length) {
+        if (
+            !conjunto.length
+        ) {
 
             return null;
 
         }
 
 
-        if (this.indice <= 0) {
+        if (
+            this.indice <= 0
+        ) {
 
             return await this.cargarIndice(
                 0
@@ -523,7 +633,9 @@ const PALNAVEGADOR = {
             this.conjuntoActivo();
 
 
-        if (!conjunto.length) {
+        if (
+            !conjunto.length
+        ) {
 
             return null;
 
@@ -559,7 +671,9 @@ const PALNAVEGADOR = {
             this.conjuntoActivo();
 
 
-        if (!conjunto.length) {
+        if (
+            !conjunto.length
+        ) {
 
             return null;
 
@@ -583,7 +697,9 @@ const PALNAVEGADOR = {
             this.conjuntoActivo();
 
 
-        if (!conjunto.length) {
+        if (
+            !conjunto.length
+        ) {
 
             throw new Error(
                 "PALNAVEGADOR: no hay registros disponibles."
@@ -733,6 +849,6 @@ window.PALNAVEGADOR =
 
 /*
 ========================================================
-FIN PALNAVEGADOR.js v1.2 LTS
+FIN PALNAVEGADOR.js v1.3 LTS
 ========================================================
 */
