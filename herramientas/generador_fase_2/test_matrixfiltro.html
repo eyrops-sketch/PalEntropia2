@@ -8,7 +8,7 @@
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
 
-<title>Test MatrixNavegador</title>
+<title>Test MatrixFiltro → MatrixNavegador</title>
 
 <style>
 
@@ -26,13 +26,43 @@ body {
 
 }
 
-
 h1 {
 
     text-align: center;
 
 }
 
+.estado {
+
+    text-align: center;
+
+    margin: 15px 0;
+
+    opacity: .8;
+
+}
+
+button {
+
+    display: block;
+
+    margin: 20px auto;
+
+    padding: 12px 20px;
+
+    border: 2px solid #62d6ff;
+
+    border-radius: 20px;
+
+    background: #15191d;
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+}
 
 #resultado {
 
@@ -50,7 +80,6 @@ h1 {
 
 }
 
-
 pre {
 
     white-space: pre-wrap;
@@ -58,17 +87,6 @@ pre {
     word-break: break-word;
 
     color: #62d6ff;
-
-}
-
-
-.estado {
-
-    text-align: center;
-
-    margin: 15px 0;
-
-    opacity: 0.8;
 
 }
 
@@ -81,7 +99,7 @@ pre {
 
 
 <h1>
-    Test MatrixNavegador
+    Test MatrixFiltro → MatrixNavegador
 </h1>
 
 
@@ -94,12 +112,23 @@ pre {
 </div>
 
 
+<button id="probar">
+
+    PROBAR CONEXIÓN
+
+</button>
+
+
 <div id="resultado">
 
-    Cargando...
+    Esperando prueba...
 
 </div>
 
+
+<!-- =====================================================
+     MATRIXNAVEGADOR
+     ===================================================== -->
 
 <script src="matrixnavegador.js"></script>
 
@@ -108,16 +137,12 @@ pre {
 
 document.addEventListener(
     "DOMContentLoaded",
-    async function() {
+    function() {
 
-        const codigos = [
-
-            "004_03",
-            "004_07",
-            "004_11",
-            "005_02"
-
-        ];
+        const boton =
+            document.getElementById(
+                "probar"
+            );
 
 
         const salida =
@@ -126,46 +151,109 @@ document.addEventListener(
             );
 
 
-        try {
+        boton.addEventListener(
+            "click",
+            async function() {
 
-            const matriz =
-                await window.MatrixNavegador.obtener(
-                    codigos
-                );
+                try {
 
+                    /*
+                    =====================================
+                    PASO 1
+                    MATRIZ QUE ENTREGA MATRIXFILTRO
+                    =====================================
+                    */
 
-            console.log(
-                "MatrixNavegador:",
-                matriz
-            );
+                    const matrizFiltro = [
 
+                        "004_03",
+                        "004_07",
+                        "004_11",
+                        "005_02"
 
-            salida.innerHTML =
-                "<pre>" +
-                JSON.stringify(
-                    matriz,
-                    null,
-                    4
-                ) +
-                "</pre>";
-
-        }
-
-        catch(error) {
-
-            console.error(
-                "ERROR TEST MatrixNavegador:",
-                error
-            );
+                    ];
 
 
-            salida.innerHTML =
-                "<pre>" +
-                "ERROR: " +
-                error.message +
-                "</pre>";
+                    /*
+                    =====================================
+                    PASO 2
+                    MATRIXNAVEGADOR RECIBE LOS J1
+                    =====================================
+                    */
 
-        }
+                    const matrizNavegador =
+
+                        await window.MatrixNavegador.obtener(
+                            matrizFiltro
+                        );
+
+
+                    /*
+                    =====================================
+                    PASO 3
+                    MOSTRAR RESULTADO
+                    =====================================
+                    */
+
+                    console.log(
+                        "MatrizFiltro:",
+                        matrizFiltro
+                    );
+
+
+                    console.log(
+                        "MatrixNavegador:",
+                        matrizNavegador
+                    );
+
+
+                    salida.innerHTML =
+
+                        "<pre>" +
+
+                        "MATRIXFILTRO\n\n" +
+
+                        JSON.stringify(
+                            matrizFiltro,
+                            null,
+                            4
+                        ) +
+
+                        "\n\n====================\n\n" +
+
+                        "MATRIXNAVEGADOR\n\n" +
+
+                        JSON.stringify(
+                            matrizNavegador,
+                            null,
+                            4
+                        ) +
+
+                        "</pre>";
+
+                }
+
+                catch(error) {
+
+                    console.error(
+                        error
+                    );
+
+
+                    salida.innerHTML =
+
+                        "<pre>" +
+
+                        "ERROR: " +
+
+                        error.message +
+
+                        "</pre>";
+
+                }
+
+            }
+        );
 
     }
 );
