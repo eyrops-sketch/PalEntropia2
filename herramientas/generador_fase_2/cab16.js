@@ -1,44 +1,52 @@
 /*
 ========================================================
-cab16.js v1.2
+cab16.js v1.2 LTS
 autocompletado del buscador avanzado
-palentropía — generador
+PalEntropía — Generador
 
-CORRECCIÓN v1.2
----------------
-- evita falsos resultados con búsquedas como "000"
-- no utiliza j3 para búsquedas numéricas de código
-- normaliza los datos antes de buscar
-- recupera datos cuando LEEPALJSON termina de cargar
-- mantiene el check "Buscar en todos los registros"
-- evita estados antiguos de resultados
-- todavía NO carga paleofichas
+CAMBIO v1.2
+-----------
+- Lee directamente desde LEEPALJSON
+- Espera a que master.csv esté cargado
+- No depende de PALNAVEGADOR para buscar
+- Evita el problema con 000
+- El check no cambia el origen de datos
+- Búsqueda por:
+    código
+    nombre
+    j3 / tiempo geológico
+    taxón
 
-NO MODIFICA:
-- cab15
-- palbuscador
-- palnavegador
-- cab12
-- cab14
+NO CARGA PALEOFICHAS TODAVÍA.
+NO MODIFICA CAB15.
+NO MODIFICA LEEPALJSON.
 ========================================================
 */
 
 window.cab16 = {
 
-    /*====================================================
-      ESTADO
-    ====================================================*/
+    /* ==================================================
+       ESTADO
+    ================================================== */
 
     inicializado: false,
 
     datos: [],
 
-    buscarTodos: false,
+    buscarTodos: true,
+
+    campo: null,
+
+    label: null,
+
+    check: null,
+
+    resultados: null,
 
 
-    /*====================================================
-      INICIALIZAR
-    ====================================================*/
+    /* ==================================================
+       INICIALIZAR
+    ================================================== */
 
     inicializar: function() {
 
@@ -49,188 +57,9 @@ window.cab16 = {
         }
 
 
-        this.obtenerDatos();
-
         this.crearInterfaz();
 
-        this.conectarCheck();
-
-        this.conectarBusqueda();
-
-        this.conectarDatos();
-
-
-        this.inicializado = true;
-
-
-        console.log(
-            "cab16 v1.2: autocompletado preparado."
-        );
-
-    },
-
-
-    /*====================================================
-      OBTENER DATOS
-    ====================================================*/
-
-    obtenerDatos: function() {
-
-        let datos = [];
-
-
-        /*------------------------------------------------
-          primera fuente: cab15
-        ------------------------------------------------*/
-
-        if (
-            window.cab15 &&
-            typeof window.cab15.obtenerDatos ===
-            "function"
-        ) {
-
-            try {
-
-                datos =
-                    window.cab15.obtenerDatos();
-
-            }
-            catch (error) {
-
-                console.warn(
-                    "cab16: error obteniendo datos desde cab15.",
-                    error
-                );
-
-            }
-
-        }
-
-
-        /*------------------------------------------------
-          segunda fuente: LEEPALJSON
-        ------------------------------------------------*/
-
-        if (
-            !Array.isArray(datos) ||
-            !datos.length
-        ) {
-
-            if (
-                window.LEEPALJSON &&
-                typeof window.LEEPALJSON.obtener ===
-                "function"
-            ) {
-
-                try {
-
-                    datos =
-                        window.LEEPALJSON.obtener();
-
-                }
-                catch (error) {
-
-                    console.warn(
-                        "cab16: error obteniendo datos desde LEEPALJSON.",
-                        error
-                    );
-
-                }
-
-            }
-
-        }
-
-
-        /*------------------------------------------------
-          guardar solamente arrays válidos
-        ------------------------------------------------*/
-
-        if (
-            Array.isArray(datos)
-        ) {
-
-            this.datos =
-                datos;
-
-        }
-        else {
-
-            this.datos =
-                [];
-
-        }
-
-
-        return this.datos;
-
-    },
-
-
-    /*====================================================
-      ESCUCHAR CARGA DE DATOS
-    ====================================================*/
-
-    conectarDatos: function() {
-
-        document.addEventListener(
-            "palentropia:datos-cargados",
-            () => {
-
-                this.obtenerDatos();
-
-
-                const campo =
-                    document.getElementById(
-                        "buscarUniversal"
-                    );
-
-
-                if (
-                    campo &&
-                    campo.value.trim().length >= 3
-                ) {
-
-                    this.ejecutarBusqueda();
-
-                }
-
-            }
-        );
-
-    },
-
-
-    /*====================================================
-      CREAR INTERFAZ
-    ====================================================*/
-
-    crearInterfaz: function() {
-
-        const ventana =
-            document.getElementById(
-                "ventanaBuscadorUniversal"
-            );
-
-
-        if (!ventana) {
-
-            console.warn(
-                "cab16: ventana de cab15 no disponible."
-            );
-
-            return;
-
-        }
-
-
-        const campo =
-            document.getElementById(
-                "buscarUniversal"
-            );
-
-
-        if (!campo) {
+        if (!this.campo) {
 
             console.warn(
                 "cab16: campo de búsqueda no disponible."
@@ -241,24 +70,157 @@ window.cab16 = {
         }
 
 
-        /*------------------------------------------------
-          evitar duplicados
-        ------------------------------------------------*/
+        this.conectarCheck();
+
+        this.conectarBusqueda();
+
+        this.inicializado = true;
+
+
+        /*
+        Intentar obtener datos inmediatamente.
+        */
+
+        this.obtenerDatos();
+
+
+        /*
+        Si LEEPALJSON todavía no ha cargado
+        master.csv, esperamos el evento.
+        */
+
+        document.addEventListener(
+            "palentropia:datos-cargados",
+            () => {
+
+                this.obtenerDatos();
+
+                this.ejecutarBusqueda();
+
+            }
+        );
+
+
+        console.log(
+            "cab16 v1.2 LTS: preparado."
+        );
+
+    },
+
+
+    /* ==================================================
+       OBTENER DATOS
+
+       FUENTE ÚNICA:
+       LEEPALJSON
+    ================================================== */
+
+    obtenerDatos: function() {
 
         if (
-            document.getElementById(
-                "labelResultadosCab16"
-            )
+            !window.LEEPALJSON ||
+            typeof window.LEEPALJSON.obtener !==
+            "function"
         ) {
+
+            this.datos = [];
+
+            return this.datos;
+
+        }
+
+
+        const datos =
+            window.LEEPALJSON.obtener();
+
+
+        if (
+            Array.isArray(datos)
+        ) {
+
+            this.datos =
+                datos;
+
+        } else {
+
+            this.datos = [];
+
+        }
+
+
+        return this.datos;
+
+    },
+
+
+    /* ==================================================
+       CREAR INTERFAZ
+    ================================================== */
+
+    crearInterfaz: function() {
+
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
+            );
+
+
+        if (!campo) {
 
             return;
 
         }
 
 
-        /*------------------------------------------------
-          LABEL
-        ------------------------------------------------*/
+        this.campo =
+            campo;
+
+
+        /*
+        Evitar duplicados.
+        */
+
+        const interfazExistente =
+            document.getElementById(
+                "cab16Interfaz"
+            );
+
+
+        if (interfazExistente) {
+
+            this.label =
+                document.getElementById(
+                    "labelResultadosCab16"
+                );
+
+            this.check =
+                document.getElementById(
+                    "buscarTodosCab16"
+                );
+
+            this.resultados =
+                document.getElementById(
+                    "resultadosCab16"
+                );
+
+            return;
+
+        }
+
+
+        const interfaz =
+            document.createElement(
+                "div"
+            );
+
+
+        interfaz.id =
+            "cab16Interfaz";
+
+
+        /* --------------------------------------------
+           LABEL
+        -------------------------------------------- */
 
         const label =
             document.createElement(
@@ -274,9 +236,9 @@ window.cab16 = {
             "Introduce al menos 3 caracteres";
 
 
-        /*------------------------------------------------
-          CHECK
-        ------------------------------------------------*/
+        /* --------------------------------------------
+           CHECK
+        -------------------------------------------- */
 
         const etiquetaCheck =
             document.createElement(
@@ -302,6 +264,15 @@ window.cab16 = {
             "buscarTodosCab16";
 
 
+        /*
+        Siempre empieza buscando en todos
+        los registros.
+        */
+
+        check.checked =
+            true;
+
+
         const textoCheck =
             document.createElement(
                 "span"
@@ -322,9 +293,9 @@ window.cab16 = {
         );
 
 
-        /*------------------------------------------------
-          RESULTADOS
-        ------------------------------------------------*/
+        /* --------------------------------------------
+           RESULTADOS
+        -------------------------------------------- */
 
         const resultados =
             document.createElement(
@@ -336,35 +307,34 @@ window.cab16 = {
             "resultadosCab16";
 
 
-        /*------------------------------------------------
-          INSERTAR
-        ------------------------------------------------*/
+        /* --------------------------------------------
+           CONSTRUIR
+        -------------------------------------------- */
 
-        campo.insertAdjacentElement(
-            "afterend",
+        interfaz.appendChild(
             label
         );
 
-
-        label.insertAdjacentElement(
-            "afterend",
+        interfaz.appendChild(
             etiquetaCheck
         );
 
-
-        etiquetaCheck.insertAdjacentElement(
-            "afterend",
+        interfaz.appendChild(
             resultados
+        );
+
+
+        campo.insertAdjacentElement(
+            "afterend",
+            interfaz
         );
 
 
         this.label =
             label;
 
-
         this.check =
             check;
-
 
         this.resultados =
             resultados;
@@ -372,31 +342,32 @@ window.cab16 = {
     },
 
 
-    /*====================================================
-      CONECTAR CHECK
-    ====================================================*/
+    /* ==================================================
+       CONECTAR CHECK
+    ================================================== */
 
     conectarCheck: function() {
 
-        const check =
-            document.getElementById(
-                "buscarTodosCab16"
-            );
-
-
-        if (!check) {
+        if (!this.check) {
 
             return;
 
         }
 
 
-        check.addEventListener(
+        this.check.addEventListener(
             "change",
             () => {
 
+                /*
+                El check NO modifica el conjunto de datos.
+
+                Lo mantenemos por compatibilidad visual
+                mientras construimos la siguiente fase.
+                */
+
                 this.buscarTodos =
-                    check.checked;
+                    this.check.checked;
 
 
                 this.ejecutarBusqueda();
@@ -407,26 +378,20 @@ window.cab16 = {
     },
 
 
-    /*====================================================
-      CONECTAR BÚSQUEDA
-    ====================================================*/
+    /* ==================================================
+       CONECTAR CAMPO DE BÚSQUEDA
+    ================================================== */
 
     conectarBusqueda: function() {
 
-        const campo =
-            document.getElementById(
-                "buscarUniversal"
-            );
-
-
-        if (!campo) {
+        if (!this.campo) {
 
             return;
 
         }
 
 
-        campo.addEventListener(
+        this.campo.addEventListener(
             "input",
             () => {
 
@@ -438,57 +403,16 @@ window.cab16 = {
     },
 
 
-    /*====================================================
-      NORMALIZAR TEXTO
-    ====================================================*/
-
-    normalizarTexto: function(valor) {
-
-        if (
-            valor === undefined ||
-            valor === null
-        ) {
-
-            return "";
-
-        }
-
-
-        return String(valor)
-            .trim()
-            .toLowerCase();
-
-    },
-
-
-    /*====================================================
-      EJECUTAR BÚSQUEDA
-    ====================================================*/
+    /* ==================================================
+       EJECUTAR BÚSQUEDA
+    ================================================== */
 
     ejecutarBusqueda: function() {
 
-        const campo =
-            document.getElementById(
-                "buscarUniversal"
-            );
-
-
-        const resultados =
-            document.getElementById(
-                "resultadosCab16"
-            );
-
-
-        const label =
-            document.getElementById(
-                "labelResultadosCab16"
-            );
-
-
         if (
-            !campo ||
-            !resultados ||
-            !label
+            !this.campo ||
+            !this.label ||
+            !this.resultados
         ) {
 
             return;
@@ -497,28 +421,31 @@ window.cab16 = {
 
 
         const texto =
-            this.normalizarTexto(
-                campo.value
-            );
+            String(
+                this.campo.value || ""
+            )
+            .trim()
+            .toLowerCase();
 
 
-        /*------------------------------------------------
-          LIMPIAR RESULTADOS ANTERIORES
-        ------------------------------------------------*/
+        /*
+        Limpiar resultados anteriores.
+        */
 
-        resultados.innerHTML =
+        this.resultados.innerHTML =
             "";
 
 
-        /*------------------------------------------------
-          MENOS DE 3 CARACTERES
-        ------------------------------------------------*/
+        /*
+        Menos de 3 caracteres:
+        no buscar.
+        */
 
         if (
             texto.length < 3
         ) {
 
-            label.textContent =
+            this.label.textContent =
                 "Introduce al menos 3 caracteres";
 
             return;
@@ -526,74 +453,62 @@ window.cab16 = {
         }
 
 
-        /*------------------------------------------------
-          RECARGAR DATOS
-        ------------------------------------------------*/
+        /*
+        OBTENER DATOS DIRECTAMENTE
+        */
 
-        this.obtenerDatos();
+        const datos =
+            this.obtenerDatos();
 
+
+        /*
+        Si todavía no hay datos,
+        no damos falsos resultados.
+        */
 
         if (
-            !Array.isArray(this.datos) ||
-            !this.datos.length
+            !Array.isArray(datos) ||
+            !datos.length
         ) {
 
-            label.textContent =
-                "No hay datos disponibles.";
+            this.label.textContent =
+                "Preparando búsqueda...";
 
             return;
 
         }
 
 
-        /*------------------------------------------------
-          CONJUNTO DE BÚSQUEDA
-        ------------------------------------------------*/
+        /*
+        IMPORTANTE:
 
-        let conjunto =
-            this.datos;
+        CAB16 trabaja directamente sobre
+        todos los registros de LEEPALJSON.
 
-
-        if (
-            !this.buscarTodos
-        ) {
-
-            const activo =
-                this.obtenerConjuntoActivo();
-
-
-            if (
-                Array.isArray(activo) &&
-                activo.length
-            ) {
-
-                conjunto =
-                    activo;
-
-            }
-
-        }
-
-
-        /*------------------------------------------------
-          FILTRAR
-        ------------------------------------------------*/
+        No usamos:
+        PALNAVEGADOR
+        cab15.obtenerDatos()
+        conjuntoActivo()
+        */
 
         const coincidencias =
-            conjunto.filter(
-                registro =>
-                    this.coincide(
+            datos.filter(
+                registro => {
+
+                    return this.coincide(
                         registro,
                         texto
-                    )
+                    );
+
+                }
             );
 
 
-        /*------------------------------------------------
-          CONTADOR
-        ------------------------------------------------*/
+        /*
+        CONTADOR
+        */
 
-        label.textContent =
+        this.label.textContent =
             coincidencias.length +
             (
                 coincidencias.length === 1
@@ -602,9 +517,9 @@ window.cab16 = {
             );
 
 
-        /*------------------------------------------------
-          MOSTRAR
-        ------------------------------------------------*/
+        /*
+        MOSTRAR
+        */
 
         this.mostrarResultados(
             coincidencias
@@ -613,54 +528,9 @@ window.cab16 = {
     },
 
 
-    /*====================================================
-      OBTENER CONJUNTO ACTIVO
-    ====================================================*/
-
-    obtenerConjuntoActivo: function() {
-
-        if (
-            window.PALNAVEGADOR &&
-            typeof window.PALNAVEGADOR.conjuntoActivo ===
-            "function"
-        ) {
-
-            try {
-
-                const conjunto =
-                    window.PALNAVEGADOR.conjuntoActivo();
-
-
-                if (
-                    Array.isArray(conjunto) &&
-                    conjunto.length
-                ) {
-
-                    return conjunto;
-
-                }
-
-            }
-            catch (error) {
-
-                console.warn(
-                    "cab16: error obteniendo conjunto activo.",
-                    error
-                );
-
-            }
-
-        }
-
-
-        return this.datos;
-
-    },
-
-
-    /*====================================================
-      COMPROBAR COINCIDENCIA
-    ====================================================*/
+    /* ==================================================
+       COMPROBAR COINCIDENCIA
+    ================================================== */
 
     coincide: function(
         registro,
@@ -675,104 +545,32 @@ window.cab16 = {
 
 
         const codigo =
-            this.normalizarTexto(
-                registro.codigo ||
-                registro.j1
-            );
+            String(
+                registro.codigo || ""
+            )
+            .toLowerCase();
 
 
         const nombre =
-            this.normalizarTexto(
-                registro.nombre ||
-                registro.j2
-            );
+            String(
+                registro.nombre || ""
+            )
+            .toLowerCase();
 
 
         const j3 =
-            this.normalizarTexto(
-                registro.j3
-            );
+            String(
+                registro.j3 || ""
+            )
+            .toLowerCase();
 
 
         const taxon =
-            this.normalizarTexto(
-                registro.taxon
-            );
+            String(
+                registro.taxon || ""
+            )
+            .toLowerCase();
 
-
-        /*================================================
-          REGLA ESPECIAL PARA CÓDIGOS
-        =================================================*/
-
-        /*
-        Si la búsqueda está formada únicamente
-        por números, primero comprobamos si puede
-        ser un código.
-
-        Esto evita que "000" provoque una búsqueda
-        masiva dentro de las cronologías j3.
-        */
-
-        const solamenteNumeros =
-            /^\d+$/.test(
-                texto
-            );
-
-
-        if (
-            solamenteNumeros
-        ) {
-
-            /*
-            Código de volumen:
-            001
-            002
-            003
-            etc.
-            */
-
-            if (
-                texto.length === 3
-            ) {
-
-                return codigo.startsWith(
-                    texto + "_"
-                );
-
-            }
-
-
-            /*
-            Código completo parcial:
-            001_
-            001_0
-            001_01
-            */
-
-            if (
-                texto.includes("_")
-            ) {
-
-                return codigo.startsWith(
-                    texto
-                );
-
-            }
-
-
-            /*
-            Otros números no se buscan
-            contra j3.
-            */
-
-            return false;
-
-        }
-
-
-        /*================================================
-          BÚSQUEDA TEXTUAL
-        =================================================*/
 
         return (
             codigo.includes(texto) ||
@@ -784,26 +582,56 @@ window.cab16 = {
     },
 
 
-    /*====================================================
-      MOSTRAR RESULTADOS
-    ====================================================*/
+    /* ==================================================
+       MOSTRAR RESULTADOS
+    ================================================== */
 
     mostrarResultados: function(
         coincidencias
     ) {
 
-        const contenedor =
-            document.getElementById(
-                "resultadosCab16"
-            );
-
-
-        if (!contenedor) {
+        if (!this.resultados) {
 
             return;
 
         }
 
+
+        /*
+        Sin coincidencias.
+        */
+
+        if (
+            !coincidencias.length
+        ) {
+
+            const vacio =
+                document.createElement(
+                    "div"
+                );
+
+
+            vacio.className =
+                "sinResultadosCab16";
+
+
+            vacio.textContent =
+                "No se encontraron resultados.";
+
+
+            this.resultados.appendChild(
+                vacio
+            );
+
+
+            return;
+
+        }
+
+
+        /*
+        Crear resultados.
+        */
 
         coincidencias.forEach(
             registro => {
@@ -823,15 +651,15 @@ window.cab16 = {
 
 
                 const codigo =
-                    registro.codigo ||
-                    registro.j1 ||
-                    "";
+                    String(
+                        registro.codigo || ""
+                    );
 
 
                 const nombre =
-                    registro.nombre ||
-                    registro.j2 ||
-                    "";
+                    String(
+                        registro.nombre || ""
+                    );
 
 
                 boton.textContent =
@@ -840,7 +668,16 @@ window.cab16 = {
                     nombre;
 
 
-                contenedor.appendChild(
+                /*
+                De momento SOLO mostramos
+                el resultado.
+
+                La carga de paleoficha vendrá
+                en la siguiente fase.
+                */
+
+
+                this.resultados.appendChild(
                     boton
                 );
 
@@ -852,9 +689,9 @@ window.cab16 = {
 };
 
 
-/*========================================================
-ARRANQUE
-========================================================*/
+/* ========================================================
+   ARRANQUE
+======================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -866,8 +703,6 @@ document.addEventListener(
 );
 
 
-/*
-========================================================
-FIN cab16.js v1.2
-========================================================
-*/
+/* ========================================================
+   FIN cab16.js v1.2 LTS
+======================================================== */
