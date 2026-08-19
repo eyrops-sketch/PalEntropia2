@@ -1,51 +1,38 @@
 /*
 ========================================================
-cab16.js v1.6
+cab16.js v1.7
 autocompletado del buscador avanzado
 palentropía — generador
 
 FUNCIÓN
-------------
+-------
 CAB16 BUSCADOR EXCLUSIVO POR CÓDIGO
 
-CAMBIOS v1.6
-------------
-- Búsqueda únicamente por código.
-- Resultados mostrados en lista vertical.
-- Cada resultado ocupa una fila completa.
-- La fila completa es seleccionable.
-- Al seleccionar un código:
-    1. se cierra el buscador;
-    2. se carga inmediatamente la paleoficha;
-    3. se actualiza el label principal.
+CIRCUITO MATRIX
+---------------
+CHECK ACTIVADO
+      ↓
+CAB16
+      ↓
+MATRIXFILTRO
+      ↓
+MATRIXNAVEGADOR
+      ↓
+PALNAVEGADOR.aplicarFiltro()
+      ↓
+NAVEGACIÓN EXCLUSIVA POR EL SUBCONJUNTO
 
-NUEVO — MATRIX
---------------
-- Cuando está activo "Buscar en todos los registros":
-    1. CAB16 obtiene los resultados.
-    2. Extrae exclusivamente sus códigos J1.
-    3. Envía esos J1 a MATRIXFILTRO.
-    4. MATRIXFILTRO los entrega a MATRIXNAVEGADOR.
-    5. MATRIXNAVEGADOR recupera los registros completos
-       de master.csv.
-- La matriz paralela queda almacenada para el siguiente paso.
-- PALNAVEGADOR todavía NO se modifica.
+CHECK DESACTIVADO
+      ↓
+PALNAVEGADOR.limpiarFiltro()
+      ↓
+NAVEGACIÓN POR TODOS LOS REGISTROS
 
 IMPORTANTE
 ----------
-La consulta NO modifica el label mientras se escribe.
-
-El label principal solo cambia:
-- al seleccionar un resultado;
-- al cerrar el buscador después de introducir
-  una consulta sin seleccionar resultado.
-
-NO MODIFICA:
-- cab15
-- palbuscador
-- palnavegador
-- cab12
-- cab14
+- La selección de una paleoficha conserva su posición.
+- Con check activo, ◀ ▶ recorren solamente el subconjunto.
+- Sin check, ◀ ▶ recorren todos los registros.
 ========================================================
 */
 
@@ -68,11 +55,9 @@ window.cab16 = {
     ultimaSeleccion: "",
 
 
-    /*
-    ====================================================
-    MATRIX
-    ====================================================
-    */
+    /*====================================================
+      MATRIX
+    ====================================================*/
 
     matrizJ1: [],
 
@@ -107,7 +92,7 @@ window.cab16 = {
 
 
         console.log(
-            "cab16 v1.6: buscador por código preparado."
+            "cab16 v1.7: buscador por código preparado."
         );
 
     },
@@ -192,10 +177,6 @@ window.cab16 = {
         }
 
 
-        /*------------------------------------------------
-          LABEL
-        ------------------------------------------------*/
-
         const label =
             document.createElement(
                 "div"
@@ -209,10 +190,6 @@ window.cab16 = {
         label.textContent =
             "Introduce al menos 3 caracteres";
 
-
-        /*------------------------------------------------
-          CHECK
-        ------------------------------------------------*/
 
         const etiquetaCheck =
             document.createElement(
@@ -258,10 +235,6 @@ window.cab16 = {
         );
 
 
-        /*------------------------------------------------
-          RESULTADOS
-        ------------------------------------------------*/
-
         const resultados =
             document.createElement(
                 "div"
@@ -271,10 +244,6 @@ window.cab16 = {
         resultados.id =
             "resultadosCab16";
 
-
-        /*------------------------------------------------
-          INSERTAR
-        ------------------------------------------------*/
 
         campo.insertAdjacentElement(
             "afterend",
@@ -329,16 +298,11 @@ window.cab16 = {
 
         check.addEventListener(
             "change",
-            () => {
+            async () => {
 
                 this.buscarTodos =
                     check.checked;
 
-
-                /*
-                Si se desactiva el check,
-                eliminamos el circuito paralelo.
-                */
 
                 if(
                     !this.buscarTodos
@@ -346,10 +310,16 @@ window.cab16 = {
 
                     this.limpiarMatriz();
 
+                    this.limpiarFiltroNavegador();
+
+                    await this.ejecutarBusqueda();
+
+                    return;
+
                 }
 
 
-                this.ejecutarBusqueda();
+                await this.ejecutarBusqueda();
 
             }
         );
@@ -378,7 +348,7 @@ window.cab16 = {
 
         campo.addEventListener(
             "input",
-            () => {
+            async () => {
 
                 const texto =
                     campo.value
@@ -389,7 +359,7 @@ window.cab16 = {
                     texto;
 
 
-                this.ejecutarBusqueda();
+                await this.ejecutarBusqueda();
 
             }
         );
@@ -472,7 +442,7 @@ window.cab16 = {
       EJECUTAR BÚSQUEDA
     ====================================================*/
 
-    ejecutarBusqueda: function(){
+    ejecutarBusqueda: async function(){
 
         const campo =
             document.getElementById(
@@ -513,10 +483,6 @@ window.cab16 = {
             "";
 
 
-        /*------------------------------------------------
-          MÍNIMO 3 CARACTERES
-        ------------------------------------------------*/
-
         if(
             texto.length < 3
         ){
@@ -531,6 +497,8 @@ window.cab16 = {
 
                 this.limpiarMatriz();
 
+                this.limpiarFiltroNavegador();
+
             }
 
 
@@ -538,10 +506,6 @@ window.cab16 = {
 
         }
 
-
-        /*------------------------------------------------
-          ACTUALIZAR DATOS
-        ------------------------------------------------*/
 
         this.obtenerDatos();
 
@@ -560,10 +524,6 @@ window.cab16 = {
 
         }
 
-
-        /*------------------------------------------------
-          CONJUNTO DE BÚSQUEDA
-        ------------------------------------------------*/
 
         let conjunto =
             this.datos;
@@ -592,10 +552,6 @@ window.cab16 = {
         }
 
 
-        /*------------------------------------------------
-          BUSCAR SOLO POR CÓDIGO
-        ------------------------------------------------*/
-
         const coincidencias =
             conjunto.filter(
                 registro =>
@@ -606,10 +562,6 @@ window.cab16 = {
             );
 
 
-        /*------------------------------------------------
-          CONTADOR
-        ------------------------------------------------*/
-
         label.textContent =
             coincidencias.length +
             (
@@ -619,24 +571,16 @@ window.cab16 = {
             );
 
 
-        /*------------------------------------------------
-          MOSTRAR RESULTADOS
-        ------------------------------------------------*/
-
         this.mostrarResultados(
             coincidencias
         );
 
 
-        /*------------------------------------------------
-          MATRIXFILTRO → MATRIXNAVEGADOR
-        ------------------------------------------------*/
-
         if(
             this.buscarTodos
         ){
 
-            this.actualizarCircuitoMatrix(
+            await this.actualizarCircuitoMatrix(
                 coincidencias
             );
 
@@ -681,7 +625,6 @@ window.cab16 = {
 
     /*====================================================
       COINCIDENCIA
-      SOLO CÓDIGO
     ====================================================*/
 
     coincide: function(
@@ -717,18 +660,14 @@ window.cab16 = {
 
     },
 
-        /*====================================================
+
+    /*====================================================
       ACTUALIZAR CIRCUITO MATRIX
     ====================================================*/
 
     actualizarCircuitoMatrix: async function(
         coincidencias
     ){
-
-        /*
-        MATRIXFILTRO recibe únicamente los J1
-        de los resultados que CAB16 está mostrando.
-        */
 
         if(
             !window.MATRIXFILTRO ||
@@ -745,10 +684,27 @@ window.cab16 = {
         }
 
 
-        const matrizJ1 =
-            window.MATRIXFILTRO.actualizar(
-                coincidencias
+        let matrizJ1;
+
+
+        try{
+
+            matrizJ1 =
+                window.MATRIXFILTRO.actualizar(
+                    coincidencias
+                );
+
+        }
+        catch(error){
+
+            console.error(
+                "cab16: error en MATRIXFILTRO.",
+                error
             );
+
+            return;
+
+        }
 
 
         if(
@@ -766,24 +722,9 @@ window.cab16 = {
         }
 
 
-        /*
-        Guardamos la matriz de J1.
-        */
-
         this.matrizJ1 =
             matrizJ1.slice();
 
-
-        console.log(
-            "cab16 → MATRIXFILTRO:",
-            this.matrizJ1
-        );
-
-
-        /*
-        MATRIXNAVEGADOR recibe los J1
-        y devuelve los registros completos.
-        */
 
         if(
             !window.MatrixNavegador ||
@@ -800,297 +741,44 @@ window.cab16 = {
         }
 
 
+        let registros;
+
+
         try{
 
-            const registros =
+            registros =
                 await window.MatrixNavegador.obtener(
                     this.matrizJ1
                 );
-
-
-            this.matrizRegistros =
-                Array.isArray(
-                    registros
-                )
-                    ? registros
-                    : [];
-
-
-            console.log(
-                "cab16 → MATRIXNAVEGADOR:",
-                this.matrizRegistros
-            );
-
 
         }
         catch(error){
 
             console.error(
-                "cab16: error al obtener MatrixNavegador.",
+                "cab16: error en MatrixNavegador.",
                 error
             );
-
 
             this.matrizRegistros =
                 [];
 
-        }
-
-    },
-
-
-    /*====================================================
-      MOSTRAR RESULTADOS
-    ====================================================*/
-
-    mostrarResultados: function(
-        coincidencias
-    ){
-
-        const contenedor =
-            document.getElementById(
-                "resultadosCab16"
-            );
-
-
-        if(!contenedor){
-
             return;
 
         }
 
 
-        coincidencias.forEach(
-            registro => {
-
-                const codigo =
-                    String(
-                        registro.codigo || ""
-                    )
-                    .trim();
-
-
-                if(!codigo){
-
-                    return;
-
-                }
-
-
-                /*----------------------------------------
-                  FILA COMPLETA
-                ----------------------------------------*/
-
-                const fila =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                fila.className =
-                    "resultadoCab16";
-
-
-                fila.dataset.codigo =
-                    codigo;
-
-
-                fila.textContent =
-                    codigo;
-
-
-                /*----------------------------------------
-                  SELECCIÓN
-                ----------------------------------------*/
-
-                fila.addEventListener(
-                    "click",
-                    () => {
-
-                        this.seleccionarCodigo(
-                            codigo
-                        );
-
-                    }
-                );
-
-
-                contenedor.appendChild(
-                    fila
-                );
-
-            }
-        );
-
-    },
-
-
-    /*====================================================
-      SELECCIONAR CÓDIGO
-    ====================================================*/
-
-    seleccionarCodigo: function(
-        codigo
-    ){
-
-        codigo =
-            String(
-                codigo || ""
+        this.matrizRegistros =
+            Array.isArray(
+                registros
             )
-            .trim()
-            .toUpperCase();
-
-
-        if(!codigo){
-
-            return;
-
-        }
-
-
-        console.log(
-            "cab16: código seleccionado:",
-            codigo
-        );
+                ? registros
+                : [];
 
 
         /*
-        Registramos selección real.
+        La parte 2 continúa aquí.
         */
-
-        this.ultimaSeleccion =
-            codigo;
-
-
-        this.ultimaConsulta =
-            codigo;
-
-
-        /*----------------------------------------------
-          ESCRIBIR CÓDIGO EN EL CAMPO
-        ----------------------------------------------*/
-
-        const campo =
-            document.getElementById(
-                "buscarUniversal"
-            );
-
-
-        if(campo){
-
-            campo.value =
-                codigo;
-
-        }
-
-
-        /*----------------------------------------------
-          ACTUALIZAR LABEL PRINCIPAL
-        ----------------------------------------------*/
-
-        const labelPrincipal =
-            document.getElementById(
-                "labelBusquedaUniversal"
-            );
-
-
-        if(labelPrincipal){
-
-            labelPrincipal.textContent =
-                codigo;
-
-        }
-
-
-        /*----------------------------------------------
-          CERRAR BUSCADOR
-        ----------------------------------------------*/
-
-        this.cerrarBuscador();
-
-
-        /*----------------------------------------------
-          CARGAR PALEOFICHA
-        ----------------------------------------------*/
-
-        this.cargarPaleoficha(
-            codigo
-        );
-
-    },
-
-
-    /*====================================================
-      CERRAR BUSCADOR
-    ====================================================*/
-
-    cerrarBuscador: function(){
-
-        /*
-        Buscamos primero las funciones conocidas
-        del sistema actual.
-        */
-
-        if(
-            window.PALBUSCADOR
-        ){
-
-            if(
-                typeof window.PALBUSCADOR.cerrar ===
-                "function"
-            ){
-
-                window.PALBUSCADOR.cerrar();
-
-                return;
-
-            }
-
-
-            if(
-                typeof window.PALBUSCADOR.cerrarBusqueda ===
-                "function"
-            ){
-
-                window.PALBUSCADOR.cerrarBusqueda();
-
-                return;
-
-            }
-
-        }
-
-
-        /*
-        Respaldo visual.
-        */
-
-        const posibles = [
-
-            "lightboxBuscador",
-
-            "buscadorLightbox",
-
-            "lightboxBusqueda",
-
-            "modalBuscador"
-
-        ];
-
-
-        for(
-            const id of posibles
-        ){
-
-            const elemento =
-                document.getElementById(
-                    id
-                );
-
-
-            if(elemento){
-
-                elemento.style.display =
+elemento.style.display =
                     "none";
 
                 elemento.classList.remove(
@@ -1117,8 +805,8 @@ window.cab16 = {
     ){
 
         /*
-        PALNAVEGADOR sigue siendo el responsable
-        de cargar la paleoficha.
+        PALNAVEGADOR es el sistema responsable
+        de la navegación de las Paleofichas.
         */
 
         if(
@@ -1310,3 +998,5 @@ document.addEventListener(
 FIN cab16.js v1.6
 ========================================================
 */
+
+    
