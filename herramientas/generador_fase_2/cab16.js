@@ -691,23 +691,48 @@ window.cab16 = {
             codigo
         );
 
+/*----------------------------------------------
+  ESCRIBIR CÓDIGO EN EL CAMPO
+----------------------------------------------*/
 
-        /*----------------------------------------------
-          ESCRIBIR CÓDIGO EN EL CAMPO
-        ----------------------------------------------*/
-
-        const campo =
-            document.getElementById(
-                "buscarUniversal"
-            );
+const campo =
+    document.getElementById(
+        "buscarUniversal"
+    );
 
 
-        if(campo){
+if(campo){
 
-            campo.value =
-                codigo;
+    campo.value =
+        codigo;
 
-        }
+}
+
+
+/*----------------------------------------------
+  ACTUALIZAR LABEL PRINCIPAL
+----------------------------------------------
+
+  SOLO cambia cuando se selecciona
+  realmente un resultado de CAB16.
+
+  El label queda mostrando el último
+  código seleccionado hasta que se
+  seleccione otro.
+----------------------------------------------*/
+
+const labelPrincipal =
+    document.getElementById(
+        "labelBusquedaUniversal"
+    );
+
+
+if(labelPrincipal){
+
+    labelPrincipal.textContent =
+        codigo;
+
+}
 
 
         /*----------------------------------------------
