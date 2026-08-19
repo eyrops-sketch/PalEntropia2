@@ -19,7 +19,17 @@ CAMBIOS v1.5
     2. se carga inmediatamente la paleoficha;
     3. se actualiza el label principal.
 - Si se cierra el buscador sin seleccionar resultado:
-    el label principal conserva la última consulta escrita.
+    el label principal toma el contenido de la caja
+    de búsqueda.
+- El label no cambia mientras se escribe.
+- No modifica CAB15.
+
+EJEMPLOS:
+---------
+001     → códigos 001_xx
+006     → 006_01, 006_02
+003_10  → 003_10
+000     → 0 resultados
 
 NO MODIFICA:
 - cab15
@@ -44,10 +54,6 @@ window.cab16 = {
 
     buscarTodos: false,
 
-    consultaActual: "",
-
-    seleccionRealizada: false,
-
 
     /*====================================================
       INICIALIZAR
@@ -61,6 +67,7 @@ window.cab16 = {
 
         }
 
+
         this.obtenerDatos();
 
         this.crearInterfaz();
@@ -69,7 +76,9 @@ window.cab16 = {
 
         this.conectarBusqueda();
 
+
         this.inicializado = true;
+
 
         console.log(
             "cab16 v1.5: buscador por código preparado."
@@ -93,6 +102,7 @@ window.cab16 = {
             const datos =
                 window.LEEPALJSON.obtener();
 
+
             if(Array.isArray(datos)){
 
                 this.datos =
@@ -101,6 +111,7 @@ window.cab16 = {
             }
 
         }
+
 
         if(
             (
@@ -119,6 +130,7 @@ window.cab16 = {
 
         }
 
+
         return this.datos;
 
     },
@@ -135,11 +147,13 @@ window.cab16 = {
                 "buscarUniversal"
             );
 
+
         if(!campo){
 
             return;
 
         }
+
 
         if(
             document.getElementById(
@@ -151,22 +165,34 @@ window.cab16 = {
 
         }
 
+
+        /*------------------------------------------------
+          LABEL
+        ------------------------------------------------*/
+
         const label =
             document.createElement(
                 "div"
             );
 
+
         label.id =
             "labelResultadosCab16";
+
 
         label.textContent =
             "Introduce al menos 3 caracteres";
 
 
+        /*------------------------------------------------
+          CHECK
+        ------------------------------------------------*/
+
         const etiquetaCheck =
             document.createElement(
                 "label"
             );
+
 
         etiquetaCheck.id =
             "checkBusquedaCab16";
@@ -177,8 +203,10 @@ window.cab16 = {
                 "input"
             );
 
+
         check.type =
             "checkbox";
+
 
         check.id =
             "buscarTodosCab16";
@@ -189,6 +217,7 @@ window.cab16 = {
                 "span"
             );
 
+
         textoCheck.textContent =
             "Buscar en todos los registros";
 
@@ -197,29 +226,41 @@ window.cab16 = {
             check
         );
 
+
         etiquetaCheck.appendChild(
             textoCheck
         );
 
+
+        /*------------------------------------------------
+          RESULTADOS
+        ------------------------------------------------*/
 
         const resultados =
             document.createElement(
                 "div"
             );
 
+
         resultados.id =
             "resultadosCab16";
 
+
+        /*------------------------------------------------
+          INSERTAR
+        ------------------------------------------------*/
 
         campo.insertAdjacentElement(
             "afterend",
             label
         );
 
+
         label.insertAdjacentElement(
             "afterend",
             etiquetaCheck
         );
+
 
         etiquetaCheck.insertAdjacentElement(
             "afterend",
@@ -230,8 +271,10 @@ window.cab16 = {
         this.label =
             label;
 
+
         this.check =
             check;
+
 
         this.resultados =
             resultados;
@@ -250,11 +293,13 @@ window.cab16 = {
                 "buscarTodosCab16"
             );
 
+
         if(!check){
 
             return;
 
         }
+
 
         check.addEventListener(
             "change",
@@ -262,6 +307,7 @@ window.cab16 = {
 
                 this.buscarTodos =
                     check.checked;
+
 
                 this.ejecutarBusqueda();
 
@@ -282,21 +328,17 @@ window.cab16 = {
                 "buscarUniversal"
             );
 
+
         if(!campo){
 
             return;
 
         }
 
+
         campo.addEventListener(
             "input",
             () => {
-
-                this.consultaActual =
-                    campo.value.trim();
-
-                this.seleccionRealizada =
-                    false;
 
                 this.ejecutarBusqueda();
 
@@ -317,15 +359,18 @@ window.cab16 = {
                 "buscarUniversal"
             );
 
+
         const resultados =
             document.getElementById(
                 "resultadosCab16"
             );
 
+
         const label =
             document.getElementById(
                 "labelResultadosCab16"
             );
+
 
         if(
             !campo ||
@@ -348,6 +393,10 @@ window.cab16 = {
             "";
 
 
+        /*------------------------------------------------
+          MÍNIMO 3 CARACTERES
+        ------------------------------------------------*/
+
         if(
             texto.length < 3
         ){
@@ -359,6 +408,10 @@ window.cab16 = {
 
         }
 
+
+        /*------------------------------------------------
+          ACTUALIZAR DATOS
+        ------------------------------------------------*/
 
         this.obtenerDatos();
 
@@ -378,9 +431,21 @@ window.cab16 = {
         }
 
 
+        /*------------------------------------------------
+          CONJUNTO DE BÚSQUEDA
+        ------------------------------------------------*/
+
         let conjunto =
             this.datos;
 
+
+        /*
+        Check desactivado:
+        se utiliza el conjunto activo.
+
+        Check activado:
+        se utilizan todos los registros.
+        */
 
         if(
             !this.buscarTodos
@@ -388,6 +453,7 @@ window.cab16 = {
 
             const activo =
                 this.obtenerConjuntoActivo();
+
 
             if(
                 Array.isArray(
@@ -404,6 +470,10 @@ window.cab16 = {
         }
 
 
+        /*------------------------------------------------
+          BUSCAR SOLO POR CÓDIGO
+        ------------------------------------------------*/
+
         const coincidencias =
             conjunto.filter(
                 registro =>
@@ -414,6 +484,10 @@ window.cab16 = {
             );
 
 
+        /*------------------------------------------------
+          CONTADOR
+        ------------------------------------------------*/
+
         label.textContent =
             coincidencias.length +
             (
@@ -422,6 +496,10 @@ window.cab16 = {
                     : " resultados"
             );
 
+
+        /*------------------------------------------------
+          MOSTRAR
+        ------------------------------------------------*/
 
         this.mostrarResultados(
             coincidencias
@@ -445,6 +523,7 @@ window.cab16 = {
             const conjunto =
                 window.PALNAVEGADOR.conjuntoActivo();
 
+
             if(
                 Array.isArray(
                     conjunto
@@ -457,6 +536,7 @@ window.cab16 = {
 
         }
 
+
         return this.datos;
 
     },
@@ -464,6 +544,7 @@ window.cab16 = {
 
     /*====================================================
       COINCIDENCIA
+      SOLO CÓDIGO
     ====================================================*/
 
     coincide: function(
@@ -477,6 +558,7 @@ window.cab16 = {
 
         }
 
+
         const codigo =
             String(
                 registro.codigo || ""
@@ -484,11 +566,13 @@ window.cab16 = {
             .trim()
             .toLowerCase();
 
+
         if(!codigo){
 
             return false;
 
         }
+
 
         return codigo.includes(
             texto
@@ -510,11 +594,13 @@ window.cab16 = {
                 "resultadosCab16"
             );
 
+
         if(!contenedor){
 
             return;
 
         }
+
 
         coincidencias.forEach(
             registro => {
@@ -525,26 +611,39 @@ window.cab16 = {
                     )
                     .trim();
 
+
                 if(!codigo){
 
                     return;
 
                 }
 
+
+                /*----------------------------------------
+                  FILA COMPLETA
+                ----------------------------------------*/
+
                 const fila =
                     document.createElement(
                         "div"
                     );
 
+
                 fila.className =
                     "resultadoCab16";
+
 
                 fila.dataset.codigo =
                     codigo;
 
+
                 fila.textContent =
                     codigo;
 
+
+                /*----------------------------------------
+                  SELECCIÓN
+                ----------------------------------------*/
 
                 fila.addEventListener(
                     "click",
@@ -583,6 +682,7 @@ window.cab16 = {
             .trim()
             .toUpperCase();
 
+
         if(!codigo){
 
             return;
@@ -596,17 +696,15 @@ window.cab16 = {
         );
 
 
-        this.seleccionRealizada =
-            true;
-
-        this.consultaActual =
-            codigo;
-
+        /*----------------------------------------------
+          ESCRIBIR CÓDIGO EN EL CAMPO
+        ----------------------------------------------*/
 
         const campo =
             document.getElementById(
                 "buscarUniversal"
             );
+
 
         if(campo){
 
@@ -616,10 +714,15 @@ window.cab16 = {
         }
 
 
+        /*----------------------------------------------
+          ACTUALIZAR LABEL PRINCIPAL
+        ----------------------------------------------*/
+
         const labelPrincipal =
             document.getElementById(
                 "labelBusquedaUniversal"
             );
+
 
         if(labelPrincipal){
 
@@ -629,472 +732,267 @@ window.cab16 = {
         }
 
 
+        /*----------------------------------------------
+          CERRAR BUSCADOR
+        ----------------------------------------------*/
+
         this.cerrarBuscador();
+
+
+        /*----------------------------------------------
+          CARGAR PALEOFICHA
+        ----------------------------------------------*/
 
         this.cargarPaleoficha(
             codigo
         );
 
     },
+
+
     /*====================================================
-      OBTENER CONJUNTO ACTIVO
-====================================================*/
+      CERRAR BUSCADOR
+    ====================================================*/
 
-obtenerConjuntoActivo: function(){
+    cerrarBuscador: function(){
 
-    if(
-        window.PALNAVEGADOR &&
-        typeof window.PALNAVEGADOR.conjuntoActivo ===
-        "function"
-    ){
+        /*
+        Si NO se ha seleccionado una fila,
+        el label principal recibe exactamente
+        el contenido actual de la caja de búsqueda.
 
-        const conjunto =
-            window.PALNAVEGADOR.conjuntoActivo();
+        Esto permite conservar la última consulta
+        aunque no se haya seleccionado ningún resultado.
+        */
+
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
+            );
+
+
+        const labelPrincipal =
+            document.getElementById(
+                "labelBusquedaUniversal"
+            );
 
 
         if(
-            Array.isArray(
-                conjunto
-            )
+            campo &&
+            labelPrincipal &&
+            campo.value.trim()
         ){
 
-            return conjunto;
+            labelPrincipal.textContent =
+                campo.value.trim();
 
         }
 
-    }
 
+        /*
+        Buscamos primero las funciones conocidas
+        del sistema actual.
+        */
 
-    return this.datos;
+        if(
+            window.PALBUSCADOR
+        ){
 
-},
+            if(
+                typeof window.PALBUSCADOR.cerrar ===
+                "function"
+            ){
 
-
-/*====================================================
-      COINCIDENCIA
-      SOLO POR CÓDIGO
-====================================================*/
-
-coincide: function(
-    registro,
-    texto
-){
-
-    if(!registro){
-
-        return false;
-
-    }
-
-
-    const codigo =
-        String(
-            registro.codigo || ""
-        )
-        .trim()
-        .toLowerCase();
-
-
-    if(!codigo){
-
-        return false;
-
-    }
-
-
-    return codigo.includes(
-        texto
-    );
-
-},
-
-
-/*====================================================
-      MOSTRAR RESULTADOS
-====================================================*/
-
-mostrarResultados: function(
-    coincidencias
-){
-
-    const contenedor =
-        document.getElementById(
-            "resultadosCab16"
-        );
-
-
-    if(!contenedor){
-
-        return;
-
-    }
-
-
-    coincidencias.forEach(
-        registro => {
-
-            const codigo =
-                String(
-                    registro.codigo || ""
-                )
-                .trim();
-
-
-            if(!codigo){
+                window.PALBUSCADOR.cerrar();
 
                 return;
 
             }
 
 
-            /*----------------------------------------
-              FILA COMPLETA
-            ----------------------------------------*/
+            if(
+                typeof window.PALBUSCADOR.cerrarBusqueda ===
+                "function"
+            ){
 
-            const fila =
-                document.createElement(
-                    "div"
+                window.PALBUSCADOR.cerrarBusqueda();
+
+                return;
+
+            }
+
+        }
+
+
+        /*
+        Respaldo visual:
+        buscar elementos habituales del lightbox.
+        */
+
+        const posibles = [
+
+            "lightboxBuscador",
+
+            "buscadorLightbox",
+
+            "lightboxBusqueda",
+
+            "modalBuscador"
+
+        ];
+
+
+        for(
+            const id of posibles
+        ){
+
+            const elemento =
+                document.getElementById(
+                    id
                 );
 
 
-            fila.className =
-                "resultadoCab16";
+            if(elemento){
+
+                elemento.style.display =
+                    "none";
+
+                elemento.classList.remove(
+                    "activo"
+                );
+
+                elemento.classList.remove(
+                    "visible"
+                );
+
+            }
+
+        }
+
+    },
 
 
-            fila.dataset.codigo =
-                codigo;
+    /*====================================================
+      CARGAR PALEOFICHA
+    ====================================================*/
 
+    cargarPaleoficha: async function(
+        codigo
+    ){
 
-            fila.textContent =
-                codigo;
+        /*
+        PALNAVEGADOR es el sistema responsable
+        de la navegación de las paleofichas.
+        */
 
+        if(
+            window.PALNAVEGADOR
+        ){
 
-            /*----------------------------------------
-              SELECCIÓN
-            ----------------------------------------*/
+            /*------------------------------------------
+              MÉTODO 1
+            ------------------------------------------*/
 
-            fila.addEventListener(
-                "click",
-                () => {
+            if(
+                typeof window.PALNAVEGADOR.cargar ===
+                "function"
+            ){
 
-                    this.seleccionarCodigo(
+                try{
+
+                    await window.PALNAVEGADOR.cargar(
                         codigo
                     );
 
+                    return;
+
                 }
-            );
+                catch(error){
+
+                    console.warn(
+                        "cab16: PALNAVEGADOR.cargar falló.",
+                        error
+                    );
+
+                }
+
+            }
 
 
-            contenedor.appendChild(
-                fila
-            );
+            /*------------------------------------------
+              MÉTODO 2
+            ------------------------------------------*/
+
+            if(
+                typeof window.PALNAVEGADOR.irA ===
+                "function"
+            ){
+
+                try{
+
+                    await window.PALNAVEGADOR.irA(
+                        codigo
+                    );
+
+                    return;
+
+                }
+                catch(error){
+
+                    console.warn(
+                        "cab16: PALNAVEGADOR.irA falló.",
+                        error
+                    );
+
+                }
+
+            }
+
+
+            /*------------------------------------------
+              MÉTODO 3
+            ------------------------------------------*/
+
+            if(
+                typeof window.PALNAVEGADOR.cargarPorCodigo ===
+                "function"
+            ){
+
+                try{
+
+                    await window.PALNAVEGADOR.cargarPorCodigo(
+                        codigo
+                    );
+
+                    return;
+
+                }
+                catch(error){
+
+                    console.warn(
+                        "cab16: PALNAVEGADOR.cargarPorCodigo falló.",
+                        error
+                    );
+
+                }
+
+            }
 
         }
-    );
-
-},
 
 
-/*====================================================
-      SELECCIONAR CÓDIGO
-====================================================*/
+        /*
+        Si no existe un método compatible,
+        no inventamos una ruta ni modificamos
+        otros módulos.
+        */
 
-seleccionarCodigo: function(
-    codigo
-){
-
-    codigo =
-        String(
-            codigo || ""
-        )
-        .trim()
-        .toUpperCase();
-
-
-    if(!codigo){
-
-        return;
-
-    }
-
-
-    console.log(
-        "cab16: código seleccionado:",
-        codigo
-    );
-
-
-    /*----------------------------------------------
-      ESCRIBIR CÓDIGO EN EL CAMPO
-    ----------------------------------------------*/
-
-    const campo =
-        document.getElementById(
-            "buscarUniversal"
+        console.warn(
+            "cab16: no se encontró un método de carga compatible para",
+            codigo
         );
 
-
-    if(campo){
-
-        campo.value =
-            codigo;
-
     }
-
-
-    /*----------------------------------------------
-      ACTUALIZAR LABEL PRINCIPAL
-    ----------------------------------------------
-
-      SOLO cambia cuando se selecciona
-      realmente un resultado de CAB16.
-
-      El label conserva el último
-      código seleccionado.
-    ----------------------------------------------*/
-
-    const labelPrincipal =
-        document.getElementById(
-            "labelBusquedaUniversal"
-        );
-
-
-    if(labelPrincipal){
-
-        labelPrincipal.textContent =
-            codigo;
-
-    }
-
-
-    /*----------------------------------------------
-      CERRAR BUSCADOR
-    ----------------------------------------------*/
-
-    this.cerrarBuscador();
-
-
-    /*----------------------------------------------
-      CARGAR PALEOFICHA
-    ----------------------------------------------*/
-
-    this.cargarPaleoficha(
-        codigo
-    );
-
-},
-
-
-/*====================================================
-      CERRAR BUSCADOR
-====================================================*/
-
-cerrarBuscador: function(){
-
-    /*
-    Buscamos primero las funciones conocidas
-    del sistema actual.
-    */
-
-    if(
-        window.PALBUSCADOR
-    ){
-
-        if(
-            typeof window.PALBUSCADOR.cerrar ===
-            "function"
-        ){
-
-            window.PALBUSCADOR.cerrar();
-
-            return;
-
-        }
-
-
-        if(
-            typeof window.PALBUSCADOR.cerrarBusqueda ===
-            "function"
-        ){
-
-            window.PALBUSCADOR.cerrarBusqueda();
-
-            return;
-
-        }
-
-    }
-
-
-    /*
-    Respaldo visual:
-    buscar elementos habituales del lightbox.
-    */
-
-    const posibles = [
-
-        "lightboxBuscador",
-
-        "buscadorLightbox",
-
-        "lightboxBusqueda",
-
-        "modalBuscador"
-
-    ];
-
-
-    for(
-        const id of posibles
-    ){
-
-        const elemento =
-            document.getElementById(
-                id
-            );
-
-
-        if(elemento){
-
-            elemento.style.display =
-                "none";
-
-            elemento.classList.remove(
-                "activo"
-            );
-
-            elemento.classList.remove(
-                "visible"
-            );
-
-        }
-
-    }
-
-},
-
-
-/*====================================================
-      CARGAR PALEOFICHA
-====================================================*/
-
-cargarPaleoficha: async function(
-    codigo
-){
-
-    /*
-    PALNAVEGADOR es el sistema responsable
-    de la navegación de las paleofichas.
-    */
-
-    if(
-        window.PALNAVEGADOR
-    ){
-
-        /*------------------------------------------
-          MÉTODO 1
-        ------------------------------------------*/
-
-        if(
-            typeof window.PALNAVEGADOR.cargar ===
-            "function"
-        ){
-
-            try{
-
-                await window.PALNAVEGADOR.cargar(
-                    codigo
-                );
-
-                return;
-
-            }
-            catch(error){
-
-                console.warn(
-                    "cab16: PALNAVEGADOR.cargar falló.",
-                    error
-                );
-
-            }
-
-        }
-
-
-        /*------------------------------------------
-          MÉTODO 2
-        ------------------------------------------*/
-
-        if(
-            typeof window.PALNAVEGADOR.irA ===
-            "function"
-        ){
-
-            try{
-
-                await window.PALNAVEGADOR.irA(
-                    codigo
-                );
-
-                return;
-
-            }
-            catch(error){
-
-                console.warn(
-                    "cab16: PALNAVEGADOR.irA falló.",
-                    error
-                );
-
-            }
-
-        }
-
-
-        /*------------------------------------------
-          MÉTODO 3
-        ------------------------------------------*/
-
-        if(
-            typeof window.PALNAVEGADOR.cargarPorCodigo ===
-            "function"
-        ){
-
-            try{
-
-                await window.PALNAVEGADOR.cargarPorCodigo(
-                    codigo
-                );
-
-                return;
-
-            }
-            catch(error){
-
-                console.warn(
-                    "cab16: PALNAVEGADOR.cargarPorCodigo falló.",
-                    error
-                );
-
-            }
-
-        }
-
-    }
-
-
-    /*
-    Si no existe un método compatible,
-    no inventamos una ruta ni modificamos
-    otros módulos.
-    */
-
-    console.warn(
-        "cab16: no se encontró un método de carga compatible para",
-        codigo
-    );
-
-}
 
 };
 
@@ -1115,6 +1013,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab16.js v1.4
+FIN cab16.js v1.5
 ========================================================
 */
