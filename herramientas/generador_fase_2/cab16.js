@@ -1,14 +1,14 @@
 /*
 ========================================================
-cab16.js v1.5
+cab16.js v1.6
 autocompletado del buscador avanzado
 palentropía — generador
 
-FUNCIÓN v1.5
+FUNCIÓN
 ------------
 CAB16 BUSCADOR EXCLUSIVO POR CÓDIGO
 
-CAMBIOS v1.5
+CAMBIOS v1.6
 ------------
 - Búsqueda únicamente por código.
 - Resultados mostrados en lista vertical.
@@ -19,11 +19,17 @@ CAMBIOS v1.5
     2. se carga inmediatamente la paleoficha;
     3. se actualiza el label principal.
 
-- Si se escribe una consulta pero NO se selecciona
-  ningún resultado:
-    1. la consulta permanece en la caja de búsqueda;
-    2. al cerrar el buscador se guarda la consulta;
-    3. el label principal muestra esa última consulta.
+NUEVO — MATRIX
+--------------
+- Cuando está activo "Buscar en todos los registros":
+    1. CAB16 obtiene los resultados.
+    2. Extrae exclusivamente sus códigos J1.
+    3. Envía esos J1 a MATRIXFILTRO.
+    4. MATRIXFILTRO los entrega a MATRIXNAVEGADOR.
+    5. MATRIXNAVEGADOR recupera los registros completos
+       de master.csv.
+- La matriz paralela queda almacenada para el siguiente paso.
+- PALNAVEGADOR todavía NO se modifica.
 
 IMPORTANTE
 ----------
@@ -40,7 +46,6 @@ NO MODIFICA:
 - palnavegador
 - cab12
 - cab14
-- cargacont
 ========================================================
 */
 
@@ -61,6 +66,17 @@ window.cab16 = {
     ultimaConsulta: "",
 
     ultimaSeleccion: "",
+
+
+    /*
+    ====================================================
+    MATRIX
+    ====================================================
+    */
+
+    matrizJ1: [],
+
+    matrizRegistros: [],
 
 
     /*====================================================
@@ -91,7 +107,7 @@ window.cab16 = {
 
 
         console.log(
-            "cab16 v1.5: buscador por código preparado."
+            "cab16 v1.6: buscador por código preparado."
         );
 
     },
@@ -319,6 +335,20 @@ window.cab16 = {
                     check.checked;
 
 
+                /*
+                Si se desactiva el check,
+                eliminamos el circuito paralelo.
+                */
+
+                if(
+                    !this.buscarTodos
+                ){
+
+                    this.limpiarMatriz();
+
+                }
+
+
                 this.ejecutarBusqueda();
 
             }
@@ -349,15 +379,6 @@ window.cab16 = {
         campo.addEventListener(
             "input",
             () => {
-
-                /*
-                Guardamos la consulta actual,
-                pero NO modificamos el label principal.
-
-                El label solo se actualizará al cerrar
-                el buscador si no se ha seleccionado
-                ningún resultado.
-                */
 
                 const texto =
                     campo.value
@@ -417,10 +438,6 @@ window.cab16 = {
                         .trim();
 
 
-                /*
-                Si no hay consulta no hacemos nada.
-                */
-
                 if(!consulta){
 
                     return;
@@ -428,21 +445,9 @@ window.cab16 = {
                 }
 
 
-                /*
-                Guardamos la última consulta.
-                */
-
                 this.ultimaConsulta =
                     consulta;
 
-
-                /*
-                Si no hubo selección de resultado,
-                la consulta pasa al label principal.
-
-                No se toca ninguna otra parte
-                del sistema.
-                */
 
                 const labelPrincipal =
                     document.getElementById(
@@ -519,6 +524,16 @@ window.cab16 = {
             label.textContent =
                 "Introduce al menos 3 caracteres";
 
+
+            if(
+                this.buscarTodos
+            ){
+
+                this.limpiarMatriz();
+
+            }
+
+
             return;
 
         }
@@ -553,14 +568,6 @@ window.cab16 = {
         let conjunto =
             this.datos;
 
-
-        /*
-        Check desactivado:
-        se utiliza el conjunto activo.
-
-        Check activado:
-        se utilizan todos los registros.
-        */
 
         if(
             !this.buscarTodos
@@ -613,12 +620,27 @@ window.cab16 = {
 
 
         /*------------------------------------------------
-          MOSTRAR
+          MOSTRAR RESULTADOS
         ------------------------------------------------*/
 
         this.mostrarResultados(
             coincidencias
         );
+
+
+        /*------------------------------------------------
+          MATRIXFILTRO → MATRIXNAVEGADOR
+        ------------------------------------------------*/
+
+        if(
+            this.buscarTodos
+        ){
+
+            this.actualizarCircuitoMatrix(
+                coincidencias
+            );
+
+        }
 
     },
 
@@ -695,7 +717,129 @@ window.cab16 = {
 
     },
 
-   /*====================================================
+        /*====================================================
+      ACTUALIZAR CIRCUITO MATRIX
+    ====================================================*/
+
+    actualizarCircuitoMatrix: async function(
+        coincidencias
+    ){
+
+        /*
+        MATRIXFILTRO recibe únicamente los J1
+        de los resultados que CAB16 está mostrando.
+        */
+
+        if(
+            !window.MATRIXFILTRO ||
+            typeof window.MATRIXFILTRO.actualizar !==
+            "function"
+        ){
+
+            console.warn(
+                "cab16: MATRIXFILTRO no está disponible."
+            );
+
+            return;
+
+        }
+
+
+        const matrizJ1 =
+            window.MATRIXFILTRO.actualizar(
+                coincidencias
+            );
+
+
+        if(
+            !Array.isArray(
+                matrizJ1
+            )
+        ){
+
+            console.warn(
+                "cab16: MATRIXFILTRO no devolvió una matriz válida."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        Guardamos la matriz de J1.
+        */
+
+        this.matrizJ1 =
+            matrizJ1.slice();
+
+
+        console.log(
+            "cab16 → MATRIXFILTRO:",
+            this.matrizJ1
+        );
+
+
+        /*
+        MATRIXNAVEGADOR recibe los J1
+        y devuelve los registros completos.
+        */
+
+        if(
+            !window.MatrixNavegador ||
+            typeof window.MatrixNavegador.obtener !==
+            "function"
+        ){
+
+            console.warn(
+                "cab16: MatrixNavegador no está disponible."
+            );
+
+            return;
+
+        }
+
+
+        try{
+
+            const registros =
+                await window.MatrixNavegador.obtener(
+                    this.matrizJ1
+                );
+
+
+            this.matrizRegistros =
+                Array.isArray(
+                    registros
+                )
+                    ? registros
+                    : [];
+
+
+            console.log(
+                "cab16 → MATRIXNAVEGADOR:",
+                this.matrizRegistros
+            );
+
+
+        }
+        catch(error){
+
+            console.error(
+                "cab16: error al obtener MatrixNavegador.",
+                error
+            );
+
+
+            this.matrizRegistros =
+                [];
+
+        }
+
+    },
+
+
+    /*====================================================
       MOSTRAR RESULTADOS
     ====================================================*/
 
@@ -811,8 +955,7 @@ window.cab16 = {
 
 
         /*
-        Registramos que se ha producido
-        una selección real.
+        Registramos selección real.
         */
 
         this.ultimaSeleccion =
@@ -919,8 +1062,7 @@ window.cab16 = {
 
 
         /*
-        Respaldo visual:
-        buscar elementos habituales del lightbox.
+        Respaldo visual.
         */
 
         const posibles = [
@@ -975,8 +1117,8 @@ window.cab16 = {
     ){
 
         /*
-        PALNAVEGADOR es el sistema responsable
-        de la navegación de las paleofichas.
+        PALNAVEGADOR sigue siendo el responsable
+        de cargar la paleoficha.
         */
 
         if(
@@ -1086,6 +1228,64 @@ window.cab16 = {
             codigo
         );
 
+    },
+
+
+    /*====================================================
+      LIMPIAR MATRIZ
+    ====================================================*/
+
+    limpiarMatriz: function(){
+
+        this.matrizJ1 =
+            [];
+
+        this.matrizRegistros =
+            [];
+
+
+        /*
+        Limpiamos también MATRIXNAVEGADOR
+        si está disponible.
+        */
+
+        if(
+            window.MatrixNavegador &&
+            typeof window.MatrixNavegador.limpiar ===
+            "function"
+        ){
+
+            window.MatrixNavegador.limpiar();
+
+        }
+
+
+        console.log(
+            "cab16: circuito Matrix limpiado."
+        );
+
+    },
+
+
+    /*====================================================
+      OBTENER MATRIZ J1 ACTUAL
+    ====================================================*/
+
+    obtenerMatrizJ1: function(){
+
+        return this.matrizJ1;
+
+    },
+
+
+    /*====================================================
+      OBTENER MATRIZ DE REGISTROS ACTUAL
+    ====================================================*/
+
+    obtenerMatrizRegistros: function(){
+
+        return this.matrizRegistros;
+
     }
 
 };
@@ -1107,6 +1307,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab16.js v1.5
+FIN cab16.js v1.6
 ========================================================
-*/ 
+*/
