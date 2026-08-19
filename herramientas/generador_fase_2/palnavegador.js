@@ -1,25 +1,42 @@
- /*
+/*
 ========================================================
 PalEntropía
-PALNAVEGADOR.js v1.1 LTS
+PALNAVEGADOR.js v1.2
 
 Sistema de navegación de Paleofichas.
 
-Funciones:
-- Carga registros desde LEEPALJSON
-- Navega por los registros
-- Gestiona filtros
-- Localiza un j1 por índice
-- Carga una Paleoficha mediante CAB07 + CARGACONT
-- Actualiza la presentación de CAB07 después de CARGACONT
-- Permite búsqueda directa mediante cargarPorCodigo()
+v1.2 — CIRCUITO MATRIX
+----------------------
+
+Añadido:
+
+- Compatibilidad con MatrixFiltro.
+- Compatibilidad con MatrixNavegador.
+- Navegación sobre un conjunto filtrado.
+- Conservación del código actualmente seleccionado.
+- Cambio limpio entre:
+      TODOS LOS REGISTROS
+      y
+      MATRIZ FILTRADA.
+
+NO MODIFICA:
+
+- CARGACONT
+- CAB07
+- CAB01-CAB06
+- LEEPALJSON
+- MatrixFiltro
+- MatrixNavegador
+
+El navegador continúa funcionando normalmente
+cuando no existe ningún filtro activo.
 ========================================================
 */
 
 
 const PALNAVEGADOR = {
 
-    version: "1.1 LTS",
+    version: "1.2",
 
     registros: [],
 
@@ -109,9 +126,18 @@ const PALNAVEGADOR = {
 
     conjuntoActivo() {
 
-        return this.filtroActivo
-            ? this.filtroActivo
-            : this.registros;
+        if (
+            Array.isArray(
+                this.filtroActivo
+            )
+        ) {
+
+            return this.filtroActivo;
+
+        }
+
+
+        return this.registros;
 
     },
 
@@ -232,26 +258,6 @@ const PALNAVEGADOR = {
 
     /* =====================================================
        CARGAR ÍNDICE
-       
-       FLUJO:
-
-       PALNAVEGADOR
-            ↓
-          CAB07
-            ↓
-         CONT07
-            ↓
-        CARGACONT
-            ↓
-         CAB01-CAB06
-            ↓
-       actualizarPresentacion()
-       
-       IMPORTANTE:
-
-       La presentación de CAB07 se actualiza DESPUÉS
-       de CARGACONT para evitar conservar la geología
-       de la Paleoficha anterior.
        ===================================================== */
 
     async cargarIndice(indice) {
@@ -310,16 +316,6 @@ const PALNAVEGADOR = {
             );
 
 
-
-     
-
-
-     
-
-
-
-
-     
         /* =================================================
            CARGACONT
            ================================================= */
@@ -342,11 +338,6 @@ const PALNAVEGADOR = {
             );
 
 
-        
-
-
-
-     
         return resultado;
 
     },
@@ -444,6 +435,13 @@ const PALNAVEGADOR = {
             this.conjuntoActivo();
 
 
+        if (!conjunto.length) {
+
+            return null;
+
+        }
+
+
         return await this.cargarIndice(
             conjunto.length - 1
         );
@@ -499,9 +497,21 @@ const PALNAVEGADOR = {
         }
 
 
-        this.filtroActivo =
-            registros;
+        /*
+        Guardamos exactamente los registros
+        proporcionados por MatrixNavegador.
 
+        No modificamos sus datos.
+        */
+
+        this.filtroActivo =
+            registros.slice();
+
+
+        /*
+        Si la matriz está vacía,
+        no existe navegación filtrada.
+        */
 
         if (!this.filtroActivo.length) {
 
@@ -511,6 +521,19 @@ const PALNAVEGADOR = {
 
         }
 
+
+        /*
+        Intentamos conservar la paleoficha
+        actualmente cargada.
+
+        Esto es lo importante para el circuito:
+
+        si estamos en 004_07 y el filtro contiene
+        004_03, 004_07, 004_11 y 005_02,
+
+        el índice pasa a ser el correspondiente
+        a 004_07 dentro de esa nueva matriz.
+        */
 
         if (this.codigoActual) {
 
@@ -536,7 +559,96 @@ const PALNAVEGADOR = {
         }
 
 
+        /*
+        Si la paleoficha actual no pertenece
+        al nuevo filtro, situamos el puntero
+        en el primer registro disponible.
+        */
+
         this.indice = 0;
+
+
+        this.codigoActual =
+            this.normalizarCodigo(
+                this.filtroActivo[0].codigo
+            );
+
+    },
+
+
+    /* =====================================================
+       APLICAR MATRIZ DE MATRIXNAVEGADOR
+       ===================================================== */
+
+    aplicarMatriz(matriz) {
+
+        if (!Array.isArray(matriz)) {
+
+            throw new Error(
+                "PALNAVEGADOR: la matriz debe ser un array."
+            );
+
+        }
+
+
+        this.aplicarFiltro(
+            matriz
+        );
+
+
+        return this.filtroActivo;
+
+    },
+
+
+    /* =====================================================
+       ACTIVAR CIRCUITO MATRIX
+       ===================================================== */
+
+    async activarMatriz(matriz) {
+
+        this.aplicarMatriz(
+            matriz
+        );
+
+
+        /*
+        Si la matriz contiene la paleoficha actual,
+        simplemente mantenemos su posición.
+
+        No recargamos la ficha innecesariamente.
+        */
+
+        if (
+            this.codigoActual &&
+            this.buscarIndice(
+                this.codigoActual
+            ) !== -1
+        ) {
+
+            return this.obtenerActual();
+
+        }
+
+
+        /*
+        Si no existe una paleoficha actual,
+        cargamos el primer registro disponible.
+        */
+
+        if (
+            this.filtroActivo &&
+            this.filtroActivo.length
+        ) {
+
+            return await this.cargarIndice(
+                this.indice
+            );
+
+        }
+
+
+        return null;
 
     },
 
@@ -554,6 +666,13 @@ const PALNAVEGADOR = {
         this.filtroActivo =
             null;
 
+
+        /*
+        Recuperamos la posición equivalente
+        dentro de TODOS los registros.
+
+        El código actual permanece.
+        */
 
         if (!codigoActual) {
 
@@ -686,6 +805,6 @@ window.PALNAVEGADOR =
 
 /*
 ========================================================
-FIN PALNAVEGADOR.js v1.1 LTS
+FIN PALNAVEGADOR.js v1.2
 ========================================================
 */
