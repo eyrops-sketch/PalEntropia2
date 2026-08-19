@@ -1,49 +1,29 @@
 /*
 ========================================================
-cab16.js v1.6
+cab16.js v1.5.1
 autocompletado del buscador avanzado
-palentropía — generador
+PalEntropía — generador
 
-FUNCIÓN
-------------
-CAB16 BUSCADOR EXCLUSIVO POR CÓDIGO
+BASE
+----
+Esta versión parte directamente de CAB16 v1.5.
 
-CAMBIOS v1.6
-------------
-- Búsqueda únicamente por código.
-- Resultados mostrados en lista vertical.
-- Cada resultado ocupa una fila completa.
-- La fila completa es seleccionable.
-- Al seleccionar un código:
-    1. se cierra el buscador;
-    2. se carga inmediatamente la paleoficha;
-    3. se actualiza el label principal.
+NUEVO
+-----
+Cuando "Buscar en todos los registros" está activado:
 
-NUEVO — MATRIX
---------------
-- Cuando está activo "Buscar en todos los registros":
-    1. CAB16 obtiene los resultados.
-    2. Extrae exclusivamente sus códigos J1.
-    3. Envía esos J1 a MATRIXFILTRO.
-    4. MATRIXFILTRO los entrega a MATRIXNAVEGADOR.
-    5. MATRIXNAVEGADOR recupera los registros completos
-       de master.csv.
-- La matriz paralela queda almacenada para el siguiente paso.
-- PALNAVEGADOR todavía NO se modifica.
+CAB16
+  ↓
+MATRIXFILTRO
+  ↓
+MATRIXNAVEGADOR
 
-IMPORTANTE
-----------
-La consulta NO modifica el label mientras se escribe.
-
-El label principal solo cambia:
-- al seleccionar un resultado;
-- al cerrar el buscador después de introducir
-  una consulta sin seleccionar resultado.
+La búsqueda normal permanece intacta.
 
 NO MODIFICA:
-- cab15
-- palbuscador
 - palnavegador
+- palbuscador
+- cab15
 - cab12
 - cab14
 ========================================================
@@ -68,11 +48,9 @@ window.cab16 = {
     ultimaSeleccion: "",
 
 
-    /*
-    ====================================================
-    MATRIX
-    ====================================================
-    */
+    /*====================================================
+      MATRIX
+    ====================================================*/
 
     matrizJ1: [],
 
@@ -107,7 +85,7 @@ window.cab16 = {
 
 
         console.log(
-            "cab16 v1.6: buscador por código preparado."
+            "cab16 v1.5.1: buscador por código preparado."
         );
 
     },
@@ -336,8 +314,8 @@ window.cab16 = {
 
 
                 /*
-                Si se desactiva el check,
-                eliminamos el circuito paralelo.
+                Al desactivar el check
+                limpiamos solamente la matriz.
                 */
 
                 if(
@@ -388,6 +366,11 @@ window.cab16 = {
                 this.ultimaConsulta =
                     texto;
 
+
+                /*
+                Mantenemos exactamente
+                el comportamiento de v1.5.
+                */
 
                 this.ejecutarBusqueda();
 
@@ -524,16 +507,6 @@ window.cab16 = {
             label.textContent =
                 "Introduce al menos 3 caracteres";
 
-
-            if(
-                this.buscarTodos
-            ){
-
-                this.limpiarMatriz();
-
-            }
-
-
             return;
 
         }
@@ -628,9 +601,14 @@ window.cab16 = {
         );
 
 
-        /*------------------------------------------------
-          MATRIXFILTRO → MATRIXNAVEGADOR
-        ------------------------------------------------*/
+        /*
+        IMPORTANTE:
+
+        El circuito Matrix se ejecuta DESPUÉS
+        de que la búsqueda normal ya haya funcionado.
+
+        No modifica la interfaz.
+        */
 
         if(
             this.buscarTodos
@@ -681,7 +659,6 @@ window.cab16 = {
 
     /*====================================================
       COINCIDENCIA
-      SOLO CÓDIGO
     ====================================================*/
 
     coincide: function(
@@ -717,7 +694,8 @@ window.cab16 = {
 
     },
 
-        /*====================================================
+
+    /*====================================================
       ACTUALIZAR CIRCUITO MATRIX
     ====================================================*/
 
@@ -726,8 +704,8 @@ window.cab16 = {
     ){
 
         /*
-        MATRIXFILTRO recibe únicamente los J1
-        de los resultados que CAB16 está mostrando.
+        Si MATRIXFILTRO todavía no está disponible,
+        NO rompemos CAB16.
         */
 
         if(
@@ -736,19 +714,32 @@ window.cab16 = {
             "function"
         ){
 
-            console.warn(
-                "cab16: MATRIXFILTRO no está disponible."
-            );
-
             return;
 
         }
 
 
-        const matrizJ1 =
-            window.MATRIXFILTRO.actualizar(
-                coincidencias
+        let matrizJ1;
+
+
+        try{
+
+            matrizJ1 =
+                window.MATRIXFILTRO.actualizar(
+                    coincidencias
+                );
+
+        }
+        catch(error){
+
+            console.warn(
+                "cab16: MATRIXFILTRO no disponible:",
+                error
             );
+
+            return;
+
+        }
 
 
         if(
@@ -757,32 +748,17 @@ window.cab16 = {
             )
         ){
 
-            console.warn(
-                "cab16: MATRIXFILTRO no devolvió una matriz válida."
-            );
-
             return;
 
         }
 
 
-        /*
-        Guardamos la matriz de J1.
-        */
-
         this.matrizJ1 =
             matrizJ1.slice();
 
 
-        console.log(
-            "cab16 → MATRIXFILTRO:",
-            this.matrizJ1
-        );
-
-
         /*
-        MATRIXNAVEGADOR recibe los J1
-        y devuelve los registros completos.
+        MATRIXNAVEGADOR
         */
 
         if(
@@ -790,10 +766,6 @@ window.cab16 = {
             typeof window.MatrixNavegador.obtener !==
             "function"
         ){
-
-            console.warn(
-                "cab16: MatrixNavegador no está disponible."
-            );
 
             return;
 
@@ -815,21 +787,13 @@ window.cab16 = {
                     ? registros
                     : [];
 
-
-            console.log(
-                "cab16 → MATRIXNAVEGADOR:",
-                this.matrizRegistros
-            );
-
-
         }
         catch(error){
 
-            console.error(
-                "cab16: error al obtener MatrixNavegador.",
+            console.warn(
+                "cab16: MatrixNavegador no disponible:",
                 error
             );
-
 
             this.matrizRegistros =
                 [];
@@ -837,9 +801,7 @@ window.cab16 = {
         }
 
     },
-
-
-    /*====================================================
+/*====================================================
       MOSTRAR RESULTADOS
     ====================================================*/
 
@@ -877,10 +839,6 @@ window.cab16 = {
                 }
 
 
-                /*----------------------------------------
-                  FILA COMPLETA
-                ----------------------------------------*/
-
                 const fila =
                     document.createElement(
                         "div"
@@ -898,10 +856,6 @@ window.cab16 = {
                 fila.textContent =
                     codigo;
 
-
-                /*----------------------------------------
-                  SELECCIÓN
-                ----------------------------------------*/
 
                 fila.addEventListener(
                     "click",
@@ -948,16 +902,6 @@ window.cab16 = {
         }
 
 
-        console.log(
-            "cab16: código seleccionado:",
-            codigo
-        );
-
-
-        /*
-        Registramos selección real.
-        */
-
         this.ultimaSeleccion =
             codigo;
 
@@ -965,10 +909,6 @@ window.cab16 = {
         this.ultimaConsulta =
             codigo;
 
-
-        /*----------------------------------------------
-          ESCRIBIR CÓDIGO EN EL CAMPO
-        ----------------------------------------------*/
 
         const campo =
             document.getElementById(
@@ -984,10 +924,6 @@ window.cab16 = {
         }
 
 
-        /*----------------------------------------------
-          ACTUALIZAR LABEL PRINCIPAL
-        ----------------------------------------------*/
-
         const labelPrincipal =
             document.getElementById(
                 "labelBusquedaUniversal"
@@ -1002,16 +938,8 @@ window.cab16 = {
         }
 
 
-        /*----------------------------------------------
-          CERRAR BUSCADOR
-        ----------------------------------------------*/
-
         this.cerrarBuscador();
 
-
-        /*----------------------------------------------
-          CARGAR PALEOFICHA
-        ----------------------------------------------*/
 
         this.cargarPaleoficha(
             codigo
@@ -1025,11 +953,6 @@ window.cab16 = {
     ====================================================*/
 
     cerrarBuscador: function(){
-
-        /*
-        Buscamos primero las funciones conocidas
-        del sistema actual.
-        */
 
         if(
             window.PALBUSCADOR
@@ -1060,10 +983,6 @@ window.cab16 = {
 
         }
 
-
-        /*
-        Respaldo visual.
-        */
 
         const posibles = [
 
@@ -1115,11 +1034,6 @@ window.cab16 = {
     cargarPaleoficha: async function(
         codigo
     ){
-
-        /*
-        PALNAVEGADOR sigue siendo el responsable
-        de cargar la paleoficha.
-        */
 
         if(
             window.PALNAVEGADOR
@@ -1217,12 +1131,6 @@ window.cab16 = {
         }
 
 
-        /*
-        Si no existe un método compatible,
-        no inventamos una ruta ni modificamos
-        otros módulos.
-        */
-
         console.warn(
             "cab16: no se encontró un método de carga compatible para",
             codigo
@@ -1244,11 +1152,6 @@ window.cab16 = {
             [];
 
 
-        /*
-        Limpiamos también MATRIXNAVEGADOR
-        si está disponible.
-        */
-
         if(
             window.MatrixNavegador &&
             typeof window.MatrixNavegador.limpiar ===
@@ -1258,11 +1161,6 @@ window.cab16 = {
             window.MatrixNavegador.limpiar();
 
         }
-
-
-        console.log(
-            "cab16: circuito Matrix limpiado."
-        );
 
     },
 
@@ -1307,6 +1205,7 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab16.js v1.6
+FIN cab16.js v1.5.1
 ========================================================
 */
+    
