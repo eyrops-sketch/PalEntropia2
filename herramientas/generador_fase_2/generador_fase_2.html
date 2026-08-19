@@ -194,75 +194,6 @@
 
 }
 
-
-/* =====================================================
-   TEST MATRIXFILTRO
-   TEMPORAL
-   ===================================================== */
-
-#testMatrixFiltro {
-
-    position: fixed;
-
-    right: 10px;
-
-    bottom: 10px;
-
-    z-index: 999999;
-
-    padding: 10px 14px;
-
-    border: 2px solid #62d6ff;
-
-    border-radius: 20px;
-
-    background: #181a1c;
-
-    color: #ffffff;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-}
-
-
-#salidaMatrixFiltro {
-
-    position: fixed;
-
-    left: 10px;
-
-    right: 10px;
-
-    bottom: 60px;
-
-    z-index: 999998;
-
-    max-height: 40vh;
-
-    overflow: auto;
-
-    padding: 15px;
-
-    background: rgba(0,0,0,.95);
-
-    color: #62d6ff;
-
-    border: 2px solid #62d6ff;
-
-    border-radius: 14px;
-
-    white-space: pre-wrap;
-
-    font-family: monospace;
-
-    font-size: 14px;
-
-    display: none;
-
-}
-
 </style>
 
 </head>
@@ -840,7 +771,7 @@ async function(j1) {
 
 
 <!-- =====================================================
-     BUSCADOR UNIVERSAL — CAB15
+     BUSCADOR UNIVERSAL — CAB15 / CAB16
      ===================================================== -->
 
 <script src="cab15.js"></script>
@@ -855,86 +786,14 @@ async function(j1) {
 <script src="matrixfiltro.js"></script>
 
 
-<script src="cab10.js"></script>
-
-
 <!-- =====================================================
-     TEST MATRIXFILTRO
+     MATRIXNAVEGADOR
      ===================================================== -->
 
-<button id="testMatrixFiltro"
-        type="button">
-
-    TEST MATRIXFILTRO
-
-</button>
+<script src="matrixnavegador.js"></script>
 
 
-<pre id="salidaMatrixFiltro"></pre>
-
-
-<script>
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function(){
-
-        const boton =
-            document.getElementById(
-                "testMatrixFiltro"
-            );
-
-
-        const salida =
-            document.getElementById(
-                "salidaMatrixFiltro"
-            );
-
-
-        if(!boton || !salida){
-
-            return;
-
-        }
-
-
-        boton.addEventListener(
-            "click",
-            function(){
-
-                /*
-                Leemos exactamente los resultados
-                que CAB16 está mostrando ahora mismo.
-                */
-
-                const matriz =
-                    window.MATRIXFILTRO.actualizar();
-
-
-                console.log(
-                    "MATRIXFILTRO:",
-                    matriz
-                );
-
-
-                salida.textContent =
-                    JSON.stringify(
-                        matriz,
-                        null,
-                        4
-                    );
-
-
-                salida.style.display =
-                    "block";
-
-            }
-        );
-
-    }
-);
-
-</script>
+<script src="cab10.js"></script>
 
 
 <!-- =====================================================
