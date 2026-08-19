@@ -10,6 +10,7 @@ funciones:
 - selector registro activo / todos los registros
 - autocompletado
 - resultados coincidentes
+- diagnóstico temporal de estructura de datos
 
 todavía NO carga paleofichas.
 
@@ -57,6 +58,13 @@ window.cab16 = {
         this.conectarBusqueda();
 
         this.inicializado = true;
+
+
+        /*
+        DIAGNÓSTICO TEMPORAL
+        */
+
+        this.mostrarDiagnostico();
 
 
         console.log(
@@ -580,6 +588,118 @@ window.cab16 = {
                 );
 
             }
+        );
+
+    },
+
+
+    /*====================================================
+      DIAGNÓSTICO TEMPORAL
+      Muestra el primer registro real recibido
+      por cab16.
+    ====================================================*/
+
+    mostrarDiagnostico: function() {
+
+        const datos =
+            this.obtenerDatos();
+
+
+        const registro =
+            datos &&
+            datos.length
+                ? datos[0]
+                : null;
+
+
+        const visor =
+            document.getElementById(
+                "ventanaBuscadorUniversal"
+            );
+
+
+        if (!visor) {
+
+            return;
+
+        }
+
+
+        /*
+        Evitar duplicados.
+        */
+
+        const anterior =
+            document.getElementById(
+                "diagnosticoCab16"
+            );
+
+
+        if (anterior) {
+
+            anterior.remove();
+
+        }
+
+
+        const diagnostico =
+            document.createElement(
+                "pre"
+            );
+
+
+        diagnostico.id =
+            "diagnosticoCab16";
+
+
+        diagnostico.style.whiteSpace =
+            "pre-wrap";
+
+
+        diagnostico.style.wordBreak =
+            "break-word";
+
+
+        diagnostico.style.marginTop =
+            "20px";
+
+
+        diagnostico.style.padding =
+            "15px";
+
+
+        diagnostico.style.background =
+            "#000";
+
+
+        diagnostico.style.color =
+            "#fff";
+
+
+        diagnostico.style.fontSize =
+            "12px";
+
+
+        diagnostico.style.maxHeight =
+            "300px";
+
+
+        diagnostico.style.overflow =
+            "auto";
+
+
+        diagnostico.textContent =
+            registro
+                ? JSON.stringify(
+                    registro,
+                    null,
+                    2
+                )
+                : "No hay datos disponibles.";
+
+
+        visor.appendChild(
+            diagnostico
         );
 
     }
