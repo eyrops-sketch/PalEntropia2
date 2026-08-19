@@ -5,77 +5,141 @@ PalEntropía
 
 FUNCIÓN
 -------
-Recibe una matriz de códigos j1 y devuelve una matriz
-con todos los campos correspondientes de master.csv.
+Recibe una matriz de códigos J1 y devuelve los registros
+completos correspondientes de master.csv.
 
 ENTRADA
 -------
 [
     "004_03",
-    "004_04",
-    "006_01"
+    "004_07",
+    "004_11",
+    "005_02"
 ]
 
 SALIDA
 ------
 [
     {
-        j1: "004_03",
+        j1: "...",
         j2: "...",
         j3: "...",
-        j4: "...",
-        j5: "...",
-        j6: "...",
-        j7: "...",
-        j8: "...",
-        j9: "...",
+        ...
         j10: "...",
         e1: "...",
         ...
         e11: "..."
-    },
-    ...
+    }
 ]
 
 IMPORTANTE
 ----------
 - No depende de ningún CAB.
 - No depende de PALNAVEGADOR.
-- No modifica ninguna navegación.
-- No interpreta ni decodifica los campos.
-- No transforma valores.
-- Trabaja exclusivamente con j1.
-- Devuelve los datos brutos completos del master.csv.
+- No depende de CAB16.
+- No decodifica ningún campo.
+- No transforma ningún valor.
+- Trabaja exclusivamente con J1 y master.csv.
+- Mantiene el orden recibido.
 ========================================================
 */
 
-
 window.MatrixNavegador = {
-
 
     /*====================================================
       ESTADO
     ====================================================*/
 
-    datos: [],
+    matriz: [],
 
-    codigos: [],
+    inicializado: false,
 
 
     /*====================================================
-      OBTENER MASTER
+      INICIALIZAR
     ====================================================*/
 
-    cargarMaster: async function() {
+    inicializar: function(){
+
+        if(this.inicializado){
+
+            return;
+
+        }
+
+        this.inicializado = true;
+
+        console.log(
+            "matrixnavegador v1.0: preparado."
+        );
+
+    },
+
+
+    /*====================================================
+      OBTENER REGISTROS POR J1
+    ====================================================*/
+
+    obtener: async function(
+        matrizJ1
+    ){
+
+        if(
+            !Array.isArray(
+                matrizJ1
+            )
+        ){
+
+            this.matriz = [];
+
+            return [];
+
+        }
+
+
+        /*
+        Limpiamos los códigos recibidos.
+        */
+
+        const codigos =
+            matrizJ1
+                .map(
+                    codigo =>
+                        String(
+                            codigo || ""
+                        ).trim()
+                )
+                .filter(
+                    codigo =>
+                        codigo !== ""
+                );
+
+
+        if(
+            !codigos.length
+        ){
+
+            this.matriz = [];
+
+            return [];
+
+        }
+
+
+        /*----------------------------------------------
+          CARGAR MASTER
+        ----------------------------------------------*/
 
         const respuesta =
-            await fetch("master.csv");
+            await fetch(
+                "master.csv"
+            );
 
 
-        if (!respuesta.ok) {
+        if(!respuesta.ok){
 
             throw new Error(
-                "MatrixNavegador: no se pudo cargar master.csv."
+                "matrixnavegador: no se pudo cargar master.csv."
             );
 
         }
@@ -86,27 +150,26 @@ window.MatrixNavegador = {
 
 
         const lineas =
-            texto.split(/\r?\n/);
+            texto.split(
+                /\r?\n/
+            );
 
 
-        const registros = [];
+        /*----------------------------------------------
+          MAPA DEL MASTER
+        ----------------------------------------------*/
+
+        const registros =
+            new Map();
 
 
-        /*
-        Saltamos la cabecera.
-        */
+        for(
+            const linea of lineas
+        ){
 
-        for (
-            let i = 1;
-            i < lineas.length;
-            i++
-        ) {
-
-            const linea =
-                lineas[i].trim();
-
-
-            if (!linea) {
+            if(
+                !linea.trim()
+            ){
 
                 continue;
 
@@ -117,16 +180,25 @@ window.MatrixNavegador = {
                 linea.split(",");
 
 
-            if (
+            /*
+            Necesitamos:
+
+            j1-j10 = 10 campos
+            e1-e11 = 11 campos
+
+            TOTAL = 21
+            */
+
+            if(
                 columnas.length < 21
-            ) {
+            ){
 
                 continue;
 
             }
 
 
-            registros.push({
+            const registro = {
 
                 j1:
                     columnas[0]?.trim() || "",
@@ -191,159 +263,67 @@ window.MatrixNavegador = {
                 e11:
                     columnas[20]?.trim() || ""
 
-            });
+            };
+
+
+            /*
+            Guardamos por J1.
+            */
+
+            registros.set(
+                registro.j1,
+                registro
+            );
 
         }
 
 
-        this.datos =
-            registros;
+        /*----------------------------------------------
+          CONSTRUIR MATRIZ FINAL
+          EN EL MISMO ORDEN DE LOS J1 RECIBIDOS
+        ----------------------------------------------*/
+
+        const resultado = [];
 
 
-        return registros;
+        for(
+            const codigo of codigos
+        ){
 
-    },
-
-
-    /*====================================================
-      CREAR MATRIZ NAVEGADOR
-    ====================================================*/
-
-    crear: async function(codigos) {
-
-
-        /*
-        Validamos entrada.
-        */
-
-        if (
-            !Array.isArray(codigos)
-        ) {
-
-            this.codigos = [];
-
-            return [];
-
-        }
-
-
-        /*
-        Normalizamos únicamente los códigos.
-        */
-
-        this.codigos =
-            codigos
-                .map(
-                    codigo =>
-                        String(
-                            codigo || ""
-                        )
-                        .trim()
-                        .toUpperCase()
-                )
-                .filter(
-                    codigo =>
-                        codigo !== ""
+            const registro =
+                registros.get(
+                    codigo
                 );
 
 
-        /*
-        Si no hay códigos,
-        devolvemos matriz vacía.
-        */
+            if(
+                registro
+            ){
 
-        if (
-            !this.codigos.length
-        ) {
-
-            return [];
-
-        }
-
-
-        /*
-        Cargamos master.csv.
-        */
-
-        const master =
-            await this.cargarMaster();
-
-
-        /*
-        Creamos un mapa por j1.
-        Esto permite localizar rápidamente
-        cada registro.
-        */
-
-        const mapa =
-            new Map();
-
-
-        master.forEach(
-            registro => {
-
-                mapa.set(
-                    registro.j1
-                        .trim()
-                        .toUpperCase(),
-
+                resultado.push(
                     registro
                 );
 
             }
+
+        }
+
+
+        /*----------------------------------------------
+          GUARDAR RESULTADO
+        ----------------------------------------------*/
+
+        this.matriz =
+            resultado;
+
+
+        console.log(
+            "matrixnavegador: registros recuperados:",
+            resultado
         );
 
 
-        /*
-        Construimos la matriz final
-        respetando exactamente el orden
-        de los códigos recibidos.
-        */
-
-        const matriz =
-            [];
-
-
-        this.codigos.forEach(
-            codigo => {
-
-                const registro =
-                    mapa.get(
-                        codigo
-                    );
-
-
-                if (
-                    registro
-                ) {
-
-                    matriz.push(
-                        registro
-                    );
-
-                }
-
-            }
-        );
-
-
-        return matriz;
-
-    },
-
-
-    /*====================================================
-      ALIAS
-      ----------------------------------------------------
-      Permite llamar a la función simplemente como
-      obtener().
-    ====================================================*/
-
-    obtener: async function(codigos) {
-
-        return await this.crear(
-            codigos
-        );
+        return resultado;
 
     },
 
@@ -352,34 +332,38 @@ window.MatrixNavegador = {
       OBTENER ÚLTIMA MATRIZ
     ====================================================*/
 
-    obtenerActual: function() {
+    obtenerMatriz: function(){
 
-        /*
-        Esta función devuelve los datos que fueron
-        generados en la última llamada a crear().
-        */
+        return this.matriz;
 
-        return this.codigos.map(
-            codigo => {
+    },
 
-                return this.datos.find(
-                    registro =>
-                        registro.j1
-                            .trim()
-                            .toUpperCase()
-                        === codigo
-                );
 
-            }
-        )
-        .filter(
-            registro =>
-                registro
-        );
+    /*====================================================
+      LIMPIAR
+    ====================================================*/
+
+    limpiar: function(){
+
+        this.matriz = [];
 
     }
 
 };
+
+
+/*========================================================
+ARRANQUE
+========================================================*/
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        window.MatrixNavegador.inicializar();
+
+    }
+);
 
 
 /*
@@ -387,7 +371,3 @@ window.MatrixNavegador = {
 FIN matrixnavegador.js v1.0
 ========================================================
 */
-
-
-
-
