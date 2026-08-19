@@ -1,1 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Test MatrixFiltro</title>
+
+</head>
+
+<body>
+
+<h1>Test MatrixFiltro</h1>
+
+<label>
+
+    <input
+        type="checkbox"
+        id="buscarTodosCab16"
+        checked
+    >
+
+    Buscar en todos los registros
+
+</label>
+
+
+<div id="resultadosCab16">
+
+    <div
+        class="resultadoCab16"
+        data-codigo="004_03">
+        004_03
+    </div>
+
+    <div
+        class="resultadoCab16"
+        data-codigo="004_07">
+        004_07
+    </div>
+
+    <div
+        class="resultadoCab16"
+        data-codigo="004_11">
+        004_11
+    </div>
+
+    <div
+        class="resultadoCab16"
+        data-codigo="005_02">
+        005_02
+    </div>
+
+</div>
+
+
+<button
+    type="button"
+    onclick="probarMatrix()">
+
+    PROBAR MATRIXFILTRO
+
+</button>
+
+
+<pre id="salida"></pre>
+
+
+<script src="matrixfiltro.js"></script>
+
+
+<script>
+
+function probarMatrix(){
+
+    const matriz =
+        MATRIXFILTRO.actualizar();
+
+
+    document.getElementById(
+        "salida"
+    ).textContent =
+        JSON.stringify(
+            matriz,
+            null,
+            4
+        );
+
+}
+
+</script>
+
+</body>
+
+</html>
+
+
 
