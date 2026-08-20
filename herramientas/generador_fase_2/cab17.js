@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-cab17.js v3.0
+cab17.js v4.0
 
 BUSCADOR AVANZADO POR NOMBRE
 
@@ -23,20 +23,46 @@ PALNAVEGADOR.aleatorio()
 
 COMPORTAMIENTO
 --------------
-☐ Consulta sin check:
-   permite seleccionar un resultado.
+Consulta por nombre:
 
-☑ Consulta con check:
-   convierte todos los resultados
-   en rango activo de navegación.
+    Gas
 
-Si no existe selección manual:
-   → aleatorio dentro del filtro.
+    Gastornis
+    Gasosaurus
 
-Si existe selección manual:
-   → se respeta la selección.
+Los J1 correspondientes pasan a MATRIXFILTRO.
+
+SIN CHECK
+---------
+La consulta YA constituye un rango activo.
+
+Se aplica:
+MATRIXFILTRO
+↓
+MatrixNavegador
+↓
+PALNAVEGADOR.aplicarFiltro()
+↓
+aleatorio dentro del rango
+
+CON CHECK
+---------
+Mismo circuito.
+
+El check solamente conserva el comportamiento
+de "consulta completa" de CAB16.
+
+SELECCIÓN MANUAL
+----------------
+Si el usuario pulsa un resultado:
+
+    → se carga ese J1
+    → no se sustituye por aleatorio
 
 NO MODIFICA CAB16.
+NO CREA NUEVAS MATRICES.
+NO CREA NUEVOS MOTORES DE BÚSQUEDA.
+
 ========================================================
 */
 
@@ -69,11 +95,6 @@ window.cab17 = {
 
         this.inicializado =
             true;
-
-
-        console.log(
-            "cab17 v3.0: buscador por nombre preparado."
-        );
 
     },
 
@@ -111,20 +132,14 @@ window.cab17 = {
             !campo
         ){
 
-            console.warn(
-                "cab17: campo buscarUniversal no encontrado."
-            );
-
             return;
 
         }
 
 
-        /*
-        ------------------------------------------------
-        INPUT
-        ------------------------------------------------
-        */
+        /*------------------------------------------------
+          INPUT
+        ------------------------------------------------*/
 
         campo.addEventListener(
             "input",
@@ -160,11 +175,9 @@ window.cab17 = {
         );
 
 
-        /*
-        ------------------------------------------------
-        CHECK
-        ------------------------------------------------
-        */
+        /*------------------------------------------------
+          CHECK
+        ------------------------------------------------*/
 
         const check =
             document.getElementById(
@@ -186,20 +199,6 @@ window.cab17 = {
 
                     this.seleccionRealizada =
                         false;
-
-
-                    /*
-                    Al quitar el check:
-                    volvemos al conjunto completo.
-                    */
-
-                    if(
-                        !this.buscarTodos
-                    ){
-
-                        this.limpiarFiltro();
-
-                    }
 
 
                     await this.buscar();
@@ -255,11 +254,9 @@ window.cab17 = {
             "";
 
 
-        /*
-        ------------------------------------------------
-        MÍNIMO 3 CARACTERES
-        ------------------------------------------------
-        */
+        /*------------------------------------------------
+          MÍNIMO 3 CARACTERES
+        ------------------------------------------------*/
 
         if(
             texto.length < 3
@@ -269,13 +266,7 @@ window.cab17 = {
                 "Introduce al menos 3 caracteres";
 
 
-            if(
-                this.buscarTodos
-            ){
-
-                this.limpiarFiltro();
-
-            }
+            this.limpiarFiltro();
 
 
             return [];
@@ -283,11 +274,24 @@ window.cab17 = {
         }
 
 
-        /*
-        ------------------------------------------------
-        PALBUSCADOR
-        ------------------------------------------------
-        */
+        /*------------------------------------------------
+          EVITAR CÓDIGOS
+        ------------------------------------------------*/
+
+        if(
+            this.esCodigo(
+                texto
+            )
+        ){
+
+            return [];
+
+        }
+
+
+        /*------------------------------------------------
+          PALBUSCADOR
+        ------------------------------------------------*/
 
         if(
             !window.PALBUSCADOR ||
@@ -297,12 +301,6 @@ window.cab17 = {
 
             label.textContent =
                 "Buscador no disponible.";
-
-
-            console.warn(
-                "cab17: PALBUSCADOR.buscarPorNombre no disponible."
-            );
-
 
             return [];
 
@@ -349,11 +347,9 @@ window.cab17 = {
         }
 
 
-        /*
-        ------------------------------------------------
-        CONTADOR
-        ------------------------------------------------
-        */
+        /*------------------------------------------------
+          CONTADOR
+        ------------------------------------------------*/
 
         label.textContent =
             coincidencias.length +
@@ -364,30 +360,40 @@ window.cab17 = {
             );
 
 
-        /*
-        ------------------------------------------------
-        MOSTRAR
-        ------------------------------------------------
-        */
+        /*------------------------------------------------
+          MOSTRAR RESULTADOS
+        ------------------------------------------------*/
 
         this.mostrar(
             coincidencias
         );
 
 
-        /*
-        ------------------------------------------------
-        CHECK ACTIVADO
-        ------------------------------------------------
-        */
+        /*------------------------------------------------
+          IMPORTANTE
+
+          La consulta por nombre SIEMPRE
+          genera el rango.
+
+          El check NO es necesario.
+
+          Esto hace que CAB17 se comporte
+          igual que CAB16 respecto al
+          posicionamiento aleatorio.
+        ------------------------------------------------*/
 
         if(
-            this.buscarTodos
+            coincidencias.length
         ){
 
             await this.aplicarMatrix(
                 coincidencias
             );
+
+        }
+        else{
+
+            this.limpiarFiltro();
 
         }
 
@@ -490,12 +496,6 @@ window.cab17 = {
         coincidencias
     ){
 
-        /*
-        ------------------------------------------------
-        SIN RESULTADOS
-        ------------------------------------------------
-        */
-
         if(
             !Array.isArray(
                 coincidencias
@@ -510,11 +510,9 @@ window.cab17 = {
         }
 
 
-        /*
-        ------------------------------------------------
-        MATRIXFILTRO
-        ------------------------------------------------
-        */
+        /*------------------------------------------------
+          MATRIXFILTRO
+        ------------------------------------------------*/
 
         if(
             !window.MATRIXFILTRO ||
@@ -532,11 +530,15 @@ window.cab17 = {
 
 
         /*
-        PALBUSCADOR ya nos entrega
-        resultados con codigo = J1.
+        PALBUSCADOR ya devuelve:
 
-        MATRIXFILTRO recibe exactamente
-        esos registros, igual que CAB16.
+        {
+            codigo: J1,
+            nombre: J2
+        }
+
+        Por tanto MATRIXFILTRO recibe
+        directamente esos registros.
         */
 
         const matrizJ1 =
@@ -548,11 +550,12 @@ window.cab17 = {
         if(
             !Array.isArray(
                 matrizJ1
-            )
+            ) ||
+            !matrizJ1.length
         ){
 
             console.warn(
-                "cab17: MATRIXFILTRO no devolvió una matriz."
+                "cab17: MATRIXFILTRO no devolvió J1."
             );
 
             return;
@@ -560,11 +563,9 @@ window.cab17 = {
         }
 
 
-        /*
-        ------------------------------------------------
-        MATRIXNAVEGADOR
-        ------------------------------------------------
-        */
+        /*------------------------------------------------
+          MATRIXNAVEGADOR
+        ------------------------------------------------*/
 
         if(
             !window.MatrixNavegador ||
@@ -595,7 +596,7 @@ window.cab17 = {
         catch(error){
 
             console.warn(
-                "cab17: error en MatrixNavegador.",
+                "cab17: error MatrixNavegador.",
                 error
             );
 
@@ -620,11 +621,9 @@ window.cab17 = {
         }
 
 
-        /*
-        ------------------------------------------------
-        PALNAVEGADOR
-        ------------------------------------------------
-        */
+        /*------------------------------------------------
+          PALNAVEGADOR
+        ------------------------------------------------*/
 
         if(
             !window.PALNAVEGADOR ||
@@ -643,7 +642,9 @@ window.cab17 = {
 
         /*
         PRIMERO:
-        aplicar el rango.
+
+        Aplicamos el rango.
+
         */
 
         window.PALNAVEGADOR.aplicarFiltro(
@@ -651,25 +652,15 @@ window.cab17 = {
         );
 
 
-        console.log(
-            "cab17: rango aplicado:",
-            registros.length,
-            "registros."
-        );
-
-
         /*
-        ------------------------------------------------
-        ALEATORIO
-        ------------------------------------------------
+        DESPUÉS:
 
-        Exactamente el mismo principio
-        que CAB16.
+        Aleatorio dentro del rango.
+
         */
 
         if(
             !this.seleccionRealizada &&
-            window.PALNAVEGADOR &&
             typeof window.PALNAVEGADOR.aleatorio ===
             "function"
         ){
@@ -678,16 +669,11 @@ window.cab17 = {
 
                 await window.PALNAVEGADOR.aleatorio();
 
-
-                console.log(
-                    "cab17: aleatorio automático dentro del filtro."
-                );
-
             }
             catch(error){
 
                 console.warn(
-                    "cab17: error en aleatorio automático.",
+                    "cab17: error en aleatorio.",
                     error
                 );
 
@@ -724,7 +710,11 @@ window.cab17 = {
 
 
         /*
-        Selección manual.
+        Desde aquí existe selección
+        manual real.
+
+        El aleatorio ya no debe
+        sustituirla.
         */
 
         this.seleccionRealizada =
@@ -763,16 +753,16 @@ window.cab17 = {
         }
 
 
-        /*
-        CERRAR
-        */
+        /*------------------------------------------------
+          CERRAR
+        ------------------------------------------------*/
 
         this.cerrar();
 
 
-        /*
-        CARGAR SELECCIÓN
-        */
+        /*------------------------------------------------
+          CARGAR J1
+        ------------------------------------------------*/
 
         if(
             window.PALNAVEGADOR &&
@@ -894,11 +884,6 @@ window.cab17 = {
 
         }
 
-
-        console.log(
-            "cab17: filtro y matriz limpiados."
-        );
-
     }
 
 };
@@ -920,6 +905,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab17.js v3.0
+FIN cab17.js v4.0
 ========================================================
 */
