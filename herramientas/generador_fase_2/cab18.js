@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-cab18.js v2.0 LTS
+cab18.js v2.1 LTS
 
 BUSCADOR AVANZADO — TIEMPO GEOLÓGICO
 
@@ -9,32 +9,15 @@ CAB16 → CÓDIGO
 CAB17 → NOMBRE
 CAB18 → TIEMPO GEOLÓGICO
 
-TIEMPO:
-- mínimo 4 caracteres
-- eón
-- era
-- período
-- edad
-- NO interpreta Ma
+PRIORIDAD:
+1. Código
+2. Nombre
+3. Tiempo geológico
 
-CIRCUITO:
-
-PALGEO
-↓
-J1
-↓
-nombre
-↓
-MATRIXFILTRO
-↓
-MatrixNavegador
-↓
-PALNAVEGADOR
-↓
-aleatorio dentro del rango
-
-RESULTADOS:
-J1 + nombre real
+Ejemplo:
+Dime → Dimetrodon → NOMBRE
+Perm → GEOLOGÍA
+Cret → GEOLOGÍA
 ========================================================
 */
 
@@ -72,13 +55,17 @@ window.cab18 = {
       NORMALIZAR
     ====================================================*/
 
-    normalizar: function(texto){
+    normalizar: function(
+        texto
+    ){
 
         return String(
             texto || ""
         )
         .toLowerCase()
-        .normalize("NFD")
+        .normalize(
+            "NFD"
+        )
         .replace(
             /[\u0300-\u036f]/g,
             ""
@@ -89,10 +76,12 @@ window.cab18 = {
 
 
     /*====================================================
-      CÓDIGO
+      COMPROBAR CÓDIGO
     ====================================================*/
 
-    esCodigo: function(texto){
+    esCodigo: function(
+        texto
+    ){
 
         return /^\d{3}(?:_\d{0,2})?$/.test(
             String(
@@ -114,6 +103,7 @@ window.cab18 = {
                 "buscarUniversal"
             );
 
+
         if(
             !campo
         ){
@@ -123,26 +113,30 @@ window.cab18 = {
         }
 
 
-        /*-----------------------------------------------
+        /*------------------------------------------------
           INPUT
-        -----------------------------------------------*/
+        ------------------------------------------------*/
 
         campo.addEventListener(
             "input",
             () => {
 
-                this.seleccionRealizada = false;
+                this.seleccionRealizada =
+                    false;
+
 
                 const texto =
                     campo.value.trim();
 
 
                 /*
-                Códigos → CAB16
+                CÓDIGO → CAB16
                 */
 
                 if(
-                    this.esCodigo(texto)
+                    this.esCodigo(
+                        texto
+                    )
                 ){
 
                     return;
@@ -151,9 +145,7 @@ window.cab18 = {
 
 
                 /*
-                CAB17 trabaja desde 3 caracteres.
-
-                CAB18 solamente entra desde 4.
+                MENOS DE 4 → CAB17
                 */
 
                 if(
@@ -171,14 +163,15 @@ window.cab18 = {
         );
 
 
-        /*-----------------------------------------------
+        /*------------------------------------------------
           CHECK
-        -----------------------------------------------*/
+        ------------------------------------------------*/
 
         const check =
             document.getElementById(
                 "buscarTodosCab16"
             );
+
 
         if(
             check
@@ -191,15 +184,20 @@ window.cab18 = {
                     this.buscarTodos =
                         check.checked;
 
+
                     this.seleccionRealizada =
                         false;
+
 
                     const texto =
                         campo.value.trim();
 
+
                     if(
                         texto.length >= 4 &&
-                        !this.esCodigo(texto)
+                        !this.esCodigo(
+                            texto
+                        )
                     ){
 
                         this.buscar();
@@ -225,10 +223,12 @@ window.cab18 = {
                 "buscarUniversal"
             );
 
+
         const label =
             document.getElementById(
                 "labelResultadosCab16"
             );
+
 
         const resultados =
             document.getElementById(
@@ -251,9 +251,14 @@ window.cab18 = {
             campo.value.trim();
 
 
+        /*
+        CÓDIGO → CAB16
+        */
+
         if(
-            texto.length < 4 ||
-            this.esCodigo(texto)
+            this.esCodigo(
+                texto
+            )
         ){
 
             return [];
@@ -261,12 +266,76 @@ window.cab18 = {
         }
 
 
-        resultados.innerHTML = "";
+        /*
+        CAB18 → MÍNIMO 4
+        */
+
+        if(
+            texto.length < 4
+        ){
+
+            return [];
+
+        }
 
 
-        /*-----------------------------------------------
-          PALGEO
-        -----------------------------------------------*/
+        resultados.innerHTML =
+            "";
+
+
+        /*================================================
+          PRIORIDAD NOMBRE
+        =================================================
+
+        Antes de consultar PALGEO,
+        comprobamos si la consulta
+        corresponde a un nombre.
+
+        Dime → Dimetrodon
+
+        Si hay coincidencia:
+        → CAB18 no busca geología.
+        =================================================*/
+
+        if(
+            window.PALBUSCADOR &&
+            typeof window.PALBUSCADOR.buscarPorNombre ===
+            "function"
+        ){
+
+            try{
+
+                const nombres =
+                    await window.PALBUSCADOR.buscarPorNombre(
+                        texto
+                    );
+
+
+                if(
+                    Array.isArray(nombres) &&
+                    nombres.length
+                ){
+
+                    return nombres;
+
+                }
+
+            }
+            catch(error){
+
+                /*
+                Si falla nombre,
+                continúa geología.
+                */
+
+            }
+
+        }
+
+
+        /*================================================
+          GEOLOGÍA
+        =================================================*/
 
         if(
             !Array.isArray(
@@ -288,10 +357,6 @@ window.cab18 = {
             );
 
 
-        /*-----------------------------------------------
-          BUSCAR INTERVALOS
-        -----------------------------------------------*/
-
         const intervalos =
             window.PALGEO.filter(
                 intervalo => {
@@ -308,11 +373,8 @@ window.cab18 = {
                     return [
 
                         intervalo.eon,
-
                         intervalo.era,
-
                         intervalo.periodo,
-
                         intervalo.edad
 
                     ].some(
@@ -340,15 +402,18 @@ window.cab18 = {
         }
 
 
-        /*-----------------------------------------------
+        /*================================================
           DATOS DE PALEOFICHAS
-        -----------------------------------------------*/
+        =================================================*/
 
         if(
             !window.LEEPALJSON ||
             typeof window.LEEPALJSON.obtener !==
             "function"
         ){
+
+            label.textContent =
+                "Datos de paleofichas no disponibles.";
 
             return [];
 
@@ -360,20 +425,22 @@ window.cab18 = {
 
 
         if(
-            !Array.isArray(fichas)
+            !Array.isArray(
+                fichas
+            )
         ){
+
+            label.textContent =
+                "0 resultados";
 
             return [];
 
         }
 
 
-        /*-----------------------------------------------
+        /*================================================
           MAPA DE NOMBRES
-
-          Igual que CAB17:
-          PALBUSCADOR proporciona el nombre real.
-        -----------------------------------------------*/
+        =================================================*/
 
         let mapaNombres =
             new Map();
@@ -401,9 +468,9 @@ window.cab18 = {
         }
 
 
-        /*-----------------------------------------------
-          BUSCAR FICHAS POR SOLAPAMIENTO TEMPORAL
-        -----------------------------------------------*/
+        /*================================================
+          COINCIDENCIAS
+        =================================================*/
 
         const coincidencias = [];
 
@@ -425,7 +492,8 @@ window.cab18 = {
                 const partes =
                     String(
                         ficha.j3
-                    ).split("-");
+                    )
+                    .split("-");
 
 
                 if(
@@ -442,6 +510,7 @@ window.cab18 = {
                         partes[0]
                     );
 
+
                 const fin =
                     Number(
                         partes[1]
@@ -449,8 +518,12 @@ window.cab18 = {
 
 
                 if(
-                    !Number.isFinite(inicio) ||
-                    !Number.isFinite(fin)
+                    !Number.isFinite(
+                        inicio
+                    ) ||
+                    !Number.isFinite(
+                        fin
+                    )
                 ){
 
                     return;
@@ -466,6 +539,7 @@ window.cab18 = {
                                 Number(
                                     intervalo.inicio_ma
                                 );
+
 
                             const geoFin =
                                 Number(
@@ -487,14 +561,8 @@ window.cab18 = {
                             }
 
 
-                            /*
-                            Solapamiento real.
-
-                            No basta con tocar
-                            exactamente el límite.
-                            */
-
                             return (
+
                                 Math.min(
                                     inicio,
                                     geoInicio
@@ -504,6 +572,7 @@ window.cab18 = {
                                     fin,
                                     geoFin
                                 )
+
                             );
 
                         }
@@ -535,7 +604,8 @@ window.cab18 = {
                     String(
                         ficha.nombre ||
                         "Sin nombre"
-                    ).trim();
+                    )
+                    .trim();
 
 
                 coincidencias.push({
@@ -558,9 +628,9 @@ window.cab18 = {
         );
 
 
-        /*-----------------------------------------------
-          ELIMINAR DUPLICADOS
-        -----------------------------------------------*/
+        /*================================================
+          ÚNICOS
+        =================================================*/
 
         const unicas =
             Array.from(
@@ -575,6 +645,10 @@ window.cab18 = {
             );
 
 
+        /*================================================
+          CONTADOR
+        =================================================*/
+
         label.textContent =
             unicas.length +
             (
@@ -584,18 +658,14 @@ window.cab18 = {
             );
 
 
-        /*-----------------------------------------------
+        /*================================================
           MOSTRAR
-        -----------------------------------------------*/
+        =================================================*/
 
         this.mostrar(
             unicas
         );
 
-
-        /*-----------------------------------------------
-          APLICAR RANGO
-        -----------------------------------------------*/
 
         if(
             unicas.length
@@ -611,9 +681,7 @@ window.cab18 = {
         return unicas;
 
     },
-
-
-    /*====================================================
+/*====================================================
       MOSTRAR RESULTADOS
     ====================================================*/
 
@@ -639,10 +707,19 @@ window.cab18 = {
         coincidencias.forEach(
             ficha => {
 
+                if(
+                    !ficha ||
+                    !ficha.codigo
+                ){
+
+                    return;
+
+                }
+
+
                 const codigo =
                     String(
-                        ficha.codigo ||
-                        ""
+                        ficha.codigo
                     )
                     .trim()
                     .toUpperCase();
@@ -652,16 +729,8 @@ window.cab18 = {
                     String(
                         ficha.nombre ||
                         "Sin nombre"
-                    ).trim();
-
-
-                if(
-                    !codigo
-                ){
-
-                    return;
-
-                }
+                    )
+                    .trim();
 
 
                 const fila =
@@ -677,10 +746,6 @@ window.cab18 = {
                 fila.dataset.codigo =
                     codigo;
 
-
-                /*
-                CÓDIGO + NOMBRE REAL
-                */
 
                 fila.textContent =
                     codigo +
@@ -730,10 +795,6 @@ window.cab18 = {
         }
 
 
-        /*-----------------------------------------------
-          MATRIXFILTRO
-        -----------------------------------------------*/
-
         if(
             !window.MATRIXFILTRO ||
             typeof window.MATRIXFILTRO.actualizar !==
@@ -762,10 +823,6 @@ window.cab18 = {
 
         }
 
-
-        /*-----------------------------------------------
-          MATRIXNAVEGADOR
-        -----------------------------------------------*/
 
         if(
             !window.MatrixNavegador ||
@@ -808,10 +865,6 @@ window.cab18 = {
         }
 
 
-        /*-----------------------------------------------
-          PALNAVEGADOR
-        -----------------------------------------------*/
-
         if(
             !window.PALNAVEGADOR ||
             typeof window.PALNAVEGADOR.aplicarFiltro !==
@@ -823,14 +876,18 @@ window.cab18 = {
         }
 
 
-        PALNAVEGADOR.aplicarFiltro(
+        /*
+        APLICAR RANGO
+        */
+
+        window.PALNAVEGADOR.aplicarFiltro(
             registros
         );
 
 
-        /*-----------------------------------------------
-          ALEATORIO
-        -----------------------------------------------*/
+        /*
+        ALEATORIO DENTRO DEL RANGO
+        */
 
         if(
             !this.seleccionRealizada &&
@@ -845,8 +902,6 @@ window.cab18 = {
             }
             catch(error){
 
-                return;
-
             }
 
         }
@@ -855,7 +910,7 @@ window.cab18 = {
 
 
     /*====================================================
-      SELECCIONAR
+      SELECCIONAR RESULTADO
     ====================================================*/
 
     seleccionar: async function(
@@ -924,9 +979,16 @@ window.cab18 = {
             "function"
         ){
 
-            await window.PALNAVEGADOR.cargarPorCodigo(
-                codigo
-            );
+            try{
+
+                await window.PALNAVEGADOR.cargarPorCodigo(
+                    codigo
+                );
+
+            }
+            catch(error){
+
+            }
 
         }
 
@@ -952,14 +1014,17 @@ window.cab18 = {
         }
 
 
-        [
+        const ids = [
 
             "lightboxBuscador",
             "buscadorLightbox",
             "lightboxBusqueda",
             "modalBuscador"
 
-        ].forEach(
+        ];
+
+
+        ids.forEach(
             id => {
 
                 const elemento =
@@ -975,8 +1040,13 @@ window.cab18 = {
                     elemento.style.display =
                         "none";
 
+
                     elemento.classList.remove(
-                        "activo",
+                        "activo"
+                    );
+
+
+                    elemento.classList.remove(
                         "visible"
                     );
 
@@ -1006,6 +1076,7 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab18.js v2.0 LTS
+FIN cab18.js v2.1 LTS
 ========================================================
 */
+    
