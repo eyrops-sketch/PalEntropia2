@@ -1,35 +1,68 @@
 /*
 ========================================================
 PalEntropía
-cab17.js v1.4
+cab17.js v1.5
 
-BUSCADOR AVANZADO POR NOMBRE — J2
+BUSCADOR AVANZADO POR NOMBRE
 
-FUNCIÓN
--------
-- Busca por nombre.
+FUNCIONAMIENTO
+--------------
+- Busca en j2.
 - Mínimo 3 caracteres.
 - Ignora mayúsculas/minúsculas.
 - Ignora tildes.
-- Lee LEEPALJSON.
-- Obtiene J1 asociado a cada coincidencia.
-- Con check activado → MATRIXFILTRO.
+- Obtiene los j1 asociados.
+- Entrega los j1 a MATRIXFILTRO.
 - No modifica CAB16.
 
-PRUEBA VISUAL
--------------
-Muestra:
+CIRCUITO
 
-CAB17 ACTIVO
-Registros cargados: XX
-Ejemplo nombre: XXXXX
-
+consulta
+   ↓
+j2
+   ↓
+j1
+   ↓
+MATRIXFILTRO
 ========================================================
 */
 
 window.cab17 = {
 
-    datos: [],
+
+    /*====================================================
+      NORMALIZAR
+    ====================================================*/
+
+    normalizar: function(texto){
+
+        return String(
+            texto || ""
+        )
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .toLowerCase()
+        .trim();
+
+    },
+
+
+    /*====================================================
+      ES CÓDIGO
+    ====================================================*/
+
+    esCodigo: function(texto){
+
+        return /^\d{3}(?:_\d{0,2})?$/.test(
+            String(
+                texto || ""
+            ).trim()
+        );
+
+    },
 
 
     /*====================================================
@@ -52,88 +85,14 @@ window.cab17 = {
                 Array.isArray(datos)
             ){
 
-                this.datos =
-                    datos;
+                return datos;
 
             }
 
         }
 
 
-        return this.datos;
-
-    },
-
-
-    /*====================================================
-      NORMALIZAR TEXTO
-    ====================================================*/
-
-    normalizar: function(texto){
-
-        return String(
-            texto || ""
-        )
-        .normalize("NFD")
-        .replace(
-            /[\u0300-\u036f]/g,
-            ""
-        )
-        .toLowerCase()
-        .trim();
-
-    },
-
-
-    /*====================================================
-      ES CÓDIGO J1
-    ====================================================*/
-
-    esCodigo: function(texto){
-
-        return /^\d{3}(?:_\d{0,2})?$/.test(
-            String(
-                texto || ""
-            ).trim()
-        );
-
-    },
-
-
-    /*====================================================
-      OBTENER NOMBRE REAL DEL REGISTRO
-    ====================================================*/
-
-    obtenerNombre: function(
-        registro
-    ){
-
-        if(
-            !registro
-        ){
-
-            return "";
-
-        }
-
-
-        /*
-        LEEPALJSON utiliza "nombre".
-
-        j2 se mantiene como respaldo por
-        compatibilidad con posibles registros
-        que conserven el nombre original del CSV.
-        */
-
-        const nombre =
-            registro.nombre !== undefined
-                ? registro.nombre
-                : registro.j2;
-
-
-        return String(
-            nombre || ""
-        ).trim();
+        return [];
 
     },
 
@@ -142,7 +101,7 @@ window.cab17 = {
       BUSCAR POR NOMBRE
     ====================================================*/
 
-    buscarJ2: function(){
+    buscar: function(){
 
         const campo =
             document.getElementById(
@@ -174,7 +133,7 @@ window.cab17 = {
             !resultados
         ){
 
-            return [];
+            return;
 
         }
 
@@ -186,48 +145,21 @@ window.cab17 = {
 
 
         /*
-        ====================================================
-        CARGAR DATOS
-        ====================================================
-        */
-
-        this.obtenerDatos();
-
-
-        /*
-        ====================================================
-        INDICADOR VISUAL
-        ====================================================
+        ----------------------------------------------------
+        INDICADOR TEMPORAL
+        ----------------------------------------------------
         */
 
         resultados.innerHTML =
             "<div style='color:#62d6ff;padding:6px;'>" +
-
-            "<strong>CAB17 ACTIVO</strong>" +
-
-            "<br>" +
-
-            "Registros cargados: " +
-            this.datos.length +
-
-            "<br>" +
-
-            "Ejemplo nombre: " +
-            (
-                this.datos.length
-                    ? this.obtenerNombre(
-                        this.datos[0]
-                    )
-                    : "SIN DATOS"
-            ) +
-
+            "CAB17 ACTIVO" +
             "</div>";
 
 
         /*
-        ====================================================
+        ----------------------------------------------------
         MÍNIMO 3 CARACTERES
-        ====================================================
+        ----------------------------------------------------
         */
 
         if(
@@ -237,50 +169,38 @@ window.cab17 = {
             label.textContent =
                 "Introduce al menos 3 caracteres";
 
-
-            return [];
+            return;
 
         }
 
 
         /*
-        ====================================================
-        SIN DATOS
-        ====================================================
+        ----------------------------------------------------
+        DATOS
+        ----------------------------------------------------
         */
 
-        if(
-            !this.datos.length
-        ){
-
-            label.textContent =
-                "0 resultados";
-
-
-            return [];
-
-        }
+        const datos =
+            this.obtenerDatos();
 
 
         /*
-        ====================================================
-        BUSCAR EN NOMBRE
-        ====================================================
+        ----------------------------------------------------
+        BUSCAR EN J2
+        ----------------------------------------------------
         */
 
         const coincidencias =
-            this.datos.filter(
+            datos.filter(
                 registro => {
 
                     const nombre =
-                        this.obtenerNombre(
-                            registro
+                        this.normalizar(
+                            registro.j2
                         );
 
 
-                    return this.normalizar(
-                        nombre
-                    ).includes(
+                    return nombre.includes(
                         texto
                     );
 
@@ -289,9 +209,9 @@ window.cab17 = {
 
 
         /*
-        ====================================================
-        CONTADOR
-        ====================================================
+        ----------------------------------------------------
+        RESULTADOS
+        ----------------------------------------------------
         */
 
         label.textContent =
@@ -304,37 +224,13 @@ window.cab17 = {
 
 
         /*
-        ====================================================
+        ----------------------------------------------------
         MOSTRAR RESULTADOS
-        ====================================================
+        ----------------------------------------------------
         */
 
         coincidencias.forEach(
             registro => {
-
-                const codigo =
-                    String(
-                        registro.codigo ||
-                        registro.j1 ||
-                        ""
-                    ).trim();
-
-
-                const nombre =
-                    this.obtenerNombre(
-                        registro
-                    );
-
-
-                if(
-                    !codigo ||
-                    !nombre
-                ){
-
-                    return;
-
-                }
-
 
                 const fila =
                     document.createElement(
@@ -347,20 +243,16 @@ window.cab17 = {
 
 
                 fila.dataset.codigo =
-                    codigo;
+                    registro.j1;
 
 
                 fila.textContent =
-                    nombre;
+                    registro.j2;
 
-
-                /*
-                Selección manual del resultado.
-                */
 
                 fila.addEventListener(
                     "click",
-                    function(){
+                    () => {
 
                         if(
                             window.PALNAVEGADOR &&
@@ -369,7 +261,7 @@ window.cab17 = {
                         ){
 
                             window.PALNAVEGADOR.cargarPorCodigo(
-                                codigo
+                                registro.j1
                             );
 
                         }
@@ -387,9 +279,9 @@ window.cab17 = {
 
 
         /*
-        ====================================================
-        CHECK ACTIVADO
-        ====================================================
+        ----------------------------------------------------
+        CHECK
+        ----------------------------------------------------
         */
 
         if(
@@ -407,10 +299,8 @@ window.cab17 = {
         return coincidencias;
 
     },
-
-
-    /*====================================================
-      ENVIAR A MATRIXFILTRO
+        /*====================================================
+      ENVIAR J1 A MATRIXFILTRO
     ====================================================*/
 
     enviarMatrix: function(
@@ -441,24 +331,16 @@ window.cab17 = {
 
 
         /*
-        Convertimos los resultados encontrados
-        en sus J1.
-
-        MATRIXFILTRO recibe únicamente esos J1.
+        EXTRAER SOLAMENTE J1
         */
 
         const j1 =
             registros
             .map(
-                registro => {
-
-                    return String(
-                        registro.codigo ||
-                        registro.j1 ||
-                        ""
-                    ).trim();
-
-                }
+                registro =>
+                    String(
+                        registro.j1 || ""
+                    ).trim()
             )
             .filter(
                 codigo =>
@@ -474,6 +356,11 @@ window.cab17 = {
 
         }
 
+
+        /*
+        MATRIXFILTRO YA SE ENCARGA
+        DEL RESTO DEL CIRCUITO.
+        */
 
         window.MATRIXFILTRO.actualizar(
             j1
@@ -518,8 +405,7 @@ window.cab17 = {
 
 
                 /*
-                Si es código J1,
-                CAB16 trabaja normalmente.
+                CÓDIGO → CAB16
                 */
 
                 if(
@@ -534,14 +420,13 @@ window.cab17 = {
 
 
                 /*
-                Si no es código,
-                CAB17 procesa la búsqueda por nombre.
+                NOMBRE → CAB17
                 */
 
                 evento.stopImmediatePropagation();
 
 
-                this.buscarJ2();
+                this.buscar();
 
             },
             true
@@ -593,8 +478,7 @@ window.cab17 = {
 
 
                 /*
-                Si es código J1,
-                CAB16 trabaja normalmente.
+                CÓDIGO → CAB16
                 */
 
                 if(
@@ -615,7 +499,7 @@ window.cab17 = {
                     evento.stopImmediatePropagation();
 
 
-                    this.buscarJ2();
+                    this.buscar();
 
                 }
 
@@ -644,6 +528,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab17.js v1.4
+FIN cab17.js v1.5
 ========================================================
 */
