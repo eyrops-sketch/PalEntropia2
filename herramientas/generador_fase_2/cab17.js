@@ -1,33 +1,30 @@
 /*
 ========================================================
 PalEntropía
-cab17.js v1.0
+cab17.js v1.1
 
 BUSCADOR POR NOMBRE — J2
 
 FUNCIÓN
 -------
-- Busca exclusivamente por nombre.
+- Busca por nombre.
 - Mínimo 3 caracteres.
 - Ignora mayúsculas/minúsculas.
 - Ignora tildes.
 - Utiliza LEEPALJSON.
 - Al activar el check:
     resultados → MATRIXFILTRO
-- No modifica CAB16.
+- CAB16 NO SE MODIFICA.
 
-Ejemplo:
-
-gas
-
-Gastornis
-Gasosaurus
-
-↓
+CIRCUITO
+--------
+NOMBRE
+  ↓
+CAB17
+  ↓
+J1 asociados
+  ↓
 MATRIXFILTRO
-↓
-J1 de ambos registros
-
 ========================================================
 */
 
@@ -88,6 +85,21 @@ window.cab17 = {
 
 
     /*====================================================
+      ES CÓDIGO J1
+    ====================================================*/
+
+    esCodigo: function(texto){
+
+        return /^\d{3}(?:_\d{0,2})?$/.test(
+            String(
+                texto || ""
+            ).trim()
+        );
+
+    },
+
+
+    /*====================================================
       BUSCAR POR NOMBRE
     ====================================================*/
 
@@ -131,7 +143,8 @@ window.cab17 = {
             );
 
 
-        resultados.innerHTML = "";
+        resultados.innerHTML =
+            "";
 
 
         if(
@@ -153,10 +166,20 @@ window.cab17 = {
             this.datos.filter(
                 registro => {
 
+                    if(
+                        !registro
+                    ){
+
+                        return false;
+
+                    }
+
+
                     const nombre =
                         this.normalizar(
                             registro.nombre
                         );
+
 
                     return nombre.includes(
                         texto
@@ -187,11 +210,14 @@ window.cab17 = {
                         "div"
                     );
 
+
                 fila.className =
                     "resultadoCab16";
 
+
                 fila.dataset.codigo =
                     registro.codigo;
+
 
                 fila.textContent =
                     registro.nombre;
@@ -248,15 +274,17 @@ window.cab17 = {
 
 
     /*====================================================
-      ENVIAR A MATRIXFILTRO
+      ENVIAR RESULTADOS A MATRIXFILTRO
     ====================================================*/
 
-    enviarMatrix: async function(
+    enviarMatrix: function(
         registros
     ){
 
         if(
-            !Array.isArray(registros) ||
+            !Array.isArray(
+                registros
+            ) ||
             !registros.length
         ){
 
@@ -271,89 +299,28 @@ window.cab17 = {
             "function"
         ){
 
-            console.warn(
-                "cab17: MATRIXFILTRO no disponible."
-            );
-
             return;
 
         }
 
 
         /*
-        MATRIXFILTRO recibe exactamente
-        los registros encontrados.
+        Se entrega a MATRIXFILTRO
+        exactamente el mismo conjunto
+        de registros encontrado.
+
+        MATRIXFILTRO obtiene los J1.
         */
 
-        const matrizJ1 =
-            window.MATRIXFILTRO.actualizar(
-                registros
-            );
-
-
-        if(
-            !Array.isArray(matrizJ1) ||
-            !matrizJ1.length
-        ){
-
-            return;
-
-        }
-
-
-        /*
-        MatrixNavegador recupera
-        los registros completos.
-        */
-
-        if(
-            !window.MatrixNavegador ||
-            typeof window.MatrixNavegador.obtener !==
-            "function"
-        ){
-
-            return;
-
-        }
-
-
-        const filtrados =
-            await window.MatrixNavegador.obtener(
-                matrizJ1
-            );
-
-
-        if(
-            !Array.isArray(filtrados) ||
-            !filtrados.length
-        ){
-
-            return;
-
-        }
-
-
-        /*
-        El rango pasa a PALNAVEGADOR.
-        */
-
-        if(
-            window.PALNAVEGADOR &&
-            typeof window.PALNAVEGADOR.aplicarFiltro ===
-            "function"
-        ){
-
-            window.PALNAVEGADOR.aplicarFiltro(
-                filtrados
-            );
-
-        }
+        window.MATRIXFILTRO.actualizar(
+            registros
+        );
 
     },
 
 
     /*====================================================
-      CONECTAR CHECK
+      CONECTAR
     ====================================================*/
 
     conectar: function(){
@@ -379,21 +346,31 @@ window.cab17 = {
         }
 
 
-        /*
-        CAB17 solo interviene cuando
-        la consulta NO tiene formato J1.
-        */
+        /*------------------------------------------------
+          INPUT
+
+          CAPTURA:
+
+          CAB17 recibe primero las consultas
+          que NO son J1.
+
+          Así CAB16 no pisa los resultados.
+        ------------------------------------------------*/
 
         campo.addEventListener(
             "input",
-            () => {
+            (evento) => {
 
                 const texto =
                     campo.value.trim();
 
 
+                /*
+                Si es J1, CAB16 trabaja normalmente.
+                */
+
                 if(
-                    /^\d{3}(?:_\d{0,2})?$/.test(
+                    this.esCodigo(
                         texto
                     )
                 ){
@@ -403,32 +380,65 @@ window.cab17 = {
                 }
 
 
+                /*
+                Consulta J2.
+                CAB17 se hace cargo.
+                */
+
+                evento.stopImmediatePropagation();
+
+
                 this.buscarJ2();
 
-            }
+            },
+            true
         );
 
 
+        /*------------------------------------------------
+          CHECK
+        ------------------------------------------------*/
+
         check.addEventListener(
             "change",
-            () => {
+            (evento) => {
 
                 const texto =
                     campo.value.trim();
 
 
+                /*
+                El check para una consulta J1
+                pertenece a CAB16.
+                */
+
                 if(
-                    texto.length >= 3 &&
-                    !/^\d{3}(?:_\d{0,2})?$/.test(
+                    this.esCodigo(
                         texto
                     )
                 ){
 
-                    this.buscarJ2();
+                    return;
 
                 }
 
-            }
+
+                if(
+                    texto.length < 3
+                ){
+
+                    return;
+
+                }
+
+
+                evento.stopImmediatePropagation();
+
+
+                this.buscarJ2();
+
+            },
+            true
         );
 
     }
@@ -452,6 +462,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab17.js v1.0
+FIN cab17.js v1.1
 ========================================================
 */
