@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-cab18.js v1.5
+cab18.js v1.5 LTS
 
 BUSCADOR AVANZADO — TIEMPO GEOLÓGICO
 
@@ -15,10 +15,10 @@ Código:
 sin restricción.
 
 Nombre:
-mínimo 3 caracteres.
+mínimo 3 caracteres → CAB17.
 
 Tiempo geológico:
-mínimo 4 caracteres.
+mínimo 4 caracteres → CAB18.
 
 CAB18 busca exclusivamente por:
 
@@ -62,17 +62,9 @@ window.cab18 = {
 
         }
 
-
         this.conectar();
 
-
-        this.inicializado =
-            true;
-
-
-        console.log(
-            "cab18 v1.5: búsqueda geológica preparada."
-        );
+        this.inicializado = true;
 
     },
 
@@ -135,106 +127,120 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
-        NOMBRE DIRECTO
-        ------------------------------------------------
+        -----------------------------------------------
+        1. nombre
+        -----------------------------------------------
         */
 
         let nombre =
-            ficha.nombre;
+            String(
+                ficha.nombre ||
+                ""
+            ).trim();
 
 
         if(
-            nombre &&
-            String(
-                nombre
-            )
-            .trim()
-            .toLowerCase() !== "j2"
+            nombre
         ){
 
-            return String(
-                nombre
-            ).trim();
+            return nombre;
 
         }
 
 
         /*
-        ------------------------------------------------
-        RESPALDO: j2
-        ------------------------------------------------
+        -----------------------------------------------
+        2. j2
+        -----------------------------------------------
         */
 
-        if(
-            ficha.j2 &&
+        nombre =
             String(
-                ficha.j2
-            )
-            .trim()
-            .toLowerCase() !== "j2"
+                ficha.j2 ||
+                ""
+            ).trim();
+
+
+        if(
+            nombre
         ){
 
-            return String(
-                ficha.j2
-            ).trim();
+            return nombre;
 
         }
 
 
         /*
-        ------------------------------------------------
-        BUSCAR EL REGISTRO REAL EN PALEOFICHAS
-        ------------------------------------------------
+        -----------------------------------------------
+        3. BUSCAR POR CÓDIGO
+        -----------------------------------------------
         */
 
+        const codigo =
+            String(
+                ficha.codigo ||
+                ficha.j1 ||
+                ""
+            )
+            .trim()
+            .toUpperCase();
+
+
         if(
-            window.PALEOFICHAS &&
+            codigo &&
             Array.isArray(
                 window.PALEOFICHAS
-            ) &&
-            ficha.codigo
+            )
         ){
-
-            const codigo =
-                String(
-                    ficha.codigo
-                )
-                .trim()
-                .toUpperCase();
-
 
             const registro =
                 window.PALEOFICHAS.find(
-                    elemento => {
+                    item => {
 
-                        return (
+                        if(
+                            !item
+                        ){
+
+                            return false;
+
+                        }
+
+
+                        const c =
                             String(
-                                elemento.codigo ||
+                                item.codigo ||
+                                item.j1 ||
                                 ""
                             )
                             .trim()
-                            .toUpperCase() ===
-                            codigo
-                        );
+                            .toUpperCase();
+
+
+                        return c === codigo;
 
                     }
                 );
 
 
             if(
-                registro &&
-                registro.nombre &&
-                String(
-                    registro.nombre
-                )
-                .trim()
-                .toLowerCase() !== "j2"
+                registro
             ){
 
-                return String(
-                    registro.nombre
-                ).trim();
+                nombre =
+                    String(
+                        registro.nombre ||
+                        registro.j2 ||
+                        ""
+                    ).trim();
+
+
+                if(
+                    nombre
+                ){
+
+                    return nombre;
+
+                }
 
             }
 
@@ -261,10 +267,6 @@ window.cab18 = {
         if(
             !campo
         ){
-
-            console.warn(
-                "cab18: campo buscarUniversal no encontrado."
-            );
 
             return;
 
@@ -308,12 +310,10 @@ window.cab18 = {
 
                 /*
                 ----------------------------------------
-                MENOS DE 4 CARACTERES
+                MENOS DE 4
 
                 CAB18 NO INTERVIENE.
-
-                CAB17 puede trabajar
-                desde 3 caracteres.
+                CAB17 puede trabajar desde 3.
                 ----------------------------------------
                 */
 
@@ -348,10 +348,6 @@ window.cab18 = {
             check
         ){
 
-            this.buscarTodos =
-                check.checked;
-
-
             check.addEventListener(
                 "change",
                 async () => {
@@ -367,12 +363,6 @@ window.cab18 = {
                     const texto =
                         campo.value.trim();
 
-
-                    /*
-                    ------------------------------------
-                    SOLO PROCESAR CONSULTAS GEOLOGICAS
-                    ------------------------------------
-                    */
 
                     if(
                         texto.length < 4 ||
@@ -436,9 +426,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
+        -----------------------------------------------
         CÓDIGO → CAB16
-        ------------------------------------------------
+        -----------------------------------------------
         */
 
         if(
@@ -453,9 +443,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
-        MÍNIMO 4 CARACTERES
-        ------------------------------------------------
+        -----------------------------------------------
+        TIEMPO → MÍNIMO 4
+        -----------------------------------------------
         */
 
         if(
@@ -467,18 +457,16 @@ window.cab18 = {
         }
 
 
-        resultados.innerHTML =
-            "";
+        resultados.innerHTML = "";
 
 
         /*
-        ------------------------------------------------
-        PALGEO DISPONIBLE
-        ------------------------------------------------
+        -----------------------------------------------
+        PALGEO
+        -----------------------------------------------
         */
 
         if(
-            !window.PALGEO ||
             !Array.isArray(
                 window.PALGEO
             )
@@ -492,12 +480,6 @@ window.cab18 = {
         }
 
 
-        /*
-        ------------------------------------------------
-        NORMALIZAR CONSULTA
-        ------------------------------------------------
-        */
-
         const consulta =
             this.normalizarTexto(
                 texto
@@ -505,16 +487,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
-        BUSCAR EN PALGEO
-
-        SOLO:
-
-        eón
-        era
-        período
-        edad
-        ------------------------------------------------
+        -----------------------------------------------
+        BUSCAR EÓN / ERA / PERÍODO / EDAD
+        -----------------------------------------------
         */
 
         const intervalos =
@@ -585,9 +560,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
-        SIN COINCIDENCIAS
-        ------------------------------------------------
+        -----------------------------------------------
+        SIN RESULTADOS
+        -----------------------------------------------
         */
 
         if(
@@ -603,9 +578,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
+        -----------------------------------------------
         LEEPALJSON
-        ------------------------------------------------
+        -----------------------------------------------
         */
 
         if(
@@ -641,9 +616,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
-        BUSCAR FICHAS POR SOLAPAMIENTO TEMPORAL REAL
-        ------------------------------------------------
+        -----------------------------------------------
+        FILTRAR POR SOLAPAMIENTO TEMPORAL REAL
+        -----------------------------------------------
         */
 
         const coincidencias =
@@ -664,6 +639,7 @@ window.cab18 = {
                         String(
                             ficha.j3
                         )
+                        .trim()
                         .split("-");
 
 
@@ -731,15 +707,6 @@ window.cab18 = {
                             }
 
 
-                            /*
-                            --------------------------------
-                            SOLAPAMIENTO REAL
-
-                            Compartir únicamente un límite
-                            NO cuenta.
-                            --------------------------------
-                            */
-
                             return (
 
                                 Math.min(
@@ -764,9 +731,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
+        -----------------------------------------------
         CONTADOR
-        ------------------------------------------------
+        -----------------------------------------------
         */
 
         label.textContent =
@@ -779,9 +746,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
-        MOSTRAR RESULTADOS
-        ------------------------------------------------
+        -----------------------------------------------
+        MOSTRAR
+        -----------------------------------------------
         */
 
         this.mostrar(
@@ -790,9 +757,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
-        CHECK ACTIVADO
-        ------------------------------------------------
+        -----------------------------------------------
+        CHECK
+        -----------------------------------------------
         */
 
         if(
@@ -812,7 +779,7 @@ window.cab18 = {
 
 
     /*====================================================
-      MOSTRAR
+      MOSTRAR RESULTADOS
     ====================================================*/
 
     mostrar: function(
@@ -834,12 +801,14 @@ window.cab18 = {
         }
 
 
+        contenedor.innerHTML = "";
+
+
         coincidencias.forEach(
             ficha => {
 
                 if(
-                    !ficha ||
-                    !ficha.codigo
+                    !ficha
                 ){
 
                     return;
@@ -849,17 +818,22 @@ window.cab18 = {
 
                 const codigo =
                     String(
-                        ficha.codigo
+                        ficha.codigo ||
+                        ficha.j1 ||
+                        ""
                     )
                     .trim()
                     .toUpperCase();
 
 
-                /*
-                ----------------------------------------
-                NOMBRE REAL
-                ----------------------------------------
-                */
+                if(
+                    !codigo
+                ){
+
+                    return;
+
+                }
+
 
                 const nombre =
                     this.obtenerNombre(
@@ -883,7 +857,7 @@ window.cab18 = {
 
                 /*
                 ----------------------------------------
-                CÓDIGO + NOMBRE
+                CÓDIGO + NOMBRE REAL
                 ----------------------------------------
                 */
 
@@ -914,19 +888,13 @@ window.cab18 = {
 
     },
 
-    /*====================================================
+        /*====================================================
       APLICAR FILTRO
     ====================================================*/
 
     aplicarFiltro: async function(
         coincidencias
     ){
-
-        /*
-        ------------------------------------------------
-        SIN RESULTADOS
-        ------------------------------------------------
-        */
 
         if(
             !Array.isArray(
@@ -941,9 +909,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
+        -----------------------------------------------
         MATRIXFILTRO
-        ------------------------------------------------
+        -----------------------------------------------
         */
 
         if(
@@ -951,10 +919,6 @@ window.cab18 = {
             typeof window.MATRIXFILTRO.actualizar !==
             "function"
         ){
-
-            console.warn(
-                "cab18: MATRIXFILTRO no disponible."
-            );
 
             return;
 
@@ -973,19 +937,15 @@ window.cab18 = {
             )
         ){
 
-            console.warn(
-                "cab18: MATRIXFILTRO no devolvió matriz."
-            );
-
             return;
 
         }
 
 
         /*
-        ------------------------------------------------
+        -----------------------------------------------
         MATRIXNAVEGADOR
-        ------------------------------------------------
+        -----------------------------------------------
         */
 
         if(
@@ -993,10 +953,6 @@ window.cab18 = {
             typeof window.MatrixNavegador.obtener !==
             "function"
         ){
-
-            console.warn(
-                "cab18: MatrixNavegador no disponible."
-            );
 
             return;
 
@@ -1014,10 +970,12 @@ window.cab18 = {
                 );
 
         }
-        catch(error){
+        catch(
+            error
+        ){
 
             console.warn(
-                "cab18: error en MatrixNavegador.",
+                "cab18: error MatrixNavegador.",
                 error
             );
 
@@ -1033,19 +991,15 @@ window.cab18 = {
             !registros.length
         ){
 
-            console.warn(
-                "cab18: no hay registros para el filtro."
-            );
-
             return;
 
         }
 
 
         /*
-        ------------------------------------------------
+        -----------------------------------------------
         PALNAVEGADOR
-        ------------------------------------------------
+        -----------------------------------------------
         */
 
         if(
@@ -1054,44 +1008,27 @@ window.cab18 = {
             "function"
         ){
 
-            console.warn(
-                "cab18: PALNAVEGADOR.aplicarFiltro no disponible."
-            );
-
             return;
 
         }
 
-
-        /*
-        ------------------------------------------------
-        APLICAR RANGO
-        ------------------------------------------------
-        */
 
         window.PALNAVEGADOR.aplicarFiltro(
             registros
         );
 
 
-        console.log(
-            "cab18: rango aplicado:",
-            registros.length,
-            "registros."
-        );
-
-
         /*
-        ------------------------------------------------
-        ALEATORIO
-        ------------------------------------------------
+        -----------------------------------------------
+        ALEATORIO AUTOMÁTICO
+        -----------------------------------------------
 
         CHECK ACTIVADO
         +
         SIN SELECCIÓN MANUAL
 
-        → ficha aleatoria dentro del rango.
-        ------------------------------------------------
+        → aleatorio dentro del rango.
+        -----------------------------------------------
         */
 
         if(
@@ -1104,16 +1041,13 @@ window.cab18 = {
 
                 await window.PALNAVEGADOR.aleatorio();
 
-
-                console.log(
-                    "cab18: aleatorio automático dentro del rango."
-                );
-
             }
-            catch(error){
+            catch(
+                error
+            ){
 
                 console.warn(
-                    "cab18: error en aleatorio automático.",
+                    "cab18: error aleatorio.",
                     error
                 );
 
@@ -1150,9 +1084,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
+        -----------------------------------------------
         SELECCIÓN MANUAL
-        ------------------------------------------------
+        -----------------------------------------------
         */
 
         this.seleccionRealizada =
@@ -1192,18 +1126,18 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
+        -----------------------------------------------
         CERRAR
-        ------------------------------------------------
+        -----------------------------------------------
         */
 
         this.cerrar();
 
 
         /*
-        ------------------------------------------------
+        -----------------------------------------------
         CARGAR FICHA
-        ------------------------------------------------
+        -----------------------------------------------
         */
 
         if(
@@ -1219,7 +1153,9 @@ window.cab18 = {
                 );
 
             }
-            catch(error){
+            catch(
+                error
+            ){
 
                 console.warn(
                     "cab18: error cargando selección.",
@@ -1239,12 +1175,6 @@ window.cab18 = {
 
     cerrar: function(){
 
-        /*
-        ------------------------------------------------
-        CIERRE OFICIAL
-        ------------------------------------------------
-        */
-
         if(
             window.PALBUSCADOR &&
             typeof window.PALBUSCADOR.cerrar ===
@@ -1257,12 +1187,6 @@ window.cab18 = {
 
         }
 
-
-        /*
-        ------------------------------------------------
-        RESPALDO VISUAL
-        ------------------------------------------------
-        */
 
         const ids = [
 
@@ -1329,6 +1253,7 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab18.js v1.5
+FIN cab18.js v1.5 LTS
 ========================================================
 */
+
