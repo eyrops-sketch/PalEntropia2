@@ -1,9 +1,19 @@
 /*
 ========================================================
 PalEntropía
-cab17.js v1.2
+cab17.js v1.3
 
 BUSCADOR POR NOMBRE — J2
+
+PRUEBA VISUAL
+-------------
+Cuando CAB17 procesa una búsqueda por nombre
+muestra:
+
+CAB17 ACTIVO
+
+Esto permite comprobar visualmente que CAB17
+está recibiendo la consulta.
 
 FUNCIÓN
 -------
@@ -12,25 +22,9 @@ FUNCIÓN
 - Ignora mayúsculas/minúsculas.
 - Ignora tildes.
 - Utiliza LEEPALJSON.
-- Comparte la interfaz de CAB16.
-- Si el check está activado:
-    resultados → MATRIXFILTRO.
+- Con check activado → MATRIXFILTRO.
+- No modifica CAB16.
 
-CIRCUITO
---------
-NOMBRE
-  ↓
-CAB17
-  ↓
-REGISTROS ENCONTRADOS
-  ↓
-MATRIXFILTRO
-  ↓
-MATRIXNAVEGADOR
-  ↓
-PALNAVEGADOR
-
-CAB16 NO SE MODIFICA.
 ========================================================
 */
 
@@ -40,7 +34,7 @@ window.cab17 = {
 
 
     /*====================================================
-      DATOS
+      OBTENER DATOS
     ====================================================*/
 
     obtenerDatos: function(){
@@ -73,7 +67,7 @@ window.cab17 = {
 
 
     /*====================================================
-      NORMALIZAR TEXTO
+      NORMALIZAR
     ====================================================*/
 
     normalizar: function(texto){
@@ -93,7 +87,7 @@ window.cab17 = {
 
 
     /*====================================================
-      COMPROBAR SI ES CÓDIGO
+      COMPROBAR CÓDIGO
     ====================================================*/
 
     esCodigo: function(texto){
@@ -154,8 +148,16 @@ window.cab17 = {
             );
 
 
+        /*
+        ====================================================
+        PRUEBA VISUAL
+        ====================================================
+        */
+
         resultados.innerHTML =
-            "";
+            "<div style='color:#62d6ff; padding:6px;'>" +
+            "CAB17 ACTIVO" +
+            "</div>";
 
 
         /*------------------------------------------------
@@ -176,7 +178,7 @@ window.cab17 = {
 
 
         /*------------------------------------------------
-          DATOS
+          OBTENER DATOS
         ------------------------------------------------*/
 
         this.obtenerDatos();
@@ -199,7 +201,7 @@ window.cab17 = {
 
 
         /*------------------------------------------------
-          BUSCAR EN J2 — NOMBRE
+          BUSCAR EN NOMBRE — J2
         ------------------------------------------------*/
 
         const coincidencias =
@@ -280,7 +282,7 @@ window.cab17 = {
 
 
                 /*
-                Selección directa del resultado.
+                Selección directa.
                 */
 
                 fila.addEventListener(
@@ -342,7 +344,7 @@ window.cab17 = {
 
 
     /*====================================================
-      ENVIAR A MATRIXFILTRO
+      MATRIXFILTRO
     ====================================================*/
 
     enviarMatrix: function(
@@ -373,11 +375,11 @@ window.cab17 = {
 
 
         /*
-        MATRIXFILTRO recibe directamente
+        CAB17 entrega directamente
         los registros encontrados.
 
-        No duplicamos aquí la lógica de
-        MatrixNavegador ni PALNAVEGADOR.
+        MATRIXFILTRO se encarga
+        del resto del circuito.
         */
 
         window.MATRIXFILTRO.actualizar(
@@ -385,23 +387,17 @@ window.cab17 = {
         );
 
     },
-        /*====================================================
+
+
+    /*====================================================
       CONECTAR
     ====================================================*/
 
     conectar: function(){
 
         /*
-        Usamos DOCUMENT como punto de escucha.
-
-        Esto permite que CAB17 funcione aunque
-        buscarUniversal sea creado dinámicamente.
+        INPUT
         */
-
-
-        /*------------------------------------------------
-          CONSULTA
-        ------------------------------------------------*/
 
         document.addEventListener(
             "input",
@@ -427,7 +423,7 @@ window.cab17 = {
 
 
                 /*
-                Si es código J1,
+                Si es código,
                 CAB16 trabaja normalmente.
                 */
 
@@ -443,8 +439,7 @@ window.cab17 = {
 
 
                 /*
-                Si no es J1,
-                CAB17 se hace cargo.
+                Consulta por nombre.
                 */
 
                 evento.stopImmediatePropagation();
@@ -457,9 +452,9 @@ window.cab17 = {
         );
 
 
-        /*------------------------------------------------
-          CHECK
-        ------------------------------------------------*/
+        /*
+        CHECK
+        */
 
         document.addEventListener(
             "change",
@@ -500,7 +495,7 @@ window.cab17 = {
 
 
                 /*
-                Si es código J1,
+                Si es código,
                 CAB16 trabaja normalmente.
                 */
 
@@ -514,11 +509,6 @@ window.cab17 = {
 
                 }
 
-
-                /*
-                Si es una consulta por nombre,
-                CAB17 vuelve a procesarla.
-                */
 
                 if(
                     texto.length >= 3
@@ -556,6 +546,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab17.js v1.2
+FIN cab17.js v1.3
 ========================================================
 */
