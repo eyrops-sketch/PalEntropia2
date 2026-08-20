@@ -312,11 +312,30 @@ window.cab18 = {
 
 
                 if(
-                    Array.isArray(nombres) &&
-                    nombres.length
-                ){
+    Array.isArray(nombres) &&
+    nombres.length
+){
 
-                    return nombres;
+    label.textContent =
+        nombres.length +
+        (
+            nombres.length === 1
+                ? " resultado"
+                : " resultados"
+        );
+
+
+    this.mostrar(
+        nombres
+    );
+
+
+    await this.aplicarMatrix(
+        nombres
+    );
+
+
+    return nombres;
 
                 }
 
