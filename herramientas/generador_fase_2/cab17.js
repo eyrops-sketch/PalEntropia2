@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-cab17.js v1.1
+cab17.js v1.2
 
 BUSCADOR POR NOMBRE — J2
 
@@ -12,9 +12,9 @@ FUNCIÓN
 - Ignora mayúsculas/minúsculas.
 - Ignora tildes.
 - Utiliza LEEPALJSON.
-- Al activar el check:
-    resultados → MATRIXFILTRO
-- CAB16 NO SE MODIFICA.
+- Comparte la interfaz de CAB16.
+- Si el check está activado:
+    resultados → MATRIXFILTRO.
 
 CIRCUITO
 --------
@@ -22,9 +22,15 @@ NOMBRE
   ↓
 CAB17
   ↓
-J1 asociados
+REGISTROS ENCONTRADOS
   ↓
 MATRIXFILTRO
+  ↓
+MATRIXNAVEGADOR
+  ↓
+PALNAVEGADOR
+
+CAB16 NO SE MODIFICA.
 ========================================================
 */
 
@@ -48,6 +54,7 @@ window.cab17 = {
             const datos =
                 window.LEEPALJSON.obtener();
 
+
             if(
                 Array.isArray(datos)
             ){
@@ -59,13 +66,14 @@ window.cab17 = {
 
         }
 
+
         return this.datos;
 
     },
 
 
     /*====================================================
-      NORMALIZAR
+      NORMALIZAR TEXTO
     ====================================================*/
 
     normalizar: function(texto){
@@ -85,7 +93,7 @@ window.cab17 = {
 
 
     /*====================================================
-      ES CÓDIGO J1
+      COMPROBAR SI ES CÓDIGO
     ====================================================*/
 
     esCodigo: function(texto){
@@ -110,15 +118,18 @@ window.cab17 = {
                 "buscarUniversal"
             );
 
+
         const label =
             document.getElementById(
                 "labelResultadosCab16"
             );
 
+
         const resultados =
             document.getElementById(
                 "resultadosCab16"
             );
+
 
         const check =
             document.getElementById(
@@ -147,6 +158,10 @@ window.cab17 = {
             "";
 
 
+        /*------------------------------------------------
+          MÍNIMO 3 CARACTERES
+        ------------------------------------------------*/
+
         if(
             texto.length < 3
         ){
@@ -154,13 +169,38 @@ window.cab17 = {
             label.textContent =
                 "Introduce al menos 3 caracteres";
 
+
             return [];
 
         }
 
 
+        /*------------------------------------------------
+          DATOS
+        ------------------------------------------------*/
+
         this.obtenerDatos();
 
+
+        if(
+            !Array.isArray(
+                this.datos
+            ) ||
+            !this.datos.length
+        ){
+
+            label.textContent =
+                "0 resultados";
+
+
+            return [];
+
+        }
+
+
+        /*------------------------------------------------
+          BUSCAR EN J2 — NOMBRE
+        ------------------------------------------------*/
 
         const coincidencias =
             this.datos.filter(
@@ -189,6 +229,10 @@ window.cab17 = {
             );
 
 
+        /*------------------------------------------------
+          CONTADOR
+        ------------------------------------------------*/
+
         label.textContent =
             coincidencias.length +
             (
@@ -205,6 +249,16 @@ window.cab17 = {
         coincidencias.forEach(
             registro => {
 
+                if(
+                    !registro ||
+                    !registro.codigo
+                ){
+
+                    return;
+
+                }
+
+
                 const fila =
                     document.createElement(
                         "div"
@@ -216,16 +270,30 @@ window.cab17 = {
 
 
                 fila.dataset.codigo =
-                    registro.codigo;
+                    String(
+                        registro.codigo
+                    ).trim();
 
 
                 fila.textContent =
                     registro.nombre;
 
 
+                /*
+                Selección directa del resultado.
+                */
+
                 fila.addEventListener(
                     "click",
                     () => {
+
+                        const codigo =
+                            String(
+                                registro.codigo
+                            )
+                            .trim()
+                            .toUpperCase();
+
 
                         if(
                             window.PALNAVEGADOR &&
@@ -234,7 +302,7 @@ window.cab17 = {
                         ){
 
                             window.PALNAVEGADOR.cargarPorCodigo(
-                                registro.codigo
+                                codigo
                             );
 
                         }
@@ -274,7 +342,7 @@ window.cab17 = {
 
 
     /*====================================================
-      ENVIAR RESULTADOS A MATRIXFILTRO
+      ENVIAR A MATRIXFILTRO
     ====================================================*/
 
     enviarMatrix: function(
@@ -305,11 +373,11 @@ window.cab17 = {
 
 
         /*
-        Se entrega a MATRIXFILTRO
-        exactamente el mismo conjunto
-        de registros encontrado.
+        MATRIXFILTRO recibe directamente
+        los registros encontrados.
 
-        MATRIXFILTRO obtiene los J1.
+        No duplicamos aquí la lógica de
+        MatrixNavegador ni PALNAVEGADOR.
         */
 
         window.MATRIXFILTRO.actualizar(
@@ -317,56 +385,50 @@ window.cab17 = {
         );
 
     },
-
-
-    /*====================================================
+        /*====================================================
       CONECTAR
     ====================================================*/
 
     conectar: function(){
 
-        const campo =
-            document.getElementById(
-                "buscarUniversal"
-            );
+        /*
+        Usamos DOCUMENT como punto de escucha.
 
-        const check =
-            document.getElementById(
-                "buscarTodosCab16"
-            );
-
-
-        if(
-            !campo ||
-            !check
-        ){
-
-            return;
-
-        }
+        Esto permite que CAB17 funcione aunque
+        buscarUniversal sea creado dinámicamente.
+        */
 
 
         /*------------------------------------------------
-          INPUT
-
-          CAPTURA:
-
-          CAB17 recibe primero las consultas
-          que NO son J1.
-
-          Así CAB16 no pisa los resultados.
+          CONSULTA
         ------------------------------------------------*/
 
-        campo.addEventListener(
+        document.addEventListener(
             "input",
             (evento) => {
+
+                const campo =
+                    evento.target;
+
+
+                if(
+                    !campo ||
+                    campo.id !==
+                    "buscarUniversal"
+                ){
+
+                    return;
+
+                }
+
 
                 const texto =
                     campo.value.trim();
 
 
                 /*
-                Si es J1, CAB16 trabaja normalmente.
+                Si es código J1,
+                CAB16 trabaja normalmente.
                 */
 
                 if(
@@ -381,7 +443,7 @@ window.cab17 = {
 
 
                 /*
-                Consulta J2.
+                Si no es J1,
                 CAB17 se hace cargo.
                 */
 
@@ -399,17 +461,47 @@ window.cab17 = {
           CHECK
         ------------------------------------------------*/
 
-        check.addEventListener(
+        document.addEventListener(
             "change",
             (evento) => {
+
+                const elemento =
+                    evento.target;
+
+
+                if(
+                    !elemento ||
+                    elemento.id !==
+                    "buscarTodosCab16"
+                ){
+
+                    return;
+
+                }
+
+
+                const campo =
+                    document.getElementById(
+                        "buscarUniversal"
+                    );
+
+
+                if(
+                    !campo
+                ){
+
+                    return;
+
+                }
+
 
                 const texto =
                     campo.value.trim();
 
 
                 /*
-                El check para una consulta J1
-                pertenece a CAB16.
+                Si es código J1,
+                CAB16 trabaja normalmente.
                 */
 
                 if(
@@ -423,19 +515,21 @@ window.cab17 = {
                 }
 
 
+                /*
+                Si es una consulta por nombre,
+                CAB17 vuelve a procesarla.
+                */
+
                 if(
-                    texto.length < 3
+                    texto.length >= 3
                 ){
 
-                    return;
+                    evento.stopImmediatePropagation();
+
+
+                    this.buscarJ2();
 
                 }
-
-
-                evento.stopImmediatePropagation();
-
-
-                this.buscarJ2();
 
             },
             true
@@ -462,6 +556,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab17.js v1.1
+FIN cab17.js v1.2
 ========================================================
 */
