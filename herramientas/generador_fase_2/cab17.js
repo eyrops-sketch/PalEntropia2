@@ -1,23 +1,31 @@
 /*
 ========================================================
 PalEntropía
-cab17.js v1.4 COMPACTA
+cab17.js v1.5 COMPACTA
 
 FILTRO AVANZADO POR NOMBRE — J2
 
 J1 → CAB16
 J2 → CAB17
 
-J2 procede directamente de:
-registro.nombre
+LEEPALJSON:
+    codigo
+    nombre
+    j3
+    dieta
+    anatomia
 
-Mínimo:
-3 caracteres
+REGLA:
+- Consultas numéricas → CAB16
+- Consultas de nombre → CAB17
+- Mínimo 3 caracteres para J2
 
-Interfaz:
-la misma de CAB16
+INTERFAZ:
+- misma interfaz de CAB16
+- mismo check
+- misma X
 
-No modifica:
+NO MODIFICA:
 - CAB16
 - MATRIXFILTRO
 - MatrixNavegador
@@ -47,6 +55,7 @@ window.cab17 = {
             return;
 
         }
+
 
         this.obtenerDatos();
 
@@ -106,7 +115,7 @@ window.cab17 = {
 
 
         console.log(
-            "cab17 v1.4: filtro J2 preparado."
+            "cab17 v1.5: filtro J2 preparado."
         );
 
     },
@@ -168,12 +177,12 @@ window.cab17 = {
 
 
     /*====================================================
-      DETECTAR J1
+      DETECTAR CONSULTA J1
     ====================================================*/
 
     esJ1:function(texto){
 
-        return /^\d{3}_\d{2}$/i.test(
+        return /^\d{3}(?:_\d{0,2})?$/i.test(
             String(
                 texto || ""
             ).trim()
@@ -183,7 +192,7 @@ window.cab17 = {
 
 
     /*====================================================
-      CONEXIÓN
+      CONECTAR
     ====================================================*/
 
     conectar:function(){
@@ -217,8 +226,7 @@ window.cab17 = {
 
 
                 /*
-                Si parece J1,
-                CAB16 es el responsable.
+                Si es J1, CAB17 no interviene.
                 */
 
                 if(
@@ -230,13 +238,14 @@ window.cab17 = {
                 }
 
 
-                /*
-                Si está vacío o tiene menos
-                de 3 caracteres, no buscamos.
-                */
+                const consulta =
+                    this.normalizar(
+                        texto
+                    );
+
 
                 if(
-                    this.normalizar(texto).length < 3
+                    consulta.length < 3
                 ){
 
                     this.seleccionRealizada =
@@ -269,23 +278,14 @@ window.cab17 = {
                     check.checked;
 
 
-                /*
-                Si se desactiva:
-                volver al conjunto completo.
-                */
-
-                if(
-                    !this.buscarTodos
-                ){
-
-                    this.limpiarFiltro();
-
-                }
-
-
                 const texto =
                     campo.value.trim();
 
+
+                /*
+                J1 pertenece exclusivamente
+                a CAB16.
+                */
 
                 if(
                     this.esJ1(texto)
@@ -297,7 +297,22 @@ window.cab17 = {
 
 
                 if(
-                    this.normalizar(texto).length >= 3
+                    !this.buscarTodos
+                ){
+
+                    this.limpiarFiltro();
+
+                }
+
+
+                const consulta =
+                    this.normalizar(
+                        texto
+                    );
+
+
+                if(
+                    consulta.length >= 3
                 ){
 
                     this.seleccionRealizada =
@@ -323,6 +338,10 @@ window.cab17 = {
                     campo.value.trim();
 
 
+                /*
+                J1 pertenece a CAB16.
+                */
+
                 if(
                     this.esJ1(texto)
                 ){
@@ -332,17 +351,22 @@ window.cab17 = {
                 }
 
 
+                const consulta =
+                    this.normalizar(
+                        texto
+                    );
+
+
                 /*
-                Si existe un filtro J2,
-                check activo y no hubo
-                selección manual:
-                cargar primer registro.
+                J2 + check +
+                sin selección:
+                cargar primer resultado.
                 */
 
                 if(
                     this.buscarTodos &&
                     !this.seleccionRealizada &&
-                    this.normalizar(texto).length >= 3
+                    consulta.length >= 3
                 ){
 
                     await this.cargarPrimero();
@@ -394,6 +418,19 @@ window.cab17 = {
             );
 
 
+        /*
+        Nunca procesar J1.
+        */
+
+        if(
+            this.esJ1(texto)
+        ){
+
+            return;
+
+        }
+
+
         if(
             texto.length < 3
         ){
@@ -413,6 +450,13 @@ window.cab17 = {
         const coincidencias =
             this.datos.filter(
                 registro => {
+
+                    if(!registro){
+
+                        return false;
+
+                    }
+
 
                     const nombre =
                         this.normalizar(
@@ -442,11 +486,6 @@ window.cab17 = {
         );
 
 
-        /*
-        El check convierte
-        la consulta en rango.
-        */
-
         if(
             this.buscarTodos
         ){
@@ -459,7 +498,7 @@ window.cab17 = {
 
     },
 
-  /*====================================================
+    /*====================================================
   MOSTRAR RESULTADOS
 ====================================================*/
 
@@ -572,10 +611,6 @@ window.cab17 = {
         }
 
 
-        /*
-        Existe selección manual.
-        */
-
         this.seleccionRealizada =
             true;
 
@@ -594,17 +629,8 @@ window.cab17 = {
         }
 
 
-        /*
-        Cerrar buscador.
-        */
-
         this.cerrar();
 
-
-        /*
-        Cargar exactamente
-        el registro seleccionado.
-        */
 
         if(
             window.PALNAVEGADOR &&
@@ -912,6 +938,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab17.js v1.4 COMPACTA
+FIN cab17.js v1.5 COMPACTA
 ========================================================
 */
