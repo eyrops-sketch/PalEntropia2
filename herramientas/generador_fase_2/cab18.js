@@ -1,7 +1,7 @@
 /*
 ========================================================
 PalEntropía
-cab18.js v1.4
+cab18.js v1.5
 
 BUSCADOR AVANZADO — TIEMPO GEOLÓGICO
 
@@ -30,7 +30,7 @@ CAB18 busca exclusivamente por:
 NO interpreta Ma.
 
 RESULTADOS:
-código + nombre.
+código + nombre real.
 
 CHECK:
 ☑ consulta completa
@@ -71,7 +71,7 @@ window.cab18 = {
 
 
         console.log(
-            "cab18 v1.4: búsqueda geológica preparada."
+            "cab18 v1.5: búsqueda geológica preparada."
         );
 
     },
@@ -113,6 +113,135 @@ window.cab18 = {
                 texto || ""
             ).trim()
         );
+
+    },
+
+
+    /*====================================================
+      OBTENER NOMBRE REAL
+    ====================================================*/
+
+    obtenerNombre: function(
+        ficha
+    ){
+
+        if(
+            !ficha
+        ){
+
+            return "Sin nombre";
+
+        }
+
+
+        /*
+        ------------------------------------------------
+        NOMBRE DIRECTO
+        ------------------------------------------------
+        */
+
+        let nombre =
+            ficha.nombre;
+
+
+        if(
+            nombre &&
+            String(
+                nombre
+            )
+            .trim()
+            .toLowerCase() !== "j2"
+        ){
+
+            return String(
+                nombre
+            ).trim();
+
+        }
+
+
+        /*
+        ------------------------------------------------
+        RESPALDO: j2
+        ------------------------------------------------
+        */
+
+        if(
+            ficha.j2 &&
+            String(
+                ficha.j2
+            )
+            .trim()
+            .toLowerCase() !== "j2"
+        ){
+
+            return String(
+                ficha.j2
+            ).trim();
+
+        }
+
+
+        /*
+        ------------------------------------------------
+        BUSCAR EL REGISTRO REAL EN PALEOFICHAS
+        ------------------------------------------------
+        */
+
+        if(
+            window.PALEOFICHAS &&
+            Array.isArray(
+                window.PALEOFICHAS
+            ) &&
+            ficha.codigo
+        ){
+
+            const codigo =
+                String(
+                    ficha.codigo
+                )
+                .trim()
+                .toUpperCase();
+
+
+            const registro =
+                window.PALEOFICHAS.find(
+                    elemento => {
+
+                        return (
+                            String(
+                                elemento.codigo ||
+                                ""
+                            )
+                            .trim()
+                            .toUpperCase() ===
+                            codigo
+                        );
+
+                    }
+                );
+
+
+            if(
+                registro &&
+                registro.nombre &&
+                String(
+                    registro.nombre
+                )
+                .trim()
+                .toLowerCase() !== "j2"
+            ){
+
+                return String(
+                    registro.nombre
+                ).trim();
+
+            }
+
+        }
+
+
+        return "Sin nombre";
 
     },
 
@@ -183,8 +312,8 @@ window.cab18 = {
 
                 CAB18 NO INTERVIENE.
 
-                Esto permite que CAB17
-                trabaje desde 3 caracteres.
+                CAB17 puede trabajar
+                desde 3 caracteres.
                 ----------------------------------------
                 */
 
@@ -218,6 +347,10 @@ window.cab18 = {
         if(
             check
         ){
+
+            this.buscarTodos =
+                check.checked;
+
 
             check.addEventListener(
                 "change",
@@ -374,7 +507,6 @@ window.cab18 = {
         /*
         ------------------------------------------------
         BUSCAR EN PALGEO
-        ------------------------------------------------
 
         SOLO:
 
@@ -382,13 +514,6 @@ window.cab18 = {
         era
         período
         edad
-
-        No se consulta:
-
-        - código
-        - cronología
-        - Ma
-        - j3
         ------------------------------------------------
         */
 
@@ -461,7 +586,7 @@ window.cab18 = {
 
         /*
         ------------------------------------------------
-        SIN COINCIDENCIAS GEOLOGICAS
+        SIN COINCIDENCIAS
         ------------------------------------------------
         */
 
@@ -517,12 +642,7 @@ window.cab18 = {
 
         /*
         ------------------------------------------------
-        BUSCAR FICHAS
-        ------------------------------------------------
-
-        Una ficha pertenece al resultado si su
-        intervalo temporal tiene SOLAPAMIENTO REAL
-        con al menos uno de los intervalos encontrados.
+        BUSCAR FICHAS POR SOLAPAMIENTO TEMPORAL REAL
         ------------------------------------------------
         */
 
@@ -582,12 +702,6 @@ window.cab18 = {
                     }
 
 
-                    /*
-                    ------------------------------------
-                    SOLAPAMIENTO REAL
-                    ------------------------------------
-                    */
-
                     return intervalos.some(
                         intervalo => {
 
@@ -619,11 +733,10 @@ window.cab18 = {
 
                             /*
                             --------------------------------
-                            Los extremos deben compartir
-                            tiempo real.
+                            SOLAPAMIENTO REAL
 
-                            Si solamente coinciden en
-                            un límite → FALSE.
+                            Compartir únicamente un límite
+                            NO cuenta.
                             --------------------------------
                             */
 
@@ -742,12 +855,16 @@ window.cab18 = {
                     .toUpperCase();
 
 
+                /*
+                ----------------------------------------
+                NOMBRE REAL
+                ----------------------------------------
+                */
+
                 const nombre =
-                    String(
-                        ficha.nombre ||
-                        "Sin nombre"
-                    )
-                    .trim();
+                    this.obtenerNombre(
+                        ficha
+                    );
 
 
                 const fila =
@@ -796,6 +913,7 @@ window.cab18 = {
         );
 
     },
+
     /*====================================================
       APLICAR FILTRO
     ====================================================*/
@@ -1211,6 +1329,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab18.js v1.4
+FIN cab18.js v1.5
 ========================================================
 */
