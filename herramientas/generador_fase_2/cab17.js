@@ -1,31 +1,43 @@
 /*
 ========================================================
 PalEntropía
-cab17.js v1.6 COMPACTA
+cab17.js v1.7 LTS
 
 FILTRO AVANZADO POR NOMBRE — J2
 
-J1 → CAB16
-J2 → CAB17
-
-CARACTERÍSTICAS
----------------
-- Mínimo 3 caracteres.
+FUNCIÓN
+-------
+- Busca exclusivamente por J2 / nombre.
+- Utiliza LEEPALJSON.obtener().
+- No modifica CAB16.
+- No crea una segunda interfaz.
+- Reutiliza la interfaz existente del buscador.
 - Ignora mayúsculas/minúsculas.
 - Ignora tildes.
-- Ignora espacios exteriores.
-- Consulta parcial por nombre.
-- Usa la interfaz existente de CAB16.
-- Usa el mismo check.
-- Usa MATRIXFILTRO.
-- Usa MatrixNavegador.
-- Usa PALNAVEGADOR.
+- Mínimo 3 caracteres.
 
-NO MODIFICA CAB16.
+CIRCUITO
+--------
+BUSCADOR
+   ↓
+CAB17
+   ↓
+LEEPALJSON
+   ↓
+MATRIXFILTRO
+   ↓
+MatrixNavegador
+   ↓
+PALNAVEGADOR
+
+J1 continúa siendo responsabilidad de CAB16.
+
 ========================================================
 */
 
 window.cab17 = {
+
+    version:"1.7 LTS",
 
     inicializado:false,
 
@@ -42,7 +54,9 @@ window.cab17 = {
 
     inicializar:function(){
 
-        if(this.inicializado){
+        if(
+            this.inicializado
+        ){
 
             return;
 
@@ -51,47 +65,53 @@ window.cab17 = {
 
         this.obtenerDatos();
 
-        this.esperarInterfaz();
+
+        /*
+        CAB16 crea la interfaz.
+        CAB17 espera hasta que exista.
+        */
+
+        this.esperarBuscador();
 
     },
 
 
     /*====================================================
-      ESPERAR INTERFAZ
+      ESPERAR BUSCADOR
     ====================================================*/
 
-    esperarInterfaz:function(){
+    esperarBuscador:function(){
 
         const campo =
             document.getElementById(
                 "buscarUniversal"
             );
 
+
         const check =
             document.getElementById(
                 "buscarTodosCab16"
             );
+
 
         const resultados =
             document.getElementById(
                 "resultadosCab16"
             );
 
-        const cerrar =
-            document.getElementById(
-                "cerrarBuscadorUniversal"
-            );
-
 
         if(
             !campo ||
             !check ||
-            !resultados ||
-            !cerrar
+            !resultados
         ){
 
             setTimeout(
-                () => this.esperarInterfaz(),
+                () => {
+
+                    this.esperarBuscador();
+
+                },
                 100
             );
 
@@ -100,48 +120,56 @@ window.cab17 = {
         }
 
 
-        this.buscarTodos =
-            check.checked;
-
-
         this.conectar();
-
 
         this.inicializado =
             true;
 
 
         console.log(
-            "cab17 v1.6: filtro J2 preparado."
+            "cab17 v1.7 LTS preparado."
         );
 
     },
 
 
     /*====================================================
-      DATOS
+      OBTENER DATOS
     ====================================================*/
 
     obtenerDatos:function(){
 
         if(
-            window.LEEPALJSON &&
-            typeof window.LEEPALJSON.obtener ===
+            !window.LEEPALJSON
+        ){
+
+            return [];
+
+        }
+
+
+        if(
+            typeof window.LEEPALJSON.obtener !==
             "function"
         ){
 
-            const datos =
-                window.LEEPALJSON.obtener();
+            return [];
+
+        }
 
 
-            if(
-                Array.isArray(datos)
-            ){
+        const datos =
+            window.LEEPALJSON.obtener();
 
-                this.datos =
-                    datos;
 
-            }
+        if(
+            Array.isArray(
+                datos
+            )
+        ){
+
+            this.datos =
+                datos;
 
         }
 
@@ -152,7 +180,7 @@ window.cab17 = {
 
 
     /*====================================================
-      NORMALIZAR
+      NORMALIZAR TEXTO
     ====================================================*/
 
     normalizar:function(texto){
@@ -174,15 +202,57 @@ window.cab17 = {
 
 
     /*====================================================
-      DETECTAR J1
+      ES CONSULTA J1
     ====================================================*/
 
     esJ1:function(texto){
 
-        return /^\d{3}(?:_\d{0,2})?$/i.test(
+        const valor =
             String(
                 texto || ""
-            ).trim()
+            )
+            .trim();
+
+
+        /*
+        Ejemplos reconocidos:
+
+        004
+        004_
+        004_1
+        004_13
+        */
+
+        return /^\d{3}(?:_\d{0,2})?$/.test(
+            valor
+        );
+
+    },
+
+
+    /*====================================================
+      ES CONSULTA J2
+    ====================================================*/
+
+    esJ2:function(texto){
+
+        const valor =
+            this.normalizar(
+                texto
+            );
+
+
+        if(
+            valor.length < 3
+        ){
+
+            return false;
+
+        }
+
+
+        return !this.esJ1(
+            texto
         );
 
     },
@@ -199,61 +269,46 @@ window.cab17 = {
                 "buscarUniversal"
             );
 
+
         const check =
             document.getElementById(
                 "buscarTodosCab16"
             );
 
-        const cerrar =
-            document.getElementById(
-                "cerrarBuscadorUniversal"
-            );
+
+        if(
+            !campo ||
+            !check
+        ){
+
+            return;
+
+        }
 
 
-        /*------------------------------------------------
-          INPUT
+        /*
+        IMPORTANTE:
 
-          CAPTURE = true
+        CAB17 utiliza captura para saber
+        qué tipo de consulta existe.
 
-          Permite que CAB17 tome el control de
-          las consultas J2 antes de CAB16.
-        ------------------------------------------------*/
+        J1 → no interviene.
+
+        J2 → CAB17 realiza su búsqueda.
+        */
 
         campo.addEventListener(
             "input",
-            async (evento) => {
+            (evento) => {
 
                 const texto =
                     campo.value.trim();
 
 
-                /*
-                J1:
-                CAB16 es el responsable.
-                */
-
                 if(
-                    this.esJ1(texto)
-                ){
-
-                    return;
-
-                }
-
-
-                const consulta =
-                    this.normalizar(
+                    !this.esJ2(
                         texto
-                    );
-
-
-                /*
-                Menos de 3 caracteres:
-                todavía no es búsqueda J2.
-                */
-
-                if(
-                    consulta.length < 3
+                    )
                 ){
 
                     return;
@@ -262,8 +317,8 @@ window.cab17 = {
 
 
                 /*
-                J2:
-                CAB17 toma el control.
+                Evitamos que CAB16 procese
+                simultáneamente una consulta J2.
                 */
 
                 evento.stopImmediatePropagation();
@@ -273,66 +328,38 @@ window.cab17 = {
                     false;
 
 
-                await this.buscar();
+                this.buscarJ2();
 
             },
             true
         );
 
 
-        /*------------------------------------------------
-          CHECK
+        /*
+        CHECK
 
-          También se captura antes de CAB16
-          cuando existe una consulta J2.
-        ------------------------------------------------*/
+        Solo intervenimos cuando existe
+        una consulta J2.
+        */
 
         check.addEventListener(
             "change",
-            async (evento) => {
+            (evento) => {
 
                 const texto =
                     campo.value.trim();
 
 
-                /*
-                J1:
-                CAB16 controla el check.
-                */
-
                 if(
-                    this.esJ1(texto)
-                ){
-
-                    return;
-
-                }
-
-
-                const consulta =
-                    this.normalizar(
+                    !this.esJ2(
                         texto
-                    );
-
-
-                /*
-                Sin consulta J2:
-                CAB16 controla el comportamiento.
-                */
-
-                if(
-                    consulta.length < 3
+                    )
                 ){
 
                     return;
 
                 }
 
-
-                /*
-                J2:
-                CAB17 controla el check.
-                */
 
                 evento.stopImmediatePropagation();
 
@@ -354,62 +381,10 @@ window.cab17 = {
                 }
 
 
-                await this.buscar();
+                this.buscarJ2();
 
             },
             true
-        );
-
-
-        /*------------------------------------------------
-          CERRAR
-        ------------------------------------------------*/
-
-        cerrar.addEventListener(
-            "click",
-            async () => {
-
-                const texto =
-                    campo.value.trim();
-
-
-                /*
-                J1:
-                CAB16.
-                */
-
-                if(
-                    this.esJ1(texto)
-                ){
-
-                    return;
-
-                }
-
-
-                const consulta =
-                    this.normalizar(
-                        texto
-                    );
-
-
-                /*
-                J2 + check activo +
-                sin selección manual:
-                cargar primer registro del filtro.
-                */
-
-                if(
-                    this.buscarTodos &&
-                    !this.seleccionRealizada &&
-                    consulta.length >= 3
-                ){
-
-                    await this.cargarPrimero();
-
-                }
-
-            }
         );
 
     },
@@ -419,17 +394,19 @@ window.cab17 = {
       BUSCAR J2
     ====================================================*/
 
-    buscar:async function(){
+    buscarJ2:function(){
 
         const campo =
             document.getElementById(
                 "buscarUniversal"
             );
 
+
         const label =
             document.getElementById(
                 "labelResultadosCab16"
             );
+
 
         const resultados =
             document.getElementById(
@@ -448,27 +425,16 @@ window.cab17 = {
         }
 
 
-        const texto =
+        const consulta =
             this.normalizar(
                 campo.value
             );
 
 
-        /*
-        Nunca procesar J1.
-        */
-
         if(
-            this.esJ1(texto)
-        ){
-
-            return;
-
-        }
-
-
-        if(
-            texto.length < 3
+            !this.esJ2(
+                consulta
+            )
         ){
 
             return;
@@ -487,7 +453,9 @@ window.cab17 = {
             this.datos.filter(
                 registro => {
 
-                    if(!registro){
+                    if(
+                        !registro
+                    ){
 
                         return false;
 
@@ -501,7 +469,7 @@ window.cab17 = {
 
 
                     return nombre.includes(
-                        texto
+                        consulta
                     );
 
                 }
@@ -523,16 +491,19 @@ window.cab17 = {
 
 
         /*
-        Check activo:
-        la consulta J2 se convierte
-        en rango de navegación.
+        CHECK ACTIVADO:
+
+        resultados →
+        MATRIXFILTRO →
+        MatrixNavegador →
+        PALNAVEGADOR
         */
 
         if(
             this.buscarTodos
         ){
 
-            await this.aplicarMatrix(
+            this.aplicarMatrix(
                 coincidencias
             );
 
@@ -552,7 +523,9 @@ window.cab17 = {
             );
 
 
-        if(!contenedor){
+        if(
+            !contenedor
+        ){
 
             return;
 
@@ -562,7 +535,9 @@ window.cab17 = {
         coincidencias.forEach(
             registro => {
 
-                if(!registro){
+                if(
+                    !registro
+                ){
 
                     return;
 
@@ -583,7 +558,9 @@ window.cab17 = {
                     .trim();
 
 
-                if(!codigo){
+                if(
+                    !codigo
+                ){
 
                     return;
 
@@ -605,7 +582,7 @@ window.cab17 = {
 
 
                 /*
-                Mostramos:
+                PRESENTACIÓN:
 
                 Nombre — Código
                 */
@@ -644,7 +621,9 @@ window.cab17 = {
   SELECCIONAR
 ====================================================*/
 
-    seleccionar:async function(codigo){
+    seleccionar:async function(
+        codigo
+    ){
 
         codigo =
             String(
@@ -654,7 +633,9 @@ window.cab17 = {
             .toUpperCase();
 
 
-        if(!codigo){
+        if(
+            !codigo
+        ){
 
             return;
 
@@ -669,13 +650,20 @@ window.cab17 = {
             true;
 
 
+        /*
+        Actualizamos el campo
+        con el código seleccionado.
+        */
+
         const campo =
             document.getElementById(
                 "buscarUniversal"
             );
 
 
-        if(campo){
+        if(
+            campo
+        ){
 
             campo.value =
                 codigo;
@@ -689,7 +677,9 @@ window.cab17 = {
             );
 
 
-        if(label){
+        if(
+            label
+        ){
 
             label.textContent =
                 codigo;
@@ -697,12 +687,16 @@ window.cab17 = {
         }
 
 
+        /*
+        Cerramos el buscador.
+        */
+
         this.cerrar();
 
 
         /*
-        Cargar exactamente el registro
-        seleccionado.
+        Cargamos exactamente
+        el registro seleccionado.
         */
 
         if(
@@ -801,7 +795,9 @@ window.cab17 = {
                 );
 
         }
-        catch(error){
+        catch(
+            error
+        ){
 
             console.error(
                 "cab17: error MatrixNavegador:",
@@ -940,7 +936,9 @@ window.cab17 = {
                     );
 
 
-                if(elemento){
+                if(
+                    elemento
+                ){
 
                     elemento.style.display =
                         "none";
@@ -1011,6 +1009,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab17.js v1.6
+FIN cab17.js v1.7 LTS
 ========================================================
 */
