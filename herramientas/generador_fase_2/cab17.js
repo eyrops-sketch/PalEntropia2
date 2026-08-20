@@ -1,46 +1,90 @@
 /*
 ========================================================
 PalEntropía
-cab17.js v2.0
+cab17.js v3.0
 
 BUSCADOR AVANZADO POR NOMBRE
 
 CIRCUITO
 --------
-
-Consulta
-   ↓
+Consulta por nombre
+↓
 PALBUSCADOR.buscarPorNombre()
-   ↓
-codigo / J1
-   ↓
+↓
+J1 / código
+↓
 MATRIXFILTRO
+↓
+MatrixNavegador
+↓
+PALNAVEGADOR.aplicarFiltro()
+↓
+PALNAVEGADOR.aleatorio()
 
-IMPORTANTE
-----------
-CAB17 NO DUPLICA EL MOTOR DE BÚSQUEDA.
+COMPORTAMIENTO
+--------------
+☐ Consulta sin check:
+   permite seleccionar un resultado.
 
-Utiliza directamente PALBUSCADOR.
+☑ Consulta con check:
+   convierte todos los resultados
+   en rango activo de navegación.
 
-No modifica CAB16.
+Si no existe selección manual:
+   → aleatorio dentro del filtro.
+
+Si existe selección manual:
+   → se respeta la selección.
+
+NO MODIFICA CAB16.
 ========================================================
 */
 
 window.cab17 = {
 
+    inicializado: false,
+
+    buscarTodos: false,
+
+    seleccionRealizada: false,
+
 
     /*====================================================
-      CONFIGURACIÓN
+      INICIALIZAR
     ====================================================*/
 
-    minimoCaracteres: 3,
+    inicializar: function(){
+
+        if(
+            this.inicializado
+        ){
+
+            return;
+
+        }
+
+
+        this.conectar();
+
+
+        this.inicializado =
+            true;
+
+
+        console.log(
+            "cab17 v3.0: buscador por nombre preparado."
+        );
+
+    },
 
 
     /*====================================================
-      ES CÓDIGO
+      COMPROBAR CÓDIGO
     ====================================================*/
 
-    esCodigo: function(texto){
+    esCodigo: function(
+        texto
+    ){
 
         return /^\d{3}(?:_\d{0,2})?$/.test(
             String(
@@ -52,10 +96,127 @@ window.cab17 = {
 
 
     /*====================================================
-      BUSCAR
+      CONECTAR
     ====================================================*/
 
-    async buscar(){
+    conectar: function(){
+
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
+            );
+
+
+        if(
+            !campo
+        ){
+
+            console.warn(
+                "cab17: campo buscarUniversal no encontrado."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        ------------------------------------------------
+        INPUT
+        ------------------------------------------------
+        */
+
+        campo.addEventListener(
+            "input",
+            () => {
+
+                this.seleccionRealizada =
+                    false;
+
+
+                const texto =
+                    campo.value.trim();
+
+
+                /*
+                Los códigos pertenecen
+                exclusivamente a CAB16.
+                */
+
+                if(
+                    this.esCodigo(
+                        texto
+                    )
+                ){
+
+                    return;
+
+                }
+
+
+                this.buscar();
+
+            }
+        );
+
+
+        /*
+        ------------------------------------------------
+        CHECK
+        ------------------------------------------------
+        */
+
+        const check =
+            document.getElementById(
+                "buscarTodosCab16"
+            );
+
+
+        if(
+            check
+        ){
+
+            check.addEventListener(
+                "change",
+                async () => {
+
+                    this.buscarTodos =
+                        check.checked;
+
+
+                    this.seleccionRealizada =
+                        false;
+
+
+                    /*
+                    Al quitar el check:
+                    volvemos al conjunto completo.
+                    */
+
+                    if(
+                        !this.buscarTodos
+                    ){
+
+                        this.limpiarFiltro();
+
+                    }
+
+
+                    await this.buscar();
+
+                }
+            );
+
+        }
+
+    },
+
+
+    /*====================================================
+      BUSCAR POR NOMBRE
+    ====================================================*/
+
+    buscar: async function(){
 
         const campo =
             document.getElementById(
@@ -75,12 +236,6 @@ window.cab17 = {
             );
 
 
-        const check =
-            document.getElementById(
-                "buscarTodosCab16"
-            );
-
-
         if(
             !campo ||
             !label ||
@@ -93,53 +248,35 @@ window.cab17 = {
 
 
         const texto =
-            String(
-                campo.value || ""
-            ).trim();
+            campo.value.trim();
 
-
-        /*
-        ----------------------------------------------------
-        INDICADOR
-        ----------------------------------------------------
-        */
 
         resultados.innerHTML =
-            "<div style='color:#62d6ff;padding:6px;'>" +
-            "CAB17 ACTIVO" +
-            "</div>";
+            "";
 
 
         /*
-        ----------------------------------------------------
-        MÍNIMO
-        ----------------------------------------------------
+        ------------------------------------------------
+        MÍNIMO 3 CARACTERES
+        ------------------------------------------------
         */
 
         if(
-            texto.length <
-            this.minimoCaracteres
+            texto.length < 3
         ){
 
             label.textContent =
                 "Introduce al menos 3 caracteres";
 
-            return [];
 
-        }
+            if(
+                this.buscarTodos
+            ){
 
+                this.limpiarFiltro();
 
-        /*
-        ----------------------------------------------------
-        CÓDIGO
-        ----------------------------------------------------
-        */
+            }
 
-        if(
-            this.esCodigo(
-                texto
-            )
-        ){
 
             return [];
 
@@ -147,9 +284,9 @@ window.cab17 = {
 
 
         /*
-        ----------------------------------------------------
+        ------------------------------------------------
         PALBUSCADOR
-        ----------------------------------------------------
+        ------------------------------------------------
         */
 
         if(
@@ -159,37 +296,40 @@ window.cab17 = {
         ){
 
             label.textContent =
-                "Buscador no disponible";
+                "Buscador no disponible.";
+
+
+            console.warn(
+                "cab17: PALBUSCADOR.buscarPorNombre no disponible."
+            );
+
 
             return [];
 
         }
 
 
-        let encontrados = [];
+        let coincidencias;
 
 
-        try {
+        try{
 
-            encontrados =
+            coincidencias =
                 await window.PALBUSCADOR.buscarPorNombre(
                     texto
                 );
 
         }
+        catch(error){
 
-        catch(
-            error
-        ){
-
-            console.error(
-                "CAB17:",
+            console.warn(
+                "cab17: error buscando por nombre.",
                 error
             );
 
 
             label.textContent =
-                "Error de búsqueda";
+                "Error de búsqueda.";
 
 
             return [];
@@ -197,28 +337,90 @@ window.cab17 = {
         }
 
 
+        if(
+            !Array.isArray(
+                coincidencias
+            )
+        ){
+
+            coincidencias =
+                [];
+
+        }
+
+
         /*
-        ----------------------------------------------------
+        ------------------------------------------------
         CONTADOR
-        ----------------------------------------------------
+        ------------------------------------------------
         */
 
         label.textContent =
-            encontrados.length +
+            coincidencias.length +
             (
-                encontrados.length === 1
+                coincidencias.length === 1
                     ? " resultado"
                     : " resultados"
             );
 
 
         /*
-        ----------------------------------------------------
-        MOSTRAR RESULTADOS
-        ----------------------------------------------------
+        ------------------------------------------------
+        MOSTRAR
+        ------------------------------------------------
         */
 
-        encontrados.forEach(
+        this.mostrar(
+            coincidencias
+        );
+
+
+        /*
+        ------------------------------------------------
+        CHECK ACTIVADO
+        ------------------------------------------------
+        */
+
+        if(
+            this.buscarTodos
+        ){
+
+            await this.aplicarMatrix(
+                coincidencias
+            );
+
+        }
+
+
+        return coincidencias;
+
+    },
+
+
+    /*====================================================
+      MOSTRAR RESULTADOS
+    ====================================================*/
+
+    mostrar: function(
+        coincidencias
+    ){
+
+        const contenedor =
+            document.getElementById(
+                "resultadosCab16"
+            );
+
+
+        if(
+            !contenedor
+        ){
+
+            return;
+
+        }
+
+
+        coincidencias.forEach(
             resultado => {
 
                 if(
@@ -229,6 +431,14 @@ window.cab17 = {
                     return;
 
                 }
+
+
+                const codigo =
+                    String(
+                        resultado.codigo
+                    )
+                    .trim()
+                    .toUpperCase();
 
 
                 const fila =
@@ -242,90 +452,69 @@ window.cab17 = {
 
 
                 fila.dataset.codigo =
-                    resultado.codigo;
+                    codigo;
 
 
                 fila.textContent =
                     resultado.nombre ||
-                    resultado.codigo;
+                    codigo;
 
-
-                /*
-                --------------------------------------------
-                SELECCIÓN INDIVIDUAL
-                --------------------------------------------
-                */
 
                 fila.addEventListener(
                     "click",
                     () => {
 
-                        if(
-                            window.PALNAVEGADOR &&
-                            typeof window.PALNAVEGADOR.cargarPorCodigo ===
-                            "function"
-                        ){
-
-                            window.PALNAVEGADOR.cargarPorCodigo(
-                                resultado.codigo
-                            );
-
-                        }
+                        this.seleccionar(
+                            codigo
+                        );
 
                     }
                 );
 
 
-                resultados.appendChild(
+                contenedor.appendChild(
                     fila
                 );
 
             }
         );
 
-
-        /*
-        ----------------------------------------------------
-        CHECK ACTIVADO
-        ----------------------------------------------------
-        */
-
-        if(
-            check &&
-            check.checked
-        ){
-
-            this.enviarMatrix(
-                encontrados
-            );
-
-        }
-
-
-        return encontrados;
-
     },
 
 
     /*====================================================
-      ENVIAR A MATRIXFILTRO
+      APLICAR MATRIX
     ====================================================*/
 
-    enviarMatrix: function(
-        resultados
+    aplicarMatrix: async function(
+        coincidencias
     ){
+
+        /*
+        ------------------------------------------------
+        SIN RESULTADOS
+        ------------------------------------------------
+        */
 
         if(
             !Array.isArray(
-                resultados
+                coincidencias
             ) ||
-            !resultados.length
+            !coincidencias.length
         ){
+
+            this.limpiarFiltro();
 
             return;
 
         }
 
+
+        /*
+        ------------------------------------------------
+        MATRIXFILTRO
+        ------------------------------------------------
+        */
 
         if(
             !window.MATRIXFILTRO ||
@@ -333,36 +522,200 @@ window.cab17 = {
             "function"
         ){
 
+            console.warn(
+                "cab17: MATRIXFILTRO no disponible."
+            );
+
             return;
 
         }
 
 
         /*
-        ----------------------------------------------------
-        EXTRAER J1
-        ----------------------------------------------------
+        PALBUSCADOR ya nos entrega
+        resultados con codigo = J1.
+
+        MATRIXFILTRO recibe exactamente
+        esos registros, igual que CAB16.
         */
 
-        const matriz =
-            resultados
-            .map(
-                resultado => {
-
-                    return String(
-                        resultado.codigo || ""
-                    ).trim();
-
-                }
-            )
-            .filter(
-                codigo =>
-                    codigo !== ""
+        const matrizJ1 =
+            window.MATRIXFILTRO.actualizar(
+                coincidencias
             );
 
 
         if(
-            !matriz.length
+            !Array.isArray(
+                matrizJ1
+            )
+        ){
+
+            console.warn(
+                "cab17: MATRIXFILTRO no devolvió una matriz."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        ------------------------------------------------
+        MATRIXNAVEGADOR
+        ------------------------------------------------
+        */
+
+        if(
+            !window.MatrixNavegador ||
+            typeof window.MatrixNavegador.obtener !==
+            "function"
+        ){
+
+            console.warn(
+                "cab17: MatrixNavegador no disponible."
+            );
+
+            return;
+
+        }
+
+
+        let registros;
+
+
+        try{
+
+            registros =
+                await window.MatrixNavegador.obtener(
+                    matrizJ1
+                );
+
+        }
+        catch(error){
+
+            console.warn(
+                "cab17: error en MatrixNavegador.",
+                error
+            );
+
+            return;
+
+        }
+
+
+        if(
+            !Array.isArray(
+                registros
+            ) ||
+            !registros.length
+        ){
+
+            console.warn(
+                "cab17: MatrixNavegador no devolvió registros."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        ------------------------------------------------
+        PALNAVEGADOR
+        ------------------------------------------------
+        */
+
+        if(
+            !window.PALNAVEGADOR ||
+            typeof window.PALNAVEGADOR.aplicarFiltro !==
+            "function"
+        ){
+
+            console.warn(
+                "cab17: PALNAVEGADOR.aplicarFiltro no disponible."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        PRIMERO:
+        aplicar el rango.
+        */
+
+        window.PALNAVEGADOR.aplicarFiltro(
+            registros
+        );
+
+
+        console.log(
+            "cab17: rango aplicado:",
+            registros.length,
+            "registros."
+        );
+
+
+        /*
+        ------------------------------------------------
+        ALEATORIO
+        ------------------------------------------------
+
+        Exactamente el mismo principio
+        que CAB16.
+        */
+
+        if(
+            !this.seleccionRealizada &&
+            window.PALNAVEGADOR &&
+            typeof window.PALNAVEGADOR.aleatorio ===
+            "function"
+        ){
+
+            try{
+
+                await window.PALNAVEGADOR.aleatorio();
+
+
+                console.log(
+                    "cab17: aleatorio automático dentro del filtro."
+                );
+
+            }
+            catch(error){
+
+                console.warn(
+                    "cab17: error en aleatorio automático.",
+                    error
+                );
+
+            }
+
+        }
+
+    },
+
+
+    /*====================================================
+      SELECCIONAR RESULTADO
+    ====================================================*/
+
+    seleccionar: async function(
+        codigo
+    ){
+
+        codigo =
+            String(
+                codigo || ""
+            )
+            .trim()
+            .toUpperCase();
+
+
+        if(
+            !codigo
         ){
 
             return;
@@ -371,151 +724,179 @@ window.cab17 = {
 
 
         /*
-        ----------------------------------------------------
-        MATRIXFILTRO
-        ----------------------------------------------------
+        Selección manual.
         */
 
-        window.MATRIXFILTRO.actualizar(
-            matriz
+        this.seleccionRealizada =
+            true;
+
+
+        const campo =
+            document.getElementById(
+                "buscarUniversal"
+            );
+
+
+        if(
+            campo
+        ){
+
+            campo.value =
+                codigo;
+
+        }
+
+
+        const label =
+            document.getElementById(
+                "labelBusquedaUniversal"
+            );
+
+
+        if(
+            label
+        ){
+
+            label.textContent =
+                codigo;
+
+        }
+
+
+        /*
+        CERRAR
+        */
+
+        this.cerrar();
+
+
+        /*
+        CARGAR SELECCIÓN
+        */
+
+        if(
+            window.PALNAVEGADOR &&
+            typeof window.PALNAVEGADOR.cargarPorCodigo ===
+            "function"
+        ){
+
+            try{
+
+                await window.PALNAVEGADOR.cargarPorCodigo(
+                    codigo
+                );
+
+            }
+            catch(error){
+
+                console.warn(
+                    "cab17: error cargando selección.",
+                    error
+                );
+
+            }
+
+        }
+
+    },
+
+
+    /*====================================================
+      CERRAR
+    ====================================================*/
+
+    cerrar: function(){
+
+        if(
+            window.PALBUSCADOR &&
+            typeof window.PALBUSCADOR.cerrar ===
+            "function"
+        ){
+
+            window.PALBUSCADOR.cerrar();
+
+            return;
+
+        }
+
+
+        const ids = [
+
+            "lightboxBuscador",
+
+            "buscadorLightbox",
+
+            "lightboxBusqueda",
+
+            "modalBuscador"
+
+        ];
+
+
+        ids.forEach(
+            id => {
+
+                const elemento =
+                    document.getElementById(
+                        id
+                    );
+
+
+                if(
+                    elemento
+                ){
+
+                    elemento.style.display =
+                        "none";
+
+
+                    elemento.classList.remove(
+                        "activo"
+                    );
+
+
+                    elemento.classList.remove(
+                        "visible"
+                    );
+
+                }
+
+            }
         );
 
     },
 
 
     /*====================================================
-      CONECTAR
+      LIMPIAR FILTRO
     ====================================================*/
 
-    conectar: function(){
+    limpiarFiltro: function(){
 
-        /*
-        ----------------------------------------------------
-        INPUT
-        ----------------------------------------------------
-        */
+        if(
+            window.PALNAVEGADOR &&
+            typeof window.PALNAVEGADOR.limpiarFiltro ===
+            "function"
+        ){
 
-        document.addEventListener(
-            "input",
-            evento => {
+            window.PALNAVEGADOR.limpiarFiltro();
 
-                const campo =
-                    evento.target;
+        }
 
 
-                if(
-                    !campo ||
-                    campo.id !==
-                    "buscarUniversal"
-                ){
+        if(
+            window.MatrixNavegador &&
+            typeof window.MatrixNavegador.limpiar ===
+            "function"
+        ){
 
-                    return;
+            window.MatrixNavegador.limpiar();
 
-                }
-
-
-                const texto =
-                    campo.value.trim();
+        }
 
 
-                /*
-                CÓDIGO → CAB16
-                */
-
-                if(
-                    this.esCodigo(
-                        texto
-                    )
-                ){
-
-                    return;
-
-                }
-
-
-                /*
-                NOMBRE → CAB17
-                */
-
-                evento.stopImmediatePropagation();
-
-
-                this.buscar();
-
-            },
-            true
-        );
-
-
-        /*
-        ----------------------------------------------------
-        CHECK
-        ----------------------------------------------------
-        */
-
-        document.addEventListener(
-            "change",
-            evento => {
-
-                const elemento =
-                    evento.target;
-
-
-                if(
-                    !elemento ||
-                    elemento.id !==
-                    "buscarTodosCab16"
-                ){
-
-                    return;
-
-                }
-
-
-                const campo =
-                    document.getElementById(
-                        "buscarUniversal"
-                    );
-
-
-                if(
-                    !campo
-                ){
-
-                    return;
-
-                }
-
-
-                const texto =
-                    campo.value.trim();
-
-
-                if(
-                    this.esCodigo(
-                        texto
-                    )
-                ){
-
-                    return;
-
-                }
-
-
-                if(
-                    texto.length >=
-                    this.minimoCaracteres
-                ){
-
-                    evento.stopImmediatePropagation();
-
-
-                    this.buscar();
-
-                }
-
-            },
-            true
+        console.log(
+            "cab17: filtro y matriz limpiados."
         );
 
     }
@@ -531,7 +912,7 @@ document.addEventListener(
     "DOMContentLoaded",
     function(){
 
-        window.cab17.conectar();
+        window.cab17.inicializar();
 
     }
 );
@@ -539,6 +920,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab17.js v2.0
+FIN cab17.js v3.0
 ========================================================
 */
