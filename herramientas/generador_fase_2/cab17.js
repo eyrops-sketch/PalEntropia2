@@ -1,29 +1,28 @@
 /*
 ========================================================
 PalEntropía
-cab17.js v1.5
+cab17.js v2.0
 
 BUSCADOR AVANZADO POR NOMBRE
 
-FUNCIONAMIENTO
---------------
-- Busca en j2.
-- Mínimo 3 caracteres.
-- Ignora mayúsculas/minúsculas.
-- Ignora tildes.
-- Obtiene los j1 asociados.
-- Entrega los j1 a MATRIXFILTRO.
-- No modifica CAB16.
-
 CIRCUITO
+--------
 
-consulta
+Consulta
    ↓
-j2
+PALBUSCADOR.buscarPorNombre()
    ↓
-j1
+codigo / J1
    ↓
 MATRIXFILTRO
+
+IMPORTANTE
+----------
+CAB17 NO DUPLICA EL MOTOR DE BÚSQUEDA.
+
+Utiliza directamente PALBUSCADOR.
+
+No modifica CAB16.
 ========================================================
 */
 
@@ -31,23 +30,10 @@ window.cab17 = {
 
 
     /*====================================================
-      NORMALIZAR
+      CONFIGURACIÓN
     ====================================================*/
 
-    normalizar: function(texto){
-
-        return String(
-            texto || ""
-        )
-        .normalize("NFD")
-        .replace(
-            /[\u0300-\u036f]/g,
-            ""
-        )
-        .toLowerCase()
-        .trim();
-
-    },
+    minimoCaracteres: 3,
 
 
     /*====================================================
@@ -66,42 +52,10 @@ window.cab17 = {
 
 
     /*====================================================
-      OBTENER DATOS
+      BUSCAR
     ====================================================*/
 
-    obtenerDatos: function(){
-
-        if(
-            window.LEEPALJSON &&
-            typeof window.LEEPALJSON.obtener ===
-            "function"
-        ){
-
-            const datos =
-                window.LEEPALJSON.obtener();
-
-
-            if(
-                Array.isArray(datos)
-            ){
-
-                return datos;
-
-            }
-
-        }
-
-
-        return [];
-
-    },
-
-
-    /*====================================================
-      BUSCAR POR NOMBRE
-    ====================================================*/
-
-    buscar: function(){
+    async buscar(){
 
         const campo =
             document.getElementById(
@@ -133,20 +87,20 @@ window.cab17 = {
             !resultados
         ){
 
-            return;
+            return [];
 
         }
 
 
         const texto =
-            this.normalizar(
-                campo.value
-            );
+            String(
+                campo.value || ""
+            ).trim();
 
 
         /*
         ----------------------------------------------------
-        INDICADOR TEMPORAL
+        INDICADOR
         ----------------------------------------------------
         */
 
@@ -158,66 +112,101 @@ window.cab17 = {
 
         /*
         ----------------------------------------------------
-        MÍNIMO 3 CARACTERES
+        MÍNIMO
         ----------------------------------------------------
         */
 
         if(
-            texto.length < 3
+            texto.length <
+            this.minimoCaracteres
         ){
 
             label.textContent =
                 "Introduce al menos 3 caracteres";
 
-            return;
+            return [];
 
         }
 
 
         /*
         ----------------------------------------------------
-        DATOS
+        CÓDIGO
         ----------------------------------------------------
         */
 
-        const datos =
-            this.obtenerDatos();
+        if(
+            this.esCodigo(
+                texto
+            )
+        ){
+
+            return [];
+
+        }
 
 
         /*
         ----------------------------------------------------
-        BUSCAR EN J2
+        PALBUSCADOR
         ----------------------------------------------------
         */
 
-        const coincidencias =
-            datos.filter(
-                registro => {
+        if(
+            !window.PALBUSCADOR ||
+            typeof window.PALBUSCADOR.buscarPorNombre !==
+            "function"
+        ){
 
-                    const nombre =
-                        this.normalizar(
-                            registro.j2
-                        );
+            label.textContent =
+                "Buscador no disponible";
+
+            return [];
+
+        }
 
 
-                    return nombre.includes(
-                        texto
-                    );
+        let encontrados = [];
 
-                }
+
+        try {
+
+            encontrados =
+                await window.PALBUSCADOR.buscarPorNombre(
+                    texto
+                );
+
+        }
+
+        catch(
+            error
+        ){
+
+            console.error(
+                "CAB17:",
+                error
             );
 
 
+            label.textContent =
+                "Error de búsqueda";
+
+
+            return [];
+
+        }
+
+
         /*
         ----------------------------------------------------
-        RESULTADOS
+        CONTADOR
         ----------------------------------------------------
         */
 
         label.textContent =
-            coincidencias.length +
+            encontrados.length +
             (
-                coincidencias.length === 1
+                encontrados.length === 1
                     ? " resultado"
                     : " resultados"
             );
@@ -229,8 +218,18 @@ window.cab17 = {
         ----------------------------------------------------
         */
 
-        coincidencias.forEach(
-            registro => {
+        encontrados.forEach(
+            resultado => {
+
+                if(
+                    !resultado ||
+                    !resultado.codigo
+                ){
+
+                    return;
+
+                }
+
 
                 const fila =
                     document.createElement(
@@ -243,12 +242,19 @@ window.cab17 = {
 
 
                 fila.dataset.codigo =
-                    registro.j1;
+                    resultado.codigo;
 
 
                 fila.textContent =
-                    registro.j2;
+                    resultado.nombre ||
+                    resultado.codigo;
 
+
+                /*
+                --------------------------------------------
+                SELECCIÓN INDIVIDUAL
+                --------------------------------------------
+                */
 
                 fila.addEventListener(
                     "click",
@@ -261,7 +267,7 @@ window.cab17 = {
                         ){
 
                             window.PALNAVEGADOR.cargarPorCodigo(
-                                registro.j1
+                                resultado.codigo
                             );
 
                         }
@@ -280,7 +286,7 @@ window.cab17 = {
 
         /*
         ----------------------------------------------------
-        CHECK
+        CHECK ACTIVADO
         ----------------------------------------------------
         */
 
@@ -290,28 +296,30 @@ window.cab17 = {
         ){
 
             this.enviarMatrix(
-                coincidencias
+                encontrados
             );
 
         }
 
 
-        return coincidencias;
+        return encontrados;
 
     },
-        /*====================================================
-      ENVIAR J1 A MATRIXFILTRO
+
+
+    /*====================================================
+      ENVIAR A MATRIXFILTRO
     ====================================================*/
 
     enviarMatrix: function(
-        registros
+        resultados
     ){
 
         if(
             !Array.isArray(
-                registros
+                resultados
             ) ||
-            !registros.length
+            !resultados.length
         ){
 
             return;
@@ -331,16 +339,21 @@ window.cab17 = {
 
 
         /*
-        EXTRAER SOLAMENTE J1
+        ----------------------------------------------------
+        EXTRAER J1
+        ----------------------------------------------------
         */
 
-        const j1 =
-            registros
+        const matriz =
+            resultados
             .map(
-                registro =>
-                    String(
-                        registro.j1 || ""
-                    ).trim()
+                resultado => {
+
+                    return String(
+                        resultado.codigo || ""
+                    ).trim();
+
+                }
             )
             .filter(
                 codigo =>
@@ -349,7 +362,7 @@ window.cab17 = {
 
 
         if(
-            !j1.length
+            !matriz.length
         ){
 
             return;
@@ -358,12 +371,13 @@ window.cab17 = {
 
 
         /*
-        MATRIXFILTRO YA SE ENCARGA
-        DEL RESTO DEL CIRCUITO.
+        ----------------------------------------------------
+        MATRIXFILTRO
+        ----------------------------------------------------
         */
 
         window.MATRIXFILTRO.actualizar(
-            j1
+            matriz
         );
 
     },
@@ -377,13 +391,13 @@ window.cab17 = {
 
         /*
         ----------------------------------------------------
-        CONSULTA
+        INPUT
         ----------------------------------------------------
         */
 
         document.addEventListener(
             "input",
-            (evento) => {
+            evento => {
 
                 const campo =
                     evento.target;
@@ -441,7 +455,7 @@ window.cab17 = {
 
         document.addEventListener(
             "change",
-            (evento) => {
+            evento => {
 
                 const elemento =
                     evento.target;
@@ -477,10 +491,6 @@ window.cab17 = {
                     campo.value.trim();
 
 
-                /*
-                CÓDIGO → CAB16
-                */
-
                 if(
                     this.esCodigo(
                         texto
@@ -493,7 +503,8 @@ window.cab17 = {
 
 
                 if(
-                    texto.length >= 3
+                    texto.length >=
+                    this.minimoCaracteres
                 ){
 
                     evento.stopImmediatePropagation();
@@ -528,6 +539,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab17.js v1.5
+FIN cab17.js v2.0
 ========================================================
 */
