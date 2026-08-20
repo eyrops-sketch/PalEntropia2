@@ -1,34 +1,43 @@
 /*
 ========================================================
 PalEntropía
-cab16.js v2.2
+cab16.js v2.0
 
 BUSCADOR AVANZADO POR CÓDIGO
 
-LÓGICA
-------
-☐ Check desactivado
-    → TODOS los registros.
+FUNCIÓN
+-------
+- Busca exclusivamente por J1 / código.
 
-☑ Check activado
-    → la consulta crea el rango activo.
+CHECK
+-----
+☐ Mostrar seleccionado/Consulta completa
+    → todos los registros.
 
-SELECCIÓN
----------
-La selección actual es independiente del rango.
+☑ Mostrar seleccionado/Consulta completa
+    → resultados de la consulta como rango
+      activo de navegación.
 
-- Si la selección sigue dentro del nuevo rango:
-      se conserva.
+COMPORTAMIENTO
+--------------
+- Si NO se selecciona manualmente un registro:
+    → se fuerza un aleatorio dentro del filtro.
 
-- Si no hay selección válida:
-      se carga el primer registro del rango.
+- Si se selecciona manualmente un registro:
+    → se respeta siempre esa selección.
 
-CONTROL DE CONSULTAS
---------------------
-Cada búsqueda recibe un número de operación.
+CIRCUITO
+--------
+CAB16
+  ↓
+MATRIXFILTRO
+  ↓
+MATRIXNAVEGADOR
+  ↓
+PALNAVEGADOR.aplicarFiltro()
+  ↓
+PALNAVEGADOR.aleatorio()
 
-Una respuesta antigua de MATRIXNAVEGADOR
-NO puede sobrescribir una consulta posterior.
 ========================================================
 */
 
@@ -42,16 +51,11 @@ window.cab16 = {
     buscarTodos: false,
 
     /*
-    Código actualmente seleccionado.
+    true solamente cuando el usuario
+    ha seleccionado realmente un resultado.
     */
 
-    codigoSeleccionado: null,
-
-    /*
-    Número de operación de búsqueda.
-    */
-
-    operacionBusqueda: 0,
+    seleccionRealizada: false,
 
 
     /*====================================================
@@ -60,7 +64,9 @@ window.cab16 = {
 
     inicializar: function(){
 
-        if(this.inicializado){
+        if(
+            this.inicializado
+        ){
 
             return;
 
@@ -78,7 +84,7 @@ window.cab16 = {
 
 
         console.log(
-            "cab16 v2.2: buscador avanzado preparado."
+            "cab16 v2.0: buscador avanzado preparado."
         );
 
     },
@@ -100,7 +106,11 @@ window.cab16 = {
                 window.LEEPALJSON.obtener();
 
 
-            if(Array.isArray(datos)){
+            if(
+                Array.isArray(
+                    datos
+                )
+            ){
 
                 this.datos =
                     datos;
@@ -127,7 +137,9 @@ window.cab16 = {
             );
 
 
-        if(!campo){
+        if(
+            !campo
+        ){
 
             return;
 
@@ -145,6 +157,10 @@ window.cab16 = {
         }
 
 
+        /*------------------------------------------------
+          LABEL RESULTADOS
+        ------------------------------------------------*/
+
         const label =
             document.createElement(
                 "div"
@@ -158,6 +174,10 @@ window.cab16 = {
         label.textContent =
             "Introduce al menos 3 caracteres";
 
+
+        /*------------------------------------------------
+          CHECK
+        ------------------------------------------------*/
 
         const checkLabel =
             document.createElement(
@@ -203,6 +223,10 @@ window.cab16 = {
         );
 
 
+        /*------------------------------------------------
+          RESULTADOS
+        ------------------------------------------------*/
+
         const resultados =
             document.createElement(
                 "div"
@@ -212,6 +236,10 @@ window.cab16 = {
         resultados.id =
             "resultadosCab16";
 
+
+        /*------------------------------------------------
+          INSERTAR
+        ------------------------------------------------*/
 
         campo.insertAdjacentElement(
             "afterend",
@@ -258,14 +286,26 @@ window.cab16 = {
 
 
         /*------------------------------------------------
-          CONSULTA
+          CAMPO DE BÚSQUEDA
         ------------------------------------------------*/
 
-        if(campo){
+        if(
+            campo
+        ){
 
             campo.addEventListener(
                 "input",
                 () => {
+
+                    /*
+                    Nueva consulta:
+                    todavía no existe una selección
+                    manual para esta consulta.
+                    */
+
+                    this.seleccionRealizada =
+                        false;
+
 
                     this.buscar();
 
@@ -279,26 +319,37 @@ window.cab16 = {
           CHECK
         ------------------------------------------------*/
 
-        if(check){
+        if(
+            check
+        ){
 
             check.addEventListener(
                 "change",
                 async () => {
+
+                    /*
+                    Guardamos exactamente
+                    el estado visual del check.
+                    */
 
                     this.buscarTodos =
                         check.checked;
 
 
                     /*
-                    Nueva operación.
+                    Cada cambio de check
+                    invalida una selección anterior.
                     */
 
-                    this.operacionBusqueda++;
+                    this.seleccionRealizada =
+                        false;
 
 
                     /*
-                    DESACTIVADO
-                    → TODOS LOS REGISTROS.
+                    CHECK DESACTIVADO
+                    -----------------
+                    Volvemos inmediatamente
+                    al conjunto completo.
                     */
 
                     if(
@@ -310,6 +361,11 @@ window.cab16 = {
                     }
 
 
+                    /*
+                    Rehacemos la consulta
+                    con el nuevo estado.
+                    */
+
                     await this.buscar();
 
                 }
@@ -319,10 +375,12 @@ window.cab16 = {
 
 
         /*------------------------------------------------
-          CERRAR
+          CERRAR BUSCADOR
         ------------------------------------------------*/
 
-        if(cerrar){
+        if(
+            cerrar
+        ){
 
             cerrar.addEventListener(
                 "click",
@@ -334,23 +392,24 @@ window.cab16 = {
                             : "";
 
 
-                    if(!texto){
+                    if(
+                        texto
+                    ){
 
-                        return;
-
-                    }
-
-
-                    const label =
-                        document.getElementById(
-                            "labelBusquedaUniversal"
-                        );
+                        const label =
+                            document.getElementById(
+                                "labelBusquedaUniversal"
+                            );
 
 
-                    if(label){
+                        if(
+                            label
+                        ){
 
-                        label.textContent =
-                            texto;
+                            label.textContent =
+                                texto;
+
+                        }
 
                     }
 
@@ -363,61 +422,10 @@ window.cab16 = {
 
 
     /*====================================================
-      OBTENER SELECCIÓN ACTUAL
-    ====================================================*/
-
-    obtenerCodigoSeleccionado: function(){
-
-        /*
-        Primero utilizamos nuestro estado.
-        */
-
-        if(
-            this.codigoSeleccionado
-        ){
-
-            return String(
-                this.codigoSeleccionado
-            )
-            .trim()
-            .toUpperCase();
-
-        }
-
-
-        /*
-        Si todavía no existe,
-        intentamos recuperar PALNAVEGADOR.
-        */
-
-        if(
-            window.PALNAVEGADOR &&
-            window.PALNAVEGADOR.codigoActual
-        ){
-
-            return String(
-                window.PALNAVEGADOR.codigoActual
-            )
-            .trim()
-            .toUpperCase();
-
-        }
-
-
-        return null;
-
-    },
-
-
-    /*====================================================
       BUSCAR
     ====================================================*/
 
     buscar: async function(){
-
-        const operacion =
-            ++this.operacionBusqueda;
-
 
         const campo =
             document.getElementById(
@@ -454,12 +462,16 @@ window.cab16 = {
                 .toLowerCase();
 
 
+        /*
+        Limpiamos resultados visuales.
+        */
+
         resultados.innerHTML =
             "";
 
 
         /*------------------------------------------------
-          MÍNIMO
+          MÍNIMO 3 CARACTERES
         ------------------------------------------------*/
 
         if(
@@ -469,6 +481,11 @@ window.cab16 = {
             label.textContent =
                 "Introduce al menos 3 caracteres";
 
+
+            /*
+            Si estamos en modo filtro,
+            eliminamos cualquier rango antiguo.
+            */
 
             if(
                 this.buscarTodos
@@ -483,6 +500,10 @@ window.cab16 = {
 
         }
 
+
+        /*------------------------------------------------
+          ACTUALIZAR DATOS
+        ------------------------------------------------*/
 
         this.obtenerDatos();
 
@@ -502,16 +523,35 @@ window.cab16 = {
         }
 
 
+        /*------------------------------------------------
+          CONJUNTO DE BÚSQUEDA
+        ------------------------------------------------*/
+
         /*
-        La búsqueda se hace SIEMPRE
-        sobre todos los registros.
+        La consulta siempre se hace sobre
+        TODOS los registros.
+
+        El check NO determina dónde buscar.
+
+        El check determina si los resultados
+        se convierten o no en rango de navegación.
         */
 
+        const conjunto =
+            this.datos;
+
+
+        /*------------------------------------------------
+          COINCIDENCIAS POR CÓDIGO
+        ------------------------------------------------*/
+
         const coincidencias =
-            this.datos.filter(
+            conjunto.filter(
                 registro => {
 
-                    if(!registro){
+                    if(
+                        !registro
+                    ){
 
                         return false;
 
@@ -526,6 +566,15 @@ window.cab16 = {
                         .toLowerCase();
 
 
+                    if(
+                        !codigo
+                    ){
+
+                        return false;
+
+                    }
+
+
                     return codigo.includes(
                         texto
                     );
@@ -534,20 +583,9 @@ window.cab16 = {
             );
 
 
-        /*
-        Si mientras calculábamos la búsqueda
-        comenzó otra operación, abandonamos.
-        */
-
-        if(
-            operacion !==
-            this.operacionBusqueda
-        ){
-
-            return;
-
-        }
-
+        /*------------------------------------------------
+          CONTADOR
+        ------------------------------------------------*/
 
         label.textContent =
             coincidencias.length +
@@ -558,23 +596,26 @@ window.cab16 = {
             );
 
 
+        /*------------------------------------------------
+          MOSTRAR RESULTADOS
+        ------------------------------------------------*/
+
         this.mostrar(
             coincidencias
         );
 
 
-        /*
-        CHECK ACTIVADO
-        → crear rango.
-        */
+        /*------------------------------------------------
+          CHECK ACTIVADO
+          → CREAR RANGO
+        ------------------------------------------------*/
 
         if(
             this.buscarTodos
         ){
 
             await this.aplicarMatrix(
-                coincidencias,
-                operacion
+                coincidencias
             );
 
         }
@@ -583,23 +624,17 @@ window.cab16 = {
 
 
     /*====================================================
-      APLICAR MATRIX
+      MATRIX
     ====================================================*/
 
     aplicarMatrix: async function(
-        coincidencias,
-        operacion
+        coincidencias
     ){
 
-        if(
-            operacion !==
-            this.operacionBusqueda
-        ){
-
-            return;
-
-        }
-
+        /*
+        Si no hay coincidencias,
+        no puede existir rango.
+        */
 
         if(
             !Array.isArray(
@@ -615,15 +650,6 @@ window.cab16 = {
         }
 
 
-        /*
-        Guardamos la selección ANTES
-        de modificar el filtro.
-        */
-
-        const codigoSeleccionado =
-            this.obtenerCodigoSeleccionado();
-
-
         /*------------------------------------------------
           MATRIXFILTRO
         ------------------------------------------------*/
@@ -633,6 +659,10 @@ window.cab16 = {
             typeof window.MATRIXFILTRO.actualizar !==
             "function"
         ){
+
+            console.warn(
+                "cab16: MATRIXFILTRO no disponible."
+            );
 
             return;
 
@@ -646,21 +676,14 @@ window.cab16 = {
 
 
         if(
-            operacion !==
-            this.operacionBusqueda
-        ){
-
-            return;
-
-        }
-
-
-        if(
             !Array.isArray(
                 matrizJ1
-            ) ||
-            !matrizJ1.length
+            )
         ){
+
+            console.warn(
+                "cab16: MATRIXFILTRO no devolvió una matriz."
+            );
 
             return;
 
@@ -676,6 +699,10 @@ window.cab16 = {
             typeof window.MatrixNavegador.obtener !==
             "function"
         ){
+
+            console.warn(
+                "cab16: MatrixNavegador no disponible."
+            );
 
             return;
 
@@ -705,25 +732,6 @@ window.cab16 = {
         }
 
 
-        /*
-        MUY IMPORTANTE:
-
-        Puede haber terminado una consulta
-        posterior mientras esperábamos.
-
-        En ese caso esta respuesta es vieja.
-        */
-
-        if(
-            operacion !==
-            this.operacionBusqueda
-        ){
-
-            return;
-
-        }
-
-
         if(
             !Array.isArray(
                 registros
@@ -731,14 +739,18 @@ window.cab16 = {
             !registros.length
         ){
 
+            console.warn(
+                "cab16: MatrixNavegador no devolvió registros."
+            );
+
             return;
 
         }
 
 
-        /*
-        Solo ahora aplicamos el filtro.
-        */
+        /*------------------------------------------------
+          PALNAVEGADOR
+        ------------------------------------------------*/
 
         if(
             !window.PALNAVEGADOR ||
@@ -746,258 +758,75 @@ window.cab16 = {
             "function"
         ){
 
+            console.warn(
+                "cab16: PALNAVEGADOR.aplicarFiltro no disponible."
+            );
+
             return;
 
         }
 
+
+        /*
+        PRIMERO aplicamos el rango.
+
+        Esto es fundamental.
+
+        El aleatorio se ejecuta DESPUÉS,
+        por lo que nunca puede salir fuera
+        del rango de la consulta.
+        */
 
         window.PALNAVEGADOR.aplicarFiltro(
             registros
         );
 
 
-        /*
-        Resolvemos la selección DESPUÉS
-        de aplicar el filtro.
-        */
-
-        await this.resolverSeleccion(
-            codigoSeleccionado,
-            registros,
-            operacion
+        console.log(
+            "cab16: rango aplicado:",
+            registros.length,
+            "registros."
         );
 
-    },
 
-    /*====================================================
-      RESOLVER SELECCIÓN
-    ====================================================*/
-
-    resolverSeleccion: async function(
-        codigoSeleccionado,
-        registros,
-        operacion
-    ){
-
-        if(
-            operacion !==
-            this.operacionBusqueda
-        ){
-
-            return;
-
-        }
-
-
-        let seleccionValida =
-            false;
-
+        /*------------------------------------------------
+          ALEATORIO AUTOMÁTICO
+        ------------------------------------------------*/
 
         /*
-        Comprobar si la selección actual
-        sigue dentro del filtro.
+        Solo hacemos el aleatorio si el usuario
+        todavía NO ha seleccionado manualmente
+        un resultado.
+
+        Si ya seleccionó uno:
+        NO tocamos su selección.
         */
 
         if(
-            codigoSeleccionado &&
-            Array.isArray(
-                registros
-            )
-        ){
-
-            const codigo =
-                String(
-                    codigoSeleccionado
-                )
-                .trim()
-                .toUpperCase();
-
-
-            seleccionValida =
-                registros.some(
-                    registro => {
-
-                        const actual =
-                            String(
-                                registro.codigo || ""
-                            )
-                            .trim()
-                            .toUpperCase();
-
-
-                        return actual ===
-                            codigo;
-
-                    }
-                );
-
-        }
-
-
-        /*
-        ==================================================
-        SELECCIÓN VÁLIDA
-        ==================================================
-
-        Se conserva exactamente.
-        */
-
-        if(
-            seleccionValida
-        ){
-
-            this.codigoSeleccionado =
-                String(
-                    codigoSeleccionado
-                )
-                .trim()
-                .toUpperCase();
-
-
-            await this.cargarCodigo(
-                this.codigoSeleccionado
-            );
-
-
-            return;
-
-        }
-
-
-        /*
-        ==================================================
-        SIN SELECCIÓN VÁLIDA
-        ==================================================
-
-        → primer registro del filtro.
-        */
-
-        await this.cargarPrimerFiltrado(
-            registros,
-            operacion
-        );
-
-    },
-
-
-    /*====================================================
-      CARGAR PRIMER FILTRADO
-    ====================================================*/
-
-    cargarPrimerFiltrado: async function(
-        registros,
-        operacion
-    ){
-
-        if(
-            operacion !==
-            this.operacionBusqueda
-        ){
-
-            return;
-
-        }
-
-
-        if(
-            !Array.isArray(
-                registros
-            ) ||
-            !registros.length
-        ){
-
-            return;
-
-        }
-
-
-        const primero =
-            registros[0];
-
-
-        if(
-            !primero ||
-            !primero.codigo
-        ){
-
-            return;
-
-        }
-
-
-        const codigo =
-            String(
-                primero.codigo
-            )
-            .trim()
-            .toUpperCase();
-
-
-        this.codigoSeleccionado =
-            codigo;
-
-
-        await this.cargarCodigo(
-            codigo
-        );
-
-    },
-
-
-    /*====================================================
-      CARGAR CÓDIGO
-    ====================================================*/
-
-    cargarCodigo: async function(
-        codigo
-    ){
-
-        if(
-            !codigo ||
-            !window.PALNAVEGADOR
-        ){
-
-            return;
-
-        }
-
-
-        /*
-        Posicionamos primero.
-        */
-
-        if(
-            typeof window.PALNAVEGADOR.posicionar ===
+            !this.seleccionRealizada &&
+            window.PALNAVEGADOR &&
+            typeof window.PALNAVEGADOR.aleatorio ===
             "function"
         ){
 
-            const situado =
-                await window.PALNAVEGADOR.posicionar(
-                    codigo
+            try{
+
+                await window.PALNAVEGADOR.aleatorio();
+
+
+                console.log(
+                    "cab16: aleatorio automático dentro del filtro."
                 );
-
-
-            if(!situado){
-
-                return;
 
             }
+            catch(error){
 
-        }
+                console.warn(
+                    "cab16: error en aleatorio automático.",
+                    error
+                );
 
-
-        /*
-        Cargamos exactamente esa ficha.
-        */
-
-        if(
-            typeof window.PALNAVEGADOR.cargarIndice ===
-            "function"
-        ){
-
-            await window.PALNAVEGADOR.cargarIndice(
-                window.PALNAVEGADOR.indice
-            );
+            }
 
         }
 
@@ -1018,7 +847,9 @@ window.cab16 = {
             );
 
 
-        if(!contenedor){
+        if(
+            !contenedor
+        ){
 
             return;
 
@@ -1028,7 +859,9 @@ window.cab16 = {
         coincidencias.forEach(
             registro => {
 
-                if(!registro){
+                if(
+                    !registro
+                ){
 
                     return;
 
@@ -1042,7 +875,9 @@ window.cab16 = {
                     .trim();
 
 
-                if(!codigo){
+                if(
+                    !codigo
+                ){
 
                     return;
 
@@ -1105,7 +940,9 @@ window.cab16 = {
             .toUpperCase();
 
 
-        if(!codigo){
+        if(
+            !codigo
+        ){
 
             return;
 
@@ -1113,20 +950,17 @@ window.cab16 = {
 
 
         /*
-        La selección manual tiene
-        máxima prioridad.
+        MUY IMPORTANTE:
+
+        Desde este momento existe una
+        selección manual real.
+
+        Por tanto, ningún aleatorio
+        automático posterior debe sustituirla.
         */
 
-        this.codigoSeleccionado =
-            codigo;
-
-
-        /*
-        Invalidamos cualquier consulta
-        pendiente anterior.
-        */
-
-        this.operacionBusqueda++;
+        this.seleccionRealizada =
+            true;
 
 
         const campo =
@@ -1135,7 +969,9 @@ window.cab16 = {
             );
 
 
-        if(campo){
+        if(
+            campo
+        ){
 
             campo.value =
                 codigo;
@@ -1149,7 +985,9 @@ window.cab16 = {
             );
 
 
-        if(label){
+        if(
+            label
+        ){
 
             label.textContent =
                 codigo;
@@ -1157,29 +995,53 @@ window.cab16 = {
         }
 
 
-        /*
-        Cerrar.
-        */
+        /*------------------------------------------------
+          CERRAR BUSCADOR
+        ------------------------------------------------*/
 
         this.cerrar();
 
 
-        /*
-        Cargar selección exacta.
-        */
+        /*------------------------------------------------
+          CARGAR SELECCIÓN
+        ------------------------------------------------*/
 
-        await this.cargarCodigo(
-            codigo
-        );
+        if(
+            window.PALNAVEGADOR &&
+            typeof window.PALNAVEGADOR.cargarPorCodigo ===
+            "function"
+        ){
+
+            try{
+
+                await window.PALNAVEGADOR.cargarPorCodigo(
+                    codigo
+                );
+
+            }
+            catch(error){
+
+                console.warn(
+                    "cab16: error cargando selección.",
+                    error
+                );
+
+            }
+
+        }
 
     },
 
-
-    /*====================================================
+        /*====================================================
       CERRAR
     ====================================================*/
 
     cerrar: function(){
+
+        /*
+        Utilizamos primero el cierre oficial
+        de PALBUSCADOR.
+        */
 
         if(
             window.PALBUSCADOR &&
@@ -1194,11 +1056,18 @@ window.cab16 = {
         }
 
 
+        /*
+        Respaldo visual.
+        */
+
         const ids = [
 
             "lightboxBuscador",
+
             "buscadorLightbox",
+
             "lightboxBusqueda",
+
             "modalBuscador"
 
         ];
@@ -1213,7 +1082,9 @@ window.cab16 = {
                     );
 
 
-                if(elemento){
+                if(
+                    elemento
+                ){
 
                     elemento.style.display =
                         "none";
@@ -1242,6 +1113,11 @@ window.cab16 = {
 
     limpiarFiltro: function(){
 
+        /*
+        PALNAVEGADOR vuelve al conjunto
+        completo de registros.
+        */
+
         if(
             window.PALNAVEGADOR &&
             typeof window.PALNAVEGADOR.limpiarFiltro ===
@@ -1253,6 +1129,10 @@ window.cab16 = {
         }
 
 
+        /*
+        MATRIXNAVEGADOR también se limpia.
+        */
+
         if(
             window.MatrixNavegador &&
             typeof window.MatrixNavegador.limpiar ===
@@ -1262,6 +1142,11 @@ window.cab16 = {
             window.MatrixNavegador.limpiar();
 
         }
+
+
+        console.log(
+            "cab16: filtro y matriz limpiados."
+        );
 
     }
 
@@ -1284,6 +1169,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab16.js v2.2
+FIN cab16.js v2.0
 ========================================================
 */
