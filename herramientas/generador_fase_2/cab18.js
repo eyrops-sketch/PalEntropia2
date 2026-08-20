@@ -15,12 +15,12 @@ Código:
 sin restricción.
 
 Nombre:
-mínimo 3 caracteres → CAB17.
+mínimo 3 caracteres.
 
 Tiempo geológico:
-mínimo 4 caracteres → CAB18.
+mínimo 4 caracteres.
 
-CAB18 busca exclusivamente por:
+CAB18 busca únicamente:
 
 - eón
 - era
@@ -33,61 +33,46 @@ RESULTADOS:
 código + nombre real.
 
 CHECK:
-☑ consulta completa
-→ rango activo + aleatorio.
-
+consulta completa
+→ aplica rango
+→ sin selección manual = aleatorio.
 ========================================================
 */
 
 window.cab18 = {
 
-    inicializado: false,
-
-    buscarTodos: false,
-
-    seleccionRealizada: false,
+    inicializado:false,
+    buscarTodos:false,
+    seleccionRealizada:false,
 
 
     /*====================================================
       INICIALIZAR
     ====================================================*/
 
-    inicializar: function(){
+    inicializar:function(){
 
-        if(
-            this.inicializado
-        ){
-
+        if(this.inicializado){
             return;
-
         }
 
         this.conectar();
 
-        this.inicializado = true;
+        this.inicializado=true;
 
     },
 
 
     /*====================================================
-      NORMALIZAR TEXTO
+      NORMALIZAR
     ====================================================*/
 
-    normalizarTexto: function(
-        texto
-    ){
+    normalizarTexto:function(texto){
 
-        return String(
-            texto || ""
-        )
-        .toLowerCase()
-        .normalize(
-            "NFD"
-        )
-        .replace(
-            /[\u0300-\u036f]/g,
-            ""
-        );
+        return String(texto || "")
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g,"");
 
     },
 
@@ -96,158 +81,11 @@ window.cab18 = {
       COMPROBAR CÓDIGO
     ====================================================*/
 
-    esCodigo: function(
-        texto
-    ){
+    esCodigo:function(texto){
 
         return /^\d{3}(?:_\d{0,2})?$/.test(
-            String(
-                texto || ""
-            ).trim()
+            String(texto || "").trim()
         );
-
-    },
-
-
-    /*====================================================
-      OBTENER NOMBRE REAL
-    ====================================================*/
-
-    obtenerNombre: function(
-        ficha
-    ){
-
-        if(
-            !ficha
-        ){
-
-            return "Sin nombre";
-
-        }
-
-
-        /*
-        -----------------------------------------------
-        1. nombre
-        -----------------------------------------------
-        */
-
-        let nombre =
-            String(
-                ficha.nombre ||
-                ""
-            ).trim();
-
-
-        if(
-            nombre
-        ){
-
-            return nombre;
-
-        }
-
-
-        /*
-        -----------------------------------------------
-        2. j2
-        -----------------------------------------------
-        */
-
-        nombre =
-            String(
-                ficha.j2 ||
-                ""
-            ).trim();
-
-
-        if(
-            nombre
-        ){
-
-            return nombre;
-
-        }
-
-
-        /*
-        -----------------------------------------------
-        3. BUSCAR POR CÓDIGO
-        -----------------------------------------------
-        */
-
-        const codigo =
-            String(
-                ficha.codigo ||
-                ficha.j1 ||
-                ""
-            )
-            .trim()
-            .toUpperCase();
-
-
-        if(
-            codigo &&
-            Array.isArray(
-                window.PALEOFICHAS
-            )
-        ){
-
-            const registro =
-                window.PALEOFICHAS.find(
-                    item => {
-
-                        if(
-                            !item
-                        ){
-
-                            return false;
-
-                        }
-
-
-                        const c =
-                            String(
-                                item.codigo ||
-                                item.j1 ||
-                                ""
-                            )
-                            .trim()
-                            .toUpperCase();
-
-
-                        return c === codigo;
-
-                    }
-                );
-
-
-            if(
-                registro
-            ){
-
-                nombre =
-                    String(
-                        registro.nombre ||
-                        registro.j2 ||
-                        ""
-                    ).trim();
-
-
-                if(
-                    nombre
-                ){
-
-                    return nombre;
-
-                }
-
-            }
-
-        }
-
-
-        return "Sin nombre";
 
     },
 
@@ -256,73 +94,49 @@ window.cab18 = {
       CONECTAR
     ====================================================*/
 
-    conectar: function(){
+    conectar:function(){
 
         const campo =
             document.getElementById(
                 "buscarUniversal"
             );
 
-
-        if(
-            !campo
-        ){
-
+        if(!campo){
             return;
-
         }
 
 
-        /*
-        ------------------------------------------------
-        INPUT
-        ------------------------------------------------
-        */
-
         campo.addEventListener(
             "input",
-            async () => {
+            async ()=>{
 
-                this.seleccionRealizada =
-                    false;
+                this.seleccionRealizada=false;
 
-
-                const texto =
+                const texto=
                     campo.value.trim();
 
 
                 /*
-                ----------------------------------------
+                --------------------------------------------
                 CÓDIGO → CAB16
-                ----------------------------------------
+                --------------------------------------------
                 */
 
-                if(
-                    this.esCodigo(
-                        texto
-                    )
-                ){
-
+                if(this.esCodigo(texto)){
                     return;
-
                 }
 
 
                 /*
-                ----------------------------------------
-                MENOS DE 4
+                --------------------------------------------
+                MENOS DE 4 → CAB18 NO INTERVIENE
 
-                CAB18 NO INTERVIENE.
-                CAB17 puede trabajar desde 3.
-                ----------------------------------------
+                CAB17 puede trabajar con 3 caracteres.
+                --------------------------------------------
                 */
 
-                if(
-                    texto.length < 4
-                ){
-
+                if(texto.length < 4){
                     return;
-
                 }
 
 
@@ -333,9 +147,9 @@ window.cab18 = {
 
 
         /*
-        ------------------------------------------------
+        --------------------------------------------
         CHECK
-        ------------------------------------------------
+        --------------------------------------------
         */
 
         const check =
@@ -343,38 +157,26 @@ window.cab18 = {
                 "buscarTodosCab16"
             );
 
-
-        if(
-            check
-        ){
+        if(check){
 
             check.addEventListener(
                 "change",
-                async () => {
+                async ()=>{
 
-                    this.buscarTodos =
+                    this.buscarTodos=
                         check.checked;
 
+                    this.seleccionRealizada=false;
 
-                    this.seleccionRealizada =
-                        false;
-
-
-                    const texto =
+                    const texto=
                         campo.value.trim();
-
 
                     if(
                         texto.length < 4 ||
-                        this.esCodigo(
-                            texto
-                        )
+                        this.esCodigo(texto)
                     ){
-
                         return;
-
                     }
-
 
                     await this.buscar();
 
@@ -390,89 +192,76 @@ window.cab18 = {
       BUSCAR
     ====================================================*/
 
-    buscar: async function(){
+    buscar:async function(){
 
         const campo =
             document.getElementById(
                 "buscarUniversal"
             );
 
-
         const label =
             document.getElementById(
                 "labelResultadosCab16"
             );
-
 
         const resultados =
             document.getElementById(
                 "resultadosCab16"
             );
 
-
         if(
             !campo ||
             !label ||
             !resultados
         ){
-
             return [];
-
         }
 
 
-        const texto =
+        const texto=
             campo.value.trim();
 
 
         /*
-        -----------------------------------------------
-        CÓDIGO → CAB16
-        -----------------------------------------------
+        --------------------------------------------
+        CAB16
+        --------------------------------------------
         */
 
-        if(
-            this.esCodigo(
-                texto
-            )
-        ){
-
+        if(this.esCodigo(texto)){
             return [];
-
         }
 
 
         /*
-        -----------------------------------------------
-        TIEMPO → MÍNIMO 4
-        -----------------------------------------------
+        --------------------------------------------
+        CAB17
+        --------------------------------------------
+
+        Con 3 caracteres CAB18 no interviene.
+        --------------------------------------------
         */
 
-        if(
-            texto.length < 4
-        ){
-
+        if(texto.length < 4){
             return [];
-
         }
 
 
-        resultados.innerHTML = "";
+        resultados.innerHTML="";
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         PALGEO
-        -----------------------------------------------
+        --------------------------------------------
         */
 
         if(
-            !Array.isArray(
-                window.PALGEO
-            )
+            !window.PALGEO ||
+            !Array.isArray(window.PALGEO)
         ){
 
-            label.textContent =
+            label.textContent=
                 "Base geológica no disponible.";
 
             return [];
@@ -480,79 +269,49 @@ window.cab18 = {
         }
 
 
-        const consulta =
-            this.normalizarTexto(
-                texto
-            );
+        const consulta=
+            this.normalizarTexto(texto);
 
 
         /*
-        -----------------------------------------------
-        BUSCAR EÓN / ERA / PERÍODO / EDAD
-        -----------------------------------------------
+        --------------------------------------------
+        BUSCAR INTERVALOS
+        --------------------------------------------
         */
 
-        const intervalos =
+        const intervalos=
             window.PALGEO.filter(
-                intervalo => {
+                intervalo=>{
 
-                    if(
-                        !intervalo
-                    ){
-
+                    if(!intervalo){
                         return false;
-
                     }
 
-
-                    const eon =
+                    const eon=
                         this.normalizarTexto(
                             intervalo.eon
                         );
 
-
-                    const era =
+                    const era=
                         this.normalizarTexto(
                             intervalo.era
                         );
 
-
-                    const periodo =
+                    const periodo=
                         this.normalizarTexto(
                             intervalo.periodo
                         );
 
-
-                    const edad =
+                    const edad=
                         this.normalizarTexto(
                             intervalo.edad
                         );
 
-
-                    return (
-
-                        eon.includes(
-                            consulta
-                        )
-
-                        ||
-
-                        era.includes(
-                            consulta
-                        )
-
-                        ||
-
-                        periodo.includes(
-                            consulta
-                        )
-
-                        ||
-
-                        edad.includes(
-                            consulta
-                        )
-
+                    return(
+                        eon.includes(consulta) ||
+                        era.includes(consulta) ||
+                        periodo.includes(consulta) ||
+                        edad.includes(consulta)
                     );
 
                 }
@@ -560,16 +319,14 @@ window.cab18 = {
 
 
         /*
-        -----------------------------------------------
-        SIN RESULTADOS
-        -----------------------------------------------
+        --------------------------------------------
+        SIN INTERVALOS
+        --------------------------------------------
         */
 
-        if(
-            !intervalos.length
-        ){
+        if(!intervalos.length){
 
-            label.textContent =
+            label.textContent=
                 "0 resultados";
 
             return [];
@@ -578,9 +335,9 @@ window.cab18 = {
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         LEEPALJSON
-        -----------------------------------------------
+        --------------------------------------------
         */
 
         if(
@@ -589,7 +346,7 @@ window.cab18 = {
             "function"
         ){
 
-            label.textContent =
+            label.textContent=
                 "Datos de paleofichas no disponibles.";
 
             return [];
@@ -597,17 +354,13 @@ window.cab18 = {
         }
 
 
-        const fichas =
+        const fichas=
             window.LEEPALJSON.obtener();
 
 
-        if(
-            !Array.isArray(
-                fichas
-            )
-        ){
+        if(!Array.isArray(fichas)){
 
-            label.textContent =
+            label.textContent=
                 "0 resultados";
 
             return [];
@@ -616,82 +369,69 @@ window.cab18 = {
 
 
         /*
-        -----------------------------------------------
-        FILTRAR POR SOLAPAMIENTO TEMPORAL REAL
-        -----------------------------------------------
+        --------------------------------------------
+        COINCIDENCIAS TEMPORALES
+        --------------------------------------------
         */
 
-        const coincidencias =
+        const coincidencias=
             fichas.filter(
-                ficha => {
+                ficha=>{
 
                     if(
                         !ficha ||
                         !ficha.j3
                     ){
-
                         return false;
-
                     }
 
 
-                    const partes =
-                        String(
-                            ficha.j3
-                        )
-                        .trim()
-                        .split("-");
+                    const partes=
+                        String(ficha.j3)
+                            .split("-");
+
+
+                    if(partes.length!==2){
+                        return false;
+                    }
+
+
+                    const inicio=
+                        Number(partes[0]);
+
+                    const fin=
+                        Number(partes[1]);
 
 
                     if(
-                        partes.length !== 2
+                        !Number.isFinite(inicio) ||
+                        !Number.isFinite(fin)
                     ){
-
                         return false;
-
                     }
 
 
-                    const inicio =
-                        Number(
-                            partes[0]
-                        );
+                    /*
+                    --------------------------------
+                    SOLAPAMIENTO REAL
 
-
-                    const fin =
-                        Number(
-                            partes[1]
-                        );
-
-
-                    if(
-                        !Number.isFinite(
-                            inicio
-                        ) ||
-                        !Number.isFinite(
-                            fin
-                        )
-                    ){
-
-                        return false;
-
-                    }
-
+                    Los extremos solamente iguales
+                    NO cuentan como coincidencia.
+                    --------------------------------
+                    */
 
                     return intervalos.some(
-                        intervalo => {
+                        intervalo=>{
 
-                            const geoInicio =
+                            const geoInicio=
                                 Number(
                                     intervalo.inicio_ma
                                 );
 
-
-                            const geoFin =
+                            const geoFin=
                                 Number(
                                     intervalo.fin_ma
                                 );
-
 
                             if(
                                 !Number.isFinite(
@@ -701,26 +441,20 @@ window.cab18 = {
                                     geoFin
                                 )
                             ){
-
                                 return false;
-
                             }
 
 
-                            return (
-
+                            return(
                                 Math.min(
                                     inicio,
                                     geoInicio
                                 )
-
                                 >
-
                                 Math.max(
                                     fin,
                                     geoFin
                                 )
-
                             );
 
                         }
@@ -731,24 +465,24 @@ window.cab18 = {
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         CONTADOR
-        -----------------------------------------------
+        --------------------------------------------
         */
 
-        label.textContent =
+        label.textContent=
             coincidencias.length +
             (
-                coincidencias.length === 1
+                coincidencias.length===1
                     ? " resultado"
                     : " resultados"
             );
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         MOSTRAR
-        -----------------------------------------------
+        --------------------------------------------
         */
 
         this.mostrar(
@@ -757,14 +491,12 @@ window.cab18 = {
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         CHECK
-        -----------------------------------------------
+        --------------------------------------------
         */
 
-        if(
-            this.buscarTodos
-        ){
+        if(this.buscarTodos){
 
             await this.aplicarFiltro(
                 coincidencias
@@ -782,86 +514,76 @@ window.cab18 = {
       MOSTRAR RESULTADOS
     ====================================================*/
 
-    mostrar: function(
-        coincidencias
-    ){
+    mostrar:function(coincidencias){
 
-        const contenedor =
+        const contenedor=
             document.getElementById(
                 "resultadosCab16"
             );
 
-
-        if(
-            !contenedor
-        ){
-
+        if(!contenedor){
             return;
-
         }
 
 
-        contenedor.innerHTML = "";
-
-
         coincidencias.forEach(
-            ficha => {
+            ficha=>{
 
                 if(
-                    !ficha
+                    !ficha ||
+                    !ficha.codigo
                 ){
-
                     return;
-
                 }
 
 
-                const codigo =
+                const codigo=
                     String(
-                        ficha.codigo ||
-                        ficha.j1 ||
-                        ""
+                        ficha.codigo
                     )
                     .trim()
                     .toUpperCase();
 
 
-                if(
-                    !codigo
-                ){
+                /*
+                ----------------------------------------
+                NOMBRE REAL
 
-                    return;
+                Primero nombre.
+                j2 queda como respaldo.
+                ----------------------------------------
+                */
 
-                }
+                const nombre=
+                    String(
+                        ficha.nombre ||
+                        ficha.j2 ||
+                        "Sin nombre"
+                    )
+                    .trim();
 
 
-                const nombre =
-                    this.obtenerNombre(
-                        ficha
-                    );
-
-
-                const fila =
+                const fila=
                     document.createElement(
                         "div"
                     );
 
 
-                fila.className =
+                fila.className=
                     "resultadoCab16";
 
 
-                fila.dataset.codigo =
+                fila.dataset.codigo=
                     codigo;
 
 
                 /*
                 ----------------------------------------
-                CÓDIGO + NOMBRE REAL
+                CÓDIGO + NOMBRE
                 ----------------------------------------
                 */
 
-                fila.textContent =
+                fila.textContent=
                     codigo +
                     "   " +
                     nombre;
@@ -869,12 +591,10 @@ window.cab18 = {
 
                 fila.addEventListener(
                     "click",
-                    () => {
-
+                    ()=>{
                         this.seleccionar(
                             codigo
                         );
-
                     }
                 );
 
@@ -892,26 +612,22 @@ window.cab18 = {
       APLICAR FILTRO
     ====================================================*/
 
-    aplicarFiltro: async function(
+    aplicarFiltro:async function(
         coincidencias
     ){
 
         if(
-            !Array.isArray(
-                coincidencias
-            ) ||
+            !Array.isArray(coincidencias) ||
             !coincidencias.length
         ){
-
             return;
-
         }
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         MATRIXFILTRO
-        -----------------------------------------------
+        --------------------------------------------
         */
 
         if(
@@ -919,33 +635,25 @@ window.cab18 = {
             typeof window.MATRIXFILTRO.actualizar !==
             "function"
         ){
-
             return;
-
         }
 
 
-        const matrizJ1 =
+        const matrizJ1=
             window.MATRIXFILTRO.actualizar(
                 coincidencias
             );
 
 
-        if(
-            !Array.isArray(
-                matrizJ1
-            )
-        ){
-
+        if(!Array.isArray(matrizJ1)){
             return;
-
         }
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         MATRIXNAVEGADOR
-        -----------------------------------------------
+        --------------------------------------------
         */
 
         if(
@@ -953,9 +661,7 @@ window.cab18 = {
             typeof window.MatrixNavegador.obtener !==
             "function"
         ){
-
             return;
-
         }
 
 
@@ -964,18 +670,16 @@ window.cab18 = {
 
         try{
 
-            registros =
+            registros=
                 await window.MatrixNavegador.obtener(
                     matrizJ1
                 );
 
         }
-        catch(
-            error
-        ){
+        catch(error){
 
             console.warn(
-                "cab18: error MatrixNavegador.",
+                "cab18: error MatrixNavegador",
                 error
             );
 
@@ -985,21 +689,17 @@ window.cab18 = {
 
 
         if(
-            !Array.isArray(
-                registros
-            ) ||
+            !Array.isArray(registros) ||
             !registros.length
         ){
-
             return;
-
         }
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         PALNAVEGADOR
-        -----------------------------------------------
+        --------------------------------------------
         */
 
         if(
@@ -1007,9 +707,7 @@ window.cab18 = {
             typeof window.PALNAVEGADOR.aplicarFiltro !==
             "function"
         ){
-
             return;
-
         }
 
 
@@ -1019,16 +717,13 @@ window.cab18 = {
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         ALEATORIO AUTOMÁTICO
-        -----------------------------------------------
 
         CHECK ACTIVADO
         +
-        SIN SELECCIÓN MANUAL
-
-        → aleatorio dentro del rango.
-        -----------------------------------------------
+        NO HAY SELECCIÓN MANUAL
+        --------------------------------------------
         */
 
         if(
@@ -1042,12 +737,10 @@ window.cab18 = {
                 await window.PALNAVEGADOR.aleatorio();
 
             }
-            catch(
-                error
-            ){
+            catch(error){
 
                 console.warn(
-                    "cab18: error aleatorio.",
+                    "cab18: error aleatorio",
                     error
                 );
 
@@ -1059,85 +752,68 @@ window.cab18 = {
 
 
     /*====================================================
-      SELECCIONAR RESULTADO
+      SELECCIONAR
     ====================================================*/
 
-    seleccionar: async function(
+    seleccionar:async function(
         codigo
     ){
 
-        codigo =
-            String(
-                codigo || ""
-            )
-            .trim()
-            .toUpperCase();
+        codigo=
+            String(codigo || "")
+                .trim()
+                .toUpperCase();
 
 
-        if(
-            !codigo
-        ){
-
+        if(!codigo){
             return;
-
         }
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         SELECCIÓN MANUAL
-        -----------------------------------------------
+        --------------------------------------------
         */
 
-        this.seleccionRealizada =
-            true;
+        this.seleccionRealizada=true;
 
 
-        const campo =
+        const campo=
             document.getElementById(
                 "buscarUniversal"
             );
 
 
-        if(
-            campo
-        ){
-
-            campo.value =
-                codigo;
-
+        if(campo){
+            campo.value=codigo;
         }
 
 
-        const label =
+        const label=
             document.getElementById(
                 "labelBusquedaUniversal"
             );
 
 
-        if(
-            label
-        ){
-
-            label.textContent =
-                codigo;
-
+        if(label){
+            label.textContent=codigo;
         }
 
 
         /*
-        -----------------------------------------------
-        CERRAR
-        -----------------------------------------------
+        --------------------------------------------
+        CERRAR BUSCADOR
+        --------------------------------------------
         */
 
         this.cerrar();
 
 
         /*
-        -----------------------------------------------
+        --------------------------------------------
         CARGAR FICHA
-        -----------------------------------------------
+        --------------------------------------------
         */
 
         if(
@@ -1153,12 +829,10 @@ window.cab18 = {
                 );
 
             }
-            catch(
-                error
-            ){
+            catch(error){
 
                 console.warn(
-                    "cab18: error cargando selección.",
+                    "cab18: error cargando ficha",
                     error
                 );
 
@@ -1173,7 +847,7 @@ window.cab18 = {
       CERRAR
     ====================================================*/
 
-    cerrar: function(){
+    cerrar:function(){
 
         if(
             window.PALBUSCADOR &&
@@ -1188,40 +862,28 @@ window.cab18 = {
         }
 
 
-        const ids = [
-
+        const ids=[
             "lightboxBuscador",
-
             "buscadorLightbox",
-
             "lightboxBusqueda",
-
             "modalBuscador"
-
         ];
 
 
         ids.forEach(
-            id => {
+            id=>{
 
-                const elemento =
-                    document.getElementById(
-                        id
-                    );
+                const elemento=
+                    document.getElementById(id);
 
+                if(elemento){
 
-                if(
-                    elemento
-                ){
-
-                    elemento.style.display =
+                    elemento.style.display=
                         "none";
-
 
                     elemento.classList.remove(
                         "activo"
                     );
-
 
                     elemento.classList.remove(
                         "visible"
@@ -1243,10 +905,8 @@ ARRANQUE
 
 document.addEventListener(
     "DOMContentLoaded",
-    function(){
-
+    ()=>{
         window.cab18.inicializar();
-
     }
 );
 
@@ -1256,4 +916,3 @@ document.addEventListener(
 FIN cab18.js v1.5 LTS
 ========================================================
 */
-
