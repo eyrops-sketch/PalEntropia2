@@ -755,6 +755,15 @@ BUSCADOR UNIVERSAL — CAB15
 }
 
 /*=========================================================
+OCULTAR BOTÓN EXPLORAR PALEOFICHAS
+La función JS permanece intacta.
+=========================================================*/
+
+#botonExplorar{
+ display:none!important;
+}
+
+/*=========================================================
 SCROLL
 =========================================================*/
 
@@ -774,15 +783,6 @@ SCROLL
 
 #ventanaBuscador::-webkit-scrollbar-thumb:hover{
  background:#00e5ff;
-}
-
-/*=========================================================
-OCULTAR BOTÓN EXPLORAR PALEOFICHAS
-La función permanece intacta.
-=========================================================*/
-
-#botonExplorar{
- display:none!important;
 }
 
 /*=========================================================
@@ -868,14 +868,18 @@ RESPONSIVE
   font-size:13px;
  }
 
- .resultadoNombre{font-size:15px}
+ .resultadoNombre{
+  font-size:15px;
+ }
 
  #imagenAmpliada{
   max-width:94vw;
   max-height:88vh;
  }
 
- #filtroActivo{font-size:13px}
+ #filtroActivo{
+  font-size:13px;
+ }
 
  #controlesBusquedaUniversal{
   gap:6px;
