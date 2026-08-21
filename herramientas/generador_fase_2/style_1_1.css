@@ -563,7 +563,6 @@ SIN RESULTADOS
 
 /*=========================================================
 FILTRO ACTIVO
-PREPARACIÓN VISUAL
 =========================================================*/
 
 #filtroActivo{
@@ -619,7 +618,6 @@ PREPARACIÓN VISUAL
 
 /*=========================================================
 BOTÓN TODOS
-PREPARACIÓN VISUAL
 =========================================================*/
 
 #botonTodos{
@@ -826,6 +824,121 @@ SCROLL EXPLORADOR
 
 
 /*=========================================================
+CAB15
+CONTROLES DEL BUSCADOR UNIVERSAL
+=========================================================*/
+
+#controlesBusquedaUniversal{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:9px;
+
+    margin:10px auto 14px;
+
+}
+
+
+/*=========================================================
+ETIQUETA — BUSCADOR UNIVERSAL
+=========================================================*/
+
+#labelBusquedaUniversal{
+
+    min-width:0;
+
+    padding:6px 4px;
+
+    color:#b56cff;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    line-height:1.2;
+
+    text-align:center;
+
+    white-space:nowrap;
+
+    text-shadow:
+        0 0 8px rgba(181,108,255,.22);
+
+}
+
+
+/*=========================================================
+BOTONES BUSCADOR UNIVERSAL
+=========================================================*/
+
+.botonBusquedaUniversal{
+
+    width:40px;
+
+    height:34px;
+
+    min-width:40px;
+
+    padding:0;
+
+    border:1px solid #62d6ff;
+
+    border-radius:9px;
+
+    background:#151719;
+
+    color:#62d6ff;
+
+    font-size:17px;
+
+    line-height:1;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 8px rgba(98,214,255,.16);
+
+    transition:
+        background .20s ease,
+        color .20s ease,
+        transform .15s ease,
+        box-shadow .20s ease;
+
+}
+
+
+.botonBusquedaUniversal:hover{
+
+    background:#62d6ff;
+
+    color:#001018;
+
+    box-shadow:
+        0 0 14px rgba(98,214,255,.32);
+
+}
+
+
+.botonBusquedaUniversal:active{
+
+    transform:scale(.94);
+
+}
+
+
+/*=========================================================
 RESPONSIVE
 =========================================================*/
 
@@ -933,146 +1046,45 @@ RESPONSIVE
         font-size:13px;
     }
 
-}
-/*=========================================================
-CAB15
-CONTROLES DEL BUSCADOR UNIVERSAL
-=========================================================*/
 
-#controlesBusquedaUniversal{
-
-    width:100%;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    gap:10px;
-
-    margin:10px auto 12px;
-
-}
-
-
-.botonBusquedaUniversal{
-
-    width:36px;
-
-    height:36px;
-
-    min-width:36px;
-
-    padding:0;
-
-    border:2px solid #62d6ff;
-
-    border-radius:50%;
-
-    background:#1d9bf0;
-
-    color:#fff;
-
-    font-size:17px;
-
-    line-height:32px;
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    cursor:pointer;
-
-    box-shadow:
-        0 0 8px rgba(98,214,255,.18);
-
-    transition:
-        background .20s ease,
-        color .20s ease,
-        transform .15s ease,
-        box-shadow .20s ease;
-
-}
-
-
-.botonBusquedaUniversal:hover{
-
-    background:#62d6ff;
-
-    color:#001018;
-
-    box-shadow:
-        0 0 14px rgba(98,214,255,.30);
-
-}
-
-
-.botonBusquedaUniversal:active{
-
-    transform:scale(.90);
-
-}
-
-
-#labelBusquedaUniversal{
-
-    min-width:0;
-
-    padding:6px 12px;
-
-    text-align:center;
-
-    color:#aaa;
-
-    font-size:14px;
-
-    font-weight:600;
-
-    white-space:nowrap;
-
-}
-
-
-/*=========================================================
-CAB15 — RESPONSIVE
-=========================================================*/
-
-@media (max-width:768px){
+    /*---------------------------------------------
+      CAB15 — BUSCADOR UNIVERSAL
+    ---------------------------------------------*/
 
     #controlesBusquedaUniversal{
 
-        gap:8px;
+        gap:7px;
 
-        margin:8px auto 10px;
-
-    }
-
-
-    .botonBusquedaUniversal{
-
-        width:34px;
-
-        height:34px;
-
-        min-width:34px;
-
-        font-size:16px;
+        margin:8px auto 12px;
 
     }
 
 
     #labelBusquedaUniversal{
 
-        font-size:13px;
+        font-size:16px;
 
-        padding:5px 8px;
+        padding:5px 2px;
+
+    }
+
+
+    .botonBusquedaUniversal{
+
+        width:38px;
+
+        height:32px;
+
+        min-width:38px;
+
+        border-radius:8px;
+
+        font-size:16px;
 
     }
 
 }
+
 
 /*=========================================================
 FIN STYLE.CSS v2.1
