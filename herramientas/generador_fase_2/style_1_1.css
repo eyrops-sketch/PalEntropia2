@@ -558,10 +558,13 @@ BOTÓN TODOS
 }
 
 /*---------------------------------------------------------
- HOME
+ HOME — FIJO ARRIBA A LA DERECHA
 ---------------------------------------------------------*/
 
 #botonMenuPrincipal{
+ position:fixed;
+ top:10px;
+ right:10px;
  width:34px;
  height:34px;
  padding:0;
@@ -570,13 +573,14 @@ BOTÓN TODOS
  background:#1d9bf0;
  color:#fff;
  font-size:17px;
- display:inline-flex;
+ line-height:30px;
+ display:flex;
  align-items:center;
  justify-content:center;
  cursor:pointer;
+ z-index:10000;
  box-shadow:0 0 10px rgba(98,214,255,.25);
  transition:.25s;
- position:relative;
 }
 
 #botonMenuPrincipal:hover{
@@ -588,6 +592,9 @@ BOTÓN TODOS
 #botonMenuPrincipal:active{
  transform:scale(.92);
 }
+
+
+
 
 /*---------------------------------------------------------
  ALEATORIO
