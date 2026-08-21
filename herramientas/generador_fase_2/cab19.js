@@ -1,15 +1,24 @@
 /*
 ========================================================
 PalEntropía
-cab19.js v1.1 LTS
+cab19.js v1.2 LTS
 
-BUSCADOR AVANZADO POR TAXÓN
+BUSCADOR AVANZADO — TAXÓN
 
-3 caracteres  → CAB17 NOMBRE
-4 caracteres  → CAB18 GEOLOGÍA
-5+ caracteres → CAB19 TAXÓN
+CAB16 → CÓDIGO
+CAB17 → NOMBRE
+CAB18 → TIEMPO GEOLÓGICO
+CAB19 → TAXÓN
 
-CAB19 NO INTERFIERE CON CAB16/CAB17/CAB18
+PRIORIDAD:
+1. Código
+2. Nombre
+3. Tiempo geológico
+4. Taxón
+
+CAB19 ACTÚA DESDE 5 CARACTERES.
+
+NO INTERFIERE CON CAB17 NI CAB18.
 ========================================================
 */
 
@@ -25,7 +34,9 @@ window.cab19 = {
 
     inicializar:function(){
 
-        if(this.inicializado) return;
+        if(this.inicializado){
+            return;
+        }
 
         this.conectar();
 
@@ -73,7 +84,9 @@ window.cab19 = {
                 "buscarUniversal"
             );
 
-        if(!campo) return;
+        if(!campo){
+            return;
+        }
 
 
         campo.addEventListener(
@@ -87,7 +100,7 @@ window.cab19 = {
 
 
                 /*
-                CAB16
+                CÓDIGO → CAB16
                 */
 
                 if(this.esCodigo(texto)){
@@ -96,16 +109,10 @@ window.cab19 = {
 
 
                 /*
-                MUY IMPORTANTE:
-
-                CAB19 SOLO ACTÚA A PARTIR
-                DE 5 CARACTERES.
-
-                No toca las consultas de
-                CAB17 ni CAB18.
+                CAB17 Y CAB18
                 */
 
-                if(texto.length < 5){
+                if(texto.length<5){
                     return;
                 }
 
@@ -119,7 +126,7 @@ window.cab19 = {
 
 
     /*====================================================
-      BUSCAR TAXÓN
+      BUSCAR
     ====================================================*/
 
     buscar:async function(){
@@ -140,8 +147,14 @@ window.cab19 = {
             );
 
 
-        if(!campo || !label || !resultados){
+        if(
+            !campo ||
+            !label ||
+            !resultados
+        ){
+
             return [];
+
         }
 
 
@@ -150,11 +163,11 @@ window.cab19 = {
 
 
         /*
-        CAB19 NO TOCA CONSULTAS CORTAS
+        CAB19 SOLO DESDE 5
         */
 
         if(
-            texto.length < 5 ||
+            texto.length<5 ||
             this.esCodigo(texto)
         ){
 
@@ -163,8 +176,120 @@ window.cab19 = {
         }
 
 
+        /*
+        ==================================================
+        PRIORIDAD NOMBRE
+        ==================================================
+        */
+
+        if(
+            window.PALBUSCADOR &&
+            typeof window.PALBUSCADOR.buscarPorNombre===
+            "function"
+        ){
+
+            try{
+
+                const nombres =
+                    await window.PALBUSCADOR.buscarPorNombre(
+                        texto
+                    );
+
+
+                /*
+                Si CAB17 encuentra algo,
+                CAB19 NO TOCA NADA.
+                */
+
+                if(
+                    Array.isArray(nombres) &&
+                    nombres.length
+                ){
+
+                    return nombres;
+
+                }
+
+            }
+            catch(error){}
+
+        }
+
+
+        /*
+        ==================================================
+        PRIORIDAD GEOLOGÍA
+        ==================================================
+        */
+
+        if(
+            Array.isArray(window.PALGEO)
+        ){
+
+            const consulta =
+                this.normalizar(texto);
+
+
+            const geo =
+                window.PALGEO.some(
+                    intervalo=>{
+
+                        if(!intervalo){
+                            return false;
+                        }
+
+
+                        return [
+
+                            intervalo.eon,
+                            intervalo.era,
+                            intervalo.periodo,
+                            intervalo.edad
+
+                        ].some(
+                            valor=>
+                                this.normalizar(
+                                    valor
+                                ).includes(
+                                    consulta
+                                )
+                        );
+
+                    }
+                );
+
+
+            /*
+            Si CAB18 reconoce la consulta,
+            CAB19 NO TOCA NADA.
+
+            Permi → Pérmico
+            Cretác → Cretácico
+            */
+
+            if(geo){
+
+                return [];
+
+            }
+
+        }
+
+
+        /*
+        ==================================================
+        LIMPIAR SOLO AHORA
+        ==================================================
+        */
+
         resultados.innerHTML="";
 
+
+        /*
+        ==================================================
+        PALTAXON
+        ==================================================
+        */
 
         if(!window.PALTAXON){
 
@@ -176,9 +301,15 @@ window.cab19 = {
         }
 
 
+        /*
+        ==================================================
+        LEEPALJSON
+        ==================================================
+        */
+
         if(
             !window.LEEPALJSON ||
-            typeof window.LEEPALJSON.obtener !==
+            typeof window.LEEPALJSON.obtener!==
             "function"
         ){
 
@@ -204,85 +335,50 @@ window.cab19 = {
         }
 
 
-        const consulta =
-            this.normalizar(texto);
-
-
         /*
         ==================================================
-        MAPA J1 → J2
+        MAPA J1 → J2 REAL
         ==================================================
 
-        Aquí está la corrección importante.
-
-        No asumimos que el resultado de la consulta
-        contiene "nombre".
-
-        LEEPALJSON es la fuente de J2 decodificado.
+        EXACTAMENTE COMO CAB18.
 
         */
 
-        const mapaJ2 =
+        let mapaNombres =
             new Map();
 
 
-        fichas.forEach(
-            ficha=>{
+        if(
+            window.PALBUSCADOR &&
+            typeof window.PALBUSCADOR.obtenerMapaNombres===
+            "function"
+        ){
 
-                if(
-                    !ficha ||
-                    !ficha.codigo
-                ){
-                    return;
-                }
+            try{
 
-
-                const codigo =
-                    String(
-                        ficha.codigo
-                    )
-                    .trim()
-                    .toUpperCase();
-
-
-                /*
-                LEEPALJSON v1.1 prepara:
-
-                codigo
-                nombre
-                j3
-                dieta
-                anatomia
-
-                */
-
-                const nombre =
-                    String(
-                        ficha.nombre ||
-                        ficha.j2 ||
-                        ""
-                    )
-                    .trim();
-
-
-                if(nombre){
-
-                    mapaJ2.set(
-                        codigo,
-                        nombre
-                    );
-
-                }
+                mapaNombres =
+                    await window.PALBUSCADOR.obtenerMapaNombres();
 
             }
-        );
+            catch(error){
+
+                mapaNombres =
+                    new Map();
+
+            }
+
+        }
 
 
         /*
         ==================================================
-        BUSCAR EN PALTAXON
+        CONSULTA TAXONÓMICA
         ==================================================
         */
+
+        const consulta =
+            this.normalizar(texto);
+
 
         const coincidencias=[];
 
@@ -296,7 +392,9 @@ window.cab19 = {
                     window.PALTAXON[codigo];
 
 
-                if(!taxon) return;
+                if(!taxon){
+                    return;
+                }
 
 
                 const ta1 =
@@ -314,17 +412,14 @@ window.cab19 = {
                 /*
                 BÚSQUEDA PARCIAL
 
-                diaps
-                ↓
-                diápsido
+                Diaps
+                → Diápsido
 
-                tyran
-                ↓
-                tyrannosauridae
+                Tyran
+                → Tyrannosauridae
 
-                drome
-                ↓
-                dromaeosauridae
+                Drome
+                → Dromeosáurido
                 */
 
                 if(
@@ -338,27 +433,28 @@ window.cab19 = {
 
 
                 const j1 =
-                    String(
-                        codigo
-                    )
+                    String(codigo)
                     .trim()
                     .toUpperCase();
 
 
                 /*
-                J2 DECODIFICADO
+                J2 REAL
+
+                NO usamos ficha.nombre
+                porque puede contener j2.
+
                 */
 
-                const j2 =
-                    mapaJ2.get(j1);
+                const nombre =
+                    mapaNombres.get(j1);
 
 
                 /*
-                Si no existe J2 real,
-                NO INVENTAMOS NADA.
+                NO INVENTAR J2
                 */
 
-                if(!j2){
+                if(!nombre){
                     return;
                 }
 
@@ -366,11 +462,8 @@ window.cab19 = {
                 coincidencias.push({
 
                     codigo:j1,
-
-                    nombre:j2,
-
+                    nombre:nombre,
                     tipo:"taxon",
-
                     relevancia:100
 
                 });
@@ -380,7 +473,9 @@ window.cab19 = {
 
 
         /*
+        ==================================================
         ÚNICOS
+        ==================================================
         */
 
         const unicas =
@@ -396,6 +491,12 @@ window.cab19 = {
             );
 
 
+        /*
+        ==================================================
+        CONTADOR
+        ==================================================
+        */
+
         label.textContent =
             unicas.length +
             (
@@ -405,10 +506,22 @@ window.cab19 = {
             );
 
 
+        /*
+        ==================================================
+        MOSTRAR
+        ==================================================
+        */
+
         this.mostrar(
             unicas
         );
 
+
+        /*
+        ==================================================
+        MATRIX
+        ==================================================
+        */
 
         if(unicas.length){
 
@@ -440,7 +553,10 @@ window.cab19 = {
                 "resultadosCab16"
             );
 
-        if(!contenedor) return;
+
+        if(!contenedor){
+            return;
+        }
 
 
         coincidencias.forEach(
@@ -450,7 +566,9 @@ window.cab19 = {
                     !ficha ||
                     !ficha.codigo
                 ){
+
                     return;
+
                 }
 
 
@@ -465,7 +583,7 @@ window.cab19 = {
                 const nombre =
                     String(
                         ficha.nombre ||
-                        "Sin nombre"
+                        ""
                     )
                     .trim();
 
@@ -483,12 +601,6 @@ window.cab19 = {
                 fila.dataset.codigo =
                     codigo;
 
-
-                /*
-                PRESENTACIÓN FINAL:
-
-                J1 + J2
-                */
 
                 fila.textContent =
                     codigo +
@@ -515,6 +627,7 @@ window.cab19 = {
 
     },
 
+
     /*====================================================
       APLICAR MATRIX
     ====================================================*/
@@ -528,8 +641,6 @@ window.cab19 = {
             !coincidencias.length
         ){
 
-            this.limpiarFiltro();
-
             return;
 
         }
@@ -537,7 +648,7 @@ window.cab19 = {
 
         if(
             !window.MATRIXFILTRO ||
-            typeof window.MATRIXFILTRO.actualizar !==
+            typeof window.MATRIXFILTRO.actualizar!==
             "function"
         ){
 
@@ -564,7 +675,7 @@ window.cab19 = {
 
         if(
             !window.MatrixNavegador ||
-            typeof window.MatrixNavegador.obtener !==
+            typeof window.MatrixNavegador.obtener!==
             "function"
         ){
 
@@ -586,11 +697,6 @@ window.cab19 = {
         }
         catch(error){
 
-            console.warn(
-                "cab19: error MatrixNavegador.",
-                error
-            );
-
             return;
 
         }
@@ -608,7 +714,7 @@ window.cab19 = {
 
         if(
             !window.PALNAVEGADOR ||
-            typeof window.PALNAVEGADOR.aplicarFiltro !==
+            typeof window.PALNAVEGADOR.aplicarFiltro!==
             "function"
         ){
 
@@ -617,22 +723,14 @@ window.cab19 = {
         }
 
 
-        /*
-        RANGO TAXONÓMICO
-        */
-
         window.PALNAVEGADOR.aplicarFiltro(
             registros
         );
 
 
-        /*
-        ALEATORIO DENTRO DEL RANGO
-        */
-
         if(
             !this.seleccionRealizada &&
-            typeof window.PALNAVEGADOR.aleatorio ===
+            typeof window.PALNAVEGADOR.aleatorio===
             "function"
         ){
 
@@ -641,14 +739,7 @@ window.cab19 = {
                 await window.PALNAVEGADOR.aleatorio();
 
             }
-            catch(error){
-
-                console.warn(
-                    "cab19: error en aleatorio.",
-                    error
-                );
-
-            }
+            catch(error){}
 
         }
 
@@ -669,7 +760,9 @@ window.cab19 = {
             .toUpperCase();
 
 
-        if(!codigo) return;
+        if(!codigo){
+            return;
+        }
 
 
         this.seleccionRealizada=true;
@@ -682,10 +775,7 @@ window.cab19 = {
 
 
         if(campo){
-
-            campo.value =
-                codigo;
-
+            campo.value=codigo;
         }
 
 
@@ -696,10 +786,7 @@ window.cab19 = {
 
 
         if(label){
-
-            label.textContent =
-                codigo;
-
+            label.textContent=codigo;
         }
 
 
@@ -708,7 +795,7 @@ window.cab19 = {
 
         if(
             window.PALNAVEGADOR &&
-            typeof window.PALNAVEGADOR.cargarPorCodigo ===
+            typeof window.PALNAVEGADOR.cargarPorCodigo===
             "function"
         ){
 
@@ -719,14 +806,7 @@ window.cab19 = {
                 );
 
             }
-            catch(error){
-
-                console.warn(
-                    "cab19: error cargando selección.",
-                    error
-                );
-
-            }
+            catch(error){}
 
         }
 
@@ -741,7 +821,7 @@ window.cab19 = {
 
         if(
             window.PALBUSCADOR &&
-            typeof window.PALBUSCADOR.cerrar ===
+            typeof window.PALBUSCADOR.cerrar===
             "function"
         ){
 
@@ -757,6 +837,7 @@ window.cab19 = {
             "buscadorLightbox",
             "lightboxBusqueda",
             "modalBuscador"
+
         ].forEach(
             id=>{
 
@@ -792,7 +873,7 @@ window.cab19 = {
 
         if(
             window.PALNAVEGADOR &&
-            typeof window.PALNAVEGADOR.limpiarFiltro ===
+            typeof window.PALNAVEGADOR.limpiarFiltro===
             "function"
         ){
 
@@ -803,7 +884,7 @@ window.cab19 = {
 
         if(
             window.MatrixNavegador &&
-            typeof window.MatrixNavegador.limpiar ===
+            typeof window.MatrixNavegador.limpiar===
             "function"
         ){
 
@@ -832,6 +913,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab19.js v1.1 LTS
+FIN cab19.js v1.2 LTS
 ========================================================
 */
