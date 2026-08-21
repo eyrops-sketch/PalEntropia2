@@ -460,9 +460,23 @@
   "nombre": "Kosmoceratops",
   "dieta": "Herbívoro",
   "anatomia": "Ceratopsio de gran tamaño con cráneo provisto de una amplia gola ósea y numerosos cuernos y estructuras ornamentales"
+  },
+  {
+    "codigo": "006_03",
+    "nombre": "Nothosaurus",
+    "dieta": "Carnívoro",
+    "anatomia": "Reptil acuático de cuerpo alargado, cuello relativamente largo, extremidades adaptadas a la natación y mandíbulas provistas de dientes cónicos para capturar peces y otros animales acuáticos"
   }
 
+  
 ]
+
+
+
+
+
+
+
 
 
 
