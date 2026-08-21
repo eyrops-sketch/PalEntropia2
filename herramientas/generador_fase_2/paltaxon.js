@@ -391,8 +391,12 @@ window.PALTAXON = {
 "006_02":{
   ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Ceratopsia > Chasmosauridae",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Ceratopsio. Casmosáurido."
+},
+"006_03":{
+  ta1:"Animalia > Chordata > Sauropterygia > Nothosauroidea > Nothosauridae",
+  ta2:"Diápsido. Sauropterigio. Nothosauroideo. Notosáurido."
 }
-
+  
 };
 
 
