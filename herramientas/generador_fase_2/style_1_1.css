@@ -45,7 +45,7 @@ h1{
 }
 
 /*=========================================================
-CONTROLES DEL BUSCADOR
+CONTROLES DEL BUSCADOR ANTIGUO
 =========================================================*/
 
 #controlesBusqueda{
@@ -55,6 +55,12 @@ CONTROLES DEL BUSCADOR
  gap:10px;
  flex-wrap:wrap;
  margin:25px 0 18px;
+}
+
+/* OCULTAR BOTÓN ANTIGUO
+   La función sigue existiendo en JS */
+#botonBuscar{
+ display:none!important;
 }
 
 #controlesBusqueda button{
@@ -371,6 +377,9 @@ LIGHTBOX IMÁGENES
 EXPLORADOR ANTIGUO
 =========================================================*/
 
+/* El sistema antiguo permanece disponible,
+   pero su botón de acceso ya no aparece. */
+
 #visorBuscador{
  display:none;
  position:fixed;
@@ -414,7 +423,7 @@ EXPLORADOR ANTIGUO
  text-align:center;
  background:#151719;
  color:#fff;
- border:2px solid #62d6ff;
+ border:2px solid #62d6ff!important;
  border-radius:10px;
  outline:none;
 }
@@ -697,7 +706,7 @@ NAVEGACIÓN
 }
 
 /*=========================================================
-BUSCADOR UNIVERSAL — CAB15
+BUSCADOR UNIVERSAL — CAB15 / CAB16
 =========================================================*/
 
 #controlesBusquedaUniversal{
@@ -709,13 +718,16 @@ BUSCADOR UNIVERSAL — CAB15
  margin:10px auto 12px;
 }
 
+/* La etiqueta queda a la izquierda
+   y los dos botones juntos a su derecha */
+
 #labelBusquedaUniversal{
  order:1;
  flex:0 0 auto;
  min-width:0;
  padding:6px 12px;
- color:#62d6ff;
- border:1px solid #62d6ff;
+ color:#62d6ff!important;
+ border:1px solid #62d6ff!important;
  border-radius:9px;
  background:#151719;
  font-size:16px;
@@ -725,6 +737,8 @@ BUSCADOR UNIVERSAL — CAB15
  text-align:center;
  box-shadow:0 0 8px rgba(98,214,255,.14);
 }
+
+/* Ambos botones permanecen agrupados */
 
 .botonBusquedaUniversal{
  width:38px;
@@ -755,9 +769,63 @@ BUSCADOR UNIVERSAL — CAB15
 }
 
 /*=========================================================
-OCULTAR BOTÓN EXPLORAR PALEOFICHAS
-La función JS permanece intacta.
+CAB16 — CABECERA
 =========================================================*/
+
+#cab16Busqueda h2,
+#cab16BusquedaUniversal h2,
+.tituloCAB16{
+ color:#b56cff!important;
+ font-size:22px;
+ font-weight:bold;
+ text-align:center;
+}
+
+/*=========================================================
+CAB16 — ETIQUETA RESULTADOS
+=========================================================*/
+
+#labelBusquedaUniversal{
+ color:#62d6ff!important;
+ border-color:#62d6ff!important;
+}
+
+/*=========================================================
+CAB16 / CAB17 — CAJA DE TEXTO
+=========================================================*/
+
+#buscarNombreCAB16,
+#inputBusquedaCAB16,
+#inputBusquedaUniversal,
+#campoBusquedaCAB16,
+#buscarNombre{
+ border:2px solid #62d6ff!important;
+ outline:none;
+ background:#151719;
+ color:#fff;
+ border-radius:10px;
+}
+
+#buscarNombreCAB16:focus,
+#inputBusquedaCAB16:focus,
+#inputBusquedaUniversal:focus,
+#campoBusquedaCAB16:focus,
+#buscarNombre:focus{
+ border-color:#62d6ff!important;
+ box-shadow:0 0 12px rgba(98,214,255,.28);
+}
+
+/*=========================================================
+OCULTAR EXPLORAR PALEOFICHAS
+=========================================================*/
+
+/* ID real presente en el HTML */
+#botonBuscar{
+ display:none!important;
+}
+
+/* Compatibilidad por si algún módulo
+   genera el botón antiguo */
 
 #botonExplorar{
  display:none!important;
@@ -791,11 +859,17 @@ RESPONSIVE
 
 @media(max-width:768px){
 
- body{padding:15px}
+ body{
+  padding:15px;
+ }
 
- h1{font-size:30px}
+ h1{
+  font-size:30px;
+ }
 
- #subtitulo{font-size:16px}
+ #subtitulo{
+  font-size:16px;
+ }
 
  #controlesBusqueda{
   margin:20px 0 15px;
@@ -806,7 +880,9 @@ RESPONSIVE
   max-width:420px;
  }
 
- #estado{font-size:13px}
+ #estado{
+  font-size:13px;
+ }
 
  #ficha{
   padding:18px;
@@ -817,7 +893,9 @@ RESPONSIVE
   font-size:clamp(24px,7vw,34px);
  }
 
- #cronologia{font-size:18px}
+ #cronologia{
+  font-size:18px;
+ }
 
  #bloqueInfo{
   font-size:18px;
@@ -829,7 +907,9 @@ RESPONSIVE
   max-width:520px;
  }
 
- #galeria{gap:10px}
+ #galeria{
+  gap:10px;
+ }
 
  #galeria img{
   width:43%;
