@@ -175,6 +175,89 @@ VENTANA
 
 
 /*=========================================================
+BOTÓN CERRAR
+=========================================================*/
+
+#lightboxEstadisticas > div > button{
+
+    position:absolute;
+
+    top:10px;
+
+    right:10px;
+
+    width:34px;
+
+    height:34px;
+
+    min-width:34px;
+
+    min-height:34px;
+
+    padding:0;
+
+    margin:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#000 !important;
+
+    color:#fff !important;
+
+    border:2px solid #62d6ff !important;
+
+    border-radius:50% !important;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:21px;
+
+    font-weight:normal;
+
+    line-height:1;
+
+    cursor:pointer;
+
+    box-sizing:border-box;
+
+    z-index:10;
+
+    box-shadow:
+        0 0 10px rgba(98,214,255,.25);
+
+    transition:
+        background .25s,
+        color .25s,
+        transform .15s,
+        box-shadow .25s;
+
+}
+
+
+#lightboxEstadisticas > div > button:hover{
+
+    background:#151719 !important;
+
+    color:#62d6ff !important;
+
+    box-shadow:
+        0 0 15px rgba(98,214,255,.42);
+
+}
+
+
+#lightboxEstadisticas > div > button:active{
+
+    transform:scale(.92);
+
+}
+
+
+/*=========================================================
 TÍTULO PRINCIPAL
 =========================================================*/
 
@@ -182,7 +265,7 @@ TÍTULO PRINCIPAL
 
     margin:0 0 8px;
 
-    padding-right:38px;
+    padding-right:40px;
 
     color:#62d6ff !important;
 
@@ -480,85 +563,6 @@ INDICADORES — BARRA
 
 
 /*=========================================================
-BOTÓN CERRAR
-=========================================================*/
-
-#lightboxEstadisticas button{
-
-    width:34px;
-
-    height:34px;
-
-    min-width:34px;
-
-    min-height:34px;
-
-    padding:0;
-
-    margin:0;
-
-    position:absolute;
-
-    top:10px;
-
-    right:10px;
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    background:#1d9bf0 !important;
-
-    color:#fff !important;
-
-    border:2px solid #62d6ff !important;
-
-    border-radius:50% !important;
-
-    font-family:Arial,Helvetica,sans-serif;
-
-    font-size:21px;
-
-    font-weight:normal;
-
-    line-height:1;
-
-    cursor:pointer;
-
-    box-shadow:
-        0 0 10px rgba(98,214,255,.25);
-
-    transition:
-        background .25s,
-        color .25s,
-        transform .15s,
-        box-shadow .25s;
-
-}
-
-
-#lightboxEstadisticas button:hover{
-
-    background:#62d6ff !important;
-
-    color:#001018 !important;
-
-    box-shadow:
-        0 0 15px rgba(98,214,255,.42);
-
-}
-
-
-#lightboxEstadisticas button:active{
-
-    transform:scale(.92);
-
-}
-
-
-/*=========================================================
 SCROLL INTERNO
 =========================================================*/
 
@@ -642,6 +646,29 @@ RESPONSIVE
     }
 
 
+    /*---------------------------------------------
+      BOTÓN CERRAR — MISMO TAMAÑO QUE HOME/ALEATORIO
+    ---------------------------------------------*/
+
+    #lightboxEstadisticas > div > button{
+
+        top:9px;
+
+        right:9px;
+
+        width:34px;
+
+        height:34px;
+
+        min-width:34px;
+
+        min-height:34px;
+
+        font-size:21px;
+
+    }
+
+
     #lightboxEstadisticas h2{
 
         font-size:25px;
@@ -699,29 +726,6 @@ RESPONSIVE
         flex:0 0 30px;
 
         font-size:15px;
-
-    }
-
-
-    /*---------------------------------------------
-      BOTÓN CERRAR
-    ---------------------------------------------*/
-
-    #lightboxEstadisticas button{
-
-        width:34px;
-
-        height:34px;
-
-        min-width:34px;
-
-        min-height:34px;
-
-        top:10px;
-
-        right:10px;
-
-        font-size:21px;
 
     }
 
