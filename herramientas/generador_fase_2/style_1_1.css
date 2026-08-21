@@ -1,1214 +1,882 @@
 /*=========================================================
-PalEntropía
-Generador de Paleofichas
-Style v2.1
-Evolución visual del Generador
+PalEntropía — STYLE.CSS v2.1
+Base + Buscador Universal
 =========================================================*/
 
-
-/*=========================================================
-BASE
-=========================================================*/
-
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 html{
-    margin:0;
-    padding:0;
-    background:#0d0f10;
+ margin:0;
+ padding:0;
+ background:#0d0f10;
 }
 
 body{
-    margin:0;
-    padding:30px;
-    background:#0d0f10;
-    color:#eee;
-    font-family:Arial,Helvetica,sans-serif;
-    min-height:100vh;
+ margin:0;
+ padding:30px;
+ background:#0d0f10;
+ color:#eee;
+ font-family:Arial,Helvetica,sans-serif;
+ min-height:100vh;
 }
 
-
-/*=========================================================
-CABECERA
-=========================================================*/
-
 #cabecera{
-    text-align:center;
-    margin-bottom:25px;
+ text-align:center;
+ margin-bottom:25px;
 }
 
 h1{
-    margin:0;
-    color:#62d6ff;
-    font-size:44px;
-    line-height:1.1;
-    text-shadow:0 0 12px rgba(98,214,255,.12);
+ margin:0;
+ color:#62d6ff;
+ font-size:44px;
+ line-height:1.1;
+ text-shadow:0 0 12px rgba(98,214,255,.12);
 }
 
 #subtitulo{
-    margin-top:7px;
-    color:#aaa;
-    font-size:18px;
+ margin-top:7px;
+ color:#aaa;
+ font-size:18px;
 }
 
-
 /*=========================================================
-CONTROLES DEL BUSCADOR
+CONTROLES
 =========================================================*/
 
 #controlesBusqueda{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-    margin:25px 0 18px;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:10px;
+ flex-wrap:wrap;
+ margin:25px 0 18px;
 }
 
 #controlesBusqueda button{
-    min-height:48px;
-    box-sizing:border-box;
-    padding:10px 22px;
-    background:#1d9bf0;
-    color:#fff;
-    border:none;
-    border-radius:10px;
-    font-size:18px;
-    font-weight:bold;
-    cursor:pointer;
-    transition:
-        background .25s,
-        transform .15s,
-        box-shadow .25s;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+ min-height:48px;
+ padding:10px 22px;
+ background:#1d9bf0;
+ color:#fff;
+ border:0;
+ border-radius:10px;
+ font-size:18px;
+ font-weight:bold;
+ cursor:pointer;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ transition:.2s;
 }
 
 #controlesBusqueda button:hover{
-    background:#62d6ff;
-    box-shadow:0 0 14px rgba(98,214,255,.28);
+ background:#62d6ff;
+ box-shadow:0 0 14px rgba(98,214,255,.28);
 }
 
-#controlesBusqueda button:active{
-    transform:scale(.97);
-}
-
-
-/*=========================================================
-ESTADO
-=========================================================*/
+#controlesBusqueda button:active{transform:scale(.97)}
 
 #estado{
-    max-width:900px;
-    margin:0 auto 18px;
-    padding:10px 14px;
-    text-align:center;
-    color:#aaa;
-    background:#151719;
-    border:1px solid #25292c;
-    border-radius:8px;
-    font-size:14px;
+ max-width:900px;
+ margin:0 auto 18px;
+ padding:10px 14px;
+ text-align:center;
+ color:#aaa;
+ background:#151719;
+ border:1px solid #25292c;
+ border-radius:8px;
+ font-size:14px;
 }
 
-.ok{
-    color:#7CFF7C;
-}
-
-.error{
-    color:#FF7777;
-}
-
+.ok{color:#7CFF7C}
+.error{color:#FF7777}
 
 /*=========================================================
 FICHA
 =========================================================*/
 
 #ficha{
-    max-width:900px;
-    margin:auto;
-    background:#181a1c;
-    border:2px solid #62d6ff;
-    border-radius:18px;
-    padding:25px;
-    box-shadow:
-        0 0 20px rgba(98,214,255,.28),
-        0 8px 30px rgba(0,0,0,.28);
+ max-width:900px;
+ margin:auto;
+ background:#181a1c;
+ border:2px solid #62d6ff;
+ border-radius:18px;
+ padding:25px;
+ box-shadow:0 0 20px rgba(98,214,255,.28),0 8px 30px rgba(0,0,0,.28);
 }
-
-
-/*=========================================================
-NOMBRE
-=========================================================*/
 
 #titulo{
-    text-align:center;
-    font-size:clamp(30px,5vw,40px);
-    line-height:1.15;
-    color:#62d6ff;
-    margin-bottom:7px;
-    overflow-wrap:break-word;
-    hyphens:auto;
+ text-align:center;
+ font-size:clamp(30px,5vw,40px);
+ line-height:1.15;
+ color:#62d6ff;
+ margin-bottom:7px;
+ overflow-wrap:break-word;
+ hyphens:auto;
 }
-
-
-/*=========================================================
-CÓDIGO
-=========================================================*/
 
 #codigoFicha{
-    text-align:center;
-    color:#999;
-    font-size:14px;
-    letter-spacing:.5px;
-    margin-bottom:10px;
+ text-align:center;
+ color:#999;
+ font-size:14px;
+ letter-spacing:.5px;
+ margin-bottom:10px;
 }
-
-
-/*=========================================================
-CRONOLOGÍA
-=========================================================*/
 
 #cronologia{
-    text-align:center;
-    font-size:22px;
-    color:#fff;
-    line-height:1.6;
-    margin-bottom:25px;
+ text-align:center;
+ font-size:22px;
+ color:#fff;
+ line-height:1.6;
+ margin-bottom:25px;
 }
 
-#cronologia strong{
-    color:#62d6ff;
-}
+#cronologia strong,
+#resultadoGeologiaCAB07 strong{color:#62d6ff}
 
-
-/*=========================================================
-ETIQUETAS GEOLOGÍA — CAB07
-=========================================================*/
-
-#resultadoGeologiaCAB07 strong{
-    color:#62d6ff;
-}
-
-
-/*=========================================================
-IMAGEN PRINCIPAL
-=========================================================*/
-
-#contenedorImagenPrincipal{
-    text-align:center;
-}
+#contenedorImagenPrincipal{text-align:center}
 
 #imagenPrincipal{
-    display:block;
-    width:78%;
-    max-width:540px;
-    max-height:620px;
-    object-fit:contain;
-    margin:0 auto 20px;
-    border-radius:10px;
-    border:2px solid #62d6ff;
-    box-shadow:0 0 15px rgba(98,214,255,.22);
-    cursor:zoom-in;
-    transition:
-        box-shadow .25s,
-        transform .2s;
+ display:block;
+ width:78%;
+ max-width:540px;
+ max-height:620px;
+ object-fit:contain;
+ margin:0 auto 20px;
+ border-radius:10px;
+ border:2px solid #62d6ff;
+ box-shadow:0 0 15px rgba(98,214,255,.22);
+ cursor:zoom-in;
+ transition:.2s;
 }
 
-#imagenPrincipal:hover{
-    box-shadow:0 0 20px rgba(98,214,255,.40);
-}
-
-
-/*=========================================================
-VÍDEO
-=========================================================*/
+#imagenPrincipal:hover{box-shadow:0 0 20px rgba(98,214,255,.40)}
 
 #videoFicha{
-    text-align:center;
-    margin:8px 0 15px;
+ text-align:center;
+ margin:8px 0 15px;
 }
 
-#botonVideo,
-#botonVideo:visited{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:7px;
-    min-height:44px;
-    margin:6px;
-    padding:10px 20px;
-    background:#62d6ff;
-    color:#001018 !important;
-    border:1px solid #62d6ff;
-    border-radius:22px;
-    text-decoration:none !important;
-    font-weight:bold;
-    font-size:16px;
-    letter-spacing:.2px;
-    box-shadow:
-        0 0 12px rgba(98,214,255,.30),
-        0 4px 12px rgba(0,0,0,.22);
-    cursor:pointer;
-    transition:
-        background .25s,
-        transform .15s,
-        box-shadow .25s;
+#botonVideo,#botonVideo:visited{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:7px;
+ min-height:44px;
+ margin:6px;
+ padding:10px 20px;
+ background:#62d6ff;
+ color:#001018!important;
+ border:1px solid #62d6ff;
+ border-radius:22px;
+ text-decoration:none!important;
+ font-weight:bold;
+ font-size:16px;
+ box-shadow:0 0 12px rgba(98,214,255,.30),0 4px 12px rgba(0,0,0,.22);
+ cursor:pointer;
+ transition:.2s;
 }
 
 #botonVideo:hover{
-    background:#00e5ff;
-    transform:translateY(-1px);
-    box-shadow:
-        0 0 18px rgba(98,214,255,.50),
-        0 5px 15px rgba(0,0,0,.28);
+ background:#00e5ff;
+ transform:translateY(-1px);
+ box-shadow:0 0 18px rgba(98,214,255,.50);
 }
 
-#botonVideo:active{
-    transform:scale(.96);
-}
-
-
-/*=========================================================
-BLOQUE INFORMACIÓN
-=========================================================*/
+#botonVideo:active{transform:scale(.96)}
 
 #bloqueInfo{
-    margin-top:25px;
-    font-size:20px;
-    line-height:1.8;
+ margin-top:25px;
+ font-size:20px;
+ line-height:1.8;
 }
 
-.campoInfo{
-    margin-bottom:18px;
-}
-
-.campoInfo:last-child{
-    margin-bottom:0;
-}
-
+.campoInfo{margin-bottom:18px}
+.campoInfo:last-child{margin-bottom:0}
 .campo{
-    display:block;
-    color:#62d6ff;
-    font-weight:bold;
-    margin-bottom:3px;
+ display:block;
+ color:#62d6ff;
+ font-weight:bold;
+ margin-bottom:3px;
 }
-
-
-/*=========================================================
-GALERÍA
-=========================================================*/
 
 #galeria{
-    margin-top:35px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:14px;
-    flex-wrap:nowrap;
+ margin-top:35px;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:14px;
+ flex-wrap:nowrap;
 }
 
 #galeria img{
-    width:40%;
-    max-width:220px;
-    border-radius:10px;
-    border:2px solid #62d6ff;
-    box-shadow:0 0 15px rgba(98,214,255,.22);
-    cursor:zoom-in;
-    transition:
-        box-shadow .25s,
-        transform .2s;
+ width:40%;
+ max-width:220px;
+ border-radius:10px;
+ border:2px solid #62d6ff;
+ box-shadow:0 0 15px rgba(98,214,255,.22);
+ cursor:zoom-in;
+ transition:.2s;
 }
 
 #galeria img:hover{
-    box-shadow:0 0 19px rgba(98,214,255,.40);
-    transform:translateY(-2px);
+ box-shadow:0 0 19px rgba(98,214,255,.40);
+ transform:translateY(-2px);
 }
-
-
-/*=========================================================
-TÍTULOS DE SECCIÓN
-=========================================================*/
 
 h2{
-    text-align:center;
-    color:#62d6ff;
-    margin-top:35px;
-    margin-bottom:20px;
+ text-align:center;
+ color:#62d6ff;
+ margin-top:35px;
+ margin-bottom:20px;
 }
 
-
-/*=========================================================
-ESTADÍSTICAS
-=========================================================*/
-
 .stats{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    font-size:18px;
-    margin-top:20px;
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ font-size:18px;
+ margin-top:20px;
 }
 
 .stats div{
-    padding:12px;
-    background:#151719;
-    border-left:4px solid #62d6ff;
-    border-radius:8px;
-    box-shadow:0 0 6px rgba(98,214,255,.10);
+ padding:12px;
+ background:#151719;
+ border-left:4px solid #62d6ff;
+ border-radius:8px;
+ box-shadow:0 0 6px rgba(98,214,255,.10);
 }
-
 
 /*=========================================================
 LIGHTBOX IMÁGENES
 =========================================================*/
 
 #visorImagen{
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100vw;
-    height:100vh;
-    padding:20px;
-    background:rgba(0,0,0,.95);
-    z-index:999999;
-    justify-content:center;
-    align-items:center;
+ display:none;
+ position:fixed;
+ inset:0;
+ width:100vw;
+ height:100vh;
+ padding:20px;
+ background:rgba(0,0,0,.95);
+ z-index:999999;
+ justify-content:center;
+ align-items:center;
 }
 
 #imagenAmpliada{
-    max-width:95vw;
-    max-height:90vh;
-    object-fit:contain;
-    border-radius:12px;
-    border:2px solid #62d6ff;
-    box-shadow:0 0 25px rgba(98,214,255,.55);
+ max-width:95vw;
+ max-height:90vh;
+ object-fit:contain;
+ border-radius:12px;
+ border:2px solid #62d6ff;
+ box-shadow:0 0 25px rgba(98,214,255,.55);
 }
 
 .botonCerrar{
-    position:absolute;
-    top:14px;
-    right:16px;
-    width:42px;
-    height:42px;
-    padding:0;
-    border:none;
-    border-radius:50%;
-    background:#1d9bf0;
-    color:#fff;
-    font-size:30px;
-    line-height:40px;
-    cursor:pointer;
-    z-index:2;
-    transition:
-        background .25s,
-        transform .15s,
-        box-shadow .25s;
+ position:absolute;
+ top:14px;
+ right:16px;
+ width:42px;
+ height:42px;
+ padding:0;
+ border:0;
+ border-radius:50%;
+ background:#1d9bf0;
+ color:#fff;
+ font-size:30px;
+ cursor:pointer;
+ z-index:2;
+ transition:.2s;
 }
 
 .botonCerrar:hover{
-    background:#62d6ff;
-    box-shadow:0 0 14px rgba(98,214,255,.40);
+ background:#62d6ff;
+ box-shadow:0 0 14px rgba(98,214,255,.40);
 }
 
-.botonCerrar:active{
-    transform:scale(.94);
-}
-
+.botonCerrar:active{transform:scale(.94)}
 
 /*=========================================================
-EXPLORADOR DE PALEOFICHAS
+EXPLORADOR
 =========================================================*/
 
 #visorBuscador{
-    display:none;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100vw;
-    height:100vh;
-    padding:20px;
-    background:rgba(0,0,0,.90);
-    z-index:999998;
-    justify-content:center;
-    align-items:center;
+ display:none;
+ position:fixed;
+ inset:0;
+ width:100vw;
+ height:100vh;
+ padding:20px;
+ background:rgba(0,0,0,.90);
+ z-index:999998;
+ justify-content:center;
+ align-items:center;
 }
 
 #ventanaBuscador{
-    position:relative;
-    width:90%;
-    max-width:700px;
-    max-height:80vh;
-    overflow:auto;
-    padding:25px;
-    background:#181a1c;
-    border:2px solid #62d6ff;
-    border-radius:18px;
-    box-shadow:
-        0 0 25px rgba(98,214,255,.35),
-        0 10px 35px rgba(0,0,0,.45);
+ position:relative;
+ width:90%;
+ max-width:700px;
+ max-height:80vh;
+ overflow:auto;
+ padding:25px;
+ background:#181a1c;
+ border:2px solid #62d6ff;
+ border-radius:18px;
+ box-shadow:0 0 25px rgba(98,214,255,.35),0 10px 35px rgba(0,0,0,.45);
 }
 
 #ventanaBuscador h2{
-    margin-top:0;
-    margin-bottom:20px;
-    padding-right:35px;
+ margin-top:0;
+ margin-bottom:20px;
+ padding-right:35px;
 }
 
 #buscarNombre{
-    display:block;
-    width:90%;
-    margin:0 auto 20px;
-    padding:10px;
-    font-size:20px;
-    text-align:center;
-    background:#151719;
-    color:#fff;
-    border:2px solid #62d6ff;
-    border-radius:10px;
-    outline:none;
+ display:block;
+ width:90%;
+ margin:0 auto 20px;
+ padding:10px;
+ font-size:20px;
+ text-align:center;
+ background:#151719;
+ color:#fff;
+ border:2px solid #62d6ff;
+ border-radius:10px;
+ outline:none;
 }
 
-#buscarNombre:focus{
-    box-shadow:0 0 12px rgba(98,214,255,.22);
-}
-
-
-/*=========================================================
-RESULTADOS DEL BUSCADOR
-=========================================================*/
+#buscarNombre:focus{box-shadow:0 0 12px rgba(98,214,255,.22)}
 
 #listaResultados{
-    display:flex;
-    flex-direction:column;
-    gap:9px;
-    margin-top:5px;
+ display:flex;
+ flex-direction:column;
+ gap:9px;
+ margin-top:5px;
 }
 
 .resultadoBuscador{
-    width:100%;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px 14px;
-    margin:0;
-    background:#151719;
-    color:#eee;
-    border:1px solid #25292c;
-    border-left:4px solid #62d6ff;
-    border-radius:10px;
-    text-align:left;
-    cursor:pointer;
-    box-shadow:0 0 6px rgba(98,214,255,.08);
-    transition:
-        background .20s,
-        transform .15s,
-        border-color .20s,
-        box-shadow .20s;
+ width:100%;
+ display:flex;
+ align-items:center;
+ gap:12px;
+ padding:12px 14px;
+ background:#151719;
+ color:#eee;
+ border:1px solid #25292c;
+ border-left:4px solid #62d6ff;
+ border-radius:10px;
+ text-align:left;
+ cursor:pointer;
+ transition:.2s;
 }
 
 .resultadoBuscador:hover{
-    background:#22343d;
-    border-color:#62d6ff;
-    transform:translateX(4px);
-    box-shadow:0 0 12px rgba(98,214,255,.24);
+ background:#22343d;
+ border-color:#62d6ff;
+ transform:translateX(4px);
+ box-shadow:0 0 12px rgba(98,214,255,.24);
 }
 
-.resultadoBuscador:active{
-    transform:scale(.985);
-}
+.resultadoBuscador:active{transform:scale(.985)}
 
 .resultadoCodigo{
-    flex:0 0 auto;
-    min-width:64px;
-    color:#62d6ff;
-    font-size:14px;
-    font-weight:bold;
-    letter-spacing:.4px;
+ flex:0 0 auto;
+ min-width:64px;
+ color:#62d6ff;
+ font-size:14px;
+ font-weight:bold;
 }
 
 .resultadoNombre{
-    min-width:0;
-    color:#fff;
-    font-size:17px;
-    font-weight:600;
-    line-height:1.3;
-    overflow-wrap:anywhere;
+ min-width:0;
+ color:#fff;
+ font-size:17px;
+ font-weight:600;
+ line-height:1.3;
+ overflow-wrap:anywhere;
 }
-
-
-/*=========================================================
-SIN RESULTADOS
-=========================================================*/
 
 .sinResultados{
-    padding:18px 12px;
-    text-align:center;
-    color:#999;
-    background:#151719;
-    border:1px solid #25292c;
-    border-radius:10px;
-    font-size:15px;
+ padding:18px 12px;
+ text-align:center;
+ color:#999;
+ background:#151719;
+ border:1px solid #25292c;
+ border-radius:10px;
+ font-size:15px;
 }
 
-
 /*=========================================================
-FILTRO ACTIVO
+FILTRO / TODOS
 =========================================================*/
 
 #filtroActivo{
-    display:none;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    width:max-content;
-    max-width:100%;
-    margin:0 auto 14px;
-    padding:7px 10px 7px 13px;
-    background:#151719;
-    color:#fff;
-    border:1px solid #62d6ff;
-    border-radius:18px;
-    box-shadow:0 0 9px rgba(98,214,255,.16);
-    font-size:14px;
-    font-weight:600;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ width:max-content;
+ max-width:100%;
+ margin:0 auto 14px;
+ padding:7px 10px 7px 13px;
+ background:#151719;
+ color:#fff;
+ border:1px solid #62d6ff;
+ border-radius:18px;
+ box-shadow:0 0 9px rgba(98,214,255,.16);
+ font-size:14px;
+ font-weight:600;
 }
 
-#filtroActivo .textoFiltro{
-    color:#62d6ff;
-}
+#filtroActivo .textoFiltro{color:#62d6ff}
 
 #filtroActivo button{
-    width:23px;
-    height:23px;
-    padding:0;
-    border:none;
-    border-radius:50%;
-    background:#1d9bf0;
-    color:#fff;
-    font-size:17px;
-    line-height:23px;
-    cursor:pointer;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    transition:
-        background .20s,
-        transform .15s;
+ width:23px;
+ height:23px;
+ padding:0;
+ border:0;
+ border-radius:50%;
+ background:#1d9bf0;
+ color:#fff;
+ font-size:17px;
+ cursor:pointer;
 }
-
-#filtroActivo button:hover{
-    background:#62d6ff;
-    color:#001018;
-}
-
-#filtroActivo button:active{
-    transform:scale(.90);
-}
-
-
-/*=========================================================
-BOTÓN TODOS
-=========================================================*/
 
 #botonTodos{
-    display:none;
-    margin:0 auto 14px;
-    padding:7px 16px;
-    background:#151719;
-    color:#62d6ff;
-    border:1px solid #62d6ff;
-    border-radius:18px;
-    font-size:14px;
-    font-weight:bold;
-    cursor:pointer;
-    transition:
-        background .20s,
-        color .20s,
-        transform .15s,
-        box-shadow .20s;
+ display:none;
+ margin:0 auto 14px;
+ padding:7px 16px;
+ background:#151719;
+ color:#62d6ff;
+ border:1px solid #62d6ff;
+ border-radius:18px;
+ font-size:14px;
+ font-weight:bold;
+ cursor:pointer;
 }
 
 #botonTodos:hover{
-    background:#62d6ff;
-    color:#001018;
-    box-shadow:0 0 10px rgba(98,214,255,.25);
+ background:#62d6ff;
+ color:#001018;
 }
-
-#botonTodos:active{
-    transform:scale(.95);
-}
-
 
 /*=========================================================
-GRUPO DE BOTONES SUPERIORES
+BOTONES SUPERIORES
 =========================================================*/
 
 #grupoAccionesSuperiores{
-    position:fixed;
-    top:10px;
-    right:10px;
-    z-index:9999;
-    display:flex;
-    align-items:center;
-    gap:6px;
+ position:fixed;
+ top:10px;
+ right:10px;
+ z-index:9999;
+ display:flex;
+ align-items:center;
+ gap:6px;
 }
 
-
-/*=========================================================
-BOTONES CIRCULARES SUPERIORES
-=========================================================*/
-
-.botonCircularSuperior{
-    width:34px;
-    height:34px;
-    padding:0;
-    border:2px solid #62d6ff;
-    border-radius:50%;
-    background:#1d9bf0;
-    color:#fff;
-    font-size:17px;
-    line-height:30px;
-    text-align:center;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    box-shadow:0 0 10px rgba(98,214,255,.25);
-    transition:
-        background .25s,
-        transform .15s,
-        box-shadow .25s;
+.botonCircularSuperior,#botonAleatorio{
+ width:34px;
+ height:34px;
+ padding:0;
+ border:2px solid #62d6ff;
+ border-radius:50%;
+ background:#1d9bf0;
+ color:#fff;
+ font-size:17px;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ cursor:pointer;
+ box-shadow:0 0 10px rgba(98,214,255,.25);
+ transition:.2s;
 }
 
-.botonCircularSuperior:hover{
-    background:#62d6ff;
-    color:#001018;
-    box-shadow:0 0 15px rgba(98,214,255,.42);
+.botonCircularSuperior:hover,#botonAleatorio:hover{
+ background:#62d6ff;
+ color:#001018;
+ box-shadow:0 0 15px rgba(98,214,255,.42);
 }
 
-.botonCircularSuperior:active{
-    transform:scale(.92);
-}
-
-
-/*=========================================================
-BOTÓN ALEATORIO
-=========================================================*/
+.botonCircularSuperior:active,#botonAleatorio:active{transform:scale(.92)}
 
 #botonAleatorio{
-    position:fixed;
-    top:10px;
-    right:10px;
-    width:34px;
-    height:34px;
-    padding:0;
-    font-size:18px;
-    line-height:34px;
-    text-align:center;
-    border:2px solid #62d6ff;
-    border-radius:50%;
-    cursor:pointer;
-    z-index:9999;
-    background:#1d9bf0;
-    color:#fff;
-    box-shadow:0 0 10px rgba(98,214,255,.25);
-    transition:
-        background .25s,
-        transform .15s,
-        box-shadow .25s;
+ position:fixed;
+ top:10px;
+ right:10px;
+ z-index:9999;
 }
-
-#botonAleatorio:hover{
-    background:#62d6ff;
-    color:#001018;
-    box-shadow:0 0 15px rgba(98,214,255,.42);
-}
-
-#botonAleatorio:active{
-    transform:scale(.92);
-}
-
 
 /*=========================================================
-CONTROLES DE NAVEGACIÓN
+NAVEGACIÓN
 =========================================================*/
 
 #controlesNavegacion{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:8px;
-    margin:12px auto;
-    flex-wrap:wrap;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:8px;
+ margin:12px auto;
+ flex-wrap:wrap;
 }
 
 .botonNavegacion{
-    width:38px;
-    height:38px;
-    border-radius:50%;
-    border:1px solid #62d6ff;
-    background:#151719;
-    color:#62d6ff;
-    cursor:pointer;
-    font-size:16px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 0 7px rgba(98,214,255,.12);
-    transition:
-        background .20s,
-        color .20s,
-        transform .15s,
-        box-shadow .20s;
+ width:38px;
+ height:38px;
+ border-radius:50%;
+ border:1px solid #62d6ff;
+ background:#151719;
+ color:#62d6ff;
+ cursor:pointer;
+ font-size:16px;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
 }
 
 .botonNavegacion:hover{
-    background:#62d6ff;
-    color:#001018;
-    box-shadow:0 0 12px rgba(98,214,255,.30);
+ background:#62d6ff;
+ color:#001018;
 }
 
-.botonNavegacion:active{
-    transform:scale(.92);
-}
-
-.botonNavegacion:disabled{
-    opacity:.35;
-    cursor:default;
-    box-shadow:none;
-}
+.botonNavegacion:active{transform:scale(.92)}
+.botonNavegacion:disabled{opacity:.35;cursor:default}
 
 #posicionNavegacion{
-    min-width:70px;
-    text-align:center;
-    font-size:13px;
-    font-weight:600;
-    color:#aaa;
-    opacity:.9;
-    padding:4px 9px;
-    border-radius:12px;
+ min-width:70px;
+ text-align:center;
+ font-size:13px;
+ font-weight:600;
+ color:#aaa;
+ padding:4px 9px;
 }
-
 
 /*=========================================================
-SCROLL EXPLORADOR
+BUSCADOR UNIVERSAL — DISEÑO DEFINITIVO
 =========================================================*/
 
-#ventanaBuscador::-webkit-scrollbar{
-    width:10px;
+/* La etiqueta y los dos botones forman UNA sola unidad */
+#controlesBusquedaUniversal{
+ width:max-content;
+ max-width:100%;
+ margin:10px auto 12px;
+ padding:0;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ flex-wrap:nowrap;
+ vertical-align:middle;
 }
 
+/* La etiqueta queda SIEMPRE a la izquierda */
+#labelBusquedaUniversal{
+ order:1;
+ flex:0 0 auto;
+ min-width:0;
+ padding:6px 10px;
+ color:#b56cff;
+ font-size:16px;
+ font-weight:bold;
+ letter-spacing:.4px;
+ white-space:nowrap;
+ text-align:center;
+}
+
+/* Los botones quedan SIEMPRE juntos a la derecha */
+#controlesBusquedaUniversal .botonBusquedaUniversal{
+ order:2;
+ flex:0 0 auto;
+ width:42px;
+ height:34px;
+ min-width:42px;
+ padding:0;
+ border:1px solid #62d6ff;
+ border-radius:9px;
+ background:#151719;
+ color:#62d6ff;
+ font-size:16px;
+ line-height:1;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ cursor:pointer;
+ box-shadow:0 0 8px rgba(98,214,255,.18);
+ transition:.2s;
+}
+
+#controlesBusquedaUniversal .botonBusquedaUniversal:hover{
+ background:#62d6ff;
+ color:#001018;
+ box-shadow:0 0 14px rgba(98,214,255,.30);
+}
+
+#controlesBusquedaUniversal .botonBusquedaUniversal:active{
+ transform:scale(.93);
+    }
+/*=========================================================
+SCROLL BUSCADOR
+=========================================================*/
+
+#ventanaBuscador::-webkit-scrollbar{width:10px}
 #ventanaBuscador::-webkit-scrollbar-track{
-    background:#151515;
-    border-radius:10px;
+ background:#151515;
+ border-radius:10px;
 }
-
 #ventanaBuscador::-webkit-scrollbar-thumb{
-    background:#62d6ff;
-    border-radius:10px;
+ background:#62d6ff;
+ border-radius:10px;
+}
+#ventanaBuscador::-webkit-scrollbar-thumb:hover{background:#00e5ff}
+
+/*=========================================================
+CAB16
+=========================================================*/
+
+#resultadosCab16{
+ display:flex;
+ flex-direction:column;
+ width:100%;
+ max-width:620px;
+ max-height:42vh;
+ margin:18px auto 0;
+ padding:0;
+ gap:8px;
+ overflow-y:auto;
+ scrollbar-width:thin;
+ scrollbar-color:#62d6ff #151719;
 }
 
-#ventanaBuscador::-webkit-scrollbar-thumb:hover{
-    background:#00e5ff;
+#resultadosCab16 .resultadoCab16{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ width:100%;
+ min-height:46px;
+ padding:10px 16px;
+ background:#151719!important;
+ color:#62d6ff!important;
+ border:1px solid rgba(98,214,255,.35)!important;
+ border-radius:10px!important;
+ font-family:Arial,Helvetica,sans-serif;
+ font-size:16px;
+ font-weight:bold;
+ line-height:1.3;
+ text-align:center;
+ cursor:pointer;
+ transition:.2s;
 }
 
+#resultadosCab16 .resultadoCab16:hover{
+ background:#1c2428!important;
+ color:#fff!important;
+ border-color:#62d6ff!important;
+ box-shadow:0 0 12px rgba(98,214,255,.22);
+}
+
+#resultadosCab16 .resultadoCab16:active{
+ transform:scale(.98);
+ background:#62d6ff!important;
+ color:#001018!important;
+}
+
+#resultadosCab16 .resultadoCab16:focus{
+ outline:none;
+ border-color:#62d6ff!important;
+ box-shadow:0 0 12px rgba(98,214,255,.28);
+}
+
+#labelResultadosCab16{
+ width:100%;
+ max-width:620px;
+ margin:14px auto 0;
+ color:#fff;
+ font-size:15px;
+ font-weight:bold;
+ line-height:1.4;
+ text-align:center;
+}
+
+#checkBusquedaCab16{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ width:100%;
+ margin:12px auto 0;
+ color:#fff;
+ font-size:14px;
+ text-align:center;
+ cursor:pointer;
+}
+
+#buscarTodosCab16{
+ width:17px;
+ height:17px;
+ margin:0;
+ accent-color:#62d6ff;
+ cursor:pointer;
+}
+
+#resultadosCab16::-webkit-scrollbar{width:8px}
+#resultadosCab16::-webkit-scrollbar-track{
+ background:#151719;
+ border-radius:8px;
+}
+#resultadosCab16::-webkit-scrollbar-thumb{
+ background:#62d6ff;
+ border-radius:8px;
+}
 
 /*=========================================================
 RESPONSIVE
 =========================================================*/
 
-@media (max-width:768px){
+@media(max-width:768px){
 
-    body{
-        padding:15px;
-    }
+ body{padding:15px}
 
-    h1{
-        font-size:30px;
-    }
+ h1{font-size:30px}
+ #subtitulo{font-size:16px}
 
-    #subtitulo{
-        font-size:16px;
-    }
+ #controlesBusqueda{
+  margin:20px 0 15px;
+ }
 
-    #controlesBusqueda{
-        margin:20px 0 15px;
-    }
+ #controlesBusqueda button{
+  width:100%;
+  max-width:420px;
+ }
 
-    #controlesBusqueda button{
-        width:100%;
-        max-width:420px;
-    }
+ #estado{font-size:13px}
 
-    #estado{
-        font-size:13px;
-    }
+ #ficha{
+  padding:18px;
+  border-radius:15px;
+ }
 
-    #ficha{
-        padding:18px;
-        border-radius:15px;
-    }
+ #titulo{font-size:clamp(24px,7vw,34px)}
+ #cronologia{font-size:18px}
 
-    #titulo{
-        font-size:clamp(24px,7vw,34px);
-    }
+ #bloqueInfo{
+  font-size:18px;
+  line-height:1.7;
+ }
 
-    #cronologia{
-        font-size:18px;
-    }
+ #imagenPrincipal{
+  width:90%;
+  max-width:520px;
+ }
 
-    #bloqueInfo{
-        font-size:18px;
-        line-height:1.7;
-    }
+ #galeria{gap:10px}
 
-    #imagenPrincipal{
-        width:90%;
-        max-width:520px;
-    }
+ #galeria img{
+  width:43%;
+  max-width:none;
+ }
 
-    #galeria{
-        gap:10px;
-    }
+ #botonVideo{
+  min-height:42px;
+  padding:9px 18px;
+  font-size:15px;
+ }
 
-    #galeria img{
-        width:43%;
-        max-width:none;
-    }
+ .stats{
+  grid-template-columns:1fr;
+  font-size:17px;
+ }
 
-    #botonVideo{
-        min-height:42px;
-        padding:9px 18px;
-        font-size:15px;
-    }
+ #ventanaBuscador{
+  width:95%;
+  padding:18px;
+  max-height:85vh;
+ }
 
-    .stats{
-        grid-template-columns:1fr;
-        font-size:17px;
-    }
+ #buscarNombre{
+  width:95%;
+  font-size:18px;
+ }
 
-    #ventanaBuscador{
-        width:95%;
-        padding:18px;
-        max-height:85vh;
-    }
+ .resultadoBuscador{
+  padding:11px 12px;
+  gap:9px;
+ }
 
-    #buscarNombre{
-        width:95%;
-        font-size:18px;
-    }
+ .resultadoCodigo{
+  min-width:58px;
+  font-size:13px;
+ }
 
-    .resultadoBuscador{
-        padding:11px 12px;
-        gap:9px;
-    }
+ .resultadoNombre{font-size:15px}
 
-    .resultadoCodigo{
-        min-width:58px;
-        font-size:13px;
-    }
+ #filtroActivo{font-size:13px}
 
-    .resultadoNombre{
-        font-size:15px;
-    }
+ /*---------------------------------------------
+ BUSCADOR UNIVERSAL — MÓVIL
+ ---------------------------------------------*/
 
-    #imagenAmpliada{
-        max-width:94vw;
-        max-height:88vh;
-    }
+ #controlesBusquedaUniversal{
+  width:auto;
+  max-width:100%;
+  margin:8px auto 10px;
+  display:inline-flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
+  align-items:center;
+  justify-content:flex-start;
+  gap:7px;
+ }
 
-    #filtroActivo{
-        font-size:13px;
-    }
+ #labelBusquedaUniversal{
+  order:1;
+  padding:5px 7px;
+  font-size:14px;
+ }
 
-    }
+ #controlesBusquedaUniversal .botonBusquedaUniversal{
+  order:2;
+  width:38px;
+  height:32px;
+  min-width:38px;
+  border-radius:8px;
+  font-size:15px;
+ }
 
-/*=========================================================
-CAB15
-BUSCADOR UNIVERSAL
-DISEÑO FINAL
-=========================================================*/
+ /*---------------------------------------------
+ CAB16 — MÓVIL
+ ---------------------------------------------*/
 
+ #resultadosCab16{
+  width:100%;
+  max-width:none;
+  margin-top:16px;
+  gap:7px;
+  max-height:45vh;
+ }
 
-/*=========================================================
-CONTENEDOR PRINCIPAL
+ #resultadosCab16 .resultadoCab16{
+  min-height:44px;
+  padding:10px 14px;
+  border-radius:9px!important;
+  font-size:15px;
+ }
 
-IMPORTANTE:
-Los tres elementos se mantienen en una única fila:
+ #labelResultadosCab16{
+  margin-top:12px;
+  font-size:14px;
+ }
 
-BUSCADOR UNIVERSAL   [ 🔎 ] [ × ]
+ #checkBusquedaCab16{
+  margin-top:10px;
+  font-size:14px;
+ }
 
-Los botones quedan SIEMPRE juntos
-a la derecha de la etiqueta.
-=========================================================*/
-
-#controlesBusquedaUniversal{
-
-    width:100%;
-
-    display:flex;
-
-    flex-direction:row;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:8px;
-
-    margin:12px auto 14px;
-
-    flex-wrap:nowrap;
-
+ #buscarTodosCab16{
+  width:18px;
+  height:18px;
+ }
 }
 
-
 /*=========================================================
-ETIQUETA
-=========================================================*/
-
-#labelBusquedaUniversal{
-
-    display:block;
-
-    flex:0 0 auto;
-
-    width:auto;
-
-    margin:0;
-
-    padding:7px 8px;
-
-    color:#b56cff !important;
-
-    font-family:Arial,Helvetica,sans-serif;
-
-    font-size:17px;
-
-    font-weight:bold;
-
-    line-height:1.2;
-
-    text-align:center;
-
-    white-space:nowrap;
-
-    text-shadow:
-        0 0 8px rgba(181,108,255,.22);
-
-}
-
-
-/*=========================================================
-GRUPO VISUAL DE BOTONES
-
-Si el HTML coloca los botones directamente dentro
-de #controlesBusquedaUniversal, el selector :is()
-los mantiene juntos visualmente.
-
-No se utiliza position:absolute.
-No se utiliza space-between.
-=========================================================*/
-
-#controlesBusquedaUniversal
-.botonBusquedaUniversal{
-
-    flex:0 0 auto;
-
-    width:42px;
-
-    height:34px;
-
-    min-width:42px;
-
-    padding:0;
-
-    margin:0;
-
-    border:1px solid #62d6ff;
-
-    border-radius:8px;
-
-    background:#151719;
-
-    color:#62d6ff;
-
-    font-family:Arial,Helvetica,sans-serif;
-
-    font-size:16px;
-
-    font-weight:bold;
-
-    line-height:1;
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    cursor:pointer;
-
-    box-shadow:
-        0 0 8px rgba(98,214,255,.18);
-
-    transition:
-        background .20s ease,
-        color .20s ease,
-        transform .15s ease,
-        box-shadow .20s ease;
-
-}
-
-
-/*=========================================================
-HOVER
-=========================================================*/
-
-#controlesBusquedaUniversal
-.botonBusquedaUniversal:hover{
-
-    background:#62d6ff;
-
-    color:#001018;
-
-    box-shadow:
-        0 0 14px rgba(98,214,255,.34);
-
-}
-
-
-/*=========================================================
-ACTIVE
-=========================================================*/
-
-#controlesBusquedaUniversal
-.botonBusquedaUniversal:active{
-
-    transform:scale(.92);
-
-}
-
-
-/*=========================================================
-FOCUS
-=========================================================*/
-
-#controlesBusquedaUniversal
-.botonBusquedaUniversal:focus-visible{
-
-    outline:none;
-
-    box-shadow:
-        0 0 0 2px rgba(181,108,255,.35),
-        0 0 14px rgba(98,214,255,.34);
-
-}
-
-
-/*=========================================================
-RESPONSIVE — MÓVIL
-=========================================================*/
-
-@media (max-width:768px){
-
-    #controlesBusquedaUniversal{
-
-        width:100%;
-
-        flex-direction:row;
-
-        justify-content:center;
-
-        align-items:center;
-
-        gap:7px;
-
-        margin:9px auto 11px;
-
-        flex-wrap:nowrap;
-
-    }
-
-
-    #labelBusquedaUniversal{
-
-        flex:0 0 auto;
-
-        padding:6px 6px;
-
-        font-size:15px;
-
-    }
-
-
-    #controlesBusquedaUniversal
-    .botonBusquedaUniversal{
-
-        flex:0 0 auto;
-
-        width:40px;
-
-        height:33px;
-
-        min-width:40px;
-
-        border-radius:8px;
-
-        font-size:15px;
-
-    }
-
-}
-
-
-/*=========================================================
-PANTALLAS MUY PEQUEÑAS
-
-Evita que la etiqueta y los dos botones
-se separen o salten de línea.
-=========================================================*/
-
-@media (max-width:380px){
-
-    #controlesBusquedaUniversal{
-
-        gap:5px;
-
-    }
-
-
-    #labelBusquedaUniversal{
-
-        padding-left:3px;
-
-        padding-right:3px;
-
-        font-size:14px;
-
-    }
-
-
-    #controlesBusquedaUniversal
-    .botonBusquedaUniversal{
-
-        width:38px;
-
-        height:32px;
-
-        min-width:38px;
-
-        font-size:14px;
-
-    }
-
-}
-
-
-/*=========================================================
-FIN CAB15
+FIN STYLE.CSS
 =========================================================*/
