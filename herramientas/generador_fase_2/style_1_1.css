@@ -26,10 +26,8 @@ CABECERA
 =========================================================*/
 
 #cabecera{
- position:relative;
  text-align:center;
- margin-bottom:25px;
- padding-bottom:16px;
+ margin-bottom:12px;
 }
 
 h1{
@@ -42,73 +40,34 @@ h1{
 
 #subtitulo{
  margin-top:7px;
- color:#fff!important;
+ color:#fff;
  font-size:18px;
+ line-height:1.2;
 }
 
-/*=========================================================
-SEPARADOR DE CABECERA
-=========================================================*/
-
-#cabecera::after{
+#subtitulo::after{
  content:"";
  display:block;
- width:90px;
+ width:210px;
+ max-width:80%;
  height:1px;
- margin:14px auto 0;
- background:linear-gradient(
-  to right,
-  transparent,
-  #62d6ff 25%,
-  #62d6ff 75%,
-  transparent
- );
- box-shadow:0 0 7px rgba(98,214,255,.35);
+ margin:8px auto 0;
+ background:#62d6ff;
  opacity:.85;
+ box-shadow:0 0 6px rgba(98,214,255,.25);
 }
 
 /*=========================================================
-CONTROLES DEL BUSCADOR ANTIGUO
+ANTIGUO BUSCADOR
+Se conserva su función, pero no se muestra.
 =========================================================*/
 
 #controlesBusqueda{
- display:flex;
- justify-content:center;
- align-items:center;
- gap:10px;
- flex-wrap:wrap;
- margin:25px 0 18px;
-}
-
-/* Oculto. Las funciones permanecen intactas. */
-
-#botonBuscar{
  display:none!important;
 }
 
-#controlesBusqueda button{
- min-height:48px;
- padding:10px 22px;
- background:#1d9bf0;
- color:#fff;
- border:none;
- border-radius:10px;
- font-size:18px;
- font-weight:bold;
- cursor:pointer;
- display:flex;
- align-items:center;
- justify-content:center;
- transition:.25s;
-}
-
-#controlesBusqueda button:hover{
- background:#62d6ff;
- box-shadow:0 0 14px rgba(98,214,255,.28);
-}
-
-#controlesBusqueda button:active{
- transform:scale(.97);
+#botonBuscar{
+ display:none!important;
 }
 
 /*=========================================================
@@ -146,10 +105,6 @@ FICHA
   0 8px 30px rgba(0,0,0,.28);
 }
 
-/*=========================================================
-NOMBRE
-=========================================================*/
-
 #titulo{
  text-align:center;
  font-size:clamp(30px,5vw,40px);
@@ -160,10 +115,6 @@ NOMBRE
  hyphens:auto;
 }
 
-/*=========================================================
-CÓDIGO
-=========================================================*/
-
 #codigoFicha{
  text-align:center;
  color:#999;
@@ -171,10 +122,6 @@ CÓDIGO
  letter-spacing:.5px;
  margin-bottom:10px;
 }
-
-/*=========================================================
-CRONOLOGÍA
-=========================================================*/
 
 #cronologia{
  text-align:center;
@@ -193,9 +140,7 @@ CRONOLOGÍA
 IMAGEN PRINCIPAL
 =========================================================*/
 
-#contenedorImagenPrincipal{
- text-align:center;
-}
+#contenedorImagenPrincipal{text-align:center}
 
 #imagenPrincipal{
  display:block;
@@ -221,7 +166,7 @@ VÍDEO
 
 #videoFicha{
  text-align:center;
- margin:8px 0 15px;
+ margin:12px 0;
 }
 
 #botonVideo,
@@ -255,12 +200,10 @@ VÍDEO
   0 5px 15px rgba(0,0,0,.28);
 }
 
-#botonVideo:active{
- transform:scale(.96);
-}
+#botonVideo:active{transform:scale(.96)}
 
 /*=========================================================
-BLOQUE INFORMACIÓN
+INFORMACIÓN
 =========================================================*/
 
 #bloqueInfo{
@@ -273,9 +216,7 @@ BLOQUE INFORMACIÓN
  margin-bottom:18px;
 }
 
-.campoInfo:last-child{
- margin-bottom:0;
-}
+.campoInfo:last-child{margin-bottom:0}
 
 .campo{
  display:block;
@@ -312,6 +253,10 @@ GALERÍA
  transform:translateY(-2px);
 }
 
+/*=========================================================
+TÍTULOS
+=========================================================*/
+
 h2{
  text-align:center;
  color:#62d6ff;
@@ -340,7 +285,7 @@ ESTADÍSTICAS
 }
 
 /*=========================================================
-LIGHTBOX IMÁGENES
+LIGHTBOX IMAGEN
 =========================================================*/
 
 #visorImagen{
@@ -388,12 +333,11 @@ LIGHTBOX IMÁGENES
  box-shadow:0 0 14px rgba(98,214,255,.40);
 }
 
-.botonCerrar:active{
- transform:scale(.94);
-}
+.botonCerrar:active{transform:scale(.94)}
 
 /*=========================================================
 EXPLORADOR ANTIGUO
+Se mantiene para no romper funciones.
 =========================================================*/
 
 #visorBuscador{
@@ -439,7 +383,7 @@ EXPLORADOR ANTIGUO
  text-align:center;
  background:#151719;
  color:#fff;
- border:2px solid #62d6ff!important;
+ border:2px solid #62d6ff;
  border-radius:10px;
  outline:none;
 }
@@ -463,8 +407,9 @@ RESULTADOS ANTIGUOS
  width:100%;
  display:flex;
  align-items:center;
- gap:12px;
- padding:12px 14px;
+ gap:10px;
+ padding:10px 12px;
+ margin:5px 0;
  background:#151719;
  color:#eee;
  border:1px solid #25292c;
@@ -483,9 +428,7 @@ RESULTADOS ANTIGUOS
  box-shadow:0 0 12px rgba(98,214,255,.24);
 }
 
-.resultadoBuscador:active{
- transform:scale(.985);
-}
+.resultadoBuscador:active{transform:scale(.985)}
 
 .resultadoCodigo{
  flex:0 0 auto;
@@ -493,7 +436,6 @@ RESULTADOS ANTIGUOS
  color:#62d6ff;
  font-size:14px;
  font-weight:bold;
- letter-spacing:.4px;
 }
 
 .resultadoNombre{
@@ -537,9 +479,7 @@ FILTRO ACTIVO
  font-weight:600;
 }
 
-#filtroActivo .textoFiltro{
- color:#62d6ff;
-}
+#filtroActivo .textoFiltro{color:#62d6ff}
 
 #filtroActivo button{
  width:23px;
@@ -563,13 +503,7 @@ FILTRO ACTIVO
  color:#001018;
 }
 
-#filtroActivo button:active{
- transform:scale(.90);
-}
-
-/*=========================================================
-BOTÓN TODOS
-=========================================================*/
+#filtroActivo button:active{transform:scale(.90)}
 
 #botonTodos{
  display:none;
@@ -591,10 +525,6 @@ BOTÓN TODOS
  box-shadow:0 0 10px rgba(98,214,255,.25);
 }
 
-#botonTodos:active{
- transform:scale(.95);
-}
-
 /*=========================================================
 BOTONES SUPERIORES
 =========================================================*/
@@ -609,7 +539,8 @@ BOTONES SUPERIORES
  gap:6px;
 }
 
-.botonCircularSuperior{
+.botonCircularSuperior,
+#botonAleatorio{
  width:34px;
  height:34px;
  padding:0;
@@ -626,42 +557,14 @@ BOTONES SUPERIORES
  transition:.25s;
 }
 
-.botonCircularSuperior:hover{
- background:#62d6ff;
- color:#001018;
- box-shadow:0 0 15px rgba(98,214,255,.42);
-}
-
-.botonCircularSuperior:active{
- transform:scale(.92);
-}
-
-#botonAleatorio{
- position:fixed;
- top:10px;
- right:10px;
- width:34px;
- height:34px;
- padding:0;
- font-size:18px;
- line-height:34px;
- text-align:center;
- border:2px solid #62d6ff;
- border-radius:50%;
- cursor:pointer;
- z-index:9999;
- background:#1d9bf0;
- color:#fff;
- box-shadow:0 0 10px rgba(98,214,255,.25);
- transition:.25s;
-}
-
+.botonCircularSuperior:hover,
 #botonAleatorio:hover{
  background:#62d6ff;
  color:#001018;
  box-shadow:0 0 15px rgba(98,214,255,.42);
 }
 
+.botonCircularSuperior:active,
 #botonAleatorio:active{
  transform:scale(.92);
 }
@@ -675,7 +578,7 @@ NAVEGACIÓN
  justify-content:center;
  align-items:center;
  gap:8px;
- margin:12px auto;
+ margin:8px auto 12px;
  flex-wrap:wrap;
 }
 
@@ -701,9 +604,7 @@ NAVEGACIÓN
  box-shadow:0 0 12px rgba(98,214,255,.30);
 }
 
-.botonNavegacion:active{
- transform:scale(.92);
-}
+.botonNavegacion:active{transform:scale(.92)}
 
 .botonNavegacion:disabled{
  opacity:.35;
@@ -719,7 +620,7 @@ NAVEGACIÓN
  color:#aaa;
  padding:4px 9px;
  border-radius:12px;
-}
+ }
 
 /*=========================================================
 BUSCADOR UNIVERSAL — CAB15 / CAB16
@@ -731,7 +632,7 @@ BUSCADOR UNIVERSAL — CAB15 / CAB16
  justify-content:center;
  align-items:center;
  gap:7px;
- margin:10px auto 12px;
+ margin:6px auto 10px;
 }
 
 #labelBusquedaUniversal{
@@ -739,8 +640,8 @@ BUSCADOR UNIVERSAL — CAB15 / CAB16
  flex:0 0 auto;
  min-width:0;
  padding:6px 12px;
- color:#62d6ff!important;
- border:1px solid #62d6ff!important;
+ color:#62d6ff;
+ border:1px solid #62d6ff;
  border-radius:9px;
  background:#151719;
  font-size:16px;
@@ -780,72 +681,57 @@ BUSCADOR UNIVERSAL — CAB15 / CAB16
 }
 
 /*=========================================================
-CAB16
+CAJA DE TEXTO CAB16 / CAB17
 =========================================================*/
 
-#cab16Busqueda h2,
-#cab16BusquedaUniversal h2,
-.tituloCAB16{
- color:#b56cff!important;
- font-size:22px;
- font-weight:bold;
- text-align:center;
-}
-
-/*=========================================================
-CAJAS DE TEXTO CAB16 / CAB17
-=========================================================*/
-
-#buscarNombreCAB16,
-#inputBusquedaCAB16,
-#inputBusquedaUniversal,
-#campoBusquedaCAB16,
 #buscarNombre{
- border:2px solid #62d6ff!important;
+ border:2px solid #62d6ff;
  outline:none;
- background:#151719;
- color:#fff;
- border-radius:10px;
 }
 
-#buscarNombreCAB16:focus,
-#inputBusquedaCAB16:focus,
-#inputBusquedaUniversal:focus,
-#campoBusquedaCAB16:focus,
 #buscarNombre:focus{
- border-color:#62d6ff!important;
- box-shadow:0 0 12px rgba(98,214,255,.28);
+ border-color:#62d6ff;
+ box-shadow:0 0 12px rgba(98,214,255,.25);
 }
 
 /*=========================================================
-OCULTAR BOTÓN ANTIGUO
+RESULTADOS CAB16
 =========================================================*/
 
-#botonBuscar,
-#botonExplorar{
- display:none!important;
+#resultadosCab16{
+ max-height:60vh;
+ overflow-y:auto;
 }
 
-/*=========================================================
-SCROLL
-=========================================================*/
-
+#resultadosCab16::-webkit-scrollbar,
 #ventanaBuscador::-webkit-scrollbar{
- width:10px;
+ width:8px;
 }
 
+#resultadosCab16::-webkit-scrollbar-track,
 #ventanaBuscador::-webkit-scrollbar-track{
  background:#151515;
- border-radius:10px;
 }
 
+#resultadosCab16::-webkit-scrollbar-thumb,
 #ventanaBuscador::-webkit-scrollbar-thumb{
  background:#62d6ff;
- border-radius:10px;
+ border-radius:8px;
 }
 
+#resultadosCab16::-webkit-scrollbar-thumb:hover,
 #ventanaBuscador::-webkit-scrollbar-thumb:hover{
  background:#00e5ff;
+}
+
+/*=========================================================
+OCULTAR EXPLORADOR ANTIGUO
+La funcionalidad permanece disponible para los módulos.
+=========================================================*/
+
+#botonExplorar,
+#botonBuscar{
+ display:none!important;
 }
 
 /*=========================================================
@@ -864,25 +750,11 @@ RESPONSIVE
 
  #subtitulo{
   font-size:16px;
-  color:#fff!important;
  }
 
- #cabecera{
-  padding-bottom:14px;
- }
-
- #cabecera::after{
-  width:75px;
-  margin-top:12px;
- }
-
- #controlesBusqueda{
-  margin:20px 0 15px;
- }
-
- #controlesBusqueda button{
-  width:100%;
-  max-width:420px;
+ #subtitulo::after{
+  width:190px;
+  margin-top:7px;
  }
 
  #estado{
@@ -968,7 +840,7 @@ RESPONSIVE
 
  #controlesBusquedaUniversal{
   gap:6px;
-  margin:8px auto 10px;
+  margin:5px auto 8px;
  }
 
  #labelBusquedaUniversal{
@@ -984,6 +856,26 @@ RESPONSIVE
   font-size:15px;
   border-radius:8px;
  }
+
+ #controlesNavegacion{
+  gap:7px;
+  margin:6px auto 10px;
+ }
+
+ .botonNavegacion{
+  width:36px;
+  height:36px;
+  font-size:15px;
+ }
+}
+
+/*=========================================================
+AJUSTE FINAL DE CABECERA
+=========================================================*/
+
+#cabecera + #controlesBusqueda{
+ margin-top:0!important;
+ margin-bottom:0!important;
 }
 
 /*=========================================================
