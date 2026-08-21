@@ -488,12 +488,6 @@ RESULTADOS DEL BUSCADOR
     margin-top:5px;
 }
 
-
-/*
-   El HTML actual utiliza .resultadoBuscador.
-   Se mantiene ese nombre para no tocar la lógica JS.
-*/
-
 .resultadoBuscador{
     width:100%;
     display:flex;
@@ -838,7 +832,7 @@ CONTROLES DEL BUSCADOR UNIVERSAL
 
     align-items:center;
 
-    gap:9px;
+    gap:8px;
 
     margin:10px auto 14px;
 
@@ -851,7 +845,17 @@ ETIQUETA — BUSCADOR UNIVERSAL
 
 #labelBusquedaUniversal{
 
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    width:auto;
+
     min-width:0;
+
+    margin:0;
 
     padding:6px 4px;
 
@@ -874,16 +878,20 @@ ETIQUETA — BUSCADOR UNIVERSAL
 
 
 /*=========================================================
-BOTONES BUSCADOR UNIVERSAL
+BOTONES — BUSCADOR UNIVERSAL
 =========================================================*/
 
 .botonBusquedaUniversal{
+
+    flex:0 0 auto;
 
     width:40px;
 
     height:34px;
 
     min-width:40px;
+
+    margin:0;
 
     padding:0;
 
@@ -918,7 +926,6 @@ BOTONES BUSCADOR UNIVERSAL
 
 }
 
-
 .botonBusquedaUniversal:hover{
 
     background:#62d6ff;
@@ -929,7 +936,6 @@ BOTONES BUSCADOR UNIVERSAL
         0 0 14px rgba(98,214,255,.32);
 
 }
-
 
 .botonBusquedaUniversal:active{
 
@@ -1047,13 +1053,15 @@ RESPONSIVE
     }
 
 
-    /*---------------------------------------------
-      CAB15 — BUSCADOR UNIVERSAL
-    ---------------------------------------------*/
+    /*=====================================================
+    CAB15 — BUSCADOR UNIVERSAL EN MÓVIL
+    =====================================================*/
 
     #controlesBusquedaUniversal{
 
-        gap:7px;
+        justify-content:center;
+
+        gap:6px;
 
         margin:8px auto 12px;
 
