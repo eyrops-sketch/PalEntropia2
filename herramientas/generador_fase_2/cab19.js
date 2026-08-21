@@ -1,55 +1,35 @@
 /*
 ========================================================
 PalEntropía
-cab19.js v1.0
+cab19.js v1.1 LTS
 
 BUSCADOR AVANZADO POR TAXÓN
 
-CIRCUITO
---------
-Consulta
-↓
-PALTAXON
-↓
-J1 / código
-↓
-LEEPALJSON → J2 decodificado
-↓
-MATRIXFILTRO
-↓
-MatrixNavegador
-↓
-PALNAVEGADOR.aplicarFiltro()
-↓
-PALNAVEGADOR.aleatorio()
+3 caracteres  → CAB17 NOMBRE
+4 caracteres  → CAB18 GEOLOGÍA
+5+ caracteres → CAB19 TAXÓN
 
-CAB19 NO MODIFICA:
-CAB16
-CAB17
-CAB18
-PALTAXON
-LEEPALJSON
+CAB19 NO INTERFIERE CON CAB16/CAB17/CAB18
 ========================================================
 */
 
 window.cab19 = {
 
-    inicializado: false,
-    seleccionRealizada: false,
+    inicializado:false,
+    seleccionRealizada:false,
 
 
     /*====================================================
       INICIALIZAR
     ====================================================*/
 
-    inicializar: function(){
+    inicializar:function(){
 
-        if(this.inicializado){
-            return;
-        }
+        if(this.inicializado) return;
 
         this.conectar();
-        this.inicializado = true;
+
+        this.inicializado=true;
 
     },
 
@@ -58,22 +38,22 @@ window.cab19 = {
       NORMALIZAR
     ====================================================*/
 
-    normalizar: function(texto){
+    normalizar:function(texto){
 
         return String(texto || "")
             .toLowerCase()
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[\u0300-\u036f]/g,"")
             .trim();
 
     },
 
 
     /*====================================================
-      COMPROBAR CÓDIGO
+      CÓDIGO
     ====================================================*/
 
-    esCodigo: function(texto){
+    esCodigo:function(texto){
 
         return /^\d{3}(?:_\d{0,2})?$/.test(
             String(texto || "").trim()
@@ -86,70 +66,63 @@ window.cab19 = {
       CONECTAR
     ====================================================*/
 
-    conectar: function(){
+    conectar:function(){
 
         const campo =
             document.getElementById(
                 "buscarUniversal"
             );
 
-        if(!campo){
-            return;
-        }
+        if(!campo) return;
 
 
         campo.addEventListener(
             "input",
-            () => {
+            ()=>{
 
-                this.seleccionRealizada = false;
+                this.seleccionRealizada=false;
 
                 const texto =
                     campo.value.trim();
 
+
                 /*
-                Los códigos siguen perteneciendo
-                a CAB16.
+                CAB16
                 */
 
                 if(this.esCodigo(texto)){
                     return;
                 }
 
+
+                /*
+                MUY IMPORTANTE:
+
+                CAB19 SOLO ACTÚA A PARTIR
+                DE 5 CARACTERES.
+
+                No toca las consultas de
+                CAB17 ni CAB18.
+                */
+
+                if(texto.length < 5){
+                    return;
+                }
+
+
                 this.buscar();
 
             }
         );
 
-
-        const check =
-            document.getElementById(
-                "buscarTodosCab16"
-            );
-
-        if(check){
-
-            check.addEventListener(
-                "change",
-                () => {
-
-                    this.seleccionRealizada = false;
-
-                    this.buscar();
-
-                }
-            );
-
-        }
-
     },
 
 
     /*====================================================
-      BUSCAR POR TAXÓN
+      BUSCAR TAXÓN
     ====================================================*/
 
-    buscar: async function(){
+    buscar:async function(){
 
         const campo =
             document.getElementById(
@@ -176,37 +149,22 @@ window.cab19 = {
             campo.value.trim();
 
 
-        resultados.innerHTML = "";
-
-
         /*
-        CÓDIGOS → CAB16
+        CAB19 NO TOCA CONSULTAS CORTAS
         */
 
-        if(this.esCodigo(texto)){
-            return [];
-        }
-
-
-        /*
-        MÍNIMO 5 CARACTERES
-        */
-
-        if(texto.length < 5){
-
-            label.textContent =
-                "Introduce al menos 5 caracteres";
-
-            this.limpiarFiltro();
+        if(
+            texto.length < 5 ||
+            this.esCodigo(texto)
+        ){
 
             return [];
 
         }
 
 
-        /*
-        PALTAXON
-        */
+        resultados.innerHTML="";
+
 
         if(!window.PALTAXON){
 
@@ -217,14 +175,6 @@ window.cab19 = {
 
         }
 
-
-        const consulta =
-            this.normalizar(texto);
-
-
-        /*
-        LEEPALJSON
-        */
 
         if(
             !window.LEEPALJSON ||
@@ -254,18 +204,30 @@ window.cab19 = {
         }
 
 
-        /*
-        MAPA J1 → J2
+        const consulta =
+            this.normalizar(texto);
 
-        LEEPALJSON contiene el nombre
-        decodificado de cada ficha.
+
+        /*
+        ==================================================
+        MAPA J1 → J2
+        ==================================================
+
+        Aquí está la corrección importante.
+
+        No asumimos que el resultado de la consulta
+        contiene "nombre".
+
+        LEEPALJSON es la fuente de J2 decodificado.
+
         */
 
-        const mapaNombres =
+        const mapaJ2 =
             new Map();
 
+
         fichas.forEach(
-            ficha => {
+            ficha=>{
 
                 if(
                     !ficha ||
@@ -274,6 +236,7 @@ window.cab19 = {
                     return;
                 }
 
+
                 const codigo =
                     String(
                         ficha.codigo
@@ -281,42 +244,66 @@ window.cab19 = {
                     .trim()
                     .toUpperCase();
 
-                mapaNombres.set(
-                    codigo,
+
+                /*
+                LEEPALJSON v1.1 prepara:
+
+                codigo
+                nombre
+                j3
+                dieta
+                anatomia
+
+                */
+
+                const nombre =
                     String(
-                        ficha.nombre || ""
-                    ).trim()
-                );
+                        ficha.nombre ||
+                        ficha.j2 ||
+                        ""
+                    )
+                    .trim();
+
+
+                if(nombre){
+
+                    mapaJ2.set(
+                        codigo,
+                        nombre
+                    );
+
+                }
 
             }
         );
 
 
         /*
-        COINCIDENCIAS TAXONÓMICAS
+        ==================================================
+        BUSCAR EN PALTAXON
+        ==================================================
         */
 
-        const coincidencias = [];
+        const coincidencias=[];
 
 
         Object.keys(
             window.PALTAXON
         ).forEach(
-            codigo => {
+            codigo=>{
 
                 const taxon =
                     window.PALTAXON[codigo];
 
 
-                if(!taxon){
-                    return;
-                }
+                if(!taxon) return;
 
 
                 const ta1 =
                     this.normalizar(
                         taxon.ta1
                     );
+
 
                 const ta2 =
                     this.normalizar(
@@ -327,15 +314,17 @@ window.cab19 = {
                 /*
                 BÚSQUEDA PARCIAL
 
-                Ejemplo:
+                diaps
+                ↓
+                diápsido
 
                 tyran
                 ↓
                 tyrannosauridae
 
-                dromeo
+                drome
                 ↓
-                dromeosaurido
+                dromaeosauridae
                 */
 
                 if(
@@ -357,37 +346,32 @@ window.cab19 = {
 
 
                 /*
-                J2 REAL DESDE LEEPALJSON
+                J2 DECODIFICADO
                 */
 
-                const nombre =
-                    mapaNombres.get(j1);
+                const j2 =
+                    mapaJ2.get(j1);
 
 
                 /*
-                Si el J1 taxonómico existe
-                pero no existe en los datos cargados,
-                no se inventa ningún nombre.
+                Si no existe J2 real,
+                NO INVENTAMOS NADA.
                 */
 
-                if(!nombre){
+                if(!j2){
                     return;
                 }
 
 
                 coincidencias.push({
 
-                    codigo:
-                        j1,
+                    codigo:j1,
 
-                    nombre:
-                        nombre,
+                    nombre:j2,
 
-                    tipo:
-                        "taxon",
+                    tipo:"taxon",
 
-                    relevancia:
-                        100
+                    relevancia:100
 
                 });
 
@@ -403,7 +387,7 @@ window.cab19 = {
             Array.from(
                 new Map(
                     coincidencias.map(
-                        ficha => [
+                        ficha=>[
                             ficha.codigo,
                             ficha
                         ]
@@ -412,31 +396,19 @@ window.cab19 = {
             );
 
 
-        /*
-        CONTADOR
-        */
-
         label.textContent =
             unicas.length +
             (
-                unicas.length === 1
+                unicas.length===1
                     ? " resultado"
                     : " resultados"
             );
 
 
-        /*
-        MOSTRAR
-        */
-
         this.mostrar(
             unicas
         );
 
-
-        /*
-        GENERAR RANGO
-        */
 
         if(unicas.length){
 
@@ -458,24 +430,21 @@ window.cab19 = {
 
 
     /*====================================================
-      MOSTRAR RESULTADOS
+      MOSTRAR
     ====================================================*/
 
-    mostrar: function(coincidencias){
+    mostrar:function(coincidencias){
 
         const contenedor =
             document.getElementById(
                 "resultadosCab16"
             );
 
-
-        if(!contenedor){
-            return;
-        }
+        if(!contenedor) return;
 
 
         coincidencias.forEach(
-            ficha => {
+            ficha=>{
 
                 if(
                     !ficha ||
@@ -516,9 +485,9 @@ window.cab19 = {
 
 
                 /*
-                PRESENTACIÓN FINAL
+                PRESENTACIÓN FINAL:
 
-                J1 + J2 decodificado
+                J1 + J2
                 */
 
                 fila.textContent =
@@ -529,12 +498,10 @@ window.cab19 = {
 
                 fila.addEventListener(
                     "click",
-                    () => {
-
+                    ()=>{
                         this.seleccionar(
                             codigo
                         );
-
                     }
                 );
 
@@ -548,12 +515,11 @@ window.cab19 = {
 
     },
 
-
     /*====================================================
       APLICAR MATRIX
     ====================================================*/
 
-    aplicarMatrix: async function(
+    aplicarMatrix:async function(
         coincidencias
     ){
 
@@ -579,10 +545,6 @@ window.cab19 = {
 
         }
 
-
-        /*
-        J1 → MATRIXFILTRO
-        */
 
         const matrizJ1 =
             window.MATRIXFILTRO.actualizar(
@@ -656,7 +618,7 @@ window.cab19 = {
 
 
         /*
-        APLICAR RANGO
+        RANGO TAXONÓMICO
         */
 
         window.PALNAVEGADOR.aplicarFiltro(
@@ -694,10 +656,10 @@ window.cab19 = {
 
 
     /*====================================================
-      SELECCIONAR RESULTADO
+      SELECCIONAR
     ====================================================*/
 
-    seleccionar: async function(codigo){
+    seleccionar:async function(codigo){
 
         codigo =
             String(
@@ -707,12 +669,10 @@ window.cab19 = {
             .toUpperCase();
 
 
-        if(!codigo){
-            return;
-        }
+        if(!codigo) return;
 
 
-        this.seleccionRealizada = true;
+        this.seleccionRealizada=true;
 
 
         const campo =
@@ -722,7 +682,10 @@ window.cab19 = {
 
 
         if(campo){
-            campo.value = codigo;
+
+            campo.value =
+                codigo;
+
         }
 
 
@@ -733,7 +696,10 @@ window.cab19 = {
 
 
         if(label){
-            label.textContent = codigo;
+
+            label.textContent =
+                codigo;
+
         }
 
 
@@ -771,7 +737,7 @@ window.cab19 = {
       CERRAR
     ====================================================*/
 
-    cerrar: function(){
+    cerrar:function(){
 
         if(
             window.PALBUSCADOR &&
@@ -792,18 +758,15 @@ window.cab19 = {
             "lightboxBusqueda",
             "modalBuscador"
         ].forEach(
-            id => {
+            id=>{
 
                 const elemento =
-                    document.getElementById(
-                        id
-                    );
+                    document.getElementById(id);
 
 
                 if(elemento){
 
-                    elemento.style.display =
-                        "none";
+                    elemento.style.display="none";
 
                     elemento.classList.remove(
                         "activo"
@@ -822,10 +785,10 @@ window.cab19 = {
 
 
     /*====================================================
-      LIMPIAR FILTRO
+      LIMPIAR
     ====================================================*/
 
-    limpiarFiltro: function(){
+    limpiarFiltro:function(){
 
         if(
             window.PALNAVEGADOR &&
@@ -869,6 +832,6 @@ document.addEventListener(
 
 /*
 ========================================================
-FIN cab19.js v1.0
+FIN cab19.js v1.1 LTS
 ========================================================
 */
