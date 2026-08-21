@@ -1,6 +1,7 @@
 /*=========================================================
-PalEntropía — STYLE.CSS v2.1
-Base + Buscador Universal
+PalEntropía
+Generador de Paleofichas
+Style v2.1
 =========================================================*/
 
 *{box-sizing:border-box}
@@ -19,6 +20,10 @@ body{
  font-family:Arial,Helvetica,sans-serif;
  min-height:100vh;
 }
+
+/*=========================================================
+CABECERA
+=========================================================*/
 
 #cabecera{
  text-align:center;
@@ -40,7 +45,7 @@ h1{
 }
 
 /*=========================================================
-CONTROLES
+CONTROLES GENERALES
 =========================================================*/
 
 #controlesBusqueda{
@@ -65,7 +70,7 @@ CONTROLES
  display:flex;
  align-items:center;
  justify-content:center;
- transition:.2s;
+ transition:.25s;
 }
 
 #controlesBusqueda button:hover{
@@ -74,6 +79,10 @@ CONTROLES
 }
 
 #controlesBusqueda button:active{transform:scale(.97)}
+
+/*=========================================================
+ESTADO
+=========================================================*/
 
 #estado{
  max-width:900px;
@@ -131,7 +140,13 @@ FICHA
 }
 
 #cronologia strong,
-#resultadoGeologiaCAB07 strong{color:#62d6ff}
+#resultadoGeologiaCAB07 strong{
+ color:#62d6ff;
+}
+
+/*=========================================================
+IMAGEN
+=========================================================*/
 
 #contenedorImagenPrincipal{text-align:center}
 
@@ -146,17 +161,24 @@ FICHA
  border:2px solid #62d6ff;
  box-shadow:0 0 15px rgba(98,214,255,.22);
  cursor:zoom-in;
- transition:.2s;
+ transition:.25s;
 }
 
-#imagenPrincipal:hover{box-shadow:0 0 20px rgba(98,214,255,.40)}
+#imagenPrincipal:hover{
+ box-shadow:0 0 20px rgba(98,214,255,.40);
+}
+
+/*=========================================================
+VÍDEO
+=========================================================*/
 
 #videoFicha{
  text-align:center;
  margin:8px 0 15px;
 }
 
-#botonVideo,#botonVideo:visited{
+#botonVideo,
+#botonVideo:visited{
  display:inline-flex;
  align-items:center;
  justify-content:center;
@@ -173,16 +195,20 @@ FICHA
  font-size:16px;
  box-shadow:0 0 12px rgba(98,214,255,.30),0 4px 12px rgba(0,0,0,.22);
  cursor:pointer;
- transition:.2s;
+ transition:.25s;
 }
 
 #botonVideo:hover{
  background:#00e5ff;
  transform:translateY(-1px);
- box-shadow:0 0 18px rgba(98,214,255,.50);
+ box-shadow:0 0 18px rgba(98,214,255,.50),0 5px 15px rgba(0,0,0,.28);
 }
 
 #botonVideo:active{transform:scale(.96)}
+
+/*=========================================================
+INFORMACIÓN
+=========================================================*/
 
 #bloqueInfo{
  margin-top:25px;
@@ -192,12 +218,17 @@ FICHA
 
 .campoInfo{margin-bottom:18px}
 .campoInfo:last-child{margin-bottom:0}
+
 .campo{
  display:block;
  color:#62d6ff;
  font-weight:bold;
  margin-bottom:3px;
 }
+
+/*=========================================================
+GALERÍA
+=========================================================*/
 
 #galeria{
  margin-top:35px;
@@ -215,7 +246,7 @@ FICHA
  border:2px solid #62d6ff;
  box-shadow:0 0 15px rgba(98,214,255,.22);
  cursor:zoom-in;
- transition:.2s;
+ transition:.25s;
 }
 
 #galeria img:hover{
@@ -223,12 +254,20 @@ FICHA
  transform:translateY(-2px);
 }
 
+/*=========================================================
+SECCIONES
+=========================================================*/
+
 h2{
  text-align:center;
  color:#62d6ff;
  margin-top:35px;
  margin-bottom:20px;
 }
+
+/*=========================================================
+ESTADÍSTICAS
+=========================================================*/
 
 .stats{
  display:grid;
@@ -247,7 +286,7 @@ h2{
 }
 
 /*=========================================================
-LIGHTBOX IMÁGENES
+LIGHTBOX IMAGEN
 =========================================================*/
 
 #visorImagen{
@@ -284,9 +323,10 @@ LIGHTBOX IMÁGENES
  background:#1d9bf0;
  color:#fff;
  font-size:30px;
+ line-height:40px;
  cursor:pointer;
  z-index:2;
- transition:.2s;
+ transition:.25s;
 }
 
 .botonCerrar:hover{
@@ -346,7 +386,13 @@ EXPLORADOR
  outline:none;
 }
 
-#buscarNombre:focus{box-shadow:0 0 12px rgba(98,214,255,.22)}
+#buscarNombre:focus{
+ box-shadow:0 0 12px rgba(98,214,255,.22);
+}
+
+/*=========================================================
+RESULTADOS ANTIGUOS / COMPATIBILIDAD
+=========================================================*/
 
 #listaResultados{
  display:flex;
@@ -368,7 +414,8 @@ EXPLORADOR
  border-radius:10px;
  text-align:left;
  cursor:pointer;
- transition:.2s;
+ box-shadow:0 0 6px rgba(98,214,255,.08);
+ transition:.20s;
 }
 
 .resultadoBuscador:hover{
@@ -386,6 +433,7 @@ EXPLORADOR
  color:#62d6ff;
  font-size:14px;
  font-weight:bold;
+ letter-spacing:.4px;
 }
 
 .resultadoNombre{
@@ -408,7 +456,7 @@ EXPLORADOR
 }
 
 /*=========================================================
-FILTRO / TODOS
+FILTRO ACTIVO
 =========================================================*/
 
 #filtroActivo{
@@ -440,8 +488,20 @@ FILTRO / TODOS
  background:#1d9bf0;
  color:#fff;
  font-size:17px;
+ line-height:23px;
  cursor:pointer;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ transition:.20s;
 }
+
+#filtroActivo button:hover{
+ background:#62d6ff;
+ color:#001018;
+}
+
+#filtroActivo button:active{transform:scale(.90)}
 
 #botonTodos{
  display:none;
@@ -454,12 +514,16 @@ FILTRO / TODOS
  font-size:14px;
  font-weight:bold;
  cursor:pointer;
+ transition:.20s;
 }
 
 #botonTodos:hover{
  background:#62d6ff;
  color:#001018;
+ box-shadow:0 0 10px rgba(98,214,255,.25);
 }
+
+#botonTodos:active{transform:scale(.95)}
 
 /*=========================================================
 BOTONES SUPERIORES
@@ -475,7 +539,7 @@ BOTONES SUPERIORES
  gap:6px;
 }
 
-.botonCircularSuperior,#botonAleatorio{
+.botonCircularSuperior{
  width:34px;
  height:34px;
  padding:0;
@@ -489,23 +553,42 @@ BOTONES SUPERIORES
  justify-content:center;
  cursor:pointer;
  box-shadow:0 0 10px rgba(98,214,255,.25);
- transition:.2s;
+ transition:.25s;
 }
 
-.botonCircularSuperior:hover,#botonAleatorio:hover{
+.botonCircularSuperior:hover{
  background:#62d6ff;
  color:#001018;
  box-shadow:0 0 15px rgba(98,214,255,.42);
 }
 
-.botonCircularSuperior:active,#botonAleatorio:active{transform:scale(.92)}
+.botonCircularSuperior:active{transform:scale(.92)}
 
 #botonAleatorio{
  position:fixed;
  top:10px;
  right:10px;
+ width:34px;
+ height:34px;
+ padding:0;
+ font-size:18px;
+ border:2px solid #62d6ff;
+ border-radius:50%;
+ cursor:pointer;
  z-index:9999;
+ background:#1d9bf0;
+ color:#fff;
+ box-shadow:0 0 10px rgba(98,214,255,.25);
+ transition:.25s;
 }
+
+#botonAleatorio:hover{
+ background:#62d6ff;
+ color:#001018;
+ box-shadow:0 0 15px rgba(98,214,255,.42);
+}
+
+#botonAleatorio:active{transform:scale(.92)}
 
 /*=========================================================
 NAVEGACIÓN
@@ -532,15 +615,23 @@ NAVEGACIÓN
  display:inline-flex;
  align-items:center;
  justify-content:center;
+ box-shadow:0 0 7px rgba(98,214,255,.12);
+ transition:.20s;
 }
 
 .botonNavegacion:hover{
  background:#62d6ff;
  color:#001018;
+ box-shadow:0 0 12px rgba(98,214,255,.30);
 }
 
 .botonNavegacion:active{transform:scale(.92)}
-.botonNavegacion:disabled{opacity:.35;cursor:default}
+
+.botonNavegacion:disabled{
+ opacity:.35;
+ cursor:default;
+ box-shadow:none;
+}
 
 #posicionNavegacion{
  min-width:70px;
@@ -549,73 +640,11 @@ NAVEGACIÓN
  font-weight:600;
  color:#aaa;
  padding:4px 9px;
+ border-radius:12px;
 }
 
 /*=========================================================
-BUSCADOR UNIVERSAL — DISEÑO DEFINITIVO
-=========================================================*/
-
-/* La etiqueta y los dos botones forman UNA sola unidad */
-#controlesBusquedaUniversal{
- width:max-content;
- max-width:100%;
- margin:10px auto 12px;
- padding:0;
- display:inline-flex;
- align-items:center;
- justify-content:center;
- gap:8px;
- flex-wrap:nowrap;
- vertical-align:middle;
-}
-
-/* La etiqueta queda SIEMPRE a la izquierda */
-#labelBusquedaUniversal{
- order:1;
- flex:0 0 auto;
- min-width:0;
- padding:6px 10px;
- color:#b56cff;
- font-size:16px;
- font-weight:bold;
- letter-spacing:.4px;
- white-space:nowrap;
- text-align:center;
-}
-
-/* Los botones quedan SIEMPRE juntos a la derecha */
-#controlesBusquedaUniversal .botonBusquedaUniversal{
- order:2;
- flex:0 0 auto;
- width:42px;
- height:34px;
- min-width:42px;
- padding:0;
- border:1px solid #62d6ff;
- border-radius:9px;
- background:#151719;
- color:#62d6ff;
- font-size:16px;
- line-height:1;
- display:inline-flex;
- align-items:center;
- justify-content:center;
- cursor:pointer;
- box-shadow:0 0 8px rgba(98,214,255,.18);
- transition:.2s;
-}
-
-#controlesBusquedaUniversal .botonBusquedaUniversal:hover{
- background:#62d6ff;
- color:#001018;
- box-shadow:0 0 14px rgba(98,214,255,.30);
-}
-
-#controlesBusquedaUniversal .botonBusquedaUniversal:active{
- transform:scale(.93);
-    }
-/*=========================================================
-SCROLL BUSCADOR
+SCROLL
 =========================================================*/
 
 #ventanaBuscador::-webkit-scrollbar{width:10px}
@@ -630,103 +659,60 @@ SCROLL BUSCADOR
 #ventanaBuscador::-webkit-scrollbar-thumb:hover{background:#00e5ff}
 
 /*=========================================================
-CAB16
+BUSCADOR UNIVERSAL — CAB15
 =========================================================*/
 
-#resultadosCab16{
- display:flex;
- flex-direction:column;
+#controlesBusquedaUniversal{
  width:100%;
- max-width:620px;
- max-height:42vh;
- margin:18px auto 0;
- padding:0;
+ display:flex;
+ justify-content:center;
+ align-items:center;
  gap:8px;
- overflow-y:auto;
- scrollbar-width:thin;
- scrollbar-color:#62d6ff #151719;
+ margin:10px auto 12px;
 }
 
-#resultadosCab16 .resultadoCab16{
- display:flex;
- align-items:center;
- justify-content:center;
- width:100%;
- min-height:46px;
- padding:10px 16px;
- background:#151719!important;
- color:#62d6ff!important;
- border:1px solid rgba(98,214,255,.35)!important;
- border-radius:10px!important;
- font-family:Arial,Helvetica,sans-serif;
+#labelBusquedaUniversal{
+ order:1;
+ flex:0 0 auto;
+ min-width:0;
+ padding:6px 12px;
+ color:#62d6ff;
+ border:1px solid #62d6ff;
+ border-radius:9px;
+ background:#151719;
  font-size:16px;
  font-weight:bold;
- line-height:1.3;
+ letter-spacing:.4px;
+ white-space:nowrap;
  text-align:center;
- cursor:pointer;
- transition:.2s;
+ box-shadow:0 0 8px rgba(98,214,255,.14);
 }
 
-#resultadosCab16 .resultadoCab16:hover{
- background:#1c2428!important;
- color:#fff!important;
- border-color:#62d6ff!important;
- box-shadow:0 0 12px rgba(98,214,255,.22);
-}
-
-#resultadosCab16 .resultadoCab16:active{
- transform:scale(.98);
- background:#62d6ff!important;
- color:#001018!important;
-}
-
-#resultadosCab16 .resultadoCab16:focus{
- outline:none;
- border-color:#62d6ff!important;
- box-shadow:0 0 12px rgba(98,214,255,.28);
-}
-
-#labelResultadosCab16{
- width:100%;
- max-width:620px;
- margin:14px auto 0;
+.botonBusquedaUniversal{
+ width:38px;
+ height:34px;
+ min-width:38px;
+ padding:0;
+ border:1px solid #62d6ff;
+ border-radius:9px;
+ background:#1d9bf0;
  color:#fff;
- font-size:15px;
- font-weight:bold;
- line-height:1.4;
- text-align:center;
-}
-
-#checkBusquedaCab16{
- display:flex;
+ font-size:16px;
+ display:inline-flex;
  align-items:center;
  justify-content:center;
- gap:8px;
- width:100%;
- margin:12px auto 0;
- color:#fff;
- font-size:14px;
- text-align:center;
  cursor:pointer;
+ box-shadow:0 0 8px rgba(98,214,255,.18);
+ transition:.20s;
 }
 
-#buscarTodosCab16{
- width:17px;
- height:17px;
- margin:0;
- accent-color:#62d6ff;
- cursor:pointer;
-}
-
-#resultadosCab16::-webkit-scrollbar{width:8px}
-#resultadosCab16::-webkit-scrollbar-track{
- background:#151719;
- border-radius:8px;
-}
-#resultadosCab16::-webkit-scrollbar-thumb{
+.botonBusquedaUniversal:hover{
  background:#62d6ff;
- border-radius:8px;
+ color:#001018;
+ box-shadow:0 0 14px rgba(98,214,255,.30);
 }
+
+.botonBusquedaUniversal:active{transform:scale(.92)}
 
 /*=========================================================
 RESPONSIVE
@@ -737,6 +723,7 @@ RESPONSIVE
  body{padding:15px}
 
  h1{font-size:30px}
+
  #subtitulo{font-size:16px}
 
  #controlesBusqueda{
@@ -756,6 +743,7 @@ RESPONSIVE
  }
 
  #titulo{font-size:clamp(24px,7vw,34px)}
+
  #cronologia{font-size:18px}
 
  #bloqueInfo{
@@ -809,71 +797,31 @@ RESPONSIVE
 
  .resultadoNombre{font-size:15px}
 
+ #imagenAmpliada{
+  max-width:94vw;
+  max-height:88vh;
+ }
+
  #filtroActivo{font-size:13px}
 
- /*---------------------------------------------
- BUSCADOR UNIVERSAL — MÓVIL
- ---------------------------------------------*/
-
  #controlesBusquedaUniversal{
-  width:auto;
-  max-width:100%;
-  margin:8px auto 10px;
-  display:inline-flex;
-  flex-direction:row;
-  flex-wrap:nowrap;
-  align-items:center;
-  justify-content:flex-start;
   gap:7px;
+  margin:8px auto 10px;
  }
 
  #labelBusquedaUniversal{
   order:1;
-  padding:5px 7px;
+  padding:5px 10px;
   font-size:14px;
- }
-
- #controlesBusquedaUniversal .botonBusquedaUniversal{
-  order:2;
-  width:38px;
-  height:32px;
-  min-width:38px;
   border-radius:8px;
+ }
+
+ .botonBusquedaUniversal{
+  width:36px;
+  height:34px;
+  min-width:36px;
   font-size:15px;
- }
-
- /*---------------------------------------------
- CAB16 — MÓVIL
- ---------------------------------------------*/
-
- #resultadosCab16{
-  width:100%;
-  max-width:none;
-  margin-top:16px;
-  gap:7px;
-  max-height:45vh;
- }
-
- #resultadosCab16 .resultadoCab16{
-  min-height:44px;
-  padding:10px 14px;
-  border-radius:9px!important;
-  font-size:15px;
- }
-
- #labelResultadosCab16{
-  margin-top:12px;
-  font-size:14px;
- }
-
- #checkBusquedaCab16{
-  margin-top:10px;
-  font-size:14px;
- }
-
- #buscarTodosCab16{
-  width:18px;
-  height:18px;
+  border-radius:8px;
  }
 }
 
