@@ -45,7 +45,7 @@ h1{
 }
 
 /*=========================================================
-CONTROLES GENERALES
+CONTROLES DEL BUSCADOR
 =========================================================*/
 
 #controlesBusqueda{
@@ -62,7 +62,7 @@ CONTROLES GENERALES
  padding:10px 22px;
  background:#1d9bf0;
  color:#fff;
- border:0;
+ border:none;
  border-radius:10px;
  font-size:18px;
  font-weight:bold;
@@ -78,7 +78,9 @@ CONTROLES GENERALES
  box-shadow:0 0 14px rgba(98,214,255,.28);
 }
 
-#controlesBusqueda button:active{transform:scale(.97)}
+#controlesBusqueda button:active{
+ transform:scale(.97);
+}
 
 /*=========================================================
 ESTADO
@@ -110,8 +112,14 @@ FICHA
  border:2px solid #62d6ff;
  border-radius:18px;
  padding:25px;
- box-shadow:0 0 20px rgba(98,214,255,.28),0 8px 30px rgba(0,0,0,.28);
+ box-shadow:
+  0 0 20px rgba(98,214,255,.28),
+  0 8px 30px rgba(0,0,0,.28);
 }
+
+/*=========================================================
+NOMBRE
+=========================================================*/
 
 #titulo{
  text-align:center;
@@ -123,6 +131,10 @@ FICHA
  hyphens:auto;
 }
 
+/*=========================================================
+CÓDIGO
+=========================================================*/
+
 #codigoFicha{
  text-align:center;
  color:#999;
@@ -130,6 +142,10 @@ FICHA
  letter-spacing:.5px;
  margin-bottom:10px;
 }
+
+/*=========================================================
+CRONOLOGÍA
+=========================================================*/
 
 #cronologia{
  text-align:center;
@@ -145,10 +161,12 @@ FICHA
 }
 
 /*=========================================================
-IMAGEN
+IMAGEN PRINCIPAL
 =========================================================*/
 
-#contenedorImagenPrincipal{text-align:center}
+#contenedorImagenPrincipal{
+ text-align:center;
+}
 
 #imagenPrincipal{
  display:block;
@@ -193,7 +211,9 @@ VÍDEO
  text-decoration:none!important;
  font-weight:bold;
  font-size:16px;
- box-shadow:0 0 12px rgba(98,214,255,.30),0 4px 12px rgba(0,0,0,.22);
+ box-shadow:
+  0 0 12px rgba(98,214,255,.30),
+  0 4px 12px rgba(0,0,0,.22);
  cursor:pointer;
  transition:.25s;
 }
@@ -201,13 +221,17 @@ VÍDEO
 #botonVideo:hover{
  background:#00e5ff;
  transform:translateY(-1px);
- box-shadow:0 0 18px rgba(98,214,255,.50),0 5px 15px rgba(0,0,0,.28);
+ box-shadow:
+  0 0 18px rgba(98,214,255,.50),
+  0 5px 15px rgba(0,0,0,.28);
 }
 
-#botonVideo:active{transform:scale(.96)}
+#botonVideo:active{
+ transform:scale(.96);
+}
 
 /*=========================================================
-INFORMACIÓN
+BLOQUE INFORMACIÓN
 =========================================================*/
 
 #bloqueInfo{
@@ -216,8 +240,13 @@ INFORMACIÓN
  line-height:1.8;
 }
 
-.campoInfo{margin-bottom:18px}
-.campoInfo:last-child{margin-bottom:0}
+.campoInfo{
+ margin-bottom:18px;
+}
+
+.campoInfo:last-child{
+ margin-bottom:0;
+}
 
 .campo{
  display:block;
@@ -255,7 +284,7 @@ GALERÍA
 }
 
 /*=========================================================
-SECCIONES
+TÍTULOS
 =========================================================*/
 
 h2{
@@ -286,7 +315,7 @@ ESTADÍSTICAS
 }
 
 /*=========================================================
-LIGHTBOX IMAGEN
+LIGHTBOX IMÁGENES
 =========================================================*/
 
 #visorImagen{
@@ -318,7 +347,7 @@ LIGHTBOX IMAGEN
  width:42px;
  height:42px;
  padding:0;
- border:0;
+ border:none;
  border-radius:50%;
  background:#1d9bf0;
  color:#fff;
@@ -334,10 +363,12 @@ LIGHTBOX IMAGEN
  box-shadow:0 0 14px rgba(98,214,255,.40);
 }
 
-.botonCerrar:active{transform:scale(.94)}
+.botonCerrar:active{
+ transform:scale(.94);
+}
 
 /*=========================================================
-EXPLORADOR
+EXPLORADOR ANTIGUO
 =========================================================*/
 
 #visorBuscador{
@@ -363,7 +394,9 @@ EXPLORADOR
  background:#181a1c;
  border:2px solid #62d6ff;
  border-radius:18px;
- box-shadow:0 0 25px rgba(98,214,255,.35),0 10px 35px rgba(0,0,0,.45);
+ box-shadow:
+  0 0 25px rgba(98,214,255,.35),
+  0 10px 35px rgba(0,0,0,.45);
 }
 
 #ventanaBuscador h2{
@@ -391,7 +424,7 @@ EXPLORADOR
 }
 
 /*=========================================================
-RESULTADOS ANTIGUOS / COMPATIBILIDAD
+RESULTADOS ANTIGUOS
 =========================================================*/
 
 #listaResultados{
@@ -425,7 +458,9 @@ RESULTADOS ANTIGUOS / COMPATIBILIDAD
  box-shadow:0 0 12px rgba(98,214,255,.24);
 }
 
-.resultadoBuscador:active{transform:scale(.985)}
+.resultadoBuscador:active{
+ transform:scale(.985);
+}
 
 .resultadoCodigo{
  flex:0 0 auto;
@@ -477,13 +512,15 @@ FILTRO ACTIVO
  font-weight:600;
 }
 
-#filtroActivo .textoFiltro{color:#62d6ff}
+#filtroActivo .textoFiltro{
+ color:#62d6ff;
+}
 
 #filtroActivo button{
  width:23px;
  height:23px;
  padding:0;
- border:0;
+ border:none;
  border-radius:50%;
  background:#1d9bf0;
  color:#fff;
@@ -501,7 +538,13 @@ FILTRO ACTIVO
  color:#001018;
 }
 
-#filtroActivo button:active{transform:scale(.90)}
+#filtroActivo button:active{
+ transform:scale(.90);
+}
+
+/*=========================================================
+BOTÓN TODOS
+=========================================================*/
 
 #botonTodos{
  display:none;
@@ -523,7 +566,9 @@ FILTRO ACTIVO
  box-shadow:0 0 10px rgba(98,214,255,.25);
 }
 
-#botonTodos:active{transform:scale(.95)}
+#botonTodos:active{
+ transform:scale(.95);
+}
 
 /*=========================================================
 BOTONES SUPERIORES
@@ -562,7 +607,9 @@ BOTONES SUPERIORES
  box-shadow:0 0 15px rgba(98,214,255,.42);
 }
 
-.botonCircularSuperior:active{transform:scale(.92)}
+.botonCircularSuperior:active{
+ transform:scale(.92);
+}
 
 #botonAleatorio{
  position:fixed;
@@ -572,6 +619,8 @@ BOTONES SUPERIORES
  height:34px;
  padding:0;
  font-size:18px;
+ line-height:34px;
+ text-align:center;
  border:2px solid #62d6ff;
  border-radius:50%;
  cursor:pointer;
@@ -588,7 +637,9 @@ BOTONES SUPERIORES
  box-shadow:0 0 15px rgba(98,214,255,.42);
 }
 
-#botonAleatorio:active{transform:scale(.92)}
+#botonAleatorio:active{
+ transform:scale(.92);
+}
 
 /*=========================================================
 NAVEGACIÓN
@@ -625,7 +676,9 @@ NAVEGACIÓN
  box-shadow:0 0 12px rgba(98,214,255,.30);
 }
 
-.botonNavegacion:active{transform:scale(.92)}
+.botonNavegacion:active{
+ transform:scale(.92);
+}
 
 .botonNavegacion:disabled{
  opacity:.35;
@@ -644,21 +697,6 @@ NAVEGACIÓN
 }
 
 /*=========================================================
-SCROLL
-=========================================================*/
-
-#ventanaBuscador::-webkit-scrollbar{width:10px}
-#ventanaBuscador::-webkit-scrollbar-track{
- background:#151515;
- border-radius:10px;
-}
-#ventanaBuscador::-webkit-scrollbar-thumb{
- background:#62d6ff;
- border-radius:10px;
-}
-#ventanaBuscador::-webkit-scrollbar-thumb:hover{background:#00e5ff}
-
-/*=========================================================
 BUSCADOR UNIVERSAL — CAB15
 =========================================================*/
 
@@ -667,7 +705,7 @@ BUSCADOR UNIVERSAL — CAB15
  display:flex;
  justify-content:center;
  align-items:center;
- gap:8px;
+ gap:7px;
  margin:10px auto 12px;
 }
 
@@ -712,7 +750,40 @@ BUSCADOR UNIVERSAL — CAB15
  box-shadow:0 0 14px rgba(98,214,255,.30);
 }
 
-.botonBusquedaUniversal:active{transform:scale(.92)}
+.botonBusquedaUniversal:active{
+ transform:scale(.92);
+}
+
+/*=========================================================
+SCROLL
+=========================================================*/
+
+#ventanaBuscador::-webkit-scrollbar{
+ width:10px;
+}
+
+#ventanaBuscador::-webkit-scrollbar-track{
+ background:#151515;
+ border-radius:10px;
+}
+
+#ventanaBuscador::-webkit-scrollbar-thumb{
+ background:#62d6ff;
+ border-radius:10px;
+}
+
+#ventanaBuscador::-webkit-scrollbar-thumb:hover{
+ background:#00e5ff;
+}
+
+/*=========================================================
+OCULTAR BOTÓN EXPLORAR PALEOFICHAS
+La función permanece intacta.
+=========================================================*/
+
+#botonExplorar{
+ display:none!important;
+}
 
 /*=========================================================
 RESPONSIVE
@@ -742,7 +813,9 @@ RESPONSIVE
   border-radius:15px;
  }
 
- #titulo{font-size:clamp(24px,7vw,34px)}
+ #titulo{
+  font-size:clamp(24px,7vw,34px);
+ }
 
  #cronologia{font-size:18px}
 
@@ -805,12 +878,11 @@ RESPONSIVE
  #filtroActivo{font-size:13px}
 
  #controlesBusquedaUniversal{
-  gap:7px;
+  gap:6px;
   margin:8px auto 10px;
  }
 
  #labelBusquedaUniversal{
-  order:1;
   padding:5px 10px;
   font-size:14px;
   border-radius:8px;
