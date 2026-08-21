@@ -2,7 +2,7 @@
 ========================================================
 cab15.js v1.4
 controles y memoria de posición
-palentropía — generador
+palentropía — visor de paleofichas
 
 funciones:
 - crear controles del buscador universal
@@ -121,19 +121,24 @@ window.cab15 = {
         botonBuscar.id =
             "botonBuscarUniversal";
 
+
         botonBuscar.type =
             "button";
+
 
         botonBuscar.className =
             "botonBusquedaUniversal";
 
+
         botonBuscar.title =
-            "búsqueda avanzada";
+            "Buscar por ...";
+
 
         botonBuscar.setAttribute(
             "aria-label",
-            "abrir búsqueda avanzada"
+            "Buscar por ..."
         );
+
 
         botonBuscar.textContent =
             "🔍";
@@ -148,8 +153,9 @@ window.cab15 = {
         etiqueta.id =
             "labelBusquedaUniversal";
 
+
         etiqueta.textContent =
-            "búsqueda avanzada";
+            "Buscar por ...";
 
 
         const botonLimpiar =
@@ -161,19 +167,24 @@ window.cab15 = {
         botonLimpiar.id =
             "botonLimpiarBusquedaUniversal";
 
+
         botonLimpiar.type =
             "button";
+
 
         botonLimpiar.className =
             "botonBusquedaUniversal";
 
+
         botonLimpiar.title =
             "mostrar todos los registros";
+
 
         botonLimpiar.setAttribute(
             "aria-label",
             "mostrar todos los registros"
         );
+
 
         botonLimpiar.textContent =
             "×";
@@ -183,9 +194,11 @@ window.cab15 = {
             botonBuscar
         );
 
+
         controles.appendChild(
             etiqueta
         );
+
 
         controles.appendChild(
             botonLimpiar
@@ -261,28 +274,36 @@ window.cab15 = {
         visor.id =
             "visorBuscadorUniversal";
 
+
         visor.setAttribute(
             "aria-hidden",
             "true"
         );
 
+
         visor.style.display =
             "none";
+
 
         visor.style.position =
             "fixed";
 
+
         visor.style.inset =
             "0";
+
 
         visor.style.zIndex =
             "999997";
 
+
         visor.style.background =
             "rgba(0,0,0,.92)";
 
+
         visor.style.justifyContent =
             "center";
+
 
         visor.style.alignItems =
             "center";
@@ -297,32 +318,42 @@ window.cab15 = {
         ventana.id =
             "ventanaBuscadorUniversal";
 
+
         ventana.style.position =
             "relative";
+
 
         ventana.style.width =
             "90%";
 
+
         ventana.style.maxWidth =
             "700px";
+
 
         ventana.style.maxHeight =
             "80vh";
 
+
         ventana.style.overflow =
             "auto";
+
 
         ventana.style.padding =
             "25px";
 
+
         ventana.style.background =
             "#181a1c";
+
 
         ventana.style.border =
             "2px solid #62d6ff";
 
+
         ventana.style.borderRadius =
             "18px";
+
 
         ventana.style.boxShadow =
             "0 0 25px rgba(98,214,255,.35)";
@@ -337,37 +368,48 @@ window.cab15 = {
         cerrar.id =
             "cerrarBuscadorUniversal";
 
+
         cerrar.type =
             "button";
+
 
         cerrar.textContent =
             "×";
 
+
         cerrar.setAttribute(
             "aria-label",
-            "cerrar búsqueda avanzada"
+            "cerrar buscador"
         );
+
 
         cerrar.style.position =
             "absolute";
 
+
         cerrar.style.top =
             "10px";
+
 
         cerrar.style.right =
             "12px";
 
+
         cerrar.style.fontSize =
             "28px";
+
 
         cerrar.style.background =
             "none";
 
+
         cerrar.style.border =
             "none";
 
+
         cerrar.style.color =
             "#fff";
+
 
         cerrar.style.cursor =
             "pointer";
@@ -380,7 +422,8 @@ window.cab15 = {
 
 
         titulo.textContent =
-            "búsqueda avanzada";
+            "Buscar por ...";
+
 
         titulo.style.marginTop =
             "0";
@@ -395,41 +438,54 @@ window.cab15 = {
         campo.id =
             "buscarUniversal";
 
+
         campo.type =
             "text";
+
 
         campo.placeholder =
             "código, nombre, tiempo geológico o taxón";
 
+
         campo.autocomplete =
             "off";
+
 
         campo.style.display =
             "block";
 
+
         campo.style.width =
             "90%";
+
 
         campo.style.margin =
             "20px auto";
 
+
         campo.style.padding =
             "10px";
+
 
         campo.style.fontSize =
             "18px";
 
+
         campo.style.textAlign =
             "center";
+
 
         campo.style.background =
             "#151719";
 
+
         campo.style.color =
             "#fff";
 
+
         campo.style.border =
             "2px solid #62d6ff";
+
 
         campo.style.borderRadius =
             "10px";
@@ -449,13 +505,16 @@ window.cab15 = {
             cerrar
         );
 
+
         ventana.appendChild(
             titulo
         );
 
+
         ventana.appendChild(
             campo
         );
+
 
         ventana.appendChild(
             resultados
