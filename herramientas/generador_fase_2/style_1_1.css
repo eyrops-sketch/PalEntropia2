@@ -696,7 +696,7 @@ BOTONES CIRCULARES SUPERIORES
 
 
 /*=========================================================
-COMPATIBILIDAD CON EL BOTÓN ALEATORIO ACTUAL
+BOTÓN ALEATORIO
 =========================================================*/
 
 #botonAleatorio{
@@ -818,133 +818,6 @@ SCROLL EXPLORADOR
 
 
 /*=========================================================
-CAB15
-CONTROLES DEL BUSCADOR UNIVERSAL
-=========================================================*/
-
-#controlesBusquedaUniversal{
-
-    width:100%;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    gap:8px;
-
-    margin:10px auto 14px;
-
-}
-
-
-/*=========================================================
-ETIQUETA — BUSCADOR UNIVERSAL
-=========================================================*/
-
-#labelBusquedaUniversal{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    width:auto;
-
-    min-width:0;
-
-    margin:0;
-
-    padding:6px 4px;
-
-    color:#b56cff;
-
-    font-size:17px;
-
-    font-weight:bold;
-
-    line-height:1.2;
-
-    text-align:center;
-
-    white-space:nowrap;
-
-    text-shadow:
-        0 0 8px rgba(181,108,255,.22);
-
-}
-
-
-/*=========================================================
-BOTONES — BUSCADOR UNIVERSAL
-=========================================================*/
-
-.botonBusquedaUniversal{
-
-    flex:0 0 auto;
-
-    width:40px;
-
-    height:34px;
-
-    min-width:40px;
-
-    margin:0;
-
-    padding:0;
-
-    border:1px solid #62d6ff;
-
-    border-radius:9px;
-
-    background:#151719;
-
-    color:#62d6ff;
-
-    font-size:17px;
-
-    line-height:1;
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    cursor:pointer;
-
-    box-shadow:
-        0 0 8px rgba(98,214,255,.16);
-
-    transition:
-        background .20s ease,
-        color .20s ease,
-        transform .15s ease,
-        box-shadow .20s ease;
-
-}
-
-.botonBusquedaUniversal:hover{
-
-    background:#62d6ff;
-
-    color:#001018;
-
-    box-shadow:
-        0 0 14px rgba(98,214,255,.32);
-
-}
-
-.botonBusquedaUniversal:active{
-
-    transform:scale(.94);
-
-}
-
-
-/*=========================================================
 RESPONSIVE
 =========================================================*/
 
@@ -1052,31 +925,275 @@ RESPONSIVE
         font-size:13px;
     }
 
+    }
 
-    /*=====================================================
-    CAB15 — BUSCADOR UNIVERSAL EN MÓVIL
-    =====================================================*/
+/*=========================================================
+CAB15
+BUSCADOR UNIVERSAL
+DISEÑO FINAL
+=========================================================*/
+
+
+/*=========================================================
+CONTENEDOR PRINCIPAL
+
+IMPORTANTE:
+Los tres elementos se mantienen en una única fila:
+
+BUSCADOR UNIVERSAL   [ 🔎 ] [ × ]
+
+Los botones quedan SIEMPRE juntos
+a la derecha de la etiqueta.
+=========================================================*/
+
+#controlesBusquedaUniversal{
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:row;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    margin:12px auto 14px;
+
+    flex-wrap:nowrap;
+
+}
+
+
+/*=========================================================
+ETIQUETA
+=========================================================*/
+
+#labelBusquedaUniversal{
+
+    display:block;
+
+    flex:0 0 auto;
+
+    width:auto;
+
+    margin:0;
+
+    padding:7px 8px;
+
+    color:#b56cff !important;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    line-height:1.2;
+
+    text-align:center;
+
+    white-space:nowrap;
+
+    text-shadow:
+        0 0 8px rgba(181,108,255,.22);
+
+}
+
+
+/*=========================================================
+GRUPO VISUAL DE BOTONES
+
+Si el HTML coloca los botones directamente dentro
+de #controlesBusquedaUniversal, el selector :is()
+los mantiene juntos visualmente.
+
+No se utiliza position:absolute.
+No se utiliza space-between.
+=========================================================*/
+
+#controlesBusquedaUniversal
+.botonBusquedaUniversal{
+
+    flex:0 0 auto;
+
+    width:42px;
+
+    height:34px;
+
+    min-width:42px;
+
+    padding:0;
+
+    margin:0;
+
+    border:1px solid #62d6ff;
+
+    border-radius:8px;
+
+    background:#151719;
+
+    color:#62d6ff;
+
+    font-family:Arial,Helvetica,sans-serif;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    line-height:1;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 0 8px rgba(98,214,255,.18);
+
+    transition:
+        background .20s ease,
+        color .20s ease,
+        transform .15s ease,
+        box-shadow .20s ease;
+
+}
+
+
+/*=========================================================
+HOVER
+=========================================================*/
+
+#controlesBusquedaUniversal
+.botonBusquedaUniversal:hover{
+
+    background:#62d6ff;
+
+    color:#001018;
+
+    box-shadow:
+        0 0 14px rgba(98,214,255,.34);
+
+}
+
+
+/*=========================================================
+ACTIVE
+=========================================================*/
+
+#controlesBusquedaUniversal
+.botonBusquedaUniversal:active{
+
+    transform:scale(.92);
+
+}
+
+
+/*=========================================================
+FOCUS
+=========================================================*/
+
+#controlesBusquedaUniversal
+.botonBusquedaUniversal:focus-visible{
+
+    outline:none;
+
+    box-shadow:
+        0 0 0 2px rgba(181,108,255,.35),
+        0 0 14px rgba(98,214,255,.34);
+
+}
+
+
+/*=========================================================
+RESPONSIVE — MÓVIL
+=========================================================*/
+
+@media (max-width:768px){
 
     #controlesBusquedaUniversal{
 
+        width:100%;
+
+        flex-direction:row;
+
         justify-content:center;
 
-        gap:6px;
+        align-items:center;
 
-        margin:8px auto 12px;
+        gap:7px;
+
+        margin:9px auto 11px;
+
+        flex-wrap:nowrap;
 
     }
 
 
     #labelBusquedaUniversal{
 
-        font-size:16px;
+        flex:0 0 auto;
 
-        padding:5px 2px;
+        padding:6px 6px;
+
+        font-size:15px;
 
     }
 
 
+    #controlesBusquedaUniversal
+    .botonBusquedaUniversal{
+
+        flex:0 0 auto;
+
+        width:40px;
+
+        height:33px;
+
+        min-width:40px;
+
+        border-radius:8px;
+
+        font-size:15px;
+
+    }
+
+}
+
+
+/*=========================================================
+PANTALLAS MUY PEQUEÑAS
+
+Evita que la etiqueta y los dos botones
+se separen o salten de línea.
+=========================================================*/
+
+@media (max-width:380px){
+
+    #controlesBusquedaUniversal{
+
+        gap:5px;
+
+    }
+
+
+    #labelBusquedaUniversal{
+
+        padding-left:3px;
+
+        padding-right:3px;
+
+        font-size:14px;
+
+    }
+
+
+    #controlesBusquedaUniversal
     .botonBusquedaUniversal{
 
         width:38px;
@@ -1085,9 +1202,7 @@ RESPONSIVE
 
         min-width:38px;
 
-        border-radius:8px;
-
-        font-size:16px;
+        font-size:14px;
 
     }
 
@@ -1095,6 +1210,5 @@ RESPONSIVE
 
 
 /*=========================================================
-FIN STYLE.CSS v2.1
-PalEntropía — Generador de Paleofichas
+FIN CAB15
 =========================================================*/
