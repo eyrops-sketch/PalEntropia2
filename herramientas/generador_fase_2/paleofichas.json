@@ -478,6 +478,12 @@
     "nombre": "Inostrancevia",
     "dieta": "Carnívoro",
     "anatomia": "Terápsido de gran tamaño y cuerpo robusto, con cráneo alargado, caninos superiores muy desarrollados, extremidades fuertes y postura parcialmente erguida adaptada a la depredación activa"
+  },
+  {
+    "codigo": "006_06",
+    "nombre": "Macrauchenia",
+    "dieta": "Herbívoro",
+    "anatomia": "Mamífero ungulado de gran tamaño, con cuerpo robusto, cuello largo, extremidades altas y fuertes y cráneo alargado provisto de una pequeña probóscide flexible"
   }
 ]
 
