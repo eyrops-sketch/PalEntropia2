@@ -466,10 +466,21 @@
     "nombre": "Nothosaurus",
     "dieta": "Carnívoro",
     "anatomia": "Reptil acuático de cuerpo alargado, cuello relativamente largo, extremidades adaptadas a la natación y mandíbulas provistas de dientes cónicos para capturar peces y otros animales acuáticos"
+  },
+  {
+    "codigo": "006_04",
+    "nombre": "Pteranodon",
+    "dieta": "Piscívoro",
+    "anatomia": "Pterosaurio de gran tamaño con alas membranosas, cuerpo ligero, pico largo y estrecho sin dientes, cresta craneal posterior y extremidades anteriores muy alargadas adaptadas al vuelo"
   }
-
   
 ]
+
+
+
+
+
+
 
 
 
