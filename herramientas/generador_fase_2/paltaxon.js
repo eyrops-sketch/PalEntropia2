@@ -399,8 +399,11 @@ window.PALTAXON = {
  "006_04":{
   ta1:"Animalia > Chordata > Reptilia > Pterosauria > Pterodactyloidea > Pteranodontidae",
   ta2:"Diápsido. Pterosaurio. Pterodactiloideo. Pteranodóntido."
+},
+"006_05":{
+  ta1:"Animalia > Chordata > Synapsida > Therapsida > Gorgonopsia > Gorgonopsidae > Inostrancevia",
+  ta2:"Sinápsido. Terápsido. Gorgonopsio. Gorgonópsido."
 }
-
   
 };
 
