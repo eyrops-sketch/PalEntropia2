@@ -484,6 +484,12 @@
     "nombre": "Macrauchenia",
     "dieta": "Herbívoro",
     "anatomia": "Mamífero ungulado de gran tamaño, con cuerpo robusto, cuello largo, extremidades altas y fuertes y cráneo alargado provisto de una pequeña probóscide flexible"
+  },
+  {
+    "codigo": "006_07",
+    "nombre": "Prionosuchus",
+    "dieta": "Carnívoro",
+    "anatomia": "Temnospóndilo acuático de gran tamaño, con cuerpo alargado, cola potente, extremidades cortas y un cráneo muy largo y estrecho provisto de numerosos dientes cónicos adaptados para capturar presas acuáticas"
   }
 ]
 
