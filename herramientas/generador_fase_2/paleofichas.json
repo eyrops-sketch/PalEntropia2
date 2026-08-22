@@ -472,8 +472,13 @@
     "nombre": "Pteranodon",
     "dieta": "Piscívoro",
     "anatomia": "Pterosaurio de gran tamaño con alas membranosas, cuerpo ligero, pico largo y estrecho sin dientes, cresta craneal posterior y extremidades anteriores muy alargadas adaptadas al vuelo"
+  },
+  {
+    "codigo": "006_05",
+    "nombre": "Inostrancevia",
+    "dieta": "Carnívoro",
+    "anatomia": "Terápsido de gran tamaño y cuerpo robusto, con cráneo alargado, caninos superiores muy desarrollados, extremidades fuertes y postura parcialmente erguida adaptada a la depredación activa"
   }
-  
 ]
 
 
