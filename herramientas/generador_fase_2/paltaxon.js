@@ -407,6 +407,10 @@ window.PALTAXON = {
 "006_06":{
   ta1:"Animalia > Chordata > Mammalia > Perissodactyla > Litopterna > Macraucheniidae > Macrauchenia",
   ta2:"Mamífero. Ungulado sudamericano. Litopterno. Macrauquénido."
+},
+"006_07":{
+  ta1:"Animalia > Chordata > Amphibia > Temnospondyli > Archegosauroidea > Archegosauridae > Prionosuchus",
+  ta2:"Tetrápodo. Temnospóndilo. Arquegosauroideo. Arquegosáurido."
 }
   
 };
