@@ -403,6 +403,10 @@ window.PALTAXON = {
 "006_05":{
   ta1:"Animalia > Chordata > Synapsida > Therapsida > Gorgonopsia > Gorgonopsidae > Inostrancevia",
   ta2:"Sinápsido. Terápsido. Gorgonopsio. Gorgonópsido."
+},
+"006_06":{
+  ta1:"Animalia > Chordata > Mammalia > Perissodactyla > Litopterna > Macraucheniidae > Macrauchenia",
+  ta2:"Mamífero. Ungulado sudamericano. Litopterno. Macrauquénido."
 }
   
 };
