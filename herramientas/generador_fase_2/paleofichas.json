@@ -508,6 +508,12 @@
     "nombre": "Diplodocus",
     "dieta": "Herbívoro",
     "anatomia": "Saurópodo de gran tamaño con cuerpo robusto, cuello y cola extremadamente largos, cabeza pequeña, dientes estrechos y alargados en la parte anterior de las mandíbulas y extremidades columnares adaptadas a soportar su enorme peso"
+  },
+  {
+    "codigo": "006_11",
+    "nombre": "Chilesaurus",
+    "dieta": "Herbívoro",
+    "anatomia": "Dinosaurio de tamaño mediano y aspecto peculiar, con cuello relativamente largo, cabeza pequeña, pico córneo, dientes de morfología adaptada al consumo vegetal, brazos relativamente cortos y extremidades posteriores robustas"
   }
 ]
 
