@@ -1,1 +1,585 @@
+/*
+============================================================
+palentropía — arena
+archivo: stylearena.css
+versión: 1.0
+estado: base visual
+============================================================
 
+módulo:
+herramientas/arena/
+
+función:
+estilos de la interfaz principal de arena palentropía.
+
+estructura preparada para:
+- torneo de 64 participantes
+- combate 1 vs 1
+- imagen i3 de cada paleoficha
+- barras de vida
+- escenario ecológico
+- turnos
+- acciones
+- registro del combate
+- cuadro de eliminatorias
+
+dependencias previstas:
+- palarena.js
+- palarenaataques.js
+- palarenaefectos.js
+- palarenaasignacion.js
+
+nota:
+este archivo contiene únicamente la capa visual.
+la lógica del combate se implementará en los módulos javascript.
+
+============================================================
+*/
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #080b12;
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+
+/* ==========================================================
+   CABECERA
+   ========================================================== */
+
+.arena-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 18px 12px;
+    background: #0d1420;
+    border-bottom: 2px solid #62d6ff;
+    text-align: center;
+}
+
+.arena-logo {
+    font-size: 30px;
+}
+
+.arena-header h1 {
+    font-size: 24px;
+    letter-spacing: 3px;
+    color: #62d6ff;
+}
+
+.arena-header p {
+    font-size: 12px;
+    opacity: 0.75;
+    letter-spacing: 2px;
+}
+
+
+/* ==========================================================
+   INFORMACIÓN DEL TORNEO
+   ========================================================== */
+
+.torneo-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    padding: 10px;
+    background: #0a101a;
+}
+
+.torneo-info > div {
+    text-align: center;
+    padding: 8px 4px;
+    background: #111a27;
+    border: 1px solid #26384d;
+    border-radius: 8px;
+}
+
+.torneo-info span {
+    display: block;
+    font-size: 9px;
+    color: #8ca3ba;
+    letter-spacing: 1px;
+}
+
+.torneo-info strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+}
+
+
+/* ==========================================================
+   COMBATE
+   ========================================================== */
+
+.combate {
+    display: grid;
+    grid-template-columns: 1fr 45px 1fr;
+    align-items: start;
+    gap: 6px;
+    padding: 12px 8px;
+}
+
+.combatiente {
+    min-width: 0;
+    background: #101722;
+    border: 1px solid #293b50;
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.combatiente-izquierda {
+    border-top: 3px solid #62d6ff;
+}
+
+.combatiente-derecha {
+    border-top: 3px solid #ff6b8a;
+}
+
+
+/* ==========================================================
+   NOMBRE DEL COMBATIENTE
+   ========================================================== */
+
+.nombre-combatiente {
+    text-align: center;
+}
+
+.nombre-combatiente .icono {
+    font-size: 18px;
+}
+
+.nombre-combatiente h2 {
+    margin-top: 3px;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.codigo {
+    display: block;
+    margin-top: 3px;
+    font-size: 9px;
+    color: #7f94aa;
+}
+
+
+/* ==========================================================
+   IMAGEN I3
+   ========================================================== */
+
+.imagen-combatiente {
+    margin: 8px auto;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: 150px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #070a10;
+    border: 1px solid #34495e;
+}
+
+.imagen-combatiente img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.imagen-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #52677d;
+    font-size: 13px;
+}
+
+
+/* ==========================================================
+   VS
+   ========================================================== */
+
+.versus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-top: 80px;
+}
+
+.versus span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #151f2d;
+    border: 2px solid #62d6ff;
+    color: #62d6ff;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+
+/* ==========================================================
+   VIDA
+   ========================================================== */
+
+.vida {
+    margin-top: 6px;
+}
+
+.vida-texto {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    margin-bottom: 4px;
+}
+
+.vida-texto span {
+    color: #8ca3ba;
+}
+
+.barra-vida {
+    width: 100%;
+    height: 9px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #28313d;
+}
+
+.vida-actual {
+    height: 100%;
+    background: #62d6ff;
+    transition: width 0.4s ease;
+}
+
+
+/* ==========================================================
+   BONIFICACIONES
+   ========================================================== */
+
+.bonificaciones {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 7px;
+}
+
+.bonificaciones span {
+    padding: 3px 5px;
+    border-radius: 5px;
+    background: #182536;
+    color: #a9bdd0;
+    font-size: 9px;
+}
+
+
+/* ==========================================================
+   ESCENARIO
+   ========================================================== */
+
+.escenario {
+    margin: 4px 8px;
+    padding: 12px;
+    background: #0e1723;
+    border: 1px solid #293b50;
+    border-radius: 12px;
+}
+
+.escenario h2 {
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 13px;
+    color: #62d6ff;
+    letter-spacing: 1px;
+}
+
+.escenario-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.escenario-bloque {
+    padding: 8px;
+    text-align: center;
+    background: #111d2b;
+    border-radius: 7px;
+}
+
+.escenario-bloque .titulo {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 8px;
+    color: #7f94aa;
+}
+
+.escenario-bloque strong {
+    font-size: 10px;
+}
+
+
+/* ==========================================================
+   TURNO
+   ========================================================== */
+
+.turno {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 8px;
+    padding: 12px;
+    background: #121d2b;
+    border: 1px solid #62d6ff;
+    border-radius: 10px;
+}
+
+.turno-numero {
+    font-size: 11px;
+    color: #8ca3ba;
+}
+
+.turno-numero strong {
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.turno-accion {
+    text-align: right;
+}
+
+.turno-accion span {
+    display: block;
+    font-size: 8px;
+    color: #8ca3ba;
+}
+
+.turno-accion strong {
+    color: #62d6ff;
+    font-size: 12px;
+}
+
+
+/* ==========================================================
+   ACCIONES
+   ========================================================== */
+
+.acciones {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    padding: 0 8px;
+}
+
+.boton-accion {
+    min-height: 62px;
+    border: 1px solid #34495e;
+    border-radius: 10px;
+    background: #121b27;
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+}
+
+.boton-accion span {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.boton-accion strong {
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.boton-accion:hover {
+    background: #1b2a3c;
+    transform: translateY(-2px);
+}
+
+
+/* ==========================================================
+   REGISTRO DEL COMBATE
+   ========================================================== */
+
+.registro {
+    margin: 12px 8px;
+    background: #0d151f;
+    border: 1px solid #293b50;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.registro-header {
+    padding: 9px 10px;
+    background: #121d2a;
+    border-bottom: 1px solid #293b50;
+}
+
+.registro-header h2 {
+    font-size: 11px;
+    color: #62d6ff;
+}
+
+.registro-contenido {
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 8px 10px;
+}
+
+.registro-contenido p {
+    padding: 5px 0;
+    font-size: 10px;
+    border-bottom: 1px solid #182330;
+}
+
+.turno-label {
+    margin-right: 5px;
+    color: #62d6ff;
+    font-weight: bold;
+}
+
+
+/* ==========================================================
+   CONTROLES
+   ========================================================== */
+
+.controles {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 6px;
+    padding: 0 8px 12px;
+}
+
+.boton-control {
+    padding: 11px 4px;
+    border: 1px solid #34495e;
+    border-radius: 8px;
+    background: #101a26;
+    color: #ffffff;
+    font-size: 9px;
+    cursor: pointer;
+}
+
+.boton-control.principal {
+    background: #162b3c;
+    border-color: #62d6ff;
+    color: #62d6ff;
+    font-weight: bold;
+}
+
+
+/* ==========================================================
+   CUADRO DEL TORNEO
+   ========================================================== */
+
+.cuadro-torneo {
+    margin: 0 8px 15px;
+    padding: 12px;
+    background: #0e1723;
+    border: 1px solid #293b50;
+    border-radius: 12px;
+}
+
+.cuadro-torneo h2 {
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #62d6ff;
+}
+
+.cuadro-placeholder {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow-x: auto;
+    gap: 8px;
+}
+
+.cuadro-placeholder span {
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #142131;
+    border: 1px solid #34495e;
+    border-radius: 50%;
+    font-size: 9px;
+}
+
+
+/* ==========================================================
+   PIE
+   ========================================================== */
+
+footer {
+    padding: 15px;
+    text-align: center;
+    font-size: 9px;
+    color: #52677d;
+}
+
+
+/* ==========================================================
+   ESCRITORIO
+   ========================================================== */
+
+@media (min-width: 700px) {
+
+    body {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .combate {
+        grid-template-columns: 1fr 70px 1fr;
+        padding: 20px;
+    }
+
+    .combatiente {
+        padding: 15px;
+    }
+
+    .imagen-combatiente {
+        max-width: 230px;
+    }
+
+    .versus {
+        padding-top: 130px;
+    }
+
+    .versus span {
+        width: 48px;
+        height: 48px;
+        font-size: 13px;
+    }
+
+    .escenario,
+    .turno,
+    .registro,
+    .cuadro-torneo {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .acciones,
+    .controles {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+  }
