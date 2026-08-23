@@ -1,1 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Arena PalEntropía</title>
+
+    <link rel="stylesheet" href="stylearena.css">
+</head>
+
+<body>
+
+    <!-- CABECERA -->
+    <header class="arena-header">
+        <div class="arena-logo">🎲🏠</div>
+
+        <div>
+            <h1>ARENA</h1>
+            <p>PalEntropía</p>
+        </div>
+    </header>
+
+
+    <!-- ESTADO DEL TORNEO -->
+    <section class="torneo-info">
+
+        <div class="fase">
+            <span>TORNEO</span>
+            <strong>64 PARTICIPANTES</strong>
+        </div>
+
+        <div class="ronda">
+            <span>RONDA</span>
+            <strong>64</strong>
+        </div>
+
+        <div class="combate-numero">
+            <span>COMBATE</span>
+            <strong>1 / 32</strong>
+        </div>
+
+    </section>
+
+
+    <!-- COMBATE -->
+    <main class="combate">
+
+        <!-- CRIATURA 1 -->
+        <section class="combatiente combatiente-izquierda">
+
+            <div class="nombre-combatiente">
+                <span class="icono">🦖</span>
+                <h2>Inostrancevia</h2>
+                <span class="codigo">006_05</span>
+            </div>
+
+            <div class="imagen-combatiente">
+                <div class="imagen-placeholder">
+                    i3
+                </div>
+            </div>
+
+            <div class="vida">
+
+                <div class="vida-texto">
+                    <span>HP</span>
+                    <strong>100 / 100</strong>
+                </div>
+
+                <div class="barra-vida">
+                    <div class="vida-actual" style="width:100%;"></div>
+                </div>
+
+            </div>
+
+            <div class="bonificaciones">
+                <span>🌿 +0</span>
+                <span>🧬 +0</span>
+                <span>🌊 +0</span>
+                <span>⏳ +0</span>
+            </div>
+
+        </section>
+
+
+        <!-- VS -->
+        <div class="versus">
+            <span>VS</span>
+        </div>
+
+
+        <!-- CRIATURA 2 -->
+        <section class="combatiente combatiente-derecha">
+
+            <div class="nombre-combatiente">
+                <span class="icono">🪽</span>
+                <h2>Pterodaustro</h2>
+                <span class="codigo">003_07</span>
+            </div>
+
+            <div class="imagen-combatiente">
+                <div class="imagen-placeholder">
+                    i3
+                </div>
+            </div>
+
+            <div class="vida">
+
+                <div class="vida-texto">
+                    <span>HP</span>
+                    <strong>100 / 100</strong>
+                </div>
+
+                <div class="barra-vida">
+                    <div class="vida-actual" style="width:100%;"></div>
+                </div>
+
+            </div>
+
+            <div class="bonificaciones">
+                <span>🌿 +0</span>
+                <span>🧬 +0</span>
+                <span>🌊 +0</span>
+                <span>⏳ +0</span>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ESCENARIO -->
+    <section class="escenario">
+
+        <h2>🌍 ESCENARIO</h2>
+
+        <div class="escenario-grid">
+
+            <div class="escenario-bloque">
+                <span class="titulo">HÁBITATS</span>
+                <strong>H000 · H000 · H000</strong>
+            </div>
+
+            <div class="escenario-bloque">
+                <span class="titulo">MODO DE VIDA</span>
+                <strong>MV000</strong>
+            </div>
+
+            <div class="escenario-bloque">
+                <span class="titulo">MEDIOS DE VIDA</span>
+                <strong>SM000 · SM000</strong>
+            </div>
+
+            <div class="escenario-bloque">
+                <span class="titulo">SUBPERÍODO</span>
+                <strong>—</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- TURNO -->
+    <section class="turno">
+
+        <div class="turno-numero">
+            TURNO <strong>1</strong>
+        </div>
+
+        <div class="turno-accion">
+            <span>ACTÚA</span>
+            <strong>Inostrancevia</strong>
+        </div>
+
+    </section>
+
+
+    <!-- ACCIONES -->
+    <section class="acciones">
+
+        <button class="boton-accion ataque">
+            <span>⚔️</span>
+            <strong>ATACAR</strong>
+        </button>
+
+        <button class="boton-accion defensa">
+            <span>🛡️</span>
+            <strong>DEFENDER</strong>
+        </button>
+
+        <button class="boton-accion especial">
+            <span>✨</span>
+            <strong>ESPECIAL</strong>
+        </button>
+
+    </section>
+
+
+    <!-- REGISTRO -->
+    <section class="registro">
+
+        <div class="registro-header">
+            <h2>📜 REGISTRO DEL COMBATE</h2>
+        </div>
+
+        <div class="registro-contenido">
+
+            <p>
+                <span class="turno-label">TURNO 1</span>
+                El combate está preparado.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- CONTROLES -->
+    <section class="controles">
+
+        <button class="boton-control">
+            ⏮ ANTERIOR
+        </button>
+
+        <button class="boton-control principal">
+            ▶ INICIAR COMBATE
+        </button>
+
+        <button class="boton-control">
+            ⏭ SIGUIENTE
+        </button>
+
+    </section>
+
+
+    <!-- FUTURO CUADRO -->
+    <section class="cuadro-torneo">
+
+        <h2>🏆 CUADRO DEL TORNEO</h2>
+
+        <div class="cuadro-placeholder">
+
+            <span>64</span>
+            <span>32</span>
+            <span>16</span>
+            <span>8</span>
+            <span>4</span>
+            <span>2</span>
+            <span>🏆</span>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+        <p>PalEntropía · Arena</p>
+    </footer>
+
+
+</body>
+</html>
