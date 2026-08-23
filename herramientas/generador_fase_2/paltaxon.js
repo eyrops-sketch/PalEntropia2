@@ -411,6 +411,14 @@ window.PALTAXON = {
 "006_07":{
   ta1:"Animalia > Chordata > Amphibia > Temnospondyli > Archegosauroidea > Archegosauridae > Prionosuchus",
   ta2:"Tetrápodo. Temnospóndilo. Arquegosauroideo. Arquegosáurido."
+},
+"006_08":{
+  ta1:"Animalia > Chordata > Ichthyosauria > Thunniformes > Temnodontosauridae > Temnodontosaurus",
+  ta2:"Diápsido. Ictiosaurio. Ictiosaurio de gran tamaño. Temnodontosáurido."
+},
+"006_09":{
+  ta1:"Animalia > Chordata > Mammalia > Cetacea > Archaeoceti > Ambulocetidae > Ambulocetus",
+  ta2:"Mamífero. Cetáceo primitivo. Arqueoceto. Ambulocétido."
 }
   
 };
