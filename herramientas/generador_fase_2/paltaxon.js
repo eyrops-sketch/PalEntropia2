@@ -419,6 +419,10 @@ window.PALTAXON = {
 "006_09":{
   ta1:"Animalia > Chordata > Mammalia > Cetacea > Archaeoceti > Ambulocetidae > Ambulocetus",
   ta2:"Mamífero. Cetáceo primitivo. Arqueoceto. Ambulocétido."
+},
+"006_10":{
+  ta1:"Animalia > Chordata > Dinosauria > Saurischia > Sauropoda > Diplodocidae > Diplodocus",
+  ta2:"Dinosaurio. Saurisquio. Saurópodo. Diplodócido."
 }
   
 };
