@@ -394,17 +394,6 @@ async function cargarPaleofichasArena() {
             }
 
 
-            /*
-            --------------------------------------------------
-            IMPORTANTE
-
-            El nombre de la Paleoficha se mantiene obtenido
-            desde paleofichas.json.
-
-            NO se modifica esta lógica.
-            --------------------------------------------------
-            */
-
             PALEOFICHAS_ARENA[
                 String(
                     ficha.codigo
@@ -620,10 +609,6 @@ function generarEstadisticasArena(datos) {
 
 
 /* ==========================================================
-   FIN PARTE 1
-============================================================ */
-
-/* ==========================================================
    CREAR DATOS DEL COMBATIENTE
    ========================================================== */
 
@@ -650,40 +635,16 @@ function crearDatosCombatienteArena(codigo) {
         codigo:
             datos.j1,
 
-        /*
-        --------------------------------------------------
-        EL NOMBRE SE MANTIENE COMO ESTABA FUNCIONANDO
-        --------------------------------------------------
-        */
-
         nombre:
             obtenerNombreArena(
                 datos.j1
             ),
 
-        /*
-        --------------------------------------------------
-        MODO DE VIDA = J9
-        --------------------------------------------------
-        */
-
         modo:
             datos.modo,
 
-        /*
-        --------------------------------------------------
-        HÁBITATS = J5 + J6
-        --------------------------------------------------
-        */
-
         habitats:
             datos.habitats,
-
-        /*
-        --------------------------------------------------
-        ESTADÍSTICAS
-        --------------------------------------------------
-        */
 
         estadisticas:
             datos.estadisticas
@@ -946,8 +907,7 @@ function prepararCombateArena(
 
                 ⚔️ Ataque especial:
                 ${escaparHTML(
-                    combatiente1.ataque_especial ||
-                    "A001"
+                    combatiente1.ataque_especial
                 )}
 
             </div>
@@ -982,8 +942,7 @@ function prepararCombateArena(
 
                 ⚔️ Ataque especial:
                 ${escaparHTML(
-                    combatiente2.ataque_especial ||
-                    "A001"
+                    combatiente2.ataque_especial
                 )}
 
             </div>
@@ -1112,7 +1071,6 @@ function nuevoCombateArena() {
 
 }
 
-<script>
 
 /* ==========================================================
    CARGAR DATOS
@@ -1231,3 +1189,11 @@ iniciarArena();
 </body>
 
 </html>
+
+
+
+
+
+
+
+    
