@@ -911,14 +911,6 @@ function prepararCombateArena(
             );
 
 
-        const hp1 =
-            combatiente1.hp;
-
-
-        const hp2 =
-            combatiente2.hp;
-
-
         document.getElementById(
             "panelCombate"
         ).style.display = "block";
@@ -932,14 +924,16 @@ function prepararCombateArena(
 
                 <strong>
                     ${escaparHTML(
-                        datos1.nombre
+                        combatiente1.nombre
                     )}
                 </strong>
 
                 <br>
 
                 ❤️ HP:
-                ${numeroArena(hp1)}
+                ${numeroArena(
+                    combatiente1.hp_max
+                )}
 
                 <br>
 
@@ -966,14 +960,16 @@ function prepararCombateArena(
 
                 <strong>
                     ${escaparHTML(
-                        datos2.nombre
+                        combatiente2.nombre
                     )}
                 </strong>
 
                 <br>
 
                 ❤️ HP:
-                ${numeroArena(hp2)}
+                ${numeroArena(
+                    combatiente2.hp_max
+                )}
 
                 <br>
 
@@ -1084,8 +1080,8 @@ function nuevoCombateArena() {
 
 
         prepararCombateArena(
-            datos1,
-            datos2
+            fila1,
+            fila2
         );
 
     } catch (error) {
@@ -1116,6 +1112,7 @@ function nuevoCombateArena() {
 
 }
 
+<script>
 
 /* ==========================================================
    CARGAR DATOS
