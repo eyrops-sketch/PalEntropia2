@@ -1,7 +1,7 @@
 /*
 ========================================================
 PALARENA
-palarenaescenario.js v1.0
+palarenaescenario.js v1.1
 PalEntropía
 
 Generador de escenarios de Arena
@@ -14,10 +14,20 @@ REGLAS:
 - Nunca existen penalizaciones
 - No utiliza tiempo geológico
 
-Fuentes:
-PALHAB
-PALMODO
-PALMEDIO
+BONIFICACIONES:
+Hábitats:
+  1 coincidencia = +5
+  2 coincidencias = +10
+  3 coincidencias = +15
+
+Modo de vida:
+  Coincidencia = +10
+
+Medio ecológico:
+  SM = +3
+  L  = +3
+  ES = +2
+  C  = +2
 ========================================================
 */
 
@@ -65,12 +75,13 @@ window.PALARENA_ESCENARIO = {
 
 
     /* ==================================================
-       OBTENER CÓDIGOS DE HÁBITAT
+       HÁBITATS DISPONIBLES
     ================================================== */
 
     obtenerHabitatsDisponibles() {
 
         if (!window.PALHAB) {
+
             console.error(
                 "PALARENA_ESCENARIO: PALHAB no está cargado."
             );
@@ -84,12 +95,13 @@ window.PALARENA_ESCENARIO = {
 
 
     /* ==================================================
-       OBTENER MODOS DISPONIBLES
+       MODOS DISPONIBLES
     ================================================== */
 
     obtenerModosDisponibles() {
 
         if (!window.PALMODO) {
+
             console.error(
                 "PALARENA_ESCENARIO: PALMODO no está cargado."
             );
@@ -103,19 +115,13 @@ window.PALARENA_ESCENARIO = {
 
 
     /* ==================================================
-       OBTENER MEDIOS DISPONIBLES
-       
-       Un medio completo se representa mediante:
-
-       SM + L + ES + C
-
-       Ejemplo:
-       SM002 | L001 | ES001 | C003
+       MEDIOS DISPONIBLES
     ================================================== */
 
     obtenerMediosDisponibles() {
 
         if (!window.PALMEDIO) {
+
             console.error(
                 "PALARENA_ESCENARIO: PALMEDIO no está cargado."
             );
@@ -154,10 +160,6 @@ window.PALARENA_ESCENARIO = {
                 codigo !== "C000"
             );
 
-
-        /*
-        Generamos combinaciones completas.
-        */
 
         SM.forEach(sm => {
 
@@ -201,12 +203,6 @@ window.PALARENA_ESCENARIO = {
 
     generar() {
 
-        /*
-        ----------------------------------------------
-        1. HÁBITATS
-        ----------------------------------------------
-        */
-
         const habitatsDisponibles =
             this.obtenerHabitatsDisponibles();
 
@@ -216,12 +212,6 @@ window.PALARENA_ESCENARIO = {
                 .slice(0, 3);
 
 
-        /*
-        ----------------------------------------------
-        2. MODO DE VIDA
-        ----------------------------------------------
-        */
-
         const modosDisponibles =
             this.obtenerModosDisponibles();
 
@@ -229,12 +219,6 @@ window.PALARENA_ESCENARIO = {
         const modo =
             this.aleatorio(modosDisponibles);
 
-
-        /*
-        ----------------------------------------------
-        3. MEDIOS
-        ----------------------------------------------
-        */
 
         const mediosDisponibles =
             this.obtenerMediosDisponibles();
@@ -244,12 +228,6 @@ window.PALARENA_ESCENARIO = {
             this.mezclar(mediosDisponibles)
                 .slice(0, 2);
 
-
-        /*
-        ----------------------------------------------
-        ESCENARIO FINAL
-        ----------------------------------------------
-        */
 
         this.escenario = {
 
@@ -267,7 +245,7 @@ window.PALARENA_ESCENARIO = {
 
 
     /* ==================================================
-       COMPARAR HÁBITATS
+       COMPROBAR HÁBITATS
     ================================================== */
 
     comprobarHabitats(datosFicha) {
@@ -297,7 +275,7 @@ window.PALARENA_ESCENARIO = {
 
 
     /* ==================================================
-       COMPARAR MODO DE VIDA
+       COMPROBAR MODO
     ================================================== */
 
     comprobarModo(datosFicha) {
@@ -312,14 +290,7 @@ window.PALARENA_ESCENARIO = {
 
 
     /* ==================================================
-       COMPARAR MEDIOS
-       
-       Se compara cada componente:
-
-       SM
-       L
-       ES
-       C
+       COMPROBAR MEDIOS
     ================================================== */
 
     comprobarMedios(datosFicha) {
@@ -330,32 +301,37 @@ window.PALARENA_ESCENARIO = {
             !this.escenario
         ) {
             return {
+
                 coincidencias: 0,
+
                 detalles: []
+
             };
         }
 
 
-        const resultado = {
+        let total = 0;
 
-            coincidencias: 0,
-
-            detalles: []
-
-        };
+        const detalles = [];
 
 
         this.escenario.medios.forEach(
             medioEscenario => {
 
-                let coincidencias = 0;
+                let SM = false;
+                let L = false;
+                let ES = false;
+                let C = false;
 
 
                 if (
                     datosFicha.medio.SM ===
                     medioEscenario.SM
                 ) {
-                    coincidencias++;
+
+                    SM = true;
+                    total += 3;
+
                 }
 
 
@@ -363,7 +339,10 @@ window.PALARENA_ESCENARIO = {
                     datosFicha.medio.L ===
                     medioEscenario.L
                 ) {
-                    coincidencias++;
+
+                    L = true;
+                    total += 3;
+
                 }
 
 
@@ -371,7 +350,10 @@ window.PALARENA_ESCENARIO = {
                     datosFicha.medio.ES ===
                     medioEscenario.ES
                 ) {
-                    coincidencias++;
+
+                    ES = true;
+                    total += 2;
+
                 }
 
 
@@ -379,21 +361,25 @@ window.PALARENA_ESCENARIO = {
                     datosFicha.medio.C ===
                     medioEscenario.C
                 ) {
-                    coincidencias++;
+
+                    C = true;
+                    total += 2;
+
                 }
 
 
-                resultado.coincidencias +=
-                    coincidencias;
-
-
-                resultado.detalles.push({
+                detalles.push({
 
                     medio:
                         medioEscenario.codigo,
 
-                    coincidencias:
-                        coincidencias
+                    SM: SM,
+
+                    L: L,
+
+                    ES: ES,
+
+                    C: C
 
                 });
 
@@ -401,24 +387,27 @@ window.PALARENA_ESCENARIO = {
         );
 
 
-        return resultado;
+        return {
+
+            coincidencias: total,
+
+            detalles: detalles
+
+        };
     },
 
 
     /* ==================================================
        CALCULAR BONIFICACIÓN
-       
-       IMPORTANTE:
-       Nunca devuelve valores negativos.
     ================================================== */
 
     calcularBonificacion(datosFicha) {
 
-        const habitats =
+        const coincidenciasHabitats =
             this.comprobarHabitats(datosFicha);
 
 
-        const modo =
+        const coincidenciaModo =
             this.comprobarModo(datosFicha);
 
 
@@ -427,33 +416,28 @@ window.PALARENA_ESCENARIO = {
 
 
         /*
-        Bonificación inicial.
-        */
-
-        let bonificacion = 0;
-
-
-        /*
         ----------------------------------------------
         HÁBITATS
         ----------------------------------------------
-        Cada coincidencia = +5
-        Máximo 3 coincidencias.
         */
 
-        bonificacion +=
-            habitats * 5;
+        let bonificacionHabitats =
+            coincidenciasHabitats * 5;
 
 
         /*
         ----------------------------------------------
-        MODO DE VIDA
+        MODO
         ----------------------------------------------
-        Coincidencia = +10
         */
 
-        if (modo) {
-            bonificacion += 10;
+        let bonificacionModo = 0;
+
+
+        if (coincidenciaModo) {
+
+            bonificacionModo = 10;
+
         }
 
 
@@ -461,32 +445,53 @@ window.PALARENA_ESCENARIO = {
         ----------------------------------------------
         MEDIOS
         ----------------------------------------------
-        Cada coincidencia de componente = +2
-
-        Máximo teórico:
-        2 medios × 4 componentes × 2 = 16
         */
 
-        bonificacion +=
-            medios.coincidencias * 2;
+        const bonificacionMedios =
+            medios.coincidencias;
+
+
+        /*
+        ----------------------------------------------
+        TOTAL
+        ----------------------------------------------
+        */
+
+        const total =
+            bonificacionHabitats +
+            bonificacionModo +
+            bonificacionMedios;
 
 
         return {
 
-            habitats: habitats,
+            habitats:
+                coincidenciasHabitats,
 
-            modo: modo,
+            bonificacionHabitats:
+                bonificacionHabitats,
 
-            medios: medios,
+            modo:
+                coincidenciaModo,
 
-            total: bonificacion
+            bonificacionModo:
+                bonificacionModo,
+
+            medios:
+                medios,
+
+            bonificacionMedios:
+                bonificacionMedios,
+
+            total:
+                total
 
         };
     },
 
 
     /* ==================================================
-       EVALUAR FICHA
+       EVALUAR PALEOFICHA
     ================================================== */
 
     evaluar(j1) {
@@ -502,7 +507,9 @@ window.PALARENA_ESCENARIO = {
 
 
         if (!this.escenario) {
+
             this.generar();
+
         }
 
 
@@ -511,7 +518,9 @@ window.PALARENA_ESCENARIO = {
 
 
         if (!datos) {
+
             return null;
+
         }
 
 
@@ -523,21 +532,24 @@ window.PALARENA_ESCENARIO = {
 
             ficha: datos,
 
-            escenario: this.escenario,
+            escenario:
+                this.escenario,
 
-            bonificacion: bonificacion
+            bonificacion:
+                bonificacion
 
         };
     },
 
 
     /* ==================================================
-       OBTENER ESCENARIO
+       OBTENER ESCENARIO ACTUAL
     ================================================== */
 
     obtener() {
 
         return this.escenario;
+
     }
 
 };
