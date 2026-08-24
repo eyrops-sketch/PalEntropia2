@@ -105,12 +105,6 @@ FUNCIONES DE ACCESO
 ============================================================
 */
 
-/**
- * Devuelve un efecto por su código.
- *
- * @param {string} codigo
- * @returns {object|null}
- */
 function obtenerEfectoArena(codigo) {
 
     if (!codigo) {
@@ -118,26 +112,17 @@ function obtenerEfectoArena(codigo) {
     }
 
     return PALARENAEFECTOS[codigo] || null;
+
 }
 
 
-/**
- * Devuelve todos los efectos disponibles.
- *
- * @returns {object[]}
- */
 function obtenerTodosLosEfectosArena() {
 
     return Object.values(PALARENAEFECTOS);
+
 }
 
 
-/**
- * Comprueba si existe un efecto.
- *
- * @param {string} codigo
- * @returns {boolean}
- */
 function existeEfectoArena(codigo) {
 
     return Object.prototype.hasOwnProperty.call(
@@ -146,3 +131,10 @@ function existeEfectoArena(codigo) {
     );
 
 }
+
+
+/*
+============================================================
+FIN PALARENAEFECTOS
+============================================================
+*/
