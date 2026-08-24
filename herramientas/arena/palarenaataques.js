@@ -155,12 +155,6 @@ FUNCIONES DE ACCESO
 ============================================================
 */
 
-/**
- * Devuelve un ataque por su código.
- *
- * @param {string} codigo
- * @returns {object|null}
- */
 function obtenerAtaqueArena(codigo) {
 
     if (!codigo) {
@@ -171,23 +165,13 @@ function obtenerAtaqueArena(codigo) {
 }
 
 
-/**
- * Devuelve todos los ataques disponibles.
- *
- * @returns {object[]}
- */
 function obtenerTodosLosAtaquesArena() {
 
     return Object.values(PALARENAATAQUES);
+
 }
 
 
-/**
- * Comprueba si existe un ataque.
- *
- * @param {string} codigo
- * @returns {boolean}
- */
 function existeAtaqueArena(codigo) {
 
     return Object.prototype.hasOwnProperty.call(
@@ -196,3 +180,10 @@ function existeAtaqueArena(codigo) {
     );
 
 }
+
+
+/*
+============================================================
+FIN PALARENAATAQUES
+============================================================
+*/
