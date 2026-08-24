@@ -1156,4 +1156,63 @@ async function iniciarArena() {
         `;
 
 
-        /*
+        /*--------------------------------------------------
+        3. Generar dos fichas aleatorias
+        --------------------------------------------------
+        */
+
+        nuevoCombateArena();
+
+    } catch (error) {
+
+        console.error(
+            "Error iniciando Arena:",
+            error
+        );
+
+
+        document.getElementById(
+            "estado"
+        ).innerHTML = `
+
+            <span class="error">
+
+                ✗ ${
+                    escaparHTML(
+                        error.message
+                    )
+                }
+
+            </span>
+
+        `;
+
+    }
+
+}
+
+
+/* ==========================================================
+   BOTÓN NUEVO COMBATE
+   ========================================================== */
+
+document.getElementById(
+    "btnNuevo"
+).addEventListener(
+    "click",
+    nuevoCombateArena
+);
+
+
+/* ==========================================================
+   INICIO
+   ========================================================== */
+
+iniciarArena();
+
+</script>
+
+</body>
+
+</html>
+
