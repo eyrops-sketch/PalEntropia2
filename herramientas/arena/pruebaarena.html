@@ -1,1 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>PalEntropía — Arena</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    padding: 20px;
+
+    background: #111;
+
+    color: #eee;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+}
+
+.contenedor {
+
+    max-width: 900px;
+
+    margin: auto;
+
+}
+
+h1 {
+
+    margin: 0 0 5px;
+
+    font-size: 28px;
+
+}
+
+h2 {
+
+    margin-top: 25px;
+
+    font-size: 20px;
+
+}
+
+.subtitulo {
+
+    color: #aaa;
+
+    margin-bottom: 25px;
+
+}
+
+.panel {
+
+    background: #1b1b1b;
+
+    border: 1px solid #333;
+
+    border-radius: 10px;
+
+    padding: 18px;
+
+    margin-bottom: 18px;
+
+}
+
+input {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin: 8px 0;
+
+    background: #222;
+
+    color: #fff;
+
+    border: 1px solid #444;
+
+    border-radius: 6px;
+
+    font-size: 16px;
+
+}
+
+button {
+
+    width: 100%;
+
+    padding: 13px;
+
+    margin-top: 8px;
+
+    background: #333;
+
+    color: #fff;
+
+    border: 1px solid #555;
+
+    border-radius: 6px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+}
+
+button:hover {
+
+    background: #444;
+
+}
+
+.boton-principal {
+
+    background: #7040a0;
+
+}
+
+.resultado {
+
+    line-height: 1.7;
+
+}
+
+.bloque {
+
+    padding: 12px;
+
+    margin-top: 10px;
+
+    background: #151515;
+
+    border-radius: 6px;
+
+    border: 1px solid #292929;
+
+}
+
+.ok {
+
+    color: #7cff9b;
+
+}
+
+.error {
+
+    color: #ff7777;
+
+}
+
+.etiqueta {
+
+    color: #aaa;
+
+}
+
+.codigo {
+
+    font-family: monospace;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="contenedor">
+
+
+<h1>🎲 PalEntropía</h1>
+
+<div class="subtitulo">
+
+Arena — Prueba de combate
+
+</div>
+
+
+<div class="panel">
+
+<h2>🦖 Paleoficha 1</h2>
+
+<label>
+
+Código de Paleoficha
+
+</label>
+
+<input
+    id="codigo1"
+    type="text"
+    value="006_01"
+    placeholder="Ejemplo: 006_01"
+>
+
+
+<h2>🦖 Paleoficha 2</h2>
+
+<label>
+
+Código de Paleoficha
+
+</label>
+
+<input
+    id="codigo2"
+    type="text"
+    value="001_02"
+    placeholder="Ejemplo: 001_02"
+>
+
+
+<button
+    class="boton-principal"
+    onclick="cargarCombate()"
+>
+
+⚔️ Preparar combate
+
+</button>
+
+</div>
+
+
+<div
+    id="resultado"
+    class="panel resultado"
+>
+
+Esperando datos...
+
+</div>
+
+
+</div>
+
+
+<!-- ======================================================
+     BASES DE DATOS
+     ====================================================== -->
+
+<script src="palhab.js"></script>
+
+<script src="palmedio.js"></script>
+
+<script src="palmodo.js"></script>
+
+<script src="palarenaataques.js"></script>
+
+<script src="palarenaefectos.js"></script>
+
+
+<!-- ======================================================
+     MOTOR ARENA
+     ====================================================== -->
+
+<script src="palarena.js"></script>
+
+
+<script>
+
+/*
+============================================================
+PRUEBA ARENA
+============================================================
+
+Esta página:
+
+1. Carga las Paleofichas desde master.csv.
+2. Busca las fichas por j1.
+3. Muestra sus datos.
+4. Crea los dos combatientes.
+5. Prepara el combate.
+
+No contiene lógica propia de combate.
+
+============================================================
+*/
+
+
+let masterArena = [];
+
+
+/*
+------------------------------------------------------------
+CARGAR MASTER.CSV
+------------------------------------------------------------
+*/
+
+async function cargarMasterArena() {
+
+    try {
+
+        const respuesta =
+            await fetch("master.csv");
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No se pudo cargar master.csv"
+            );
+
+        }
+
+        const texto =
+            await respuesta.text();
+
+        masterArena =
+            parsearMasterArena(texto);
+
+        mostrarMensajeArena(
+            "✓ master.csv cargado correctamente",
+            "ok"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        mostrarMensajeArena(
+            "✗ Error cargando master.csv: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/*
+------------------------------------------------------------
+PARSER CSV
+------------------------------------------------------------
+*/
+
+function parsearMasterArena(texto) {
+
+    const lineas =
+        texto
+            .trim()
+            .split(/\r?\n/);
+
+    if (lineas.length < 2) {
+
+        return [];
+
+    }
+
+    const cabecera =
+        lineas[0]
+            .split(",");
+
+    const datos = [];
+
+
+    for (
+        let i = 1;
+        i < lineas.length;
+        i++
+    ) {
+
+        const linea =
+            lineas[i].trim();
+
+        if (!linea) {
+
+            continue;
+
+        }
+
+        const valores =
+            linea.split(",");
+
+        const registro = {};
+
+
+        cabecera.forEach(
+            function(campo, indice) {
+
+                registro[campo] =
+                    valores[indice] ?? "";
+
+            }
+        );
+
+
+        datos.push(registro);
+
+    }
+
+
+    return datos;
+
+}
+
+
+/*
+------------------------------------------------------------
+BUSCAR PALEOFICHA
+------------------------------------------------------------
+*/
+
+function buscarFichaArena(codigo) {
+
+    return masterArena.find(
+        function(ficha) {
+
+            return ficha.j1 === codigo;
+
+        }
+    ) || null;
+
+}
+
+
+/*
+------------------------------------------------------------
+MOSTRAR MENSAJE
+------------------------------------------------------------
+*/
+
+function mostrarMensajeArena(
+    mensaje,
+    clase
+) {
+
+    const resultado =
+        document.getElementById(
+            "resultado"
+        );
+
+    resultado.innerHTML =
+        '<div class="' +
+        clase +
+        '">' +
+        mensaje +
+        "</div>";
+
+}
+
+
+/*
+------------------------------------------------------------
+FORMATEAR ESTADÍSTICAS
+------------------------------------------------------------
+*/
+
+function mostrarEstadisticasArena(
+    ficha
+) {
+
+    return `
+
+        <div class="bloque">
+
+            <strong>📊 Estadísticas</strong>
+
+            <br>
+
+            e1 Adaptabilidad:
+            ${ficha.e1}
+
+            <br>
+
+            e2 Sociabilidad:
+            ${ficha.e2}
+
+            <br>
+
+            e3 Resistencia:
+            ${ficha.e3}
+
+            <br>
+
+            e4 Reproducción:
+            ${ficha.e4}
+
+            <br>
+
+            e5 Ofensiva:
+            ${ficha.e5}
+
+            <br>
+
+            e6 Defensa:
+            ${ficha.e6}
+
+            <br>
+
+            e7 Movilidad:
+            ${ficha.e7}
+
+            <br>
+
+            e8 Plasticidad:
+            ${ficha.e8}
+
+            <br>
+
+            e9 Tamaño:
+            ${ficha.e9}
+
+            <br>
+
+            e10 Velocidad:
+            ${ficha.e10}
+
+            <br>
+
+            e11 Inteligencia:
+            ${ficha.e11}
+
+        </div>
+
+    `;
+
+}
+
+
+/*
+------------------------------------------------------------
+MOSTRAR FICHA
+------------------------------------------------------------
+*/
+
+function mostrarFichaArena(
+    ficha,
+    numero
+) {
+
+    return `
+
+        <div class="bloque">
+
+            <strong>
+                🦖 Combatiente ${numero}
+            </strong>
+
+            <br><br>
+
+            <span class="etiqueta">
+                Código:
+            </span>
+
+            <span class="codigo">
+                ${ficha.j1}
+            </span>
+
+            <br>
+
+            <span class="etiqueta">
+                Nombre:
+            </span>
+
+            ${ficha.j2}
+
+            <br>
+
+            <span class="etiqueta">
+                Modo de vida:
+            </span>
+
+            MV${ficha.j9}
+
+            <br>
+
+            <span class="etiqueta">
+                Hábitats:
+            </span>
+
+            H${ficha.j5}
+
+            <br>
+
+            <span class="etiqueta">
+                Hábitats secundarios:
+            </span>
+
+            H${ficha.j6}
+
+            <br>
+
+            ${mostrarEstadisticasArena(ficha)}
+
+        </div>
+
+    `;
+
+}
+
+
+/*
+------------------------------------------------------------
+PREPARAR COMBATE
+------------------------------------------------------------
+*/
+
+function cargarCombate() {
+
+    const codigo1 =
+        document
+            .getElementById("codigo1")
+            .value
+            .trim();
+
+    const codigo2 =
+        document
+            .getElementById("codigo2")
+            .value
+            .trim();
+
+
+    const ficha1 =
+        buscarFichaArena(codigo1);
+
+    const ficha2 =
+        buscarFichaArena(codigo2);
+
+
+    if (!ficha1) {
+
+        mostrarMensajeArena(
+            "✗ No se encuentra la ficha " +
+            codigo1,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!ficha2) {
+
+        mostrarMensajeArena(
+            "✗ No se encuentra la ficha " +
+            codigo2,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    let html = `
+
+        <div class="ok">
+
+            ✓ Fichas cargadas correctamente
+
+        </div>
+
+    `;
+
+
+    html +=
+        mostrarFichaArena(
+            ficha1,
+            1
+        );
+
+
+    html +=
+        mostrarFichaArena(
+            ficha2,
+            2
+        );
+
+
+    /*
+    --------------------------------------------------------
+    CREAR COMBATIENTES
+    --------------------------------------------------------
+    */
+
+    if (
+        typeof crearCombatienteArena !==
+        "function"
+    ) {
+
+        html += `
+
+            <div class="bloque error">
+
+                ✗ No se ha encontrado
+                crearCombatienteArena()
+
+            </div>
+
+        `;
+
+        document
+            .getElementById("resultado")
+            .innerHTML = html;
+
+        return;
+
+    }
+
+
+    const combatiente1 =
+        crearCombatienteArena(
+            ficha1
+        );
+
+
+    const combatiente2 =
+        crearCombatienteArena(
+            ficha2
+        );
+
+
+    html += `
+
+        <div class="bloque">
+
+            <strong>
+                ⚔️ Combatientes preparados
+            </strong>
+
+            <br><br>
+
+            ${combatiente1.nombre}
+
+            — HP:
+            ${combatiente1.hp_max}
+
+            <br>
+
+            Iniciativa:
+            ${combatiente1.iniciativa}
+
+            <br>
+
+            Ataque especial:
+            ${combatiente1.ataque_especial}
+
+            <hr>
+
+            ${combatiente2.nombre}
+
+            — HP:
+            ${combatiente2.hp_max}
+
+            <br>
+
+            Iniciativa:
+            ${combatiente2.iniciativa}
+
+            <br>
+
+            Ataque especial:
+            ${combatiente2.ataque_especial}
+
+        </div>
+
+    `;
+
+
+    document
+        .getElementById("resultado")
+        .innerHTML = html;
+
+}
+
+
+cargarMasterArena();
+
+              </script>
