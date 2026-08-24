@@ -877,6 +877,17 @@ const combatiente2 =
                 datos2
             );
 
+        const ataque1 =
+    obtenerAtaqueArena(
+        combatiente1.ataque_especial
+    );
+
+
+
+        const ataque2 =
+    obtenerAtaqueArena(
+        combatiente2.ataque_especial
+    );
 
         document.getElementById(
             "panelCombate"
@@ -912,9 +923,14 @@ const combatiente2 =
                 <br>
 
                 ⚔️ Ataque especial:
-                ${escaparHTML(
-                    combatiente1.ataque_especial
-                )}
+${escaparHTML(
+    combatiente1.ataque_especial
+)}
+${
+    ataque1 && ataque1.nombre
+        ? " — " + escaparHTML(ataque1.nombre)
+        : ""
+}
 
             </div>
 
@@ -947,9 +963,14 @@ const combatiente2 =
                 <br>
 
                 ⚔️ Ataque especial:
-                ${escaparHTML(
-                    combatiente2.ataque_especial
-                )}
+${escaparHTML(
+    combatiente2.ataque_especial
+)}
+${
+    ataque2 && ataque2.nombre
+        ? " — " + escaparHTML(ataque2.nombre)
+        : ""
+}
 
             </div>
 
