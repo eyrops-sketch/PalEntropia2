@@ -317,16 +317,16 @@ Cargando datos de Arena...
 PRUEBA ARENA
 ============================================================
 
-Parte 1
-
 Esta página:
 
 - carga master.csv
 - busca Paleofichas por j1
-- comprueba que existen
 - muestra sus datos
-- crea los combatientes
-- NO ejecuta todavía el combate
+- prepara los combatientes
+- NO modifica palarena.js
+
+La corrección de Stats se realiza aquí,
+antes de entregar los datos al motor Arena.
 
 ============================================================
 */
@@ -556,6 +556,35 @@ function mostrarResultadoArena(
 
 
 /* ==========================================================
+   NORMALIZAR STATS PARA PALARENA
+   ========================================================== */
+
+function prepararStatsArena(
+    ficha
+) {
+
+    return {
+
+        ...ficha,
+
+        e1: Number(ficha.e1) || 0,
+        e2: Number(ficha.e2) || 0,
+        e3: Number(ficha.e3) || 0,
+        e4: Number(ficha.e4) || 0,
+        e5: Number(ficha.e5) || 0,
+        e6: Number(ficha.e6) || 0,
+        e7: Number(ficha.e7) || 0,
+        e8: Number(ficha.e8) || 0,
+        e9: Number(ficha.e9) || 0,
+        e10: Number(ficha.e10) || 0,
+        e11: Number(ficha.e11) || 0
+
+    };
+
+}
+
+
+/* ==========================================================
    MOSTRAR ESTADÍSTICAS
    ========================================================== */
 
@@ -724,13 +753,42 @@ function generarFichaArena(
 
 }
 
-
 /* ==========================================================
    CREAR COMBATIENTE
    ========================================================== */
 
 function prepararCombatienteArena(
     ficha
+) {
+
+    if (
+        typeof crearCombatienteArena !==
+        "function"
+    ) {
+
+        return null;
+
+    }
+
+
+    /*
+    ----------------------------------------------------------
+    NORMALIZAR STATS ANTES DE ENTREGAR A PALARENA.JS
+    ----------------------------------------------------------
+    */
+
+    const datosArena =
+        prepararStatsArena(
+            ficha
+        );
+
+
+    return crearCombatienteArena(
+        datosArena
+    );
+
+}
+
 
 /* ==========================================================
    PREPARAR COMBATE
@@ -941,10 +999,8 @@ function prepararCombateArena() {
 
 /* ==========================================================
    INICIO
- 
-   
    ========================================================== */
-console.log("ARENA: script iniciado");
+
 cargarMasterArena();
 
 </script>
