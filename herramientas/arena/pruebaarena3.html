@@ -856,15 +856,17 @@ function prepararCombateArena(
 
 
         const combatiente1 =
-            crearCombatienteArena(
-                datos1
-            );
+    crearCombatienteArena({
+        ...datos1,
+        ...datos1.estadisticas
+    });
 
 
-        const combatiente2 =
-            crearCombatienteArena(
-                datos2
-            );
+const combatiente2 =
+    crearCombatienteArena({
+        ...datos2,
+        ...datos2.estadisticas
+    });
 
 
         COMBATE_ARENA =
