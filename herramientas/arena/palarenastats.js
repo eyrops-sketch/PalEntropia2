@@ -1,7 +1,7 @@
 /*
 ========================================================
 PALARENA
-palarenastats.js v1.0
+palarenastats.js v1.1
 PalEntropía
 
 Conversión de los 11 stats de Paleoficha
@@ -38,8 +38,30 @@ window.PALARENA_STATS = {
 
 
     /* ==================================================
+       CONVERTIR A NÚMERO
+    ================================================== */
+
+    numero(valor) {
+
+        const numero =
+            Number(valor);
+
+        if (
+            Number.isFinite(numero)
+        ) {
+
+            return numero;
+
+        }
+
+        return 0;
+
+    },
+
+
+    /* ==================================================
        LIMITAR VALORES
-       ================================================== */
+    ================================================== */
 
     limitar(valor) {
 
@@ -55,8 +77,168 @@ window.PALARENA_STATS = {
 
 
     /* ==================================================
+       OBTENER STATS DE LA FICHA
+    ================================================== */
+
+    obtenerStats(ficha) {
+
+        if (!ficha) {
+
+            return null;
+
+        }
+
+
+        /*
+        ----------------------------------------------
+        CASO 1
+        e1...e11 directamente en la ficha
+        ----------------------------------------------
+        */
+
+        if (
+            ficha.e1 !== undefined ||
+            ficha.e2 !== undefined ||
+            ficha.e3 !== undefined
+        ) {
+
+            return {
+
+                e1: this.numero(ficha.e1),
+                e2: this.numero(ficha.e2),
+                e3: this.numero(ficha.e3),
+                e4: this.numero(ficha.e4),
+                e5: this.numero(ficha.e5),
+                e6: this.numero(ficha.e6),
+                e7: this.numero(ficha.e7),
+                e8: this.numero(ficha.e8),
+                e9: this.numero(ficha.e9),
+                e10: this.numero(ficha.e10),
+                e11: this.numero(ficha.e11)
+
+            };
+
+        }
+
+
+        /*
+        ----------------------------------------------
+        CASO 2
+        ficha.estadisticas
+        ----------------------------------------------
+        */
+
+        if (
+            ficha.estadisticas
+        ) {
+
+            const s =
+                ficha.estadisticas;
+
+
+            return {
+
+                e1: this.numero(s.e1),
+                e2: this.numero(s.e2),
+                e3: this.numero(s.e3),
+                e4: this.numero(s.e4),
+                e5: this.numero(s.e5),
+                e6: this.numero(s.e6),
+                e7: this.numero(s.e7),
+                e8: this.numero(s.e8),
+                e9: this.numero(s.e9),
+                e10: this.numero(s.e10),
+                e11: this.numero(s.e11)
+
+            };
+
+        }
+
+
+        /*
+        ----------------------------------------------
+        CASO 3
+        ficha.stats
+        ----------------------------------------------
+        */
+
+        if (
+            ficha.stats
+        ) {
+
+            const s =
+                ficha.stats;
+
+
+            return {
+
+                e1: this.numero(s.e1),
+                e2: this.numero(s.e2),
+                e3: this.numero(s.e3),
+                e4: this.numero(s.e4),
+                e5: this.numero(s.e5),
+                e6: this.numero(s.e6),
+                e7: this.numero(s.e7),
+                e8: this.numero(s.e8),
+                e9: this.numero(s.e9),
+                e10: this.numero(s.e10),
+                e11: this.numero(s.e11)
+
+            };
+
+        }
+
+
+        /*
+        ----------------------------------------------
+        CASO 4
+        Array de 11 valores
+        ----------------------------------------------
+        */
+
+        if (
+            Array.isArray(ficha.stats)
+        ) {
+
+            return {
+
+                e1: this.numero(ficha.stats[0]),
+                e2: this.numero(ficha.stats[1]),
+                e3: this.numero(ficha.stats[2]),
+                e4: this.numero(ficha.stats[3]),
+                e5: this.numero(ficha.stats[4]),
+                e6: this.numero(ficha.stats[5]),
+                e7: this.numero(ficha.stats[6]),
+                e8: this.numero(ficha.stats[7]),
+                e9: this.numero(ficha.stats[8]),
+                e10: this.numero(ficha.stats[9]),
+                e11: this.numero(ficha.stats[10])
+
+            };
+
+        }
+
+
+        /*
+        ----------------------------------------------
+        NO ENCONTRADO
+        ----------------------------------------------
+        */
+
+        console.error(
+            "PALARENA_STATS: No se encontraron e1-e11.",
+            ficha
+        );
+
+
+        return null;
+
+    },
+
+
+    /* ==================================================
        CALCULAR 5 INDICADORES
-       ================================================== */
+    ================================================== */
 
     calcular(stats) {
 
@@ -76,9 +258,9 @@ window.PALARENA_STATS = {
 
         const ataque =
             (
-                Number(stats.e5) +
-                Number(stats.e11) +
-                Number(stats.e10)
+                stats.e5 +
+                stats.e11 +
+                stats.e10
             ) / 3;
 
 
@@ -91,9 +273,9 @@ window.PALARENA_STATS = {
 
         const defensa =
             (
-                Number(stats.e6) +
-                Number(stats.e3) +
-                Number(stats.e9)
+                stats.e6 +
+                stats.e3 +
+                stats.e9
             ) / 3;
 
 
@@ -106,8 +288,8 @@ window.PALARENA_STATS = {
 
         const velocidad =
             (
-                Number(stats.e7) +
-                Number(stats.e10)
+                stats.e7 +
+                stats.e10
             ) / 2;
 
 
@@ -120,9 +302,9 @@ window.PALARENA_STATS = {
 
         const resistencia =
             (
-                Number(stats.e3) +
-                Number(stats.e8) +
-                Number(stats.e1)
+                stats.e3 +
+                stats.e8 +
+                stats.e1
             ) / 3;
 
 
@@ -135,9 +317,9 @@ window.PALARENA_STATS = {
 
         const tactica =
             (
-                Number(stats.e11) +
-                Number(stats.e2) +
-                Number(stats.e4)
+                stats.e11 +
+                stats.e2 +
+                stats.e4
             ) / 3;
 
 
@@ -165,32 +347,19 @@ window.PALARENA_STATS = {
 
     /* ==================================================
        CALCULAR DESDE PALEOFICHA
-       ================================================== */
+    ================================================== */
 
     calcularFicha(ficha) {
 
-        if (!ficha) {
+        const stats =
+            this.obtenerStats(ficha);
+
+
+        if (!stats) {
 
             return null;
 
         }
-
-
-        const stats = {
-
-            e1: ficha.e1,
-            e2: ficha.e2,
-            e3: ficha.e3,
-            e4: ficha.e4,
-            e5: ficha.e5,
-            e6: ficha.e6,
-            e7: ficha.e7,
-            e8: ficha.e8,
-            e9: ficha.e9,
-            e10: ficha.e10,
-            e11: ficha.e11
-
-        };
 
 
         return this.calcular(stats);
