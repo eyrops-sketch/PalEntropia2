@@ -10,7 +10,7 @@
     content="width=device-width, initial-scale=1.0"
 >
 
-<title>PalEntropía - Prueba Arena</title>
+<title>PalEntropía — Arena</title>
 
 <style>
 
@@ -19,156 +19,176 @@
 }
 
 body {
+
     margin: 0;
     padding: 20px;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #101010;
-    color: #ffffff;
+
+    background: #111;
+    color: #eee;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
 }
 
 .contenedor {
-    max-width: 1000px;
+
+    max-width: 900px;
     margin: auto;
+
 }
 
 h1 {
-    text-align: center;
+
+    margin: 0 0 5px;
+    font-size: 28px;
+
+}
+
+.subtitulo {
+
+    color: #aaa;
     margin-bottom: 25px;
+
 }
 
 .panel {
-    background: #181818;
+
+    background: #1b1b1b;
+
     border: 1px solid #333;
-    border-radius: 12px;
+    border-radius: 10px;
+
     padding: 18px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
+
 }
 
-.selector {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+h2 {
+
+    margin-top: 20px;
+    font-size: 20px;
+
 }
 
-.codigo {
-    background: #0d0d0d;
-    border: 1px solid #333;
-    border-radius: 8px;
+label {
+
+    display: block;
+    margin-top: 10px;
+    color: #aaa;
+
+}
+
+input {
+
+    width: 100%;
+
     padding: 12px;
-    margin-top: 8px;
-    font-family: monospace;
-    font-size: 18px;
+    margin: 8px 0;
+
+    background: #222;
+    color: #fff;
+
+    border: 1px solid #444;
+    border-radius: 6px;
+
+    font-size: 16px;
+
 }
 
 button {
+
     width: 100%;
+
     padding: 13px;
-    margin-top: 15px;
-    border: 0;
-    border-radius: 8px;
-    background: #252525;
-    color: white;
+    margin-top: 10px;
+
+    background: #333;
+    color: #fff;
+
+    border: 1px solid #555;
+    border-radius: 6px;
+
     font-size: 16px;
-    font-weight: bold;
+
     cursor: pointer;
+
 }
 
 button:hover {
-    background: #353535;
+
+    background: #444;
+
 }
 
-.estado {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 8px;
-    background: #111;
+.boton-principal {
+
+    background: #7040a0;
+
+}
+
+.boton-principal:hover {
+
+    background: #8050b0;
+
+}
+
+.resultado {
+
+    line-height: 1.7;
+
+}
+
+.bloque {
+
+    padding: 12px;
+    margin-top: 12px;
+
+    background: #151515;
+
+    border: 1px solid #292929;
+    border-radius: 6px;
+
 }
 
 .ok {
-    color: #7cff8b;
+
+    color: #7cff9b;
+
 }
 
 .error {
-    color: #ff6b6b;
+
+    color: #ff7777;
+
 }
 
-.combatientes {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+.aviso {
+
+    color: #ffd166;
+
 }
 
-.combatiente {
-    background: #151515;
-    border: 1px solid #333;
-    border-radius: 12px;
-    padding: 18px;
-}
+.etiqueta {
 
-.nombre {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.codigoFicha {
     color: #aaa;
-    margin-bottom: 12px;
+
 }
 
-.seccion {
-    margin-top: 15px;
-    padding-top: 12px;
-    border-top: 1px solid #333;
-}
+.codigo {
 
-.seccion h3 {
-    margin: 0 0 10px 0;
-    font-size: 17px;
-}
-
-.habitat {
-    margin: 5px 0;
     font-family: monospace;
+
 }
 
-.stat {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 0;
-    border-bottom: 1px solid #222;
-}
+hr {
 
-.stat span:last-child {
-    font-weight: bold;
-}
+    border: 0;
+    border-top: 1px solid #333;
 
-.enlace {
-    display: block;
-    text-decoration: none;
-    text-align: center;
-    padding: 10px;
-    margin-top: 15px;
-    border-radius: 8px;
-    background: #252525;
-    color: white;
-    font-weight: bold;
-}
-
-.enlace:hover {
-    background: #353535;
-}
-
-.preparados {
-    font-size: 18px;
-}
-
-@media (max-width: 700px) {
-
-    .selector,
-    .combatientes {
-        grid-template-columns: 1fr;
-    }
+    margin: 14px 0;
 
 }
 
@@ -179,89 +199,93 @@ button:hover {
 
 <body>
 
+
 <div class="contenedor">
 
-<h1>
-🎲 PalEntropía<br>
-Arena — Prueba de combate
-</h1>
 
+<h1>🎲 PalEntropía</h1>
+
+<div class="subtitulo">
+
+Arena — Prueba de combate
+
+</div>
+
+
+<!-- ======================================================
+     SELECCIÓN DE PALEOFICHAS
+     ====================================================== -->
 
 <div class="panel">
 
-    <div class="selector">
+<h2>🦖 Paleoficha 1</h2>
 
-        <div>
+<label for="codigo1">
 
-            <strong>🦖 Paleoficha 1</strong>
+Código de Paleoficha
 
-            <div
-                id="codigo1"
-                class="codigo"
-            >
-                ---
-            </div>
+</label>
 
-        </div>
-
-
-        <div>
-
-            <strong>🦖 Paleoficha 2</strong>
-
-            <div
-                id="codigo2"
-                class="codigo"
-            >
-                ---
-            </div>
-
-        </div>
-
-    </div>
+<input
+    id="codigo1"
+    type="text"
+    value="006_01"
+    placeholder="Ejemplo: 006_01"
+>
 
 
-    <button
-        id="btnNuevo"
-        type="button"
-    >
-        🎲 Nuevo combate
-    </button>
+<h2>🦖 Paleoficha 2</h2>
+
+<label for="codigo2">
+
+Código de Paleoficha
+
+</label>
+
+<input
+    id="codigo2"
+    type="text"
+    value="001_02"
+    placeholder="Ejemplo: 001_02"
+>
 
 
-    <div
-        id="estado"
-        class="estado"
-    >
-        Cargando datos...
-    </div>
+<button
+    class="boton-principal"
+    onclick="prepararCombateArena()"
+>
+
+⚔️ Preparar combate
+
+</button>
 
 </div>
 
+
+<!-- ======================================================
+     RESULTADO
+     ====================================================== -->
 
 <div
     id="resultado"
-    class="combatientes"
-></div>
-
-
-<div
-    id="panelCombate"
-    class="panel"
-    style="display:none;"
+    class="panel resultado"
 >
 
-    <h2>⚔️ Combatientes preparados</h2>
+<span class="aviso">
 
-    <div
-        id="combatientesPreparados"
-        class="preparados"
-    ></div>
+Cargando datos de Arena...
 
-</div>
+</span>
 
 </div>
 
+
+</div>
+
+
+<!-- ======================================================
+     BASES DE DATOS
+     ====================================================== -->
 
 <script src="../generador_fase_2/palhab.js"></script>
 
@@ -269,1059 +293,583 @@ Arena — Prueba de combate
 
 <script src="../generador_fase_2/palmodo.js"></script>
 
-<script src="palarenadatos.js"></script>
 
-<script src="palarenaataques.js"></script>
+<!-- ======================================================
+     BASES DE DATOS DE ARENA
+     ====================================================== -->
 
-<script src="palarenaefectos.js"></script>
+<script src="./palarenaataques.js"></script>
 
-<script src="palarena.js"></script>
+<script src="./palarenaefectos.js"></script>
+
+
+<!-- ======================================================
+     MOTOR DE COMBATE
+     ====================================================== -->
+
+<script src="./palarena.js"></script>
 
 
 <script>
 
-const RUTA_PALEOFICHAS =
-    "../generador_fase_2/paleofichas.json";
-
-
-const RUTA_GENERADOR =
-    "../generador_fase_2/generador_fase_2.html";
-
-
-let PALEOFICHAS_ARENA = {};
-
-let COMBATE_ARENA = null;
-
-
-function escaparHTML(valor) {
-
-    if (
-        valor === null ||
-        valor === undefined
-    ) {
-
-        return "";
-
-    }
-
-    return String(valor)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
-
-
-async function cargarPaleofichasArena() {
-
-    const respuesta =
-        await fetch(
-            RUTA_PALEOFICHAS
-        );
-
-
-    if (!respuesta.ok) {
-
-        throw new Error(
-            "No se pudo cargar paleofichas.json"
-        );
-
-    }
-
-
-    const fichas =
-        await respuesta.json();
-
-
-    if (!Array.isArray(fichas)) {
-
-        throw new Error(
-            "paleofichas.json no contiene un array válido."
-        );
-
-    }
-
-
-    PALEOFICHAS_ARENA = {};
-
-
-    fichas.forEach(
-        function(ficha) {
-
-            if (
-                !ficha ||
-                !ficha.codigo
-            ) {
-
-                return;
-
-            }
-
-
-            PALEOFICHAS_ARENA[
-                String(
-                    ficha.codigo
-                ).trim()
-            ] = ficha;
-
-        }
-    );
-
-
-    return fichas.length;
-
-}
-
-
-function obtenerPaleofichaArena(codigo) {
-
-    return PALEOFICHAS_ARENA[
-        String(codigo).trim()
-    ] || null;
-
-}
-
-
-function obtenerNombreArena(codigo) {
-
-    const ficha =
-        obtenerPaleofichaArena(
-            codigo
-        );
-
-
-    if (
-        ficha &&
-        ficha.nombre
-    ) {
-
-        return ficha.nombre;
-
-    }
-
-
-    return "Nombre no disponible";
-
-}
-
-
-function obtenerDosFichasAleatoriasArena() {
-
-    if (
-        !window.PALARENA_DATOS ||
-        !window.PALARENA_DATOS.datos ||
-        !window.PALARENA_DATOS.datos.length
-    ) {
-
-        throw new Error(
-            "No hay datos cargados en PALARENA_DATOS."
-        );
-
-    }
-
-
-    const fichasValidas =
-        window.PALARENA_DATOS.datos.filter(
-            function(fila) {
-
-                return (
-                    fila &&
-                    fila.j1 &&
-                    obtenerPaleofichaArena(
-                        fila.j1
-                    )
-                );
-
-            }
-        );
-
-
-    if (
-        fichasValidas.length < 2
-    ) {
-
-        throw new Error(
-            "No hay suficientes Paleofichas válidas."
-        );
-
-    }
-
-
-    const indice1 =
-        Math.floor(
-            Math.random() *
-            fichasValidas.length
-        );
-
-
-    let indice2 =
-        Math.floor(
-            Math.random() *
-            fichasValidas.length
-        );
-
-
-    while (
-        indice2 === indice1
-    ) {
-
-        indice2 =
-            Math.floor(
-                Math.random() *
-                fichasValidas.length
-            );
-
-    }
-
-
-    return [
-        fichasValidas[indice1],
-        fichasValidas[indice2]
-    ];
-
-}
-
-
-function numeroArena(valor) {
-
-    const numero =
-        Number(valor);
-
-
-    return Number.isFinite(numero)
-        ? numero
-        : 0;
-
-}
-
-
-function generarEstadisticasArena(datos) {
-
-    const estadisticas = [
-
-        ["e1", "Adaptabilidad"],
-        ["e2", "Sociabilidad"],
-        ["e3", "Resistencia"],
-        ["e4", "Reproducción"],
-        ["e5", "Ofensiva"],
-        ["e6", "Defensa"],
-        ["e7", "Movilidad"],
-        ["e8", "Plasticidad ecológica"],
-        ["e9", "Tamaño"],
-        ["e10", "Velocidad"],
-        ["e11", "Inteligencia"]
-
-    ];
-
-
-    let html = "";
-
-
-    estadisticas.forEach(
-        function(stat) {
-
-            html += `
-
-                <div class="stat">
-
-                    <span>
-                        ${escaparHTML(stat[1])}
-                    </span>
-
-                    <span>
-                        ${numeroArena(
-                            datos.estadisticas[
-                                stat[0]
-                            ]
-                        )}
-                    </span>
-
-                </div>
-
-            `;
-
-        }
-    );
-
-
-    return html;
-
-}
-
-
-/* FIN PARTE 1 */
-
 /*
 ============================================================
-palentropía — arena
-archivo: palarena.js
-versión: 1.0
-parte: 2/2
+PRUEBA ARENA
 ============================================================
 
-incluye:
-- defensa
-- ataque especial
-- daño progresivo
-- decisiones de ia
-- iniciativa
-- ejecución de acciones
-- creación del combate
-- ejecución de turnos
-- finalización
-- combate automático
-- control manual
-- exportación global
+Parte 1
+
+Esta página:
+
+- carga master.csv
+- busca Paleofichas por j1
+- comprueba que existen
+- muestra sus datos
+- crea los combatientes
+- NO ejecuta todavía el combate
 
 ============================================================
 */
 
 
-/* ==========================================================
-   DEFENSA
-   ========================================================== */
-
-function ejecutarDefensaArena(combatiente) {
-
-    combatiente.defendiendo = true;
-
-    return {
-
-        tipo: "defensa",
-
-        atacante: combatiente.nombre,
-
-        dano: 0,
-
-        mensaje:
-            combatiente.nombre +
-            " adopta una posición defensiva."
-
-    };
-
-}
+let masterArena = [];
 
 
 /* ==========================================================
-   ATAQUE ESPECIAL
+   CARGAR MASTER.CSV
    ========================================================== */
 
-function ejecutarEspecialArena(
-    atacante,
-    objetivo
-) {
+async function cargarMasterArena() {
 
-    return ejecutarAtaqueArena(
-        atacante,
-        objetivo,
-        atacante.ataque_especial
-    );
+    try {
 
-}
+        const respuesta =
+            await fetch(
+                "../generador_fase_2/master.csv"
+            );
 
 
-/* ==========================================================
-   DAÑO PROGRESIVO
-   ========================================================== */
+        if (!respuesta.ok) {
 
-function aplicarDanioProgresivoArena(
-    combatiente
-) {
-
-    const efecto =
-        obtenerEfectoActivoArena(
-            combatiente,
-            "E005"
-        );
-
-    if (!efecto) {
-
-        return null;
-
-    }
-
-    const dano =
-        Number(efecto.potencia) || 1;
-
-    combatiente.hp -= dano;
-
-    if (combatiente.hp <= 0) {
-
-        combatiente.hp = 0;
-
-        combatiente.derrotado = true;
-
-    }
-
-    return {
-
-        dano: dano,
-
-        mensaje:
-            combatiente.nombre +
-            " recibe " +
-            dano +
-            " de daño progresivo."
-
-    };
-
-}
-
-
-/* ==========================================================
-   APLICAR DEFENSA
-   ========================================================== */
-
-function aplicarDefensaArena(
-    dano,
-    objetivo
-) {
-
-    if (
-        !objetivo.defendiendo
-    ) {
-
-        return dano;
-
-    }
-
-    return Math.max(
-        1,
-        Math.round(
-            dano * 0.5
-        )
-    );
-
-}
-
-
-/* ==========================================================
-   DECISIÓN DE IA
-   ========================================================== */
-
-function decidirAccionArena(
-    combatiente,
-    objetivo
-) {
-
-    const hpPorcentaje =
-        combatiente.hp /
-        combatiente.hp_max *
-        100;
-
-
-    /*
-    ----------------------------------------------------------
-    Criatura muy herida
-    ----------------------------------------------------------
-    */
-
-    if (hpPorcentaje <= 25) {
-
-        const dado =
-            arenaAleatorio(1, 100);
-
-        if (dado <= 35) {
-
-            return "defender";
+            throw new Error(
+                "No se pudo cargar master.csv"
+            );
 
         }
 
-    }
+
+        const texto =
+            await respuesta.text();
 
 
-    /*
-    ----------------------------------------------------------
-    Inteligencia alta:
-    mayor utilización del ataque especial.
-    ----------------------------------------------------------
-    */
-
-    if (
-        combatiente.stats.inteligencia >= 70
-    ) {
-
-        const dado =
-            arenaAleatorio(1, 100);
-
-        if (dado <= 55) {
-
-            return "especial";
-
-        }
-
-    }
+        masterArena =
+            parsearMasterArena(
+                texto
+            );
 
 
-    /*
-    ----------------------------------------------------------
-    Comportamiento general.
-    ----------------------------------------------------------
-    */
+        mostrarResultadoArena(
 
-    const dado =
-        arenaAleatorio(1, 100);
+            `
+            <div class="ok">
 
-    if (dado <= 65) {
+                ✓ Datos cargados correctamente
 
-        return "atacar";
+            </div>
+
+            <div class="bloque">
+
+                Paleofichas disponibles:
+                ${masterArena.length}
+
+            </div>
+            `
+
+        );
 
     }
 
-    if (dado <= 85) {
+    catch (error) {
 
-        return "especial";
+        console.error(
+            "Error cargando master.csv:",
+            error
+        );
+
+
+        mostrarResultadoArena(
+
+            `
+            <div class="error">
+
+                ✗ Error cargando master.csv
+
+            </div>
+
+            <div class="bloque">
+
+                ${error.message}
+
+            </div>
+            `
+
+        );
 
     }
-
-    return "defender";
 
 }
 
 
 /* ==========================================================
-   INICIATIVA
+   PARSER CSV
    ========================================================== */
 
-function determinarPrimeroArena(
-    combatiente1,
-    combatiente2
-) {
+function parsearMasterArena(texto) {
 
-    const iniciativa1 =
-        obtenerIniciativaEfectivaArena(
-            combatiente1
-        );
-
-    const iniciativa2 =
-        obtenerIniciativaEfectivaArena(
-            combatiente2
-        );
-
-
-    if (iniciativa1 > iniciativa2) {
-
-        return combatiente1;
-
-    }
-
-
-    if (iniciativa2 > iniciativa1) {
-
-        return combatiente2;
-
-    }
-
-
-    /*
-    Empate de iniciativa.
-    */
-
-    return (
-        Math.random() < 0.5
-            ? combatiente1
-            : combatiente2
-    );
-
-}
-
-
-/* ==========================================================
-   EJECUTAR ACCIÓN
-   ========================================================== */
-
-function ejecutarAccionArena(
-    atacante,
-    objetivo,
-    accion
-) {
-
-    atacante.defendiendo = false;
-
-
-    if (accion === "atacar") {
-
-        return ejecutarAtaqueArena(
-            atacante,
-            objetivo,
-            "A001"
-        );
-
-    }
-
-
-    if (accion === "especial") {
-
-        return ejecutarEspecialArena(
-            atacante,
-            objetivo
-        );
-
-    }
-
-
-    if (accion === "defender") {
-
-        return ejecutarDefensaArena(
-            atacante
-        );
-
-    }
-
-
-    return {
-
-        tipo: "error",
-
-        mensaje:
-            "Acción no reconocida."
-
-    };
-
-}
-
-
-/* ==========================================================
-   CREAR COMBATE
-   ========================================================== */
-
-function crearCombateArena(
-    datos1,
-    datos2
-) {
-
-    const combatiente1 =
-        crearCombatienteArena(
-            datos1
-        );
-
-    const combatiente2 =
-        crearCombatienteArena(
-            datos2
-        );
-
-
-    return {
-
-        estado: "preparado",
-
-        turno: 0,
-
-        combatiente1:
-            combatiente1,
-
-        combatiente2:
-            combatiente2,
-
-        actual: null,
-
-        ganador: null,
-
-        historial: []
-
-    };
-
-}
-
-
-/* ==========================================================
-   EJECUTAR TURNO
-   ========================================================== */
-
-function ejecutarTurnoArena(
-    combate
-) {
-
-    if (
-        combate.estado === "finalizado"
-    ) {
-
-        return {
-
-            terminado: true,
-
-            ganador:
-                combate.ganador
-
-        };
-
-    }
+    const lineas =
+        texto
+            .trim()
+            .split(/\r?\n/);
 
 
     if (
-        combate.turno >=
-        PALARENA.configuracion.max_turnos
+        lineas.length < 2
     ) {
 
-        finalizarCombatePorLimiteArena(
-            combate
-        );
-
-        return {
-
-            terminado: true,
-
-            ganador:
-                combate.ganador
-
-        };
+        return [];
 
     }
 
 
-    combate.turno++;
+    const cabecera =
+        lineas[0]
+            .split(",")
+            .map(
+                campo =>
+                    campo.trim()
+            );
 
 
-    const c1 =
-        combate.combatiente1;
+    const registros = [];
 
-    const c2 =
-        combate.combatiente2;
-
-
-    const primero =
-        determinarPrimeroArena(
-            c1,
-            c2
-        );
-
-
-    const segundo =
-        primero === c1
-            ? c2
-            : c1;
-
-
-    const orden = [
-        primero,
-        segundo
-    ];
-
-
-    combate.actual =
-        primero.codigo;
-
-
-    /*
-    ----------------------------------------------------------
-    Las dos criaturas actúan en orden de iniciativa.
-    ----------------------------------------------------------
-    */
 
     for (
-        let i = 0;
-        i < orden.length;
+        let i = 1;
+        i < lineas.length;
         i++
     ) {
 
-        const atacante =
-            orden[i];
-
-        const objetivo =
-            atacante === c1
-                ? c2
-                : c1;
+        const linea =
+            lineas[i].trim();
 
 
-        if (
-            atacante.derrotado ||
-            objetivo.derrotado
-        ) {
+        if (!linea) {
 
             continue;
 
         }
 
 
-        /*
-        Si estaba defendiendo del turno anterior,
-        pierde esa postura al comenzar su acción.
-        */
-
-        const accion =
-            decidirAccionArena(
-                atacante,
-                objetivo
-            );
+        const valores =
+            linea.split(",");
 
 
-        let resultado;
+        const registro = {};
 
 
-        if (accion === "defender") {
+        cabecera.forEach(
 
-            resultado =
-                ejecutarDefensaArena(
-                    atacante
-                );
+            function(
+                campo,
+                indice
+            ) {
 
-        } else {
+                registro[campo] =
+                    (
+                        valores[indice] ??
+                        ""
+                    ).trim();
 
-            resultado =
-                ejecutarAccionArena(
-                    atacante,
-                    objetivo,
-                    accion
-                );
+            }
 
-        }
-
-
-        /*
-        ------------------------------------------------------
-        Registrar acción.
-        ------------------------------------------------------
-        */
-
-        combate.historial.push({
-
-            turno:
-                combate.turno,
-
-            codigo_atacante:
-                atacante.codigo,
-
-            atacante:
-                atacante.nombre,
-
-            codigo_objetivo:
-                objetivo.codigo,
-
-            objetivo:
-                objetivo.nombre,
-
-            accion:
-                accion,
-
-            resultado:
-                resultado
-
-        });
+        );
 
 
-        /*
-        ------------------------------------------------------
-        Comprobar derrota.
-        ------------------------------------------------------
-        */
-
-        if (
-            objetivo.derrotado
-        ) {
-
-            finalizarCombateArena(
-                combate,
-                atacante
-            );
-
-            break;
-
-        }
+        registros.push(
+            registro
+        );
 
     }
 
 
-    /*
-    ----------------------------------------------------------
-    Daño progresivo al finalizar el turno.
-    ----------------------------------------------------------
-    */
+    return registros;
+
+}
+
+
+/* ==========================================================
+   BUSCAR PALEOFICHA
+   ========================================================== */
+
+function buscarFichaArena(
+    codigo
+) {
+
+    if (!codigo) {
+
+        return null;
+
+    }
+
+
+    return masterArena.find(
+
+        function(ficha) {
+
+            return ficha.j1 === codigo;
+
+        }
+
+    ) || null;
+
+}
+
+
+/* ==========================================================
+   MOSTRAR RESULTADO
+   ========================================================== */
+
+function mostrarResultadoArena(
+    html
+) {
+
+    const elemento =
+        document.getElementById(
+            "resultado"
+        );
+
+
+    elemento.innerHTML =
+        html;
+
+}
+
+
+/* ==========================================================
+   MOSTRAR ESTADÍSTICAS
+   ========================================================== */
+
+function generarEstadisticasArena(
+    ficha
+) {
+
+    return `
+
+        <div class="bloque">
+
+            <strong>
+                📊 Estadísticas
+            </strong>
+
+            <br><br>
+
+            e1 Adaptabilidad:
+            ${ficha.e1}
+
+            <br>
+
+            e2 Sociabilidad:
+            ${ficha.e2}
+
+            <br>
+
+            e3 Resistencia:
+            ${ficha.e3}
+
+            <br>
+
+            e4 Reproducción:
+            ${ficha.e4}
+
+            <br>
+
+            e5 Ofensiva:
+            ${ficha.e5}
+
+            <br>
+
+            e6 Defensa:
+            ${ficha.e6}
+
+            <br>
+
+            e7 Movilidad:
+            ${ficha.e7}
+
+            <br>
+
+            e8 Plasticidad ecológica:
+            ${ficha.e8}
+
+            <br>
+
+            e9 Tamaño:
+            ${ficha.e9}
+
+            <br>
+
+            e10 Velocidad:
+            ${ficha.e10}
+
+            <br>
+
+            e11 Inteligencia:
+            ${ficha.e11}
+
+        </div>
+
+    `;
+
+}
+
+
+/* ==========================================================
+   MOSTRAR PALEOFICHA
+   ========================================================== */
+
+function generarFichaArena(
+    ficha,
+    numero
+) {
+
+    return `
+
+        <div class="bloque">
+
+            <strong>
+                🦖 Combatiente ${numero}
+            </strong>
+
+            <br><br>
+
+            <span class="etiqueta">
+                Código:
+            </span>
+
+            <span class="codigo">
+                ${ficha.j1}
+            </span>
+
+            <br>
+
+            <span class="etiqueta">
+                Nombre:
+            </span>
+
+            ${ficha.j2}
+
+            <br>
+
+            <span class="etiqueta">
+                Cronología:
+            </span>
+
+            ${ficha.j3}
+
+            <br>
+
+            <span class="etiqueta">
+                Modo de vida:
+            </span>
+
+            MV${ficha.j9}
+
+            <br>
+
+            <span class="etiqueta">
+                j5:
+            </span>
+
+            ${ficha.j5}
+
+            <br>
+
+            <span class="etiqueta">
+                j6:
+            </span>
+
+            ${ficha.j6}
+
+            <br>
+
+            <span class="etiqueta">
+                j7:
+            </span>
+
+            ${ficha.j7}
+
+            <br>
+
+            <span class="etiqueta">
+                j8:
+            </span>
+
+            ${ficha.j8}
+
+            ${generarEstadisticasArena(ficha)}
+
+        </div>
+
+    `;
+
+}
+
+
+/* ==========================================================
+   CREAR COMBATIENTE
+   ========================================================== */
+
+function prepararCombatienteArena(
+    ficha
+
+/* ==========================================================
+   PREPARAR COMBATE
+   ========================================================== */
+
+function prepararCombateArena() {
+
+    const codigo1 =
+        document
+            .getElementById(
+                "codigo1"
+            )
+            .value
+            .trim();
+
+
+    const codigo2 =
+        document
+            .getElementById(
+                "codigo2"
+            )
+            .value
+            .trim();
+
+
+    const ficha1 =
+        buscarFichaArena(
+            codigo1
+        );
+
+
+    const ficha2 =
+        buscarFichaArena(
+            codigo2
+        );
+
+
+    if (!ficha1) {
+
+        mostrarResultadoArena(
+
+            `
+            <div class="error">
+
+                ✗ No se encuentra la
+                Paleoficha ${codigo1}
+
+            </div>
+            `
+
+        );
+
+        return;
+
+    }
+
+
+    if (!ficha2) {
+
+        mostrarResultadoArena(
+
+            `
+            <div class="error">
+
+                ✗ No se encuentra la
+                Paleoficha ${codigo2}
+
+            </div>
+            `
+
+        );
+
+        return;
+
+    }
+
+
+    let html = `
+
+        <div class="ok">
+
+            ✓ Paleofichas cargadas correctamente
+
+        </div>
+
+    `;
+
+
+    html +=
+        generarFichaArena(
+            ficha1,
+            1
+        );
+
+
+    html +=
+        generarFichaArena(
+            ficha2,
+            2
+        );
+
+
+    const combatiente1 =
+        prepararCombatienteArena(
+            ficha1
+        );
+
+
+    const combatiente2 =
+        prepararCombatienteArena(
+            ficha2
+        );
+
 
     if (
-        combate.estado !== "finalizado"
+        !combatiente1 ||
+        !combatiente2
     ) {
 
-        const dano1 =
-            aplicarDanioProgresivoArena(
-                c1
-            );
+        html += `
 
-        const dano2 =
-            aplicarDanioProgresivoArena(
-                c2
-            );
+            <div class="bloque error">
 
+                ✗ No se pudo crear
+                uno o ambos combatientes.
 
-        if (dano1) {
+                <br><br>
 
-            combate.historial.push({
+                Comprueba que
+                <strong>palarena.js</strong>
+                se ha cargado correctamente.
 
-                turno:
-                    combate.turno,
+            </div>
 
-                tipo:
-                    "danio_progresivo",
-
-                codigo:
-                    c1.codigo,
-
-                resultado:
-                    dano1
-
-            });
-
-        }
+        `;
 
 
-        if (dano2) {
-
-            combate.historial.push({
-
-                turno:
-                    combate.turno,
-
-                tipo:
-                    "danio_progresivo",
-
-                codigo:
-                    c2.codigo,
-
-                resultado:
-                    dano2
-
-            });
-
-        }
-
-
-        /*
-        ------------------------------------------------------
-        Actualizar efectos.
-        ------------------------------------------------------
-        */
-
-        actualizarEfectosArena(c1);
-
-        actualizarEfectosArena(c2);
-
-
-        /*
-        ------------------------------------------------------
-        Comprobar derrotas por daño progresivo.
-        ------------------------------------------------------
-        */
-
-        if (
-            c1.derrotado &&
-            !c2.derrotado
-        ) {
-
-            finalizarCombateArena(
-                combate,
-                c2
-            );
-
-        } else if (
-            c2.derrotado &&
-            !c1.derrotado
-        ) {
-
-            finalizarCombateArena(
-                combate,
-                c1
-            );
-
-        } else if (
-            c1.derrotado &&
-            c2.derrotado
-        ) {
-
-            finalizarCombateArena(
-                combate,
-                null
-            );
-
-        }
-
-    }
-
-
-    return {
-
-        terminado:
-            combate.estado === "finalizado",
-
-        ganador:
-            combate.ganador,
-
-        turno:
-            combate.turno
-
-    };
-
-}
-
-
-/* ==========================================================
-   FIN PARTE 2
-============================================================ */
-
-
-/*
-============================================================
-palentropía — arena
-archivo: palarena.js
-versión: 1.0
-parte: 3/3
-============================================================
-
-incluye:
-- finalización del combate
-- límite de turnos
-- ejecución automática
-- control manual
-- resumen
-- exportación global
-
-============================================================
-*/
-
-
-/* ==========================================================
-   FINALIZAR COMBATE
-   ========================================================== */
-
-function finalizarCombateArena(
-    combate,
-    ganador
-) {
-
-    combate.estado = "finalizado";
-
-    combate.ganador =
-        ganador
-            ? ganador.codigo
-            : null;
-
-    combate.actual = null;
-
-    return combate;
-
-}
-
-
-/* ==========================================================
-   FINALIZAR POR LÍMITE DE TURNOS
-   ========================================================== */
-
-function finalizarCombatePorLimiteArena(
-    combate
-) {
-
-    const c1 =
-        combate.combatiente1;
-
-    const c2 =
-        combate.combatiente2;
-
-
-    if (c1.hp > c2.hp) {
-
-        finalizarCombateArena(
-            combate,
-            c1
+        mostrarResultadoArena(
+            html
         );
 
         return;
@@ -1329,315 +877,80 @@ function finalizarCombatePorLimiteArena(
     }
 
 
-    if (c2.hp > c1.hp) {
+    html += `
 
-        finalizarCombateArena(
-            combate,
-            c2
-        );
+        <div class="bloque">
 
-        return;
+            <strong>
+                ⚔️ Combatientes preparados
+            </strong>
 
-    }
+            <br><br>
+
+            <strong>
+                ${combatiente1.nombre}
+            </strong>
+
+            <br>
+
+            HP:
+            ${combatiente1.hp_max}
+
+            <br>
+
+            Iniciativa:
+            ${combatiente1.iniciativa}
+
+            <br>
+
+            Ataque especial:
+            ${combatiente1.ataque_especial}
+
+            <hr>
+
+            <strong>
+                ${combatiente2.nombre}
+            </strong>
+
+            <br>
+
+            HP:
+            ${combatiente2.hp_max}
+
+            <br>
+
+            Iniciativa:
+            ${combatiente2.iniciativa}
+
+            <br>
+
+            Ataque especial:
+            ${combatiente2.ataque_especial}
+
+        </div>
+
+    `;
 
 
-    /*
-    Empate.
-    */
-
-    finalizarCombateArena(
-        combate,
-        null
+    mostrarResultadoArena(
+        html
     );
 
 }
 
 
 /* ==========================================================
-   EJECUTAR COMBATE AUTOMÁTICO
+   INICIO
    ========================================================== */
 
-function ejecutarCombateArena(
-    combate
-) {
+cargarMasterArena();
 
-    if (!combate) {
+</script>
 
-        return null;
+</body>
 
-    }
+</html>
 
-
-    while (
-        combate.estado !== "finalizado"
-    ) {
-
-        ejecutarTurnoArena(
-            combate
-        );
-
-    }
-
-
-    return combate;
-
-}
-
-
-/* ==========================================================
-   EJECUTAR ACCIÓN DEL JUGADOR
-   ========================================================== */
-
-function ejecutarAccionJugadorArena(
-    combate,
-    codigoCombatiente,
-    accion
-) {
-
-    if (!combate) {
-
-        return {
-
-            error:
-                "Combate no disponible."
-
-        };
-
-    }
-
-
-    if (
-        combate.estado === "finalizado"
-    ) {
-
-        return {
-
-            error:
-                "El combate ya ha finalizado."
-
-        };
-
-    }
-
-
-    const atacante =
-        combate.combatiente1.codigo ===
-        codigoCombatiente
-
-            ? combate.combatiente1
-
-            : combate.combatiente2;
-
-
-    const objetivo =
-        atacante === combate.combatiente1
-
-            ? combate.combatiente2
-
-            : combate.combatiente1;
-
-
-    if (
-        atacante.derrotado ||
-        objetivo.derrotado
-    ) {
-
-        return {
-
-            error:
-                "No se puede ejecutar la acción."
-
-        };
-
-    }
-
-
-    const resultado =
-        ejecutarAccionArena(
-            atacante,
-            objetivo,
-            accion
-        );
-
-
-    combate.historial.push({
-
-        turno:
-            combate.turno,
-
-        codigo_atacante:
-            atacante.codigo,
-
-        atacante:
-            atacante.nombre,
-
-        codigo_objetivo:
-            objetivo.codigo,
-
-        objetivo:
-            objetivo.nombre,
-
-        accion:
-            accion,
-
-        resultado:
-            resultado
-
-    });
-
-
-    if (
-        objetivo.derrotado
-    ) {
-
-        finalizarCombateArena(
-            combate,
-            atacante
-        );
-
-    }
-
-
-    return resultado;
-
-}
-
-
-/* ==========================================================
-   RESUMEN DEL COMBATE
-   ========================================================== */
-
-function obtenerResumenCombateArena(
-    combate
-) {
-
-    if (!combate) {
-
-        return null;
-
-    }
-
-
-    const c1 =
-        combate.combatiente1;
-
-    const c2 =
-        combate.combatiente2;
-
-
-    return {
-
-        estado:
-            combate.estado,
-
-        turno:
-            combate.turno,
-
-        combatiente1: {
-
-            codigo:
-                c1.codigo,
-
-            nombre:
-                c1.nombre,
-
-            hp:
-                c1.hp,
-
-            hp_max:
-                c1.hp_max,
-
-            iniciativa:
-                c1.iniciativa,
-
-            ataque_especial:
-                c1.ataque_especial,
-
-            derrotado:
-                c1.derrotado
-
-        },
-
-
-        combatiente2: {
-
-            codigo:
-                c2.codigo,
-
-            nombre:
-                c2.nombre,
-
-            hp:
-                c2.hp,
-
-            hp_max:
-                c2.hp_max,
-
-            iniciativa:
-                c2.iniciativa,
-
-            ataque_especial:
-                c2.ataque_especial,
-
-            derrotado:
-                c2.derrotado
-
-        },
-
-
-        ganador:
-            combate.ganador,
-
-        historial:
-            combate.historial
-
-    };
-
-}
-
-
-/* ==========================================================
-   EXPORTACIÓN GLOBAL
-   ========================================================== */
-
-window.PALARENA =
-    PALARENA;
-
-
-window.crearCombatienteArena =
-    crearCombatienteArena;
-
-
-window.crearCombateArena =
-    crearCombateArena;
-
-
-window.ejecutarTurnoArena =
-    ejecutarTurnoArena;
-
-
-window.ejecutarCombateArena =
-    ejecutarCombateArena;
-
-
-window.ejecutarAccionJugadorArena =
-    ejecutarAccionJugadorArena;
-
-
-window.decidirAccionArena =
-    decidirAccionArena;
-
-
-window.finalizarCombateArena =
-    finalizarCombateArena;
-
-
-window.obtenerResumenCombateArena =
-    obtenerResumenCombateArena;
-
-
-/*
-============================================================
-FIN PALARENA.JS — PARTE 3/3
-============================================================
-*/
+<!-- ==========================================================
+   FIN
+   ========================================================== -->
