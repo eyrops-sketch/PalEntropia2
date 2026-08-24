@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>PalEntropía - Prueba Escenario</title>
+    <title>PalEntropía - Prueba Arena</title>
 
     <link
         rel="stylesheet"
@@ -23,6 +23,11 @@
 <body>
 
 <main class="arena">
+
+
+    <!-- ==================================================
+         CABECERA
+    ================================================== -->
 
     <header class="arena-cabecera">
 
@@ -37,31 +42,48 @@
     </header>
 
 
+    <!-- ==================================================
+         ESCENARIO
+    ================================================== -->
+
     <section class="panel">
 
         <h2>🎲 Escenario</h2>
 
         <div id="escenario">
+
             Generando escenario...
+
         </div>
+
 
         <button
             id="btnNuevoEscenario"
             type="button"
         >
+
             🎲 Nuevo escenario
+
         </button>
 
     </section>
 
 
+    <!-- ==================================================
+         PALEOFICHA
+    ================================================== -->
+
     <section class="panel">
 
         <h2>🦖 Prueba de Paleoficha</h2>
 
+
         <label for="codigoFicha">
-            Código
+
+            Código de Paleoficha
+
         </label>
+
 
         <input
             type="text"
@@ -70,19 +92,27 @@
             maxlength="7"
         >
 
+
         <button
             id="btnEvaluar"
             type="button"
         >
-            Evaluar ficha
+
+            Cargar ficha
+
         </button>
 
     </section>
 
 
+    <!-- ==================================================
+         RESULTADO DEL ESCENARIO
+    ================================================== -->
+
     <section class="panel">
 
         <h2>⚔️ Resultado</h2>
+
 
         <div id="resultado">
 
@@ -92,12 +122,31 @@
 
     </section>
 
+
+    <!-- ==================================================
+         ESTADÍSTICAS DE COMBATE
+    ================================================== -->
+
+    <section class="panel">
+
+        <h2>⚔️ Estadísticas de combate</h2>
+
+
+        <div id="statsCombate">
+
+            Esperando evaluación...
+
+        </div>
+
+    </section>
+
+
 </main>
 
 
-<!-- ==================================================
+<!-- ======================================================
      BASES DE DATOS
-================================================== -->
+====================================================== -->
 
 <script src="../generador_fase_2/palhab.js"></script>
 
@@ -106,13 +155,15 @@
 <script src="../generador_fase_2/palmodo.js"></script>
 
 
-<!-- ==================================================
-     MOTOR DE DATOS
-================================================== -->
+<!-- ======================================================
+     MOTOR DE DATOS DE ARENA
+====================================================== -->
 
 <script src="palarenadatos.js"></script>
 
 <script src="palarenaescenario.js"></script>
+
+<script src="palarenastats.js"></script>
 
 
 <script>
@@ -130,6 +181,10 @@ const escenarioElemento =
 
 const resultadoElemento =
     document.getElementById("resultado");
+
+
+const statsElemento =
+    document.getElementById("statsCombate");
 
 
 const codigoFicha =
@@ -160,11 +215,15 @@ function generarEscenario() {
 
 
     /*
-    Si ya tenemos una ficha,
+    ----------------------------------------------
+    Si ya hay una ficha cargada,
     la volvemos a evaluar.
+    ----------------------------------------------
     */
 
-    if (codigoFicha.value.trim() !== "") {
+    if (
+        codigoFicha.value.trim() !== ""
+    ) {
 
         evaluarFicha();
 
@@ -183,13 +242,24 @@ function mostrarEscenario(escenario) {
 
     if (!escenario) {
 
-        escenarioElemento.innerHTML =
-            "<p>❌ No se pudo generar el escenario.</p>";
+        escenarioElemento.innerHTML = `
+
+            <p>
+                ❌ No se pudo generar el escenario.
+            </p>
+
+        `;
 
         return;
 
     }
 
+
+    /*
+    ----------------------------------------------
+    HÁBITATS
+    ----------------------------------------------
+    */
 
     const habitatsHTML =
         escenario.habitats
@@ -199,6 +269,7 @@ function mostrarEscenario(escenario) {
                     window.PALARENA_DATOS
                         .obtenerHabitat(codigo);
 
+
                 const nombre =
                     datos
                         ? datos.nombre
@@ -206,19 +277,34 @@ function mostrarEscenario(escenario) {
 
 
                 return `
+
                     <div class="dato">
-                        <strong>${codigo}</strong>
+
+                        <strong>
+                            ${codigo}
+                        </strong>
+
                         — ${nombre}
+
                     </div>
+
                 `;
 
             })
             .join("");
 
 
+    /*
+    ----------------------------------------------
+    MODO DE VIDA
+    ----------------------------------------------
+    */
+
     const modoDatos =
         window.PALARENA_DATOS
-            .obtenerModo(escenario.modo);
+            .obtenerModo(
+                escenario.modo
+            );
 
 
     const modoNombre =
@@ -227,11 +313,18 @@ function mostrarEscenario(escenario) {
             : "Desconocido";
 
 
+    /*
+    ----------------------------------------------
+    MEDIOS
+    ----------------------------------------------
+    */
+
     const mediosHTML =
         escenario.medios
             .map(medio => {
 
                 return `
+
                     <div class="dato">
 
                         <strong>
@@ -257,11 +350,18 @@ function mostrarEscenario(escenario) {
                         </strong>
 
                     </div>
+
                 `;
 
             })
             .join("");
 
+
+    /*
+    ----------------------------------------------
+    MOSTRAR
+    ----------------------------------------------
+    */
 
     escenarioElemento.innerHTML = `
 
@@ -306,13 +406,30 @@ function evaluarFicha() {
 
     if (!codigo) {
 
-        resultadoElemento.innerHTML =
-            "Introduce un código de Paleoficha.";
+        resultadoElemento.innerHTML = `
+
+            <p>
+                Introduce un código de Paleoficha.
+            </p>
+
+        `;
+
+        statsElemento.innerHTML = `
+
+            Esperando evaluación...
+
+        `;
 
         return;
 
     }
 
+
+    /*
+    ----------------------------------------------
+    EVALUAR EN EL ESCENARIO ACTUAL
+    ----------------------------------------------
+    */
 
     const resultado =
         window.PALARENA_ESCENARIO
@@ -324,9 +441,21 @@ function evaluarFicha() {
         resultadoElemento.innerHTML = `
 
             <p>
+
                 ❌ No se pudo evaluar
-                <strong>${codigo}</strong>
+
+                <strong>
+                    ${codigo}
+                </strong>
+
             </p>
+
+        `;
+
+
+        statsElemento.innerHTML = `
+
+            ❌ No hay estadísticas disponibles.
 
         `;
 
@@ -335,12 +464,29 @@ function evaluarFicha() {
     }
 
 
+    /*
+    ----------------------------------------------
+    DATOS
+    ----------------------------------------------
+    */
+
     const ficha =
         resultado.ficha;
 
 
     const bonificacion =
         resultado.bonificacion;
+
+
+    /*
+    ----------------------------------------------
+    ESTADÍSTICAS DE COMBATE
+    ----------------------------------------------
+    */
+
+    const statsCombate =
+        window.PALARENA_STATS
+            .calcularFicha(ficha);
 
 
     /*
@@ -353,7 +499,9 @@ function evaluarFicha() {
         "Ninguna";
 
 
-    if (bonificacion.habitats > 0) {
+    if (
+        bonificacion.habitats > 0
+    ) {
 
         textoHabitats =
             bonificacion.habitats +
@@ -381,12 +529,14 @@ function evaluarFicha() {
     */
 
     const textoMedios =
-        bonificacion.medios.coincidencias;
+        bonificacion
+            .medios
+            .coincidencias;
 
 
     /*
     ----------------------------------------------
-    RESULTADO
+    RESULTADO GENERAL
     ----------------------------------------------
     */
 
@@ -420,8 +570,20 @@ function evaluarFicha() {
         <div class="dato">
 
             Coincidencias:
+
             <strong>
                 ${textoHabitats}
+            </strong>
+
+        </div>
+
+
+        <div class="dato">
+
+            Bonificación:
+
+            <strong>
+                +${bonificacion.bonificacionHabitats}
             </strong>
 
         </div>
@@ -436,13 +598,36 @@ function evaluarFicha() {
         </div>
 
 
+        <div class="dato">
+
+            Bonificación:
+
+            <strong>
+                +${bonificacion.bonificacionModo}
+            </strong>
+
+        </div>
+
+
         <h3>🌎 Medios ecológicos</h3>
 
         <div class="dato">
 
             Componentes coincidentes:
+
             <strong>
                 ${textoMedios}
+            </strong>
+
+        </div>
+
+
+        <div class="dato">
+
+            Bonificación:
+
+            <strong>
+                +${bonificacion.bonificacionMedios}
             </strong>
 
         </div>
@@ -463,12 +648,81 @@ function evaluarFicha() {
 
     `;
 
+
+    /*
+    ----------------------------------------------
+    MOSTRAR 5 STATS DE COMBATE
+    ----------------------------------------------
+    */
+
+    if (statsCombate) {
+
+        statsElemento.innerHTML = `
+
+            <div class="stat-combate">
+
+                ⚔️ Ataque
+
+                <strong>
+                    ${statsCombate.ataque}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-combate">
+
+                🛡️ Defensa
+
+                <strong>
+                    ${statsCombate.defensa}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-combate">
+
+                ⚡ Velocidad
+
+                <strong>
+                    ${statsCombate.velocidad}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-combate">
+
+                ❤️ Resistencia
+
+                <strong>
+                    ${statsCombate.resistencia}
+                </strong>
+
+            </div>
+
+
+            <div class="stat-combate">
+
+                🧠 Táctica
+
+                <strong>
+                    ${statsCombate.tactica}
+                </strong>
+
+            </div>
+
+        `;
+
+    }
+
 }
 
 
 /*
 ========================================================
-BOTONES
+BOTÓN NUEVO ESCENARIO
 ========================================================
 */
 
@@ -478,9 +732,37 @@ btnNuevoEscenario.addEventListener(
 );
 
 
+/*
+========================================================
+BOTÓN EVALUAR
+========================================================
+*/
+
 btnEvaluar.addEventListener(
     "click",
     evaluarFicha
+);
+
+
+/*
+========================================================
+INTRODUCIR CON ENTER
+========================================================
+*/
+
+codigoFicha.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            evaluarFicha();
+
+        }
+
+    }
 );
 
 
@@ -492,18 +774,25 @@ INICIO
 
 async function iniciar() {
 
-    escenarioElemento.innerHTML =
-        "⏳ Cargando base de datos...";
+    escenarioElemento.innerHTML = `
+
+        ⏳ Cargando base de datos...
+
+    `;
 
 
     const cargado =
-        await window.PALARENA_DATOS.cargar();
+        await window.PALARENA_DATOS
+            .cargar();
 
 
     if (!cargado) {
 
-        escenarioElemento.innerHTML =
-            "❌ Error cargando master.csv.";
+        escenarioElemento.innerHTML = `
+
+            ❌ Error cargando master.csv.
+
+        `;
 
         return;
 
@@ -514,6 +803,12 @@ async function iniciar() {
 
 }
 
+
+/*
+========================================================
+ARRANQUE
+========================================================
+*/
 
 iniciar();
 
