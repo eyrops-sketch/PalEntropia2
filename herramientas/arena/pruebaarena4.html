@@ -163,10 +163,80 @@ button:hover {
     font-size: 18px;
 }
 
+
+/* ==========================================================
+   PANEL DE COMBATE
+   ========================================================== */
+
+#panelResultadoCombate {
+    display: none;
+}
+
+.combateCabecera {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.combateFicha {
+    background: #101010;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.combateFicha h3 {
+    margin-top: 0;
+}
+
+.barraHp {
+    width: 100%;
+    height: 14px;
+    background: #333;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.barraHpInterior {
+    height: 100%;
+    width: 100%;
+    background: #62d6ff;
+    transition: width 0.2s ease;
+}
+
+.ganador {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    background: #111;
+}
+
+.historialCombate {
+    max-height: 500px;
+    overflow-y: auto;
+    background: #0d0d0d;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.turnoCombate {
+    border-bottom: 1px solid #292929;
+    padding: 10px 4px;
+}
+
+.turnoCombate:last-child {
+    border-bottom: 0;
+}
+
 @media (max-width: 700px) {
 
     .selector,
-    .combatientes {
+    .combatientes,
+    .combateCabecera {
         grid-template-columns: 1fr;
     }
 
@@ -270,6 +340,57 @@ Arena — Prueba de combate
         class="preparados"
     ></div>
 
+
+    <!-- ==================================================
+         BOTÓN DE PRUEBA
+         ================================================== -->
+
+    <button
+        id="btnEjecutarCombate"
+        type="button"
+    >
+        ⚔️ Ejecutar combate automático
+    </button>
+
+</div>
+
+
+<!-- ======================================================
+     RESULTADO DEL COMBATE
+     ====================================================== -->
+
+<div
+    id="panelResultadoCombate"
+    class="panel"
+>
+
+    <h2>🏆 Resultado del combate</h2>
+
+    <div
+        id="ganadorCombate"
+        class="ganador"
+    ></div>
+
+
+    <div
+        id="estadoCombatientes"
+        class="combateCabecera"
+    ></div>
+
+
+    <div class="seccion">
+
+        <h3>
+            📜 Historial
+        </h3>
+
+        <div
+            id="historialCombate"
+            class="historialCombate"
+        ></div>
+
+    </div>
+
 </div>
 
 </div>
@@ -290,7 +411,9 @@ Arena — Prueba de combate
 <script src="palarenaataques.js"></script>
 
 <script src="palarenaefectos.js"></script>
+
 <script src="palarenaasignacion.js"></script>
+
 <script src="palarena.js"></script>
 
 
@@ -300,7 +423,7 @@ Arena — Prueba de combate
 ============================================================
 palentropía — arena
 archivo: pruebaarena.html
-versión: 1.4
+versión: 1.5
 parte: 1/2
 ============================================================
 */
@@ -614,8 +737,6 @@ function generarEstadisticasArena(datos) {
 
 function crearDatosCombatienteArena(codigo) {
 
-    
-    
     const datos =
         window.PALARENA_DATOS.preparar(
             codigo
@@ -856,42 +977,60 @@ function prepararCombateArena(
 
 
         const combatiente1 =
-    crearCombatienteArena({
-        ...datos1,
-        j2: datos1.nombre,
-        ...datos1.estadisticas
-    });
+            crearCombatienteArena({
+                ...datos1,
+                j1: datos1.codigo,
+                j2: datos1.nombre,
+                ...datos1.estadisticas
+            });
 
 
-const combatiente2 =
-    crearCombatienteArena({
-        ...datos2,
-        j2: datos2.nombre,
-        ...datos2.estadisticas
-    });
+        const combatiente2 =
+            crearCombatienteArena({
+                ...datos2,
+                j1: datos2.codigo,
+                j2: datos2.nombre,
+                ...datos2.estadisticas
+            });
 
 
         COMBATE_ARENA =
             crearCombateArena(
-                datos1,
-                datos2
+                {
+                    ...datos1,
+                    j1: datos1.codigo,
+                    j2: datos1.nombre,
+                    ...datos1.estadisticas
+                },
+                {
+                    ...datos2,
+                    j1: datos2.codigo,
+                    j2: datos2.nombre,
+                    ...datos2.estadisticas
+                }
             );
 
-        const ataque1 =
-    obtenerAtaqueArena(
-        combatiente1.ataque_especial
-    );
 
+        const ataque1 =
+            obtenerAtaqueArena(
+                combatiente1.ataque_especial
+            );
 
 
         const ataque2 =
-    obtenerAtaqueArena(
-        combatiente2.ataque_especial
-    );
+            obtenerAtaqueArena(
+                combatiente2.ataque_especial
+            );
+
 
         document.getElementById(
             "panelCombate"
         ).style.display = "block";
+
+
+        document.getElementById(
+            "panelResultadoCombate"
+        ).style.display = "none";
 
 
         document.getElementById(
@@ -923,14 +1062,18 @@ const combatiente2 =
                 <br>
 
                 ⚔️ Ataque especial:
-${escaparHTML(
-    combatiente1.ataque_especial
-)}
-${
-    ataque1 && ataque1.nombre
-        ? " — " + escaparHTML(ataque1.nombre)
-        : ""
-}
+                ${escaparHTML(
+                    combatiente1.ataque_especial
+                )}
+
+                ${
+                    ataque1 && ataque1.nombre
+                        ? " — " +
+                          escaparHTML(
+                              ataque1.nombre
+                          )
+                        : ""
+                }
 
             </div>
 
@@ -963,14 +1106,18 @@ ${
                 <br>
 
                 ⚔️ Ataque especial:
-${escaparHTML(
-    combatiente2.ataque_especial
-)}
-${
-    ataque2 && ataque2.nombre
-        ? " — " + escaparHTML(ataque2.nombre)
-        : ""
-}
+                ${escaparHTML(
+                    combatiente2.ataque_especial
+                )}
+
+                ${
+                    ataque2 && ataque2.nombre
+                        ? " — " +
+                          escaparHTML(
+                              ataque2.nombre
+                          )
+                        : ""
+                }
 
             </div>
 
@@ -1000,6 +1147,320 @@ ${
                 )}
 
             </div>
+
+        `;
+
+    }
+
+                    }
+
+
+
+    /* ==========================================================
+   MOSTRAR RESULTADO DEL COMBATE
+   ========================================================== */
+
+function mostrarResultadoCombateArena(combate) {
+
+    if (!combate) {
+        return;
+    }
+
+
+    const panel =
+        document.getElementById(
+            "panelResultadoCombate"
+        );
+
+
+    const ganador =
+        document.getElementById(
+            "ganadorCombate"
+        );
+
+
+    const estadoCombatientes =
+        document.getElementById(
+            "estadoCombatientes"
+        );
+
+
+    const historial =
+        document.getElementById(
+            "historialCombate"
+        );
+
+
+    panel.style.display = "block";
+
+
+    /*
+    ----------------------------------------------------------
+    GANADOR
+    ----------------------------------------------------------
+    */
+
+    if (combate.ganador) {
+
+        ganador.innerHTML = `
+            🏆 Ganador:
+            ${escaparHTML(
+                combate.ganador
+            )}
+        `;
+
+    } else {
+
+        ganador.innerHTML = `
+            ⚔️ Combate finalizado
+        `;
+
+    }
+
+
+    /*
+    ----------------------------------------------------------
+    ESTADO DE LOS COMBATIENTES
+    ----------------------------------------------------------
+    */
+
+    const c1 =
+        combate.combatiente1;
+
+    const c2 =
+        combate.combatiente2;
+
+
+    const porcentaje1 =
+        c1.hp_max > 0
+            ? Math.max(
+                0,
+                Math.min(
+                    100,
+                    c1.hp / c1.hp_max * 100
+                )
+            )
+            : 0;
+
+
+    const porcentaje2 =
+        c2.hp_max > 0
+            ? Math.max(
+                0,
+                Math.min(
+                    100,
+                    c2.hp / c2.hp_max * 100
+                )
+            )
+            : 0;
+
+
+    estadoCombatientes.innerHTML = `
+
+        <div class="combateFicha">
+
+            <h3>
+                🦖 ${escaparHTML(
+                    c1.nombre
+                )}
+            </h3>
+
+            ❤️ HP:
+            ${numeroArena(c1.hp)}
+            /
+            ${numeroArena(c1.hp_max)}
+
+            <div class="barraHp">
+
+                <div
+                    class="barraHpInterior"
+                    style="width:${porcentaje1}%"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="combateFicha">
+
+            <h3>
+                🦖 ${escaparHTML(
+                    c2.nombre
+                )}
+            </h3>
+
+            ❤️ HP:
+            ${numeroArena(c2.hp)}
+            /
+            ${numeroArena(c2.hp_max)}
+
+            <div class="barraHp">
+
+                <div
+                    class="barraHpInterior"
+                    style="width:${porcentaje2}%"
+                ></div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    /*
+    ----------------------------------------------------------
+    HISTORIAL
+    ----------------------------------------------------------
+    */
+
+    if (
+        !Array.isArray(
+            combate.historial
+        ) ||
+        combate.historial.length === 0
+    ) {
+
+        historial.innerHTML =
+            "<div>No hay acciones registradas.</div>";
+
+        return;
+
+    }
+
+
+    let html = "";
+
+
+    combate.historial.forEach(
+        function(registro) {
+
+            const resultado =
+                registro.resultado || {};
+
+
+            html += `
+
+                <div class="turnoCombate">
+
+                    <strong>
+                        Turno
+                        ${numeroArena(
+                            registro.turno
+                        )}
+                    </strong>
+
+                    <br>
+
+                    🦖 ${escaparHTML(
+                        registro.atacante
+                    )}
+
+                    →
+                    ${escaparHTML(
+                        registro.objetivo
+                    )}
+
+                    <br>
+
+                    Acción:
+                    ${escaparHTML(
+                        registro.accion
+                    )}
+
+                    <br>
+
+                    ${
+                        resultado.mensaje
+                            ? escaparHTML(
+                                resultado.mensaje
+                            )
+                            : "Sin mensaje."
+                    }
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    historial.innerHTML =
+        html;
+
+}
+
+
+/* ==========================================================
+   EJECUTAR COMBATE AUTOMÁTICO
+   ========================================================== */
+
+function ejecutarCombateAutomaticoArena() {
+
+    try {
+
+        if (!COMBATE_ARENA) {
+
+            throw new Error(
+                "No hay un combate preparado."
+            );
+
+        }
+
+
+        if (
+            typeof ejecutarCombateArena !==
+            "function"
+        ) {
+
+            throw new Error(
+                "La función de combate automático no está disponible."
+            );
+
+        }
+
+
+        const combate =
+            ejecutarCombateArena(
+                COMBATE_ARENA.combatiente1.datos,
+                COMBATE_ARENA.combatiente2.datos
+            );
+
+
+        COMBATE_ARENA =
+            combate;
+
+
+        mostrarResultadoCombateArena(
+            combate
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error ejecutando combate:",
+            error
+        );
+
+
+        document.getElementById(
+            "panelResultadoCombate"
+        ).style.display = "block";
+
+
+        document.getElementById(
+            "ganadorCombate"
+        ).innerHTML = `
+
+            <span class="error">
+
+                ❌ ${escaparHTML(
+                    error.message
+                )}
+
+            </span>
 
         `;
 
@@ -1156,7 +1617,8 @@ async function iniciarArena() {
         `;
 
 
-        /*--------------------------------------------------
+        /*
+        --------------------------------------------------
         3. Generar dos fichas aleatorias
         --------------------------------------------------
         */
@@ -1205,6 +1667,18 @@ document.getElementById(
 
 
 /* ==========================================================
+   BOTÓN EJECUTAR COMBATE
+   ========================================================== */
+
+document.getElementById(
+    "btnEjecutarCombate"
+).addEventListener(
+    "click",
+    ejecutarCombateAutomaticoArena
+);
+
+
+/* ==========================================================
    INICIO
    ========================================================== */
 
@@ -1215,4 +1689,3 @@ iniciarArena();
 </body>
 
 </html>
-
