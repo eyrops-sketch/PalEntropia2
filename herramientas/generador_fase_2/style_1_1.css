@@ -1,0 +1,1328 @@
+/*=========================================================
+PalEntropía
+Generador de Paleofichas
+Style v2.1
+=========================================================*/
+
+*{
+ box-sizing:border-box;
+}
+
+html{
+ margin:0;
+ padding:0;
+ background:#0d0f10;
+}
+
+body{
+ margin:0;
+ padding:30px;
+ background:#0d0f10;
+ color:#eee;
+ font-family:Arial,Helvetica,sans-serif;
+ min-height:100vh;
+}
+
+
+/*=========================================================
+ CABECERA
+=========================================================*/
+
+#cabecera{
+ text-align:center;
+ margin-bottom:12px;
+}
+
+h1{
+ margin:0;
+ color:#62d6ff;
+ font-size:44px;
+ line-height:1.1;
+ text-shadow:0 0 12px rgba(98,214,255,.12);
+}
+
+#subtitulo{
+ margin-top:7px;
+ color:#fff;
+ font-size:18px;
+ line-height:1.2;
+}
+
+#subtitulo::after{
+ content:"";
+ display:block;
+ width:210px;
+ max-width:80%;
+ height:1px;
+ margin:8px auto 0;
+ background:#62d6ff;
+ opacity:.85;
+ box-shadow:0 0 6px rgba(98,214,255,.25);
+}
+
+
+/*=========================================================
+ ANTIGUO BUSCADOR
+=========================================================*/
+
+#controlesBusqueda{
+ display:none!important;
+}
+
+#botonBuscar{
+ display:none!important;
+}
+
+
+/*=========================================================
+ ESTADO
+=========================================================*/
+
+#estado{
+ max-width:900px;
+ margin:0 auto 18px;
+ padding:10px 14px;
+ text-align:center;
+ color:#aaa;
+ background:#151719;
+ border:1px solid #25292c;
+ border-radius:8px;
+ font-size:14px;
+}
+
+.ok{
+ color:#7CFF7C;
+}
+
+.error{
+ color:#FF7777;
+}
+
+
+/*=========================================================
+ FICHA
+=========================================================*/
+
+#ficha{
+ max-width:900px;
+ margin:auto;
+ background:#181a1c;
+ border:2px solid #62d6ff;
+ border-radius:18px;
+ padding:25px;
+ box-shadow:
+  0 0 20px rgba(98,214,255,.28),
+  0 8px 30px rgba(0,0,0,.28);
+}
+
+#titulo{
+ text-align:center;
+ font-size:clamp(30px,5vw,40px);
+ line-height:1.15;
+ color:#62d6ff;
+ margin-bottom:7px;
+ overflow-wrap:break-word;
+ hyphens:auto;
+}
+
+#codigoFicha{
+ text-align:center;
+ color:#999;
+ font-size:14px;
+ letter-spacing:.5px;
+ margin-bottom:10px;
+}
+
+#cronologia{
+ text-align:center;
+ font-size:22px;
+ color:#fff;
+ line-height:1.6;
+ margin-bottom:25px;
+}
+
+#cronologia strong,
+#resultadoGeologiaCAB07 strong{
+ color:#62d6ff;
+}
+
+
+/*=========================================================
+ IMAGEN PRINCIPAL
+=========================================================*/
+
+#contenedorImagenPrincipal{
+ text-align:center;
+}
+
+#imagenPrincipal{
+ display:block;
+ width:78%;
+ max-width:540px;
+ max-height:620px;
+ object-fit:contain;
+ margin:0 auto 20px;
+ border-radius:10px;
+ border:2px solid #62d6ff;
+ box-shadow:0 0 15px rgba(98,214,255,.22);
+ cursor:zoom-in;
+ transition:.25s;
+}
+
+#imagenPrincipal:hover{
+ box-shadow:0 0 20px rgba(98,214,255,.40);
+}
+
+
+/*=========================================================
+ VÍDEO
+=========================================================*/
+
+#videoFicha{
+ text-align:center;
+ margin:12px 0;
+}
+
+#botonVideo,
+#botonVideo:visited{
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:7px;
+ min-height:44px;
+ margin:6px;
+ padding:10px 20px;
+ background:#62d6ff;
+ color:#001018!important;
+ border:1px solid #62d6ff;
+ border-radius:22px;
+ text-decoration:none!important;
+ font-weight:bold;
+ font-size:16px;
+ box-shadow:
+  0 0 12px rgba(98,214,255,.30),
+  0 4px 12px rgba(0,0,0,.22);
+ cursor:pointer;
+ transition:.25s;
+}
+
+#botonVideo:hover{
+ background:#00e5ff;
+ transform:translateY(-1px);
+ box-shadow:
+  0 0 18px rgba(98,214,255,.50),
+  0 5px 15px rgba(0,0,0,.28);
+}
+
+#botonVideo:active{
+ transform:scale(.96);
+}
+
+
+/*=========================================================
+ INFORMACIÓN
+=========================================================*/
+
+#bloqueInfo{
+ margin-top:25px;
+ font-size:20px;
+ line-height:1.8;
+}
+
+.campoInfo{
+ margin-bottom:18px;
+}
+
+.campoInfo:last-child{
+ margin-bottom:0;
+}
+
+.campo{
+ display:block;
+ color:#62d6ff;
+ font-weight:bold;
+ margin-bottom:3px;
+}
+
+
+/*=========================================================
+ GALERÍA
+=========================================================*/
+
+#galeria{
+ margin-top:35px;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:14px;
+ flex-wrap:nowrap;
+}
+
+#galeria img{
+ width:40%;
+ max-width:220px;
+ border-radius:10px;
+ border:2px solid #62d6ff;
+ box-shadow:0 0 15px rgba(98,214,255,.22);
+ cursor:zoom-in;
+ transition:.25s;
+}
+
+#galeria img:hover{
+ box-shadow:0 0 19px rgba(98,214,255,.40);
+ transform:translateY(-2px);
+}
+
+
+/*=========================================================
+ TÍTULOS
+=========================================================*/
+
+h2{
+ text-align:center;
+ color:#62d6ff;
+ margin-top:35px;
+ margin-bottom:20px;
+}
+
+
+/*=========================================================
+ ESTADÍSTICAS
+=========================================================*/
+
+.stats{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ font-size:18px;
+ margin-top:20px;
+}
+
+.stats div{
+ padding:12px;
+ background:#151719;
+ border-left:4px solid #62d6ff;
+ border-radius:8px;
+ box-shadow:0 0 6px rgba(98,214,255,.10);
+}
+
+
+/*=========================================================
+ LIGHTBOX IMAGEN
+=========================================================*/
+
+#visorImagen{
+ display:none;
+ position:fixed;
+ inset:0;
+ width:100vw;
+ height:100vh;
+ padding:20px;
+ background:rgba(0,0,0,.95);
+ z-index:999999;
+ justify-content:center;
+ align-items:center;
+}
+
+#imagenAmpliada{
+ max-width:95vw;
+ max-height:90vh;
+ object-fit:contain;
+ border-radius:12px;
+ border:2px solid #62d6ff;
+ box-shadow:0 0 25px rgba(98,214,255,.55);
+}
+
+.botonCerrar{
+ position:absolute;
+ top:14px;
+ right:16px;
+ width:42px;
+ height:42px;
+ padding:0;
+ border:none;
+ border-radius:50%;
+ background:#1d9bf0;
+ color:#fff;
+ font-size:30px;
+ line-height:40px;
+ cursor:pointer;
+ z-index:2;
+ transition:.25s;
+}
+
+.botonCerrar:hover{
+ background:#62d6ff;
+ box-shadow:0 0 14px rgba(98,214,255,.40);
+}
+
+.botonCerrar:active{
+ transform:scale(.94);
+}
+
+
+/*=========================================================
+ EXPLORADOR ANTIGUO
+=========================================================*/
+
+#visorBuscador{
+ display:none;
+ position:fixed;
+ inset:0;
+ width:100vw;
+ height:100vh;
+ padding:20px;
+ background:rgba(0,0,0,.90);
+ z-index:999998;
+ justify-content:center;
+ align-items:center;
+}
+
+#ventanaBuscador{
+ position:relative;
+ width:90%;
+ max-width:700px;
+ max-height:80vh;
+ overflow:auto;
+ padding:25px;
+ background:#181a1c;
+ border:2px solid #62d6ff;
+ border-radius:18px;
+ box-shadow:
+  0 0 25px rgba(98,214,255,.35),
+  0 10px 35px rgba(0,0,0,.45);
+}
+
+#ventanaBuscador h2{
+ margin-top:0;
+ margin-bottom:20px;
+ padding-right:35px;
+}
+
+#buscarNombre{
+ display:block;
+ width:90%;
+ margin:0 auto 20px;
+ padding:10px;
+ font-size:20px;
+ text-align:center;
+ background:#151719;
+ color:#fff;
+ border:2px solid #62d6ff;
+ border-radius:10px;
+ outline:none;
+}
+
+#buscarNombre:focus{
+ border-color:#62d6ff;
+ box-shadow:0 0 12px rgba(98,214,255,.25);
+}
+
+
+/*=========================================================
+ RESULTADOS ANTIGUOS
+=========================================================*/
+
+#listaResultados{
+ display:flex;
+ flex-direction:column;
+ gap:9px;
+ margin-top:5px;
+}
+
+.resultadoBuscador{
+ width:100%;
+ display:flex;
+ align-items:center;
+ gap:10px;
+ padding:10px 12px;
+ margin:5px 0;
+ background:#151719;
+ color:#eee;
+ border:1px solid #25292c;
+ border-left:4px solid #62d6ff;
+ border-radius:10px;
+ text-align:left;
+ cursor:pointer;
+ box-shadow:0 0 6px rgba(98,214,255,.08);
+ transition:.20s;
+}
+
+.resultadoBuscador:hover{
+ background:#22343d;
+ border-color:#62d6ff;
+ transform:translateX(4px);
+ box-shadow:0 0 12px rgba(98,214,255,.24);
+}
+
+.resultadoBuscador:active{
+ transform:scale(.985);
+}
+
+.resultadoCodigo{
+ flex:0 0 auto;
+ min-width:64px;
+ color:#62d6ff;
+ font-size:14px;
+ font-weight:bold;
+}
+
+.resultadoNombre{
+ min-width:0;
+ color:#fff;
+ font-size:17px;
+ font-weight:600;
+ line-height:1.3;
+ overflow-wrap:anywhere;
+}
+
+.sinResultados{
+ padding:18px 12px;
+ text-align:center;
+ color:#999;
+ background:#151719;
+ border:1px solid #25292c;
+ border-radius:10px;
+ font-size:15px;
+}
+
+
+/*=========================================================
+ FILTRO ACTIVO
+=========================================================*/
+
+#filtroActivo{
+ display:none;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ width:max-content;
+ max-width:100%;
+ margin:0 auto 14px;
+ padding:7px 10px 7px 13px;
+ background:#151719;
+ color:#fff;
+ border:1px solid #62d6ff;
+ border-radius:18px;
+ box-shadow:0 0 9px rgba(98,214,255,.16);
+ font-size:14px;
+ font-weight:600;
+}
+
+#filtroActivo .textoFiltro{
+ color:#62d6ff;
+}
+
+#filtroActivo button{
+ width:23px;
+ height:23px;
+ padding:0;
+ border:none;
+ border-radius:50%;
+ background:#1d9bf0;
+ color:#fff;
+ font-size:17px;
+ line-height:23px;
+ cursor:pointer;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ transition:.20s;
+}
+
+#filtroActivo button:hover{
+ background:#62d6ff;
+ color:#001018;
+}
+
+#filtroActivo button:active{
+ transform:scale(.90);
+}
+
+
+/*=========================================================
+ BOTÓN TODOS
+=========================================================*/
+
+#botonTodos{
+ display:none;
+ margin:0 auto 14px;
+ padding:7px 16px;
+ background:#151719;
+ color:#62d6ff;
+ border:1px solid #62d6ff;
+ border-radius:18px;
+ font-size:14px;
+ font-weight:bold;
+ cursor:pointer;
+ transition:.20s;
+}
+
+#botonTodos:hover{
+ background:#62d6ff;
+ color:#001018;
+ box-shadow:0 0 10px rgba(98,214,255,.25);
+}
+
+
+/*=========================================================
+ BOTONES SUPERIORES
+=========================================================*/
+
+#grupoAccionesSuperiores{
+ position:fixed;
+ top:10px;
+ right:10px;
+ z-index:9999;
+ display:flex;
+ align-items:center;
+ justify-content:flex-end;
+ gap:6px;
+}
+
+
+/*---------------------------------------------------------
+ HOME — FIJO ARRIBA A LA DERECHA
+---------------------------------------------------------*/
+
+#botonMenuPrincipal{
+ position:fixed;
+ top:10px;
+ right:10px;
+
+ width:34px;
+ height:34px;
+
+ padding:0;
+
+ border:2px solid #62d6ff;
+ border-radius:50%;
+
+ background:#1d9bf0;
+ color:#fff;
+
+ font-size:17px;
+ line-height:30px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ cursor:pointer;
+ z-index:10000;
+
+ box-shadow:0 0 10px rgba(98,214,255,.25);
+
+ transition:.25s;
+}
+
+#botonMenuPrincipal:hover{
+ background:#62d6ff;
+ color:#001018;
+ box-shadow:0 0 15px rgba(98,214,255,.42);
+}
+
+#botonMenuPrincipal:active{
+ transform:scale(.92);
+}
+
+
+/*---------------------------------------------------------
+ ALEATORIO
+---------------------------------------------------------*/
+
+#botonAleatorio{
+ position:fixed;
+ top:10px;
+ right:50px;
+
+ width:34px;
+ height:34px;
+
+ padding:0;
+
+ border:2px solid #62d6ff;
+ border-radius:50%;
+
+ background:#1d9bf0;
+ color:#fff;
+
+ font-size:18px;
+ line-height:34px;
+ text-align:center;
+
+ cursor:pointer;
+ z-index:9999;
+
+ box-shadow:0 0 10px rgba(98,214,255,.25);
+
+ transition:.25s;
+}
+
+#botonAleatorio:hover{
+ background:#62d6ff;
+ color:#001018;
+ box-shadow:0 0 15px rgba(98,214,255,.42);
+}
+
+#botonAleatorio:active{
+ transform:scale(.92);
+}
+
+
+/*=========================================================
+ NAVEGACIÓN
+=========================================================*/
+
+#controlesNavegacion{
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:8px;
+ margin:12px auto;
+ flex-wrap:wrap;
+}
+
+.botonNavegacion{
+ width:38px;
+ height:38px;
+ border-radius:50%;
+ border:1px solid #62d6ff;
+ background:#151719;
+ color:#62d6ff;
+ cursor:pointer;
+ font-size:16px;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ box-shadow:0 0 7px rgba(98,214,255,.12);
+ transition:.20s;
+}
+
+.botonNavegacion:hover{
+ background:#62d6ff;
+ color:#001018;
+ box-shadow:0 0 12px rgba(98,214,255,.30);
+}
+
+.botonNavegacion:active{
+ transform:scale(.92);
+}
+
+.botonNavegacion:disabled{
+ opacity:.35;
+ cursor:default;
+ box-shadow:none;
+}
+
+#posicionNavegacion{
+ min-width:70px;
+ text-align:center;
+ font-size:13px;
+ font-weight:600;
+ color:#aaa;
+ padding:4px 9px;
+ border-radius:12px;
+  }
+/*=========================================================
+ BUSCADOR UNIVERSAL — CAB15 / CAB16
+=========================================================*/
+
+#controlesBusquedaUniversal{
+ width:100%;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ gap:7px;
+ min-height:38px;
+ margin:8px auto 10px;
+}
+
+
+/*---------------------------------------------------------
+ BOTÓN BUSCAR
+---------------------------------------------------------*/
+
+#botonBuscarUniversal{
+ order:0;
+
+ width:38px;
+ height:38px;
+
+ min-width:38px;
+ min-height:38px;
+
+ padding:0;
+
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+
+ background:#151719;
+ color:#fff;
+
+ border:1px solid #62d6ff;
+ border-radius:9px;
+
+ font-size:17px;
+
+ cursor:pointer;
+
+ box-shadow:
+  0 0 8px rgba(98,214,255,.14);
+
+ transition:.20s;
+}
+
+#botonBuscarUniversal:hover{
+ background:#1d2529;
+ color:#62d6ff;
+
+ border-color:#62d6ff;
+
+ box-shadow:
+  0 0 14px rgba(98,214,255,.30);
+}
+
+#botonBuscarUniversal:active{
+ transform:scale(.92);
+}
+
+
+/*---------------------------------------------------------
+ LABEL — BUSCAR POR...
+---------------------------------------------------------*/
+
+#labelBusquedaUniversal{
+ order:1;
+
+ height:38px;
+ min-height:38px;
+
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+
+ padding:0 14px;
+
+ color:#fff;
+
+ background:#151719;
+
+ border:1px solid #62d6ff;
+ border-radius:9px;
+
+ font-size:19px;
+ font-weight:600;
+
+ line-height:1;
+ letter-spacing:.3px;
+
+ white-space:nowrap;
+ text-align:center;
+
+ box-shadow:
+  0 0 8px rgba(98,214,255,.14);
+}
+
+
+/*---------------------------------------------------------
+ BOTÓN X — OCULTO
+---------------------------------------------------------*/
+
+#botonLimpiarBusquedaUniversal{
+ display:none!important;
+}
+
+
+/*=========================================================
+ RESULTADOS CAB16
+=========================================================*/
+
+#labelResultadosCab16{
+ margin:8px 0 10px;
+
+ text-align:center;
+
+ color:#62d6ff;
+
+ font-size:14px;
+ font-weight:600;
+}
+
+
+#checkBusquedaCab16{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ gap:7px;
+
+ margin:8px auto 12px;
+
+ color:#aaa;
+
+ font-size:13px;
+}
+
+#checkBusquedaCab16 input{
+ accent-color:#62d6ff;
+}
+
+
+#resultadosCab16{
+ display:flex;
+ flex-direction:column;
+ gap:7px;
+ width:100%;
+}
+
+
+.resultadoCab16{
+ width:100%;
+
+ padding:10px 12px;
+
+ background:#151719;
+ color:#fff;
+
+ border:1px solid #25292c;
+ border-left:3px solid #62d6ff;
+
+ border-radius:9px;
+
+ font-size:15px;
+ font-weight:600;
+
+ text-align:center;
+
+ cursor:pointer;
+
+ transition:.20s;
+}
+
+.resultadoCab16:hover{
+ background:#22343d;
+ border-color:#62d6ff;
+
+ box-shadow:
+  0 0 10px rgba(98,214,255,.20);
+}
+
+.resultadoCab16:active{
+ transform:scale(.985);
+}
+
+
+/*=========================================================
+ VISOR BUSCADOR UNIVERSAL — CAB15
+=========================================================*/
+
+#visorBuscadorUniversal{
+ display:none;
+
+ position:fixed;
+ inset:0;
+
+ width:100vw;
+ height:100vh;
+
+ padding:20px;
+
+ background:rgba(0,0,0,.92);
+
+ z-index:999997;
+
+ justify-content:center;
+ align-items:center;
+}
+
+
+#ventanaBuscadorUniversal{
+ position:relative;
+
+ width:90%;
+ max-width:700px;
+ max-height:80vh;
+
+ overflow:auto;
+
+ padding:25px;
+
+ background:#181a1c;
+
+ border:2px solid #62d6ff;
+ border-radius:18px;
+
+ box-shadow:
+  0 0 25px rgba(98,214,255,.35),
+  0 10px 35px rgba(0,0,0,.45);
+}
+
+
+/*---------------------------------------------------------
+ CERRAR LIGHTBOX
+---------------------------------------------------------*/
+
+#cerrarBuscadorUniversal{
+ position:absolute;
+
+ top:10px;
+ right:12px;
+
+ width:36px;
+ height:36px;
+
+ padding:0;
+
+ border:none;
+
+ background:none;
+
+ color:#fff;
+
+ font-size:28px;
+ line-height:36px;
+
+ cursor:pointer;
+
+ z-index:2;
+}
+
+
+/*---------------------------------------------------------
+ CABECERA DEL LIGHTBOX
+---------------------------------------------------------*/
+
+#ventanaBuscadorUniversal h2{
+ margin:0;
+
+ padding:0 35px 0 0;
+
+ text-align:center;
+
+ color:#62d6ff;
+
+ font-size:24px;
+ line-height:1.2;
+}
+
+
+/*---------------------------------------------------------
+ CAMPO DE BÚSQUEDA
+---------------------------------------------------------*/
+
+#buscarUniversal{
+ display:block;
+
+ width:90%;
+
+ margin:20px auto;
+
+ padding:10px;
+
+ font-size:18px;
+
+ text-align:center;
+
+ background:#151719;
+ color:#fff;
+
+ border:2px solid #62d6ff;
+ border-radius:10px;
+
+ outline:none;
+}
+
+#buscarUniversal:focus{
+ box-shadow:
+  0 0 12px rgba(98,214,255,.25);
+}
+
+
+/*=========================================================
+ SCROLL LIGHTBOX
+=========================================================*/
+
+#ventanaBuscadorUniversal::-webkit-scrollbar{
+ width:10px;
+}
+
+#ventanaBuscadorUniversal::-webkit-scrollbar-track{
+ background:#151515;
+ border-radius:10px;
+}
+
+#ventanaBuscadorUniversal::-webkit-scrollbar-thumb{
+ background:#62d6ff;
+ border-radius:10px;
+}
+
+#ventanaBuscadorUniversal::-webkit-scrollbar-thumb:hover{
+ background:#00e5ff;
+}
+
+
+/*=========================================================
+ RESPONSIVE
+=========================================================*/
+
+@media(max-width:768px){
+
+ body{
+  padding:15px;
+ }
+
+
+ /*-------------------------------------------------------
+    CABECERA
+ -------------------------------------------------------*/
+
+ h1{
+  font-size:30px;
+ }
+
+ #subtitulo{
+  font-size:16px;
+ }
+
+
+ /*-------------------------------------------------------
+    BUSCADOR ANTIGUO
+ -------------------------------------------------------*/
+
+ #controlesBusqueda{
+  margin:8px 0 15px;
+ }
+
+ #controlesBusqueda button{
+  width:100%;
+  max-width:420px;
+ }
+
+
+ /*-------------------------------------------------------
+    ESTADO
+ -------------------------------------------------------*/
+
+ #estado{
+  font-size:13px;
+ }
+
+
+ /*-------------------------------------------------------
+    FICHA
+ -------------------------------------------------------*/
+
+ #ficha{
+  padding:18px;
+  border-radius:15px;
+ }
+
+ #titulo{
+  font-size:clamp(24px,7vw,34px);
+ }
+
+ #cronologia{
+  font-size:18px;
+ }
+
+ #bloqueInfo{
+  font-size:18px;
+  line-height:1.7;
+ }
+
+
+ /*-------------------------------------------------------
+    IMAGEN
+ -------------------------------------------------------*/
+
+ #imagenPrincipal{
+  width:90%;
+  max-width:520px;
+ }
+
+
+ /*-------------------------------------------------------
+    GALERÍA
+ -------------------------------------------------------*/
+
+ #galeria{
+  gap:10px;
+ }
+
+ #galeria img{
+  width:43%;
+  max-width:none;
+ }
+
+
+ /*-------------------------------------------------------
+    VÍDEO
+ -------------------------------------------------------*/
+
+ #botonVideo{
+  min-height:42px;
+  padding:9px 18px;
+  font-size:15px;
+ }
+
+
+ /*-------------------------------------------------------
+    ESTADÍSTICAS
+ -------------------------------------------------------*/
+
+ .stats{
+  grid-template-columns:1fr;
+  font-size:17px;
+ }
+
+
+ /*-------------------------------------------------------
+    EXPLORADOR ANTIGUO
+ -------------------------------------------------------*/
+
+ #ventanaBuscador{
+  width:95%;
+  padding:18px;
+  max-height:85vh;
+ }
+
+ #buscarNombre{
+  width:95%;
+  font-size:18px;
+ }
+
+ .resultadoBuscador{
+  padding:11px 12px;
+  gap:9px;
+ }
+
+ .resultadoCodigo{
+  min-width:58px;
+  font-size:13px;
+ }
+
+ .resultadoNombre{
+  font-size:15px;
+ }
+
+
+ /*-------------------------------------------------------
+    IMAGEN AMPLIADA
+ -------------------------------------------------------*/
+
+ #imagenAmpliada{
+  max-width:94vw;
+  max-height:88vh;
+ }
+
+
+ /*-------------------------------------------------------
+    FILTRO
+ -------------------------------------------------------*/
+
+ #filtroActivo{
+  font-size:13px;
+ }
+
+
+ /*-------------------------------------------------------
+    BUSCADOR UNIVERSAL
+ -------------------------------------------------------*/
+
+ #controlesBusquedaUniversal{
+  gap:6px;
+  margin:8px auto 10px;
+  min-height:38px;
+ }
+
+
+ #botonBuscarUniversal{
+  width:38px;
+  height:38px;
+
+  min-width:38px;
+  min-height:38px;
+
+  font-size:16px;
+
+  border-radius:8px;
+ }
+
+
+ #labelBusquedaUniversal{
+  height:38px;
+  min-height:38px;
+
+  padding:0 12px;
+
+  font-size:18px;
+
+  border-radius:8px;
+ }
+
+
+ /*-------------------------------------------------------
+    LIGHTBOX BUSCADOR UNIVERSAL
+ -------------------------------------------------------*/
+
+ #ventanaBuscadorUniversal{
+  width:95%;
+  max-height:85vh;
+  padding:20px;
+ }
+
+
+ #ventanaBuscadorUniversal h2{
+  font-size:22px;
+ }
+
+
+ #buscarUniversal{
+  width:95%;
+  font-size:17px;
+ }
+
+
+ #labelResultadosCab16{
+  font-size:13px;
+ }
+
+
+ #checkBusquedaCab16{
+  font-size:12px;
+ }
+
+
+ .resultadoCab16{
+  padding:10px;
+  font-size:15px;
+ }
+
+
+ /*-------------------------------------------------------
+    BOTONES HOME / ALEATORIO EN MÓVIL
+ -------------------------------------------------------*/
+
+ #botonMenuPrincipal{
+  width:34px;
+  height:34px;
+  right:10px;
+  top:10px;
+ }
+
+
+ #botonAleatorio{
+  width:34px;
+  height:34px;
+  right:50px;
+  top:10px;
+ }
+
+}
+
+
+/*=========================================================
+ FIN STYLE.CSS
+=========================================================*/
