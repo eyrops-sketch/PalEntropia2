@@ -12,237 +12,10 @@
 
 <title>PalEntropía - Prueba Arena</title>
 
-<style>
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    padding: 20px;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #101010;
-    color: #ffffff;
-}
-
-.contenedor {
-    max-width: 1000px;
-    margin: auto;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.panel {
-    background: #181818;
-    border: 1px solid #333;
-    border-radius: 12px;
-    padding: 18px;
-    margin-bottom: 20px;
-}
-
-.selector {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-
-.codigo {
-    background: #0d0d0d;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 12px;
-    margin-top: 8px;
-    font-family: monospace;
-    font-size: 18px;
-}
-
-button {
-    width: 100%;
-    padding: 13px;
-    margin-top: 15px;
-    border: 0;
-    border-radius: 8px;
-    background: #252525;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #353535;
-}
-
-.estado {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 8px;
-    background: #111;
-}
-
-.ok {
-    color: #7cff8b;
-}
-
-.error {
-    color: #ff6b6b;
-}
-
-.combatientes {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.combatiente {
-    background: #151515;
-    border: 1px solid #333;
-    border-radius: 12px;
-    padding: 18px;
-}
-
-.nombre {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.codigoFicha {
-    color: #aaa;
-    margin-bottom: 12px;
-}
-
-.seccion {
-    margin-top: 15px;
-    padding-top: 12px;
-    border-top: 1px solid #333;
-}
-
-.seccion h3 {
-    margin: 0 0 10px 0;
-    font-size: 17px;
-}
-
-.habitat {
-    margin: 5px 0;
-    font-family: monospace;
-}
-
-.stat {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 0;
-    border-bottom: 1px solid #222;
-}
-
-.stat span:last-child {
-    font-weight: bold;
-}
-
-.enlace {
-    display: block;
-    text-decoration: none;
-    text-align: center;
-    padding: 10px;
-    margin-top: 15px;
-    border-radius: 8px;
-    background: #252525;
-    color: white;
-    font-weight: bold;
-}
-
-.enlace:hover {
-    background: #353535;
-}
-
-.preparados {
-    font-size: 18px;
-}
-
-
-/* ==========================================================
-   PANEL DE COMBATE
-   ========================================================== */
-
-#panelResultadoCombate {
-    display: none;
-}
-
-.combateCabecera {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-
-.combateFicha {
-    background: #101010;
-    border: 1px solid #333;
-    border-radius: 10px;
-    padding: 15px;
-}
-
-.combateFicha h3 {
-    margin-top: 0;
-}
-
-.barraHp {
-    width: 100%;
-    height: 14px;
-    background: #333;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-top: 6px;
-}
-
-.barraHpInterior {
-    height: 100%;
-    width: 100%;
-    background: #62d6ff;
-    transition: width 0.2s ease;
-}
-
-.ganador {
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    background: #111;
-}
-
-.historialCombate {
-    max-height: 500px;
-    overflow-y: auto;
-    background: #0d0d0d;
-    border-radius: 10px;
-    padding: 12px;
-}
-
-.turnoCombate {
-    border-bottom: 1px solid #292929;
-    padding: 10px 4px;
-}
-
-.turnoCombate:last-child {
-    border-bottom: 0;
-}
-
-@media (max-width: 700px) {
-
-    .selector,
-    .combatientes,
-    .combateCabecera {
-        grid-template-columns: 1fr;
-    }
-
-}
-
-</style>
+<link
+    rel="stylesheet"
+    href="pruebaarena_2.css"
+>
 
 </head>
 
@@ -330,10 +103,11 @@ Arena — Prueba de combate
 <div
     id="panelCombate"
     class="panel"
-    style="display:none;"
 >
 
-    <h2>⚔️ Combatientes preparados</h2>
+    <h2>
+        ⚔️ Combatientes preparados
+    </h2>
 
     <div
         id="combatientesPreparados"
@@ -364,7 +138,9 @@ Arena — Prueba de combate
     class="panel"
 >
 
-    <h2>🏆 Resultado del combate</h2>
+    <h2>
+        🏆 Resultado del combate
+    </h2>
 
     <div
         id="ganadorCombate"
@@ -421,9 +197,9 @@ Arena — Prueba de combate
 
 /*
 ============================================================
-palentropía — arena
-archivo: pruebaarena.html
-versión: 1.5
+palentropía — arena 2
+archivo: pruebaarena_2.html
+versión: desarrollo
 parte: 1/2
 ============================================================
 */
@@ -1124,271 +900,32 @@ function prepararCombateArena(
         `;
 
     } catch (error) {
-
-        console.error(
+            console.error(
             "Error preparando combate:",
             error
         );
 
 
         document.getElementById(
-            "panelCombate"
+            "panelResultadoCombate"
         ).style.display = "block";
 
 
         document.getElementById(
-            "combatientesPreparados"
+            "ganadorCombate"
         ).innerHTML = `
 
-            <div class="error">
+            <span class="error">
 
                 ❌ ${escaparHTML(
                     error.message
                 )}
 
-            </div>
+            </span>
 
         `;
 
     }
-
-                    }
-
-
-
-    /* ==========================================================
-   MOSTRAR RESULTADO DEL COMBATE
-   ========================================================== */
-
-function mostrarResultadoCombateArena(combate) {
-
-    if (!combate) {
-        return;
-    }
-
-
-    const panel =
-        document.getElementById(
-            "panelResultadoCombate"
-        );
-
-
-    const ganador =
-        document.getElementById(
-            "ganadorCombate"
-        );
-
-
-    const estadoCombatientes =
-        document.getElementById(
-            "estadoCombatientes"
-        );
-
-
-    const historial =
-        document.getElementById(
-            "historialCombate"
-        );
-
-
-    panel.style.display = "block";
-
-
-    /*
-    ----------------------------------------------------------
-    GANADOR
-    ----------------------------------------------------------
-    */
-
-    if (combate.ganador) {
-
-        ganador.innerHTML = `
-            🏆 Ganador:
-            ${escaparHTML(
-                combate.ganador
-            )}
-        `;
-
-    } else {
-
-        ganador.innerHTML = `
-            ⚔️ Combate finalizado
-        `;
-
-    }
-
-
-    /*
-    ----------------------------------------------------------
-    ESTADO DE LOS COMBATIENTES
-    ----------------------------------------------------------
-    */
-
-    const c1 =
-        combate.combatiente1;
-
-    const c2 =
-        combate.combatiente2;
-
-
-    const porcentaje1 =
-        c1.hp_max > 0
-            ? Math.max(
-                0,
-                Math.min(
-                    100,
-                    c1.hp / c1.hp_max * 100
-                )
-            )
-            : 0;
-
-
-    const porcentaje2 =
-        c2.hp_max > 0
-            ? Math.max(
-                0,
-                Math.min(
-                    100,
-                    c2.hp / c2.hp_max * 100
-                )
-            )
-            : 0;
-
-
-    estadoCombatientes.innerHTML = `
-
-        <div class="combateFicha">
-
-            <h3>
-                🦖 ${escaparHTML(
-                    c1.nombre
-                )}
-            </h3>
-
-            ❤️ HP:
-            ${numeroArena(c1.hp)}
-            /
-            ${numeroArena(c1.hp_max)}
-
-            <div class="barraHp">
-
-                <div
-                    class="barraHpInterior"
-                    style="width:${porcentaje1}%"
-                ></div>
-
-            </div>
-
-        </div>
-
-
-        <div class="combateFicha">
-
-            <h3>
-                🦖 ${escaparHTML(
-                    c2.nombre
-                )}
-            </h3>
-
-            ❤️ HP:
-            ${numeroArena(c2.hp)}
-            /
-            ${numeroArena(c2.hp_max)}
-
-            <div class="barraHp">
-
-                <div
-                    class="barraHpInterior"
-                    style="width:${porcentaje2}%"
-                ></div>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    /*
-    ----------------------------------------------------------
-    HISTORIAL
-    ----------------------------------------------------------
-    */
-
-    if (
-        !Array.isArray(
-            combate.historial
-        ) ||
-        combate.historial.length === 0
-    ) {
-
-        historial.innerHTML =
-            "<div>No hay acciones registradas.</div>";
-
-        return;
-
-    }
-
-
-    let html = "";
-
-
-    combate.historial.forEach(
-        function(registro) {
-
-            const resultado =
-                registro.resultado || {};
-
-
-            html += `
-
-                <div class="turnoCombate">
-
-                    <strong>
-                        Turno
-                        ${numeroArena(
-                            registro.turno
-                        )}
-                    </strong>
-
-                    <br>
-
-                    🦖 ${escaparHTML(
-                        registro.atacante
-                    )}
-
-                    →
-                    ${escaparHTML(
-                        registro.objetivo
-                    )}
-
-                    <br>
-
-                    Acción:
-                    ${escaparHTML(
-                        registro.accion
-                    )}
-
-                    <br>
-
-                    ${
-                        resultado.mensaje
-                            ? escaparHTML(
-                                resultado.mensaje
-                            )
-                            : "Sin mensaje."
-                    }
-
-                </div>
-
-            `;
-
-        }
-    );
-
-
-    historial.innerHTML =
-        html;
 
 }
 
@@ -1410,32 +947,119 @@ function ejecutarCombateAutomaticoArena() {
         }
 
 
-        if (
-            typeof ejecutarCombateArena !==
-            "function"
-        ) {
-
-            throw new Error(
-                "La función de combate automático no está disponible."
-            );
-
-        }
-
-
-        const combate =
+        const resultado =
             ejecutarCombateArena(
-                COMBATE_ARENA.combatiente1.datos,
-                COMBATE_ARENA.combatiente2.datos
+                COMBATE_ARENA
             );
 
 
-        COMBATE_ARENA =
-            combate;
+        document.getElementById(
+            "panelResultadoCombate"
+        ).style.display = "block";
 
 
-        mostrarResultadoCombateArena(
-            combate
-        );
+        document.getElementById(
+            "ganadorCombate"
+        ).innerHTML = `
+
+            🏆 Ganador:
+            <strong>
+                ${escaparHTML(
+                    resultado.ganador
+                )}
+            </strong>
+
+        `;
+
+
+        document.getElementById(
+            "estadoCombatientes"
+        ).innerHTML = `
+
+            <div class="combateFicha">
+
+                <h3>
+                    ${escaparHTML(
+                        resultado.combatiente1.nombre
+                    )}
+                </h3>
+
+                ❤️ HP:
+                ${numeroArena(
+                    resultado.combatiente1.hp
+                )}
+
+                <div class="barraHp">
+
+                    <div
+                        class="barraHpInterior"
+                        style="width:${
+                            numeroArena(
+                                resultado.combatiente1.porcentajeHp
+                            )
+                        }%;"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="combateFicha">
+
+                <h3>
+                    ${escaparHTML(
+                        resultado.combatiente2.nombre
+                    )}
+                </h3>
+
+                ❤️ HP:
+                ${numeroArena(
+                    resultado.combatiente2.hp
+                )}
+
+                <div class="barraHp">
+
+                    <div
+                        class="barraHpInterior"
+                        style="width:${
+                            numeroArena(
+                                resultado.combatiente2.porcentajeHp
+                            )
+                        }%;"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.getElementById(
+            "historialCombate"
+        ).innerHTML =
+
+            resultado.historial
+                .map(
+                    function(turno) {
+
+                        return `
+
+                            <div class="turnoCombate">
+
+                                ${escaparHTML(
+                                    turno
+                                )}
+
+                            </div>
+
+                        `;
+
+                    }
+                )
+                .join("");
+
 
     } catch (error) {
 
