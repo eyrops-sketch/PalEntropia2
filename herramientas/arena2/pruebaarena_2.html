@@ -640,8 +640,7 @@ async function mostrarCombatienteArena(datos) {
         );
 
 
-    const enlace =
-        RUTA_GENERADOR +
+    
 
     const enlace =
         RUTA_GENERADOR +
@@ -718,17 +717,29 @@ async function mostrarCombatienteArena(datos) {
             : "";
 
 
-    return `
+return `
 
-        <div class="combatiente">
+    <div class="combatiente">
 
-            <div class="nombre">
+        ${
+            miniatura
+                ? `
+                    <img
+                        class="miniaturaCombatiente"
+                        src="${escaparHTML(miniatura)}"
+                        alt="${escaparHTML(datos.nombre)}"
+                    >
+                  `
+                : ""
+        }
 
-                🦖 ${escaparHTML(
-                    datos.nombre
-                )}
+        <div class="nombre">
 
-            </div>
+            🦖 ${escaparHTML(
+                datos.nombre
+            )}
+
+        </div>
 
 
             <div class="codigoFicha">
