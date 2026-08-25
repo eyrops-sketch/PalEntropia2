@@ -449,6 +449,82 @@ function numeroArena(valor) {
 
 
 /* ==========================================================
+   OBTENER MINIATURA DEL COMBATIENTE
+   ========================================================== */
+
+async function obtenerMiniaturaArena(codigo) {
+
+    if (
+        !window.BUSCARUTA ||
+        typeof window.BUSCARUTA.buscar !== "function"
+    ) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        const resultado =
+            await window.BUSCARUTA.buscar(
+                codigo
+            );
+
+
+        if (
+            !resultado ||
+            !Array.isArray(
+                resultado.imagenes
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        const imagen =
+            resultado.imagenes.find(
+                function(item) {
+
+                    return (
+                        item &&
+                        item.tipo === "i3" &&
+                        item.estado === "ok" &&
+                        item.ruta
+                    );
+
+                }
+            );
+
+
+        return imagen
+            ? imagen.ruta
+            : null;
+
+
+    } catch (error) {
+
+        console.warn(
+            "No se pudo obtener la miniatura de " +
+            codigo,
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+    
+
+
+
+    
+/* ==========================================================
    MOSTRAR ESTADÍSTICAS
    ========================================================== */
 
