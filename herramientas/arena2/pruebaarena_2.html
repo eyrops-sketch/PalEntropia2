@@ -828,7 +828,7 @@ function crearDatosCombatienteArena(codigo) {
    MOSTRAR COMBATIENTE
    ========================================================== */
 
-async function mostrarCombatienteArena(datos) {
+async function mostrarCombatienteArena(datos, numeroCombatiente) {
 
     const miniatura =
         await obtenerMiniaturaArena(
@@ -840,11 +840,13 @@ async function mostrarCombatienteArena(datos) {
     
 
     const enlace =
-        RUTA_GENERADOR +
-        "?codigo=" +
-        encodeURIComponent(
-            datos.codigo
-        );
+    RUTA_GENERADOR +
+    "?codigo=" +
+    encodeURIComponent(
+        datos.codigo
+    ) +
+    "&arena=" +
+    numeroCombatiente;
 
 
     const habitatsHTML =
@@ -1273,15 +1275,17 @@ async function nuevoCombateArena() {
             datos2.codigo;
 
 
-      const fichaHTML1 =
+const fichaHTML1 =
     await mostrarCombatienteArena(
-        datos1
+        datos1,
+        1
     );
 
 
 const fichaHTML2 =
     await mostrarCombatienteArena(
-        datos2
+        datos2,
+        2
     );
 
 
