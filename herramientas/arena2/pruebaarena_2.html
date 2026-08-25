@@ -1054,16 +1054,37 @@ function ejecutarCombateAutomaticoArena() {
         ------------------------------------------------------
         */
 
-        while (
-            COMBATE_ARENA.estado !==
-            "finalizado"
-        ) {
+        /*
+------------------------------------------------------
+REINICIAR COMBATE PARA CADA EJECUCIÓN
+Mantiene las mismas dos Paleofichas pero crea
+una nueva partida desde cero.
+------------------------------------------------------
+*/
 
-            ejecutarTurnoArena(
-                COMBATE_ARENA
-            );
+COMBATE_ARENA =
+    crearCombateArena(
+        COMBATE_ARENA.combatiente1.datos,
+        COMBATE_ARENA.combatiente2.datos
+    );
 
-        }
+
+/*
+------------------------------------------------------
+EJECUTAR TODOS LOS TURNOS
+------------------------------------------------------
+*/
+
+while (
+    COMBATE_ARENA.estado !==
+    "finalizado"
+) {
+
+    ejecutarTurnoArena(
+        COMBATE_ARENA
+    );
+
+}
 
 
         /*
