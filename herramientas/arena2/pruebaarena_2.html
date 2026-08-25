@@ -1065,17 +1065,24 @@ function nuevoCombateArena() {
             datos2.codigo;
 
 
-        document.getElementById(
-            "resultado"
-        ).innerHTML =
+      const fichaHTML1 =
+    await mostrarCombatienteArena(
+        datos1
+    );
 
-            mostrarCombatienteArena(
-                datos1
-            ) +
 
-            mostrarCombatienteArena(
-                datos2
-            );
+const fichaHTML2 =
+    await mostrarCombatienteArena(
+        datos2
+    );
+
+
+document.getElementById(
+    "resultado"
+).innerHTML =
+
+    fichaHTML1 +
+    fichaHTML2;
 
 
         prepararCombateArena(
