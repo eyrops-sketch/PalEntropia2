@@ -448,73 +448,276 @@ function numeroArena(valor) {
 }
 
 
+
+
+
+
 /* ==========================================================
    OBTENER MINIATURA DEL COMBATIENTE
    ========================================================== */
 
-async function obtenerMiniaturaArena(codigo) {
+async function obtenerMiniaturaArena(
+    codigo,
+    nombre
+) {
+
+    /*
+    ----------------------------------------------------------
+    1. CASO 2 — ARQUITECTURA ANTIGUA
+    ----------------------------------------------------------
+    001_01 → 005_15
+    ----------------------------------------------------------
+    */
+
+    const partes =
+        String(codigo)
+            .trim()
+            .split("_");
+
+
+    const volumen =
+        Number(partes[0]);
+
+
+    const ficha =
+        Number(partes[1]);
+
 
     if (
-        !window.BUSCARUTA ||
-        typeof window.BUSCARUTA.buscar !== "function"
+        volumen >= 1 &&
+        volumen <= 5 &&
+        ficha >= 1 &&
+        ficha <= 15
     ) {
 
-        return null;
+        /*
+        Excepciones:
+        001_12
+        002_04
+        003_14
+        004_14
+
+        Estas NO se construyen aquí.
+        */
+
+        const excepciones = [
+
+            "001_12",
+            "002_04",
+            "003_14",
+            "004_14"
+
+        ];
+
+
+        if (
+            !excepciones.includes(
+                String(codigo).trim()
+            )
+        ) {
+
+            const directorio =
+                String(nombre)
+                    .trim()
+                    .normalize("NFD")
+                    .replace(
+                        /[\u0300-\u036f]/g,
+                        ""
+                    )
+                    .toLowerCase()
+                    .replace(
+                        /[^a-z0-9]+/g,
+                        "_"
+                    )
+                    .replace(
+                        /^_+|_+$/g,
+                        ""
+                    );
+
+
+            const archivo =
+                String(nombre)
+                    .trim()
+                    .normalize("NFD")
+                    .replace(
+                        /[\u0300-\u036f]/g,
+                        ""
+                    )
+                    .replace(
+                        /[^a-zA-Z0-9]+/g,
+                        "_"
+                    )
+                    .replace(
+                        /^_+|_+$/g,
+                        ""
+                    );
+
+
+            if (
+                directorio &&
+                archivo
+            ) {
+
+                const extensiones = [
+
+                    ".png",
+                    ".jpg",
+                    ".jpeg",
+                    ".webp"
+
+                ];
+
+
+                for (
+                    const extension of extensiones
+                ) {
+
+                    const ruta =
+
+                        "../../paleofichas/" +
+
+                        "vol" +
+                        partes[0] +
+
+                        "/" +
+
+                        codigo +
+                        "_" +
+                        directorio +
+
+                        "/" +
+
+                        archivo +
+                        "_i3" +
+                        extension;
+
+
+                    const existe =
+                        await comprobarImagenArena(
+                            ruta
+                        );
+
+
+                    if (existe) {
+
+                        return ruta;
+
+                    }
+
+                }
+
+            }
+
+        }
 
     }
 
 
-    try {
+    /*
+    ----------------------------------------------------------
+    2. RESTO DE ARQUITECTURAS
+    ----------------------------------------------------------
+    Excepciones + multimedia/new/
+    ----------------------------------------------------------
+    */
 
-        const resultado =
-            await window.BUSCARUTA.buscar(
-                codigo
-            );
+    if (
+        window.BUSCARUTA &&
+        typeof window.BUSCARUTA.buscar ===
+            "function"
+    ) {
+
+        try {
+
+            const resultado =
+                await window.BUSCARUTA.buscar(
+                    codigo
+                );
 
 
-        if (
-            !resultado ||
-            !Array.isArray(
-                resultado.imagenes
-            )
-        ) {
+            if (
+                resultado &&
+                Array.isArray(
+                    resultado.imagenes
+                )
+            ) {
+
+                const imagen =
+                    resultado.imagenes.find(
+                        function(item) {
+
+                            return (
+                                item &&
+                                item.tipo === "i3" &&
+                                item.estado === "ok" &&
+                                item.ruta
+                            );
+
+                        }
+                    );
+
+
+                if (imagen) {
+
+                    return imagen.ruta;
+
+                }
+
+            }
+
+        } catch (error) {
 
             return null;
 
         }
 
-
-        const imagen =
-            resultado.imagenes.find(
-                function(item) {
-
-                    return (
-                        item &&
-                        item.tipo === "i3" &&
-                        item.estado === "ok" &&
-                        item.ruta
-                    );
-
-                }
-            );
-
-
-        return imagen
-            ? imagen.ruta
-            : null;
-
-
-    } catch (error) {
-
-        return null;
-
     }
+
+
+    return null;
 
 }
 
+
+/* ==========================================================
+   COMPROBAR IMAGEN ARENA
+   ========================================================== */
+
+function comprobarImagenArena(ruta) {
+
+    return new Promise(
+        function(resolve) {
+
+            const imagen =
+                new Image();
+
+
+            imagen.onload =
+                function() {
+
+                    resolve(true);
+
+                };
+
+
+            imagen.onerror =
+                function() {
+
+                    resolve(false);
+
+                };
+
+
+            imagen.src =
+                ruta;
+
+        }
+    );
+
+}
+
+
     
-
-
 
     
 /* ==========================================================
@@ -629,7 +832,8 @@ async function mostrarCombatienteArena(datos) {
 
     const miniatura =
         await obtenerMiniaturaArena(
-            datos.codigo
+            datos.codigo,
+            datos.nombre
         );
 
 
