@@ -632,7 +632,16 @@ function crearDatosCombatienteArena(codigo) {
    MOSTRAR COMBATIENTE
    ========================================================== */
 
-function mostrarCombatienteArena(datos) {
+async function mostrarCombatienteArena(datos) {
+
+    const miniatura =
+        await obtenerMiniaturaArena(
+            datos.codigo
+        );
+
+
+    const enlace =
+        RUTA_GENERADOR +
 
     const enlace =
         RUTA_GENERADOR +
