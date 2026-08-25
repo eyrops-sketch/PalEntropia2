@@ -947,10 +947,32 @@ function ejecutarCombateAutomaticoArena() {
         }
 
 
-        const resultado =
-            ejecutarCombateArena(
-                COMBATE_ARENA
-            );
+        while (
+    COMBATE_ARENA.estado !==
+    "finalizado"
+) {
+
+    ejecutarTurnoArena(
+        COMBATE_ARENA
+    );
+
+}
+
+const resultado = {
+
+    ganador:
+        COMBATE_ARENA.ganador,
+
+    combatiente1:
+        COMBATE_ARENA.combatiente1,
+
+    combatiente2:
+        COMBATE_ARENA.combatiente2,
+
+    historial:
+        COMBATE_ARENA.historial
+
+};
 
 
         document.getElementById(
