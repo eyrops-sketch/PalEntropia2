@@ -1252,6 +1252,9 @@ while (
         `;
 
 
+
+
+
         /*
         ------------------------------------------------------
         HISTORIAL
@@ -1269,6 +1272,111 @@ while (
                         if (!turno) {
 
                             return "";
+
+                        }
+
+
+                        /*
+                        --------------------------------------
+                        CONVERTIR RESULTADO A TEXTO
+                        --------------------------------------
+                        */
+
+                        function resultadoArena(valor) {
+
+                            if (
+                                valor === null ||
+                                valor === undefined
+                            ) {
+
+                                return "";
+
+                            }
+
+
+                            if (
+                                typeof valor === "string" ||
+                                typeof valor === "number"
+                            ) {
+
+                                return String(valor);
+
+                            }
+
+
+                            if (
+                                typeof valor === "object"
+                            ) {
+
+                                if (
+                                    valor.mensaje
+                                ) {
+
+                                    return String(
+                                        valor.mensaje
+                                    );
+
+                                }
+
+
+                                if (
+                                    valor.texto
+                                ) {
+
+                                    return String(
+                                        valor.texto
+                                    );
+
+                                }
+
+
+                                if (
+                                    valor.descripcion
+                                ) {
+
+                                    return String(
+                                        valor.descripcion
+                                    );
+
+                                }
+
+
+                                if (
+                                    valor.dano !== undefined
+                                ) {
+
+                                    return (
+                                        "Daño: " +
+                                        numeroArena(
+                                            valor.dano
+                                        )
+                                    );
+
+                                }
+
+
+                                if (
+                                    valor.danio !== undefined
+                                ) {
+
+                                    return (
+                                        "Daño: " +
+                                        numeroArena(
+                                            valor.danio
+                                        )
+                                    );
+
+                                }
+
+
+                                return JSON.stringify(
+                                    valor
+                                );
+
+                            }
+
+
+                            return String(valor);
 
                         }
 
@@ -1304,11 +1412,19 @@ while (
                             }
 
 
-                            if (turno.resultado) {
+                            const resultadoTexto =
+                                resultadoArena(
+                                    turno.resultado
+                                );
+
+
+                            if (
+                                resultadoTexto
+                            ) {
 
                                 texto +=
                                     " — " +
-                                    turno.resultado;
+                                    resultadoTexto;
 
                             }
 
@@ -1344,19 +1460,26 @@ while (
                                 numeroArena(
                                     turno.turno
                                 ) +
-                                " — " +
-                                "Efecto sobre " +
+                                " — Efecto sobre " +
                                 (
                                     turno.objetivo ||
                                     ""
                                 );
 
 
-                            if (turno.resultado) {
+                            const resultadoTexto =
+                                resultadoArena(
+                                    turno.resultado
+                                );
+
+
+                            if (
+                                resultadoTexto
+                            ) {
 
                                 texto +=
                                     " — " +
-                                    turno.resultado;
+                                    resultadoTexto;
 
                             }
 
@@ -1387,7 +1510,7 @@ while (
                             <div class="turnoCombate">
 
                                 ${escaparHTML(
-                                    JSON.stringify(
+                                    resultadoArena(
                                         turno
                                     )
                                 )}
@@ -1433,6 +1556,29 @@ while (
 }
 
 
+
+        
+
+
+        
+
+        
+
+
+                        
+
+
+
+
+
+
+    
+
+
+
+
+
+    
 /* ==========================================================
    CARGAR DATOS
    ========================================================== */
