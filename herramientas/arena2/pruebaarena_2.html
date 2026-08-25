@@ -930,6 +930,10 @@ function prepararCombateArena(
 }
 
 
+
+
+
+    
 /* ==========================================================
    EJECUTAR COMBATE AUTOMÁTICO
    ========================================================== */
@@ -947,44 +951,70 @@ function ejecutarCombateAutomaticoArena() {
         }
 
 
+        /*
+        ------------------------------------------------------
+        EJECUTAR TODOS LOS TURNOS
+        ------------------------------------------------------
+        */
+
         while (
-    COMBATE_ARENA.estado !==
-    "finalizado"
-) {
+            COMBATE_ARENA.estado !==
+            "finalizado"
+        ) {
 
-    ejecutarTurnoArena(
-        COMBATE_ARENA
-    );
+            ejecutarTurnoArena(
+                COMBATE_ARENA
+            );
 
-}
+        }
 
-const resultado = {
 
-    ganador:
-        COMBATE_ARENA.ganador,
+        /*
+        ------------------------------------------------------
+        PREPARAR RESULTADO
+        ------------------------------------------------------
+        */
 
-    combatiente1:
-        COMBATE_ARENA.combatiente1,
+        const resultado = {
 
-    combatiente2:
-        COMBATE_ARENA.combatiente2,
+            ganador:
+                COMBATE_ARENA.ganador,
 
-    historial:
-        COMBATE_ARENA.historial
+            combatiente1:
+                COMBATE_ARENA.combatiente1,
 
-};
+            combatiente2:
+                COMBATE_ARENA.combatiente2,
 
+            historial:
+                COMBATE_ARENA.historial
+
+        };
+
+
+        /*
+        ------------------------------------------------------
+        MOSTRAR PANEL
+        ------------------------------------------------------
+        */
 
         document.getElementById(
             "panelResultadoCombate"
         ).style.display = "block";
 
 
+        /*
+        ------------------------------------------------------
+        GANADOR
+        ------------------------------------------------------
+        */
+
         document.getElementById(
             "ganadorCombate"
         ).innerHTML = `
 
             🏆 Ganador:
+
             <strong>
                 ${escaparHTML(
                     resultado.ganador
@@ -993,6 +1023,64 @@ const resultado = {
 
         `;
 
+
+        /*
+        ------------------------------------------------------
+        CALCULAR HP Y PORCENTAJES
+        ------------------------------------------------------
+        */
+
+        const hp1 =
+            numeroArena(
+                resultado.combatiente1.hp
+            );
+
+        const hpMax1 =
+            numeroArena(
+                resultado.combatiente1.hp_max
+            );
+
+
+        const hp2 =
+            numeroArena(
+                resultado.combatiente2.hp
+            );
+
+        const hpMax2 =
+            numeroArena(
+                resultado.combatiente2.hp_max
+            );
+
+
+        const porcentajeHp1 =
+            hpMax1 > 0
+                ? Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        (hp1 / hpMax1) * 100
+                    )
+                )
+                : 0;
+
+
+        const porcentajeHp2 =
+            hpMax2 > 0
+                ? Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        (hp2 / hpMax2) * 100
+                    )
+                )
+                : 0;
+
+
+        /*
+        ------------------------------------------------------
+        ESTADO FINAL DE COMBATIENTES
+        ------------------------------------------------------
+        */
 
         document.getElementById(
             "estadoCombatientes"
@@ -1007,19 +1095,16 @@ const resultado = {
                 </h3>
 
                 ❤️ HP:
-                ${numeroArena(
-                    resultado.combatiente1.hp
-                )}
+
+                ${hp1}
+                /
+                ${hpMax1}
 
                 <div class="barraHp">
 
                     <div
                         class="barraHpInterior"
-                        style="width:${
-                            numeroArena(
-                                resultado.combatiente1.porcentajeHp
-                            )
-                        }%;"
+                        style="width:${porcentajeHp1}%;"
                     ></div>
 
                 </div>
@@ -1036,19 +1121,16 @@ const resultado = {
                 </h3>
 
                 ❤️ HP:
-                ${numeroArena(
-                    resultado.combatiente2.hp
-                )}
+
+                ${hp2}
+                /
+                ${hpMax2}
 
                 <div class="barraHp">
 
                     <div
                         class="barraHpInterior"
-                        style="width:${
-                            numeroArena(
-                                resultado.combatiente2.porcentajeHp
-                            )
-                        }%;"
+                        style="width:${porcentajeHp2}%;"
                     ></div>
 
                 </div>
@@ -1058,6 +1140,12 @@ const resultado = {
         `;
 
 
+        /*
+        ------------------------------------------------------
+        HISTORIAL
+        ------------------------------------------------------
+        */
+
         document.getElementById(
             "historialCombate"
         ).innerHTML =
@@ -1066,12 +1154,115 @@ const resultado = {
                 .map(
                     function(turno) {
 
+
+                        /*
+                        --------------------------------------
+                        ACCIÓN DE COMBATE
+                        --------------------------------------
+                        */
+
+                        if (
+                            turno &&
+                            turno.atacante
+                        ) {
+
+                            return `
+
+                                <div class="turnoCombate">
+
+                                    <strong>
+                                        T${numeroArena(
+                                            turno.turno
+                                        )}
+                                    </strong>
+
+                                    ·
+
+                                    ${escaparHTML(
+                                        turno.atacante
+                                    )}
+
+                                    →
+
+                                    ${escaparHTML(
+                                        turno.objetivo
+                                    )}
+
+                                    <br>
+
+                                    ⚔️
+
+                                    ${escaparHTML(
+                                        turno.accion
+                                    )}
+
+                                    <br>
+
+                                    ${escaparHTML(
+                                        turno.resultado
+                                    )}
+
+                                </div>
+
+                            `;
+
+                        }
+
+
+                        /*
+                        --------------------------------------
+                        EFECTO
+                        --------------------------------------
+                        */
+
+                        if (
+                            turno &&
+                            turno.tipo === "efecto"
+                        ) {
+
+                            return `
+
+                                <div class="turnoCombate">
+
+                                    <strong>
+                                        T${numeroArena(
+                                            turno.turno
+                                        )}
+                                    </strong>
+
+                                    · ✨ Efecto sobre
+
+                                    ${escaparHTML(
+                                        turno.objetivo
+                                    )}
+
+                                    <br>
+
+                                    ${escaparHTML(
+                                        turno.resultado
+                                    )}
+
+                                </div>
+
+                            `;
+
+                        }
+
+
+                        /*
+                        --------------------------------------
+                        SEGURIDAD
+                        --------------------------------------
+                        */
+
                         return `
 
                             <div class="turnoCombate">
 
                                 ${escaparHTML(
-                                    turno
+                                    JSON.stringify(
+                                        turno
+                                    )
                                 )}
 
                             </div>
@@ -1115,96 +1306,26 @@ const resultado = {
 }
 
 
-/* ==========================================================
-   NUEVO COMBATE
-   ========================================================== */
-
-function nuevoCombateArena() {
-
-    try {
-
-        const seleccion =
-            obtenerDosFichasAleatoriasArena();
 
 
-        const fila1 =
-            seleccion[0];
 
 
-        const fila2 =
-            seleccion[1];
 
 
-        const datos1 =
-            crearDatosCombatienteArena(
-                fila1.j1
-            );
 
 
-        const datos2 =
-            crearDatosCombatienteArena(
-                fila2.j1
-            );
 
 
-        document.getElementById(
-            "codigo1"
-        ).textContent =
-            datos1.codigo;
+            
 
 
-        document.getElementById(
-            "codigo2"
-        ).textContent =
-            datos2.codigo;
 
 
-        document.getElementById(
-            "resultado"
-        ).innerHTML =
-
-            mostrarCombatienteArena(
-                datos1
-            ) +
-
-            mostrarCombatienteArena(
-                datos2
-            );
 
 
-        prepararCombateArena(
-            datos1,
-            datos2
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Error creando nuevo combate:",
-            error
-        );
 
 
-        document.getElementById(
-            "estado"
-        ).innerHTML = `
-
-            <span class="error">
-
-                ✗ ${
-                    escaparHTML(
-                        error.message
-                    )
-                }
-
-            </span>
-
-        `;
-
-    }
-
-}
-
+    
 
 /* ==========================================================
    CARGAR DATOS
