@@ -817,11 +817,66 @@ document.addEventListener(
                 parametros.get("codigo");
 
 
+            const arena =
+                parametros.get("arena");
+
+
+            const esArena =
+                arena === "1" ||
+                arena === "2";
+
+
+            let codigoArenaInicial =
+                codigo;
+
+
             if (codigo) {
 
                 await window.PALNAVEGADOR.cargarPorCodigo(
                     codigo
                 );
+
+
+                if (esArena) {
+
+                    setInterval(
+                        function() {
+
+                            const codigoActual =
+                                window.PALNAVEGADOR.codigoActual;
+
+
+                            if (
+                                codigoActual &&
+                                codigoActual !==
+                                codigoArenaInicial
+                            ) {
+
+                                localStorage.setItem(
+                                    "palentropia_arena_seleccion",
+                                    JSON.stringify({
+
+                                        arena:
+                                            arena,
+
+                                        codigo:
+                                            codigoActual
+
+                                    })
+                                );
+
+
+                                codigoArenaInicial =
+                                    codigoActual;
+
+                            }
+
+                        },
+                        500
+                    );
+
+                }
+
 
                 return;
 
@@ -845,6 +900,10 @@ document.addEventListener(
 );
 
 </script>
+
+
+
+      
 
 
 </body>
