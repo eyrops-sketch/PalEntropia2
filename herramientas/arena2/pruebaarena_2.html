@@ -824,6 +824,79 @@ function crearDatosCombatienteArena(codigo) {
 }
 
 
+
+
+/* ==========================================================
+   RECIBIR SELECCIÓN DESDE EL VISOR
+   ========================================================== */
+
+function recibirSeleccionArena() {
+
+    const seleccion =
+        localStorage.getItem(
+            "palentropia_arena_seleccion"
+        );
+
+
+    if (!seleccion) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        const datos =
+            JSON.parse(
+                seleccion
+            );
+
+
+        if (
+            !datos ||
+            !datos.arena ||
+            !datos.codigo
+        ) {
+
+            return null;
+
+        }
+
+
+        localStorage.removeItem(
+            "palentropia_arena_seleccion"
+        );
+
+
+        return datos;
+
+    } catch (error) {
+
+        localStorage.removeItem(
+            "palentropia_arena_seleccion"
+        );
+
+
+        return null;
+
+    }
+
+}
+
+    
+
+
+    
+
+
+
+
+
+
+
+    
+
 /* ==========================================================
    MOSTRAR COMBATIENTE
    ========================================================== */
