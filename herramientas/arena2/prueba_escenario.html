@@ -477,7 +477,7 @@ function evaluarFicha() {
 
     const bonificacion =
         resultado.bonificacion;
-
+   
 
     /*
     ----------------------------------------------
@@ -489,6 +489,13 @@ function evaluarFicha() {
         window.PALARENA_STATS
             .calcularFicha(ficha);
 
+
+    const statsFinales =
+    window.PALARENA_BONIFICACIONES
+        .aplicar(
+            statsCombate,
+            bonificacion
+        );
 
     /*
     ----------------------------------------------
