@@ -514,6 +514,12 @@
     "nombre": "Chilesaurus",
     "dieta": "Herbívoro",
     "anatomia": "Dinosaurio de tamaño mediano y aspecto peculiar, con cuello relativamente largo, cabeza pequeña, pico córneo, dientes de morfología adaptada al consumo vegetal, brazos relativamente cortos y extremidades posteriores robustas"
+  },
+  {
+    "codigo": "006_12",
+    "nombre": "Leedsichthys",
+    "dieta": "Planctívoro",
+    "anatomia": "Pez óseo marino de tamaño gigantesco, con cuerpo alargado, cabeza grande, boca muy amplia y branquiespinas especializadas para filtrar plancton y pequeños organismos del agua"
   }
 ]
 
