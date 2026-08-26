@@ -1,45 +1,26 @@
 /*
 ========================================================
 PALARENA
-palarenabonificaciones.js v2.0
+palarenabonificaciones.js v1.2
 PalEntropía
 
 APLICACIÓN DE BONIFICACIONES DE ESCENARIO
-A LOS STATS REALES DE ARENA.
+A LOS 5 INDICADORES DE COMBATE.
 
 RECIBE:
-- 11 stats de la Paleoficha
+- estadísticas de combate base
 - bonificación del escenario
 
 DEVUELVE:
-- 11 stats modificados
-- detalle de las bonificaciones aplicadas
+- estadísticas de combate modificadas
+- desglose completo de las bonificaciones
 
 REGLAS:
 - Nunca supera 100.
 - Nunca baja de 0.
 - Nunca existen penalizaciones.
-
-DISTRIBUCIÓN:
-
-HÁBITATS
-Cada coincidencia = +5
-
-→ Resistencia +2.5
-→ Táctica +2.5
-
-MODO DE VIDA
-Coincidencia = +10
-
-→ Ofensiva +5
-→ Velocidad +5
-
-MEDIOS ECOLÓGICOS
-
-SM → Resistencia +3
-L  → Velocidad +3
-ES → Defensa +2
-C  → Ofensiva +2
+- Conserva los nombres de los elementos
+  que generan cada bonificación.
 ========================================================
 */
 
@@ -48,7 +29,7 @@ window.PALARENA_BONIFICACIONES = {
 
     /* ==================================================
        LIMITAR
-    ================================================== */
+       ================================================== */
 
     limitar(valor) {
 
@@ -64,8 +45,113 @@ window.PALARENA_BONIFICACIONES = {
 
 
     /* ==================================================
+       OBTENER NOMBRE HÁBITAT
+       ================================================== */
+
+    nombreHabitat(codigo) {
+
+        if (
+            window.PALHAB &&
+            window.PALHAB[codigo]
+        ) {
+
+            const habitat =
+                window.PALHAB[codigo];
+
+            if (
+                typeof habitat === "string"
+            ) {
+
+                return habitat;
+
+            }
+
+            return (
+                habitat.nombre ||
+                habitat.descripcion ||
+                codigo
+            );
+
+        }
+
+        return codigo;
+
+    },
+
+
+    /* ==================================================
+       OBTENER NOMBRE MODO
+       ================================================== */
+
+    nombreModo(codigo) {
+
+        if (
+            window.PALMODO &&
+            window.PALMODO[codigo]
+        ) {
+
+            const modo =
+                window.PALMODO[codigo];
+
+            if (
+                typeof modo === "string"
+            ) {
+
+                return modo;
+
+            }
+
+            return (
+                modo.nombre ||
+                modo.descripcion ||
+                codigo
+            );
+
+        }
+
+        return codigo;
+
+    },
+
+
+    /* ==================================================
+       OBTENER NOMBRE MEDIO
+       ================================================== */
+
+    nombreMedio(codigo) {
+
+        if (
+            window.PALMEDIO &&
+            window.PALMEDIO[codigo]
+        ) {
+
+            const medio =
+                window.PALMEDIO[codigo];
+
+            if (
+                typeof medio === "string"
+            ) {
+
+                return medio;
+
+            }
+
+            return (
+                medio.nombre ||
+                medio.descripcion ||
+                codigo
+            );
+
+        }
+
+        return codigo;
+
+    },
+
+
+    /* ==================================================
        APLICAR BONIFICACIONES
-    ================================================== */
+       ================================================== */
 
     aplicar(stats, bonificacion) {
 
@@ -77,112 +163,90 @@ window.PALARENA_BONIFICACIONES = {
 
 
         /*
-        ==================================================
-        STATS BASE
-        ==================================================
+        ----------------------------------------------
+        SI NO EXISTE ESCENARIO
+        ----------------------------------------------
         */
 
-        const base = {
+        if (!bonificacion) {
 
-            adaptabilidad:
-                Number(stats.adaptabilidad) || 0,
+            return {
 
-            sociabilidad:
-                Number(stats.sociabilidad) || 0,
+                ataque:
+                    this.limitar(
+                        stats.ataque
+                    ),
 
-            resistencia:
-                Number(stats.resistencia) || 0,
+                defensa:
+                    this.limitar(
+                        stats.defensa
+                    ),
 
-            reproduccion:
-                Number(stats.reproduccion) || 0,
+                velocidad:
+                    this.limitar(
+                        stats.velocidad
+                    ),
 
-            ofensiva:
-                Number(stats.ofensiva) || 0,
+                resistencia:
+                    this.limitar(
+                        stats.resistencia
+                    ),
 
-            defensa:
-                Number(stats.defensa) || 0,
+                tactica:
+                    this.limitar(
+                        stats.tactica
+                    ),
 
-            movilidad:
-                Number(stats.movilidad) || 0,
+                desglose: {
 
-            plasticidad:
-                Number(stats.plasticidad) || 0,
+                    habitats: [],
 
-            tamano:
-                Number(stats.tamano) || 0,
+                    modo: null,
 
-            velocidad:
-                Number(stats.velocidad) || 0,
+                    medios: []
 
-            inteligencia:
-                Number(stats.inteligencia) || 0
+                }
 
-        };
+            };
+
+        }
+
+
+        /*
+        ----------------------------------------------
+        ESTADÍSTICAS BASE
+        ----------------------------------------------
+        */
+
+        let ataque =
+            Number(stats.ataque) || 0;
+
+        let defensa =
+            Number(stats.defensa) || 0;
+
+        let velocidad =
+            Number(stats.velocidad) || 0;
+
+        let resistencia =
+            Number(stats.resistencia) || 0;
+
+        let tactica =
+            Number(stats.tactica) || 0;
 
 
         /*
         ==================================================
-        STATS MODIFICADOS
+        DESGLOSE
         ==================================================
         */
 
-        const resultado = {
+        const desglose = {
 
-            adaptabilidad:
-                base.adaptabilidad,
+            habitats: [],
 
-            sociabilidad:
-                base.sociabilidad,
+            modo: null,
 
-            resistencia:
-                base.resistencia,
-
-            reproduccion:
-                base.reproduccion,
-
-            ofensiva:
-                base.ofensiva,
-
-            defensa:
-                base.defensa,
-
-            movilidad:
-                base.movilidad,
-
-            plasticidad:
-                base.plasticidad,
-
-            tamano:
-                base.tamano,
-
-            velocidad:
-                base.velocidad,
-
-            inteligencia:
-                base.inteligencia
-
-        };
-
-
-        /*
-        ==================================================
-        DETALLE
-        ==================================================
-        */
-
-        const detalle = {
-
-            habitats: 0,
-
-            modo: 0,
-
-            SM: 0,
-
-            L: 0,
-
-            ES: 0,
-
-            C: 0
+            medios: []
 
         };
 
@@ -195,7 +259,6 @@ window.PALARENA_BONIFICACIONES = {
 
         const bonificacionHabitats =
             Number(
-                bonificacion &&
                 bonificacion.bonificacionHabitats
             ) || 0;
 
@@ -204,26 +267,87 @@ window.PALARENA_BONIFICACIONES = {
             bonificacionHabitats > 0
         ) {
 
-            const mitad =
-                bonificacionHabitats / 2;
-
-
-            resultado.resistencia +=
-                mitad;
-
-            resultado.inteligencia +=
-                mitad;
+            const coincidencias =
+                Number(
+                    bonificacion.habitats
+                ) || 0;
 
 
             /*
-            La parte destinada a táctica
-            se representa mediante
-            Inteligencia, ya que Arena
-            utiliza los 11 stats originales.
+            La bonificación de hábitat
+            se reparte entre:
+
+            RESISTENCIA
+            TÁCTICA
             */
 
-            detalle.habitats =
-                bonificacionHabitats;
+            const resistenciaHabitat =
+                bonificacionHabitats / 2;
+
+            const tacticaHabitat =
+                bonificacionHabitats / 2;
+
+
+            resistencia +=
+                resistenciaHabitat;
+
+            tactica +=
+                tacticaHabitat;
+
+
+            /*
+            Obtener los hábitats reales
+            del escenario.
+            */
+
+            if (
+                bonificacion.escenarioHabitats &&
+                Array.isArray(
+                    bonificacion.escenarioHabitats
+                )
+            ) {
+
+                bonificacion
+                    .escenarioHabitats
+                    .forEach(
+                        codigo => {
+
+                            desglose.habitats.push({
+
+                                codigo:
+                                    codigo,
+
+                                nombre:
+                                    this.nombreHabitat(
+                                        codigo
+                                    ),
+
+                                ataque: 0,
+
+                                defensa: 0,
+
+                                velocidad: 0,
+
+                                resistencia:
+                                    resistenciaHabitat /
+                                    Math.max(
+                                        1,
+                                        coincidencias
+                                    ),
+
+                                tactica:
+                                    tacticaHabitat /
+                                    Math.max(
+                                        1,
+                                        coincidencias
+                                    )
+
+                            });
+
+                        }
+                    );
+
+            }
 
         }
 
@@ -236,7 +360,6 @@ window.PALARENA_BONIFICACIONES = {
 
         const bonificacionModo =
             Number(
-                bonificacion &&
                 bonificacion.bonificacionModo
             ) || 0;
 
@@ -245,19 +368,50 @@ window.PALARENA_BONIFICACIONES = {
             bonificacionModo > 0
         ) {
 
-            const mitad =
+            /*
+            Se reparte:
+
+            ATAQUE
+            VELOCIDAD
+            */
+
+            const ataqueModo =
+                bonificacionModo / 2;
+
+            const velocidadModo =
                 bonificacionModo / 2;
 
 
-            resultado.ofensiva +=
-                mitad;
+            ataque +=
+                ataqueModo;
 
-            resultado.velocidad +=
-                mitad;
+            velocidad +=
+                velocidadModo;
 
 
-            detalle.modo =
-                bonificacionModo;
+            const codigoModo =
+                bonificacion.escenarioModo ||
+                bonificacion.modoCodigo ||
+                "";
+
+
+            desglose.modo = {
+
+                codigo:
+                    codigoModo,
+
+                nombre:
+                    this.nombreModo(
+                        codigoModo
+                    ),
+
+                ataque:
+                    ataqueModo,
+
+                velocidad:
+                    velocidadModo
+
+            };
 
         }
 
@@ -269,161 +423,177 @@ window.PALARENA_BONIFICACIONES = {
         */
 
         if (
-            bonificacion &&
             bonificacion.medios &&
             Array.isArray(
                 bonificacion.medios.detalles
             )
         ) {
 
-            bonificacion.medios.detalles.forEach(
-                function(detalleMedio) {
+            bonificacion
+                .medios
+                .detalles
+                .forEach(
+                    detalle => {
+
+                        const datos = {
+
+                            codigo:
+                                detalle.medio || "",
+
+                            nombre:
+                                this.nombreMedio(
+                                    detalle.medio || ""
+                                ),
+
+                            SM: false,
+
+                            L: false,
+
+                            ES: false,
+
+                            C: false,
+
+                            ataque: 0,
+
+                            defensa: 0,
+
+                            velocidad: 0,
+
+                            resistencia: 0,
+
+                            tactica: 0
+
+                        };
 
 
-                    /*
-                    --------------------------------------
-                    SM
-                    --------------------------------------
-                    */
+                        /*
+                        SM
+                        */
 
-                    if (
-                        detalleMedio.SM
-                    ) {
+                        if (detalle.SM) {
 
-                        resultado.resistencia +=
-                            3;
+                            datos.SM = true;
 
-                        detalle.SM +=
-                            3;
+                            datos.resistencia =
+                                3;
+
+                            resistencia +=
+                                3;
+
+                        }
+
+
+                        /*
+                        L
+                        */
+
+                        if (detalle.L) {
+
+                            datos.L = true;
+
+                            datos.velocidad =
+                                3;
+
+                            velocidad +=
+                                3;
+
+                        }
+
+
+                        /*
+                        ES
+                        */
+
+                        if (detalle.ES) {
+
+                            datos.ES = true;
+
+                            datos.defensa =
+                                2;
+
+                            defensa +=
+                                2;
+
+                        }
+
+
+                        /*
+                        C
+                        */
+
+                        if (detalle.C) {
+
+                            datos.C = true;
+
+                            datos.ataque =
+                                2;
+
+                            ataque +=
+                                2;
+
+                        }
+
+
+                        /*
+                        Solo guardar medios
+                        que realmente producen
+                        alguna bonificación.
+                        */
+
+                        if (
+                            datos.SM ||
+                            datos.L ||
+                            datos.ES ||
+                            datos.C
+                        ) {
+
+                            desglose.medios.push(
+                                datos
+                            );
+
+                        }
 
                     }
-
-
-                    /*
-                    --------------------------------------
-                    L
-                    --------------------------------------
-                    */
-
-                    if (
-                        detalleMedio.L
-                    ) {
-
-                        resultado.velocidad +=
-                            3;
-
-                        detalle.L +=
-                            3;
-
-                    }
-
-
-                    /*
-                    --------------------------------------
-                    ES
-                    --------------------------------------
-                    */
-
-                    if (
-                        detalleMedio.ES
-                    ) {
-
-                        resultado.defensa +=
-                            2;
-
-                        detalle.ES +=
-                            2;
-
-                    }
-
-
-                    /*
-                    --------------------------------------
-                    C
-                    --------------------------------------
-                    */
-
-                    if (
-                        detalleMedio.C
-                    ) {
-
-                        resultado.ofensiva +=
-                            2;
-
-                        detalle.C +=
-                            2;
-
-                    }
-
-                }
-            );
+                );
 
         }
 
 
         /*
         ==================================================
-        LIMITAR STATS
-        ==================================================
-        */
-
-        Object.keys(resultado)
-            .forEach(
-                function(clave) {
-
-                    resultado[clave] =
-                        window.PALARENA_BONIFICACIONES
-                            .limitar(
-                                resultado[clave]
-                            );
-
-                }
-            );
-
-
-        /*
-        ==================================================
-        DEVOLVER
+        RESULTADO FINAL
         ==================================================
         */
 
         return {
 
-            adaptabilidad:
-                resultado.adaptabilidad,
-
-            sociabilidad:
-                resultado.sociabilidad,
-
-            resistencia:
-                resultado.resistencia,
-
-            reproduccion:
-                resultado.reproduccion,
-
-            ofensiva:
-                resultado.ofensiva,
+            ataque:
+                this.limitar(
+                    ataque
+                ),
 
             defensa:
-                resultado.defensa,
-
-            movilidad:
-                resultado.movilidad,
-
-            plasticidad:
-                resultado.plasticidad,
-
-            tamano:
-                resultado.tamano,
+                this.limitar(
+                    defensa
+                ),
 
             velocidad:
-                resultado.velocidad,
+                this.limitar(
+                    velocidad
+                ),
 
-            inteligencia:
-                resultado.inteligencia,
+            resistencia:
+                this.limitar(
+                    resistencia
+                ),
 
-            detalle:
-                detalle
+            tactica:
+                this.limitar(
+                    tactica
+                ),
+
+            desglose:
+                desglose
 
         };
 
