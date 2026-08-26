@@ -427,6 +427,10 @@ window.PALTAXON = {
 "006_11":{
   ta1:"Animalia > Chordata > Dinosauria > Saurischia > Theropoda > Tetanurae > Chilesaurus",
   ta2:"Dinosaurio. Saurisquio. Terópodo. Tetanuro."
+},
+"006_12":{
+  ta1:"Animalia > Chordata > Actinopterygii > Pachycormiformes > Pachycormidae > Leedsichthys",
+  ta2:"Pez óseo. Actinopterigio. Paquicórmido. Filtrador planctívoro."
 }
   
 };
