@@ -124,7 +124,25 @@
 
 
     <!-- ==================================================
-         ESTADÍSTICAS DE COMBATE
+         ESTADÍSTICAS BASE
+    ================================================== -->
+
+    <section class="panel">
+
+        <h2>📊 Estadísticas base</h2>
+
+
+        <div id="statsBase">
+
+            Esperando evaluación...
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         ESTADÍSTICAS FINALES
     ================================================== -->
 
     <section class="panel">
@@ -183,6 +201,10 @@ const escenarioElemento =
 
 const resultadoElemento =
     document.getElementById("resultado");
+
+
+const statsBaseElemento =
+    document.getElementById("statsBase");
 
 
 const statsElemento =
@@ -396,6 +418,88 @@ function mostrarEscenario(escenario) {
 
 /*
 ========================================================
+MOSTRAR ESTADÍSTICAS
+========================================================
+*/
+
+function mostrarStats(stats, elemento) {
+
+    if (!stats) {
+
+        elemento.innerHTML = `
+
+            ❌ No hay estadísticas disponibles.
+
+        `;
+
+        return;
+
+    }
+
+
+    elemento.innerHTML = `
+
+        <div class="stat-combate">
+
+            ⚔️ Ataque
+
+            <strong>
+                ${stats.ataque}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-combate">
+
+            🛡️ Defensa
+
+            <strong>
+                ${stats.defensa}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-combate">
+
+            ⚡ Velocidad
+
+            <strong>
+                ${stats.velocidad}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-combate">
+
+            ❤️ Resistencia
+
+            <strong>
+                ${stats.resistencia}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-combate">
+
+            🧠 Táctica
+
+            <strong>
+                ${stats.tactica}
+            </strong>
+
+        </div>
+
+    `;
+
+}
+
+
+/*
+========================================================
 EVALUAR FICHA
 ========================================================
 */
@@ -416,11 +520,14 @@ function evaluarFicha() {
 
         `;
 
-        statsElemento.innerHTML = `
 
-            Esperando evaluación...
+        statsBaseElemento.innerHTML =
+            "Esperando evaluación...";
 
-        `;
+
+        statsElemento.innerHTML =
+            "Esperando evaluación...";
+
 
         return;
 
@@ -451,6 +558,13 @@ function evaluarFicha() {
                 </strong>
 
             </p>
+
+        `;
+
+
+        statsBaseElemento.innerHTML = `
+
+            ❌ No hay estadísticas disponibles.
 
         `;
 
@@ -506,9 +620,33 @@ function evaluarFicha() {
 
 
     /*
-    ==================================================
-    DIAGNÓSTICO TEMPORAL
-    ==================================================
+    ----------------------------------------------
+    MOSTRAR STATS BASE
+    ----------------------------------------------
+    */
+
+    mostrarStats(
+        statsCombate,
+        statsBaseElemento
+    );
+
+
+    /*
+    ----------------------------------------------
+    MOSTRAR STATS FINALES
+    ----------------------------------------------
+    */
+
+    mostrarStats(
+        statsFinales,
+        statsElemento
+    );
+
+
+    /*
+    ----------------------------------------------
+    DIAGNÓSTICO
+    ----------------------------------------------
     */
 
     console.log(
@@ -687,75 +825,6 @@ function evaluarFicha() {
         </div>
 
     `;
-
-
-    /*
-    ==================================================
-    MOSTRAR STATS FINALES
-    ==================================================
-    */
-
-    if (statsFinales) {
-
-        statsElemento.innerHTML = `
-
-            <div class="stat-combate">
-
-                ⚔️ Ataque
-
-                <strong>
-                    ${statsFinales.ataque}
-                </strong>
-
-            </div>
-
-
-            <div class="stat-combate">
-
-                🛡️ Defensa
-
-                <strong>
-                    ${statsFinales.defensa}
-                </strong>
-
-            </div>
-
-
-            <div class="stat-combate">
-
-                ⚡ Velocidad
-
-                <strong>
-                    ${statsFinales.velocidad}
-                </strong>
-
-            </div>
-
-
-            <div class="stat-combate">
-
-                ❤️ Resistencia
-
-                <strong>
-                    ${statsFinales.resistencia}
-                </strong>
-
-            </div>
-
-
-            <div class="stat-combate">
-
-                🧠 Táctica
-
-                <strong>
-                    ${statsFinales.tactica}
-                </strong>
-
-            </div>
-
-        `;
-
-    }
 
 }
 
