@@ -911,7 +911,64 @@ document.addEventListener(
 
 </script>
 
+/* =====================================================
+   BOTÓN ARENA
+   ===================================================== */
 
+function abrirArenaDesdeVisor() {
+
+    const codigo =
+        window.PALNAVEGADOR.codigoActual;
+
+
+    if (!codigo) {
+
+        return;
+
+    }
+
+
+    const url =
+        "../arena2/pruebaarena_2.html" +
+        "?codigo=" +
+        encodeURIComponent(codigo) +
+        "&arena=1";
+
+
+    window.location.href =
+        url;
+
+}
+
+
+/* =====================================================
+   CONECTAR BOTÓN ARENA
+   ===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        const botonArena =
+            document.getElementById(
+                "botonArena"
+            );
+
+
+        if (!botonArena) {
+
+            return;
+
+        }
+
+
+        botonArena.addEventListener(
+            "click",
+            abrirArenaDesdeVisor
+        );
+
+    }
+);
 
       
 
