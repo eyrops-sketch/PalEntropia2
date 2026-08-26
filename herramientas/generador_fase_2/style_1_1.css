@@ -180,29 +180,31 @@ h1{
 =========================================================*/
 
 #botonArena{
- position:absolute;
- top:8px;
- right:calc(15% - 24px);
+ position:fixed;
+ top:10px;
+ right:90px;
 
- width:36px;
- height:36px;
+ width:34px;
+ height:34px;
 
- border-radius:50%;
+ padding:0;
+
  border:2px solid #62d6ff;
+ border-radius:50%;
 
- background:rgba(0,0,0,.75);
-
+ background:#1d9bf0;
  color:#fff;
+
+ font-size:17px;
+ line-height:30px;
 
  display:flex;
  align-items:center;
  justify-content:center;
 
- font-size:17px;
-
  cursor:pointer;
 
- z-index:10;
+ z-index:9999;
 
  box-shadow:0 0 10px rgba(98,214,255,.25);
 
@@ -210,8 +212,15 @@ h1{
 }
 
 #botonArena:hover{
- transform:scale(1.08);
- box-shadow:0 0 16px rgba(98,214,255,.45);
+ background:#62d6ff;
+ color:#001018;
+
+ box-shadow:
+  0 0 15px rgba(98,214,255,.42);
+}
+
+#botonArena:active{
+ transform:scale(.92);
 }
 
 /*=========================================================
