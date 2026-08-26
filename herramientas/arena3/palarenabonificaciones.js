@@ -7,20 +7,49 @@ PalEntropía
 APLICACIÓN DE BONIFICACIONES DE ESCENARIO
 A LOS 5 INDICADORES DE COMBATE.
 
-RECIBE:
-- estadísticas de combate base
-- bonificación del escenario
-
-DEVUELVE:
-- estadísticas de combate modificadas
-- desglose completo de las bonificaciones
+INDICADORES:
+- Ataque
+- Defensa
+- Velocidad
+- Resistencia
+- Táctica
 
 REGLAS:
 - Nunca supera 100.
 - Nunca baja de 0.
 - Nunca existen penalizaciones.
-- Conserva los nombres de los elementos
-  que generan cada bonificación.
+- Las bonificaciones se suman sobre los
+  indicadores de combate BASE.
+
+BONIFICACIONES:
+
+HÁBITATS
+1 coincidencia = +5
+2 coincidencias = +10
+3 coincidencias = +15
+
+La bonificación de hábitats se reparte:
+- 50% Resistencia
+- 50% Táctica
+
+MODO DE VIDA
+Coincidencia = +10
+
+Se reparte:
+- +5 Ataque
+- +5 Velocidad
+
+MEDIOS ECOLÓGICOS
+SM = +3 Resistencia
+L  = +3 Velocidad
+ES = +2 Defensa
+C  = +2 Ataque
+
+Además devuelve:
+- detalles de bonificaciones
+- nombres de las bonificaciones
+- valores aplicados
+- total
 ========================================================
 */
 
@@ -45,117 +74,15 @@ window.PALARENA_BONIFICACIONES = {
 
 
     /* ==================================================
-       OBTENER NOMBRE HÁBITAT
-       ================================================== */
-
-    nombreHabitat(codigo) {
-
-        if (
-            window.PALHAB &&
-            window.PALHAB[codigo]
-        ) {
-
-            const habitat =
-                window.PALHAB[codigo];
-
-            if (
-                typeof habitat === "string"
-            ) {
-
-                return habitat;
-
-            }
-
-            return (
-                habitat.nombre ||
-                habitat.descripcion ||
-                codigo
-            );
-
-        }
-
-        return codigo;
-
-    },
-
-
-    /* ==================================================
-       OBTENER NOMBRE MODO
-       ================================================== */
-
-    nombreModo(codigo) {
-
-        if (
-            window.PALMODO &&
-            window.PALMODO[codigo]
-        ) {
-
-            const modo =
-                window.PALMODO[codigo];
-
-            if (
-                typeof modo === "string"
-            ) {
-
-                return modo;
-
-            }
-
-            return (
-                modo.nombre ||
-                modo.descripcion ||
-                codigo
-            );
-
-        }
-
-        return codigo;
-
-    },
-
-
-    /* ==================================================
-       OBTENER NOMBRE MEDIO
-       ================================================== */
-
-    nombreMedio(codigo) {
-
-        if (
-            window.PALMEDIO &&
-            window.PALMEDIO[codigo]
-        ) {
-
-            const medio =
-                window.PALMEDIO[codigo];
-
-            if (
-                typeof medio === "string"
-            ) {
-
-                return medio;
-
-            }
-
-            return (
-                medio.nombre ||
-                medio.descripcion ||
-                codigo
-            );
-
-        }
-
-        return codigo;
-
-    },
-
-
-    /* ==================================================
        APLICAR BONIFICACIONES
        ================================================== */
 
     aplicar(stats, bonificacion) {
 
-        if (!stats) {
+        if (
+            !stats ||
+            !bonificacion
+        ) {
 
             return null;
 
@@ -163,59 +90,9 @@ window.PALARENA_BONIFICACIONES = {
 
 
         /*
-        ----------------------------------------------
-        SI NO EXISTE ESCENARIO
-        ----------------------------------------------
-        */
-
-        if (!bonificacion) {
-
-            return {
-
-                ataque:
-                    this.limitar(
-                        stats.ataque
-                    ),
-
-                defensa:
-                    this.limitar(
-                        stats.defensa
-                    ),
-
-                velocidad:
-                    this.limitar(
-                        stats.velocidad
-                    ),
-
-                resistencia:
-                    this.limitar(
-                        stats.resistencia
-                    ),
-
-                tactica:
-                    this.limitar(
-                        stats.tactica
-                    ),
-
-                desglose: {
-
-                    habitats: [],
-
-                    modo: null,
-
-                    medios: []
-
-                }
-
-            };
-
-        }
-
-
-        /*
-        ----------------------------------------------
-        ESTADÍSTICAS BASE
-        ----------------------------------------------
+        ==================================================
+        INDICADORES BASE
+        ==================================================
         */
 
         let ataque =
@@ -236,19 +113,11 @@ window.PALARENA_BONIFICACIONES = {
 
         /*
         ==================================================
-        DESGLOSE
+        REGISTRO DE BONIFICACIONES
         ==================================================
         */
 
-        const desglose = {
-
-            habitats: [],
-
-            modo: null,
-
-            medios: []
-
-        };
+        const detalles = [];
 
 
         /*
@@ -257,6 +126,12 @@ window.PALARENA_BONIFICACIONES = {
         ==================================================
         */
 
+        const coincidenciasHabitats =
+            Number(
+                bonificacion.habitats
+            ) || 0;
+
+
         const bonificacionHabitats =
             Number(
                 bonificacion.bonificacionHabitats
@@ -264,22 +139,9 @@ window.PALARENA_BONIFICACIONES = {
 
 
         if (
+            coincidenciasHabitats > 0 &&
             bonificacionHabitats > 0
         ) {
-
-            const coincidencias =
-                Number(
-                    bonificacion.habitats
-                ) || 0;
-
-
-            /*
-            La bonificación de hábitat
-            se reparte entre:
-
-            RESISTENCIA
-            TÁCTICA
-            */
 
             const resistenciaHabitat =
                 bonificacionHabitats / 2;
@@ -295,59 +157,40 @@ window.PALARENA_BONIFICACIONES = {
                 tacticaHabitat;
 
 
-            /*
-            Obtener los hábitats reales
-            del escenario.
-            */
+            detalles.push({
 
-            if (
-                bonificacion.escenarioHabitats &&
-                Array.isArray(
-                    bonificacion.escenarioHabitats
-                )
-            ) {
+                tipo: "hábitats",
 
-                bonificacion
-                    .escenarioHabitats
-                    .forEach(
-                        codigo => {
+                nombre:
+                    "Coincidencia de hábitats",
 
-                            desglose.habitats.push({
+                coincidencias:
+                    coincidenciasHabitats,
 
-                                codigo:
-                                    codigo,
+                bonificacion:
+                    bonificacionHabitats,
 
-                                nombre:
-                                    this.nombreHabitat(
-                                        codigo
-                                    ),
+                efectos: [
 
-                                ataque: 0,
+                    {
+                        indicador:
+                            "Resistencia",
 
-                                defensa: 0,
+                        valor:
+                            resistenciaHabitat
+                    },
 
-                                velocidad: 0,
+                    {
+                        indicador:
+                            "Táctica",
 
-                                resistencia:
-                                    resistenciaHabitat /
-                                    Math.max(
-                                        1,
-                                        coincidencias
-                                    ),
+                        valor:
+                            tacticaHabitat
+                    }
 
-                                tactica:
-                                    tacticaHabitat /
-                                    Math.max(
-                                        1,
-                                        coincidencias
-                                    )
+                ]
 
-                            });
-
-                        }
-                    );
-
-            }
+            });
 
         }
 
@@ -358,6 +201,12 @@ window.PALARENA_BONIFICACIONES = {
         ==================================================
         */
 
+        const coincidenciaModo =
+            Boolean(
+                bonificacion.modo
+            );
+
+
         const bonificacionModo =
             Number(
                 bonificacion.bonificacionModo
@@ -365,15 +214,9 @@ window.PALARENA_BONIFICACIONES = {
 
 
         if (
+            coincidenciaModo &&
             bonificacionModo > 0
         ) {
-
-            /*
-            Se reparte:
-
-            ATAQUE
-            VELOCIDAD
-            */
 
             const ataqueModo =
                 bonificacionModo / 2;
@@ -389,29 +232,37 @@ window.PALARENA_BONIFICACIONES = {
                 velocidadModo;
 
 
-            const codigoModo =
-                bonificacion.escenarioModo ||
-                bonificacion.modoCodigo ||
-                "";
+            detalles.push({
 
-
-            desglose.modo = {
-
-                codigo:
-                    codigoModo,
+                tipo: "modo",
 
                 nombre:
-                    this.nombreModo(
-                        codigoModo
-                    ),
+                    "Coincidencia de modo de vida",
 
-                ataque:
-                    ataqueModo,
+                bonificacion:
+                    bonificacionModo,
 
-                velocidad:
-                    velocidadModo
+                efectos: [
 
-            };
+                    {
+                        indicador:
+                            "Ataque",
+
+                        valor:
+                            ataqueModo
+                    },
+
+                    {
+                        indicador:
+                            "Velocidad",
+
+                        valor:
+                            velocidadModo
+                    }
+
+                ]
+
+            });
 
         }
 
@@ -429,134 +280,170 @@ window.PALARENA_BONIFICACIONES = {
             )
         ) {
 
-            bonificacion
-                .medios
-                .detalles
-                .forEach(
-                    detalle => {
+            bonificacion.medios.detalles.forEach(
+                detalle => {
 
-                        const datos = {
-
-                            codigo:
-                                detalle.medio || "",
-
-                            nombre:
-                                this.nombreMedio(
-                                    detalle.medio || ""
-                                ),
-
-                            SM: false,
-
-                            L: false,
-
-                            ES: false,
-
-                            C: false,
-
-                            ataque: 0,
-
-                            defensa: 0,
-
-                            velocidad: 0,
-
-                            resistencia: 0,
-
-                            tactica: 0
-
-                        };
+                    const efectosMedio = [];
 
 
-                        /*
-                        SM
-                        */
+                    /*
+                    --------------------------------------
+                    SM — RESISTENCIA
+                    --------------------------------------
+                    */
 
-                        if (detalle.SM) {
+                    if (detalle.SM) {
 
-                            datos.SM = true;
+                        resistencia += 3;
 
-                            datos.resistencia =
-                                3;
+                        efectosMedio.push({
 
-                            resistencia +=
-                                3;
+                            indicador:
+                                "Resistencia",
 
-                        }
+                            valor:
+                                3
 
-
-                        /*
-                        L
-                        */
-
-                        if (detalle.L) {
-
-                            datos.L = true;
-
-                            datos.velocidad =
-                                3;
-
-                            velocidad +=
-                                3;
-
-                        }
-
-
-                        /*
-                        ES
-                        */
-
-                        if (detalle.ES) {
-
-                            datos.ES = true;
-
-                            datos.defensa =
-                                2;
-
-                            defensa +=
-                                2;
-
-                        }
-
-
-                        /*
-                        C
-                        */
-
-                        if (detalle.C) {
-
-                            datos.C = true;
-
-                            datos.ataque =
-                                2;
-
-                            ataque +=
-                                2;
-
-                        }
-
-
-                        /*
-                        Solo guardar medios
-                        que realmente producen
-                        alguna bonificación.
-                        */
-
-                        if (
-                            datos.SM ||
-                            datos.L ||
-                            datos.ES ||
-                            datos.C
-                        ) {
-
-                            desglose.medios.push(
-                                datos
-                            );
-
-                        }
+                        });
 
                     }
-                );
+
+
+                    /*
+                    --------------------------------------
+                    L — VELOCIDAD
+                    --------------------------------------
+                    */
+
+                    if (detalle.L) {
+
+                        velocidad += 3;
+
+                        efectosMedio.push({
+
+                            indicador:
+                                "Velocidad",
+
+                            valor:
+                                3
+
+                        });
+
+                    }
+
+
+                    /*
+                    --------------------------------------
+                    ES — DEFENSA
+                    --------------------------------------
+                    */
+
+                    if (detalle.ES) {
+
+                        defensa += 2;
+
+                        efectosMedio.push({
+
+                            indicador:
+                                "Defensa",
+
+                            valor:
+                                2
+
+                        });
+
+                    }
+
+
+                    /*
+                    --------------------------------------
+                    C — ATAQUE
+                    --------------------------------------
+                    */
+
+                    if (detalle.C) {
+
+                        ataque += 2;
+
+                        efectosMedio.push({
+
+                            indicador:
+                                "Ataque",
+
+                            valor:
+                                2
+
+                        });
+
+                    }
+
+
+                    /*
+                    --------------------------------------
+                    REGISTRAR MEDIO
+                    --------------------------------------
+                    */
+
+                    if (
+                        efectosMedio.length > 0
+                    ) {
+
+                        detalles.push({
+
+                            tipo: "medio",
+
+                            codigo:
+                                detalle.medio,
+
+                            nombre:
+                                "Coincidencia de medio ecológico",
+
+                            efectos:
+                                efectosMedio
+
+                        });
+
+                    }
+
+                }
+            );
 
         }
+
+
+        /*
+        ==================================================
+        CALCULAR TOTAL APLICADO
+        ==================================================
+        */
+
+        let total = 0;
+
+
+        detalles.forEach(
+            detalle => {
+
+                if (
+                    Array.isArray(
+                        detalle.efectos
+                    )
+                ) {
+
+                    detalle.efectos.forEach(
+                        efecto => {
+
+                            total +=
+                                Number(
+                                    efecto.valor
+                                ) || 0;
+
+                        }
+                    );
+
+                }
+
+            }
+        );
 
 
         /*
@@ -565,7 +452,7 @@ window.PALARENA_BONIFICACIONES = {
         ==================================================
         */
 
-        return {
+        const resultado = {
 
             ataque:
                 this.limitar(
@@ -592,10 +479,117 @@ window.PALARENA_BONIFICACIONES = {
                     tactica
                 ),
 
-            desglose:
-                desglose
+
+            /*
+            ----------------------------------------------
+            VALORES BASE
+            ----------------------------------------------
+            */
+
+            base: {
+
+                ataque:
+                    this.limitar(
+                        stats.ataque
+                    ),
+
+                defensa:
+                    this.limitar(
+                        stats.defensa
+                    ),
+
+                velocidad:
+                    this.limitar(
+                        stats.velocidad
+                    ),
+
+                resistencia:
+                    this.limitar(
+                        stats.resistencia
+                    ),
+
+                tactica:
+                    this.limitar(
+                        stats.tactica
+                    )
+
+            },
+
+
+            /*
+            ----------------------------------------------
+            BONIFICACIONES
+            ----------------------------------------------
+            */
+
+            bonificacion: {
+
+                ataque:
+                    this.limitar(
+                        ataque
+                    ) -
+                    this.limitar(
+                        stats.ataque
+                    ),
+
+                defensa:
+                    this.limitar(
+                        defensa
+                    ) -
+                    this.limitar(
+                        stats.defensa
+                    ),
+
+                velocidad:
+                    this.limitar(
+                        velocidad
+                    ) -
+                    this.limitar(
+                        stats.velocidad
+                    ),
+
+                resistencia:
+                    this.limitar(
+                        resistencia
+                    ) -
+                    this.limitar(
+                        stats.resistencia
+                    ),
+
+                tactica:
+                    this.limitar(
+                        tactica
+                    ) -
+                    this.limitar(
+                        stats.tactica
+                    )
+
+            },
+
+
+            /*
+            ----------------------------------------------
+            DESGLOSE
+            ----------------------------------------------
+            */
+
+            detalles:
+                detalles,
+
+
+            /*
+            ----------------------------------------------
+            TOTAL
+            ----------------------------------------------
+            */
+
+            total:
+                total
 
         };
+
+
+        return resultado;
 
     }
 
