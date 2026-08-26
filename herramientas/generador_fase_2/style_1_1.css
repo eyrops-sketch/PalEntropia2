@@ -182,7 +182,7 @@ h1{
 #botonArena{
  position:absolute;
  top:8px;
- right:15%;
+ right:calc(15% - 18px);
 
  width:36px;
  height:36px;
