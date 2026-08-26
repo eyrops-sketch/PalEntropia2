@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>PalEntropía - Arena</title>
+
+    <link
+        rel="stylesheet"
+        href="stylearena.css"
+    >
+
+</head>
+
+
+<body>
+
+    <main class="arena">
+
+        <header class="arena-cabecera">
+
+            <h1>🎲 PalEntropía</h1>
+
+            <h2>Arena</h2>
+
+            <p>
+                Prueba de datos de combate
+            </p>
+
+        </header>
+
+
+        <section class="panel">
+
+            <h2>Datos de Paleoficha</h2>
+
+            <label for="codigoFicha">
+                Código de Paleoficha
+            </label>
+
+            <input
+                type="text"
+                id="codigoFicha"
+                value="006_01"
+                maxlength="7"
+            >
+
+            <button
+                id="btnCargar"
+                type="button"
+            >
+                Cargar ficha
+            </button>
+
+        </section>
+
+
+        <section
+            id="resultado"
+            class="panel resultado"
+        >
+
+            <h2>Resultado</h2>
+
+            <div id="estado">
+                Esperando datos...
+            </div>
+
+            <div id="datosFicha"></div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==========================================
+         BASES DE DATOS DE PALENTROPÍA
+    =========================================== -->
+
+    <script src="../generador_fase_2/palhab.js"></script>
+
+    <script src="../generador_fase_2/palmedio.js"></script>
+
+    <script src="../generador_fase_2/palmodo.js"></script>
+
+
+    <!-- ==========================================
+         DATOS DE ARENA
+    =========================================== -->
+
+    <script src="palarenadatos.js"></script>
+
+
+    <!-- ==========================================
+         INICIALIZACIÓN
+    =========================================== -->
+
+    <script>
+
+        const estado =
+            document.getElementById("estado");
+
+        const datosFicha =
+            document.getElementById("datosFicha");
+
+        const codigoFicha =
+            document.getElementById("codigoFicha");
+
+        const btnCargar =
+            document.getElementById("btnCargar");
+
+
+        /* =========================================
+           MOSTRAR FICHA
+        ========================================= */
+
+        function mostrarFicha(codigo) {
+
+            const datos =
+                window.PALARENA_DATOS.preparar(codigo);
+
+
+            if (!datos) {
+
+                estado.textContent =
+                    "❌ No se encontró la ficha.";
+
+                datosFicha.innerHTML = "";
+
+                return;
+            }
+
+
+            estado.textContent =
+                "✓ Ficha cargada correctamente";
+
+
+            datosFicha.innerHTML = `
+
+                <div class="dato">
+
+                    <strong>Código:</strong>
+
+                    ${datos.j1}
+
+                </div>
+
+
+                <div class="dato">
+
+                    <strong>Nombre:</strong>
+
+                    ${datos.j2}
+
+                </div>
+
+
+                <hr>
+
+
+                <h3>Hábitats j5</h3>
+
+                <div class="codigo">
+
+                    ${datos.habitatsJ5.join(" | ")}
+
+                </div>
+
+
+                <h3>Hábitats j6</h3>
+
+                <div class="codigo">
+
+                    ${datos.habitatsJ6.join(" | ")}
+
+                </div>
+
+
+                <h3>Modo de vida</h3>
+
+                <div class="codigo">
+
+                    ${datos.modo}
+
+                </div>
+
+
+                <h3>Medio ecológico</h3>
+
+                <div class="codigo">
+
+                    ${datos.medio.SM}
+                    |
+                    ${datos.medio.L}
+                    |
+                    ${datos.medio.ES}
+                    |
+                    ${datos.medio.C}
+
+                </div>
+
+
+                <h3>Estadísticas</h3>
+
+                <div class="estadisticas">
+
+                    <div>e1: ${datos.estadisticas.e1}</div>
+                    <div>e2: ${datos.estadisticas.e2}</div>
+                    <div>e3: ${datos.estadisticas.e3}</div>
+                    <div>e4: ${datos.estadisticas.e4}</div>
+                    <div>e5: ${datos.estadisticas.e5}</div>
+                    <div>e6: ${datos.estadisticas.e6}</div>
+                    <div>e7: ${datos.estadisticas.e7}</div>
+                    <div>e8: ${datos.estadisticas.e8}</div>
+                    <div>e9: ${datos.estadisticas.e9}</div>
+                    <div>e10: ${datos.estadisticas.e10}</div>
+                    <div>e11: ${datos.estadisticas.e11}</div>
+
+                </div>
+
+            `;
+        }
+
+
+        /* =========================================
+           BOTÓN
+        ========================================= */
+
+        btnCargar.addEventListener(
+            "click",
+            function () {
+
+                const codigo =
+                    codigoFicha.value.trim();
+
+                mostrarFicha(codigo);
+
+            }
+        );
+
+
+        /* =========================================
+           CARGA INICIAL
+        ========================================= */
+
+        async function iniciarArena() {
+
+            estado.textContent =
+                "⏳ Cargando master.csv...";
+
+
+            const cargado =
+                await window.PALARENA_DATOS.cargar();
+
+
+            if (!cargado) {
+
+                estado.textContent =
+                    "❌ Error cargando master.csv.";
+
+                return;
+            }
+
+
+            estado.textContent =
+                "✓ Base de datos cargada";
+
+
+            mostrarFicha("006_01");
+
+        }
+
+
+        iniciarArena();
+
+    </script>
+
+
+</body>
+
+</html>
