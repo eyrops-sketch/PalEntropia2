@@ -888,11 +888,147 @@ function recibirSeleccionArena() {
 
 
     
+/* ==========================================================
+   APLICAR SELECCIÓN DE PALEOFICHA
+   ========================================================== */
+
+async function aplicarSeleccionArena() {
+
+    const seleccion =
+        recibirSeleccionArena();
+
+
+    if (!seleccion) {
+
+        return false;
+
+    }
+
+
+    if (
+        !COMBATE_ARENA
+    ) {
+
+        return false;
+
+    }
+
+
+    const nuevosDatos =
+        crearDatosCombatienteArena(
+            seleccion.codigo
+        );
+
+
+    if (
+        seleccion.arena === "1"
+    ) {
+
+        const datos2 =
+            COMBATE_ARENA.combatiente2.datos;
+
+
+        const datos1 =
+            nuevosDatos;
+
+
+        const fichaHTML1 =
+            await mostrarCombatienteArena(
+                datos1,
+                1
+            );
+
+
+        const fichaHTML2 =
+            await mostrarCombatienteArena(
+                datos2,
+                2
+            );
+
+
+        document.getElementById(
+            "codigo1"
+        ).textContent =
+            datos1.codigo;
+
+
+        document.getElementById(
+            "resultado"
+        ).innerHTML =
+            fichaHTML1 +
+            fichaHTML2;
+
+
+        prepararCombateArena(
+            datos1,
+            datos2
+        );
+
+
+        return true;
+
+    }
+
+
+    if (
+        seleccion.arena === "2"
+    ) {
+
+        const datos1 =
+            COMBATE_ARENA.combatiente1.datos;
+
+
+        const datos2 =
+            nuevosDatos;
+
+
+        const fichaHTML1 =
+            await mostrarCombatienteArena(
+                datos1,
+                1
+            );
+
+
+        const fichaHTML2 =
+            await mostrarCombatienteArena(
+                datos2,
+                2
+            );
+
+
+        document.getElementById(
+            "codigo2"
+        ).textContent =
+            datos2.codigo;
+
+
+        document.getElementById(
+            "resultado"
+        ).innerHTML =
+            fichaHTML1 +
+            fichaHTML2;
+
+
+        prepararCombateArena(
+            datos1,
+            datos2
+        );
+
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
 
 
 
 
 
+    
 
 
     
@@ -2081,6 +2217,39 @@ document.getElementById(
    ========================================================== */
 
 iniciarArena();
+
+
+/* ==========================================================
+   COMPROBAR SELECCIÓN DESDE EL VISOR
+   ========================================================== */
+
+setInterval(
+    async function() {
+
+        try {
+
+            await aplicarSeleccionArena();
+
+        } catch (error) {
+
+            console.error(
+                "Error aplicando selección desde visor:",
+                error
+            );
+
+        }
+
+    },
+    500
+);
+
+
+
+
+    
+
+
+    
 
 </script>
 
