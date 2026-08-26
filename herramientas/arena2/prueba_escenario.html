@@ -167,6 +167,7 @@
 
 <script src="palarenabonificaciones.js"></script>
 
+
 <script>
 
 /*
@@ -477,11 +478,11 @@ function evaluarFicha() {
 
     const bonificacion =
         resultado.bonificacion;
-   
+
 
     /*
     ----------------------------------------------
-    ESTADÍSTICAS DE COMBATE
+    ESTADÍSTICAS BASE
     ----------------------------------------------
     */
 
@@ -490,12 +491,19 @@ function evaluarFicha() {
             .calcularFicha(ficha);
 
 
+    /*
+    ----------------------------------------------
+    APLICAR BONIFICACIONES
+    ----------------------------------------------
+    */
+
     const statsFinales =
-    window.PALARENA_BONIFICACIONES
-        .aplicar(
-            statsCombate,
-            bonificacion
-        );
+        window.PALARENA_BONIFICACIONES
+            .aplicar(
+                statsCombate,
+                bonificacion
+            );
+
 
     /*
     ----------------------------------------------
@@ -659,11 +667,11 @@ function evaluarFicha() {
 
     /*
     ----------------------------------------------
-    MOSTRAR 5 STATS DE COMBATE
+    MOSTRAR 5 STATS FINALES
     ----------------------------------------------
     */
 
-    if (statsCombate) {
+    if (statsFinales) {
 
         statsElemento.innerHTML = `
 
@@ -672,7 +680,7 @@ function evaluarFicha() {
                 ⚔️ Ataque
 
                 <strong>
-                    ${statsCombate.ataque}
+                    ${statsFinales.ataque}
                 </strong>
 
             </div>
@@ -683,7 +691,7 @@ function evaluarFicha() {
                 🛡️ Defensa
 
                 <strong>
-                    ${statsCombate.defensa}
+                    ${statsFinales.defensa}
                 </strong>
 
             </div>
@@ -694,7 +702,7 @@ function evaluarFicha() {
                 ⚡ Velocidad
 
                 <strong>
-                    ${statsCombate.velocidad}
+                    ${statsFinales.velocidad}
                 </strong>
 
             </div>
@@ -705,7 +713,7 @@ function evaluarFicha() {
                 ❤️ Resistencia
 
                 <strong>
-                    ${statsCombate.resistencia}
+                    ${statsFinales.resistencia}
                 </strong>
 
             </div>
@@ -716,7 +724,7 @@ function evaluarFicha() {
                 🧠 Táctica
 
                 <strong>
-                    ${statsCombate.tactica}
+                    ${statsFinales.tactica}
                 </strong>
 
             </div>
