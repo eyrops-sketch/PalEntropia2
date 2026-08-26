@@ -1232,6 +1232,9 @@ return `
 }
 
 
+
+
+
 /* ==========================================================
    PREPARAR COMBATE
    ========================================================== */
@@ -1255,6 +1258,80 @@ function prepararCombateArena(
         }
 
 
+        /*
+        ==================================================
+        ESCENARIO
+        ==================================================
+        */
+
+        let escenario = null;
+
+        let bonificacion1 = null;
+        let bonificacion2 = null;
+
+
+        if (
+            window.PALARENA_ESCENARIO
+        ) {
+
+            /*
+            ----------------------------------------------
+            Generar un único escenario para el combate
+            ----------------------------------------------
+            */
+
+            escenario =
+                window.PALARENA_ESCENARIO.generar();
+
+
+            /*
+            ----------------------------------------------
+            Evaluar combatiente 1
+            ----------------------------------------------
+            */
+
+            const resultado1 =
+                window.PALARENA_ESCENARIO.evaluar(
+                    datos1.codigo
+                );
+
+
+            if (resultado1) {
+
+                bonificacion1 =
+                    resultado1.bonificacion;
+
+            }
+
+
+            /*
+            ----------------------------------------------
+            Evaluar combatiente 2
+            ----------------------------------------------
+            */
+
+            const resultado2 =
+                window.PALARENA_ESCENARIO.evaluar(
+                    datos2.codigo
+                );
+
+
+            if (resultado2) {
+
+                bonificacion2 =
+                    resultado2.bonificacion;
+
+            }
+
+        }
+
+
+        /*
+        ==================================================
+        DATOS COMBATE 1
+        ==================================================
+        */
+
         const datosCombate1 = {
 
             ...datos1,
@@ -1269,6 +1346,12 @@ function prepararCombateArena(
 
         };
 
+
+        /*
+        ==================================================
+        DATOS COMBATE 2
+        ==================================================
+        */
 
         const datosCombate2 = {
 
@@ -1285,6 +1368,140 @@ function prepararCombateArena(
         };
 
 
+        /*
+        ==================================================
+        BONIFICACIONES REALES DE COMBATE
+        ==================================================
+        */
+
+        if (
+            window.PALARENA_BONIFICACIONES
+        ) {
+
+            const statsBase1 =
+                obtenerStatsArena(
+                    datosCombate1
+                );
+
+
+            const statsBase2 =
+                obtenerStatsArena(
+                    datosCombate2
+                );
+
+
+            const statsModificados1 =
+                window.PALARENA_BONIFICACIONES
+                    .aplicar(
+                        statsBase1,
+                        bonificacion1
+                    );
+
+
+            const statsModificados2 =
+                window.PALARENA_BONIFICACIONES
+                    .aplicar(
+                        statsBase2,
+                        bonificacion2
+                    );
+
+
+            /*
+            ----------------------------------------------
+            Aplicar stats modificados al combatiente 1
+            ----------------------------------------------
+            */
+
+            if (statsModificados1) {
+
+                datosCombate1.e1 =
+                    statsModificados1.adaptabilidad;
+
+                datosCombate1.e2 =
+                    statsModificados1.sociabilidad;
+
+                datosCombate1.e3 =
+                    statsModificados1.resistencia;
+
+                datosCombate1.e4 =
+                    statsModificados1.reproduccion;
+
+                datosCombate1.e5 =
+                    statsModificados1.ofensiva;
+
+                datosCombate1.e6 =
+                    statsModificados1.defensa;
+
+                datosCombate1.e7 =
+                    statsModificados1.movilidad;
+
+                datosCombate1.e8 =
+                    statsModificados1.plasticidad;
+
+                datosCombate1.e9 =
+                    statsModificados1.tamano;
+
+                datosCombate1.e10 =
+                    statsModificados1.velocidad;
+
+                datosCombate1.e11 =
+                    statsModificados1.inteligencia;
+
+            }
+
+
+            /*
+            ----------------------------------------------
+            Aplicar stats modificados al combatiente 2
+            ----------------------------------------------
+            */
+
+            if (statsModificados2) {
+
+                datosCombate2.e1 =
+                    statsModificados2.adaptabilidad;
+
+                datosCombate2.e2 =
+                    statsModificados2.sociabilidad;
+
+                datosCombate2.e3 =
+                    statsModificados2.resistencia;
+
+                datosCombate2.e4 =
+                    statsModificados2.reproduccion;
+
+                datosCombate2.e5 =
+                    statsModificados2.ofensiva;
+
+                datosCombate2.e6 =
+                    statsModificados2.defensa;
+
+                datosCombate2.e7 =
+                    statsModificados2.movilidad;
+
+                datosCombate2.e8 =
+                    statsModificados2.plasticidad;
+
+                datosCombate2.e9 =
+                    statsModificados2.tamano;
+
+                datosCombate2.e10 =
+                    statsModificados2.velocidad;
+
+                datosCombate2.e11 =
+                    statsModificados2.inteligencia;
+
+            }
+
+        }
+
+
+        /*
+        ==================================================
+        CREAR COMBATIENTES
+        ==================================================
+        */
+
         const combatiente1 =
             crearCombatienteArena(
                 datosCombate1
@@ -1297,12 +1514,24 @@ function prepararCombateArena(
             );
 
 
+        /*
+        ==================================================
+        CREAR COMBATE
+        ==================================================
+        */
+
         COMBATE_ARENA =
             crearCombateArena(
                 datosCombate1,
                 datosCombate2
             );
 
+
+        /*
+        ==================================================
+        ATAQUES ESPECIALES
+        ==================================================
+        */
 
         const ataque1 =
             obtenerAtaqueArena(
@@ -1316,6 +1545,12 @@ function prepararCombateArena(
             );
 
 
+        /*
+        ==================================================
+        MOSTRAR PANEL
+        ==================================================
+        */
+
         document.getElementById(
             "panelCombate"
         ).style.display = "block";
@@ -1325,6 +1560,12 @@ function prepararCombateArena(
             "panelResultadoCombate"
         ).style.display = "none";
 
+
+        /*
+        ==================================================
+        MOSTRAR COMBATIENTES
+        ==================================================
+        */
 
         document.getElementById(
             "combatientesPreparados"
@@ -1355,17 +1596,14 @@ function prepararCombateArena(
                 <br>
 
                 ⚔️ Ataque especial:
-                ${escaparHTML(
-                    combatiente1.ataque_especial
-                )}
-
                 ${
-                    ataque1 && ataque1.nombre
-                        ? " — " +
-                          escaparHTML(
-                              ataque1.nombre
-                          )
-                        : ""
+                    ataque1
+                        ? escaparHTML(
+                            ataque1.codigo +
+                            " — " +
+                            ataque1.nombre
+                        )
+                        : "Desconocido"
                 }
 
             </div>
@@ -1399,22 +1637,72 @@ function prepararCombateArena(
                 <br>
 
                 ⚔️ Ataque especial:
-                ${escaparHTML(
-                    combatiente2.ataque_especial
-                )}
-
                 ${
-                    ataque2 && ataque2.nombre
-                        ? " — " +
-                          escaparHTML(
-                              ataque2.nombre
-                          )
-                        : ""
+                    ataque2
+                        ? escaparHTML(
+                            ataque2.codigo +
+                            " — " +
+                            ataque2.nombre
+                        )
+                        : "Desconocido"
                 }
 
             </div>
 
         `;
+
+
+        /*
+        ==================================================
+        MOSTRAR ESCENARIO Y BONIFICACIONES
+        ==================================================
+        */
+
+        const panelEscenario =
+            document.getElementById(
+                "escenarioCombate"
+            );
+
+
+        if (
+            panelEscenario &&
+            escenario
+        ) {
+
+            panelEscenario.innerHTML = `
+
+                <h3>🎲 Escenario</h3>
+
+                <div>
+
+                    🏠 Hábitats:
+                    ${escenario.habitats.join(", ")}
+
+                </div>
+
+                <div>
+
+                    🧬 Modo:
+                    ${escenario.modo}
+
+                </div>
+
+                <div>
+
+                    🌎 Medios:
+                    ${escenario.medios
+                        .map(
+                            medio =>
+                                medio.codigo
+                        )
+                        .join(", ")
+                    }
+
+                </div>
+
+            `;
+
+        }
 
     } catch (error) {
 
@@ -1424,30 +1712,63 @@ function prepararCombateArena(
         );
 
 
-        document.getElementById(
-            "panelResultadoCombate"
-        ).style.display = "block";
+        const estado =
+            document.getElementById(
+                "estado"
+            );
 
 
-        document.getElementById(
-            "ganadorCombate"
-        ).innerHTML = `
+        if (estado) {
 
-            <span class="error">
+            estado.innerHTML = `
 
-                ❌ ${escaparHTML(
-                    error.message
-                )}
+                <span class="error">
 
-            </span>
+                    ✗ ${
+                        escaparHTML(
+                            error.message
+                        )
+                    }
 
-        `;
+                </span>
+
+            `;
+
+        }
 
     }
 
 }
 
 
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+        
+                
+
+
+
+
+
+                
+
+                    
+
+
+
+    
 /* ==========================================================
    NUEVO COMBATE
    ========================================================== */
