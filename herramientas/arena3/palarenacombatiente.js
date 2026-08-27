@@ -1,24 +1,20 @@
 /* ==========================================================
    PALENTROPÍA — ARENA
    archivo: palarenacombatiente.js
-   versión: 1.2
-
-   CREACIÓN DE COMBATIENTE
-
-   REGLA:
-   - Calcula HP base.
-   - Obtiene el escenario.
-   - Aplica únicamente la bonificación de HP.
-   - No modifica estadísticas.
+   versión: 1.3
    ========================================================== */
 
+
+/* ==========================================================
+   CREAR COMBATIENTE
+   ========================================================== */
 
 function crearCombatienteArena(datos) {
 
 
     /*
     ==========================================================
-    STATS
+    STATS BASE
     ==========================================================
     */
 
@@ -51,8 +47,8 @@ function crearCombatienteArena(datos) {
     ==========================================================
     */
 
-    let hpFinal =
-        hpBase;
+    let hpBonificacionEscenario =
+        0;
 
 
     let bonificacionesEscenario =
@@ -61,7 +57,18 @@ function crearCombatienteArena(datos) {
 
     /*
     ----------------------------------------------------------
-    OBTENER RESULTADO DEL ESCENARIO
+    INDICADOR
+    ----------------------------------------------------------
+    */
+
+    console.log(
+        "🟢 APLICANDO ESCENARIO"
+    );
+
+
+    /*
+    ----------------------------------------------------------
+    OBTENER RESULTADO
     ----------------------------------------------------------
     */
 
@@ -77,79 +84,150 @@ function crearCombatienteArena(datos) {
             );
 
 
-        /*
-        ------------------------------------------------------
-        APLICAR BONIFICACIÓN
-        ------------------------------------------------------
-        */
-
         if (
             resultadoEscenario &&
-            resultadoEscenario.bonificacion &&
-            typeof window.aplicarEscenarioArena ===
-            "function"
+            resultadoEscenario.bonificacion
         ) {
 
 
+            const bonificacion =
+                resultadoEscenario.bonificacion;
+
+
             /*
-            --------------------------------------------------
-            IMPORTANTE
-
-            aplicarescenario.js espera:
-
-            1. ficha
-            2. resultado del escenario
-
-            Creamos una ficha temporal
-            únicamente con el HP base.
-
-            No modificamos los datos originales.
-            --------------------------------------------------
+            ==================================================
+            HÁBITATS
+            ==================================================
             */
 
-            const fichaTemporal = {
-
-                hp_max:
-                    hpBase
-
-            };
+            const coincidenciasHabitats =
+                Number(
+                    bonificacion.habitats
+                ) || 0;
 
 
-            const aplicado =
-                window.aplicarEscenarioArena(
-                    fichaTemporal,
-                    resultadoEscenario
-                );
+            if (
+                coincidenciasHabitats > 0
+            ) {
+
+                hpBonificacionEscenario +=
+                    Math.round(
+                        coincidenciasHabitats *
+                        5
+                    );
+
+
+                bonificacionesEscenario.push({
+
+                    nombre:
+                        "Hábitats",
+
+                    origen:
+                        "habitats",
+
+                    coincidencias:
+                        coincidenciasHabitats,
+
+                    hp:
+                        Math.round(
+                            coincidenciasHabitats * 5
+                        )
+
+                });
+
+            }
 
 
             /*
-            --------------------------------------------------
-            RECIBIR HP FINAL
-            --------------------------------------------------
+            ==================================================
+            MODO
+            ==================================================
             */
 
             if (
-                aplicado
+                bonificacion.modo === true
             ) {
 
-                hpFinal =
-                    Number(
-                        aplicado.hp_total
-                    ) || hpBase;
+                hpBonificacionEscenario +=
+                    10;
 
 
-                bonificacionesEscenario =
-                    Array.isArray(
-                        aplicado.bonificaciones
-                    )
-                        ? aplicado.bonificaciones
-                        : [];
+                bonificacionesEscenario.push({
+
+                    nombre:
+                        "Modo de vida",
+
+                    origen:
+                        "modo",
+
+                    coincidencias:
+                        1,
+
+                    hp:
+                        10
+
+                });
+
+            }
+
+
+            /*
+            ==================================================
+            MEDIOS
+            ==================================================
+            */
+
+            const bonificacionMedios =
+                Number(
+                    bonificacion
+                        .bonificacionMedios
+                ) || 0;
+
+
+            if (
+                bonificacionMedios > 0
+            ) {
+
+                hpBonificacionEscenario +=
+                    bonificacionMedios;
+
+
+                bonificacionesEscenario.push({
+
+                    nombre:
+                        "Medios ecológicos",
+
+                    origen:
+                        "medios",
+
+                    coincidencias:
+                        Number(
+                            bonificacion
+                                .medios
+                                ?.coincidencias
+                        ) || 0,
+
+                    hp:
+                        bonificacionMedios
+
+                });
 
             }
 
         }
 
     }
+
+
+    /*
+    ==========================================================
+    HP FINAL
+    ==========================================================
+    */
+
+    const hpFinal =
+        hpBase +
+        hpBonificacionEscenario;
 
 
     /*
@@ -194,24 +272,14 @@ function crearCombatienteArena(datos) {
 
     return {
 
-
-        /*
-        ------------------------------------------------------
-        DATOS
-        ------------------------------------------------------
-        */
-
         datos:
             datos,
-
 
         codigo:
             datos.j1 || "",
 
-
         nombre:
             datos.j2 || "Desconocido",
-
 
         imagen:
             datos.i3 || "",
@@ -246,18 +314,14 @@ function crearCombatienteArena(datos) {
         hp_base:
             hpBase,
 
-
         hp_bonificacion_escenario:
-            hpFinal - hpBase,
-
+            hpBonificacionEscenario,
 
         bonificaciones_escenario:
             bonificacionesEscenario,
 
-
         hp_max:
             hpFinal,
-
 
         hp:
             hpFinal,
@@ -292,10 +356,8 @@ function crearCombatienteArena(datos) {
         defendiendo:
             false,
 
-
         efectos:
             [],
-
 
         derrotado:
             false
