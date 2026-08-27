@@ -1,4 +1,10 @@
 /* ==========================================================
+   PALENTROPÍA — ARENA
+   archivo: palarenacombatiente.js
+   ========================================================== */
+
+
+/* ==========================================================
    CREAR COMBATIENTE
    ========================================================== */
 
@@ -84,25 +90,22 @@ function crearCombatienteArena(datos) {
 
     /*
     ==========================================================
-    APLICAR ESCENARIO
+    APLICACIÓN DEL ESCENARIO
     ==========================================================
 
-    El escenario calcula las coincidencias.
+    El escenario NO modifica estadísticas.
 
-    aplicarescenario.js recibe:
+    Solo añade HP.
 
-        datos
-        resultadoEscenario
+    Flujo:
 
-    y devuelve:
-
-        hp_base
-        hp_bonificado
-        hp_total
-        bonificaciones
-
-    El escenario SOLO modifica HP.
-
+        hpBase
+            ↓
+        resultado del escenario
+            ↓
+        aplicarescenario.js
+            ↓
+        HP final
     ==========================================================
     */
 
@@ -118,6 +121,17 @@ function crearCombatienteArena(datos) {
         [];
 
 
+    /*
+    ==========================================================
+    INDICADOR DE APLICACIÓN
+    ==========================================================
+    */
+
+    console.log(
+        "🟢 APLICANDO ESCENARIO"
+    );
+
+
     if (
         window.PALARENA_ESCENARIO &&
         typeof window.PALARENA_ESCENARIO.evaluar ===
@@ -128,7 +142,7 @@ function crearCombatienteArena(datos) {
 
         /*
         ------------------------------------------------------
-        OBTENER RESULTADO DEL ESCENARIO
+        OBTENER ESCENARIO
         ------------------------------------------------------
         */
 
@@ -138,29 +152,28 @@ function crearCombatienteArena(datos) {
             );
 
 
+        /*
+        ------------------------------------------------------
+        APLICAR BONIFICACIÓN
+        ------------------------------------------------------
+        */
+
         if (
             resultadoEscenario
         ) {
 
-            /*
-            --------------------------------------------------
-            APLICAR ESCENARIO
-            --------------------------------------------------
-
-            IMPORTANTE:
-
-            Se pasa el objeto datos completo y el resultado
-            completo del escenario.
-
-            --------------------------------------------------
-            */
-
             const aplicado =
                 window.aplicarEscenarioArena(
-                    datos,
+                    hpBase,
                     resultadoEscenario
                 );
 
+
+            /*
+            --------------------------------------------------
+            RESULTADO
+            --------------------------------------------------
+            */
 
             if (
                 aplicado
@@ -257,6 +270,12 @@ function crearCombatienteArena(datos) {
             stats,
 
 
+        /*
+        ------------------------------------------------------
+        INDICADORES ARENA
+        ------------------------------------------------------
+        */
+
         indicadoresArena:
             datos.indicadoresArena || null,
 
@@ -305,7 +324,7 @@ function crearCombatienteArena(datos) {
 
         /*
         ------------------------------------------------------
-        ESTADO
+        ESTADO DE COMBATE
         ------------------------------------------------------
         */
 
