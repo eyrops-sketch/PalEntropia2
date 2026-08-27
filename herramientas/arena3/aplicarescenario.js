@@ -2,35 +2,29 @@
 ============================================================
 palentropía — arena
 archivo: aplicarescenario.js
-versión: 1.2
+versión: 1.1
 ============================================================
 
-APLICACIÓN DE ESCENARIO AL COMBATIENTE
-
-FUNCIÓN:
+APLICACIÓN DEL ESCENARIO
 
 Recibe:
 
-- HP base
-- bonificaciones del escenario
+    hpBase
+    resultadoEscenario
 
-ÚNICAMENTE suma HP.
+Convierte las bonificaciones del escenario
+en sumandos de HP.
 
-NO modifica:
+REGLA:
 
-- estadísticas
-- ataque
-- defensa
-- velocidad
-- resistencia
-- inteligencia
-- parámetros de combate
+    0  = +0 HP
+    10 = +50 HP
 
-Cada bonificación conserva:
+Los valores intermedios son proporcionales.
 
-- nombre
-- origen
-- cantidad de HP
+NO modifica estadísticas.
+
+SOLO modifica HP.
 
 ============================================================
 */
@@ -39,27 +33,55 @@ Cada bonificación conserva:
 const PALARENA_APLICAR_ESCENARIO = {
 
     version:
-        "1.2"
+        "1.1",
+
+    hp_maximo:
+        50,
+
+    coincidencias_maximas:
+        10
 
 };
 
 
 /*
 ============================================================
-INDICADOR DE PRUEBA
-============================================================
-
-NO modifica ningún elemento HTML.
-
-Solo confirma que la función está siendo ejecutada.
-
+CONVERSIÓN PROPORCIONAL
 ============================================================
 */
 
-function mostrarIndicadorAplicarEscenario() {
+function calcularHPBonificacionEscenario(
+    valor
+) {
 
-    console.log(
-        "🟢 APLICANDO ESCENARIO"
+    const coincidencias =
+        Math.max(
+            0,
+            Math.min(
+                PALARENA_APLICAR_ESCENARIO
+                    .coincidencias_maximas,
+                Number(valor) || 0
+            )
+        );
+
+
+    if (
+        coincidencias === 0
+    ) {
+
+        return 0;
+
+    }
+
+
+    return Math.round(
+        (
+            coincidencias /
+            PALARENA_APLICAR_ESCENARIO
+                .coincidencias_maximas
+        ) *
+        PALARENA_APLICAR_ESCENARIO
+            .hp_maximo
     );
 
 }
@@ -70,51 +92,26 @@ function mostrarIndicadorAplicarEscenario() {
 APLICAR ESCENARIO
 ============================================================
 
-Recibe:
+IMPORTANTE:
 
-hpBase
-bonificacion
+    hpBase
+        = HP que ya tenía el combatiente
 
-Ejemplo:
-
-105
-
-{
-
-    bonificacionHabitats: 15,
-
-    bonificacionModo: 10,
-
-    bonificacionMedios: 20
-
-}
-
-Resultado:
-
-105 + 15 + 10 + 20 = 150
+    resultado
+        = resultado de PALARENA_ESCENARIO.evaluar()
 
 ============================================================
 */
 
 function aplicarEscenarioArena(
     hpBase,
-    bonificacion
+    resultado
 ) {
 
-
     /*
-    ========================================================
-    INDICADOR
-    ========================================================
-    */
-
-    mostrarIndicadorAplicarEscenario();
-
-
-    /*
-    ========================================================
+    --------------------------------------------------------
     HP BASE
-    ========================================================
+    --------------------------------------------------------
     */
 
     const base =
@@ -122,18 +119,42 @@ function aplicarEscenarioArena(
 
 
     /*
-    ========================================================
-    DATOS DEL ESCENARIO
-    ========================================================
+    --------------------------------------------------------
+    COMPROBAR RESULTADO
+    --------------------------------------------------------
     */
 
-    const datos =
-        bonificacion || {};
+    if (
+        !resultado ||
+        !resultado.bonificacion
+    ) {
+
+        return {
+
+            hp_base:
+                base,
+
+            hp_bonificado:
+                0,
+
+            hp_total:
+                base,
+
+            bonificaciones:
+                []
+
+        };
+
+    }
+
+
+    const bonificacion =
+        resultado.bonificacion;
 
 
     /*
     ========================================================
-    LISTA DE BONIFICACIONES
+    LISTA DE SUMANDOS
     ========================================================
     */
 
@@ -146,26 +167,35 @@ function aplicarEscenarioArena(
     ========================================================
     */
 
-    const hpHabitats =
+    const habitats =
         Number(
-            datos.bonificacionHabitats
+            bonificacion.habitats
         ) || 0;
 
 
     if (
-        hpHabitats > 0
+        habitats > 0
     ) {
+
+        const hp =
+            calcularHPBonificacionEscenario(
+                habitats
+            );
+
 
         bonificaciones.push({
 
             nombre:
-                "Hábitats del escenario",
+                "Hábitats",
 
             origen:
-                "hábitats",
+                "habitats",
+
+            coincidencias:
+                habitats,
 
             hp:
-                hpHabitats
+                hp
 
         });
 
@@ -178,26 +208,35 @@ function aplicarEscenarioArena(
     ========================================================
     */
 
-    const hpModo =
-        Number(
-            datos.bonificacionModo
-        ) || 0;
-
-
     if (
-        hpModo > 0
+        bonificacion.modo === true
     ) {
+
+        /*
+        Una coincidencia de modo
+        equivale a 1 coincidencia
+        dentro de la escala proporcional.
+        */
+
+        const hp =
+            calcularHPBonificacionEscenario(
+                1
+            );
+
 
         bonificaciones.push({
 
             nombre:
-                "Modo de vida del escenario",
+                "Modo de vida",
 
             origen:
                 "modo",
 
+            coincidencias:
+                1,
+
             hp:
-                hpModo
+                hp
 
         });
 
@@ -210,26 +249,37 @@ function aplicarEscenarioArena(
     ========================================================
     */
 
-    const hpMedios =
+    const medios =
         Number(
-            datos.bonificacionMedios
+            bonificacion
+                .medios
+                ?.coincidencias
         ) || 0;
 
 
     if (
-        hpMedios > 0
+        medios > 0
     ) {
+
+        const hp =
+            calcularHPBonificacionEscenario(
+                medios
+            );
+
 
         bonificaciones.push({
 
             nombre:
-                "Medios ecológicos del escenario",
+                "Medios ecológicos",
 
             origen:
                 "medios",
 
+            coincidencias:
+                medios,
+
             hp:
-                hpMedios
+                hp
 
         });
 
@@ -247,12 +297,10 @@ function aplicarEscenarioArena(
 
 
     bonificaciones.forEach(
-        function(bonificacion) {
+        function(item) {
 
             hpBonificado +=
-                Number(
-                    bonificacion.hp
-                ) || 0;
+                item.hp;
 
         }
     );
@@ -260,7 +308,7 @@ function aplicarEscenarioArena(
 
     /*
     ========================================================
-    HP TOTAL
+    HP FINAL
     ========================================================
     */
 
@@ -271,7 +319,7 @@ function aplicarEscenarioArena(
 
     /*
     ========================================================
-    DEVOLVER RESULTADO
+    RESULTADO
     ========================================================
     */
 
@@ -296,26 +344,7 @@ function aplicarEscenarioArena(
 
 /*
 ============================================================
-FUNCIÓN DIRECTA PARA EL COMBATIENTE
-============================================================
-*/
-
-function obtenerHPConEscenarioArena(
-    hpBase,
-    bonificacion
-) {
-
-    return aplicarEscenarioArena(
-        hpBase,
-        bonificacion
-    );
-
-}
-
-
-/*
-============================================================
-EXPORTACIÓN GLOBAL
+EXPORTACIÓN
 ============================================================
 */
 
@@ -327,12 +356,5 @@ window.aplicarEscenarioArena =
     aplicarEscenarioArena;
 
 
-window.obtenerHPConEscenarioArena =
-    obtenerHPConEscenarioArena;
-
-
-/*
-============================================================
-FIN APLICARESCENARIO
-============================================================
-*/
+window.calcularHPBonificacionEscenario =
+    calcularHPBonificacionEscenario;
