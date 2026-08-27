@@ -1,72 +1,29 @@
 /* ==========================================================
    PALENTROPÍA — ARENA
    archivo: palarenacombatiente.js
+   versión: 1.2
+
+   CREACIÓN DE COMBATIENTE
+
+   REGLA:
+   - Calcula HP base.
+   - Obtiene el escenario.
+   - Aplica únicamente la bonificación de HP.
+   - No modifica estadísticas.
    ========================================================== */
 
-
-/* ==========================================================
-   CREAR COMBATIENTE
-   ========================================================== */
 
 function crearCombatienteArena(datos) {
 
+
     /*
     ==========================================================
-    STATS BASE
+    STATS
     ==========================================================
     */
 
-    const statsBase =
+    const stats =
         obtenerStatsArena(datos);
-
-
-    /*
-    ==========================================================
-    INDICADORES DE COMBATE
-    ==========================================================
-    */
-
-    let stats =
-        statsBase;
-
-
-    if (
-        datos &&
-        datos.indicadoresArena
-    ) {
-
-        stats = {
-
-            ...statsBase,
-
-            ataque:
-                Number(
-                    datos.indicadoresArena.ataque
-                ) || 0,
-
-            defensa:
-                Number(
-                    datos.indicadoresArena.defensa
-                ) || 0,
-
-            velocidad:
-                Number(
-                    datos.indicadoresArena.velocidad
-                ) || 0,
-
-            resistencia:
-                Number(
-                    datos.indicadoresArena.resistencia
-                ) || 0,
-
-            tactica:
-                Number(
-                    datos.indicadoresArena.tactica
-                ) || 0
-
-        };
-
-    }
 
 
     /*
@@ -90,22 +47,7 @@ function crearCombatienteArena(datos) {
 
     /*
     ==========================================================
-    APLICACIÓN DEL ESCENARIO
-    ==========================================================
-
-    El escenario NO modifica estadísticas.
-
-    Solo añade HP.
-
-    Flujo:
-
-        hpBase
-            ↓
-        resultado del escenario
-            ↓
-        aplicarescenario.js
-            ↓
-        HP final
+    ESCENARIO
     ==========================================================
     */
 
@@ -113,38 +55,21 @@ function crearCombatienteArena(datos) {
         hpBase;
 
 
-    let hpBonificacionEscenario =
-        0;
-
-
     let bonificacionesEscenario =
         [];
 
 
     /*
-    ==========================================================
-    INDICADOR DE APLICACIÓN
-    ==========================================================
+    ----------------------------------------------------------
+    OBTENER RESULTADO DEL ESCENARIO
+    ----------------------------------------------------------
     */
-
-    console.log(
-        "🟢 APLICANDO ESCENARIO"
-    );
-
 
     if (
         window.PALARENA_ESCENARIO &&
         typeof window.PALARENA_ESCENARIO.evaluar ===
-        "function" &&
-        typeof window.aplicarEscenarioArena ===
         "function"
     ) {
-
-        /*
-        ------------------------------------------------------
-        OBTENER ESCENARIO
-        ------------------------------------------------------
-        */
 
         const resultadoEscenario =
             window.PALARENA_ESCENARIO.evaluar(
@@ -159,19 +84,47 @@ function crearCombatienteArena(datos) {
         */
 
         if (
-            resultadoEscenario
+            resultadoEscenario &&
+            resultadoEscenario.bonificacion &&
+            typeof window.aplicarEscenarioArena ===
+            "function"
         ) {
+
+
+            /*
+            --------------------------------------------------
+            IMPORTANTE
+
+            aplicarescenario.js espera:
+
+            1. ficha
+            2. resultado del escenario
+
+            Creamos una ficha temporal
+            únicamente con el HP base.
+
+            No modificamos los datos originales.
+            --------------------------------------------------
+            */
+
+            const fichaTemporal = {
+
+                hp_max:
+                    hpBase
+
+            };
+
 
             const aplicado =
                 window.aplicarEscenarioArena(
-                    hpBase,
+                    fichaTemporal,
                     resultadoEscenario
                 );
 
 
             /*
             --------------------------------------------------
-            RESULTADO
+            RECIBIR HP FINAL
             --------------------------------------------------
             */
 
@@ -183,12 +136,6 @@ function crearCombatienteArena(datos) {
                     Number(
                         aplicado.hp_total
                     ) || hpBase;
-
-
-                hpBonificacionEscenario =
-                    Number(
-                        aplicado.hp_bonificado
-                    ) || 0;
 
 
                 bonificacionesEscenario =
@@ -247,14 +194,24 @@ function crearCombatienteArena(datos) {
 
     return {
 
+
+        /*
+        ------------------------------------------------------
+        DATOS
+        ------------------------------------------------------
+        */
+
         datos:
             datos,
+
 
         codigo:
             datos.j1 || "",
 
+
         nombre:
             datos.j2 || "Desconocido",
+
 
         imagen:
             datos.i3 || "",
@@ -272,7 +229,7 @@ function crearCombatienteArena(datos) {
 
         /*
         ------------------------------------------------------
-        INDICADORES ARENA
+        INDICADORES
         ------------------------------------------------------
         */
 
@@ -289,14 +246,18 @@ function crearCombatienteArena(datos) {
         hp_base:
             hpBase,
 
+
         hp_bonificacion_escenario:
-            hpBonificacionEscenario,
+            hpFinal - hpBase,
+
 
         bonificaciones_escenario:
             bonificacionesEscenario,
 
+
         hp_max:
             hpFinal,
+
 
         hp:
             hpFinal,
@@ -324,15 +285,17 @@ function crearCombatienteArena(datos) {
 
         /*
         ------------------------------------------------------
-        ESTADO DE COMBATE
+        ESTADO
         ------------------------------------------------------
         */
 
         defendiendo:
             false,
 
+
         efectos:
             [],
+
 
         derrotado:
             false
