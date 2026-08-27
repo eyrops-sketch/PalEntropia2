@@ -87,16 +87,21 @@ function crearCombatienteArena(datos) {
     APLICAR ESCENARIO
     ==========================================================
 
-    El escenario ya calcula las coincidencias.
+    El escenario calcula las coincidencias.
 
-    Aquí:
+    aplicarescenario.js recibe:
 
-    1. Obtenemos el escenario actual.
-    2. Obtenemos sus bonificaciones.
-    3. Se las pasamos a aplicarescenario.js.
-    4. Recibimos el HP final.
+        datos
+        resultadoEscenario
 
-    NO modificamos ninguna estadística.
+    y devuelve:
+
+        hp_base
+        hp_bonificado
+        hp_total
+        bonificaciones
+
+    El escenario SOLO modifica HP.
 
     ==========================================================
     */
@@ -134,20 +139,26 @@ function crearCombatienteArena(datos) {
 
 
         if (
-            resultadoEscenario &&
-            resultadoEscenario.bonificacion
+            resultadoEscenario
         ) {
 
             /*
             --------------------------------------------------
-            APLICAR BONIFICACIÓN
+            APLICAR ESCENARIO
+            --------------------------------------------------
+
+            IMPORTANTE:
+
+            Se pasa el objeto datos completo y el resultado
+            completo del escenario.
+
             --------------------------------------------------
             */
 
             const aplicado =
                 window.aplicarEscenarioArena(
-                    hpBase,
-                    resultadoEscenario.bonificacion
+                    datos,
+                    resultadoEscenario
                 );
 
 
@@ -156,15 +167,23 @@ function crearCombatienteArena(datos) {
             ) {
 
                 hpFinal =
-                    aplicado.hp_total;
+                    Number(
+                        aplicado.hp_total
+                    ) || hpBase;
 
 
                 hpBonificacionEscenario =
-                    aplicado.hp_bonificado;
+                    Number(
+                        aplicado.hp_bonificado
+                    ) || 0;
 
 
                 bonificacionesEscenario =
-                    aplicado.bonificaciones || [];
+                    Array.isArray(
+                        aplicado.bonificaciones
+                    )
+                        ? aplicado.bonificaciones
+                        : [];
 
             }
 
