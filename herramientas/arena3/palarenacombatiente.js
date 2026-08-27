@@ -18,11 +18,6 @@ function crearCombatienteArena(datos) {
     ==========================================================
     INDICADORES DE COMBATE
     ==========================================================
-
-    Si prepararCombateArena() ya ha calculado
-    indicadoresArena, utilizamos esos valores modificados.
-
-    Los demás valores originales permanecen intactos.
     */
 
     let stats =
@@ -72,10 +67,6 @@ function crearCombatienteArena(datos) {
     ==========================================================
     HP BASE
     ==========================================================
-
-    El HP se calcula exactamente como antes.
-
-    Todavía no se aplica el escenario.
     */
 
     const hpBase =
@@ -93,60 +84,56 @@ function crearCombatienteArena(datos) {
 
     /*
     ==========================================================
-    BONIFICACIÓN DEL ESCENARIO
+    ESCENARIO
     ==========================================================
+    
+    El escenario NO modifica estadísticas.
 
-    El escenario se aplica DESPUÉS de obtener
-    el HP base.
+    Solo añade HP al HP base.
 
-    No modificamos estadísticas.
-    No hacemos conversiones de parámetros.
-
-    Simplemente recibimos una cantidad de HP
-    adicional y la información de las
-    bonificaciones que la han producido.
+    El resultado del escenario debe estar disponible
+    en datos.resultadoEscenario.
     */
 
-    let bonificacionEscenario = {
+    let hp =
+        hpBase;
 
-        total: 0,
+    let hpBonificacionEscenario =
+        0;
 
-        bonificaciones: []
-
-    };
+    let bonificacionesEscenario =
+        [];
 
 
     if (
-        typeof aplicarEscenarioArena ===
+        datos &&
+        datos.resultadoEscenario &&
+        typeof obtenerHPConEscenarioArena ===
         "function"
     ) {
 
-        const resultadoEscenario =
-            aplicarEscenarioArena(
-                datos,
-                hpBase
+        const hpEscenario =
+            obtenerHPConEscenarioArena(
+                {
+                    ...datos,
+                    hp_max: hpBase
+                },
+                datos.resultadoEscenario
             );
 
 
         if (
-            resultadoEscenario
+            hpEscenario
         ) {
 
-            bonificacionEscenario = {
+            hp =
+                hpEscenario.hp;
 
-                total:
-                    Number(
-                        resultadoEscenario.total
-                    ) || 0,
+            hpBonificacionEscenario =
+                hpEscenario.hp_bonificado;
 
-                bonificaciones:
-                    Array.isArray(
-                        resultadoEscenario.bonificaciones
-                    )
-                        ? resultadoEscenario.bonificaciones
-                        : []
-
-            };
+            bonificacionesEscenario =
+                hpEscenario.bonificaciones;
 
         }
 
@@ -155,26 +142,8 @@ function crearCombatienteArena(datos) {
 
     /*
     ==========================================================
-    HP FINAL
-    ==========================================================
-
-    HP final = HP base + bonificación del escenario.
-    */
-
-    const hp =
-        hpBase +
-        bonificacionEscenario.total;
-
-
-    /*
-    ==========================================================
     INICIATIVA
     ==========================================================
-
-    VELOCIDAD puede estar modificada por el escenario.
-
-    MOVILIDAD continúa siendo el stat original
-    de la ficha.
     */
 
     const iniciativa =
@@ -250,19 +219,16 @@ function crearCombatienteArena(datos) {
         ------------------------------------------------------
         HP
         ------------------------------------------------------
-
-        Guardamos por separado el HP base y la
-        bonificación para poder mostrarla posteriormente.
         */
 
         hp_base:
             hpBase,
 
         hp_bonificacion_escenario:
-            bonificacionEscenario.total,
+            hpBonificacionEscenario,
 
         bonificaciones_escenario:
-            bonificacionEscenario.bonificaciones,
+            bonificacionesEscenario,
 
         hp_max:
             hp,
