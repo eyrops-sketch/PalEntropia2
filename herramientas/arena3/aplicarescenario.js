@@ -2,7 +2,7 @@
 ============================================================
 palentropía — arena
 archivo: aplicarescenario.js
-versión: 1.1
+versión: 1.2
 ============================================================
 
 APLICACIÓN DE ESCENARIO AL COMBATIENTE
@@ -11,22 +11,26 @@ FUNCIÓN:
 
 Recibe:
 
-- HP base del combatiente
-- bonificación ya calculada por el escenario
+- HP base
+- bonificaciones del escenario
 
-NO recalcula el escenario.
+ÚNICAMENTE suma HP.
 
-NO modifica estadísticas.
+NO modifica:
 
-ÚNICAMENTE:
+- estadísticas
+- ataque
+- defensa
+- velocidad
+- resistencia
+- inteligencia
+- parámetros de combate
 
-HP BASE
-+
-BONIFICACIÓN ESCENARIO
-=
-HP TOTAL
+Cada bonificación conserva:
 
-Además conserva la denominación de cada bonificación.
+- nombre
+- origen
+- cantidad de HP
 
 ============================================================
 */
@@ -35,7 +39,7 @@ Además conserva la denominación de cada bonificación.
 const PALARENA_APLICAR_ESCENARIO = {
 
     version:
-        "1.1"
+        "1.2"
 
 };
 
@@ -45,43 +49,18 @@ const PALARENA_APLICAR_ESCENARIO = {
 INDICADOR DE PRUEBA
 ============================================================
 
-Sirve para comprobar visualmente que esta función
-está siendo ejecutada.
+NO modifica ningún elemento HTML.
+
+Solo confirma que la función está siendo ejecutada.
 
 ============================================================
 */
 
 function mostrarIndicadorAplicarEscenario() {
 
-    const resultado =
-        document.getElementById("resultado");
-
-
-    if (!resultado) {
-
-        return;
-
-    }
-
-
-    resultado.innerHTML = `
-
-        <div
-            style="
-                padding:12px;
-                margin-bottom:12px;
-                border:2px solid #00ff88;
-                border-radius:8px;
-                text-align:center;
-                font-weight:bold;
-            "
-        >
-
-            🟢 APLICANDO ESCENARIO
-
-        </div>
-
-    `;
+    console.log(
+        "🟢 APLICANDO ESCENARIO"
+    );
 
 }
 
@@ -98,26 +77,21 @@ bonificacion
 
 Ejemplo:
 
-aplicarEscenarioArena(
-    105,
-    {
-        bonificacionHabitats: 15,
-        bonificacionModo: 10,
-        bonificacionMedios: 20
-    }
-);
+105
+
+{
+
+    bonificacionHabitats: 15,
+
+    bonificacionModo: 10,
+
+    bonificacionMedios: 20
+
+}
 
 Resultado:
 
-HP base: 105
-
-+15 HP — Hábitats del escenario
-+10 HP — Modo de vida del escenario
-+20 HP — Medios ecológicos del escenario
-
-Total bonificación: +45 HP
-
-HP total: 150
+105 + 15 + 10 + 20 = 150
 
 ============================================================
 */
@@ -126,6 +100,7 @@ function aplicarEscenarioArena(
     hpBase,
     bonificacion
 ) {
+
 
     /*
     ========================================================
@@ -148,7 +123,7 @@ function aplicarEscenarioArena(
 
     /*
     ========================================================
-    BONIFICACIÓN
+    DATOS DEL ESCENARIO
     ========================================================
     */
 
@@ -166,9 +141,9 @@ function aplicarEscenarioArena(
 
 
     /*
-    --------------------------------------------------------
+    ========================================================
     HÁBITATS
-    --------------------------------------------------------
+    ========================================================
     */
 
     const hpHabitats =
@@ -198,9 +173,9 @@ function aplicarEscenarioArena(
 
 
     /*
-    --------------------------------------------------------
+    ========================================================
     MODO DE VIDA
-    --------------------------------------------------------
+    ========================================================
     */
 
     const hpModo =
@@ -230,9 +205,9 @@ function aplicarEscenarioArena(
 
 
     /*
-    --------------------------------------------------------
+    ========================================================
     MEDIOS ECOLÓGICOS
-    --------------------------------------------------------
+    ========================================================
     */
 
     const hpMedios =
@@ -263,18 +238,21 @@ function aplicarEscenarioArena(
 
     /*
     ========================================================
-    TOTAL DE BONIFICACIÓN
+    SUMAR BONIFICACIONES
     ========================================================
     */
 
-    let hpBonificado = 0;
+    let hpBonificado =
+        0;
 
 
     bonificaciones.forEach(
-        function(item) {
+        function(bonificacion) {
 
             hpBonificado +=
-                Number(item.hp) || 0;
+                Number(
+                    bonificacion.hp
+                ) || 0;
 
         }
     );
@@ -293,7 +271,7 @@ function aplicarEscenarioArena(
 
     /*
     ========================================================
-    RESULTADO
+    DEVOLVER RESULTADO
     ========================================================
     */
 
@@ -318,7 +296,7 @@ function aplicarEscenarioArena(
 
 /*
 ============================================================
-OBTENER HP CON ESCENARIO
+FUNCIÓN DIRECTA PARA EL COMBATIENTE
 ============================================================
 */
 
@@ -355,6 +333,6 @@ window.obtenerHPConEscenarioArena =
 
 /*
 ============================================================
-FIN
+FIN APLICARESCENARIO
 ============================================================
 */
