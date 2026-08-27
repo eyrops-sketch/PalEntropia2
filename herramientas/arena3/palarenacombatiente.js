@@ -1,7 +1,7 @@
 /* ==========================================================
    PALENTROPÍA — ARENA
    archivo: palarenacombatiente.js
-   versión: 1.4
+   versión: 1.5
    ========================================================== */
 
 
@@ -13,12 +13,6 @@ function mostrarEstadoEscenarioArena(
     mensaje,
     tipo = "info"
 ) {
-
-    /*
-    ----------------------------------------------------------
-    BUSCAR CONTENEDOR
-    ----------------------------------------------------------
-    */
 
     const posibles = [
 
@@ -54,12 +48,6 @@ function mostrarEstadoEscenarioArena(
     }
 
 
-    /*
-    ----------------------------------------------------------
-    SI EXISTE EL CONTENEDOR
-    ----------------------------------------------------------
-    */
-
     if (elemento) {
 
         elemento.textContent =
@@ -74,12 +62,6 @@ function mostrarEstadoEscenarioArena(
     }
 
 
-    /*
-    ----------------------------------------------------------
-    CONSOLA
-    ----------------------------------------------------------
-    */
-
     console.log(
         "[PALARENA ESCENARIO]",
         mensaje
@@ -89,10 +71,97 @@ function mostrarEstadoEscenarioArena(
 
 
 /* ==========================================================
+   INDICADORES DE COMBATE BASE
+   ========================================================== */
+
+function obtenerIndicadoresArena(
+    stats,
+    datos
+) {
+
+    /*
+    ----------------------------------------------------------
+    Si CONTENEDOR ya proporciona indicadores específicos,
+    se utilizan directamente.
+    ----------------------------------------------------------
+    */
+
+    if (
+        datos &&
+        datos.indicadoresArena
+    ) {
+
+        const indicadores =
+            datos.indicadoresArena;
+
+
+        return {
+
+            ataque:
+                Number(indicadores.ataque) ||
+                Number(stats.ofensiva) ||
+                0,
+
+            defensa:
+                Number(indicadores.defensa) ||
+                Number(stats.defensa) ||
+                0,
+
+            velocidad:
+                Number(indicadores.velocidad) ||
+                Number(stats.velocidad) ||
+                0,
+
+            resistencia:
+                Number(indicadores.resistencia) ||
+                Number(stats.resistencia) ||
+                0,
+
+            tactica:
+                Number(indicadores.tactica) ||
+                Number(stats.inteligencia) ||
+                0
+
+        };
+
+    }
+
+
+    /*
+    ----------------------------------------------------------
+    Conversión directa desde las estadísticas existentes.
+    ----------------------------------------------------------
+    */
+
+    return {
+
+        ataque:
+            Number(stats.ofensiva) || 0,
+
+        defensa:
+            Number(stats.defensa) || 0,
+
+        velocidad:
+            Number(stats.velocidad) || 0,
+
+        resistencia:
+            Number(stats.resistencia) || 0,
+
+        tactica:
+            Number(stats.inteligencia) || 0
+
+    };
+
+}
+
+
+/* ==========================================================
    CREAR COMBATIENTE
    ========================================================== */
 
-function crearCombatienteArena(datos) {
+function crearCombatienteArena(
+    datos
+) {
 
 
     /*
@@ -114,7 +183,9 @@ function crearCombatienteArena(datos) {
     */
 
     const stats =
-        obtenerStatsArena(datos);
+        obtenerStatsArena(
+            datos
+        );
 
 
     /*
@@ -136,66 +207,35 @@ function crearCombatienteArena(datos) {
         );
 
 
-    mostrarEstadoEscenarioArena(
-        "🟢 ESCENARIO DETECTADO — HP base: " +
-        hpBase,
-        "ok"
-    );
+    /*
+    ==========================================================
+    INDICADORES DE COMBATE BASE
+    ==========================================================
+    */
+
+    const indicadoresBase =
+        obtenerIndicadoresArena(
+            stats,
+            datos
+        );
 
 
     /*
     ==========================================================
-    ESCENARIO
+    BONIFICACIÓN DE ESCENARIO
     ==========================================================
     */
 
-    let hpBonificacionEscenario =
-        0;
+    let resultadoEscenario =
+        null;
 
-
-    let bonificacionesEscenario =
-        [];
-
-
-    /*
-    ==========================================================
-    COMPROBAR PALARENA_ESCENARIO
-    ==========================================================
-    */
 
     if (
-        !window.PALARENA_ESCENARIO
-    ) {
-
-        mostrarEstadoEscenarioArena(
-            "🔴 PALARENA_ESCENARIO NO DISPONIBLE",
-            "error"
-        );
-
-    }
-
-
-    else if (
+        window.PALARENA_ESCENARIO &&
         typeof
-        window.PALARENA_ESCENARIO.evaluar
-        !== "function"
+        window.PALARENA_ESCENARIO.evaluar ===
+        "function"
     ) {
-
-        mostrarEstadoEscenarioArena(
-            "🔴 PALARENA_ESCENARIO.evaluar() NO DISPONIBLE",
-            "error"
-        );
-
-    }
-
-
-    else {
-
-        /*
-        ======================================================
-        EVALUANDO
-        ======================================================
-        */
 
         mostrarEstadoEscenarioArena(
             "🟡 EVALUANDO ESCENARIO...",
@@ -203,203 +243,133 @@ function crearCombatienteArena(datos) {
         );
 
 
-        /*
-        ------------------------------------------------------
-        OBTENER RESULTADO
-        ------------------------------------------------------
-        */
-
-        const resultadoEscenario =
+        resultadoEscenario =
             window.PALARENA_ESCENARIO.evaluar(
                 datos.j1
             );
 
+    }
+    else {
 
-        /*
-        ------------------------------------------------------
-        COMPROBAR RESULTADO
-        ------------------------------------------------------
-        */
+        mostrarEstadoEscenarioArena(
+            "⚠️ ESCENARIO NO DISPONIBLE",
+            "warning"
+        );
 
-        if (
-            !resultadoEscenario
-        ) {
+    }
 
-            mostrarEstadoEscenarioArena(
-                "🔴 ESCENARIO SIN RESULTADO",
-                "error"
+
+    /*
+    ==========================================================
+    HP DEL ESCENARIO
+    ==========================================================
+    */
+
+    let resultadoHP =
+        {
+
+            hp_base:
+                hpBase,
+
+            hp_bonificado:
+                0,
+
+            hp_total:
+                hpBase,
+
+            bonificaciones:
+                []
+
+        };
+
+
+    if (
+        resultadoEscenario &&
+        typeof aplicarEscenarioArena ===
+        "function"
+    ) {
+
+        resultadoHP =
+            aplicarEscenarioArena(
+                hpBase,
+                resultadoEscenario
             );
+
+    }
+
+
+    /*
+    ==========================================================
+    INDICADORES BONIFICADOS
+    ==========================================================
+    */
+
+    let indicadoresFinales =
+        indicadoresBase;
+
+
+    let resultadoIndicadores =
+        null;
+
+
+    if (
+        resultadoEscenario &&
+        resultadoEscenario.bonificacion &&
+        window.PALARENA_BONIFICACIONES &&
+        typeof
+        window.PALARENA_BONIFICACIONES.aplicar ===
+        "function"
+    ) {
+
+        resultadoIndicadores =
+            window.PALARENA_BONIFICACIONES.aplicar(
+                indicadoresBase,
+                resultadoEscenario.bonificacion
+            );
+
+
+        if (resultadoIndicadores) {
+
+            indicadoresFinales = {
+
+                ataque:
+                    resultadoIndicadores.ataque,
+
+                defensa:
+                    resultadoIndicadores.defensa,
+
+                velocidad:
+                    resultadoIndicadores.velocidad,
+
+                resistencia:
+                    resultadoIndicadores.resistencia,
+
+                tactica:
+                    resultadoIndicadores.tactica
+
+            };
 
         }
 
-
-        else if (
-            !resultadoEscenario.bonificacion
-        ) {
-
-            mostrarEstadoEscenarioArena(
-                "🔴 ESCENARIO SIN BONIFICACIÓN",
-                "error"
-            );
-
-        }
+    }
 
 
-        else {
+    /*
+    ==========================================================
+    MOSTRAR RESULTADO DEL ESCENARIO
+    ==========================================================
+    */
 
-            /*
-            ==================================================
-            APLICANDO
-            ==================================================
-            */
+    if (
+        resultadoEscenario
+    ) {
 
-            mostrarEstadoEscenarioArena(
-                "🟢 APLICANDO ESCENARIO",
-                "ok"
-            );
-
-
-            const bonificacion =
-                resultadoEscenario.bonificacion;
-
-
-            /*
-            ==================================================
-            HÁBITATS
-            ==================================================
-            */
-
-            const coincidenciasHabitats =
-                Number(
-                    bonificacion.habitats
-                ) || 0;
-
-
-            if (
-                coincidenciasHabitats > 0
-            ) {
-
-                const hpHabitats =
-                    Math.round(
-                        coincidenciasHabitats *
-                        5
-                    );
-
-
-                hpBonificacionEscenario +=
-                    hpHabitats;
-
-
-                bonificacionesEscenario.push({
-
-                    nombre:
-                        "Hábitats",
-
-                    origen:
-                        "habitats",
-
-                    coincidencias:
-                        coincidenciasHabitats,
-
-                    hp:
-                        hpHabitats
-
-                });
-
-            }
-
-
-            /*
-            ==================================================
-            MODO DE VIDA
-            ==================================================
-            */
-
-            if (
-                bonificacion.modo === true
-            ) {
-
-                hpBonificacionEscenario +=
-                    10;
-
-
-                bonificacionesEscenario.push({
-
-                    nombre:
-                        "Modo de vida",
-
-                    origen:
-                        "modo",
-
-                    coincidencias:
-                        1,
-
-                    hp:
-                        10
-
-                });
-
-            }
-
-
-            /*
-            ==================================================
-            MEDIOS ECOLÓGICOS
-            ==================================================
-            */
-
-            const bonificacionMedios =
-                Number(
-                    bonificacion
-                        .bonificacionMedios
-                ) || 0;
-
-
-            if (
-                bonificacionMedios > 0
-            ) {
-
-                hpBonificacionEscenario +=
-                    bonificacionMedios;
-
-
-                bonificacionesEscenario.push({
-
-                    nombre:
-                        "Medios ecológicos",
-
-                    origen:
-                        "medios",
-
-                    coincidencias:
-                        Number(
-                            bonificacion
-                                .medios
-                                ?.coincidencias
-                        ) || 0,
-
-                    hp:
-                        bonificacionMedios
-
-                });
-
-            }
-
-
-            /*
-            ==================================================
-            MOSTRAR RESULTADO
-            ==================================================
-            */
-
-            mostrarEstadoEscenarioArena(
-                "➕ BONIFICACIÓN ESCENARIO: +" +
-                hpBonificacionEscenario +
-                " HP",
-                "ok"
-            );
-
-        }
+        mostrarEstadoEscenarioArena(
+            "🌎 ESCENARIO APLICADO — +" +
+            resultadoHP.hp_bonificado +
+            " HP",
+            "ok"
+        );
 
     }
 
@@ -411,15 +381,7 @@ function crearCombatienteArena(datos) {
     */
 
     const hpFinal =
-        hpBase +
-        hpBonificacionEscenario;
-
-
-    mostrarEstadoEscenarioArena(
-        "❤️ HP FINAL: " +
-        hpFinal,
-        "ok"
-    );
+        resultadoHP.hp_total;
 
 
     /*
@@ -430,8 +392,10 @@ function crearCombatienteArena(datos) {
 
     const iniciativa =
         Math.round(
-            stats.velocidad * 0.6 +
-            stats.movilidad * 0.4
+            indicadoresFinales.velocidad *
+            0.6 +
+            stats.movilidad *
+            0.4
         );
 
 
@@ -451,7 +415,9 @@ function crearCombatienteArena(datos) {
     ) {
 
         ataqueEspecial =
-            asignarAtaqueArena(datos);
+            asignarAtaqueArena(
+                datos
+            );
 
     }
 
@@ -462,7 +428,7 @@ function crearCombatienteArena(datos) {
     ==========================================================
     */
 
-    return {
+    const combatiente = {
 
         datos:
             datos,
@@ -479,7 +445,7 @@ function crearCombatienteArena(datos) {
 
         /*
         ------------------------------------------------------
-        STATS
+        ESTADÍSTICAS ORIGINALES
         ------------------------------------------------------
         */
 
@@ -487,8 +453,36 @@ function crearCombatienteArena(datos) {
             stats,
 
 
+        /*
+        ------------------------------------------------------
+        INDICADORES DE COMBATE
+        ------------------------------------------------------
+        */
+
         indicadoresArena:
-            datos.indicadoresArena || null,
+            indicadoresFinales,
+
+
+        indicadoresBase:
+            indicadoresBase,
+
+
+        indicadoresBonificacion:
+            resultadoIndicadores
+                ?.bonificacion || {
+
+                ataque: 0,
+                defensa: 0,
+                velocidad: 0,
+                resistencia: 0,
+                tactica: 0
+
+            },
+
+
+        detallesBonificaciones:
+            resultadoIndicadores
+                ?.detalles || [],
 
 
         /*
@@ -498,13 +492,13 @@ function crearCombatienteArena(datos) {
         */
 
         hp_base:
-            hpBase,
+            resultadoHP.hp_base,
 
         hp_bonificacion_escenario:
-            hpBonificacionEscenario,
+            resultadoHP.hp_bonificado,
 
         bonificaciones_escenario:
-            bonificacionesEscenario,
+            resultadoHP.bonificaciones,
 
         hp_max:
             hpFinal,
@@ -549,5 +543,33 @@ function crearCombatienteArena(datos) {
             false
 
     };
+
+
+    /*
+    ==========================================================
+    RESULTADO FINAL
+    ==========================================================
+    */
+
+    mostrarEstadoEscenarioArena(
+        "❤️ " +
+        combatiente.nombre +
+        " — HP " +
+        hpFinal +
+        " | ATQ " +
+        indicadoresFinales.ataque +
+        " | DEF " +
+        indicadoresFinales.defensa +
+        " | VEL " +
+        indicadoresFinales.velocidad +
+        " | RES " +
+        indicadoresFinales.resistencia +
+        " | TAC " +
+        indicadoresFinales.tactica,
+        "ok"
+    );
+
+
+    return combatiente;
 
 }
