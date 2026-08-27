@@ -2,31 +2,31 @@
 ============================================================
 palentropía — arena
 archivo: aplicarescenario.js
-versión: 1.0
+versión: 1.1
 ============================================================
 
-APLICACIÓN DIRECTA DEL ESCENARIO
+APLICACIÓN DE ESCENARIO AL COMBATIENTE
 
 FUNCIÓN:
 
 Recibe:
 
 - HP base del combatiente
-- bonificaciones obtenidas por el escenario
+- bonificación ya calculada por el escenario
+
+NO recalcula el escenario.
 
 NO modifica estadísticas.
 
-NO convierte estadísticas.
+ÚNICAMENTE:
 
-NO modifica ofensiva, defensa, velocidad,
-resistencia ni inteligencia.
+HP BASE
++
+BONIFICACIÓN ESCENARIO
+=
+HP TOTAL
 
-ÚNICAMENTE SUMA HP.
-
-Cada bonificación conserva:
-
-- nombre
-- HP
+Además conserva la denominación de cada bonificación.
 
 ============================================================
 */
@@ -34,149 +34,247 @@ Cada bonificación conserva:
 
 const PALARENA_APLICAR_ESCENARIO = {
 
-    version: "1.0",
-
-    hp_maximo:
-        50,
-
-    coincidencias_maximas:
-        10
+    version:
+        "1.1"
 
 };
 
 
 /*
 ============================================================
-CONVERSIÓN PROPORCIONAL
+INDICADOR DE PRUEBA
 ============================================================
 
-0  coincidencias = 0 HP
-10 coincidencias = 50 HP
+Sirve para comprobar visualmente que esta función
+está siendo ejecutada.
 
 ============================================================
 */
 
-function calcularHPBonificacionEscenario(
-    coincidencias
-) {
+function mostrarIndicadorAplicarEscenario() {
 
-    const valor =
-        Number(coincidencias) || 0;
+    const resultado =
+        document.getElementById("resultado");
 
 
-    const limitado =
-        Math.max(
-            0,
-            Math.min(
-                PALARENA_APLICAR_ESCENARIO
-                    .coincidencias_maximas,
-                valor
-            )
-        );
+    if (!resultado) {
+
+        return;
+
+    }
 
 
-    return Math.round(
-        limitado /
-        PALARENA_APLICAR_ESCENARIO
-            .coincidencias_maximas
-        *
-        PALARENA_APLICAR_ESCENARIO
-            .hp_maximo
-    );
+    resultado.innerHTML = `
+
+        <div
+            style="
+                padding:12px;
+                margin-bottom:12px;
+                border:2px solid #00ff88;
+                border-radius:8px;
+                text-align:center;
+                font-weight:bold;
+            "
+        >
+
+            🟢 APLICANDO ESCENARIO
+
+        </div>
+
+    `;
 
 }
 
 
 /*
 ============================================================
-APLICAR BONIFICACIONES AL HP
+APLICAR ESCENARIO
 ============================================================
 
-hpBase:
+Recibe:
 
-HP que ya tenía el combatiente.
+hpBase
+bonificacion
 
-bonificaciones:
+Ejemplo:
 
-Array con:
+aplicarEscenarioArena(
+    105,
+    {
+        bonificacionHabitats: 15,
+        bonificacionModo: 10,
+        bonificacionMedios: 20
+    }
+);
 
-{
-    nombre: "...",
-    coincidencias: 3
-}
+Resultado:
+
+HP base: 105
+
++15 HP — Hábitats del escenario
++10 HP — Modo de vida del escenario
++20 HP — Medios ecológicos del escenario
+
+Total bonificación: +45 HP
+
+HP total: 150
 
 ============================================================
 */
 
 function aplicarEscenarioArena(
     hpBase,
-    bonificaciones
+    bonificacion
 ) {
+
+    /*
+    ========================================================
+    INDICADOR
+    ========================================================
+    */
+
+    mostrarIndicadorAplicarEscenario();
+
+
+    /*
+    ========================================================
+    HP BASE
+    ========================================================
+    */
 
     const base =
         Number(hpBase) || 0;
 
 
+    /*
+    ========================================================
+    BONIFICACIÓN
+    ========================================================
+    */
+
+    const datos =
+        bonificacion || {};
+
+
+    /*
+    ========================================================
+    LISTA DE BONIFICACIONES
+    ========================================================
+    */
+
+    const bonificaciones = [];
+
+
+    /*
+    --------------------------------------------------------
+    HÁBITATS
+    --------------------------------------------------------
+    */
+
+    const hpHabitats =
+        Number(
+            datos.bonificacionHabitats
+        ) || 0;
+
+
     if (
-        !Array.isArray(bonificaciones)
+        hpHabitats > 0
     ) {
 
-        return {
+        bonificaciones.push({
 
-            hp_base:
-                base,
+            nombre:
+                "Hábitats del escenario",
 
-            hp_bonificado:
-                0,
+            origen:
+                "hábitats",
 
-            hp_total:
-                base,
+            hp:
+                hpHabitats
 
-            bonificaciones:
-                []
-
-        };
+        });
 
     }
 
 
-    const lista = [];
+    /*
+    --------------------------------------------------------
+    MODO DE VIDA
+    --------------------------------------------------------
+    */
+
+    const hpModo =
+        Number(
+            datos.bonificacionModo
+        ) || 0;
+
+
+    if (
+        hpModo > 0
+    ) {
+
+        bonificaciones.push({
+
+            nombre:
+                "Modo de vida del escenario",
+
+            origen:
+                "modo",
+
+            hp:
+                hpModo
+
+        });
+
+    }
+
+
+    /*
+    --------------------------------------------------------
+    MEDIOS ECOLÓGICOS
+    --------------------------------------------------------
+    */
+
+    const hpMedios =
+        Number(
+            datos.bonificacionMedios
+        ) || 0;
+
+
+    if (
+        hpMedios > 0
+    ) {
+
+        bonificaciones.push({
+
+            nombre:
+                "Medios ecológicos del escenario",
+
+            origen:
+                "medios",
+
+            hp:
+                hpMedios
+
+        });
+
+    }
+
+
+    /*
+    ========================================================
+    TOTAL DE BONIFICACIÓN
+    ========================================================
+    */
+
+    let hpBonificado = 0;
 
 
     bonificaciones.forEach(
-        function(bonificacion) {
+        function(item) {
 
-            const coincidencias =
-                Number(
-                    bonificacion.coincidencias
-                ) || 0;
-
-
-            if (
-                coincidencias <= 0
-            ) {
-
-                return;
-
-            }
-
-
-            const hp =
-                calcularHPBonificacionEscenario(
-                    coincidencias
-                );
-
-
-            lista.push({
-
-                nombre:
-                    bonificacion.nombre ||
-                    "Bonificación del escenario",
-
-                hp:
-                    hp
-
-            });
+            hpBonificado +=
+                Number(item.hp) || 0;
 
         }
     );
@@ -184,21 +282,13 @@ function aplicarEscenarioArena(
 
     /*
     ========================================================
-    SUMA TOTAL
+    HP TOTAL
     ========================================================
     */
 
-    let totalBonificacion = 0;
-
-
-    lista.forEach(
-        function(bonificacion) {
-
-            totalBonificacion +=
-                bonificacion.hp;
-
-        }
-    );
+    const hpTotal =
+        base +
+        hpBonificado;
 
 
     /*
@@ -213,14 +303,13 @@ function aplicarEscenarioArena(
             base,
 
         hp_bonificado:
-            totalBonificacion,
+            hpBonificado,
 
         hp_total:
-            base +
-            totalBonificacion,
+            hpTotal,
 
         bonificaciones:
-            lista
+            bonificaciones
 
     };
 
@@ -229,7 +318,26 @@ function aplicarEscenarioArena(
 
 /*
 ============================================================
-EXPORTACIÓN
+OBTENER HP CON ESCENARIO
+============================================================
+*/
+
+function obtenerHPConEscenarioArena(
+    hpBase,
+    bonificacion
+) {
+
+    return aplicarEscenarioArena(
+        hpBase,
+        bonificacion
+    );
+
+}
+
+
+/*
+============================================================
+EXPORTACIÓN GLOBAL
 ============================================================
 */
 
@@ -241,5 +349,12 @@ window.aplicarEscenarioArena =
     aplicarEscenarioArena;
 
 
-window.calcularHPBonificacionEscenario =
-    calcularHPBonificacionEscenario;
+window.obtenerHPConEscenarioArena =
+    obtenerHPConEscenarioArena;
+
+
+/*
+============================================================
+FIN
+============================================================
+*/
