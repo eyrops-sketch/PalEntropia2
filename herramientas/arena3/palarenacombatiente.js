@@ -70,18 +70,15 @@ function crearCombatienteArena(datos) {
 
     /*
     ==========================================================
-    HP
+    HP BASE
     ==========================================================
 
-    Utiliza los indicadores modificados de:
+    El HP se calcula exactamente como antes.
 
-    RESISTENCIA
-    DEFENSA
-
-    y mantiene TAMAÑO como característica original.
+    Todavía no se aplica el escenario.
     */
 
-    const hp =
+    const hpBase =
         limitarArena(
             Math.round(
                 PALARENA.configuracion.hp_base +
@@ -96,12 +93,88 @@ function crearCombatienteArena(datos) {
 
     /*
     ==========================================================
+    BONIFICACIÓN DEL ESCENARIO
+    ==========================================================
+
+    El escenario se aplica DESPUÉS de obtener
+    el HP base.
+
+    No modificamos estadísticas.
+    No hacemos conversiones de parámetros.
+
+    Simplemente recibimos una cantidad de HP
+    adicional y la información de las
+    bonificaciones que la han producido.
+    */
+
+    let bonificacionEscenario = {
+
+        total: 0,
+
+        bonificaciones: []
+
+    };
+
+
+    if (
+        typeof aplicarEscenarioArena ===
+        "function"
+    ) {
+
+        const resultadoEscenario =
+            aplicarEscenarioArena(
+                datos,
+                hpBase
+            );
+
+
+        if (
+            resultadoEscenario
+        ) {
+
+            bonificacionEscenario = {
+
+                total:
+                    Number(
+                        resultadoEscenario.total
+                    ) || 0,
+
+                bonificaciones:
+                    Array.isArray(
+                        resultadoEscenario.bonificaciones
+                    )
+                        ? resultadoEscenario.bonificaciones
+                        : []
+
+            };
+
+        }
+
+    }
+
+
+    /*
+    ==========================================================
+    HP FINAL
+    ==========================================================
+
+    HP final = HP base + bonificación del escenario.
+    */
+
+    const hp =
+        hpBase +
+        bonificacionEscenario.total;
+
+
+    /*
+    ==========================================================
     INICIATIVA
     ==========================================================
 
     VELOCIDAD puede estar modificada por el escenario.
 
-    MOVILIDAD continúa siendo el stat original de la ficha.
+    MOVILIDAD continúa siendo el stat original
+    de la ficha.
     */
 
     const iniciativa =
@@ -140,7 +213,8 @@ function crearCombatienteArena(datos) {
 
     return {
 
-        datos: datos,
+        datos:
+            datos,
 
         codigo:
             datos.j1 || "",
@@ -151,22 +225,44 @@ function crearCombatienteArena(datos) {
         imagen:
             datos.i3 || "",
 
+
         /*
-        Stats completos para el motor.
-        Los 5 indicadores afectados por
-        escenario ya están modificados.
+        ------------------------------------------------------
+        STATS
+        ------------------------------------------------------
         */
 
         stats:
             stats,
 
+
         /*
-        Guardamos también explícitamente
-        los indicadores modificados.
+        ------------------------------------------------------
+        INDICADORES DEL ESCENARIO
+        ------------------------------------------------------
         */
 
         indicadoresArena:
             datos.indicadoresArena || null,
+
+
+        /*
+        ------------------------------------------------------
+        HP
+        ------------------------------------------------------
+
+        Guardamos por separado el HP base y la
+        bonificación para poder mostrarla posteriormente.
+        */
+
+        hp_base:
+            hpBase,
+
+        hp_bonificacion_escenario:
+            bonificacionEscenario.total,
+
+        bonificaciones_escenario:
+            bonificacionEscenario.bonificaciones,
 
         hp_max:
             hp,
@@ -174,11 +270,32 @@ function crearCombatienteArena(datos) {
         hp:
             hp,
 
+
+        /*
+        ------------------------------------------------------
+        INICIATIVA
+        ------------------------------------------------------
+        */
+
         iniciativa:
             iniciativa,
 
+
+        /*
+        ------------------------------------------------------
+        ATAQUE ESPECIAL
+        ------------------------------------------------------
+        */
+
         ataque_especial:
             ataqueEspecial,
+
+
+        /*
+        ------------------------------------------------------
+        ESTADO DE COMBATE
+        ------------------------------------------------------
+        */
 
         defendiendo:
             false,
