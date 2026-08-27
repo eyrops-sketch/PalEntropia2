@@ -86,54 +86,60 @@ function crearCombatienteArena(datos) {
     ==========================================================
     ESCENARIO
     ==========================================================
-    
-    El escenario NO modifica estadísticas.
 
-    Solo añade HP al HP base.
+    El escenario ya sabe calcular las coincidencias.
 
-    El resultado del escenario debe estar disponible
-    en datos.resultadoEscenario.
+    Aquí solamente obtenemos ese resultado y lo
+    entregamos a aplicarescenario.js.
+
+    NO modificamos estadísticas.
     */
 
-    let hp =
+    let hpFinal =
         hpBase;
 
-    let hpBonificacionEscenario =
-        0;
 
     let bonificacionesEscenario =
         [];
 
 
     if (
-        datos &&
-        datos.resultadoEscenario &&
-        typeof obtenerHPConEscenarioArena ===
+        window.PALARENA_ESCENARIO &&
+        typeof window.PALARENA_ESCENARIO.evaluar ===
+        "function" &&
+        typeof window.aplicarEscenarioArena ===
         "function"
     ) {
 
-        const hpEscenario =
-            obtenerHPConEscenarioArena(
-                {
-                    ...datos,
-                    hp_max: hpBase
-                },
-                datos.resultadoEscenario
+        const resultadoEscenario =
+            window.PALARENA_ESCENARIO.evaluar(
+                datos.j1
             );
 
 
         if (
-            hpEscenario
+            resultadoEscenario
         ) {
 
-            hp =
-                hpEscenario.hp;
+            const aplicado =
+                window.aplicarEscenarioArena(
+                    hpBase,
+                    resultadoEscenario.bonificacion
+                );
 
-            hpBonificacionEscenario =
-                hpEscenario.hp_bonificado;
 
-            bonificacionesEscenario =
-                hpEscenario.bonificaciones;
+            if (
+                aplicado
+            ) {
+
+                hpFinal =
+                    aplicado.hp_total;
+
+
+                bonificacionesEscenario =
+                    aplicado.bonificaciones;
+
+            }
 
         }
 
@@ -205,12 +211,6 @@ function crearCombatienteArena(datos) {
             stats,
 
 
-        /*
-        ------------------------------------------------------
-        INDICADORES DEL ESCENARIO
-        ------------------------------------------------------
-        */
-
         indicadoresArena:
             datos.indicadoresArena || null,
 
@@ -225,16 +225,17 @@ function crearCombatienteArena(datos) {
             hpBase,
 
         hp_bonificacion_escenario:
-            hpBonificacionEscenario,
+            hpFinal -
+            hpBase,
 
         bonificaciones_escenario:
             bonificacionesEscenario,
 
         hp_max:
-            hp,
+            hpFinal,
 
         hp:
-            hp,
+            hpFinal,
 
 
         /*
@@ -259,7 +260,7 @@ function crearCombatienteArena(datos) {
 
         /*
         ------------------------------------------------------
-        ESTADO DE COMBATE
+        ESTADO
         ------------------------------------------------------
         */
 
