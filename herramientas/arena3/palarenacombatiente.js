@@ -1,8 +1,91 @@
 /* ==========================================================
    PALENTROPÍA — ARENA
    archivo: palarenacombatiente.js
-   versión: 1.3
+   versión: 1.4
    ========================================================== */
+
+
+/* ==========================================================
+   INDICADOR DE ESCENARIO
+   ========================================================== */
+
+function mostrarEstadoEscenarioArena(
+    mensaje,
+    tipo = "info"
+) {
+
+    /*
+    ----------------------------------------------------------
+    BUSCAR CONTENEDOR
+    ----------------------------------------------------------
+    */
+
+    const posibles = [
+
+        "estadoEscenarioArena",
+        "estado-escenario-arena",
+        "indicadorEscenarioArena",
+        "indicador-escenario-arena"
+
+    ];
+
+
+    let elemento = null;
+
+
+    for (
+        let i = 0;
+        i < posibles.length;
+        i++
+    ) {
+
+        elemento =
+            document.getElementById(
+                posibles[i]
+            );
+
+
+        if (elemento) {
+
+            break;
+
+        }
+
+    }
+
+
+    /*
+    ----------------------------------------------------------
+    SI EXISTE EL CONTENEDOR
+    ----------------------------------------------------------
+    */
+
+    if (elemento) {
+
+        elemento.textContent =
+            mensaje;
+
+        elemento.style.display =
+            "block";
+
+        elemento.dataset.estado =
+            tipo;
+
+    }
+
+
+    /*
+    ----------------------------------------------------------
+    CONSOLA
+    ----------------------------------------------------------
+    */
+
+    console.log(
+        "[PALARENA ESCENARIO]",
+        mensaje
+    );
+
+}
 
 
 /* ==========================================================
@@ -10,6 +93,18 @@
    ========================================================== */
 
 function crearCombatienteArena(datos) {
+
+
+    /*
+    ==========================================================
+    COMPROBACIÓN INICIAL
+    ==========================================================
+    */
+
+    mostrarEstadoEscenarioArena(
+        "🟢 CREANDO COMBATIENTE",
+        "info"
+    );
 
 
     /*
@@ -41,6 +136,13 @@ function crearCombatienteArena(datos) {
         );
 
 
+    mostrarEstadoEscenarioArena(
+        "🟢 ESCENARIO DETECTADO — HP base: " +
+        hpBase,
+        "ok"
+    );
+
+
     /*
     ==========================================================
     ESCENARIO
@@ -56,27 +158,56 @@ function crearCombatienteArena(datos) {
 
 
     /*
-    ----------------------------------------------------------
-    INDICADOR
-    ----------------------------------------------------------
-    */
-
-    console.log(
-        "🟢 APLICANDO ESCENARIO"
-    );
-
-
-    /*
-    ----------------------------------------------------------
-    OBTENER RESULTADO
-    ----------------------------------------------------------
+    ==========================================================
+    COMPROBAR PALARENA_ESCENARIO
+    ==========================================================
     */
 
     if (
-        window.PALARENA_ESCENARIO &&
-        typeof window.PALARENA_ESCENARIO.evaluar ===
-        "function"
+        !window.PALARENA_ESCENARIO
     ) {
+
+        mostrarEstadoEscenarioArena(
+            "🔴 PALARENA_ESCENARIO NO DISPONIBLE",
+            "error"
+        );
+
+    }
+
+
+    else if (
+        typeof
+        window.PALARENA_ESCENARIO.evaluar
+        !== "function"
+    ) {
+
+        mostrarEstadoEscenarioArena(
+            "🔴 PALARENA_ESCENARIO.evaluar() NO DISPONIBLE",
+            "error"
+        );
+
+    }
+
+
+    else {
+
+        /*
+        ======================================================
+        EVALUANDO
+        ======================================================
+        */
+
+        mostrarEstadoEscenarioArena(
+            "🟡 EVALUANDO ESCENARIO...",
+            "warning"
+        );
+
+
+        /*
+        ------------------------------------------------------
+        OBTENER RESULTADO
+        ------------------------------------------------------
+        */
 
         const resultadoEscenario =
             window.PALARENA_ESCENARIO.evaluar(
@@ -84,10 +215,48 @@ function crearCombatienteArena(datos) {
             );
 
 
+        /*
+        ------------------------------------------------------
+        COMPROBAR RESULTADO
+        ------------------------------------------------------
+        */
+
         if (
-            resultadoEscenario &&
-            resultadoEscenario.bonificacion
+            !resultadoEscenario
         ) {
+
+            mostrarEstadoEscenarioArena(
+                "🔴 ESCENARIO SIN RESULTADO",
+                "error"
+            );
+
+        }
+
+
+        else if (
+            !resultadoEscenario.bonificacion
+        ) {
+
+            mostrarEstadoEscenarioArena(
+                "🔴 ESCENARIO SIN BONIFICACIÓN",
+                "error"
+            );
+
+        }
+
+
+        else {
+
+            /*
+            ==================================================
+            APLICANDO
+            ==================================================
+            */
+
+            mostrarEstadoEscenarioArena(
+                "🟢 APLICANDO ESCENARIO",
+                "ok"
+            );
 
 
             const bonificacion =
@@ -110,11 +279,15 @@ function crearCombatienteArena(datos) {
                 coincidenciasHabitats > 0
             ) {
 
-                hpBonificacionEscenario +=
+                const hpHabitats =
                     Math.round(
                         coincidenciasHabitats *
                         5
                     );
+
+
+                hpBonificacionEscenario +=
+                    hpHabitats;
 
 
                 bonificacionesEscenario.push({
@@ -129,9 +302,7 @@ function crearCombatienteArena(datos) {
                         coincidenciasHabitats,
 
                     hp:
-                        Math.round(
-                            coincidenciasHabitats * 5
-                        )
+                        hpHabitats
 
                 });
 
@@ -140,7 +311,7 @@ function crearCombatienteArena(datos) {
 
             /*
             ==================================================
-            MODO
+            MODO DE VIDA
             ==================================================
             */
 
@@ -173,7 +344,7 @@ function crearCombatienteArena(datos) {
 
             /*
             ==================================================
-            MEDIOS
+            MEDIOS ECOLÓGICOS
             ==================================================
             */
 
@@ -214,6 +385,20 @@ function crearCombatienteArena(datos) {
 
             }
 
+
+            /*
+            ==================================================
+            MOSTRAR RESULTADO
+            ==================================================
+            */
+
+            mostrarEstadoEscenarioArena(
+                "➕ BONIFICACIÓN ESCENARIO: +" +
+                hpBonificacionEscenario +
+                " HP",
+                "ok"
+            );
+
         }
 
     }
@@ -228,6 +413,13 @@ function crearCombatienteArena(datos) {
     const hpFinal =
         hpBase +
         hpBonificacionEscenario;
+
+
+    mostrarEstadoEscenarioArena(
+        "❤️ HP FINAL: " +
+        hpFinal,
+        "ok"
+    );
 
 
     /*
@@ -294,12 +486,6 @@ function crearCombatienteArena(datos) {
         stats:
             stats,
 
-
-        /*
-        ------------------------------------------------------
-        INDICADORES
-        ------------------------------------------------------
-        */
 
         indicadoresArena:
             datos.indicadoresArena || null,
