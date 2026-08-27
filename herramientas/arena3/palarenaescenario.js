@@ -1,7 +1,7 @@
 /*
 ========================================================
 PALARENA
-palarenaescenario.js v1.1
+palarenaescenario.js v1.2
 PalEntropía
 
 Generador de escenarios de Arena
@@ -28,8 +28,16 @@ Medio ecológico:
   L  = +3
   ES = +2
   C  = +2
+
+IMPORTANTE:
+El resultado de la evaluación se conserva temporalmente
+en window.PALARENA_BONIFICACION_ACTUAL para que otros
+módulos puedan utilizar directamente las bonificaciones.
 ========================================================
 */
+
+window.PALARENA_BONIFICACION_ACTUAL = null;
+
 
 window.PALARENA_ESCENARIO = {
 
@@ -38,7 +46,7 @@ window.PALARENA_ESCENARIO = {
 
     /* ==================================================
        UTILIDADES
-    ================================================== */
+       ================================================== */
 
     aleatorio(array) {
 
@@ -238,6 +246,18 @@ window.PALARENA_ESCENARIO = {
             medios: medios
 
         };
+
+
+        /*
+        --------------------------------------------------
+        NUEVO ESCENARIO
+        --------------------------------------------------
+
+        Al generar un escenario nuevo eliminamos
+        temporalmente la bonificación anterior.
+        */
+
+        window.PALARENA_BONIFICACION_ACTUAL = null;
 
 
         return this.escenario;
@@ -528,9 +548,29 @@ window.PALARENA_ESCENARIO = {
             this.calcularBonificacion(datos);
 
 
+        /*
+        ==================================================
+        GUARDAR BONIFICACIÓN ACTUAL
+        ==================================================
+
+        No recalculamos nada.
+
+        Simplemente guardamos exactamente el resultado
+        que acaba de producir este módulo.
+
+        Otros módulos pueden leer:
+
+        window.PALARENA_BONIFICACION_ACTUAL
+        */
+
+        window.PALARENA_BONIFICACION_ACTUAL =
+            bonificacion;
+
+
         return {
 
-            ficha: datos,
+            ficha:
+                datos,
 
             escenario:
                 this.escenario,
