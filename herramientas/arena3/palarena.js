@@ -107,8 +107,82 @@ function obtenerStatsArena(datos) {
 
 function crearCombatienteArena(datos) {
 
-    const stats =
+    /*
+    ==========================================================
+    STATS BASE
+    ==========================================================
+    */
+
+    const statsBase =
         obtenerStatsArena(datos);
+
+
+    /*
+    ==========================================================
+    INDICADORES DE COMBATE
+    ==========================================================
+
+    Si prepararCombateArena() ya ha calculado
+    indicadoresArena, utilizamos esos valores modificados.
+
+    Los demás valores originales permanecen intactos.
+    */
+
+    let stats =
+        statsBase;
+
+
+    if (
+        datos &&
+        datos.indicadoresArena
+    ) {
+
+        stats = {
+
+            ...statsBase,
+
+            ataque:
+                Number(
+                    datos.indicadoresArena.ataque
+                ) || 0,
+
+            defensa:
+                Number(
+                    datos.indicadoresArena.defensa
+                ) || 0,
+
+            velocidad:
+                Number(
+                    datos.indicadoresArena.velocidad
+                ) || 0,
+
+            resistencia:
+                Number(
+                    datos.indicadoresArena.resistencia
+                ) || 0,
+
+            tactica:
+                Number(
+                    datos.indicadoresArena.tactica
+                ) || 0
+
+        };
+
+    }
+
+
+    /*
+    ==========================================================
+    HP
+    ==========================================================
+
+    Utiliza los indicadores modificados de:
+
+    RESISTENCIA
+    DEFENSA
+
+    y mantiene TAMAÑO como característica original.
+    */
 
     const hp =
         limitarArena(
@@ -122,16 +196,37 @@ function crearCombatienteArena(datos) {
             140
         );
 
+
+    /*
+    ==========================================================
+    INICIATIVA
+    ==========================================================
+
+    VELOCIDAD puede estar modificada por el escenario.
+
+    MOVILIDAD continúa siendo el stat original de la ficha.
+    */
+
     const iniciativa =
         Math.round(
             stats.velocidad * 0.6 +
             stats.movilidad * 0.4
         );
 
-    let ataqueEspecial = "A001";
+
+    /*
+    ==========================================================
+    ATAQUE ESPECIAL
+    ==========================================================
+    */
+
+    let ataqueEspecial =
+        "A001";
+
 
     if (
-        typeof asignarAtaqueArena === "function"
+        typeof asignarAtaqueArena ===
+        "function"
     ) {
 
         ataqueEspecial =
@@ -139,31 +234,63 @@ function crearCombatienteArena(datos) {
 
     }
 
+
+    /*
+    ==========================================================
+    COMBATIENTE
+    ==========================================================
+    */
+
     return {
 
         datos: datos,
 
-        codigo: datos.j1 || "",
+        codigo:
+            datos.j1 || "",
 
-        nombre: datos.j2 || "Desconocido",
+        nombre:
+            datos.j2 || "Desconocido",
 
-        imagen: datos.i3 || "",
+        imagen:
+            datos.i3 || "",
 
-        stats: stats,
+        /*
+        Stats completos para el motor.
+        Los 5 indicadores afectados por
+        escenario ya están modificados.
+        */
 
-        hp_max: hp,
+        stats:
+            stats,
 
-        hp: hp,
+        /*
+        Guardamos también explícitamente
+        los indicadores modificados.
+        */
 
-        iniciativa: iniciativa,
+        indicadoresArena:
+            datos.indicadoresArena || null,
 
-        ataque_especial: ataqueEspecial,
+        hp_max:
+            hp,
 
-        defendiendo: false,
+        hp:
+            hp,
 
-        efectos: [],
+        iniciativa:
+            iniciativa,
 
-        derrotado: false
+        ataque_especial:
+            ataqueEspecial,
+
+        defendiendo:
+            false,
+
+        efectos:
+            [],
+
+        derrotado:
+            false
 
     };
 
