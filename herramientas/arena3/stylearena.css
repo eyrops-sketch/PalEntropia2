@@ -583,3 +583,32 @@ footer {
         padding-right: 20px;
     }
   }
+
+
+/* ==========================================================
+   ARENA — AJUSTES DE INTERFAZ
+   ========================================================== */
+
+/* Ocultar códigos de las paleofichas en la cabecera */
+.codigoOculto {
+    display: none;
+}
+
+/* Nombre de la paleoficha */
+.nombrePaleoficha {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+/* ==========================================================
+   BOTÓN NUEVO COMBATE
+   ========================================================== */
+
+.botonNuevo {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 18px;
+}
