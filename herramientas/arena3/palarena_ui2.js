@@ -72,22 +72,51 @@ async function obtenerMiniaturaArena(codigo,nombre){
 }
 
 function generarEstadisticasArena(datos){
+
     const estadisticas=[
-        ["e1","Adaptabilidad"],["e2","Sociabilidad"],
-        ["e3","Resistencia"],["e4","Reproducción"],
-        ["e5","Ofensiva"],["e6","Defensa"],
-        ["e7","Movilidad"],["e8","Plasticidad ecológica"],
-        ["e9","Tamaño"],["e10","Velocidad"],
+        ["e1","Adaptabilidad"],
+        ["e2","Sociabilidad"],
+        ["e3","Resistencia"],
+        ["e4","Reproducción"],
+        ["e5","Ofensiva"],
+        ["e6","Defensa"],
+        ["e7","Movilidad"],
+        ["e8","Plasticidad ecológica"],
+        ["e9","Tamaño"],
+        ["e10","Velocidad"],
         ["e11","Inteligencia"]
     ];
 
     let html="";
 
     estadisticas.forEach(function(stat){
+
+        const valor=Number(
+            numeroArena(
+                datos.estadisticas[stat[0]]
+            )
+        );
+
         html+=`
             <div class="stat">
-                <span>${escaparHTML(stat[1])}</span>
-                <span>${numeroArena(datos.estadisticas[stat[0]])}</span>
+
+                <span class="statNombre">
+                    ${escaparHTML(stat[1])}
+                </span>
+
+                <div class="statBarra">
+
+                    <div
+                        class="statBarraInterior"
+                        style="width:${valor}%"
+                    ></div>
+
+                </div>
+
+                <span class="statValor">
+                    ${valor}
+                </span>
+
             </div>
         `;
     });
@@ -96,10 +125,13 @@ function generarEstadisticasArena(datos){
 }
 
 function crearDatosCombatienteArena(codigo){
+
     const datos=window.PALARENA_DATOS.preparar(codigo);
 
     if(!datos)
-        throw new Error("No se pudo preparar la Paleoficha "+codigo);
+        throw new Error(
+            "No se pudo preparar la Paleoficha "+codigo
+        );
 
     return{
         codigo:datos.j1,
