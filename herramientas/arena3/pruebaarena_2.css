@@ -65,31 +65,40 @@ body {
     top: 10px;
     right: 10px;
 
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
 
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    background: #111c2a;
-
     border:
-        1px solid #62d6ff;
+        1px solid #35516b;
 
     border-radius: 50%;
+
+    background: #101b28;
 
     color: #ffffff;
 
     text-decoration: none;
 
-    font-size: 18px;
-
-    box-shadow:
-        0 0 10px rgba(98, 214, 255, 0.18);
+    font-size: 16px;
 
     z-index: 1000;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.35);
+
+}
+
+
+.botonHome:hover {
+
+    border-color: #62d6ff;
+
+    background: #17283a;
 
 }
 
@@ -233,7 +242,7 @@ h1 {
 
     text-align: center;
 
-    font-size: 15px;
+    font-size: 18px;
 
     font-weight: bold;
 
@@ -368,72 +377,6 @@ button:active {
 
 
 /* ==========================================================
-   BOTÓN EJECUTAR COMBATE AUTOMÁTICO
-   ========================================================== */
-
-#btnEjecutarCombate {
-
-    width: 100%;
-
-    min-height: 50px;
-
-    margin-top: 14px;
-
-    padding: 12px;
-
-    border:
-        1px solid #62d6ff;
-
-    border-radius: 10px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #1b3248,
-            #10202f
-        );
-
-    color: #62d6ff;
-
-    font-family: inherit;
-
-    font-size: 15px;
-
-    font-weight: bold;
-
-    letter-spacing: 0.7px;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 0 10px rgba(98, 214, 255, 0.10);
-
-    transition:
-        transform 0.15s ease,
-        background 0.15s ease,
-        box-shadow 0.15s ease;
-
-}
-
-
-#btnEjecutarCombate:hover {
-
-    background: #203c55;
-
-    box-shadow:
-        0 0 14px rgba(98, 214, 255, 0.22);
-
-}
-
-
-#btnEjecutarCombate:active {
-
-    transform: scale(0.98);
-
-}
-
-
-/* ==========================================================
    ESTADO
    ========================================================== */
 
@@ -529,11 +472,11 @@ button:active {
 
     text-align: center;
 
-    font-size: 18px;
+    font-size: 20px;
 
     font-weight: bold;
 
-    color: #ffffff;
+    color: #62d6ff;
 
     white-space: nowrap;
 
@@ -609,7 +552,7 @@ button:active {
 
 
 /* ==========================================================
-   MODO DE VIDA
+   DATOS
    ========================================================== */
 
 .dato {
@@ -679,19 +622,20 @@ button:active {
 
     display: flex;
 
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
 
-    gap: 8px;
+    align-items: stretch;
 
-    padding: 6px 7px;
+    gap: 4px;
+
+    padding: 7px 7px;
 
     border-bottom:
         1px solid #172534;
 
-    font-size: 10px;
+    font-size: 11px;
 
-    color: #a9b8c6;
+    color: #ffffff;
 
 }
 
@@ -699,6 +643,15 @@ button:active {
 .stat:last-child {
 
     border-bottom: 0;
+
+}
+
+
+.stat span:first-child {
+
+    color: #ffffff;
+
+    font-size: 11px;
 
 }
 
@@ -711,10 +664,39 @@ button:active {
 
     font-weight: bold;
 
-    color: #ffffff;
+    color: #62d6ff;
+
+    font-size: 12px;
 
 }
 
+
+/* ==========================================================
+   BARRA DE ESTADÍSTICA
+   ========================================================== */
+
+.stat::after {
+
+    content: "";
+
+    display: block;
+
+    width: 100%;
+
+    height: 7px;
+
+    overflow: hidden;
+
+    border-radius: 6px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #62d6ff var(--valor-stat, 0%),
+            #253342 var(--valor-stat, 0%)
+        );
+
+}
 
 /* ==========================================================
    ENLACE PALEOFICHA
@@ -1059,14 +1041,14 @@ button:active {
 
     .nombre {
 
-        font-size: 18px;
+        font-size: 20px;
 
     }
 
 
     .nombrePaleoficha {
 
-        font-size: 15px;
+        font-size: 17px;
 
     }
 
@@ -1109,11 +1091,36 @@ button:active {
     }
 
 
-    #btnEjecutarCombate {
+    .botonHome {
 
-        min-height: 50px;
+        top: 8px;
+        right: 8px;
+
+        width: 30px;
+        height: 30px;
 
         font-size: 15px;
+
+    }
+
+
+    .stat {
+
+        font-size: 12px;
+
+    }
+
+
+    .stat span:first-child {
+
+        font-size: 12px;
+
+    }
+
+
+    .stat span:last-child {
+
+        font-size: 13px;
 
     }
 
@@ -1151,7 +1158,14 @@ button:active {
 
     .nombre {
 
-        font-size: 19px;
+        font-size: 21px;
+
+    }
+
+
+    .nombrePaleoficha {
+
+        font-size: 18px;
 
     }
 
