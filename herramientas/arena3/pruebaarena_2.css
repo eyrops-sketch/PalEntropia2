@@ -1170,3 +1170,69 @@ button:active {
     }
 
 }
+
+
+/* ==========================================================
+   BOTÓN EJECUTAR COMBATE AUTOMÁTICO
+   ========================================================== */
+
+#btnEjecutarCombate {
+
+    width: 100%;
+
+    min-height: 50px;
+
+    margin-top: 14px;
+
+    padding: 12px;
+
+    border:
+        1px solid #62d6ff;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #1b3248,
+            #10202f
+        );
+
+    color: #62d6ff;
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.7px;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 0 10px rgba(98, 214, 255, 0.10);
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        box-shadow 0.15s ease;
+
+}
+
+
+#btnEjecutarCombate:hover {
+
+    background: #203c55;
+
+    box-shadow:
+        0 0 14px rgba(98, 214, 255, 0.22);
+
+}
+
+
+#btnEjecutarCombate:active {
+
+    transform: scale(0.98);
+
+}
