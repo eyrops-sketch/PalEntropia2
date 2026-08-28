@@ -1,31 +1,27 @@
-/*
-============================================================
-PALENTROPÍA — ARENA
-archivo: palarenaui4.js
-versión: 1.1
-estado: interfaz de Arena
+/* ========================================================
+PALARENA
+palarenaui4.js
+PalEntropía
 
-funciones:
-- presentación de paleofichas
-- presentación del escenario
-- presentación de bonificaciones
-- presentación del ataque asignado
-- ejecución y resultado del combate
-- historial
-- selección desde visor
+INTERFAZ DE ARENA
+
+- Presentación de paleofichas
+- Presentación del escenario
+- Presentación de bonificaciones
+- Presentación del ataque especial
+- Ejecución y resultado del combate
+- Historial
+- Selección desde visor
 
 No contiene lógica de combate.
-============================================================
-*/
+======================================================== */
 
 
-/*
-============================================================
-MOSTRAR COMBATIENTE
-============================================================
-*/
+/* ======================================================
+   MOSTRAR COMBATIENTE
+====================================================== */
 
-async function mostrarCombatienteArena(datos, n) {
+async function mostrarCombatienteArena(datos,n){
 
     const miniatura =
         await obtenerMiniaturaArena(
@@ -39,6 +35,7 @@ async function mostrarCombatienteArena(datos, n) {
         encodeURIComponent(datos.codigo) +
         "&arena=" +
         n;
+
 
     const habitatsHTML =
         datos.habitats
@@ -74,14 +71,17 @@ async function mostrarCombatienteArena(datos, n) {
             })
             .join("");
 
+
     const modo =
         window.PALARENA_DATOS
             .obtenerModo(datos.modo);
+
 
     const modoNombre =
         modo && modo.nombre
             ? modo.nombre
             : "";
+
 
     return `
 
@@ -99,14 +99,22 @@ async function mostrarCombatienteArena(datos, n) {
                     : ""
             }
 
+
             <div class="nombre">
-                🦖 ${escaparHTML(datos.nombre)}
+
+                🦖
+                ${escaparHTML(datos.nombre)}
+
             </div>
 
+
             <div class="codigoFicha">
+
                 Código:
                 ${escaparHTML(datos.codigo)}
+
             </div>
+
 
             <div class="seccion">
 
@@ -131,6 +139,7 @@ async function mostrarCombatienteArena(datos, n) {
 
             </div>
 
+
             <div class="seccion">
 
                 <h3>
@@ -143,6 +152,7 @@ async function mostrarCombatienteArena(datos, n) {
                 }
 
             </div>
+
 
             <div class="seccion">
 
@@ -159,6 +169,7 @@ async function mostrarCombatienteArena(datos, n) {
 
             </div>
 
+
             <a
                 class="enlace"
                 href="${escaparHTML(enlace)}"
@@ -174,27 +185,34 @@ async function mostrarCombatienteArena(datos, n) {
 }
 
 
-/*
-============================================================
-NOMBRE LEGIBLE DE ATRIBUTO
-============================================================
-*/
+/* ======================================================
+   NOMBRE LEGIBLE DE ATRIBUTO
+====================================================== */
 
-function nombreIndicadorArena(indicador) {
+function nombreIndicadorArena(efecto){
 
-    if (
-        indicador === null ||
-        indicador === undefined
-    ) {
-
+    if(!efecto){
         return "";
-
     }
 
+
     const valor =
-        String(indicador)
-            .toLowerCase()
-            .trim();
+        efecto.indicador ??
+        efecto.atributo ??
+        efecto.estadistica ??
+        efecto.stat ??
+        efecto.nombre ??
+        efecto.tipo;
+
+
+    if(!valor){
+        return "";
+    }
+
+
+    const texto =
+        normalizarTextoArena(valor);
+
 
     const nombres = {
 
@@ -210,14 +228,8 @@ function nombreIndicadorArena(indicador) {
         reproduccion:
             "Reproducción",
 
-        reproducción:
-            "Reproducción",
-
         ofensiva:
             "Ofensiva",
-
-        ataque:
-            "Ataque",
 
         defensa:
             "Defensa",
@@ -231,52 +243,37 @@ function nombreIndicadorArena(indicador) {
         plasticidad_ecologica:
             "Plasticidad ecológica",
 
-        plasticidad_ecológica:
-            "Plasticidad ecológica",
-
         tamano:
-            "Tamaño",
-
-        tamaño:
             "Tamaño",
 
         velocidad:
             "Velocidad",
 
         inteligencia:
-            "Inteligencia",
-
-        iniciativa:
-            "Iniciativa",
-
-        hp:
-            "HP",
-
-        vida:
-            "HP"
+            "Inteligencia"
 
     };
 
-    return
-        nombres[valor] ||
-        String(indicador);
+
+    return (
+        nombres[texto] ||
+        String(valor)
+    );
 
 }
 
 
-/*
-============================================================
-BONIFICACIONES
-============================================================
-*/
+/* ======================================================
+   BONIFICACIONES
+====================================================== */
 
-function mostrarBonificacionesArena(bonificacion) {
+function mostrarBonificacionesArena(bonificacion){
 
-    if (
+    if(
         !bonificacion ||
         !Array.isArray(bonificacion.detalles) ||
         !bonificacion.detalles.length
-    ) {
+    ){
 
         return `
             <div class="bonificacion">
@@ -286,30 +283,40 @@ function mostrarBonificacionesArena(bonificacion) {
 
     }
 
+
     return bonificacion.detalles
+
         .map(detalle => {
+
 
             const efectos =
                 Array.isArray(detalle.efectos)
 
                     ? detalle.efectos
+
                         .map(efecto => {
 
                             const indicador =
                                 nombreIndicadorArena(
-                                    efecto.indicador
+                                    efecto
                                 );
+
 
                             return `
 
-                                <div class="efectoBonificacion">
+                                <div
+                                    class="efectoBonificacion"
+                                >
 
                                     ↳
 
                                     <strong>
-                                        ${escaparHTML(
-                                            indicador
-                                        )}
+                                        ${
+                                            escaparHTML(
+                                                indicador ||
+                                                "Atributo"
+                                            )
+                                        }
                                     </strong>
 
                                     +${numeroArena(
@@ -321,18 +328,20 @@ function mostrarBonificacionesArena(bonificacion) {
                             `;
 
                         })
+
                         .join("")
 
                     : "";
+
 
             let titulo =
                 detalle.nombre ||
                 "Bonificación";
 
-            if (
-                detalle.coincidencias !==
-                undefined
-            ) {
+
+            if(
+                detalle.coincidencias !== undefined
+            ){
 
                 titulo +=
                     " — " +
@@ -343,6 +352,7 @@ function mostrarBonificacionesArena(bonificacion) {
 
             }
 
+
             return `
 
                 <div class="bonificacion">
@@ -351,20 +361,27 @@ function mostrarBonificacionesArena(bonificacion) {
                         ${escaparHTML(titulo)}
                     </strong>
 
+
                     ${
                         detalle.codigo
+
                             ? `
-                                <div class="codigoBonificacion">
+                                <div
+                                    class="codigoBonificacion"
+                                >
                                     ${escaparHTML(
                                         detalle.codigo
                                     )}
                                 </div>
                             `
+
                             : ""
                     }
 
+
                     ${
                         efectos
+
                             ? `
                                 <div
                                     class="efectosBonificacion"
@@ -372,6 +389,7 @@ function mostrarBonificacionesArena(bonificacion) {
                                     ${efectos}
                                 </div>
                             `
+
                             : ""
                     }
 
@@ -380,119 +398,102 @@ function mostrarBonificacionesArena(bonificacion) {
             `;
 
         })
+
         .join("");
 
 }
 
+/* ======================================================
+   ATAQUE ESPECIAL
+====================================================== */
 
-/*
-============================================================
-ATAQUE ASIGNADO
-============================================================
-*/
+function obtenerAtaqueVisualArena(datos){
 
-function mostrarAtaqueAsignadoArena(datos) {
+    let codigo = null;
 
-    if (
-        !datos
-    ) {
 
-        return `
-            <div class="ataqueArena">
-                ⚔️ Ataque: No disponible
-            </div>
-        `;
+    /*
+    ------------------------------------------------------
+    SI YA VIENE ASIGNADO
+    ------------------------------------------------------
+    */
+
+    if(
+        datos &&
+        datos.ataque_especial
+    ){
+
+        codigo =
+            datos.ataque_especial;
 
     }
+
+
+    /*
+    ------------------------------------------------------
+    ASIGNACIÓN AUTOMÁTICA
+    ------------------------------------------------------
+    */
+
+    if(
+        !codigo &&
+        typeof asignarAtaqueArena ===
+        "function"
+    ){
+
+        codigo =
+            asignarAtaqueArena(datos);
+
+    }
+
+
+    /*
+    ------------------------------------------------------
+    OBTENER DATOS DEL ATAQUE
+    ------------------------------------------------------
+    */
 
     let ataque = null;
 
-    try {
 
-        if (
-            typeof obtenerAtaqueAsignadoArena ===
-            "function"
-        ) {
+    if(
+        codigo &&
+        typeof obtenerAtaqueArena ===
+        "function"
+    ){
 
-            ataque =
-                obtenerAtaqueAsignadoArena(
-                    datos
-                );
-
-        }
-
-    } catch(error) {
-
-        ataque = null;
+        ataque =
+            obtenerAtaqueArena(codigo);
 
     }
 
-    if (!ataque) {
 
-        return `
-            <div class="ataqueArena">
-                ⚔️ Ataque: No disponible
-            </div>
-        `;
+    if(!ataque){
+
+        return {
+
+            codigo:
+                codigo || "A001",
+
+            nombre:
+                "Ataque normal",
+
+            tipo:
+                "normal"
+
+        };
 
     }
 
-    const nombre =
-        ataque.nombre ||
-        ataque.codigo ||
-        "Ataque";
 
-    const tipo =
-        ataque.tipo ||
-        "normal";
-
-    const codigo =
-        ataque.codigo ||
-        "";
-
-    return `
-
-        <div class="ataqueArena">
-
-            <h3>
-                ⚔️ Ataque especial
-            </h3>
-
-            <div>
-                <strong>
-                    ${escaparHTML(nombre)}
-                </strong>
-            </div>
-
-            <div>
-                Tipo:
-                <strong>
-                    ${escaparHTML(tipo)}
-                </strong>
-            </div>
-
-            ${
-                codigo
-                    ? `
-                        <div>
-                            Código:
-                            ${escaparHTML(codigo)}
-                        </div>
-                    `
-                    : ""
-            }
-
-        </div>
-
-    `;
+    return ataque;
 
 }
 
-/*
-============================================================
-COMBATIENTES PREPARADOS
-============================================================
-*/
+
+/* ======================================================
+   COMBATIENTES PREPARADOS
+====================================================== */
 
 function mostrarPreparadosArena(
     c1,
@@ -500,22 +501,29 @@ function mostrarPreparadosArena(
     b1,
     b2,
     escenario
-) {
+){
 
     document.getElementById(
         "panelCombate"
     ).style.display = "block";
+
 
     document.getElementById(
         "panelResultadoCombate"
     ).style.display = "none";
 
 
-    /*
-    ========================================================
-    COMBATIENTE 1
-    ========================================================
-    */
+    const ataque1 =
+        obtenerAtaqueVisualArena(
+            c1.datos || c1
+        );
+
+
+    const ataque2 =
+        obtenerAtaqueVisualArena(
+            c2.datos || c2
+        );
+
 
     document.getElementById(
         "combatientesPreparados"
@@ -537,11 +545,39 @@ function mostrarPreparadosArena(
             ⚡ Iniciativa:
             ${numeroArena(c1.iniciativa)}
 
-            ${
-                mostrarAtaqueAsignadoArena(
-                    c1.datos
-                )
-            }
+
+            <div class="seccion">
+
+                <h3>
+                    ⚔️ Ataque especial
+                </h3>
+
+                <div class="dato">
+
+                    <strong>
+                        ${escaparHTML(
+                            ataque1.nombre
+                        )}
+                    </strong>
+
+                    <br>
+
+                    Tipo:
+                    ${escaparHTML(
+                        ataque1.tipo || "normal"
+                    )}
+
+                    <br>
+
+                    Código:
+                    ${escaparHTML(
+                        ataque1.codigo || "A001"
+                    )}
+
+                </div>
+
+            </div>
+
 
             <div class="seccion">
 
@@ -549,11 +585,7 @@ function mostrarPreparadosArena(
                     ✨ Bonificaciones
                 </h3>
 
-                ${
-                    mostrarBonificacionesArena(
-                        b1
-                    )
-                }
+                ${mostrarBonificacionesArena(b1)}
 
             </div>
 
@@ -562,12 +594,6 @@ function mostrarPreparadosArena(
 
         <hr>
 
-
-        /*
-        ====================================================
-        COMBATIENTE 2
-        ====================================================
-        */
 
         <div>
 
@@ -585,11 +611,39 @@ function mostrarPreparadosArena(
             ⚡ Iniciativa:
             ${numeroArena(c2.iniciativa)}
 
-            ${
-                mostrarAtaqueAsignadoArena(
-                    c2.datos
-                )
-            }
+
+            <div class="seccion">
+
+                <h3>
+                    ⚔️ Ataque especial
+                </h3>
+
+                <div class="dato">
+
+                    <strong>
+                        ${escaparHTML(
+                            ataque2.nombre
+                        )}
+                    </strong>
+
+                    <br>
+
+                    Tipo:
+                    ${escaparHTML(
+                        ataque2.tipo || "normal"
+                    )}
+
+                    <br>
+
+                    Código:
+                    ${escaparHTML(
+                        ataque2.codigo || "A001"
+                    )}
+
+                </div>
+
+            </div>
+
 
             <div class="seccion">
 
@@ -597,11 +651,7 @@ function mostrarPreparadosArena(
                     ✨ Bonificaciones
                 </h3>
 
-                ${
-                    mostrarBonificacionesArena(
-                        b2
-                    )
-                }
+                ${mostrarBonificacionesArena(b2)}
 
             </div>
 
@@ -610,32 +660,25 @@ function mostrarPreparadosArena(
     `;
 
 
-    /*
-    ========================================================
-    ESCENARIO
-    ========================================================
-    */
+    /* ==================================================
+       ESCENARIO
+    ================================================== */
 
     const panel =
         document.getElementById(
             "escenarioCombate"
         );
 
-    if (
+
+    if(
         !panel ||
         !escenario
-    ) {
+    ){
 
         return;
 
     }
 
-
-    /*
-    --------------------------------------------------------
-    HÁBITATS
-    --------------------------------------------------------
-    */
 
     const habitats =
         Array.isArray(
@@ -643,6 +686,7 @@ function mostrarPreparadosArena(
         )
 
             ? escenario.habitats
+
                 .map(c => {
 
                     const h =
@@ -650,22 +694,19 @@ function mostrarPreparadosArena(
                             .obtenerHabitat(c);
 
                     return h && h.nombre
+
                         ? escaparHTML(
                             h.nombre
                         )
+
                         : escaparHTML(c);
 
                 })
+
                 .join(", ")
 
             : "—";
 
-
-    /*
-    --------------------------------------------------------
-    MODO
-    --------------------------------------------------------
-    */
 
     const modo =
         window.PALARENA_DATOS
@@ -673,18 +714,14 @@ function mostrarPreparadosArena(
                 escenario.modo
             );
 
+
     const modoNombre =
         modo && modo.nombre
+
             ? modo.nombre
-            : escenario.modo ||
-              "—";
 
+            : escenario.modo || "—";
 
-    /*
-    --------------------------------------------------------
-    MEDIOS
-    --------------------------------------------------------
-    */
 
     const medios =
         Array.isArray(
@@ -692,11 +729,13 @@ function mostrarPreparadosArena(
         )
 
             ? escenario.medios
+
                 .map(medio => {
 
                     if(!medio){
                         return "";
                     }
+
 
                     return [
                         "SM",
@@ -710,9 +749,11 @@ function mostrarPreparadosArena(
                         const codigo =
                             medio[tipo];
 
+
                         if(!codigo){
                             return "";
                         }
+
 
                         const dato =
                             window.PALARENA_DATOS
@@ -720,8 +761,8 @@ function mostrarPreparadosArena(
                                     codigo
                                 );
 
-                        return dato &&
-                               dato.nombre
+
+                        return dato && dato.nombre
 
                             ? escaparHTML(
                                 dato.nombre
@@ -734,21 +775,17 @@ function mostrarPreparadosArena(
                     })
 
                     .filter(Boolean)
+
                     .join(" · ");
 
                 })
 
                 .filter(Boolean)
+
                 .join("<br>")
 
             : "—";
 
-
-    /*
-    --------------------------------------------------------
-    PRESENTACIÓN DEL ESCENARIO
-    --------------------------------------------------------
-    */
 
     panel.innerHTML = `
 
@@ -766,15 +803,19 @@ function mostrarPreparadosArena(
 
         </div>
 
+
         <div>
 
             🧬 Modo:
 
             <strong>
-                ${escaparHTML(modoNombre)}
+                ${escaparHTML(
+                    modoNombre
+                )}
             </strong>
 
         </div>
+
 
         <div>
 
@@ -791,23 +832,23 @@ function mostrarPreparadosArena(
 }
 
 
-/*
-============================================================
-NUEVO COMBATE
-============================================================
-*/
+/* ======================================================
+   NUEVO COMBATE
+====================================================== */
 
-async function nuevoCombateArena() {
+async function nuevoCombateArena(){
 
-    try {
+    try{
 
         const fichas =
             obtenerDosFichasAleatoriasArena();
+
 
         const datos1 =
             crearDatosCombatienteArena(
                 fichas[0].j1
             );
+
 
         const datos2 =
             crearDatosCombatienteArena(
@@ -819,6 +860,7 @@ async function nuevoCombateArena() {
             "codigo1"
         ).textContent =
             datos1.codigo;
+
 
         document.getElementById(
             "codigo2"
@@ -849,12 +891,13 @@ async function nuevoCombateArena() {
         );
 
 
-    } catch(error) {
+    }catch(error){
 
         console.error(
             "Error generando nuevo combate:",
             error
         );
+
 
         document.getElementById(
             "estado"
@@ -877,23 +920,21 @@ async function nuevoCombateArena() {
 }
 
 
-/*
-============================================================
-PREPARAR COMBATE
-============================================================
-*/
+/* ======================================================
+   PREPARAR COMBATE
+====================================================== */
 
 function prepararCombateArena(
     datos1,
     datos2
-) {
+){
 
-    try {
+    try{
 
         if(
             typeof crearCombatienteArena !==
             "function"
-        ) {
+        ){
 
             throw new Error(
                 "palarena.js no está cargado correctamente."
@@ -909,15 +950,9 @@ function prepararCombateArena(
         let bonificacion2 = null;
 
 
-        /*
-        ====================================================
-        GENERAR ESCENARIO
-        ====================================================
-        */
-
         if(
             window.PALARENA_ESCENARIO
-        ) {
+        ){
 
             escenario =
                 window.PALARENA_ESCENARIO
@@ -931,7 +966,7 @@ function prepararCombateArena(
                     );
 
 
-            if(resultado1) {
+            if(resultado1){
 
                 bonificacion1 =
                     resultado1.bonificacion;
@@ -946,7 +981,7 @@ function prepararCombateArena(
                     );
 
 
-            if(resultado2) {
+            if(resultado2){
 
                 bonificacion2 =
                     resultado2.bonificacion;
@@ -955,12 +990,6 @@ function prepararCombateArena(
 
         }
 
-
-        /*
-        ====================================================
-        DATOS PARA COMBATE
-        ====================================================
-        */
 
         const datosCombate1 = {
 
@@ -992,20 +1021,42 @@ function prepararCombateArena(
         };
 
 
-        /*
-        ====================================================
-        APLICAR BONIFICACIONES
-        ====================================================
-        */
+        /* ==================================================
+           ASIGNAR ATAQUES ESPECIALES
+        ================================================== */
+
+        if(
+            typeof asignarAtaqueArena ===
+            "function"
+        ){
+
+            datosCombate1.ataque_especial =
+                asignarAtaqueArena(
+                    datosCombate1
+                );
+
+
+            datosCombate2.ataque_especial =
+                asignarAtaqueArena(
+                    datosCombate2
+                );
+
+        }
+
+
+        /* ==================================================
+           APLICAR BONIFICACIONES
+        ================================================== */
 
         if(
             window.PALARENA_BONIFICACIONES
-        ) {
+        ){
 
             const statsBase1 =
                 obtenerStatsArena(
                     datosCombate1
                 );
+
 
             const statsBase2 =
                 obtenerStatsArena(
@@ -1029,13 +1080,7 @@ function prepararCombateArena(
                     );
 
 
-            /*
-            ------------------------------------------------
-            CONSERVAR DETALLES REALES
-            ------------------------------------------------
-            */
-
-            if(statsModificados1) {
+            if(statsModificados1){
 
                 bonificacion1 = {
 
@@ -1061,7 +1106,7 @@ function prepararCombateArena(
             }
 
 
-            if(statsModificados2) {
+            if(statsModificados2){
 
                 bonificacion2 = {
 
@@ -1089,16 +1134,11 @@ function prepararCombateArena(
         }
 
 
-        /*
-        ====================================================
-        CREAR COMBATIENTES
-        ====================================================
-        */
-
         const combatiente1 =
             crearCombatienteArena(
                 datosCombate1
             );
+
 
         const combatiente2 =
             crearCombatienteArena(
@@ -1113,12 +1153,6 @@ function prepararCombateArena(
             );
 
 
-        /*
-        ====================================================
-        GUARDAR BONIFICACIONES
-        ====================================================
-        */
-
         COMBATE_ARENA
             .combatiente1
             .bonificacion_escenario =
@@ -1131,11 +1165,19 @@ function prepararCombateArena(
                 bonificacion2;
 
 
-        /*
-        ====================================================
-        MOSTRAR PREPARACIÓN
-        ====================================================
-        */
+        COMBATE_ARENA
+            .combatiente1
+            .ataque_especial =
+                datosCombate1
+                    .ataque_especial;
+
+
+        COMBATE_ARENA
+            .combatiente2
+            .ataque_especial =
+                datosCombate2
+                    .ataque_especial;
+
 
         mostrarPreparadosArena(
             combatiente1,
@@ -1146,19 +1188,21 @@ function prepararCombateArena(
         );
 
 
-    } catch(error) {
+    }catch(error){
 
         console.error(
             "Error preparando combate:",
             error
         );
 
+
         const estado =
             document.getElementById(
                 "estado"
             );
 
-        if(estado) {
+
+        if(estado){
 
             estado.innerHTML = `
 
@@ -1179,17 +1223,14 @@ function prepararCombateArena(
     }
 
 }
-
-/*
-============================================================
-APLICAR ESTADÍSTICAS
-============================================================
-*/
+/* ======================================================
+   APLICAR ESTADÍSTICAS
+====================================================== */
 
 function aplicarStatsArena(
     datos,
     stats
-) {
+){
 
     datos.e1 =
         stats.adaptabilidad;
@@ -1227,18 +1268,16 @@ function aplicarStatsArena(
 }
 
 
-/*
-============================================================
-RESULTADO DE UNA ACCIÓN
-============================================================
-*/
+/* ======================================================
+   RESULTADO DE UNA ACCIÓN
+====================================================== */
 
-function resultadoArena(valor) {
+function resultadoArena(valor){
 
     if(
         valor === null ||
         valor === undefined
-    ) {
+    ){
 
         return "";
 
@@ -1248,7 +1287,7 @@ function resultadoArena(valor) {
     if(
         typeof valor === "string" ||
         typeof valor === "number"
-    ) {
+    ){
 
         return String(valor);
 
@@ -1257,9 +1296,9 @@ function resultadoArena(valor) {
 
     if(
         typeof valor === "object"
-    ) {
+    ){
 
-        if(valor.mensaje) {
+        if(valor.mensaje){
 
             return String(
                 valor.mensaje
@@ -1268,7 +1307,7 @@ function resultadoArena(valor) {
         }
 
 
-        if(valor.texto) {
+        if(valor.texto){
 
             return String(
                 valor.texto
@@ -1277,7 +1316,7 @@ function resultadoArena(valor) {
         }
 
 
-        if(valor.descripcion) {
+        if(valor.descripcion){
 
             return String(
                 valor.descripcion
@@ -1288,7 +1327,7 @@ function resultadoArena(valor) {
 
         if(
             valor.dano !== undefined
-        ) {
+        ){
 
             return (
                 "Daño: " +
@@ -1302,7 +1341,7 @@ function resultadoArena(valor) {
 
         if(
             valor.danio !== undefined
-        ) {
+        ){
 
             return (
                 "Daño: " +
@@ -1314,9 +1353,7 @@ function resultadoArena(valor) {
         }
 
 
-        return JSON.stringify(
-            valor
-        );
+        return JSON.stringify(valor);
 
     }
 
@@ -1326,49 +1363,40 @@ function resultadoArena(valor) {
 }
 
 
-/*
-============================================================
-HISTORIAL
-============================================================
-*/
+/* ======================================================
+   HISTORIAL
+====================================================== */
 
 function mostrarHistorialArena(
     historial
-) {
+){
 
     return historial
+
         .map(turno => {
 
-            if(!turno) {
-
+            if(!turno){
                 return "";
-
             }
 
 
             if(
                 turno.atacante &&
                 turno.objetivo
-            ) {
+            ){
 
                 let texto =
-
                     "Turno " +
-
                     numeroArena(
                         turno.turno
                     ) +
-
                     " — " +
-
                     turno.atacante +
-
                     " → " +
-
                     turno.objetivo;
 
 
-                if(turno.accion) {
+                if(turno.accion){
 
                     texto +=
                         " — " +
@@ -1383,7 +1411,7 @@ function mostrarHistorialArena(
                     );
 
 
-                if(resultado) {
+                if(resultado){
 
                     texto +=
                         " — " +
@@ -1410,18 +1438,14 @@ function mostrarHistorialArena(
             if(
                 turno.tipo ===
                 "efecto"
-            ) {
+            ){
 
                 let texto =
-
                     "Turno " +
-
                     numeroArena(
                         turno.turno
                     ) +
-
                     " — Efecto sobre " +
-
                     (
                         turno.objetivo ||
                         ""
@@ -1434,7 +1458,7 @@ function mostrarHistorialArena(
                     );
 
 
-                if(resultado) {
+                if(resultado){
 
                     texto +=
                         " — " +
@@ -1463,9 +1487,7 @@ function mostrarHistorialArena(
                 <div class="turnoCombate">
 
                     ${escaparHTML(
-                        resultadoArena(
-                            turno
-                        )
+                        resultadoArena(turno)
                     )}
 
                 </div>
@@ -1473,22 +1495,21 @@ function mostrarHistorialArena(
             `;
 
         })
+
         .join("");
 
 }
 
 
-/*
-============================================================
-EJECUTAR COMBATE AUTOMÁTICO
-============================================================
-*/
+/* ======================================================
+   EJECUTAR COMBATE AUTOMÁTICO
+====================================================== */
 
-function ejecutarCombateAutomaticoArena() {
+function ejecutarCombateAutomaticoArena(){
 
-    try {
+    try{
 
-        if(!COMBATE_ARENA) {
+        if(!COMBATE_ARENA){
 
             throw new Error(
                 "No hay un combate preparado."
@@ -1514,7 +1535,7 @@ function ejecutarCombateAutomaticoArena() {
         while(
             COMBATE_ARENA.estado !==
             "finalizado"
-        ) {
+        ){
 
             ejecutarTurnoArena(
                 COMBATE_ARENA
@@ -1595,36 +1616,46 @@ function ejecutarCombateAutomaticoArena() {
 
 
         const porcentajeHp1 =
-
             hpMax1 > 0
 
                 ? Math.max(
+
                     0,
+
                     Math.min(
+
                         100,
+
                         (
                             hp1 /
                             hpMax1
                         ) * 100
+
                     )
+
                 )
 
                 : 0;
 
 
         const porcentajeHp2 =
-
             hpMax2 > 0
 
                 ? Math.max(
+
                     0,
+
                     Math.min(
+
                         100,
+
                         (
                             hp2 /
                             hpMax2
                         ) * 100
+
                     )
+
                 )
 
                 : 0;
@@ -1637,17 +1668,21 @@ function ejecutarCombateAutomaticoArena() {
             <div class="combateFicha">
 
                 <h3>
+
                     ${escaparHTML(
                         resultado
                             .combatiente1
                             .nombre
                     )}
+
                 </h3>
 
                 ❤️ HP:
+
                 ${hp1}
                 /
                 ${hpMax1}
+
 
                 <div class="barraHp">
 
@@ -1664,17 +1699,21 @@ function ejecutarCombateAutomaticoArena() {
             <div class="combateFicha">
 
                 <h3>
+
                     ${escaparHTML(
                         resultado
                             .combatiente2
                             .nombre
                     )}
+
                 </h3>
 
                 ❤️ HP:
+
                 ${hp2}
                 /
                 ${hpMax2}
+
 
                 <div class="barraHp">
 
@@ -1693,12 +1732,13 @@ function ejecutarCombateAutomaticoArena() {
         document.getElementById(
             "historialCombate"
         ).innerHTML =
+
             mostrarHistorialArena(
                 resultado.historial
             );
 
 
-    } catch(error) {
+    }catch(error){
 
         console.error(
             "Error ejecutando combate:",
@@ -1732,13 +1772,11 @@ function ejecutarCombateAutomaticoArena() {
 }
 
 
-/*
-============================================================
-SELECCIÓN DESDE VISOR
-============================================================
-*/
+/* ======================================================
+   SELECCIÓN DESDE VISOR
+====================================================== */
 
-function recibirSeleccionArena() {
+function recibirSeleccionArena(){
 
     const seleccion =
         localStorage.getItem(
@@ -1746,14 +1784,14 @@ function recibirSeleccionArena() {
         );
 
 
-    if(!seleccion) {
+    if(!seleccion){
 
         return null;
 
     }
 
 
-    try {
+    try{
 
         const datos =
             JSON.parse(
@@ -1765,7 +1803,7 @@ function recibirSeleccionArena() {
             !datos ||
             !datos.arena ||
             !datos.codigo
-        ) {
+        ){
 
             return null;
 
@@ -1780,7 +1818,7 @@ function recibirSeleccionArena() {
         return datos;
 
 
-    } catch(error) {
+    }catch(error){
 
         localStorage.removeItem(
             "palentropia_arena_seleccion"
@@ -1793,13 +1831,11 @@ function recibirSeleccionArena() {
 }
 
 
-/*
-============================================================
-APLICAR SELECCIÓN
-============================================================
-*/
+/* ======================================================
+   APLICAR SELECCIÓN
+====================================================== */
 
-async function aplicarSeleccionArena() {
+async function aplicarSeleccionArena(){
 
     const seleccion =
         recibirSeleccionArena();
@@ -1808,7 +1844,7 @@ async function aplicarSeleccionArena() {
     if(
         !seleccion ||
         !COMBATE_ARENA
-    ) {
+    ){
 
         return false;
 
@@ -1824,7 +1860,7 @@ async function aplicarSeleccionArena() {
     if(
         seleccion.arena ===
         "1"
-    ) {
+    ){
 
         const datos2 =
             COMBATE_ARENA
@@ -1869,7 +1905,7 @@ async function aplicarSeleccionArena() {
     if(
         seleccion.arena ===
         "2"
-    ) {
+    ){
 
         const datos1 =
             COMBATE_ARENA
@@ -1916,15 +1952,13 @@ async function aplicarSeleccionArena() {
 }
 
 
-/*
-============================================================
-INICIAR ARENA
-============================================================
-*/
+/* ======================================================
+   INICIAR ARENA
+====================================================== */
 
-async function iniciarArena() {
+async function iniciarArena(){
 
-    try {
+    try{
 
         document.getElementById(
             "estado"
@@ -1940,7 +1974,7 @@ async function iniciarArena() {
                 .cargar();
 
 
-        if(!cargado) {
+        if(!cargado){
 
             throw new Error(
                 "No se pudo cargar master.csv"
@@ -1966,7 +2000,7 @@ async function iniciarArena() {
         nuevoCombateArena();
 
 
-    } catch(error) {
+    }catch(error){
 
         console.error(
             "Error iniciando Arena:",
@@ -1995,11 +2029,9 @@ async function iniciarArena() {
 }
 
 
-/*
-============================================================
-BOTONES
-============================================================
-*/
+/* ======================================================
+   BOTONES
+====================================================== */
 
 document.getElementById(
     "btnNuevo"
@@ -2017,29 +2049,26 @@ document.getElementById(
 );
 
 
-/*
-============================================================
-INICIO
-============================================================
-*/
+/* ======================================================
+   INICIO
+====================================================== */
 
 iniciarArena();
 
 
-/*
-============================================================
-COMPROBAR SELECCIÓN
-============================================================
-*/
+/* ======================================================
+   COMPROBAR SELECCIÓN
+====================================================== */
 
 setInterval(
-    async function() {
 
-        try {
+    async function(){
+
+        try{
 
             await aplicarSeleccionArena();
 
-        } catch(error) {
+        }catch(error){
 
             console.error(
                 "Error aplicando selección desde visor:",
@@ -2049,5 +2078,7 @@ setInterval(
         }
 
     },
+
     500
+
 );
