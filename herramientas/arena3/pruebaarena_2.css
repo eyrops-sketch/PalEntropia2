@@ -1236,3 +1236,93 @@ button:active {
     transform: scale(0.98);
 
 }
+
+/* ==========================================================
+   ESTADÍSTICAS — FORMATO TABULADO
+   ========================================================== */
+
+.stat {
+
+    display: grid;
+
+    grid-template-columns:
+        150px
+        1fr
+        35px;
+
+    align-items: center;
+
+    gap: 8px;
+
+    width: 100%;
+
+    min-height: 27px;
+
+    padding: 4px 6px;
+
+    border-bottom:
+        1px solid #172534;
+
+    white-space: nowrap;
+
+}
+
+
+.statNombre {
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+.statBarra {
+
+    width: 100%;
+
+    height: 8px;
+
+    overflow: hidden;
+
+    background: #253342;
+
+    border-radius: 6px;
+
+}
+
+
+.statBarraInterior {
+
+    height: 100%;
+
+    background: #62d6ff;
+
+    border-radius: 6px;
+
+}
+
+
+.statValor {
+
+    width: 35px;
+
+    text-align: right;
+
+    color: #62d6ff;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    white-space: nowrap;
+
+}
