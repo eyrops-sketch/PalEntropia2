@@ -56,12 +56,16 @@ async function mostrarCombatienteArena(datos,n){
                         : "";
 
                 return `
-                    <div class="habitat">
-
+                    <div
+                        class="habitat"
+                        style="
+                            color:#ffffff;
+                            font-size:14px;
+                        "
+                    >
                         <strong>
                             ${escaparHTML(c)}
                         </strong>
-
                         ${
                             nombre
                                 ? " — " +
@@ -70,10 +74,8 @@ async function mostrarCombatienteArena(datos,n){
                                   )
                                 : ""
                         }
-
                     </div>
                 `;
-
             })
             .join("");
 
@@ -110,21 +112,19 @@ async function mostrarCombatienteArena(datos,n){
             }
 
             <div class="nombre">
-
                 🦖
                 ${escaparHTML(
                     datos.nombre
                 )}
-
             </div>
 
-            <div class="codigoFicha">
-
-                Código:
+            <div
+                class="codigoFicha"
+                style="display:none;"
+            >
                 ${escaparHTML(
                     datos.codigo
                 )}
-
             </div>
 
             <div class="seccion">
@@ -133,7 +133,13 @@ async function mostrarCombatienteArena(datos,n){
                     🧬 Modo de vida
                 </h3>
 
-                <div class="dato">
+                <div
+                    class="dato"
+                    style="
+                        font-size:16px;
+                        color:#ffffff;
+                    "
+                >
 
                     <strong>
                         ${escaparHTML(
@@ -154,6 +160,7 @@ async function mostrarCombatienteArena(datos,n){
 
             </div>
 
+
             <div class="seccion">
 
                 <h3>
@@ -162,10 +169,21 @@ async function mostrarCombatienteArena(datos,n){
 
                 ${
                     habitatsHTML ||
-                    '<div class="habitat">Ninguno</div>'
+                    `
+                    <div
+                        class="habitat"
+                        style="
+                            color:#ffffff;
+                            font-size:14px;
+                        "
+                    >
+                        Ninguno
+                    </div>
+                    `
                 }
 
             </div>
+
 
             <div class="seccion">
 
@@ -181,6 +199,7 @@ async function mostrarCombatienteArena(datos,n){
                 }
 
             </div>
+
 
             <a
                 class="enlace"
@@ -270,7 +289,6 @@ function nombreIndicadorArena(efecto){
         nombres[texto] ||
         String(valor)
     );
-
 }
 
 
@@ -291,15 +309,10 @@ function mostrarBonificacionesArena(
     ){
 
         return `
-
             <div class="bonificacion">
-
                 Sin bonificaciones
-
             </div>
-
         `;
-
     }
 
     return bonificacion.detalles
@@ -318,30 +331,24 @@ function mostrarBonificacionesArena(
                                 );
 
                             return `
-
                                 <div
                                     class="efectoBonificacion"
                                 >
-
                                     ↳
 
                                     <strong>
-
                                         ${
                                             escaparHTML(
                                                 indicador ||
                                                 "Atributo"
                                             )
                                         }
-
                                     </strong>
 
                                     +${numeroArena(
                                         efecto.valor
                                     )}
-
                                 </div>
-
                             `;
 
                         })
@@ -363,7 +370,6 @@ function mostrarBonificacionesArena(
                         detalle.coincidencias
                     ) +
                     " coincidencia(s)";
-
             }
 
             return `
@@ -371,11 +377,9 @@ function mostrarBonificacionesArena(
                 <div class="bonificacion">
 
                     <strong>
-
                         ${escaparHTML(
                             titulo
                         )}
-
                     </strong>
 
                     ${
@@ -384,9 +388,7 @@ function mostrarBonificacionesArena(
                                 <div
                                     class="efectosBonificacion"
                                 >
-
                                     ${efectos}
-
                                 </div>
                             `
                             : ""
@@ -398,8 +400,8 @@ function mostrarBonificacionesArena(
 
         })
         .join("");
-
 }
+
 
 /* ======================================================
    ATAQUE ESPECIAL
@@ -409,11 +411,9 @@ function obtenerAtaqueVisualArena(datos){
 
     let codigo = null;
 
-    /*
-    ------------------------------------------------------
-    SI YA VIENE ASIGNADO
-    ------------------------------------------------------
-    */
+    /* --------------------------------------------------
+       SI YA VIENE ASIGNADO
+    -------------------------------------------------- */
 
     if(
         datos &&
@@ -422,14 +422,12 @@ function obtenerAtaqueVisualArena(datos){
 
         codigo =
             datos.ataque_especial;
-
     }
 
-    /*
-    ------------------------------------------------------
-    ASIGNACIÓN AUTOMÁTICA
-    ------------------------------------------------------
-    */
+
+    /* --------------------------------------------------
+       ASIGNACIÓN AUTOMÁTICA
+    -------------------------------------------------- */
 
     if(
         !codigo &&
@@ -441,14 +439,12 @@ function obtenerAtaqueVisualArena(datos){
             asignarAtaqueArena(
                 datos
             );
-
     }
 
-    /*
-    ------------------------------------------------------
-    OBTENER DATOS DEL ATAQUE
-    ------------------------------------------------------
-    */
+
+    /* --------------------------------------------------
+       OBTENER DATOS DEL ATAQUE
+    -------------------------------------------------- */
 
     let ataque = null;
 
@@ -462,8 +458,8 @@ function obtenerAtaqueVisualArena(datos){
             obtenerAtaqueArena(
                 codigo
             );
-
     }
+
 
     if(!ataque){
 
@@ -479,11 +475,9 @@ function obtenerAtaqueVisualArena(datos){
                 "normal"
 
         };
-
     }
 
     return ataque;
-
 }
 
 
@@ -509,7 +503,6 @@ function mostrarPreparadosArena(
     ).style.display =
         "none";
 
-
     const ataque1 =
         obtenerAtaqueVisualArena(
             c1.datos || c1
@@ -519,7 +512,6 @@ function mostrarPreparadosArena(
         obtenerAtaqueVisualArena(
             c2.datos || c2
         );
-
 
     document.getElementById(
         "combatientesPreparados"
@@ -547,7 +539,6 @@ function mostrarPreparadosArena(
                 c1.iniciativa
             )}
 
-
             <div class="seccion">
 
                 <h3>
@@ -566,7 +557,6 @@ function mostrarPreparadosArena(
 
             </div>
 
-
             <div class="seccion">
 
                 <h3>
@@ -583,9 +573,7 @@ function mostrarPreparadosArena(
 
         </div>
 
-
         <hr>
-
 
         <div>
 
@@ -609,7 +597,6 @@ function mostrarPreparadosArena(
                 c2.iniciativa
             )}
 
-
             <div class="seccion">
 
                 <h3>
@@ -627,7 +614,6 @@ function mostrarPreparadosArena(
                 </div>
 
             </div>
-
 
             <div class="seccion">
 
@@ -647,7 +633,6 @@ function mostrarPreparadosArena(
 
     `;
 
-
     /* ==================================================
        ESCENARIO
     ================================================== */
@@ -663,17 +648,12 @@ function mostrarPreparadosArena(
     ){
 
         return;
-
     }
-
-
-    const habitats =
+       const habitats =
         Array.isArray(
             escenario.habitats
         )
-
             ? escenario.habitats
-
                 .map(c => {
 
                     const h =
@@ -682,19 +662,15 @@ function mostrarPreparadosArena(
 
                     return h &&
                         h.nombre
-
                         ? escaparHTML(
                             h.nombre
                         )
-
                         : escaparHTML(
                             c
                         );
 
                 })
-
                 .join(", ")
-
             : "—";
 
 
@@ -704,13 +680,10 @@ function mostrarPreparadosArena(
                 escenario.modo
             );
 
-
     const modoNombre =
         modo &&
         modo.nombre
-
             ? modo.nombre
-
             : escenario.modo ||
               "—";
 
@@ -719,9 +692,7 @@ function mostrarPreparadosArena(
         Array.isArray(
             escenario.medios
         )
-
             ? escenario.medios
-
                 .map(medio => {
 
                     if(!medio){
@@ -734,7 +705,6 @@ function mostrarPreparadosArena(
                         "ES",
                         "C"
                     ]
-
                     .map(tipo => {
 
                         const codigo =
@@ -752,27 +722,20 @@ function mostrarPreparadosArena(
 
                         return dato &&
                             dato.nombre
-
                             ? escaparHTML(
                                 dato.nombre
                             )
-
                             : escaparHTML(
                                 codigo
                             );
 
                     })
-
                     .filter(Boolean)
-
                     .join(" · ");
 
                 })
-
                 .filter(Boolean)
-
                 .join("<br>")
-
             : "—";
 
 
@@ -783,17 +746,14 @@ function mostrarPreparadosArena(
         </h3>
 
         <div>
-
             🏠 Hábitats:
 
             <strong>
                 ${habitats}
             </strong>
-
         </div>
 
         <div>
-
             🧬 Modo:
 
             <strong>
@@ -801,21 +761,17 @@ function mostrarPreparadosArena(
                     modoNombre
                 )}
             </strong>
-
         </div>
 
         <div>
-
             🌎 Medios:
 
             <strong>
                 ${medios}
             </strong>
-
         </div>
 
     `;
-
 }
 
 
@@ -843,16 +799,22 @@ async function nuevoCombateArena(){
             );
 
 
+        /*
+        --------------------------------------------------
+        MOSTRAR NOMBRE EN LUGAR DEL CÓDIGO
+        --------------------------------------------------
+        */
+
         document.getElementById(
             "codigo1"
         ).textContent =
-            datos1.codigo;
+            datos1.nombre;
 
 
         document.getElementById(
             "codigo2"
         ).textContent =
-            datos2.codigo;
+            datos2.nombre;
 
 
         document.getElementById(
@@ -877,14 +839,14 @@ async function nuevoCombateArena(){
             datos2
         );
 
+    }
 
-    }catch(error){
+    catch(error){
 
         console.error(
             "Error generando nuevo combate:",
             error
         );
-
 
         document.getElementById(
             "estado"
@@ -905,8 +867,6 @@ async function nuevoCombateArena(){
     }
 
 }
-
-
 
 
 /* ======================================================
@@ -1176,8 +1136,9 @@ function prepararCombateArena(
             escenario
         );
 
+    }
 
-    }catch(error){
+    catch(error){
 
         console.error(
             "Error preparando combate:",
@@ -1257,8 +1218,6 @@ function aplicarStatsArena(
         stats.inteligencia;
 
 }
-
-
 /* ======================================================
    RESULTADO DE UNA ACCIÓN
 ====================================================== */
@@ -1365,7 +1324,6 @@ function mostrarHistorialArena(
 ){
 
     return historial
-
         .map(turno => {
 
             if(!turno){
@@ -1381,7 +1339,6 @@ function mostrarHistorialArena(
             ){
 
                 let texto =
-
                     "Turno " +
                     numeroArena(
                         turno.turno
@@ -1418,7 +1375,9 @@ function mostrarHistorialArena(
 
                 return `
 
-                    <div class="turnoCombate">
+                    <div
+                        class="turnoCombate"
+                    >
 
                         ${escaparHTML(
                             texto
@@ -1437,7 +1396,6 @@ function mostrarHistorialArena(
             ){
 
                 let texto =
-
                     "Turno " +
                     numeroArena(
                         turno.turno
@@ -1466,7 +1424,9 @@ function mostrarHistorialArena(
 
                 return `
 
-                    <div class="turnoCombate">
+                    <div
+                        class="turnoCombate"
+                    >
 
                         ${escaparHTML(
                             texto
@@ -1481,7 +1441,9 @@ function mostrarHistorialArena(
 
             return `
 
-                <div class="turnoCombate">
+                <div
+                    class="turnoCombate"
+                >
 
                     ${escaparHTML(
                         resultadoArena(
@@ -1494,7 +1456,6 @@ function mostrarHistorialArena(
             `;
 
         })
-
         .join("");
 
 }
@@ -1519,7 +1480,6 @@ function ejecutarCombateAutomaticoArena(){
 
         COMBATE_ARENA =
             crearCombateArena(
-
                 COMBATE_ARENA
                     .combatiente1
                     .datos,
@@ -1527,7 +1487,6 @@ function ejecutarCombateAutomaticoArena(){
                 COMBATE_ARENA
                     .combatiente2
                     .datos
-
             );
 
 
@@ -1562,7 +1521,8 @@ function ejecutarCombateAutomaticoArena(){
 
         document.getElementById(
             "panelResultadoCombate"
-        ).style.display = "block";
+        ).style.display =
+            "block";
 
 
         document.getElementById(
@@ -1650,28 +1610,36 @@ function ejecutarCombateAutomaticoArena(){
             "estadoCombatientes"
         ).innerHTML = `
 
-            <div class="combateFicha">
+            <div
+                class="combateFicha"
+            >
 
                 <h3>
-
                     ${escaparHTML(
                         resultado
                             .combatiente1
                             .nombre
                     )}
-
                 </h3>
 
                 ❤️ HP:
+
                 ${hp1}
+
                 /
+
                 ${hpMax1}
 
-                <div class="barraHp">
+
+                <div
+                    class="barraHp"
+                >
 
                     <div
                         class="barraHpInterior"
-                        style="width:${porcentajeHp1}%"
+                        style="
+                            width:${porcentajeHp1}%
+                        "
                     ></div>
 
                 </div>
@@ -1679,28 +1647,36 @@ function ejecutarCombateAutomaticoArena(){
             </div>
 
 
-            <div class="combateFicha">
+            <div
+                class="combateFicha"
+            >
 
                 <h3>
-
                     ${escaparHTML(
                         resultado
                             .combatiente2
                             .nombre
                     )}
-
                 </h3>
 
                 ❤️ HP:
+
                 ${hp2}
+
                 /
+
                 ${hpMax2}
 
-                <div class="barraHp">
+
+                <div
+                    class="barraHp"
+                >
 
                     <div
                         class="barraHpInterior"
-                        style="width:${porcentajeHp2}%"
+                        style="
+                            width:${porcentajeHp2}%
+                        "
                     ></div>
 
                 </div>
@@ -1713,13 +1689,13 @@ function ejecutarCombateAutomaticoArena(){
         document.getElementById(
             "historialCombate"
         ).innerHTML =
-
             mostrarHistorialArena(
                 resultado.historial
             );
 
+    }
 
-    }catch(error){
+    catch(error){
 
         console.error(
             "Error ejecutando combate:",
@@ -1729,7 +1705,8 @@ function ejecutarCombateAutomaticoArena(){
 
         document.getElementById(
             "panelResultadoCombate"
-        ).style.display = "block";
+        ).style.display =
+            "block";
 
 
         document.getElementById(
@@ -1798,8 +1775,9 @@ function recibirSeleccionArena(){
 
         return datos;
 
+    }
 
-    }catch(error){
+    catch(error){
 
         localStorage.removeItem(
             "palentropia_arena_seleccion"
@@ -1852,7 +1830,7 @@ async function aplicarSeleccionArena(){
         document.getElementById(
             "codigo1"
         ).textContent =
-            nuevosDatos.codigo;
+            nuevosDatos.nombre;
 
 
         document.getElementById(
@@ -1897,7 +1875,7 @@ async function aplicarSeleccionArena(){
         document.getElementById(
             "codigo2"
         ).textContent =
-            nuevosDatos.codigo;
+            nuevosDatos.nombre;
 
 
         document.getElementById(
@@ -1930,8 +1908,7 @@ async function aplicarSeleccionArena(){
 
     return false;
 
-}
-
+           }
 
 /* ======================================================
    INICIAR ARENA
@@ -1980,8 +1957,9 @@ async function iniciarArena(){
 
         nuevoCombateArena();
 
+    }
 
-    }catch(error){
+    catch(error){
 
         console.error(
             "Error iniciando Arena:",
@@ -2049,7 +2027,9 @@ setInterval(
 
             await aplicarSeleccionArena();
 
-        }catch(error){
+        }
+
+        catch(error){
 
             console.error(
                 "Error aplicando selección desde visor:",
