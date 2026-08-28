@@ -1,27 +1,13 @@
 /*
 ============================================================
-PalEntropía — Arena 2
+PalEntropía — Arena 1.0
 archivo: pruebaarena_2.css
 versión: 1.0
 estado: desarrollo
 ============================================================
 
-Función:
-Capa visual independiente para Arena 2.
-
-Objetivos:
-- Diseño Synthwave / PalEntropía
-- Prioridad móvil
-- Tarjetas de combatientes
-- Preparado para miniatura i3
-- Panel de combate
-- Barras de HP
-- Historial
-- Estados y controles
-
-IMPORTANTE:
-Este archivo contiene únicamente presentación.
-No contiene lógica de combate.
+Capa visual de Arena 1.0.
+Sin lógica.
 ============================================================
 */
 
@@ -69,7 +55,7 @@ body {
 
 
 /* ==========================================================
-   CONTENEDOR PRINCIPAL
+   CONTENEDOR
    ========================================================== */
 
 .contenedor {
@@ -109,7 +95,7 @@ h1 {
 
 
 /* ==========================================================
-   PANELES GENERALES
+   PANELES
    ========================================================== */
 
 .panel {
@@ -151,7 +137,7 @@ h1 {
 
 
 /* ==========================================================
-   SELECTOR DE PALEOFICHAS
+   SELECTOR
    ========================================================== */
 
 .selector {
@@ -166,15 +152,11 @@ h1 {
 }
 
 
-/* ==========================================================
-   BLOQUES DE SELECCIÓN
-   ========================================================== */
-
 .selector > div {
 
     min-width: 0;
 
-    padding: 10px;
+    padding: 12px 10px;
 
     background: #0d1622;
 
@@ -192,22 +174,43 @@ h1 {
 
     text-align: center;
 
-    font-size: 11px;
+    font-size: 13px;
 
-    color: #a9bdd0;
+    color: #ffffff;
 
 }
 
 
 /* ==========================================================
-   CÓDIGOS DE PALEOFICHA
+   NOMBRE DE PALEOFICHA
+   ========================================================== */
+
+.nombrePaleoficha {
+
+    display: block;
+
+    margin-top: 5px;
+
+    text-align: center;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    color: #ffffff;
+
+}
+
+
+/* ==========================================================
+   CÓDIGO
    ========================================================== */
 
 .codigo {
 
-    margin-top: 8px;
+    margin-top: 7px;
 
-    padding: 10px 6px;
+    padding: 7px 5px;
 
     text-align: center;
 
@@ -220,9 +223,9 @@ h1 {
 
     font-family: monospace;
 
-    font-size: 16px;
+    font-size: 13px;
 
-    color: #62d6ff;
+    color: #71869b;
 
     letter-spacing: 1px;
 
@@ -230,58 +233,89 @@ h1 {
 
 
 /* ==========================================================
-   BOTONES
+   OCULTAR CÓDIGOS
    ========================================================== */
 
-button {
+.codigoOculto {
+
+    display: none;
+
+}
+
+
+/* ==========================================================
+   BOTÓN NUEVO COMBATE
+   ========================================================== */
+
+#btnNuevo {
 
     width: 100%;
 
-    min-height: 46px;
+    min-height: 50px;
 
-    margin-top: 12px;
+    margin-top: 14px;
 
-    padding: 11px;
+    padding: 12px;
 
     border:
-        1px solid #35516b;
+        1px solid #62d6ff;
 
-    border-radius: 9px;
+    border-radius: 10px;
 
     background:
         linear-gradient(
             180deg,
-            #18283a,
-            #101b28
+            #1b3248,
+            #10202f
         );
 
-    color: #ffffff;
+    color: #62d6ff;
 
-    font-size: 13px;
+    font-size: 15px;
 
     font-weight: bold;
 
-    letter-spacing: 0.5px;
+    letter-spacing: 0.7px;
 
     cursor: pointer;
 
+    box-shadow:
+        0 0 10px rgba(98, 214, 255, 0.10);
+
     transition:
         transform 0.15s ease,
-        border-color 0.15s ease,
         background 0.15s ease,
         box-shadow 0.15s ease;
 
 }
 
 
-button:hover {
+#btnNuevo:hover {
 
-    background: #1d3248;
-
-    border-color: #62d6ff;
+    background: #203c55;
 
     box-shadow:
-        0 0 10px rgba(98, 214, 255, 0.18);
+        0 0 14px rgba(98, 214, 255, 0.22);
+
+}
+
+
+#btnNuevo:active {
+
+    transform: scale(0.98);
+
+}
+
+
+/* ==========================================================
+   BOTONES GENERALES
+   ========================================================== */
+
+button {
+
+    font-family: inherit;
+
+    cursor: pointer;
 
 }
 
@@ -359,7 +393,7 @@ button:active {
 
     min-width: 0;
 
-    padding: 12px;
+    padding: 14px;
 
     background:
         linear-gradient(
@@ -385,11 +419,11 @@ button:active {
 
 .nombre {
 
-    padding-bottom: 7px;
+    padding-bottom: 8px;
 
     text-align: center;
 
-    font-size: 17px;
+    font-size: 18px;
 
     font-weight: bold;
 
@@ -412,7 +446,7 @@ button:active {
 
     text-align: center;
 
-    margin-bottom: 8px;
+    margin-bottom: 9px;
 
     font-family: monospace;
 
@@ -427,77 +461,29 @@ button:active {
    MINIATURA I3
    ========================================================== */
 
-/*
-   Preparado para la futura incorporación de:
+.miniaturaCombatiente {
 
-   <div class="imagen-combatiente">
-       <img ...>
-   </div>
+    width: 120px;
+    height: 120px;
 
-   La incorporación de la imagen se hará después
-   en el JavaScript.
-*/
-
-.imagen-combatiente {
-
-    width: 100%;
-
-    max-width: 180px;
-
-    aspect-ratio: 1 / 1;
-
-    margin: 10px auto;
-
-    overflow: hidden;
-
-    background: #060a10;
-
-    border:
-        1px solid #30465e;
-
-    border-radius: 10px;
-
-}
-
-
-.imagen-combatiente img {
+    object-fit: fill;
 
     display: block;
 
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-}
-
-
-.imagen-placeholder {
-
-    width: 100%;
-    height: 100%;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    color: #52677d;
-
-    font-size: 11px;
+    margin: 0 auto 12px auto;
 
 }
 
 
 /* ==========================================================
-   SECCIONES DE LA TARJETA
+   SECCIONES
    ========================================================== */
 
 .seccion {
 
-    margin-top: 12px;
+    margin-top: 13px;
 
-    padding-top: 10px;
+    padding-top: 11px;
 
     border-top:
         1px solid #243548;
@@ -507,9 +493,9 @@ button:active {
 
 .seccion h3 {
 
-    margin: 0 0 8px;
+    margin: 0 0 9px;
 
-    font-size: 12px;
+    font-size: 13px;
 
     color: #62d6ff;
 
@@ -517,22 +503,22 @@ button:active {
 
 
 /* ==========================================================
-   DATOS
+   MODO DE VIDA
    ========================================================== */
 
 .dato {
 
-    padding: 7px 8px;
+    padding: 9px 10px;
 
     background: #0c1621;
 
     border-radius: 7px;
 
-    font-size: 10px;
+    font-size: 12px;
 
     line-height: 1.5;
 
-    color: #c4d2df;
+    color: #d5e0e9;
 
 }
 
@@ -540,6 +526,8 @@ button:active {
 .dato strong {
 
     color: #ffffff;
+
+    font-size: 12px;
 
 }
 
@@ -550,9 +538,9 @@ button:active {
 
 .habitat {
 
-    margin: 4px 0;
+    margin: 5px 0;
 
-    padding: 6px 8px;
+    padding: 7px 9px;
 
     background: #0c1621;
 
@@ -563,9 +551,9 @@ button:active {
 
     font-family: monospace;
 
-    font-size: 9px;
+    font-size: 10px;
 
-    color: #a9bdd0;
+    color: #ffffff;
 
 }
 
@@ -590,14 +578,14 @@ button:active {
 
     gap: 8px;
 
-    padding: 5px 6px;
+    padding: 6px 7px;
 
     border-bottom:
         1px solid #172534;
 
-    font-size: 9px;
+    font-size: 10px;
 
-    color: #8fa4b8;
+    color: #a9b8c6;
 
 }
 
@@ -623,14 +611,14 @@ button:active {
 
 
 /* ==========================================================
-   ENLACE A PALEOFICHA
+   ENLACE PALEOFICHA
    ========================================================== */
 
 .enlace {
 
     display: block;
 
-    margin-top: 12px;
+    margin-top: 13px;
 
     padding: 10px;
 
@@ -656,19 +644,6 @@ button:active {
 
     font-weight: bold;
 
-    transition:
-        background 0.15s ease,
-        border-color 0.15s ease;
-
-}
-
-
-.enlace:hover {
-
-    background: #1b3045;
-
-    border-color: #62d6ff;
-
 }
 
 
@@ -678,7 +653,7 @@ button:active {
 
 .preparados {
 
-    padding: 10px;
+    padding: 11px;
 
     background: #0a1119;
 
@@ -696,7 +671,7 @@ button:active {
 
 .preparados hr {
 
-    margin: 10px 0;
+    margin: 11px 0;
 
     border: 0;
 
@@ -707,7 +682,51 @@ button:active {
 
 
 /* ==========================================================
-   PANEL DE COMBATE
+   ESCENARIO DE COMBATE
+   ========================================================== */
+
+.escenarioCombate {
+
+    margin-bottom: 12px;
+
+    padding: 11px;
+
+    background: #0c1621;
+
+    border:
+        1px solid #30465e;
+
+    border-radius: 9px;
+
+    font-size: 11px;
+
+    line-height: 1.7;
+
+}
+
+
+.escenarioCombate h3 {
+
+    margin: 0 0 8px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    color: #62d6ff;
+
+}
+
+
+.escenarioCombate strong {
+
+    color: #ffffff;
+
+}
+
+
+/* ==========================================================
+   PANEL COMBATE
    ========================================================== */
 
 #panelCombate {
@@ -718,7 +737,7 @@ button:active {
 
 
 /* ==========================================================
-   CABECERA DEL COMBATE
+   CABECERA DEL RESULTADO
    ========================================================== */
 
 .combateCabecera {
@@ -764,7 +783,7 @@ button:active {
 
 
 /* ==========================================================
-   BARRA DE HP
+   BARRA HP
    ========================================================== */
 
 .barraHp {
@@ -882,33 +901,6 @@ button:active {
 
 
 /* ==========================================================
-   SCROLL DEL HISTORIAL
-   ========================================================== */
-
-.historialCombate::-webkit-scrollbar {
-
-    width: 5px;
-
-}
-
-
-.historialCombate::-webkit-scrollbar-track {
-
-    background: #080d14;
-
-}
-
-
-.historialCombate::-webkit-scrollbar-thumb {
-
-    background: #30465e;
-
-    border-radius: 5px;
-
-}
-
-
-/* ==========================================================
    RESPONSIVE — MÓVIL
    ========================================================== */
 
@@ -928,7 +920,7 @@ button:active {
 
         padding: 12px 6px;
 
-        font-size: 19px;
+        font-size: 20px;
 
     }
 
@@ -952,32 +944,61 @@ button:active {
     }
 
 
-    .combatiente {
+    .selector strong {
 
-        padding: 11px;
+        font-size: 14px;
 
     }
 
 
     .nombre {
 
-        font-size: 16px;
+        font-size: 18px;
 
     }
 
 
-    .imagen-combatiente {
+    .nombrePaleoficha {
 
-        max-width: 160px;
+        font-size: 15px;
 
     }
 
 
-    button {
-
-        min-height: 44px;
+    .dato {
 
         font-size: 12px;
+
+    }
+
+
+    .dato strong {
+
+        font-size: 13px;
+
+    }
+
+
+    .habitat {
+
+        font-size: 10px;
+
+    }
+
+
+    .miniaturaCombatiente {
+
+        width: 120px;
+        height: 120px;
+
+    }
+
+
+    #btnNuevo {
+
+        min-height: 50px;
+
+        font-size: 15px;
 
     }
 
@@ -1005,28 +1026,18 @@ button:active {
     }
 
 
-    .imagen-combatiente {
+    .miniaturaCombatiente {
 
-        max-width: 210px;
+        width: 150px;
+        height: 150px;
 
     }
 
-        }
 
-/* ==========================================================
-   MINIATURA DE COMBATIENTE
-   ========================================================== */
+    .nombre {
 
-.miniaturaCombatiente {
+        font-size: 19px;
 
-    width: 120px;
-    height: 120px;
-
-    object-fit: fill;
-
-    display: block;
-
-    margin: 0 auto 12px auto;
+    }
 
 }
-
