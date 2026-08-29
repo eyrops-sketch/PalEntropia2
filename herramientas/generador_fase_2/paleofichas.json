@@ -526,6 +526,12 @@
     "nombre": "Parasaurolophus",
     "dieta": "Herbívoro",
     "anatomia": "Dinosaurio hadrosáurido de gran tamaño, con cuerpo robusto, pico córneo, mandíbulas provistas de baterías dentales para triturar vegetación, extremidades posteriores largas y una característica cresta craneal tubular y alargada"
+  },
+  {
+    "codigo": "006_14",
+    "nombre": "Iberosuchus",
+    "dieta": "Carnívoro",
+    "anatomia": "Cocodrilomorfo terrestre de tamaño mediano, con cuerpo robusto, cráneo alto y profundo, hocico relativamente corto y dientes comprimidos lateralmente y aserrados, adaptado a la captura y despiece de presas"
   }
 ]
 
