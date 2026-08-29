@@ -2,7 +2,7 @@
 ============================================================
 PalEntropía — Arena 1.0
 archivo: pruebaarena_2.css
-versión: 1.1
+versión: 1.0
 estado: desarrollo
 ============================================================
 
@@ -90,6 +90,7 @@ body {
         0 3px 10px rgba(0, 0, 0, 0.35);
 }
 
+
 .botonHome:hover {
 
     border-color: #62d6ff;
@@ -105,7 +106,6 @@ body {
 .contenedor {
 
     width: 100%;
-
     max-width: 1000px;
 
     margin: 0 auto;
@@ -125,7 +125,6 @@ h1 {
     text-align: center;
 
     font-size: 23px;
-
     line-height: 1.35;
 
     letter-spacing: 1px;
@@ -145,7 +144,6 @@ h1 {
 .panel {
 
     margin-bottom: 18px;
-
     padding: 15px;
 
     background:
@@ -163,6 +161,7 @@ h1 {
         0 5px 18px rgba(0, 0, 0, 0.35);
 }
 
+
 .panel h2 {
 
     margin: 0 0 14px;
@@ -178,7 +177,7 @@ h1 {
 
 
 /* ==========================================================
-   SELECTOR DE PALEOFICHAS
+   SELECTOR
    ========================================================== */
 
 .selector {
@@ -191,6 +190,7 @@ h1 {
     gap: 10px;
 }
 
+
 .selector > div {
 
     min-width: 0;
@@ -202,16 +202,14 @@ h1 {
     border: 1px solid #26384d;
 
     border-radius: 10px;
-
-    text-align: center;
 }
 
 
 /* ==========================================================
-   LABEL PALEOFICHA
+   ETIQUETA PALEOFICHA 1 / 2
    ========================================================== */
 
-.selector > div > strong {
+.selector strong {
 
     display: block;
 
@@ -219,15 +217,15 @@ h1 {
 
     padding: 0;
 
+    text-align: center;
+
     color: #ffffff !important;
 
-    font-size: 15px !important;
+    font-size: 14px !important;
 
-    font-weight: normal !important;
+    font-weight: normal;
 
-    line-height: 1.3;
-
-    text-align: center;
+    line-height: 1.4;
 }
 
 
@@ -235,16 +233,6 @@ h1 {
    NOMBRE DE PALEOFICHA
    ========================================================== */
 
-/*
-   ESTA ES LA REGLA IMPORTANTE.
-
-   El nombre generado por JavaScript queda:
-   - celeste
-   - grande
-   - en negrita
-*/
-
-.selector .nombrePaleoficha,
 .nombrePaleoficha {
 
     display: block !important;
@@ -253,21 +241,21 @@ h1 {
 
     padding: 0 !important;
 
+    text-align: center !important;
+
     color: #62d6ff !important;
 
-    font-size: 24px !important;
+    font-size: 23px !important;
 
     font-weight: bold !important;
 
     line-height: 1.25 !important;
 
-    text-align: center !important;
+    white-space: nowrap;
 
-    white-space: normal !important;
+    overflow: hidden;
 
-    overflow: visible !important;
-
-    text-overflow: clip !important;
+    text-overflow: ellipsis;
 }
 
 
@@ -277,7 +265,25 @@ h1 {
 
 .codigo {
 
-    display: none !important;
+    margin-top: 7px;
+
+    padding: 7px 5px;
+
+    text-align: center;
+
+    background: #070c13;
+
+    border: 1px solid #30465e;
+
+    border-radius: 7px;
+
+    font-family: monospace;
+
+    font-size: 13px;
+
+    color: #ffffff;
+
+    letter-spacing: 1px;
 }
 
 
@@ -318,6 +324,8 @@ h1 {
 
     color: #62d6ff;
 
+    font-family: inherit;
+
     font-size: 16px;
 
     font-weight: bold;
@@ -335,6 +343,7 @@ h1 {
         box-shadow 0.15s ease;
 }
 
+
 #btnNuevo:hover {
 
     background: #203c55;
@@ -342,6 +351,7 @@ h1 {
     box-shadow:
         0 0 14px rgba(98, 214, 255, 0.22);
 }
+
 
 #btnNuevo:active {
 
@@ -359,6 +369,7 @@ button {
 
     cursor: pointer;
 }
+
 
 button:active {
 
@@ -389,14 +400,16 @@ button:active {
     color: #ffffff;
 }
 
+
 .ok {
 
-    color: #7cff8b;
+    color: #7cff8b !important;
 }
+
 
 .error {
 
-    color: #ff6b8a;
+    color: #ff6b8a !important;
 }
 
 
@@ -492,7 +505,6 @@ button:active {
 .miniaturaCombatiente {
 
     width: 120px;
-
     height: 120px;
 
     object-fit: fill;
@@ -513,9 +525,9 @@ button:active {
 
     padding-top: 11px;
 
-    border-top:
-        1px solid #243548;
+    border-top: 1px solid #243548;
 }
+
 
 .seccion h3 {
 
@@ -546,11 +558,12 @@ button:active {
     color: #ffffff;
 }
 
+
 .dato strong {
 
     color: #ffffff;
 
-    font-size: 13px;
+    font-size: 12px;
 }
 
 
@@ -566,8 +579,7 @@ button:active {
 
     background: #0c1621;
 
-    border-left:
-        2px solid #62d6ff;
+    border-left: 2px solid #62d6ff;
 
     border-radius: 5px;
 
@@ -577,6 +589,7 @@ button:active {
 
     color: #ffffff;
 }
+
 
 .habitat strong {
 
@@ -613,18 +626,18 @@ button:active {
     white-space: nowrap;
 }
 
+
 .stat:last-child {
 
     border-bottom: 0;
 }
 
+
 .statNombre {
 
-    min-width: 0;
+    color: #ffffff !important;
 
-    color: #ffffff;
-
-    font-size: 12px;
+    font-size: 12px !important;
 
     font-weight: bold;
 
@@ -635,26 +648,28 @@ button:active {
     text-overflow: ellipsis;
 }
 
+
 .statBarra {
 
     width: 100%;
 
     height: 8px;
 
-    margin: 0;
+    margin: 5px 0 4px 0;
 
     padding: 0;
 
     overflow: hidden;
 
-    background: #253342 !important;
+    background: transparent !important;
 
     border: none !important;
 
-    border-radius: 6px;
-
     box-shadow: none !important;
+
+    border-radius: 4px;
 }
+
 
 .statBarraInterior {
 
@@ -666,14 +681,15 @@ button:active {
 
     padding: 0;
 
-    background: #62d6ff !important;
+    background: #66d9ff !important;
 
     border: none !important;
 
-    border-radius: 4px;
-
     box-shadow: none !important;
+
+    border-radius: 4px;
 }
+
 
 .statValor {
 
@@ -681,15 +697,14 @@ button:active {
 
     text-align: right;
 
-    color: #62d6ff;
+    color: #62d6ff !important;
 
-    font-size: 12px;
+    font-size: 12px !important;
 
     font-weight: bold;
 
     white-space: nowrap;
 }
-
 
 /* ==========================================================
    ENLACE PALEOFICHA
@@ -725,6 +740,7 @@ button:active {
     font-weight: bold;
 }
 
+
 /* ==========================================================
    COMBATIENTES PREPARADOS
    ========================================================== */
@@ -746,14 +762,14 @@ button:active {
     color: #ffffff;
 }
 
+
 .preparados hr {
 
     margin: 11px 0;
 
     border: 0;
 
-    border-top:
-        1px solid #26384d;
+    border-top: 1px solid #26384d;
 }
 
 
@@ -780,6 +796,7 @@ button:active {
     color: #ffffff;
 }
 
+
 .escenarioCombate h3 {
 
     margin: 0 0 8px;
@@ -790,6 +807,7 @@ button:active {
 
     color: #62d6ff;
 }
+
 
 .escenarioCombate strong {
 
@@ -835,7 +853,10 @@ button:active {
     border: 1px solid #30465e;
 
     border-radius: 10px;
+
+    color: #ffffff;
 }
+
 
 .combateFicha h3 {
 
@@ -865,6 +886,7 @@ button:active {
 
     border-radius: 8px;
 }
+
 
 .barraHpInterior {
 
@@ -934,6 +956,7 @@ button:active {
     border-radius: 9px;
 }
 
+
 .turnoCombate {
 
     padding: 8px 4px;
@@ -947,6 +970,7 @@ button:active {
 
     color: #ffffff;
 }
+
 
 .turnoCombate:last-child {
 
@@ -1000,6 +1024,7 @@ button:active {
         box-shadow 0.15s ease;
 }
 
+
 #btnEjecutarCombate:hover {
 
     background: #203c55;
@@ -1007,6 +1032,7 @@ button:active {
     box-shadow:
         0 0 14px rgba(98, 214, 255, 0.22);
 }
+
 
 #btnEjecutarCombate:active {
 
@@ -1025,15 +1051,16 @@ button:active {
         padding: 8px;
     }
 
+
     h1 {
 
-        margin:
-            5px 0 15px;
+        margin: 5px 0 15px;
 
         padding: 12px 6px;
 
         font-size: 20px;
     }
+
 
     .panel {
 
@@ -1042,48 +1069,54 @@ button:active {
         border-radius: 11px;
     }
 
+
     .selector,
     .combatientes,
     .combateCabecera {
 
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
     }
 
-    .selector > div > strong {
 
-        font-size: 15px !important;
+    .selector strong {
+
+        font-size: 14px !important;
 
         color: #ffffff !important;
     }
 
-    .selector .nombrePaleoficha,
+
     .nombrePaleoficha {
 
-        font-size: 24px !important;
+        font-size: 23px !important;
 
         color: #62d6ff !important;
     }
+
 
     .nombre {
 
         font-size: 20px;
     }
 
+
     .dato {
 
         font-size: 12px;
     }
+
 
     .dato strong {
 
         font-size: 13px;
     }
 
+
     .habitat {
 
         font-size: 10px;
     }
+
 
     .miniaturaCombatiente {
 
@@ -1092,12 +1125,14 @@ button:active {
         height: 120px;
     }
 
+
     #btnNuevo {
 
         min-height: 50px;
 
         font-size: 16px;
     }
+
 
     .botonHome {
 
@@ -1112,24 +1147,27 @@ button:active {
         font-size: 15px;
     }
 
+
     .stat {
 
         grid-template-columns:
-            105px
+            110px
             1fr
             35px;
 
         font-size: 12px;
     }
 
+
     .statNombre {
 
-        font-size: 12px;
+        font-size: 12px !important;
     }
+
 
     .statValor {
 
-        font-size: 13px;
+        font-size: 13px !important;
     }
 }
 
@@ -1146,10 +1184,12 @@ button:active {
             25px 15px;
     }
 
+
     .combatiente {
 
         padding: 16px;
     }
+
 
     .miniaturaCombatiente {
 
@@ -1158,23 +1198,53 @@ button:active {
         height: 150px;
     }
 
+
     .nombre {
 
         font-size: 21px;
     }
 
+
     .nombrePaleoficha {
 
-        font-size: 26px !important;
-    }
-
-    .selector > div > strong {
-
-        font-size: 15px !important;
+        font-size: 25px !important;
     }
 }
 
 
 /* ==========================================================
-   FIN
+   PROTECCIÓN FINAL DE NOMBRES
    ========================================================== */
+
+/*
+   Estas reglas son deliberadamente específicas.
+   Evitan que otro CSS de Arena reduzca el tamaño
+   o cambie el color de los nombres.
+*/
+
+.selector > div > .nombrePaleoficha {
+
+    display: block !important;
+
+    color: #62d6ff !important;
+
+    font-size: 23px !important;
+
+    font-weight: bold !important;
+
+    text-align: center !important;
+}
+
+
+.selector > div > strong {
+
+    display: block !important;
+
+    color: #ffffff !important;
+
+    font-size: 14px !important;
+
+    font-weight: normal !important;
+
+    text-align: center !important;
+}
