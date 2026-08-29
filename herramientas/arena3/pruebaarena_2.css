@@ -1325,3 +1325,62 @@ button:active {
     border: 1px solid #62d6ff !important;
 
 }
+
+
+/* ==========================================================
+   BORDES CELESTES — COMBATE PREPARADO
+   ========================================================== */
+
+#panelCombate {
+
+    border:
+        1px solid #62d6ff !important;
+
+}
+
+#panelCombate .preparados {
+
+    border:
+        1px solid #62d6ff !important;
+
+}
+
+#panelCombate .escenarioCombate {
+
+    border:
+        1px solid #62d6ff !important;
+
+}
+
+
+/* ==========================================================
+   BORDES CELESTES — RESULTADO DEL COMBATE
+   ========================================================== */
+
+#panelResultadoCombate {
+
+    border:
+        1px solid #62d6ff !important;
+
+}
+
+#panelResultadoCombate .ganador {
+
+    border:
+        1px solid #62d6ff !important;
+
+}
+
+#panelResultadoCombate .combateFicha {
+
+    border:
+        1px solid #62d6ff !important;
+
+}
+
+#panelResultadoCombate .historialCombate {
+
+    border:
+        1px solid #62d6ff !important;
+
+}
