@@ -1,9 +1,8 @@
-/*
-============================================================
-PalEntropía — Arena 1.0
-archivo: pruebaarena_2.css
-versión: 1.0
-estado: desarrollo
+/* ============================================================
+   PalEntropía — Arena 1.0
+   archivo: pruebaarena_2.css
+   versión: 1.0
+   estado: desarrollo
 ============================================================
 
 Capa visual de Arena 1.0.
@@ -620,22 +619,27 @@ button:active {
 
 .stat {
 
-    display: flex;
+    display: grid;
 
-    flex-direction: column;
+    grid-template-columns:
+        150px
+        1fr
+        35px;
 
-    align-items: stretch;
+    align-items: center;
 
-    gap: 4px;
+    gap: 8px;
 
-    padding: 7px 7px;
+    width: 100%;
+
+    min-height: 27px;
+
+    padding: 4px 6px;
 
     border-bottom:
         1px solid #172534;
 
-    font-size: 11px;
-
-    color: #ffffff;
+    white-space: nowrap;
 
 }
 
@@ -647,56 +651,83 @@ button:active {
 }
 
 
-.stat span:first-child {
+.statNombre {
 
     color: #ffffff;
 
-    font-size: 11px;
+    font-size: 12px;
+
+    font-weight: bold;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 
 }
 
 
-.stat span:last-child {
+.statBarra {
 
-    min-width: 25px;
+    width: 100%;
+
+    height: 8px;
+
+    margin: 0;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    background: transparent !important;
+
+    border: none !important;
+
+    box-shadow: none !important;
+
+    border-radius: 6px;
+
+}
+
+
+.statBarraInterior {
+
+    display: block;
+
+    height: 100%;
+
+    margin: 0;
+
+    padding: 0;
+
+    background: #62d6ff !important;
+
+    border: none !important;
+
+    box-shadow: none !important;
+
+    border-radius: 4px;
+
+}
+
+
+.statValor {
+
+    width: 35px;
 
     text-align: right;
-
-    font-weight: bold;
 
     color: #62d6ff;
 
     font-size: 12px;
 
-}
+    font-weight: bold;
 
-
-/* ==========================================================
-   BARRA DE ESTADÍSTICA
-   ========================================================== */
-
-.stat::after {
-
-    content: "";
-
-    display: block;
-
-    width: 100%;
-
-    height: 7px;
-
-    overflow: hidden;
-
-    border-radius: 6px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #62d6ff var(--valor-stat, 0%),
-            #253342 var(--valor-stat, 0%)
-        );
+    white-space: nowrap;
 
 }
+
 
 /* ==========================================================
    ENLACE PALEOFICHA
@@ -908,7 +939,6 @@ button:active {
         width 0.2s ease;
 
 }
-
 
 /* ==========================================================
    GANADOR
@@ -1236,122 +1266,3 @@ button:active {
     transform: scale(0.98);
 
 }
-
-/* ==========================================================
-   ESTADÍSTICAS — FORMATO TABULADO
-   ========================================================== */
-
-.stat {
-
-    display: grid;
-
-    grid-template-columns:
-        150px
-        1fr
-        35px;
-
-    align-items: center;
-
-    gap: 8px;
-
-    width: 100%;
-
-    min-height: 27px;
-
-    padding: 4px 6px;
-
-    border-bottom:
-        1px solid #172534;
-
-    white-space: nowrap;
-
-}
-
-
-.statNombre {
-
-    color: #ffffff;
-
-    font-size: 12px;
-
-    font-weight: bold;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-}
-
-
-.statBarra {
-
-    width: 100%;
-
-    height: 8px;
-
-    overflow: hidden;
-
-    background: #253342;
-
-    border-radius: 6px;
-
-}
-
-
-.statBarraInterior {
-
-    height: 100%;
-
-    background: #62d6ff;
-
-    border-radius: 6px;
-
-}
-
-
-.statValor {
-
-    width: 35px;
-
-    text-align: right;
-
-    color: #62d6ff;
-
-    font-size: 12px;
-
-    font-weight: bold;
-
-    white-space: nowrap;
-
-}
-
-
-
-/* ==========================================================
-   ESTADÍSTICAS — BARRAS LIMPIAS
-   ========================================================== */
-
-.statBarra {
-    width: 100%;
-    height: 8px;
-    margin: 5px 0 4px 0;
-    padding: 0;
-    overflow: hidden;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-.statBarraInterior {
-    display: block;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background: #66d9ff !important;
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 4px;
-}
-
