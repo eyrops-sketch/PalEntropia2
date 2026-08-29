@@ -1248,3 +1248,42 @@ button:active {
 
     text-align: center !important;
 }
+
+
+/* ==========================================================
+   AJUSTE FINAL — NOMBRES Y BORDES
+   ========================================================== */
+
+.selector > div {
+
+    border: 1px solid #62d6ff !important;
+
+}
+
+
+.selector > div > strong {
+
+    color: #ffffff !important;
+
+    font-size: 14px !important;
+
+    font-weight: normal !important;
+
+}
+
+
+.selector > div > .nombrePaleoficha {
+
+    display: block !important;
+
+    color: #62d6ff !important;
+
+    font-size: 26px !important;
+
+    font-weight: bold !important;
+
+    text-align: center !important;
+
+    line-height: 1.25 !important;
+
+}
