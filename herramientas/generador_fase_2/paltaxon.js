@@ -431,6 +431,10 @@ window.PALTAXON = {
 "006_12":{
   ta1:"Animalia > Chordata > Actinopterygii > Pachycormiformes > Pachycormidae > Leedsichthys",
   ta2:"Pez óseo. Actinopterigio. Paquicórmido. Filtrador planctívoro."
+},
+"006_13":{
+  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Ornithopoda > Hadrosauridae > Lambeosaurinae > Parasaurolophus",
+  ta2:"Dinosaurio. Ornitisquio. Ornitópodo. Hadrosáurido lambeosaurino."
 }
   
 };
