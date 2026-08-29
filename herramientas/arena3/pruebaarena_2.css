@@ -1287,3 +1287,18 @@ button:active {
     line-height: 1.25 !important;
 
 }
+
+
+/* ==========================================================
+   AJUSTE FINAL DEL NOMBRE
+   ========================================================== */
+
+.selector > div > .nombrePaleoficha {
+
+    color: #62d6ff !important;
+
+    font-size: 28px !important;
+
+    font-weight: bold !important;
+
+}
