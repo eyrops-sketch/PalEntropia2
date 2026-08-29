@@ -1526,18 +1526,21 @@ function ejecutarCombateAutomaticoArena(){
 
 
         document.getElementById(
-            "ganadorCombate"
-        ).innerHTML = `
+    "ganadorCombate"
+).innerHTML = `
 
-            🏆 Ganador:
+    🏆 Ganador:
 
-            <strong>
-                ${escaparHTML(
-                    resultado.ganador
-                )}
-            </strong>
+    <strong>
+        ${escaparHTML(
+            resultado.ganador ===
+            resultado.combatiente1.codigo
+                ? resultado.combatiente1.nombre
+                : resultado.combatiente2.nombre
+        )}
+    </strong>
 
-        `;
+`;
 
 
         const hp1 =
