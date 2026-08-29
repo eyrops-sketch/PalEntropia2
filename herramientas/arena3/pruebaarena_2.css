@@ -1,8 +1,9 @@
-/* ============================================================
-   PalEntropía — Arena 1.0
-   archivo: pruebaarena_2.css
-   versión: 1.0
-   estado: desarrollo
+/*
+============================================================
+PalEntropía — Arena 1.0
+archivo: pruebaarena_2.css
+versión: 1.1
+estado: desarrollo
 ============================================================
 
 Capa visual de Arena 1.0.
@@ -49,7 +50,6 @@ body {
         );
 
     color: #ffffff;
-
 }
 
 
@@ -72,8 +72,7 @@ body {
     align-items: center;
     justify-content: center;
 
-    border:
-        1px solid #35516b;
+    border: 1px solid #35516b;
 
     border-radius: 50%;
 
@@ -89,16 +88,13 @@ body {
 
     box-shadow:
         0 3px 10px rgba(0, 0, 0, 0.35);
-
 }
-
 
 .botonHome:hover {
 
     border-color: #62d6ff;
 
     background: #17283a;
-
 }
 
 
@@ -109,10 +105,10 @@ body {
 .contenedor {
 
     width: 100%;
+
     max-width: 1000px;
 
     margin: 0 auto;
-
 }
 
 
@@ -129,6 +125,7 @@ h1 {
     text-align: center;
 
     font-size: 23px;
+
     line-height: 1.35;
 
     letter-spacing: 1px;
@@ -138,7 +135,6 @@ h1 {
     text-shadow:
         0 0 8px rgba(98, 214, 255, 0.45),
         0 0 18px rgba(98, 214, 255, 0.18);
-
 }
 
 
@@ -149,6 +145,7 @@ h1 {
 .panel {
 
     margin-bottom: 18px;
+
     padding: 15px;
 
     background:
@@ -158,16 +155,13 @@ h1 {
             #0b111b
         );
 
-    border:
-        1px solid #263c54;
+    border: 1px solid #263c54;
 
     border-radius: 14px;
 
     box-shadow:
         0 5px 18px rgba(0, 0, 0, 0.35);
-
 }
-
 
 .panel h2 {
 
@@ -180,12 +174,11 @@ h1 {
     color: #62d6ff;
 
     letter-spacing: 1px;
-
 }
 
 
 /* ==========================================================
-   SELECTOR
+   SELECTOR DE PALEOFICHAS
    ========================================================== */
 
 .selector {
@@ -196,9 +189,7 @@ h1 {
         1fr 1fr;
 
     gap: 10px;
-
 }
-
 
 .selector > div {
 
@@ -208,24 +199,35 @@ h1 {
 
     background: #0d1622;
 
-    border:
-        1px solid #26384d;
+    border: 1px solid #26384d;
 
     border-radius: 10px;
 
+    text-align: center;
 }
 
 
-.selector strong {
+/* ==========================================================
+   LABEL PALEOFICHA
+   ========================================================== */
+
+.selector > div > strong {
 
     display: block;
 
+    margin: 0;
+
+    padding: 0;
+
+    color: #ffffff !important;
+
+    font-size: 15px !important;
+
+    font-weight: normal !important;
+
+    line-height: 1.3;
+
     text-align: center;
-
-    font-size: 13px;
-
-    color: #ffffff;
-
 }
 
 
@@ -233,20 +235,39 @@ h1 {
    NOMBRE DE PALEOFICHA
    ========================================================== */
 
+/*
+   ESTA ES LA REGLA IMPORTANTE.
+
+   El nombre generado por JavaScript queda:
+   - celeste
+   - grande
+   - en negrita
+*/
+
+.selector .nombrePaleoficha,
 .nombrePaleoficha {
 
-    display: block;
+    display: block !important;
 
-    margin-top: 5px;
+    margin-top: 6px !important;
 
-    text-align: center;
+    padding: 0 !important;
 
-    font-size: 18px;
+    color: #62d6ff !important;
 
-    font-weight: bold;
+    font-size: 24px !important;
 
-    color: #62d6ff;
+    font-weight: bold !important;
 
+    line-height: 1.25 !important;
+
+    text-align: center !important;
+
+    white-space: normal !important;
+
+    overflow: visible !important;
+
+    text-overflow: clip !important;
 }
 
 
@@ -256,27 +277,7 @@ h1 {
 
 .codigo {
 
-    margin-top: 7px;
-
-    padding: 7px 5px;
-
-    text-align: center;
-
-    background: #070c13;
-
-    border:
-        1px solid #30465e;
-
-    border-radius: 7px;
-
-    font-family: monospace;
-
-    font-size: 13px;
-
-    color: #71869b;
-
-    letter-spacing: 1px;
-
+    display: none !important;
 }
 
 
@@ -286,8 +287,7 @@ h1 {
 
 .codigoOculto {
 
-    display: none;
-
+    display: none !important;
 }
 
 
@@ -305,8 +305,7 @@ h1 {
 
     padding: 12px;
 
-    border:
-        1px solid #62d6ff;
+    border: 1px solid #62d6ff;
 
     border-radius: 10px;
 
@@ -319,7 +318,7 @@ h1 {
 
     color: #62d6ff;
 
-    font-size: 15px;
+    font-size: 16px;
 
     font-weight: bold;
 
@@ -334,9 +333,7 @@ h1 {
         transform 0.15s ease,
         background 0.15s ease,
         box-shadow 0.15s ease;
-
 }
-
 
 #btnNuevo:hover {
 
@@ -344,14 +341,11 @@ h1 {
 
     box-shadow:
         0 0 14px rgba(98, 214, 255, 0.22);
-
 }
-
 
 #btnNuevo:active {
 
     transform: scale(0.98);
-
 }
 
 
@@ -364,14 +358,11 @@ button {
     font-family: inherit;
 
     cursor: pointer;
-
 }
-
 
 button:active {
 
     transform: scale(0.98);
-
 }
 
 
@@ -389,29 +380,23 @@ button:active {
 
     background: #080e16;
 
-    border:
-        1px solid #1d2d40;
+    border: 1px solid #1d2d40;
 
     border-radius: 8px;
 
     font-size: 11px;
 
-    color: #8ca3ba;
-
+    color: #ffffff;
 }
-
 
 .ok {
 
     color: #7cff8b;
-
 }
-
 
 .error {
 
     color: #ff6b8a;
-
 }
 
 
@@ -429,7 +414,6 @@ button:active {
     gap: 12px;
 
     margin-bottom: 18px;
-
 }
 
 
@@ -450,19 +434,17 @@ button:active {
             #0b111a
         );
 
-    border:
-        1px solid #30465e;
+    border: 1px solid #30465e;
 
     border-radius: 14px;
 
     box-shadow:
         0 5px 15px rgba(0, 0, 0, 0.3);
-
 }
 
 
 /* ==========================================================
-   NOMBRE
+   NOMBRE DEL COMBATIENTE
    ========================================================== */
 
 .nombre {
@@ -482,7 +464,6 @@ button:active {
     overflow: hidden;
 
     text-overflow: ellipsis;
-
 }
 
 
@@ -500,8 +481,7 @@ button:active {
 
     font-size: 9px;
 
-    color: #71869b;
-
+    color: #ffffff;
 }
 
 
@@ -512,6 +492,7 @@ button:active {
 .miniaturaCombatiente {
 
     width: 120px;
+
     height: 120px;
 
     object-fit: fill;
@@ -519,7 +500,6 @@ button:active {
     display: block;
 
     margin: 0 auto 12px auto;
-
 }
 
 
@@ -535,9 +515,7 @@ button:active {
 
     border-top:
         1px solid #243548;
-
 }
-
 
 .seccion h3 {
 
@@ -546,7 +524,6 @@ button:active {
     font-size: 13px;
 
     color: #62d6ff;
-
 }
 
 
@@ -566,17 +543,14 @@ button:active {
 
     line-height: 1.5;
 
-    color: #d5e0e9;
-
+    color: #ffffff;
 }
-
 
 .dato strong {
 
     color: #ffffff;
 
-    font-size: 12px;
-
+    font-size: 13px;
 }
 
 
@@ -602,14 +576,11 @@ button:active {
     font-size: 10px;
 
     color: #ffffff;
-
 }
-
 
 .habitat strong {
 
     color: #62d6ff;
-
 }
 
 
@@ -640,18 +611,16 @@ button:active {
         1px solid #172534;
 
     white-space: nowrap;
-
 }
-
 
 .stat:last-child {
 
     border-bottom: 0;
-
 }
 
-
 .statNombre {
+
+    min-width: 0;
 
     color: #ffffff;
 
@@ -664,9 +633,7 @@ button:active {
     overflow: hidden;
 
     text-overflow: ellipsis;
-
 }
-
 
 .statBarra {
 
@@ -680,16 +647,14 @@ button:active {
 
     overflow: hidden;
 
-    background: transparent !important;
+    background: #253342 !important;
 
     border: none !important;
 
-    box-shadow: none !important;
-
     border-radius: 6px;
 
+    box-shadow: none !important;
 }
-
 
 .statBarraInterior {
 
@@ -705,12 +670,10 @@ button:active {
 
     border: none !important;
 
-    box-shadow: none !important;
-
     border-radius: 4px;
 
+    box-shadow: none !important;
 }
-
 
 .statValor {
 
@@ -725,7 +688,6 @@ button:active {
     font-weight: bold;
 
     white-space: nowrap;
-
 }
 
 
@@ -752,8 +714,7 @@ button:active {
             #101a26
         );
 
-    border:
-        1px solid #35516b;
+    border: 1px solid #35516b;
 
     border-radius: 8px;
 
@@ -762,9 +723,7 @@ button:active {
     font-size: 10px;
 
     font-weight: bold;
-
 }
-
 
 /* ==========================================================
    COMBATIENTES PREPARADOS
@@ -776,8 +735,7 @@ button:active {
 
     background: #0a1119;
 
-    border:
-        1px solid #223448;
+    border: 1px solid #223448;
 
     border-radius: 9px;
 
@@ -785,8 +743,8 @@ button:active {
 
     line-height: 1.7;
 
+    color: #ffffff;
 }
-
 
 .preparados hr {
 
@@ -796,7 +754,6 @@ button:active {
 
     border-top:
         1px solid #26384d;
-
 }
 
 
@@ -812,8 +769,7 @@ button:active {
 
     background: #0c1621;
 
-    border:
-        1px solid #30465e;
+    border: 1px solid #30465e;
 
     border-radius: 9px;
 
@@ -821,8 +777,8 @@ button:active {
 
     line-height: 1.7;
 
+    color: #ffffff;
 }
-
 
 .escenarioCombate h3 {
 
@@ -833,14 +789,11 @@ button:active {
     font-size: 13px;
 
     color: #62d6ff;
-
 }
-
 
 .escenarioCombate strong {
 
     color: #ffffff;
-
 }
 
 
@@ -851,7 +804,6 @@ button:active {
 #panelCombate {
 
     display: none;
-
 }
 
 
@@ -867,7 +819,6 @@ button:active {
         1fr 1fr;
 
     gap: 10px;
-
 }
 
 
@@ -881,23 +832,18 @@ button:active {
 
     background: #0c1520;
 
-    border:
-        1px solid #30465e;
+    border: 1px solid #30465e;
 
     border-radius: 10px;
-
 }
-
 
 .combateFicha h3 {
 
-    margin:
-        0 0 8px;
+    margin: 0 0 8px;
 
     font-size: 12px;
 
     color: #ffffff;
-
 }
 
 
@@ -918,9 +864,7 @@ button:active {
     background: #252f3a;
 
     border-radius: 8px;
-
 }
-
 
 .barraHpInterior {
 
@@ -937,8 +881,8 @@ button:active {
 
     transition:
         width 0.2s ease;
-
 }
+
 
 /* ==========================================================
    GANADOR
@@ -959,8 +903,7 @@ button:active {
             #0a111a
         );
 
-    border:
-        1px solid #62d6ff;
+    border: 1px solid #62d6ff;
 
     border-radius: 10px;
 
@@ -969,7 +912,6 @@ button:active {
     font-weight: bold;
 
     color: #62d6ff;
-
 }
 
 
@@ -987,13 +929,10 @@ button:active {
 
     background: #070c12;
 
-    border:
-        1px solid #1e3043;
+    border: 1px solid #1e3043;
 
     border-radius: 9px;
-
 }
-
 
 .turnoCombate {
 
@@ -1006,199 +945,12 @@ button:active {
 
     line-height: 1.5;
 
-    color: #b6c5d2;
-
+    color: #ffffff;
 }
-
 
 .turnoCombate:last-child {
 
     border-bottom: 0;
-
-}
-
-
-/* ==========================================================
-   RESPONSIVE — MÓVIL
-   ========================================================== */
-
-@media (max-width: 700px) {
-
-    body {
-
-        padding: 8px;
-
-    }
-
-
-    h1 {
-
-        margin:
-            5px 0 15px;
-
-        padding: 12px 6px;
-
-        font-size: 20px;
-
-    }
-
-
-    .panel {
-
-        padding: 11px;
-
-        border-radius: 11px;
-
-    }
-
-
-    .selector,
-    .combatientes,
-    .combateCabecera {
-
-        grid-template-columns:
-            1fr;
-
-    }
-
-
-    .selector strong {
-
-        font-size: 14px;
-
-    }
-
-
-    .nombre {
-
-        font-size: 20px;
-
-    }
-
-
-    .nombrePaleoficha {
-
-        font-size: 17px;
-
-    }
-
-
-    .dato {
-
-        font-size: 12px;
-
-    }
-
-
-    .dato strong {
-
-        font-size: 13px;
-
-    }
-
-
-    .habitat {
-
-        font-size: 10px;
-
-    }
-
-
-    .miniaturaCombatiente {
-
-        width: 120px;
-        height: 120px;
-
-    }
-
-
-    #btnNuevo {
-
-        min-height: 50px;
-
-        font-size: 15px;
-
-    }
-
-
-    .botonHome {
-
-        top: 8px;
-        right: 8px;
-
-        width: 30px;
-        height: 30px;
-
-        font-size: 15px;
-
-    }
-
-
-    .stat {
-
-        font-size: 12px;
-
-    }
-
-
-    .stat span:first-child {
-
-        font-size: 12px;
-
-    }
-
-
-    .stat span:last-child {
-
-        font-size: 13px;
-
-    }
-
-}
-
-
-/* ==========================================================
-   ESCRITORIO
-   ========================================================== */
-
-@media (min-width: 701px) {
-
-    body {
-
-        padding:
-            25px 15px;
-
-    }
-
-
-    .combatiente {
-
-        padding: 16px;
-
-    }
-
-
-    .miniaturaCombatiente {
-
-        width: 150px;
-        height: 150px;
-
-    }
-
-
-    .nombre {
-
-        font-size: 21px;
-
-    }
-
-
-    .nombrePaleoficha {
-
-        font-size: 18px;
-
-    }
-
 }
 
 
@@ -1216,8 +968,7 @@ button:active {
 
     padding: 12px;
 
-    border:
-        1px solid #62d6ff;
+    border: 1px solid #62d6ff;
 
     border-radius: 10px;
 
@@ -1247,9 +998,7 @@ button:active {
         transform 0.15s ease,
         background 0.15s ease,
         box-shadow 0.15s ease;
-
 }
-
 
 #btnEjecutarCombate:hover {
 
@@ -1257,79 +1006,175 @@ button:active {
 
     box-shadow:
         0 0 14px rgba(98, 214, 255, 0.22);
-
 }
-
 
 #btnEjecutarCombate:active {
 
     transform: scale(0.98);
-
 }
+
 
 /* ==========================================================
-   ARENA — PALEOFICHAS — TEXTO GRANDE Y BLANCO
+   RESPONSIVE — MÓVIL
    ========================================================== */
-
-.selector strong,
-.selector .nombrePaleoficha,
-.selector .nombrePaleoficha strong {
-
-    color: #ffffff !important;
-
-    font-size: 22px !important;
-
-    font-weight: bold !important;
-
-    line-height: 1.3;
-
-    text-align: center;
-
-}
-
-
-/* Paleoficha 1 / Paleoficha 2 */
-
-.selector > div > strong {
-
-    color: #ffffff !important;
-
-    font-size: 22px !important;
-
-}
-
-
-/* Nombre de la especie */
-
-.selector .nombrePaleoficha {
-
-    display: block;
-
-    color: #ffffff !important;
-
-    font-size: 25px !important;
-
-    font-weight: bold !important;
-
-    margin-top: 8px;
-
-}
-
-
-/* Móvil */
 
 @media (max-width: 700px) {
 
+    body {
+
+        padding: 8px;
+    }
+
+    h1 {
+
+        margin:
+            5px 0 15px;
+
+        padding: 12px 6px;
+
+        font-size: 20px;
+    }
+
+    .panel {
+
+        padding: 11px;
+
+        border-radius: 11px;
+    }
+
+    .selector,
+    .combatientes,
+    .combateCabecera {
+
+        grid-template-columns:
+            1fr;
+    }
+
     .selector > div > strong {
 
-        font-size: 22px !important;
+        font-size: 15px !important;
 
+        color: #ffffff !important;
     }
 
-    .selector .nombrePaleoficha {
+    .selector .nombrePaleoficha,
+    .nombrePaleoficha {
 
-        font-size: 25px !important;
+        font-size: 24px !important;
 
+        color: #62d6ff !important;
     }
 
+    .nombre {
+
+        font-size: 20px;
+    }
+
+    .dato {
+
+        font-size: 12px;
+    }
+
+    .dato strong {
+
+        font-size: 13px;
+    }
+
+    .habitat {
+
+        font-size: 10px;
+    }
+
+    .miniaturaCombatiente {
+
+        width: 120px;
+
+        height: 120px;
+    }
+
+    #btnNuevo {
+
+        min-height: 50px;
+
+        font-size: 16px;
+    }
+
+    .botonHome {
+
+        top: 8px;
+
+        right: 8px;
+
+        width: 30px;
+
+        height: 30px;
+
+        font-size: 15px;
+    }
+
+    .stat {
+
+        grid-template-columns:
+            105px
+            1fr
+            35px;
+
+        font-size: 12px;
+    }
+
+    .statNombre {
+
+        font-size: 12px;
+    }
+
+    .statValor {
+
+        font-size: 13px;
+    }
 }
+
+
+/* ==========================================================
+   ESCRITORIO
+   ========================================================== */
+
+@media (min-width: 701px) {
+
+    body {
+
+        padding:
+            25px 15px;
+    }
+
+    .combatiente {
+
+        padding: 16px;
+    }
+
+    .miniaturaCombatiente {
+
+        width: 150px;
+
+        height: 150px;
+    }
+
+    .nombre {
+
+        font-size: 21px;
+    }
+
+    .nombrePaleoficha {
+
+        font-size: 26px !important;
+    }
+
+    .selector > div > strong {
+
+        font-size: 15px !important;
+    }
+}
+
+
+/* ==========================================================
+   FIN
+   ========================================================== */
