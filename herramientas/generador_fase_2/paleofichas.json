@@ -520,6 +520,12 @@
     "nombre": "Leedsichthys",
     "dieta": "Planctívoro",
     "anatomia": "Pez óseo marino de tamaño gigantesco, con cuerpo alargado, cabeza grande, boca muy amplia y branquiespinas especializadas para filtrar plancton y pequeños organismos del agua"
+  },
+  {
+    "codigo": "006_13",
+    "nombre": "Parasaurolophus",
+    "dieta": "Herbívoro",
+    "anatomia": "Dinosaurio hadrosáurido de gran tamaño, con cuerpo robusto, pico córneo, mandíbulas provistas de baterías dentales para triturar vegetación, extremidades posteriores largas y una característica cresta craneal tubular y alargada"
   }
 ]
 
