@@ -443,6 +443,10 @@ window.PALTAXON = {
 "006_15":{
   ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Ornithopoda > Iguanodontidae > Iguanodon",
   ta2:"Dinosaurio. Ornitisquio. Ornitópodo. Iguanodóntido."
+},
+"007_01":{
+  ta1:"Animalia > Chordata > Synapsida > Caseasauria > Caseidae > Cotylorhynchus",
+  ta2:"Sinápsido. Caseasaurio. Caseido. Herbívoro de gran tamaño."
 }
   
 };
