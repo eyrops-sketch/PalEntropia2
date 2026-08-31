@@ -439,6 +439,10 @@ window.PALTAXON = {
 "006_14":{
   ta1:"Animalia > Chordata > Reptilia > Crocodylomorpha > Sebecia > Sebecidae > Iberosuchus",
   ta2:"Diápsido. Cocodrilomorfo. Sebécido. Cocodrilomorfo terrestre."
+},
+"006_15":{
+  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Ornithopoda > Iguanodontidae > Iguanodon",
+  ta2:"Dinosaurio. Ornitisquio. Ornitópodo. Iguanodóntido."
 }
   
 };
