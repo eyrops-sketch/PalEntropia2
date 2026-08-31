@@ -538,6 +538,12 @@
     "nombre": "Iguanodon",
     "dieta": "Herbívoro",
     "anatomia": "Dinosaurio ornitópodo de gran tamaño, con cuerpo robusto, pico córneo, mandíbulas provistas de dientes para procesar vegetación, extremidades posteriores fuertes, manos con pulgar transformado en una gran espina y capacidad para desplazarse de forma bípeda o cuadrúpeda"
+  },
+  {
+    "codigo": "007_01",
+    "nombre": "Cotylorhynchus",
+    "dieta": "Herbívoro",
+    "anatomia": "Sinápsido herbívoro de gran tamaño, con cuerpo extremadamente robusto y voluminoso, cabeza relativamente pequeña, cuello corto, extremidades fuertes y cola larga y gruesa"
   }
 ]
 
