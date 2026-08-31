@@ -532,6 +532,12 @@
     "nombre": "Iberosuchus",
     "dieta": "Carnívoro",
     "anatomia": "Cocodrilomorfo terrestre de tamaño mediano, con cuerpo robusto, cráneo alto y profundo, hocico relativamente corto y dientes comprimidos lateralmente y aserrados, adaptado a la captura y despiece de presas"
+  },
+  {
+    "codigo": "006_15",
+    "nombre": "Iguanodon",
+    "dieta": "Herbívoro",
+    "anatomia": "Dinosaurio ornitópodo de gran tamaño, con cuerpo robusto, pico córneo, mandíbulas provistas de dientes para procesar vegetación, extremidades posteriores fuertes, manos con pulgar transformado en una gran espina y capacidad para desplazarse de forma bípeda o cuadrúpeda"
   }
 ]
 
