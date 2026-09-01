@@ -149,6 +149,9 @@
             📋 Participantes
         </h2>
 
+        <div id="totalParticipantes">
+        </div>
+
         <div id="listaParticipantes">
         </div>
 
@@ -185,6 +188,181 @@ window.MATRIZ_COMBATIENTES_TORNEO = [];
 
 
 /* =====================================================
+   OBTENER TODOS LOS J1 DEL PALNAVEGADOR
+   ===================================================== */
+
+function obtenerTodosLosJ1DelNavegador() {
+
+    const navegador =
+        window.PALNAVEGADOR;
+
+
+    if (!navegador) {
+
+        console.warn(
+            "PALNAVEGADOR no está disponible."
+        );
+
+        return [];
+
+    }
+
+
+    /*
+    PALNAVEGADOR puede mantener la matriz
+    de navegación en diferentes propiedades.
+    Probamos las estructuras existentes sin
+    modificar PALNAVEGADOR.
+    */
+
+    const posiblesMatrices = [
+
+        navegador.matriz,
+
+        navegador.datos,
+
+        navegador.registros,
+
+        navegador.lista,
+
+        navegador.paleofichas
+
+    ];
+
+
+    for (
+        const matriz of posiblesMatrices
+    ) {
+
+        if (
+            Array.isArray(matriz) &&
+            matriz.length
+        ) {
+
+            const codigos =
+                matriz
+                    .map(
+                        registro => {
+
+                            if (
+                                typeof registro ===
+                                "string"
+                            ) {
+
+                                return registro;
+
+                            }
+
+
+                            if (
+                                registro &&
+                                registro.j1
+                            ) {
+
+                                return registro.j1;
+
+                            }
+
+
+                            if (
+                                registro &&
+                                registro.codigo
+                            ) {
+
+                                return registro.codigo;
+
+                            }
+
+
+                            return "";
+
+                        }
+                    )
+                    .map(
+                        codigo =>
+                            String(
+                                codigo || ""
+                            ).trim()
+                    )
+                    .filter(Boolean);
+
+
+            if (
+                codigos.length
+            ) {
+
+                return [
+                    ...new Set(
+                        codigos
+                    )
+                ];
+
+            }
+
+        }
+
+    }
+
+
+    /*
+    Respaldo: si el navegador expone un índice
+    de códigos, también lo utilizamos.
+    */
+
+    const posiblesIndices = [
+
+        navegador.codigos,
+
+        navegador.listaCodigos,
+
+        navegador.matrizCodigos
+
+    ];
+
+
+    for (
+        const indice of posiblesIndices
+    ) {
+
+        if (
+            Array.isArray(indice) &&
+            indice.length
+        ) {
+
+            const codigos =
+                indice
+                    .map(
+                        codigo =>
+                            String(
+                                codigo || ""
+                            ).trim()
+                    )
+                    .filter(Boolean);
+
+
+            if (
+                codigos.length
+            ) {
+
+                return [
+                    ...new Set(
+                        codigos
+                    )
+                ];
+
+            }
+
+        }
+
+    }
+
+
+    return [];
+
+}
+
+
+/* =====================================================
    CARGAR PARTICIPANTES
    ===================================================== */
 
@@ -193,6 +371,12 @@ async function cargarParticipantesTorneo() {
     const lista =
         document.getElementById(
             "listaParticipantes"
+        );
+
+
+    const total =
+        document.getElementById(
+            "totalParticipantes"
         );
 
 
@@ -206,9 +390,17 @@ async function cargarParticipantesTorneo() {
     lista.innerHTML = "";
 
 
+    if (total) {
+
+        total.textContent = "";
+
+    }
+
+
     /*
-    Recuperamos exclusivamente los J1
-    preparados por el visor.
+    =====================================================
+    1. INTENTAR MATRIZ PROCEDENTE DEL BUSCADOR
+    =====================================================
     */
 
     const matrizGuardada =
@@ -217,47 +409,87 @@ async function cargarParticipantesTorneo() {
         );
 
 
-    if (!matrizGuardada) {
-
-        lista.innerHTML =
-            "<p>No hay participantes cargados.</p>";
-
-        return;
-
-    }
+    let matrizJ1 = [];
 
 
-    let matrizJ1;
+    if (matrizGuardada) {
+
+        try {
+
+            const matrizTemporal =
+                JSON.parse(
+                    matrizGuardada
+                );
 
 
-    try {
+            if (
+                Array.isArray(
+                    matrizTemporal
+                )
+            ) {
 
-        matrizJ1 =
-            JSON.parse(
-                matrizGuardada
+                matrizJ1 =
+                    matrizTemporal
+                        .map(
+                            codigo =>
+                                String(
+                                    codigo || ""
+                                ).trim()
+                        )
+                        .filter(Boolean);
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.warn(
+                "La matriz guardada no es válida. Se utilizará el total del navegador.",
+                error
             );
 
-    }
+            matrizJ1 = [];
 
-    catch (error) {
-
-        console.error(
-            "Matriz de combatientes no válida:",
-            error
-        );
-
-        lista.innerHTML =
-            "<p>No se pudo cargar la matriz de participantes.</p>";
-
-        return;
+        }
 
     }
 
+
+    /*
+    =====================================================
+    2. SI NO HAY BÚSQUEDA:
+       USAR TODOS LOS REGISTROS DEL NAVEGADOR
+    =====================================================
+    */
 
     if (
-        !Array.isArray(matrizJ1) ||
         !matrizJ1.length
     ) {
+
+        matrizJ1 =
+            obtenerTodosLosJ1DelNavegador();
+
+    }
+
+
+    /*
+    =====================================================
+    COMPROBAR MATRIZ
+    =====================================================
+    */
+
+    if (
+        !matrizJ1.length
+    ) {
+
+        if (total) {
+
+            total.textContent =
+                "0 participantes";
+
+        }
+
 
         lista.innerHTML =
             "<p>No hay participantes cargados.</p>";
@@ -268,21 +500,15 @@ async function cargarParticipantesTorneo() {
 
 
     /*
-    Limpiamos y normalizamos J1.
+    Eliminar duplicados manteniendo el orden.
     */
 
     matrizJ1 =
-        matrizJ1
-            .map(
-                codigo =>
-                    String(
-                        codigo || ""
-                    ).trim()
+        [
+            ...new Set(
+                matrizJ1
             )
-            .filter(
-                codigo =>
-                    codigo !== ""
-            );
+        ];
 
 
     /*
@@ -345,11 +571,6 @@ async function cargarParticipantesTorneo() {
         new Map();
 
 
-    /*
-    paleofichas.json puede contener los registros
-    como array.
-    */
-
     if (
         Array.isArray(
             datosJSON
@@ -407,8 +628,7 @@ async function cargarParticipantesTorneo() {
     /*
     =====================================================
     MAPA DEL MASTER
-    =====================================================
-    */
+    ===================================================== */
 
     const mapaMaster =
         new Map();
@@ -472,8 +692,7 @@ async function cargarParticipantesTorneo() {
     /*
     =====================================================
     CONSTRUIR MATRIZ FINAL
-    =====================================================
-    */
+    ===================================================== */
 
     const participantes = [];
 
@@ -487,15 +706,16 @@ async function cargarParticipantesTorneo() {
                 );
 
 
-            /*
-            J2 se obtiene de paleofichas.json.
-            */
-
             const j2 =
                 mapaNombres.get(
                     j1
                 ) || "";
 
+
+            /*
+            Solo incluimos registros que
+            existen realmente en master.csv.
+            */
 
             if (
                 !columnas
@@ -523,15 +743,37 @@ async function cargarParticipantesTorneo() {
     );
 
 
+    /*
+    =====================================================
+    GUARDAR MATRIZ FINAL
+    ===================================================== */
+
     window.MATRIZ_COMBATIENTES_TORNEO =
         participantes;
 
 
     /*
     =====================================================
-    MOSTRAR SOLO J1 Y J2
+    MOSTRAR TOTAL
+    ===================================================== */
+
+    if (total) {
+
+        total.textContent =
+            participantes.length +
+            (
+                participantes.length === 1
+                    ? " participante"
+                    : " participantes"
+            );
+
+    }
+
+
+    /*
     =====================================================
-    */
+    MOSTRAR SOLO J1 Y J2
+    ===================================================== */
 
     participantes.forEach(
         participante => {
