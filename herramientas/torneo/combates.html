@@ -1,10 +1,26 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="es">
 
-<title>PalEntropía — Combates</title><link rel="stylesheet"
-      href="index.css"></head><body><!-- =====================================================
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>PalEntropía — Combates</title>
+
+<link rel="stylesheet"
+      href="index.css">
+
+</head>
+
+<body>
+
+<!-- =====================================================
      BOTÓN MENÚ PRINCIPAL
-     ===================================================== --><button
+     ===================================================== -->
+
+<button
 id="botonMenuPrincipal"
 type="button"
 title="Volver al menú principal"
@@ -12,17 +28,31 @@ aria-label="Volver al menú principal">
 
 🏠
 
-</button><!-- =====================================================
+</button>
+
+
+<!-- =====================================================
      CABECERA
-     ===================================================== --><header id="cabecera"><h1>PalEntropía</h1>
+     ===================================================== -->
+
+<header id="cabecera">
+
+<h1>PalEntropía</h1>
 
 <div id="subtitulo">
     Combates
 </div>
 
-</header><!-- =====================================================
+</header>
+
+
+<!-- =====================================================
      CONTENEDOR PRINCIPAL
-     ===================================================== --><main id="combates"><section id="cabeceraCombates">
+     ===================================================== -->
+
+<main id="combates">
+
+<section id="cabeceraCombates">
 
     <h2>⚔️ Combates del torneo</h2>
 
@@ -40,9 +70,16 @@ aria-label="Volver al menú principal">
 <section id="contenedorRondas">
 </section>
 
-</main><!-- =====================================================
+</main>
+
+
+<!-- =====================================================
      VOLVER AL ÍNDICE
-     ===================================================== --><section id="volver"><a
+     ===================================================== -->
+
+<section id="volver">
+
+<a
     href="index.html"
     id="botonVolver">
 
@@ -50,9 +87,14 @@ aria-label="Volver al menú principal">
 
 </a>
 
-</section><!-- =====================================================
+</section>
+
+
+<!-- =====================================================
      MOTOR DEL TORNEO
-     ===================================================== --><script>
+     ===================================================== -->
+
+<script>
 
 window.TORNEO_COMBATES = [];
 
@@ -68,13 +110,9 @@ function obtenerParticipantes() {
             "palentropia_matriz_combatientes"
         );
 
-
     if (!guardado) {
-
         return [];
-
     }
-
 
     try {
 
@@ -83,15 +121,11 @@ function obtenerParticipantes() {
                 guardado
             );
 
-
         if (
             !Array.isArray(matriz)
         ) {
-
             return [];
-
         }
-
 
         return matriz
             .map(
@@ -104,7 +138,6 @@ function obtenerParticipantes() {
                 codigo =>
                     codigo !== ""
             );
-
 
     }
 
@@ -123,6 +156,180 @@ function obtenerParticipantes() {
 
 
 /* =====================================================
+   OBTENER J2
+   ===================================================== */
+
+async function obtenerMapaNombres() {
+
+    const mapaNombres =
+        new Map();
+
+    try {
+
+        const respuesta =
+            await fetch(
+                "../generador_fase_2/paleofichas.json"
+            );
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No se pudo cargar paleofichas.json."
+            );
+
+        }
+
+        const datos =
+            await respuesta.json();
+
+        if (
+            !Array.isArray(datos)
+        ) {
+            return mapaNombres;
+        }
+
+        datos.forEach(
+            registro => {
+
+                if (!registro) {
+                    return;
+                }
+
+                const j1 =
+                    String(
+                        registro.j1 ||
+                        registro.codigo ||
+                        registro.J1 ||
+                        ""
+                    ).trim();
+
+                const j2 =
+                    String(
+                        registro.j2 ||
+                        registro.nombre ||
+                        registro.J2 ||
+                        ""
+                    ).trim();
+
+                if (
+                    j1 &&
+                    j2
+                ) {
+
+                    mapaNombres.set(
+                        j1,
+                        j2
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Error cargando nombres J2:",
+            error
+        );
+
+    }
+
+    return mapaNombres;
+
+}
+
+
+/* =====================================================
+   CONVERTIR PARTICIPANTES
+   J1 → J1 + J2
+   ===================================================== */
+
+function crearParticipantesDatos(
+    matrizJ1,
+    mapaNombres
+) {
+
+    const participantes = [];
+
+    matrizJ1.forEach(
+        codigo => {
+
+            const j1 =
+                String(
+                    codigo || ""
+                ).trim();
+
+            if (!j1) {
+                return;
+            }
+
+            const j2 =
+                mapaNombres.get(j1) ||
+                "";
+
+            participantes.push({
+
+                j1:
+                    j1,
+
+                j2:
+                    j2
+
+            });
+
+        }
+    );
+
+    return participantes;
+
+}
+
+
+/* =====================================================
+   BARAJAR PARTICIPANTES
+   FISHER-YATES
+   ===================================================== */
+
+function barajar(
+    matriz
+) {
+
+    const resultado =
+        [...matriz];
+
+    for (
+        let i =
+            resultado.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() *
+                (i + 1)
+            );
+
+        const temporal =
+            resultado[i];
+
+        resultado[i] =
+            resultado[j];
+
+        resultado[j] =
+            temporal;
+
+    }
+
+    return resultado;
+
+}
+
+
+/* =====================================================
    CALCULAR MAYOR POTENCIA DE 2
    MENOR O IGUAL AL TOTAL
    ===================================================== */
@@ -131,8 +338,8 @@ function calcularCuadroPrincipal(
     cantidad
 ) {
 
-    let potencia = 1;
-
+    let potencia =
+        1;
 
     while (
         potencia * 2 <=
@@ -143,7 +350,6 @@ function calcularCuadroPrincipal(
 
     }
 
-
     return potencia;
 
 }
@@ -151,25 +357,7 @@ function calcularCuadroPrincipal(
 
 /* =====================================================
    CALCULAR RONDA PREVIA
-   =====================================================
-
-   Si tenemos:
-
-   9  → 1 combate
-   10 → 2 combates
-   11 → 3 combates
-   12 → 4 combates
-   13 → 5 combates
-   14 → 6 combates
-   15 → 7 combates
-   16 → 0 combates
-
-   Fórmula:
-
-   participantes sobrantes =
-   cantidad - potenciaDe2
-
-   ==================================================== */
+   ===================================================== */
 
 function calcularRondaPrevia(
     cantidad
@@ -180,11 +368,9 @@ function calcularRondaPrevia(
             cantidad
         );
 
-
     const sobrantes =
         cantidad -
         cuadro;
-
 
     return {
 
@@ -212,7 +398,6 @@ function crearCruces(
 
     const cruces = [];
 
-
     for (
         let i = 0;
         i < participantes.length;
@@ -222,10 +407,8 @@ function crearCruces(
         const participante1 =
             participantes[i];
 
-
         const participante2 =
             participantes[i + 1];
-
 
         if (
             participante1 &&
@@ -252,7 +435,6 @@ function crearCruces(
 
     }
 
-
     return cruces;
 
 }
@@ -269,9 +451,7 @@ function generarTorneo(
     const cantidad =
         participantes.length;
 
-
     const rondas = [];
-
 
     if (
         cantidad < 2
@@ -282,11 +462,20 @@ function generarTorneo(
     }
 
 
+    /*
+    BARAJADO GENERAL
+    */
+
+    const participantesBarajados =
+        barajar(
+            participantes
+        );
+
+
     const cuadro =
         calcularCuadroPrincipal(
             cantidad
         );
-
 
     const sobrantes =
         cantidad -
@@ -301,6 +490,11 @@ function generarTorneo(
         sobrantes === 0
     ) {
 
+        const participantesCuadro =
+            barajar(
+                participantesBarajados
+            );
+
         rondas.push({
 
             nombre:
@@ -310,18 +504,17 @@ function generarTorneo(
                 "principal",
 
             participantes:
-                [...participantes],
+                participantesCuadro,
 
             reservas:
                 [],
 
             cruces:
                 crearCruces(
-                    participantes
+                    participantesCuadro
                 )
 
         });
-
 
         return rondas;
 
@@ -330,35 +523,19 @@ function generarTorneo(
 
     /* =================================================
        RONDA PREVIA
-       =================================================
-
-       Necesitamos exactamente:
-
-       2 × sobrantes
-
-       participantes para producir:
-
-       sobrantes
-
-       ganadores.
-
-       Los demás pasan directamente.
-
-    ================================================= */
+       ================================================= */
 
     const cantidadParaPrevia =
         sobrantes * 2;
 
-
     const participantesPrevia =
-        participantes.slice(
+        participantesBarajados.slice(
             0,
             cantidadParaPrevia
         );
 
-
     const pasanDirectamente =
-        participantes.slice(
+        participantesBarajados.slice(
             cantidadParaPrevia
         );
 
@@ -391,18 +568,9 @@ function generarTorneo(
 
     /* =================================================
        CUADRO PRINCIPAL
-       =================================================
-
-       Los ganadores de la previa ocupan
-       las plazas de los participantes
-       que han jugado la previa.
-
-       Los restantes pasan directamente.
-
-    ================================================= */
+       ================================================= */
 
     const marcadoresGanadores = [];
-
 
     for (
         let i = 0;
@@ -429,13 +597,8 @@ function generarTorneo(
     }
 
 
-    const siguiente =
-        [];
+    const siguiente = [];
 
-
-    /*
-    Primero los ganadores de la previa.
-    */
 
     marcadoresGanadores.forEach(
         ganador => {
@@ -448,10 +611,6 @@ function generarTorneo(
     );
 
 
-    /*
-    Después los que pasan directamente.
-    */
-
     pasanDirectamente.forEach(
         participante => {
 
@@ -463,6 +622,17 @@ function generarTorneo(
     );
 
 
+    /*
+    BARAJAR LAS PLAZAS DEL
+    CUADRO PRINCIPAL
+    */
+
+    const siguienteBarajado =
+        barajar(
+            siguiente
+        );
+
+
     rondas.push({
 
         nombre:
@@ -472,20 +642,70 @@ function generarTorneo(
             "principal",
 
         participantes:
-            siguiente,
+            siguienteBarajado,
 
         reservas:
             [],
 
         cruces:
             crearCruces(
-                siguiente
+                siguienteBarajado
             )
 
     });
 
 
     return rondas;
+
+}
+
+
+/* =====================================================
+   OBTENER TEXTO DEL PARTICIPANTE
+   FORMATO:
+   Gastornis (006_01)
+   ===================================================== */
+
+function obtenerTextoParticipante(
+    participante
+) {
+
+    if (
+        participante &&
+        typeof participante ===
+        "object" &&
+        participante.j1
+    ) {
+
+        if (
+            participante.j2
+        ) {
+
+            return (
+                participante.j2 +
+                " (" +
+                participante.j1 +
+                ")"
+            );
+
+        }
+
+        return participante.j1;
+
+    }
+
+
+    if (
+        typeof participante ===
+        "string"
+    ) {
+
+        return participante;
+
+    }
+
+
+    return "—";
 
 }
 
@@ -503,7 +723,6 @@ function crearParticipanteVisual(
             "div"
         );
 
-
     elemento.className =
         "participanteCombate";
 
@@ -513,12 +732,19 @@ function crearParticipanteVisual(
     */
 
     if (
+        participante &&
         typeof participante ===
-        "string"
+        "object" &&
+        participante.j1
     ) {
 
         elemento.textContent =
-            participante;
+            obtenerTextoParticipante(
+                participante
+            );
+
+        elemento.dataset.codigo =
+            participante.j1;
 
         return elemento;
 
@@ -551,7 +777,6 @@ function crearParticipanteVisual(
     elemento.textContent =
         "—";
 
-
     return elemento;
 
 }
@@ -570,7 +795,6 @@ function mostrarCruce(
             "div"
         );
 
-
     tarjeta.className =
         "cruceCombate";
 
@@ -580,15 +804,12 @@ function mostrarCruce(
             "div"
         );
 
-
     numero.className =
         "numeroCombate";
-
 
     numero.textContent =
         "Combate " +
         cruce.numero;
-
 
     tarjeta.appendChild(
         numero
@@ -599,7 +820,6 @@ function mostrarCruce(
         document.createElement(
             "div"
         );
-
 
     participantes.className =
         "participantesCombate";
@@ -617,14 +837,11 @@ function mostrarCruce(
             "div"
         );
 
-
     versus.className =
         "versusCombate";
 
-
     versus.textContent =
         "⚔️";
-
 
     participantes.appendChild(
         versus
@@ -646,8 +863,6 @@ function mostrarCruce(
     return tarjeta;
 
 }
-
-
 /* =====================================================
    MOSTRAR RONDAS
    ===================================================== */
@@ -741,7 +956,9 @@ function mostrarRondas(
 
 
                         elemento.textContent =
-                            participante;
+                            obtenerTextoParticipante(
+                                participante
+                            );
 
 
                         if (
@@ -819,9 +1036,9 @@ function mostrarRondas(
    INICIAR
    ===================================================== */
 
-function iniciarCombates() {
+async function iniciarCombates() {
 
-    const participantes =
+    const matrizJ1 =
         obtenerParticipantes();
 
 
@@ -832,12 +1049,45 @@ function iniciarCombates() {
 
 
     if (
-        participantes.length <
+        matrizJ1.length <
         2
     ) {
 
         estado.textContent =
             "No hay suficientes participantes para generar combates.";
+
+        return;
+
+    }
+
+
+    /*
+    CARGAR J2
+    */
+
+    const mapaNombres =
+        await obtenerMapaNombres();
+
+
+    /*
+    CREAR PARTICIPANTES
+    CON J1 + J2
+    */
+
+    const participantes =
+        crearParticipantesDatos(
+            matrizJ1,
+            mapaNombres
+        );
+
+
+    if (
+        participantes.length <
+        2
+    ) {
+
+        estado.textContent =
+            "No hay suficientes participantes válidos para generar combates.";
 
         return;
 
@@ -944,4 +1194,9 @@ document.addEventListener(
     }
 );
 
-</script></body></html>
+</script>
+
+
+</body>
+
+</html>
