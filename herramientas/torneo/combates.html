@@ -1,26 +1,11 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<head>
-<meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>PalEntropía — Combates</title>
-
-<link rel="stylesheet"
-      href="combates.css">
-
-</head>
-
-<body>
-
-<!-- =====================================================
+<title>PalEntropía — Combates</title><link rel="stylesheet"
+      href="combates.css"></head><body><!-- =====================================================
      BOTÓN MENÚ PRINCIPAL
-     ===================================================== -->
-
-<button
+     ===================================================== --><button
 id="botonMenuPrincipal"
 type="button"
 title="Volver al menú principal"
@@ -28,75 +13,159 @@ aria-label="Volver al menú principal">
 
 🏠
 
-</button>
-
-
-<!-- =====================================================
+</button><!-- =====================================================
      CABECERA
-     ===================================================== -->
-
-<header id="cabecera">
-
-<h1>PalEntropía</h1>
-
-<div id="subtitulo">
+     ===================================================== --><header id="cabecera"><h1>PalEntropía</h1><div id="subtitulo">
     Combates
-</div>
-
-</header>
-
-
-<!-- =====================================================
+</div></header><!-- =====================================================
      CONTENEDOR PRINCIPAL
-     ===================================================== -->
+     ===================================================== --><main id="combates"><section id="cabeceraCombates"><h2 id="tituloTorneo">
+    ⚔️ Torneo
+</h2>
 
-<main id="combates">
+<p id="estadoCombates">
+    Preparando emparejamientos...
+</p>
 
-<section id="cabeceraCombates">
-
-    <h2>⚔️ Combates del torneo</h2>
-
-    <p id="estadoCombates">
-        Preparando emparejamientos...
-    </p>
-
-</section>
-
-
-<!-- =================================================
+</section><!-- =================================================
      RONDAS
-     ================================================= -->
-
-<section id="contenedorRondas">
-</section>
-
-</main>
-
-
-<!-- =====================================================
+     ================================================= --><section id="contenedorRondas">
+</section></main><!-- =====================================================
      VOLVER AL ÍNDICE
-     ===================================================== -->
+     ===================================================== --><section id="volver"><a
+href="index.html"
+id="botonVolver">
 
-<section id="volver">
+← Volver al índice del torneo
 
-<a
-    href="index.html"
-    id="botonVolver">
-
-    ← Volver al índice del torneo
-
-</a>
-
-</section>
-
-
-<!-- =====================================================
+</a></section><!-- =====================================================
      MOTOR DEL TORNEO
-     ===================================================== -->
-
-<script>
+     ===================================================== --><script>
 
 window.TORNEO_COMBATES = [];
+
+
+/* =====================================================
+   OBTENER CRITERIO DEL TORNEO
+   ===================================================== */
+
+function obtenerCriterioTorneo() {
+
+    const criterio =
+        localStorage.getItem(
+            "palentropia_criterio_torneo"
+        );
+
+    return String(
+        criterio || ""
+    ).trim();
+
+}
+
+
+/* =====================================================
+   TRANSFORMAR CRITERIO PARA MOSTRAR
+   ===================================================== */
+
+function transformarCriterioTorneo(
+    criterio
+) {
+
+    const valor =
+        String(
+            criterio || ""
+        ).trim();
+
+    if (!valor) {
+        return "";
+    }
+
+
+    const equivalencias = {
+
+        "perm":
+            "Pérmico",
+
+        "chord":
+            "Chordata",
+
+        "placen":
+            "Placentaria"
+
+    };
+
+
+    const clave =
+        valor.toLowerCase();
+
+
+    if (
+        equivalencias[
+            clave
+        ]
+    ) {
+
+        return equivalencias[
+            clave
+        ];
+
+    }
+
+
+    /*
+    Los códigos se mantienen
+    exactamente como fueron introducidos.
+    */
+
+    return valor;
+
+}
+
+
+/* =====================================================
+   MOSTRAR TÍTULO DEL TORNEO
+   ===================================================== */
+
+function mostrarTituloTorneo() {
+
+    const titulo =
+        document.getElementById(
+            "tituloTorneo"
+        );
+
+    if (!titulo) {
+        return;
+    }
+
+
+    const criterio =
+        obtenerCriterioTorneo();
+
+
+    const criterioMostrar =
+        transformarCriterioTorneo(
+            criterio
+        );
+
+
+    if (
+        criterioMostrar
+    ) {
+
+        titulo.textContent =
+            "⚔️ Torneo — " +
+            criterioMostrar;
+
+    }
+
+    else {
+
+        titulo.textContent =
+            "⚔️ Torneo";
+
+    }
+
+}
 
 
 /* =====================================================
@@ -864,153 +933,119 @@ function mostrarCruce(
 
 }
 /* =====================================================
-   MOSTRAR RONDAS
-   ===================================================== */
+MOSTRAR RONDAS
+===================================================== */
 
 function mostrarRondas(
-    rondas
+rondas
 ) {
 
-    const contenedor =
-        document.getElementById(
-            "contenedorRondas"
-        );
+const contenedor =
+    document.getElementById(
+        "contenedorRondas"
+    );
 
 
-    contenedor.innerHTML =
-        "";
+contenedor.innerHTML =
+    "";
 
 
-    rondas.forEach(
-        ronda => {
+rondas.forEach(
+    ronda => {
 
-            const bloque =
-                document.createElement(
-                    "section"
-                );
-
-
-            bloque.className =
-                "rondaTorneo";
-
-
-            const titulo =
-                document.createElement(
-                    "h2"
-                );
-
-
-            titulo.textContent =
-                ronda.nombre;
-
-
-            bloque.appendChild(
-                titulo
+        const bloque =
+            document.createElement(
+                "section"
             );
 
 
-            /*
-            PARTICIPANTES QUE PASAN DIRECTAMENTE
-            */
-
-            if (
-                ronda.reservas &&
-                ronda.reservas.length
-            ) {
-
-                const reservas =
-                    document.createElement(
-                        "div"
-                    );
+        bloque.className =
+            "rondaTorneo";
 
 
-                reservas.className =
-                    "pasanDirectamente";
+        const titulo =
+            document.createElement(
+                "h2"
+            );
 
 
-                const texto =
-                    document.createElement(
-                        "span"
-                    );
+        titulo.textContent =
+            ronda.nombre;
 
 
-                texto.innerHTML =
-                    "<strong>⏭ Pasan directamente:</strong> ";
+        bloque.appendChild(
+            titulo
+        );
 
 
-                reservas.appendChild(
-                    texto
-                );
+        /*
+        PARTICIPANTES QUE PASAN DIRECTAMENTE
+        */
 
+        if (
+            ronda.reservas &&
+            ronda.reservas.length
+        ) {
 
-                ronda.reservas.forEach(
-                    (
-                        participante,
-                        indice
-                    ) => {
-
-                        const elemento =
-                            document.createElement(
-                                "span"
-                            );
-
-
-                        elemento.textContent =
-                            obtenerTextoParticipante(
-                                participante
-                            );
-
-
-                        if (
-                            indice >
-                            0
-                        ) {
-
-                            reservas.appendChild(
-                                document.createTextNode(
-                                    " · "
-                                )
-                            );
-
-                        }
-
-
-                        reservas.appendChild(
-                            elemento
-                        );
-
-                    }
-                );
-
-
-                bloque.appendChild(
-                    reservas
-                );
-
-            }
-
-
-            /*
-            LISTA DE COMBATES
-            */
-
-            const lista =
+            const reservas =
                 document.createElement(
                     "div"
                 );
 
 
-            lista.className =
-                "listaCombates";
+            reservas.className =
+                "pasanDirectamente";
 
 
-            ronda.cruces.forEach(
-                cruce => {
+            const texto =
+                document.createElement(
+                    "span"
+                );
 
-                    lista.appendChild(
-                        mostrarCruce(
-                            cruce
-                        )
+
+            texto.innerHTML =
+                "<strong>⏭ Pasan directamente:</strong> ";
+
+
+            reservas.appendChild(
+                texto
+            );
+
+
+            ronda.reservas.forEach(
+                (
+                    participante,
+                    indice
+                ) => {
+
+                    const elemento =
+                        document.createElement(
+                            "span"
+                        );
+
+
+                    elemento.textContent =
+                        obtenerTextoParticipante(
+                            participante
+                        );
+
+
+                    if (
+                        indice >
+                        0
+                    ) {
+
+                        reservas.appendChild(
+                            document.createTextNode(
+                                " · "
+                            )
+                        );
+
+                    }
+
+
+                    reservas.appendChild(
+                        elemento
                     );
 
                 }
@@ -1018,185 +1053,219 @@ function mostrarRondas(
 
 
             bloque.appendChild(
-                lista
-            );
-
-
-            contenedor.appendChild(
-                bloque
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   INICIAR
-   ===================================================== */
-
-async function iniciarCombates() {
-
-    const matrizJ1 =
-        obtenerParticipantes();
-
-
-    const estado =
-        document.getElementById(
-            "estadoCombates"
-        );
-
-
-    if (
-        matrizJ1.length <
-        2
-    ) {
-
-        estado.textContent =
-            "No hay suficientes participantes para generar combates.";
-
-        return;
-
-    }
-
-
-    /*
-    CARGAR J2
-    */
-
-    const mapaNombres =
-        await obtenerMapaNombres();
-
-
-    /*
-    CREAR PARTICIPANTES
-    CON J1 + J2
-    */
-
-    const participantes =
-        crearParticipantesDatos(
-            matrizJ1,
-            mapaNombres
-        );
-
-
-    if (
-        participantes.length <
-        2
-    ) {
-
-        estado.textContent =
-            "No hay suficientes participantes válidos para generar combates.";
-
-        return;
-
-    }
-
-
-    const informacion =
-        calcularRondaPrevia(
-            participantes.length
-        );
-
-
-    const rondas =
-        generarTorneo(
-            participantes
-        );
-
-
-    window.TORNEO_COMBATES =
-        rondas;
-
-
-    if (
-        informacion.sobrantes >
-        0
-    ) {
-
-        estado.textContent =
-            participantes.length +
-            " participantes · " +
-            informacion.combates +
-            " combates de ronda previa · " +
-            informacion.cuadro +
-            " participantes en el cuadro principal.";
-
-    }
-
-    else {
-
-        estado.textContent =
-            participantes.length +
-            " participantes · cuadro de " +
-            informacion.cuadro +
-            ".";
-
-    }
-
-
-    mostrarRondas(
-        rondas
-    );
-
-
-    console.log(
-        "TORNEO_COMBATES:",
-        rondas
-    );
-
-}
-
-
-/* =====================================================
-   ARRANQUE
-   ===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-
-        /* ---------------------------------------------
-           MENÚ PRINCIPAL
-        --------------------------------------------- */
-
-        const botonMenu =
-            document.getElementById(
-                "botonMenuPrincipal"
-            );
-
-
-        if (
-            botonMenu
-        ) {
-
-            botonMenu.addEventListener(
-                "click",
-                function() {
-
-                    window.location.href =
-                        "../../index.html";
-
-                }
+                reservas
             );
 
         }
 
 
-        /* ---------------------------------------------
-           INICIAR TORNEO
-        --------------------------------------------- */
+        /*
+        LISTA DE COMBATES
+        */
 
-        iniciarCombates();
+        const lista =
+            document.createElement(
+                "div"
+            );
+
+
+        lista.className =
+            "listaCombates";
+
+
+        ronda.cruces.forEach(
+            cruce => {
+
+                lista.appendChild(
+                    mostrarCruce(
+                        cruce
+                    )
+                );
+
+            }
+        );
+
+
+        bloque.appendChild(
+            lista
+        );
+
+
+        contenedor.appendChild(
+            bloque
+        );
 
     }
 );
 
-</script>
+}
+
+/* =====================================================
+INICIAR
+===================================================== */
+
+async function iniciarCombates() {
+
+/*
+MOSTRAR CRITERIO DEL TORNEO
+*/
+
+mostrarTituloTorneo();
 
 
-</body>
+const matrizJ1 =
+    obtenerParticipantes();
 
-</html>
+
+const estado =
+    document.getElementById(
+        "estadoCombates"
+    );
+
+
+if (
+    matrizJ1.length <
+    2
+) {
+
+    estado.textContent =
+        "No hay suficientes participantes para generar combates.";
+
+    return;
+
+}
+
+
+/*
+CARGAR J2
+*/
+
+const mapaNombres =
+    await obtenerMapaNombres();
+
+
+/*
+CREAR PARTICIPANTES
+CON J1 + J2
+*/
+
+const participantes =
+    crearParticipantesDatos(
+        matrizJ1,
+        mapaNombres
+    );
+
+
+if (
+    participantes.length <
+    2
+) {
+
+    estado.textContent =
+        "No hay suficientes participantes válidos para generar combates.";
+
+    return;
+
+}
+
+
+const informacion =
+    calcularRondaPrevia(
+        participantes.length
+    );
+
+
+const rondas =
+    generarTorneo(
+        participantes
+    );
+
+
+window.TORNEO_COMBATES =
+    rondas;
+
+
+if (
+    informacion.sobrantes >
+    0
+) {
+
+    estado.textContent =
+        participantes.length +
+        " participantes · " +
+        informacion.combates +
+        " combates de ronda previa · " +
+        informacion.cuadro +
+        " participantes en el cuadro principal.";
+
+}
+
+else {
+
+    estado.textContent =
+        participantes.length +
+        " participantes · cuadro de " +
+        informacion.cuadro +
+        ".";
+
+}
+
+
+mostrarRondas(
+    rondas
+);
+
+
+console.log(
+    "TORNEO_COMBATES:",
+    rondas
+);
+
+}
+
+/* =====================================================
+ARRANQUE
+===================================================== */
+
+document.addEventListener(
+"DOMContentLoaded",
+function() {
+
+    /* ---------------------------------------------
+       MENÚ PRINCIPAL
+    --------------------------------------------- */
+
+    const botonMenu =
+        document.getElementById(
+            "botonMenuPrincipal"
+        );
+
+
+    if (
+        botonMenu
+    ) {
+
+        botonMenu.addEventListener(
+            "click",
+            function() {
+
+                window.location.href =
+                    "../../index.html";
+
+            }
+        );
+
+    }
+
+
+    /* ---------------------------------------------
+       INICIAR TORNEO
+    --------------------------------------------- */
+
+    iniciarCombates();
+
+}
+
+);
+
+</script></body></html>
