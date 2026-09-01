@@ -447,6 +447,10 @@ window.PALTAXON = {
 "007_01":{
   ta1:"Animalia > Chordata > Synapsida > Caseasauria > Caseidae > Cotylorhynchus",
   ta2:"Sinápsido. Caseasaurio. Caseido. Herbívoro de gran tamaño."
+},
+"007_02":{
+  ta1:"Animalia > Chordata > Aves > Cariamiformes > Phorusrhacidae > Kelenken",
+  ta2:"Ave. Cariamiforme. Fororrácido. Ave del terror."
 }
   
 };
