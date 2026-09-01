@@ -451,6 +451,10 @@ window.PALTAXON = {
 "007_02":{
   ta1:"Animalia > Chordata > Aves > Cariamiformes > Phorusrhacidae > Kelenken",
   ta2:"Ave. Cariamiforme. Fororrácido. Ave del terror."
+},
+"007_03":{
+  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Thyreophora > Stegosauria > Stegosauridae > Stegosaurus",
+  ta2:"Dinosaurio. Ornitisquio. Tireóforo. Estegosáurido."
 }
   
 };
