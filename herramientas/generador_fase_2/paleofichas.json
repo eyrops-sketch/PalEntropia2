@@ -550,6 +550,12 @@
     "nombre": "Kelenken",
     "dieta": "Carnívoro",
     "anatomia": "Ave corredora de gran tamaño, con cuerpo robusto, cuello largo y musculoso, patas posteriores muy largas y fuertes y un enorme cráneo provisto de un pico alto y curvado adaptado para capturar y desgarrar presas"
+  },
+  {
+    "codigo": "007_03",
+    "nombre": "Stegosaurus",
+    "dieta": "Herbívoro",
+    "anatomia": "Dinosaurio herbívoro de gran tamaño, con cuerpo robusto, cabeza pequeña, pico córneo, doble fila de placas óseas a lo largo del dorso y cuatro grandes púas en el extremo de la cola, con extremidades posteriores más largas que las anteriores"
   }
 ]
 
