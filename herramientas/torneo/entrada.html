@@ -1,1 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>PalEntropía — Entrar al torneo</title>
+
+<link rel="stylesheet"
+      href="entrada.css">
+
+</head>
+
+<body>
+
+
+<!-- =====================================================
+     BOTÓN MENÚ PRINCIPAL
+     ===================================================== -->
+
+<button
+    id="botonMenuPrincipal"
+    type="button"
+    title="Volver al menú principal"
+    aria-label="Volver al menú principal">
+
+    🏠
+
+</button>
+
+
+<!-- =====================================================
+     CABECERA
+     ===================================================== -->
+
+<header id="cabecera">
+
+    <h1>PalEntropía</h1>
+
+    <div id="subtitulo">
+        Entrar al torneo
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     CONTENEDOR PRINCIPAL
+     ===================================================== -->
+
+<main id="torneo">
+
+
+    <section id="cabeceraTorneo">
+
+        <h2 id="tituloCabeceraTorneo">
+            ⚔️ Entrar al torneo
+        </h2>
+
+        <p id="criterioTorneo">
+            Selecciona la fase desde la que quieres entrar.
+        </p>
+
+    </section>
+
+
+    <!-- =================================================
+         SELECCIÓN DE FASE
+         ================================================= -->
+
+    <section id="seleccionFase">
+
+        <h3>
+            Selecciona una fase
+        </h3>
+
+        <div id="listaFases">
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- =====================================================
+     VOLVER
+     ===================================================== -->
+
+<section id="volver">
+
+    <a
+        href="index.html"
+        id="botonVolver">
+
+        ← Volver al torneo
+
+    </a>
+
+</section>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script>
+
+
+/* =====================================================
+   CLAVES DE LOCALSTORAGE
+   ===================================================== */
+
+const CLAVE_MATRIZ_COMBATIENTES =
+    "palentropia_matriz_combatientes";
+
+const CLAVE_CRITERIO_TORNEO =
+    "palentropia_criterio_torneo";
+
+const CLAVE_ENTRADA_TORNEO =
+    "palentropia_entrada_torneo";
+
+
+/* =====================================================
+   OBTENER PARTICIPANTES
+   ===================================================== */
+
+function obtenerParticipantes() {
+
+    const guardado =
+        localStorage.getItem(
+            CLAVE_MATRIZ_COMBATIENTES
+        );
+
+
+    if (!guardado) {
+
+        return [];
+
+    }
+
+
+    try {
+
+        const participantes =
+            JSON.parse(
+                guardado
+            );
+
+
+        if (!Array.isArray(participantes)) {
+
+            return [];
+
+        }
+
+
+        return participantes;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Participantes del torneo no válidos:",
+            error
+        );
+
+
+        return [];
+
+    }
+
+}
+
+
+/* =====================================================
+   CALCULAR TAMAÑO DEL CUADRO PRINCIPAL
+   ===================================================== */
+
+function calcularCuadroPrincipal(numeroParticipantes) {
+
+    if (
+        numeroParticipantes < 2
+    ) {
+
+        return 1;
+
+    }
+
+
+    return Math.pow(
+        2,
+        Math.floor(
+            Math.log2(
+                numeroParticipantes
+            )
+        )
+    );
+
+}
+
+
+/* =====================================================
+   OBTENER NOMBRE DE LA FASE
+   ===================================================== */
+
+function obtenerNombreFase(numeroParticipantes) {
+
+    const nombres = {
+
+        2:
+            "Final",
+
+        4:
+            "Semifinales",
+
+        8:
+            "Cuartos",
+
+        16:
+            "Octavos",
+
+        32:
+            "16 avos",
+
+        64:
+            "32 avos"
+
+    };
+
+
+    return (
+        nombres[numeroParticipantes] ||
+        "Cuadro principal"
+    );
+
+}
+
+
+/* =====================================================
+   CALCULAR RONDA PREVIA
+   ===================================================== */
+
+function existeRondaPrevia(numeroParticipantes) {
+
+    const cuadro =
+        calcularCuadroPrincipal(
+            numeroParticipantes
+        );
+
+
+    return (
+        numeroParticipantes >
+        cuadro
+    );
+
+}
+
+
+/* =====================================================
+   OBTENER FASES DISPONIBLES
+   ===================================================== */
+
+function obtenerFasesDisponibles() {
+
+    const participantes =
+        obtenerParticipantes();
+
+
+    const numero =
+        participantes.length;
+
+
+    const fases = [];
+
+
+    /*
+    =====================================================
+    CAMPEÓN
+    =====================================================
+    */
+
+    fases.push({
+
+        id:
+            "campeon",
+
+        nombre:
+            "🏆 Campeón",
+
+        descripcion:
+            "Mostrar el ganador del torneo."
+
+    });
+
+
+    /*
+    =====================================================
+    RONDA PREVIA
+    =====================================================
+    */
+
+    if (
+        existeRondaPrevia(
+            numero
+        )
+    ) {
+
+        fases.push({
+
+            id:
+                "previa",
+
+            nombre:
+                "⚔️ Ronda previa",
+
+            descripcion:
+                "Comenzar desde los combates preliminares."
+
+        });
+
+    }
+
+
+    /*
+    =====================================================
+    CUADRO PRINCIPAL
+    =====================================================
+    */
+
+    if (
+        numero >= 2
+    ) {
+
+        const cuadro =
+            calcularCuadroPrincipal(
+                numero
+            );
+
+
+        fases.push({
+
+            id:
+                "principal",
+
+            nombre:
+                "🏟️ Cuadro principal",
+
+            descripcion:
+                "Comenzar desde la primera ronda del cuadro."
+
+        });
+
+
+        /*
+        =================================================
+        RONDAS DEL CUADRO
+        =================================================
+        */
+
+        let participantesRonda =
+            cuadro;
+
+
+        while (
+            participantesRonda >= 2
+        ) {
+
+            fases.push({
+
+                id:
+                    obtenerIdFase(
+                        participantesRonda
+                    ),
+
+                nombre:
+                    obtenerNombreFase(
+                        participantesRonda
+                    ),
+
+                descripcion:
+                    "Entrar directamente en " +
+                    obtenerNombreFase(
+                        participantesRonda
+                    ) +
+                    "."
+
+            });
+
+
+            participantesRonda =
+                participantesRonda /
+                2;
+
+        }
+
+    }
+
+
+    return fases;
+
+}
+
+
+/* =====================================================
+   IDENTIFICADOR DE FASE
+   ===================================================== */
+
+function obtenerIdFase(numeroParticipantes) {
+
+    const ids = {
+
+        2:
+            "final",
+
+        4:
+            "semifinales",
+
+        8:
+            "cuartos",
+
+        16:
+            "octavos",
+
+        32:
+            "16avos",
+
+        64:
+            "32avos"
+
+    };
+
+
+    return (
+        ids[numeroParticipantes] ||
+        "principal"
+    );
+
+}
+
+
+/* =====================================================
+   GUARDAR ENTRADA AL TORNEO
+   ===================================================== */
+
+function entrarDesdeFase(fase) {
+
+    const datos = {
+
+        fase:
+            fase.id,
+
+        nombre:
+            fase.nombre,
+
+        timestamp:
+            Date.now()
+
+    };
+
+
+    localStorage.setItem(
+
+        CLAVE_ENTRADA_TORNEO,
+
+        JSON.stringify(
+            datos
+        )
+
+    );
+
+
+    /*
+    =====================================================
+    PUNTO DE FUTURA INVOCACIÓN DE LA ARENA
+    =====================================================
+
+    Aquí posteriormente conectaremos:
+
+        Arena(codigo1, codigo2, reglas)
+
+    Por ahora solamente guardamos
+    la fase seleccionada.
+    */
+
+
+    console.log(
+        "Entrada al torneo:",
+        datos
+    );
+
+
+    alert(
+        "Entrada seleccionada: " +
+        fase.nombre
+    );
+
+}
+
+
+/* =====================================================
+   MOSTRAR FASES
+   ===================================================== */
+
+function mostrarFases() {
+
+    const contenedor =
+        document.getElementById(
+            "listaFases"
+        );
+
+
+    contenedor.innerHTML =
+        "";
+
+
+    const fases =
+        obtenerFasesDisponibles();
+
+
+    fases.forEach(
+        function(fase) {
+
+
+            const boton =
+                document.createElement(
+                    "button"
+                );
+
+
+            boton.type =
+                "button";
+
+
+            boton.className =
+                "botonFase";
+
+
+            boton.dataset.fase =
+                fase.id;
+
+
+            boton.innerHTML =
+
+                "<span class=\"nombreFase\">" +
+
+                    fase.nombre +
+
+                "</span>" +
+
+                "<span class=\"descripcionFase\">" +
+
+                    fase.descripcion +
+
+                "</span>";
+
+
+            boton.addEventListener(
+                "click",
+                function() {
+
+                    entrarDesdeFase(
+                        fase
+                    );
+
+                }
+            );
+
+
+            contenedor.appendChild(
+                boton
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   MOSTRAR CRITERIO DEL TORNEO
+   ===================================================== */
+
+function obtenerCriterioTorneo() {
+
+    const criterio =
+        localStorage.getItem(
+            CLAVE_CRITERIO_TORNEO
+        );
+
+
+    if (
+        !criterio ||
+        !String(criterio).trim()
+    ) {
+
+        return "";
+
+    }
+
+
+    const valor =
+        String(
+            criterio
+        ).trim();
+
+
+    const equivalencias = {
+
+        "perm":
+            "Pérmico",
+
+        "chord":
+            "Chordata",
+
+        "placen":
+            "Placentaria"
+
+    };
+
+
+    const clave =
+        valor.toLowerCase();
+
+
+    return (
+        equivalencias[clave] ||
+        valor
+    );
+
+}
+
+
+/* =====================================================
+   MOSTRAR IDENTIFICADOR
+   ===================================================== */
+
+function mostrarIdentificadorTorneo() {
+
+    const criterio =
+        obtenerCriterioTorneo();
+
+
+    if (!criterio) {
+
+        return;
+
+    }
+
+
+    const subtitulo =
+        document.getElementById(
+            "subtitulo"
+        );
+
+
+    const titulo =
+        document.getElementById(
+            "tituloCabeceraTorneo"
+        );
+
+
+    const descripcion =
+        document.getElementById(
+            "criterioTorneo"
+        );
+
+
+    if (subtitulo) {
+
+        subtitulo.textContent =
+            "Entrar al torneo — " +
+            criterio;
+
+    }
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            "⚔️ Entrar al torneo — " +
+            criterio;
+
+    }
+
+
+    if (descripcion) {
+
+        descripcion.textContent =
+            "Selecciona la fase desde la que quieres entrar — " +
+            criterio;
+
+    }
+
+}
+
+
+/* =====================================================
+   BOTÓN MENÚ PRINCIPAL
+   ===================================================== */
+
+document
+    .getElementById(
+        "botonMenuPrincipal"
+    )
+    .addEventListener(
+        "click",
+        function() {
+
+            window.location.href =
+                "../../index.html";
+
+        }
+    );
+
+
+/* =====================================================
+   INICIALIZACIÓN
+   ===================================================== */
+
+mostrarIdentificadorTorneo();
+
+mostrarFases();
+
+
+</script>
+
+</body>
+
+</html>
