@@ -149,7 +149,129 @@
 
 
 <!-- =====================================================
-     JAVASCRIPT
+     MATRIXNAVEGADOR
+     NO SE MODIFICA
+     ===================================================== -->
+
+<script src="../generador_fase_2/matrixnavegador.js"></script>
+
+
+<!-- =====================================================
+     CARGA DE LA MATRIZ DEL TORNEO
+     ===================================================== -->
+
+<script>
+
+window.MATRIZ_COMBATIENTES_TORNEO = [];
+
+
+async function cargarMatrizCombatientesTorneo() {
+
+    try {
+
+        if (
+            !window.MatrixNavegador
+        ) {
+
+            console.error(
+                "No se encontró MatrixNavegador."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        La matriz de J1 procede de los registros
+        disponibles actualmente en PALNAVEGADOR.
+        */
+
+        let matrizJ1 = [];
+
+
+        if (
+            window.PALNAVEGADOR &&
+            Array.isArray(
+                window.PALNAVEGADOR.matriz
+            )
+        ) {
+
+            matrizJ1 =
+                window.PALNAVEGADOR.matriz
+                    .map(
+                        registro =>
+                            registro &&
+                            registro.j1
+                    )
+                    .filter(Boolean);
+
+        }
+
+
+        /*
+        Si PALNAVEGADOR mantiene los códigos
+        en otra propiedad, usamos codigoActual
+        como respaldo para el registro actual.
+        */
+
+        if (
+            !matrizJ1.length &&
+            window.PALNAVEGADOR &&
+            window.PALNAVEGADOR.codigoActual
+        ) {
+
+            matrizJ1 = [
+                window.PALNAVEGADOR.codigoActual
+            ];
+
+        }
+
+
+        /*
+        Obtener los registros completos mediante
+        MatrixNavegador, sin modificarlo.
+        */
+
+        window.MATRIZ_COMBATIENTES_TORNEO =
+            await window.MatrixNavegador.obtener(
+                matrizJ1
+            );
+
+
+        console.log(
+            "Matriz de combatientes del torneo:",
+            window.MATRIZ_COMBATIENTES_TORNEO
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Error cargando la matriz de combatientes:",
+            error
+        );
+
+    }
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        cargarMatrizCombatientesTorneo();
+
+    }
+);
+
+</script>
+
+
+<!-- =====================================================
+     BOTÓN MENÚ PRINCIPAL
      ===================================================== -->
 
 <script>
