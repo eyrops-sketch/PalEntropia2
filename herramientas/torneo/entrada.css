@@ -1,1 +1,458 @@
+/* =====================================================
+   PALENTROPÍA — ENTRAR AL TORNEO
+   ===================================================== */
 
+
+/* =====================================================
+   BASE
+   ===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+
+    background: #071018;
+
+    color: #dff8ff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    text-align: center;
+
+}
+
+
+/* =====================================================
+   BOTÓN MENÚ PRINCIPAL
+   ===================================================== */
+
+#botonMenuPrincipal {
+
+    position: fixed;
+
+    top: 12px;
+    left: 12px;
+
+    width: 44px;
+    height: 44px;
+
+    border:
+        1px solid #63d9ff;
+
+    border-radius: 10px;
+
+    background: #0b1c28;
+
+    color: #dff8ff;
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+    z-index: 1000;
+
+}
+
+#botonMenuPrincipal:active {
+
+    transform: scale(0.96);
+
+}
+
+
+/* =====================================================
+   CABECERA
+   ===================================================== */
+
+#cabecera {
+
+    padding:
+        28px
+        15px
+        18px;
+
+    border-bottom:
+        1px solid #16475b;
+
+    background: #091923;
+
+}
+
+#cabecera h1 {
+
+    margin: 0;
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    color: #e8fbff;
+
+}
+
+#subtitulo {
+
+    margin-top: 7px;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    color: #63d9ff;
+
+}
+
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+   ===================================================== */
+
+#torneo {
+
+    width: 100%;
+
+    max-width: 700px;
+
+    margin: 0 auto;
+
+    padding:
+        20px
+        14px
+        30px;
+
+}
+
+
+/* =====================================================
+   CABECERA DEL TORNEO
+   ===================================================== */
+
+#cabeceraTorneo {
+
+    margin-bottom: 22px;
+
+}
+
+#cabeceraTorneo h2 {
+
+    margin:
+        0
+        0
+        8px;
+
+    font-size: 23px;
+
+    color: #e8fbff;
+
+}
+
+#cabeceraTorneo p {
+
+    margin: 0;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    color: #8ed8e8;
+
+}
+
+
+/* =====================================================
+   SELECCIÓN DE FASE
+   ===================================================== */
+
+#seleccionFase {
+
+    width: 100%;
+
+}
+
+#seleccionFase h3 {
+
+    margin:
+        0
+        0
+        16px;
+
+    font-size: 19px;
+
+    color: #e8fbff;
+
+}
+
+
+/* =====================================================
+   LISTA DE FASES
+   ===================================================== */
+
+#listaFases {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+
+/* =====================================================
+   BOTONES DE FASE
+   ===================================================== */
+
+.botonFase {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    min-height: 76px;
+
+    padding:
+        14px
+        16px;
+
+    border:
+        1px solid #1b5268;
+
+    border-radius: 13px;
+
+    background: #0b1c28;
+
+    color: #e8fbff;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 14px
+        rgba(0, 0, 0, 0.35);
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease;
+
+}
+
+.botonFase:hover {
+
+    background: #102a39;
+
+    border-color: #63d9ff;
+
+    transform:
+        translateY(-1px);
+
+}
+
+.botonFase:active {
+
+    transform:
+        scale(0.98);
+
+}
+
+
+/* =====================================================
+   NOMBRE DE LA FASE
+   ===================================================== */
+
+.nombreFase {
+
+    display: block;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+}
+
+
+/* =====================================================
+   DESCRIPCIÓN
+   ===================================================== */
+
+.descripcionFase {
+
+    display: block;
+
+    margin-top: 6px;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    color: #9bdbe8;
+
+}
+
+
+/* =====================================================
+   BOTÓN VOLVER
+   ===================================================== */
+
+#volver {
+
+    width: 100%;
+
+    padding:
+        0
+        14px
+        30px;
+
+    text-align: center;
+
+}
+
+#botonVolver {
+
+    display: inline-block;
+
+    padding:
+        11px
+        20px;
+
+    border:
+        1px solid #63d9ff;
+
+    border-radius: 9px;
+
+    background: #0b1c28;
+
+    color: #dff8ff;
+
+    text-decoration: none;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
+
+}
+
+#botonVolver:hover {
+
+    background: #102a39;
+
+}
+
+#botonVolver:active {
+
+    transform:
+        scale(0.98);
+
+}
+
+
+/* =====================================================
+   ADAPTACIÓN MÓVIL
+   ===================================================== */
+
+@media (max-width: 480px) {
+
+    #cabecera {
+
+        padding-top: 25px;
+
+    }
+
+
+    #cabecera h1 {
+
+        font-size: 25px;
+
+    }
+
+
+    #subtitulo {
+
+        font-size: 15px;
+
+    }
+
+
+    #cabeceraTorneo h2 {
+
+        font-size: 21px;
+
+    }
+
+
+    #torneo {
+
+        padding:
+            18px
+            12px
+            25px;
+
+    }
+
+
+    #seleccionFase h3 {
+
+        font-size: 18px;
+
+    }
+
+
+    .botonFase {
+
+        min-height: 72px;
+
+        padding:
+            13px
+            12px;
+
+    }
+
+
+    .nombreFase {
+
+        font-size: 17px;
+
+    }
+
+
+    .descripcionFase {
+
+        font-size: 12px;
+
+    }
+
+
+    #botonVolver {
+
+        width: 100%;
+
+        max-width: 320px;
+
+        padding:
+            12px
+            18px;
+
+    }
+
+}
