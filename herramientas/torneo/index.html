@@ -6,405 +6,486 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+content="width=device-width, initial-scale=1.0">
 
-<title>PalEntropía — Visor de Paleofichas</title>
-
-<link rel="stylesheet"
-      href="style_fase_3.css">
+<title>PalEntropía — Torneo</title>
 
 <link rel="stylesheet"
-      href="stylecab09.css">
-
-<link rel="stylesheet"
-      href="stylecab10.css">
-
-<link rel="stylesheet"
-      href="stylecab16.css">
+      href="index.css">
 
 </head>
 
 <body>
 
 <!-- =====================================================
-     BOTÓN ALEATORIO
+     BOTÓN MENÚ PRINCIPAL
      ===================================================== -->
 
-<button id="botonAleatorio"
-        type="button"
-        title="Paleoficha aleatoria"
-        aria-label="Paleoficha aleatoria">
+<button
+id="botonMenuPrincipal"
+type="button"
+title="Volver al menú principal"
+aria-label="Volver al menú principal">
 
-    🎲
+🏠
 
 </button>
 
 
 <!-- =====================================================
-     BOTÓN MENÚ PRINCIPAL
+     CABECERA
      ===================================================== -->
-
-<button id="botonMenuPrincipal"
-        class="botonCircularSuperior"
-        type="button"
-        title="Volver al menú principal"
-        aria-label="Volver al menú principal">
-
-    🏠
-
-</button>
-
 
 <header id="cabecera">
 
-    <h1>PalEntropía</h1>
+<h1>PalEntropía</h1>
 
-    <div id="subtitulo">
-        Visor de Paleofichas
-    </div>
+<div id="subtitulo">
+    Torneo
+</div>
 
 </header>
 
 
 <!-- =====================================================
-     BUSCADOR ANTIGUO
+     CONTENEDOR PRINCIPAL
      ===================================================== -->
 
-<section id="controlesBusqueda">
+<main id="torneo">
 
-    <button id="botonBuscar"
-            type="button">
+<section id="cabeceraTorneo">
 
-        🔎 Explorar Paleofichas
+    <h2 id="tituloCabeceraTorneo">
+        ⚔️ Torneo PalEntropía
+    </h2>
 
-    </button>
+    <p>
+        Índice del torneo
+    </p>
 
 </section>
 
 
-<!-- =====================================================
-     NAVEGACIÓN DE PALEOFICHAS
-     ===================================================== -->
+<!-- =================================================
+     ÍNDICE DEL TORNEO
+     ================================================= -->
 
-<section id="controlesNavegacion"
-         aria-label="Navegación de paleofichas">
-
-    <button id="botonPrimero"
-            class="botonNavegacion"
-            type="button"
-            title="Primera paleoficha"
-            aria-label="Primera paleoficha">
-
-        ⏮
-
-    </button>
+<section id="indiceTorneo">
 
 
-    <button id="botonAnterior"
-            class="botonNavegacion"
-            type="button"
-            title="Paleoficha anterior"
-            aria-label="Paleoficha anterior">
+    <div class="bloqueTorneo">
 
-        ◀
+        <h3 id="tituloBloqueTorneo">
+            🏆 Torneo
+        </h3>
 
-    </button>
+        <a
+            class="botonTorneo"
+            href="torneo.html">
 
-
-    <span id="posicionNavegacion">
-
-        — / —
-
-    </span>
-
-
-    <button id="botonSiguiente"
-            class="botonNavegacion"
-            type="button"
-            title="Siguiente paleoficha"
-            aria-label="Siguiente paleoficha">
-
-        ▶
-
-    </button>
-
-
-    <button id="botonUltimo"
-            class="botonNavegacion"
-            type="button"
-            title="Última paleoficha"
-            aria-label="Última paleoficha">
-
-        ⏭
-
-    </button>
-
-
-    <!-- =================================================
-         ÍNDICE DEL TORNEO
-         ================================================= -->
-
-    <a id="botonIndiceTorneo"
-       href="../torneo/index.html"
-       title="Índice del torneo"
-       aria-label="Índice del torneo">
-
-        ⚔️
-
-    </a>
-
-</section>
-
-
-<div id="estado">
-    Cargando contenedor...
-</div>
-
-
-<!-- =====================================================
-     FICHA
-     ===================================================== -->
-
-<main id="ficha"
-      class="ficha"
-      style="display:none;">
-
-    <div id="titulo"></div>
-
-    <div id="codigoFicha"></div>
-
-
-    <!-- =================================================
-         BOTÓN ARENA
-         ================================================= -->
-
-    <button id="botonArena"
-            type="button"
-            title="Entrar al torneo"
-            aria-label="Entrar al torneo">
-
-        ⚔️
-
-    </button>
-
-
-    <!-- =================================================
-         IMAGEN PRINCIPAL
-         ================================================= -->
-
-    <div id="contenedorImagenPrincipal">
-
-        <img id="imagenPrincipal"
-             alt="Imagen principal de la paleoficha">
-
-    </div>
-
-
-    <!-- =================================================
-         VÍDEO
-         ================================================= -->
-
-    <div id="videoFicha"
-         style="display:none;">
-
-        <a id="botonVideo"
-           href="#"
-           target="_self"
-           rel="noopener">
-
-            ▶ Ver vídeo
+            Entrar al torneo
 
         </a>
 
     </div>
 
 
-    <!-- =================================================
-         INFORMACIÓN
-         ================================================= -->
+    <div class="bloqueTorneo">
 
-    <section id="bloqueInfo">
+        <h3>📋 Participantes</h3>
 
-        <div class="campoInfo">
+        <button
+            id="botonParticipantes"
+            class="botonTorneo"
+            type="button">
 
-            <span class="campo">
-                Dieta
-            </span>
+            Ver participantes
 
-            <span id="dieta"></span>
+        </button>
 
-        </div>
-
-
-        <div class="campoInfo">
-
-            <span class="campo">
-                Descripción
-            </span>
-
-            <span id="descripcion"></span>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         GALERÍA
-         ================================================= -->
-
-    <section id="galeria">
-
-        <img id="img2"
-             alt="Imagen secundaria 1">
-
-        <img id="img3"
-             alt="Imagen secundaria 2">
-
-    </section>
-
-
-    <!-- =================================================
-         CRONOLOGÍA
-         ================================================= -->
-
-    <div id="cronologia">
     </div>
 
 
-    <!-- =================================================
-         TAXONOMÍA
-         ================================================= -->
+    <div class="bloqueTorneo">
 
-    <section id="bloqueTaxon">
+        <h3>⚔️ Combates</h3>
 
-        <span class="campo">
-            Taxón
-        </span>
+        <a
+            class="botonTorneo"
+            href="combates.html">
 
-        <div id="taxonTa1">
-        </div>
+            Ver combates
 
-        <div id="taxonTa2">
-        </div>
+        </a>
 
-    </section>
+    </div>
 
 
-    <!-- =================================================
-         ESTADÍSTICAS
-         ================================================= -->
+    <div class="bloqueTorneo">
 
-    <section id="bloqueEstadisticas"
-             style="display:none;">
+        <h3>⚙️ Reglas del torneo</h3>
 
-        <h2>
-            Estadísticas
-        </h2>
+        <a
+            class="botonTorneo"
+            href="reglas.html">
 
-        <div id="estadisticas"
-             class="stats">
+            Configurar reglas
 
-        </div>
+        </a>
 
-    </section>
+    </div>
+
+
+</section>
+
+
+<!-- =================================================
+     PARTICIPANTES
+     ================================================= -->
+
+<section
+    id="panelParticipantes"
+    style="display:none;">
+
+    <h2>
+        📋 Participantes
+    </h2>
+
+    <div id="listaParticipantes">
+    </div>
+
+</section>
 
 </main>
 
 
 <!-- =====================================================
-     LIGHTBOX DE IMÁGENES
+     VOLVER AL VISOR
      ===================================================== -->
 
-<div id="visorImagen"
-     class="visor"
-     aria-hidden="true">
+<section id="volver">
 
-    <button id="cerrarImagen"
-            class="botonCerrar"
-            type="button"
-            aria-label="Cerrar imagen">
+<a
+    href="../generador_fase_2/generador_fase_3.html"
+    id="botonVolver">
 
-        ×
+    ← Volver al visor
 
-    </button>
+</a>
 
-
-    <img id="imagenAmpliada"
-         alt="Imagen ampliada">
-
-</div>
+</section>
 
 
 <!-- =====================================================
-     EXPLORADOR DE PALEOFICHAS
-     ===================================================== -->
-
-<div id="visorBuscador"
-     class="visor"
-     aria-hidden="true">
-
-    <div id="ventanaBuscador">
-
-        <button id="cerrarBuscador"
-                class="botonCerrar botonCerrarBuscador"
-                type="button"
-                aria-label="Cerrar buscador">
-
-            ×
-
-        </button>
-
-
-        <h2>
-            Explorador de Paleofichas
-        </h2>
-
-
-        <input id="buscarNombre"
-               type="text"
-               placeholder="Buscar por nombre o código"
-               autocomplete="off">
-
-
-        <div id="listaResultados">
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     ALMACÉN MAESTRO
+     PARTICIPANTES DEL TORNEO
      ===================================================== -->
 
 <script>
 
-window.MASTER_ACTUAL = null;
+window.MATRIZ_COMBATIENTES_TORNEO = [];
 
 
-window.cargarMasterPorJ1 =
-async function(j1) {
+/* =====================================================
+   CRITERIO IDENTIFICATIVO DEL TORNEO
+   ===================================================== */
+
+function obtenerCriterioTorneo() {
+
+    const criterio =
+        localStorage.getItem(
+            "palentropia_criterio_torneo"
+        );
+
 
     if (
-        j1 === undefined ||
-        j1 === null ||
-        String(j1).trim() === ""
+        !criterio ||
+        !String(criterio).trim()
     ) {
 
-        window.MASTER_ACTUAL = null;
-
-        return null;
+        return "";
 
     }
 
 
-    const respuesta =
-        await fetch("master.csv");
+    const valor =
+        String(
+            criterio
+        ).trim();
 
 
-    if (!respuesta.ok) {
+    /*
+    =====================================================
+    TRANSFORMACIONES DE PRESENTACIÓN
+    =====================================================
+    */
+
+    const equivalencias = {
+
+        "perm":
+            "Pérmico",
+
+        "chord":
+            "Chordata",
+
+        "placen":
+            "Placentaria"
+
+    };
+
+
+    const clave =
+        valor.toLowerCase();
+
+
+    if (
+        equivalencias[clave]
+    ) {
+
+        return equivalencias[clave];
+
+    }
+
+
+    /*
+    Los códigos se conservan tal como fueron introducidos:
+    006
+    006_0
+    006_01
+    */
+
+    return valor;
+
+}
+
+
+/* =====================================================
+   MOSTRAR IDENTIFICADOR DEL TORNEO
+   ===================================================== */
+
+function mostrarIdentificadorTorneo() {
+
+    const criterio =
+        obtenerCriterioTorneo();
+
+
+    if (!criterio) {
+
+        return;
+
+    }
+
+
+    const subtitulo =
+        document.getElementById(
+            "subtitulo"
+        );
+
+
+    const tituloCabecera =
+        document.getElementById(
+            "tituloCabeceraTorneo"
+        );
+
+
+    const tituloBloque =
+        document.getElementById(
+            "tituloBloqueTorneo"
+        );
+
+
+    /*
+    =====================================================
+    CABECERA SUPERIOR
+    =====================================================
+    */
+
+    if (subtitulo) {
+
+        subtitulo.textContent =
+            "Torneo " +
+            criterio;
+
+    }
+
+
+    /*
+    =====================================================
+    CABECERA PRINCIPAL
+    =====================================================
+    */
+
+    if (tituloCabecera) {
+
+        tituloCabecera.textContent =
+            "⚔️ Torneo " +
+            criterio;
+
+    }
+
+
+    /*
+    =====================================================
+    BLOQUE TORNEO
+    =====================================================
+    */
+
+    if (tituloBloque) {
+
+        tituloBloque.textContent =
+            "🏆 Torneo " +
+            criterio;
+
+    }
+
+}
+
+
+/* =====================================================
+   INICIALIZAR IDENTIFICADOR
+   ===================================================== */
+
+mostrarIdentificadorTorneo();
+
+
+/* =====================================================
+   CARGAR PARTICIPANTES
+   ===================================================== */
+
+async function cargarParticipantesTorneo() {
+
+    const lista =
+        document.getElementById(
+            "listaParticipantes"
+        );
+
+
+    if (!lista) {
+
+        return;
+
+    }
+
+
+    lista.innerHTML = "";
+
+
+    /*
+    Recuperamos exclusivamente los J1
+    preparados por el visor.
+    */
+
+    const matrizGuardada =
+        localStorage.getItem(
+            "palentropia_matriz_combatientes"
+        );
+
+
+    if (!matrizGuardada) {
+
+        lista.innerHTML =
+            "<p>No hay participantes cargados.</p>";
+
+        return;
+
+    }
+
+
+    let matrizJ1;
+
+
+    try {
+
+        matrizJ1 =
+            JSON.parse(
+                matrizGuardada
+            );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Matriz de combatientes no válida:",
+            error
+        );
+
+        lista.innerHTML =
+            "<p>No se pudo cargar la matriz de participantes.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        !Array.isArray(matrizJ1) ||
+        !matrizJ1.length
+    ) {
+
+        lista.innerHTML =
+            "<p>No hay participantes cargados.</p>";
+
+        return;
+
+    }
+
+
+    /*
+    Limpiamos y normalizamos J1.
+    */
+
+    matrizJ1 =
+        matrizJ1
+            .map(
+                codigo =>
+                    String(
+                        codigo || ""
+                    ).trim()
+            )
+            .filter(
+                codigo =>
+                    codigo !== ""
+            );
+
+
+    /*
+    =====================================================
+    PALEOFICHAS.JSON
+    =====================================================
+    */
+
+    const respuestaJSON =
+        await fetch(
+            "../generador_fase_2/paleofichas.json"
+        );
+
+
+    if (!respuestaJSON.ok) {
+
+        throw new Error(
+            "No se pudo cargar paleofichas.json."
+        );
+
+    }
+
+
+    const datosJSON =
+        await respuestaJSON.json();
+
+
+    /*
+    =====================================================
+    MASTER.CSV
+    =====================================================
+    */
+
+    const respuestaMaster =
+        await fetch(
+            "../generador_fase_2/master.csv"
+        );
+
+
+    if (!respuestaMaster.ok) {
 
         throw new Error(
             "No se pudo cargar master.csv."
@@ -413,510 +494,320 @@ async function(j1) {
     }
 
 
-    const texto =
-        await respuesta.text();
+    const textoMaster =
+        await respuestaMaster.text();
 
 
-    const lineas =
-        texto.split(/\r?\n/);
+    /*
+    =====================================================
+    MAPA J1 → J2
+    =====================================================
+    */
 
+    const mapaNombres =
+        new Map();
 
-    for (const linea of lineas) {
 
-        if (!linea.trim()) {
+    if (
+        Array.isArray(
+            datosJSON
+        )
+    ) {
 
-            continue;
+        datosJSON.forEach(
+            registro => {
 
-        }
+                if (
+                    !registro
+                ) {
 
+                    return;
 
-        const columnas =
-            linea.split(",");
+                }
 
 
-        if (columnas.length < 21) {
+                const j1 =
+                    String(
+                        registro.j1 ||
+                        registro.codigo ||
+                        registro.J1 ||
+                        ""
+                    ).trim();
 
-            continue;
 
-        }
+                const j2 =
+                    String(
+                        registro.j2 ||
+                        registro.nombre ||
+                        registro.J2 ||
+                        ""
+                    ).trim();
 
 
-        const codigo =
-            String(
-                columnas[0]
-            ).trim();
+                if (
+                    j1 &&
+                    j2
+                ) {
 
-
-        if (
-            codigo !==
-            String(j1).trim()
-        ) {
-
-            continue;
-
-        }
-
-
-        window.MASTER_ACTUAL = {
-
-            j1: columnas[0]?.trim() || "",
-            j2: columnas[1]?.trim() || "",
-            j3: columnas[2]?.trim() || "",
-            j4: columnas[3]?.trim() || "",
-            j5: columnas[4]?.trim() || "",
-            j6: columnas[5]?.trim() || "",
-            j7: columnas[6]?.trim() || "",
-            j8: columnas[7]?.trim() || "",
-            j9: columnas[8]?.trim() || "",
-            j10: columnas[9]?.trim() || "",
-
-            e1: columnas[10]?.trim() || "",
-            e2: columnas[11]?.trim() || "",
-            e3: columnas[12]?.trim() || "",
-            e4: columnas[13]?.trim() || "",
-            e5: columnas[14]?.trim() || "",
-            e6: columnas[15]?.trim() || "",
-            e7: columnas[16]?.trim() || "",
-            e8: columnas[17]?.trim() || "",
-            e9: columnas[18]?.trim() || "",
-            e10: columnas[19]?.trim() || "",
-            e11: columnas[20]?.trim() || ""
-
-        };
-
-
-        return window.MASTER_ACTUAL;
-
-    }
-
-
-    window.MASTER_ACTUAL = null;
-
-    return null;
-
-};
-
-</script>
-
-
-<!-- =====================================================
-     MÓDULOS BASE
-     ===================================================== -->
-
-<script src="leepaljson.js"></script>
-<script src="palvideo.js"></script>
-<script src="buscaruta.js"></script>
-<script src="cargacont.js"></script>
-<script src="palbuscador.js"></script>
-<script src="palnavegador.js"></script>
-<script src="palgeo.js"></script>
-<script src="palgeosimplificado.js"></script>
-<script src="leepalgeo.js"></script>
-<script src="palcabecera.js"></script>
-
-
-<!-- =====================================================
-     TAXONOMÍA
-     ===================================================== -->
-
-<script src="paltaxon.js"></script>
-
-
-<!-- =====================================================
-     CONTENEDOR GEOLOGÍA
-     ===================================================== -->
-
-<script src="cont07.js"></script>
-
-
-<!-- =====================================================
-     GENERADOR 1.1
-     ===================================================== -->
-
-<script src="cab01.js"></script>
-<script src="cab02.js"></script>
-<script src="cab03.js"></script>
-<script src="cab04.js"></script>
-<script src="cab05.js"></script>
-<script src="cab06.js"></script>
-<script src="cab07.js"></script>
-<script src="cab08.js"></script>
-<script src="cab09.js"></script>
-<script src="palmodo.js"></script>
-<script src="cab12.js"></script>
-<script src="palmedio.js"></script>
-<script src="cab13.js"></script>
-<script src="palhab.js"></script>
-<script src="palhabdecoder.js"></script>
-<script src="cab14.js"></script>
-
-
-<!-- =====================================================
-     BUSCADOR UNIVERSAL
-     ===================================================== -->
-
-<script src="cab15.js"></script>
-<script src="cab16.js"></script>
-<script src="cab17.js"></script>
-<script src="cab18.js"></script>
-<script src="cab19.js"></script>
-
-
-<!-- =====================================================
-     MATRIXFILTRO
-     ===================================================== -->
-
-<script src="matrixfiltro.js"></script>
-
-
-<!-- =====================================================
-     MATRIXNAVEGADOR
-     NO SE MODIFICA
-     ===================================================== -->
-
-<script src="matrixnavegador.js"></script>
-
-
-<!-- =====================================================
-     CAB10
-     ===================================================== -->
-
-<script src="cab10.js"></script>
-
-
-<!-- =====================================================
-     ARRANQUE VISOR
-     ===================================================== -->
-
-<script>
-
-document.addEventListener(
-    "DOMContentLoaded",
-    async function() {
-
-        try {
-
-            await window.PALNAVEGADOR.inicializar();
-
-
-            const parametros =
-                new URLSearchParams(
-                    window.location.search
-                );
-
-
-            const codigo =
-                parametros.get("codigo");
-
-
-            const arena =
-                parametros.get("arena");
-
-
-            const esArena =
-                arena === "1" ||
-                arena === "2";
-
-
-            let codigoArenaInicial =
-                codigo;
-
-
-            if (codigo) {
-
-                await window.PALNAVEGADOR.cargarPorCodigo(
-                    codigo
-                );
-
-
-                if (esArena) {
-
-                    setInterval(
-                        function() {
-
-                            const codigoActual =
-                                window.PALNAVEGADOR.codigoActual;
-
-
-                            if (
-                                codigoActual &&
-                                codigoActual !==
-                                codigoArenaInicial
-                            ) {
-
-                                localStorage.setItem(
-                                    "palentropia_arena_seleccion",
-                                    JSON.stringify({
-
-                                        arena:
-                                            arena,
-
-                                        codigo:
-                                            codigoActual
-
-                                    })
-                                );
-
-
-                                codigoArenaInicial =
-                                    codigoActual;
-
-                            }
-
-                        },
-                        500
+                    mapaNombres.set(
+                        j1,
+                        j2
                     );
 
                 }
 
+            }
+        );
+
+    }
+
+
+    /*
+    =====================================================
+    MAPA DEL MASTER
+    =====================================================
+    */
+
+    const mapaMaster =
+        new Map();
+
+
+    const lineas =
+        textoMaster.split(
+            /\r?\n/
+        );
+
+
+    lineas.forEach(
+        linea => {
+
+            if (
+                !linea.trim()
+            ) {
 
                 return;
 
             }
 
 
-            await window.PALNAVEGADOR.aleatorio();
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "VISOR DE PALEOFICHAS: error durante el arranque.",
-                error
-            );
-
-        }
-
-    }
-);
-
-</script>
+            const columnas =
+                linea.split(",");
 
 
-<!-- =====================================================
-     BOTÓN ÍNDICE DEL TORNEO
-     ===================================================== -->
+            if (
+                columnas.length < 21
+            ) {
 
-<script>
-
-function abrirIndiceTorneo() {
-
-    /*
-    =====================================================
-    MATRIZ DE PARTICIPANTES
-    =====================================================
-    */
-
-    let matriz = [];
-
-
-    if (
-        window.MATRIXFILTRO &&
-        typeof window.MATRIXFILTRO.actualizar ===
-        "function"
-    ) {
-
-        matriz =
-            window.MATRIXFILTRO.actualizar();
-
-    }
-
-
-    /*
-    Si MATRIXFILTRO no tiene resultados,
-    usamos directamente su matriz actual.
-    */
-
-    if (
-        !Array.isArray(matriz) &&
-        window.MATRIXFILTRO &&
-        Array.isArray(
-            window.MATRIXFILTRO.datos
-        )
-    ) {
-
-        matriz =
-            window.MATRIXFILTRO.datos;
-
-    }
-
-
-    /*
-    =====================================================
-    NORMALIZAR MATRIZ
-    =====================================================
-    */
-
-    matriz =
-        Array.isArray(matriz)
-            ? matriz
-                .map(
-                    codigo =>
-                        String(
-                            codigo || ""
-                        ).trim()
-                )
-                .filter(Boolean)
-                .filter(
-                    (codigo, indice, array) =>
-                        array.indexOf(codigo) === indice
-                )
-            : [];
-
-
-    /*
-    =====================================================
-    CRITERIO DE BÚSQUEDA DEL TORNEO
-    =====================================================
-
-    CAB16 utiliza buscarUniversal como campo
-    real del buscador.
-
-    Guardamos exactamente el texto introducido.
-    No lo transformamos aquí.
-
-    La transformación visual se realizará
-    posteriormente en las páginas del torneo.
-    */
-
-    const campoBusqueda =
-        document.getElementById(
-            "buscarUniversal"
-        );
-
-
-    const criterioTorneo =
-        campoBusqueda
-            ? String(
-                campoBusqueda.value || ""
-              ).trim()
-            : "";
-
-
-    /*
-    =====================================================
-    GUARDAR PARTICIPANTES
-    =====================================================
-    */
-
-    localStorage.setItem(
-        "palentropia_matriz_combatientes",
-        JSON.stringify(matriz)
-    );
-
-
-    /*
-    =====================================================
-    GUARDAR CRITERIO DEL TORNEO
-    =====================================================
-    */
-
-    localStorage.setItem(
-        "palentropia_criterio_torneo",
-        criterioTorneo
-    );
-
-
-    console.log(
-        "PalEntropía — matriz transferida al torneo:",
-        matriz
-    );
-
-
-    console.log(
-        "PalEntropía — criterio del torneo:",
-        criterioTorneo
-    );
-
-
-    /*
-    =====================================================
-    IR AL ÍNDICE DEL TORNEO
-    =====================================================
-    */
-
-    window.location.href =
-        "../torneo/index.html";
-
-}
-
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        const boton =
-            document.getElementById(
-                "botonIndiceTorneo"
-            );
-
-
-        if (!boton) {
-
-            return;
-
-        }
-
-
-        boton.addEventListener(
-            "click",
-            function(event) {
-
-                event.preventDefault();
-
-                abrirIndiceTorneo();
+                return;
 
             }
-        );
+
+
+            const j1 =
+                String(
+                    columnas[0] || ""
+                ).trim();
+
+
+            if (
+                !j1
+            ) {
+
+                return;
+
+            }
+
+
+            mapaMaster.set(
+                j1,
+                columnas
+            );
+
+        }
+    );
+
+
+    /*
+    =====================================================
+    CONSTRUIR MATRIZ FINAL
+    =====================================================
+    */
+
+    const participantes = [];
+
+
+    matrizJ1.forEach(
+        j1 => {
+
+            const columnas =
+                mapaMaster.get(
+                    j1
+                );
+
+
+            const j2 =
+                mapaNombres.get(
+                    j1
+                ) || "";
+
+
+            if (
+                !columnas
+            ) {
+
+                return;
+
+            }
+
+
+            participantes.push({
+
+                j1:
+                    j1,
+
+                j2:
+                    j2,
+
+                master:
+                    columnas
+
+            });
+
+        }
+    );
+
+
+    window.MATRIZ_COMBATIENTES_TORNEO =
+        participantes;
+
+
+    /*
+    =====================================================
+    MOSTRAR SOLO J1 Y J2
+    =====================================================
+    */
+
+    participantes.forEach(
+        participante => {
+
+            const fila =
+                document.createElement(
+                    "div"
+                );
+
+
+            fila.className =
+                "participanteTorneo";
+
+
+            fila.textContent =
+                participante.j1 +
+                " — " +
+                participante.j2;
+
+
+            lista.appendChild(
+                fila
+            );
+
+        }
+    );
+
+
+    if (
+        !participantes.length
+    ) {
+
+        lista.innerHTML =
+            "<p>No se encontraron participantes.</p>";
 
     }
-);
-
-</script>
-
-
-<!-- =====================================================
-     BOTÓN ARENA
-     ===================================================== -->
-
-<script>
-
-function abrirEntradaTorneo() {
-
-    window.location.href =
-        "../torneo/entrada.html";
 
 }
 
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
+/* =====================================================
+   BOTÓN PARTICIPANTES
+   ===================================================== */
 
-        const botonArena =
-            document.getElementById(
-                "botonArena"
-            );
+document
+    .getElementById(
+        "botonParticipantes"
+    )
+    .addEventListener(
+        "click",
+        async function() {
+
+            const panel =
+                document.getElementById(
+                    "panelParticipantes"
+                );
 
 
-        if (!botonArena) {
+            if (
+                panel.style.display ===
+                "none"
+            ) {
 
-            return;
+                panel.style.display =
+                    "block";
+
+
+                try {
+
+                    await cargarParticipantesTorneo();
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Error cargando participantes:",
+                        error
+                    );
+
+                    document
+                        .getElementById(
+                            "listaParticipantes"
+                        )
+                        .innerHTML =
+                            "<p>Error cargando participantes.</p>";
+
+                }
+
+            }
+
+            else {
+
+                panel.style.display =
+                    "none";
+
+            }
 
         }
+    );
 
 
-        botonArena.addEventListener(
-            "click",
-            abrirEntradaTorneo
-        );
+/* =====================================================
+   BOTÓN MENÚ PRINCIPAL
+   ===================================================== */
 
-    }
-);
+document
+    .getElementById(
+        "botonMenuPrincipal"
+    )
+    .addEventListener(
+        "click",
+        function() {
+
+            window.location.href =
+                "../../index.html";
+
+        }
+    );
 
 </script>
 
-
 </body>
+
 </html>
