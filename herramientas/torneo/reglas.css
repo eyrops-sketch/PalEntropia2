@@ -1,1 +1,523 @@
+/* =====================================================
+   PALENTROPÍA — REGLAS DEL TORNEO
+   ===================================================== */
 
+
+/* =====================================================
+   BASE
+   ===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    background: #071018;
+    color: #dff8ff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    text-align: center;
+}
+
+
+/* =====================================================
+   BOTÓN MENÚ PRINCIPAL
+   ===================================================== */
+
+#botonMenuPrincipal {
+
+    position: fixed;
+
+    top: 12px;
+    left: 12px;
+
+    width: 44px;
+    height: 44px;
+
+    border: 1px solid #63d9ff;
+    border-radius: 10px;
+
+    background: #0b1c28;
+    color: #dff8ff;
+
+    font-size: 21px;
+
+    cursor: pointer;
+
+    z-index: 1000;
+
+}
+
+#botonMenuPrincipal:active {
+
+    transform: scale(0.96);
+
+}
+
+
+/* =====================================================
+   CABECERA
+   ===================================================== */
+
+#cabecera {
+
+    padding:
+        28px
+        15px
+        18px;
+
+    border-bottom:
+        1px solid #16475b;
+
+    background: #091923;
+
+}
+
+#cabecera h1 {
+
+    margin: 0;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    color: #e8fbff;
+
+}
+
+#subtitulo {
+
+    margin-top: 7px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    color: #63d9ff;
+
+}
+
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+   ===================================================== */
+
+#torneo {
+
+    width: 100%;
+    max-width: 700px;
+
+    margin: 0 auto;
+
+    padding:
+        20px
+        14px
+        30px;
+
+}
+
+
+/* =====================================================
+   CABECERA DEL TORNEO
+   ===================================================== */
+
+#cabeceraTorneo {
+
+    margin-bottom: 22px;
+
+}
+
+#cabeceraTorneo h2 {
+
+    margin:
+        0
+        0
+        8px;
+
+    font-size: 23px;
+
+    color: #e8fbff;
+
+}
+
+#cabeceraTorneo p {
+
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.5;
+
+    color: #8ed8e8;
+
+}
+
+
+/* =====================================================
+   CONTENEDOR DE REGLAS
+   ===================================================== */
+
+#reglasTorneo {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+    width: 100%;
+
+}
+
+
+/* =====================================================
+   BLOQUES DE CONFIGURACIÓN
+   ===================================================== */
+
+.bloqueTorneo {
+
+    width: 100%;
+
+    padding:
+        20px
+        18px;
+
+    border:
+        1px solid #1b5268;
+
+    border-radius: 14px;
+
+    background: #0b1c28;
+
+    box-shadow:
+        0 4px 14px
+        rgba(0, 0, 0, 0.35);
+
+}
+
+.bloqueTorneo h3 {
+
+    margin:
+        0
+        0
+        10px;
+
+    font-size: 19px;
+
+    color: #e8fbff;
+
+}
+
+.bloqueTorneo p {
+
+    margin:
+        0
+        0
+        17px;
+
+    font-size: 14px;
+    line-height: 1.5;
+
+    color: #9bdbe8;
+
+}
+
+
+/* =====================================================
+   PARTIDOS POR SERIE
+   ===================================================== */
+
+#partidosSerie {
+
+    display: block;
+
+    width: 140px;
+
+    margin:
+        0
+        auto;
+
+    padding:
+        12px
+        10px;
+
+    border:
+        1px solid #63d9ff;
+
+    border-radius: 9px;
+
+    background: #071018;
+    color: #e8fbff;
+
+    font-size: 21px;
+    font-weight: 700;
+
+    text-align: center;
+
+    outline: none;
+
+}
+
+#partidosSerie:focus {
+
+    border-color: #a5ecff;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(99, 217, 255, 0.18);
+
+}
+
+
+/* =====================================================
+   ELIMINAR FLECHAS DEL INPUT NUMÉRICO
+   ===================================================== */
+
+#partidosSerie::-webkit-inner-spin-button,
+#partidosSerie::-webkit-outer-spin-button {
+
+    opacity: 1;
+
+}
+
+
+/* =====================================================
+   SELECTOR DE TIPO DE COMBATE
+   ===================================================== */
+
+#tipoCombate {
+
+    display: block;
+
+    width: 100%;
+    max-width: 320px;
+
+    margin:
+        0
+        auto;
+
+    padding:
+        12px
+        14px;
+
+    border:
+        1px solid #63d9ff;
+
+    border-radius: 9px;
+
+    background: #071018;
+    color: #e8fbff;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    text-align: center;
+
+    outline: none;
+
+    cursor: pointer;
+
+}
+
+#tipoCombate:focus {
+
+    border-color: #a5ecff;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(99, 217, 255, 0.18);
+
+}
+
+
+/* =====================================================
+   OPCIONES DEL SELECTOR
+   ===================================================== */
+
+#tipoCombate option {
+
+    background: #071018;
+    color: #e8fbff;
+
+}
+
+
+/* =====================================================
+   AVISO DE VALIDACIÓN
+   ===================================================== */
+
+#avisoPartidosSerie {
+
+    min-height: 20px;
+
+    margin-top: 10px;
+
+    font-size: 13px;
+
+    color: #ffb6b6;
+
+}
+
+
+/* =====================================================
+   BOTÓN VOLVER
+   ===================================================== */
+
+#volver {
+
+    width: 100%;
+
+    padding:
+        0
+        14px
+        30px;
+
+    text-align: center;
+
+}
+
+#botonVolver {
+
+    display: inline-block;
+
+    padding:
+        11px
+        20px;
+
+    border:
+        1px solid #63d9ff;
+
+    border-radius: 9px;
+
+    background: #0b1c28;
+    color: #dff8ff;
+
+    text-decoration: none;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
+
+}
+
+#botonVolver:hover {
+
+    background: #102a39;
+
+}
+
+#botonVolver:active {
+
+    transform: scale(0.98);
+
+}
+
+
+/* =====================================================
+   ADAPTACIÓN MÓVIL
+   ===================================================== */
+
+@media (max-width: 480px) {
+
+    #cabecera {
+
+        padding-top: 25px;
+
+    }
+
+
+    #cabecera h1 {
+
+        font-size: 25px;
+
+    }
+
+
+    #subtitulo {
+
+        font-size: 15px;
+
+    }
+
+
+    #cabeceraTorneo h2 {
+
+        font-size: 21px;
+
+    }
+
+
+    #torneo {
+
+        padding:
+            18px
+            12px
+            25px;
+
+    }
+
+
+    .bloqueTorneo {
+
+        padding:
+            18px
+            14px;
+
+    }
+
+
+    .bloqueTorneo h3 {
+
+        font-size: 18px;
+
+    }
+
+
+    .bloqueTorneo p {
+
+        font-size: 13px;
+
+    }
+
+
+    #partidosSerie {
+
+        width: 130px;
+
+        font-size: 20px;
+
+    }
+
+
+    #tipoCombate {
+
+        max-width: 100%;
+
+        font-size: 15px;
+
+    }
+
+
+    #botonVolver {
+
+        width: 100%;
+        max-width: 320px;
+
+        padding:
+            12px
+            18px;
+
+    }
+
+}
