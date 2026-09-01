@@ -1,1 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>PalEntropía — Reglas del torneo</title>
+
+<link rel="stylesheet"
+      href="reglas.css">
+
+</head>
+
+<body>
+
+
+<!-- =====================================================
+     BOTÓN MENÚ PRINCIPAL
+     ===================================================== -->
+
+<button
+    id="botonMenuPrincipal"
+    type="button"
+    title="Volver al menú principal"
+    aria-label="Volver al menú principal">
+
+    🏠
+
+</button>
+
+
+<!-- =====================================================
+     CABECERA
+     ===================================================== -->
+
+<header id="cabecera">
+
+    <h1>PalEntropía</h1>
+
+    <div id="subtitulo">
+        Reglas del torneo
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     CONTENEDOR PRINCIPAL
+     ===================================================== -->
+
+<main id="torneo">
+
+
+    <section id="cabeceraTorneo">
+
+        <h2 id="tituloCabeceraTorneo">
+            ⚙️ Reglas del torneo
+        </h2>
+
+        <p id="criterioTorneo">
+            Configuración del torneo
+        </p>
+
+    </section>
+
+
+    <!-- =================================================
+         REGLAS DEL TORNEO
+         ================================================= -->
+
+    <section id="reglasTorneo">
+
+
+        <!-- =============================================
+             PARTIDOS POR SERIE
+             ============================================= -->
+
+        <div class="bloqueTorneo">
+
+            <h3>
+                ⚔️ Partidos por serie
+            </h3>
+
+            <p>
+                Número de combates que debe disputar cada serie.
+            </p>
+
+            <input
+                id="partidosSerie"
+                type="number"
+                min="1"
+                step="2"
+                value="1"
+                inputmode="numeric"
+                aria-label="Número de partidos por serie">
+
+            <div id="avisoPartidosSerie"></div>
+
+        </div>
+
+
+        <!-- =============================================
+             TIPO DE COMBATE
+             ============================================= -->
+
+        <div class="bloqueTorneo">
+
+            <h3>
+                🎲 Tipo de combate
+            </h3>
+
+            <p>
+                Sistema utilizado para resolver los combates.
+            </p>
+
+            <select
+                id="tipoCombate"
+                aria-label="Tipo de combate">
+
+                <option value="standard">
+                    Standard
+                </option>
+
+            </select>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- =====================================================
+     VOLVER AL ÍNDICE DEL TORNEO
+     ===================================================== -->
+
+<section id="volver">
+
+    <a
+        href="index.html"
+        id="botonVolver">
+
+        ← Volver al torneo
+
+    </a>
+
+</section>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script>
+
+
+/* =====================================================
+   CLAVES DE LOCALSTORAGE
+   ===================================================== */
+
+const CLAVE_REGLAS_TORNEO =
+    "palentropia_reglas_torneo";
+
+const CLAVE_CRITERIO_TORNEO =
+    "palentropia_criterio_torneo";
+
+
+/* =====================================================
+   REGLAS POR DEFECTO
+   ===================================================== */
+
+const REGLAS_TORNEO_DEFECTO = {
+
+    partidosSerie: 1,
+
+    tipoCombate: "standard"
+
+};
+
+
+/* =====================================================
+   OBTENER REGLAS
+   ===================================================== */
+
+function obtenerReglasTorneo() {
+
+    const guardado =
+        localStorage.getItem(
+            CLAVE_REGLAS_TORNEO
+        );
+
+
+    if (!guardado) {
+
+        return {
+            ...REGLAS_TORNEO_DEFECTO
+        };
+
+    }
+
+
+    try {
+
+        const reglas =
+            JSON.parse(
+                guardado
+            );
+
+
+        return {
+
+            ...REGLAS_TORNEO_DEFECTO,
+
+            ...reglas
+
+        };
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Reglas del torneo no válidas:",
+            error
+        );
+
+
+        return {
+            ...REGLAS_TORNEO_DEFECTO
+        };
+
+    }
+
+}
+
+
+/* =====================================================
+   GUARDAR REGLAS AUTOMÁTICAMENTE
+   ===================================================== */
+
+function guardarReglasTorneo() {
+
+    const partidos =
+        Number(
+            document.getElementById(
+                "partidosSerie"
+            ).value
+        );
+
+
+    const tipo =
+        document.getElementById(
+            "tipoCombate"
+        ).value;
+
+
+    localStorage.setItem(
+
+        CLAVE_REGLAS_TORNEO,
+
+        JSON.stringify({
+
+            partidosSerie:
+                partidos,
+
+            tipoCombate:
+                tipo
+
+        })
+
+    );
+
+}
+
+
+/* =====================================================
+   OBTENER CRITERIO DEL TORNEO
+   ===================================================== */
+
+function obtenerCriterioTorneo() {
+
+    const criterio =
+        localStorage.getItem(
+            CLAVE_CRITERIO_TORNEO
+        );
+
+
+    if (
+        !criterio ||
+        !String(criterio).trim()
+    ) {
+
+        return "";
+
+    }
+
+
+    const valor =
+        String(
+            criterio
+        ).trim();
+
+
+    const equivalencias = {
+
+        "perm":
+            "Pérmico",
+
+        "chord":
+            "Chordata",
+
+        "placen":
+            "Placentaria"
+
+    };
+
+
+    const clave =
+        valor.toLowerCase();
+
+
+    return (
+        equivalencias[clave] ||
+        valor
+    );
+
+}
+
+
+/* =====================================================
+   MOSTRAR IDENTIFICADOR DEL TORNEO
+   ===================================================== */
+
+function mostrarIdentificadorTorneo() {
+
+    const criterio =
+        obtenerCriterioTorneo();
+
+
+    if (!criterio) {
+
+        return;
+
+    }
+
+
+    const subtitulo =
+        document.getElementById(
+            "subtitulo"
+        );
+
+
+    const titulo =
+        document.getElementById(
+            "tituloCabeceraTorneo"
+        );
+
+
+    const descripcion =
+        document.getElementById(
+            "criterioTorneo"
+        );
+
+
+    if (subtitulo) {
+
+        subtitulo.textContent =
+            "Reglas — " +
+            criterio;
+
+    }
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            "⚙️ Reglas del torneo — " +
+            criterio;
+
+    }
+
+
+    if (descripcion) {
+
+        descripcion.textContent =
+            "Configuración del torneo — " +
+            criterio;
+
+    }
+
+}
+
+
+/* =====================================================
+   CARGAR REGLAS EN LA INTERFAZ
+   ===================================================== */
+
+function cargarReglasEnInterfaz() {
+
+    const reglas =
+        obtenerReglasTorneo();
+
+
+    const partidos =
+        document.getElementById(
+            "partidosSerie"
+        );
+
+
+    const tipo =
+        document.getElementById(
+            "tipoCombate"
+        );
+
+
+    let valorPartidos =
+        Number(
+            reglas.partidosSerie
+        );
+
+
+    /*
+    Si el valor almacenado no es válido,
+    volvemos a 1.
+    */
+
+    if (
+        !Number.isInteger(valorPartidos) ||
+        valorPartidos < 1 ||
+        valorPartidos % 2 === 0
+    ) {
+
+        valorPartidos = 1;
+
+    }
+
+
+    partidos.value =
+        valorPartidos;
+
+
+    /*
+    =====================================================
+    TIPO DE COMBATE
+    =====================================================
+    */
+
+    const opcionExiste =
+        Array.from(
+            tipo.options
+        ).some(
+            opcion =>
+                opcion.value ===
+                reglas.tipoCombate
+        );
+
+
+    if (opcionExiste) {
+
+        tipo.value =
+            reglas.tipoCombate;
+
+    }
+
+    else {
+
+        tipo.value =
+            "standard";
+
+    }
+
+}
+
+
+/* =====================================================
+   VALIDAR PARTIDOS POR SERIE
+   ===================================================== */
+
+function validarPartidosSerie() {
+
+    const campo =
+        document.getElementById(
+            "partidosSerie"
+        );
+
+
+    const aviso =
+        document.getElementById(
+            "avisoPartidosSerie"
+        );
+
+
+    const valor =
+        Number(
+            campo.value
+        );
+
+
+    /*
+    Campo vacío
+    */
+
+    if (
+        campo.value === ""
+    ) {
+
+        aviso.textContent =
+            "Introduce un número impar.";
+
+        return false;
+
+    }
+
+
+    /*
+    Solo enteros positivos impares
+    */
+
+    if (
+        !Number.isInteger(valor) ||
+        valor < 1 ||
+        valor % 2 === 0
+    ) {
+
+        aviso.textContent =
+            "Debe ser un número impar: 1, 3, 5, 7...";
+
+        return false;
+
+    }
+
+
+    aviso.textContent =
+        "";
+
+
+    return true;
+
+}
+
+
+/* =====================================================
+   CAMBIO DE PARTIDOS POR SERIE
+   ===================================================== */
+
+document
+    .getElementById(
+        "partidosSerie"
+    )
+    .addEventListener(
+        "input",
+        function() {
+
+            if (
+                validarPartidosSerie()
+            ) {
+
+                guardarReglasTorneo();
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   CAMBIO DE TIPO DE COMBATE
+   ===================================================== */
+
+document
+    .getElementById(
+        "tipoCombate"
+    )
+    .addEventListener(
+        "change",
+        function() {
+
+            guardarReglasTorneo();
+
+        }
+    );
+
+
+/* =====================================================
+   BOTÓN MENÚ PRINCIPAL
+   ===================================================== */
+
+document
+    .getElementById(
+        "botonMenuPrincipal"
+    )
+    .addEventListener(
+        "click",
+        function() {
+
+            window.location.href =
+                "../../index.html";
+
+        }
+    );
+
+
+/* =====================================================
+   INICIALIZACIÓN
+   ===================================================== */
+
+mostrarIdentificadorTorneo();
+
+cargarReglasEnInterfaz();
+
+
+</script>
+
+</body>
+
+</html>
