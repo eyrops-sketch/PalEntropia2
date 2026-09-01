@@ -1,365 +1,141 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>PalEntropía — Torneo</title>
-
-<link rel="stylesheet"
-      href="index.css">
-
-</head>
-
-<body>
-
-
-<!-- =====================================================
+<title>PalEntropía — Torneo</title><link rel="stylesheet"
+      href="index.css"></head><body><!-- =====================================================
      BOTÓN MENÚ PRINCIPAL
-     ===================================================== -->
+     ===================================================== --><button
+id="botonMenuPrincipal"
+type="button"
+title="Volver al menú principal"
+aria-label="Volver al menú principal">
 
-<button
-    id="botonMenuPrincipal"
-    type="button"
-    title="Volver al menú principal"
-    aria-label="Volver al menú principal">
+🏠
 
-    🏠
-
-</button>
-
-
-<!-- =====================================================
+</button><!-- =====================================================
      CABECERA
-     ===================================================== -->
+     ===================================================== --><header id="cabecera"><h1>PalEntropía</h1>
 
-<header id="cabecera">
+<div id="subtitulo">
+    Torneo
+</div>
 
-    <h1>PalEntropía</h1>
-
-    <div id="subtitulo">
-        Torneo
-    </div>
-
-</header>
-
-
-<!-- =====================================================
+</header><!-- =====================================================
      CONTENEDOR PRINCIPAL
-     ===================================================== -->
+     ===================================================== --><main id="torneo"><section id="cabeceraTorneo">
 
-<main id="torneo">
+    <h2>⚔️ Torneo PalEntropía</h2>
 
-
-    <section id="cabeceraTorneo">
-
-        <h2>⚔️ Torneo PalEntropía</h2>
-
-        <p>
-            Índice del torneo
-        </p>
-
-    </section>
-
-
-    <!-- =================================================
-         ÍNDICE DEL TORNEO
-         ================================================= -->
-
-    <section id="indiceTorneo">
-
-
-        <div class="bloqueTorneo">
-
-            <h3>🏆 Torneo</h3>
-
-            <a
-                class="botonTorneo"
-                href="torneo.html">
-
-                Entrar al torneo
-
-            </a>
-
-        </div>
-
-
-        <div class="bloqueTorneo">
-
-            <h3>📋 Participantes</h3>
-
-            <button
-                id="botonParticipantes"
-                class="botonTorneo"
-                type="button">
-
-                Ver participantes
-
-            </button>
-
-        </div>
-
-
-        <div class="bloqueTorneo">
-
-            <h3>⚔️ Combates</h3>
-
-            <a
-                class="botonTorneo"
-                href="combates.html">
-
-                Ver combates
-
-            </a>
-
-        </div>
-
-
-        <div class="bloqueTorneo">
-
-            <h3>🏅 Clasificación</h3>
-
-            <a
-                class="botonTorneo"
-                href="clasificacion.html">
-
-                Ver clasificación
-
-            </a>
-
-        </div>
-
-
-    </section>
-
-
-    <!-- =================================================
-         PARTICIPANTES
-         ================================================= -->
-
-    <section
-        id="panelParticipantes"
-        style="display:none;">
-
-        <h2>
-            📋 Participantes
-        </h2>
-
-        <div id="totalParticipantes">
-        </div>
-
-        <div id="listaParticipantes">
-        </div>
-
-    </section>
-
-
-</main>
-
-
-<!-- =====================================================
-     VOLVER AL VISOR
-     ===================================================== -->
-
-<section id="volver">
-
-    <a
-        href="../../generador_fase_2/generador_fase_3.html"
-        id="botonVolver">
-
-        ← Volver al visor
-
-    </a>
+    <p>
+        Índice del torneo
+    </p>
 
 </section>
 
 
-<!-- =====================================================
-     PARTICIPANTES DEL TORNEO
-     ===================================================== -->
+<!-- =================================================
+     ÍNDICE DEL TORNEO
+     ================================================= -->
 
-<script>
+<section id="indiceTorneo">
+
+
+    <div class="bloqueTorneo">
+
+        <h3>🏆 Torneo</h3>
+
+        <a
+            class="botonTorneo"
+            href="torneo.html">
+
+            Entrar al torneo
+
+        </a>
+
+    </div>
+
+
+    <div class="bloqueTorneo">
+
+        <h3>📋 Participantes</h3>
+
+        <button
+            id="botonParticipantes"
+            class="botonTorneo"
+            type="button">
+
+            Ver participantes
+
+        </button>
+
+    </div>
+
+
+    <div class="bloqueTorneo">
+
+        <h3>⚔️ Combates</h3>
+
+        <a
+            class="botonTorneo"
+            href="combates.html">
+
+            Ver combates
+
+        </a>
+
+    </div>
+
+
+    <div class="bloqueTorneo">
+
+        <h3>🏅 Clasificación</h3>
+
+        <a
+            class="botonTorneo"
+            href="clasificacion.html">
+
+            Ver clasificación
+
+        </a>
+
+    </div>
+
+
+</section>
+
+
+<!-- =================================================
+     PARTICIPANTES
+     ================================================= -->
+
+<section
+    id="panelParticipantes"
+    style="display:none;">
+
+    <h2>
+        📋 Participantes
+    </h2>
+
+    <div id="listaParticipantes">
+    </div>
+
+</section>
+
+</main><!-- =====================================================
+     VOLVER AL VISOR
+     ===================================================== --><section id="volver"><a
+    href="../generador_fase_2/generador_fase_3.html"
+    id="botonVolver">
+
+    ← Volver al visor
+
+</a>
+
+</section><!-- =====================================================
+     PARTICIPANTES DEL TORNEO
+     ===================================================== --><script>
 
 window.MATRIZ_COMBATIENTES_TORNEO = [];
-
-
-/* =====================================================
-   OBTENER TODOS LOS J1 DEL PALNAVEGADOR
-   ===================================================== */
-
-function obtenerTodosLosJ1DelNavegador() {
-
-    const navegador =
-        window.PALNAVEGADOR;
-
-
-    if (!navegador) {
-
-        console.warn(
-            "PALNAVEGADOR no está disponible."
-        );
-
-        return [];
-
-    }
-
-
-    /*
-    PALNAVEGADOR puede mantener la matriz
-    de navegación en diferentes propiedades.
-    Probamos las estructuras existentes sin
-    modificar PALNAVEGADOR.
-    */
-
-    const posiblesMatrices = [
-
-        navegador.matriz,
-
-        navegador.datos,
-
-        navegador.registros,
-
-        navegador.lista,
-
-        navegador.paleofichas
-
-    ];
-
-
-    for (
-        const matriz of posiblesMatrices
-    ) {
-
-        if (
-            Array.isArray(matriz) &&
-            matriz.length
-        ) {
-
-            const codigos =
-                matriz
-                    .map(
-                        registro => {
-
-                            if (
-                                typeof registro ===
-                                "string"
-                            ) {
-
-                                return registro;
-
-                            }
-
-
-                            if (
-                                registro &&
-                                registro.j1
-                            ) {
-
-                                return registro.j1;
-
-                            }
-
-
-                            if (
-                                registro &&
-                                registro.codigo
-                            ) {
-
-                                return registro.codigo;
-
-                            }
-
-
-                            return "";
-
-                        }
-                    )
-                    .map(
-                        codigo =>
-                            String(
-                                codigo || ""
-                            ).trim()
-                    )
-                    .filter(Boolean);
-
-
-            if (
-                codigos.length
-            ) {
-
-                return [
-                    ...new Set(
-                        codigos
-                    )
-                ];
-
-            }
-
-        }
-
-    }
-
-
-    /*
-    Respaldo: si el navegador expone un índice
-    de códigos, también lo utilizamos.
-    */
-
-    const posiblesIndices = [
-
-        navegador.codigos,
-
-        navegador.listaCodigos,
-
-        navegador.matrizCodigos
-
-    ];
-
-
-    for (
-        const indice of posiblesIndices
-    ) {
-
-        if (
-            Array.isArray(indice) &&
-            indice.length
-        ) {
-
-            const codigos =
-                indice
-                    .map(
-                        codigo =>
-                            String(
-                                codigo || ""
-                            ).trim()
-                    )
-                    .filter(Boolean);
-
-
-            if (
-                codigos.length
-            ) {
-
-                return [
-                    ...new Set(
-                        codigos
-                    )
-                ];
-
-            }
-
-        }
-
-    }
-
-
-    return [];
-
-}
 
 
 /* =====================================================
@@ -374,12 +150,6 @@ async function cargarParticipantesTorneo() {
         );
 
 
-    const total =
-        document.getElementById(
-            "totalParticipantes"
-        );
-
-
     if (!lista) {
 
         return;
@@ -390,17 +160,9 @@ async function cargarParticipantesTorneo() {
     lista.innerHTML = "";
 
 
-    if (total) {
-
-        total.textContent = "";
-
-    }
-
-
     /*
-    =====================================================
-    1. INTENTAR MATRIZ PROCEDENTE DEL BUSCADOR
-    =====================================================
+    Recuperamos exclusivamente los J1
+    preparados por el visor.
     */
 
     const matrizGuardada =
@@ -409,87 +171,47 @@ async function cargarParticipantesTorneo() {
         );
 
 
-    let matrizJ1 = [];
+    if (!matrizGuardada) {
 
+        lista.innerHTML =
+            "<p>No hay participantes cargados.</p>";
 
-    if (matrizGuardada) {
-
-        try {
-
-            const matrizTemporal =
-                JSON.parse(
-                    matrizGuardada
-                );
-
-
-            if (
-                Array.isArray(
-                    matrizTemporal
-                )
-            ) {
-
-                matrizJ1 =
-                    matrizTemporal
-                        .map(
-                            codigo =>
-                                String(
-                                    codigo || ""
-                                ).trim()
-                        )
-                        .filter(Boolean);
-
-            }
-
-        }
-
-        catch (error) {
-
-            console.warn(
-                "La matriz guardada no es válida. Se utilizará el total del navegador.",
-                error
-            );
-
-            matrizJ1 = [];
-
-        }
+        return;
 
     }
 
 
-    /*
-    =====================================================
-    2. SI NO HAY BÚSQUEDA:
-       USAR TODOS LOS REGISTROS DEL NAVEGADOR
-    =====================================================
-    */
+    let matrizJ1;
 
-    if (
-        !matrizJ1.length
-    ) {
+
+    try {
 
         matrizJ1 =
-            obtenerTodosLosJ1DelNavegador();
+            JSON.parse(
+                matrizGuardada
+            );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Matriz de combatientes no válida:",
+            error
+        );
+
+        lista.innerHTML =
+            "<p>No se pudo cargar la matriz de participantes.</p>";
+
+        return;
 
     }
 
 
-    /*
-    =====================================================
-    COMPROBAR MATRIZ
-    =====================================================
-    */
-
     if (
+        !Array.isArray(matrizJ1) ||
         !matrizJ1.length
     ) {
-
-        if (total) {
-
-            total.textContent =
-                "0 participantes";
-
-        }
-
 
         lista.innerHTML =
             "<p>No hay participantes cargados.</p>";
@@ -500,15 +222,21 @@ async function cargarParticipantesTorneo() {
 
 
     /*
-    Eliminar duplicados manteniendo el orden.
+    Limpiamos y normalizamos J1.
     */
 
     matrizJ1 =
-        [
-            ...new Set(
-                matrizJ1
+        matrizJ1
+            .map(
+                codigo =>
+                    String(
+                        codigo || ""
+                    ).trim()
             )
-        ];
+            .filter(
+                codigo =>
+                    codigo !== ""
+            );
 
 
     /*
@@ -628,7 +356,8 @@ async function cargarParticipantesTorneo() {
     /*
     =====================================================
     MAPA DEL MASTER
-    ===================================================== */
+    =====================================================
+    */
 
     const mapaMaster =
         new Map();
@@ -692,7 +421,8 @@ async function cargarParticipantesTorneo() {
     /*
     =====================================================
     CONSTRUIR MATRIZ FINAL
-    ===================================================== */
+    =====================================================
+    */
 
     const participantes = [];
 
@@ -711,11 +441,6 @@ async function cargarParticipantesTorneo() {
                     j1
                 ) || "";
 
-
-            /*
-            Solo incluimos registros que
-            existen realmente en master.csv.
-            */
 
             if (
                 !columnas
@@ -743,37 +468,15 @@ async function cargarParticipantesTorneo() {
     );
 
 
-    /*
-    =====================================================
-    GUARDAR MATRIZ FINAL
-    ===================================================== */
-
     window.MATRIZ_COMBATIENTES_TORNEO =
         participantes;
 
 
     /*
     =====================================================
-    MOSTRAR TOTAL
-    ===================================================== */
-
-    if (total) {
-
-        total.textContent =
-            participantes.length +
-            (
-                participantes.length === 1
-                    ? " participante"
-                    : " participantes"
-            );
-
-    }
-
-
-    /*
-    =====================================================
     MOSTRAR SOLO J1 Y J2
-    ===================================================== */
+    =====================================================
+    */
 
     participantes.forEach(
         participante => {
@@ -894,9 +597,4 @@ document
         }
     );
 
-</script>
-
-
-</body>
-
-</html>
+</script></body></html>
