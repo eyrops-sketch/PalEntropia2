@@ -544,6 +544,12 @@
     "nombre": "Cotylorhynchus",
     "dieta": "Herbívoro",
     "anatomia": "Sinápsido herbívoro de gran tamaño, con cuerpo extremadamente robusto y voluminoso, cabeza relativamente pequeña, cuello corto, extremidades fuertes y cola larga y gruesa"
+  },
+  {
+    "codigo": "007_02",
+    "nombre": "Kelenken",
+    "dieta": "Carnívoro",
+    "anatomia": "Ave corredora de gran tamaño, con cuerpo robusto, cuello largo y musculoso, patas posteriores muy largas y fuertes y un enorme cráneo provisto de un pico alto y curvado adaptado para capturar y desgarrar presas"
   }
 ]
 
