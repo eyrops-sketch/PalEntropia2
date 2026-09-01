@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
 <meta charset="UTF-8">
@@ -25,10 +26,6 @@
 
 <body>
 
-<!-- =====================================================
-     BOTÓN ALEATORIO
-     ===================================================== -->
-
 <button id="botonAleatorio"
         type="button"
         title="Paleoficha aleatoria"
@@ -37,11 +34,6 @@
     🎲
 
 </button>
-
-
-<!-- =====================================================
-     BOTÓN MENÚ PRINCIPAL
-     ===================================================== -->
 
 <button id="botonMenuPrincipal"
         class="botonCircularSuperior"
@@ -53,7 +45,6 @@
 
 </button>
 
-
 <header id="cabecera">
 
     <h1>PalEntropía</h1>
@@ -63,11 +54,6 @@
     </div>
 
 </header>
-
-
-<!-- =====================================================
-     BUSCADOR ANTIGUO
-     ===================================================== -->
 
 <section id="controlesBusqueda">
 
@@ -79,11 +65,6 @@
     </button>
 
 </section>
-
-
-<!-- =====================================================
-     NAVEGACIÓN DE PALEOFICHAS
-     ===================================================== -->
 
 <section id="controlesNavegacion"
          aria-label="Navegación de paleofichas">
@@ -98,7 +79,6 @@
 
     </button>
 
-
     <button id="botonAnterior"
             class="botonNavegacion"
             type="button"
@@ -109,13 +89,11 @@
 
     </button>
 
-
     <span id="posicionNavegacion">
 
         — / —
 
     </span>
-
 
     <button id="botonSiguiente"
             class="botonNavegacion"
@@ -127,7 +105,6 @@
 
     </button>
 
-
     <button id="botonUltimo"
             class="botonNavegacion"
             type="button"
@@ -138,31 +115,20 @@
 
     </button>
 
-
-    <!-- =================================================
-         ÍNDICE DEL TORNEO
-         ================================================= -->
-
     <a id="botonIndiceTorneo"
-   href="../torneo/index.html"
-   title="Índice del torneo"
-   aria-label="Índice del torneo">
+       href="#"
+       title="Índice del torneo"
+       aria-label="Índice del torneo">
 
-    ⚔️
+        ⚔️
 
     </a>
 
 </section>
 
-
 <div id="estado">
     Cargando contenedor...
 </div>
-
-
-<!-- =====================================================
-     FICHA
-     ===================================================== -->
 
 <main id="ficha"
       class="ficha"
@@ -171,11 +137,6 @@
     <div id="titulo"></div>
 
     <div id="codigoFicha"></div>
-
-
-    <!-- =================================================
-         BOTÓN ARENA
-         ================================================= -->
 
     <button id="botonArena"
             type="button"
@@ -186,22 +147,12 @@
 
     </button>
 
-
-    <!-- =================================================
-         IMAGEN PRINCIPAL
-         ================================================= -->
-
     <div id="contenedorImagenPrincipal">
 
         <img id="imagenPrincipal"
              alt="Imagen principal de la paleoficha">
 
     </div>
-
-
-    <!-- =================================================
-         VÍDEO
-         ================================================= -->
 
     <div id="videoFicha"
          style="display:none;">
@@ -217,13 +168,7 @@
 
     </div>
 
-
-    <!-- =================================================
-         INFORMACIÓN
-         ================================================= -->
-
     <section id="bloqueInfo">
-
 
         <div class="campoInfo">
 
@@ -235,7 +180,6 @@
 
         </div>
 
-
         <div class="campoInfo">
 
             <span class="campo">
@@ -246,39 +190,20 @@
 
         </div>
 
-
     </section>
 
-
-    <!-- =================================================
-         GALERÍA
-         ================================================= -->
-
     <section id="galeria">
-
 
         <img id="img2"
              alt="Imagen secundaria 1">
 
-
         <img id="img3"
              alt="Imagen secundaria 2">
 
-
     </section>
-
-
-    <!-- =================================================
-         CRONOLOGÍA
-         ================================================= -->
 
     <div id="cronologia">
     </div>
-
-
-    <!-- =================================================
-         TAXONOMÍA
-         ================================================= -->
 
     <section id="bloqueTaxon">
 
@@ -294,18 +219,12 @@
 
     </section>
 
-
-    <!-- =================================================
-         ESTADÍSTICAS
-         ================================================= -->
-
     <section id="bloqueEstadisticas"
              style="display:none;">
 
         <h2>
             Estadísticas
         </h2>
-
 
         <div id="estadisticas"
              class="stats">
@@ -315,11 +234,6 @@
     </section>
 
 </main>
-
-
-<!-- =====================================================
-     LIGHTBOX DE IMÁGENES
-     ===================================================== -->
 
 <div id="visorImagen"
      class="visor"
@@ -334,23 +248,16 @@
 
     </button>
 
-
     <img id="imagenAmpliada"
          alt="Imagen ampliada">
 
 </div>
-
-
-<!-- =====================================================
-     EXPLORADOR DE PALEOFICHAS
-     ===================================================== -->
 
 <div id="visorBuscador"
      class="visor"
      aria-hidden="true">
 
     <div id="ventanaBuscador">
-
 
         <button id="cerrarBuscador"
                 class="botonCerrar botonCerrarBuscador"
@@ -361,35 +268,25 @@
 
         </button>
 
-
         <h2>
             Explorador de Paleofichas
         </h2>
-
 
         <input id="buscarNombre"
                type="text"
                placeholder="Buscar por nombre o código"
                autocomplete="off">
 
-
         <div id="listaResultados">
         </div>
-
 
     </div>
 
 </div>
 
-
-<!-- =====================================================
-     ALMACÉN MAESTRO
-     ===================================================== -->
-
 <script>
 
 window.MASTER_ACTUAL = null;
-
 
 window.cargarMasterPorJ1 =
 async function(j1) {
@@ -406,12 +303,8 @@ async function(j1) {
 
     }
 
-
     const respuesta =
-        await fetch(
-            "master.csv"
-        );
-
+        await fetch("master.csv");
 
     if (!respuesta.ok) {
 
@@ -421,46 +314,33 @@ async function(j1) {
 
     }
 
-
     const texto =
         await respuesta.text();
-
 
     const lineas =
         texto.split(/\r?\n/);
 
+    for (const linea of lineas) {
 
-    for (
-        const linea of lineas
-    ) {
-
-        if (
-            !linea.trim()
-        ) {
+        if (!linea.trim()) {
 
             continue;
 
         }
-
 
         const columnas =
             linea.split(",");
 
-
-        if (
-            columnas.length < 21
-        ) {
+        if (columnas.length < 21) {
 
             continue;
 
         }
-
 
         const codigo =
             String(
                 columnas[0]
             ).trim();
-
 
         if (
             codigo !==
@@ -471,79 +351,36 @@ async function(j1) {
 
         }
 
-
         window.MASTER_ACTUAL = {
 
-            j1:
-                columnas[0]?.trim() || "",
+            j1: columnas[0]?.trim() || "",
+            j2: columnas[1]?.trim() || "",
+            j3: columnas[2]?.trim() || "",
+            j4: columnas[3]?.trim() || "",
+            j5: columnas[4]?.trim() || "",
+            j6: columnas[5]?.trim() || "",
+            j7: columnas[6]?.trim() || "",
+            j8: columnas[7]?.trim() || "",
+            j9: columnas[8]?.trim() || "",
+            j10: columnas[9]?.trim() || "",
 
-            j2:
-                columnas[1]?.trim() || "",
-
-            j3:
-                columnas[2]?.trim() || "",
-
-            j4:
-                columnas[3]?.trim() || "",
-
-            j5:
-                columnas[4]?.trim() || "",
-
-            j6:
-                columnas[5]?.trim() || "",
-
-            j7:
-                columnas[6]?.trim() || "",
-
-            j8:
-                columnas[7]?.trim() || "",
-
-            j9:
-                columnas[8]?.trim() || "",
-
-            j10:
-                columnas[9]?.trim() || "",
-
-            e1:
-                columnas[10]?.trim() || "",
-
-            e2:
-                columnas[11]?.trim() || "",
-
-            e3:
-                columnas[12]?.trim() || "",
-
-            e4:
-                columnas[13]?.trim() || "",
-
-            e5:
-                columnas[14]?.trim() || "",
-
-            e6:
-                columnas[15]?.trim() || "",
-
-            e7:
-                columnas[16]?.trim() || "",
-
-            e8:
-                columnas[17]?.trim() || "",
-
-            e9:
-                columnas[18]?.trim() || "",
-
-            e10:
-                columnas[19]?.trim() || "",
-
-            e11:
-                columnas[20]?.trim() || ""
+            e1: columnas[10]?.trim() || "",
+            e2: columnas[11]?.trim() || "",
+            e3: columnas[12]?.trim() || "",
+            e4: columnas[13]?.trim() || "",
+            e5: columnas[14]?.trim() || "",
+            e6: columnas[15]?.trim() || "",
+            e7: columnas[16]?.trim() || "",
+            e8: columnas[17]?.trim() || "",
+            e9: columnas[18]?.trim() || "",
+            e10: columnas[19]?.trim() || "",
+            e11: columnas[20]?.trim() || ""
 
         };
-
 
         return window.MASTER_ACTUAL;
 
     }
-
 
     window.MASTER_ACTUAL = null;
 
@@ -553,117 +390,48 @@ async function(j1) {
 
 </script>
 
-
-<!-- =====================================================
-     MÓDULOS BASE
-     ===================================================== -->
-
 <script src="leepaljson.js"></script>
-
 <script src="palvideo.js"></script>
-
 <script src="buscaruta.js"></script>
-
 <script src="cargacont.js"></script>
-
 <script src="palbuscador.js"></script>
-
 <script src="palnavegador.js"></script>
-
 <script src="palgeo.js"></script>
-
 <script src="palgeosimplificado.js"></script>
-
 <script src="leepalgeo.js"></script>
-
 <script src="palcabecera.js"></script>
-
-
-<!-- =====================================================
-     TAXONOMÍA
-     ===================================================== -->
 
 <script src="paltaxon.js"></script>
 
-
-<!-- =====================================================
-     CONTENEDOR GEOLOGÍA
-     ===================================================== -->
-
 <script src="cont07.js"></script>
 
-
-<!-- =====================================================
-     GENERADOR 1.1
-     ===================================================== -->
-
 <script src="cab01.js"></script>
-
 <script src="cab02.js"></script>
-
 <script src="cab03.js"></script>
-
 <script src="cab04.js"></script>
-
 <script src="cab05.js"></script>
-
 <script src="cab06.js"></script>
-
 <script src="cab07.js"></script>
-
 <script src="cab08.js"></script>
-
 <script src="cab09.js"></script>
-
 <script src="palmodo.js"></script>
-
 <script src="cab12.js"></script>
-
 <script src="palmedio.js"></script>
-
 <script src="cab13.js"></script>
-
 <script src="palhab.js"></script>
-
 <script src="palhabdecoder.js"></script>
-
 <script src="cab14.js"></script>
 
-
-<!-- =====================================================
-     BUSCADOR UNIVERSAL — CAB15 / CAB16
-     ===================================================== -->
-
 <script src="cab15.js"></script>
-
 <script src="cab16.js"></script>
-
 <script src="cab17.js"></script>
-
 <script src="cab18.js"></script>
-
 <script src="cab19.js"></script>
 
-
-<!-- =====================================================
-     MATRIXFILTRO
-     ===================================================== -->
-
 <script src="matrixfiltro.js"></script>
-
-
-<!-- =====================================================
-     MATRIXNAVEGADOR
-     ===================================================== -->
-
 <script src="matrixnavegador.js"></script>
 
 <script src="cab10.js"></script>
-
-
-<!-- =====================================================
-     ARRANQUE VISOR
-     ===================================================== -->
 
 <script>
 
@@ -675,36 +443,29 @@ document.addEventListener(
 
             await window.PALNAVEGADOR.inicializar();
 
-
             const parametros =
                 new URLSearchParams(
                     window.location.search
                 );
 
-
             const codigo =
                 parametros.get("codigo");
 
-
             const arena =
                 parametros.get("arena");
-
 
             const esArena =
                 arena === "1" ||
                 arena === "2";
 
-
             let codigoArenaInicial =
                 codigo;
-
 
             if (codigo) {
 
                 await window.PALNAVEGADOR.cargarPorCodigo(
                     codigo
                 );
-
 
                 if (esArena) {
 
@@ -713,7 +474,6 @@ document.addEventListener(
 
                             const codigoActual =
                                 window.PALNAVEGADOR.codigoActual;
-
 
                             if (
                                 codigoActual &&
@@ -725,15 +485,11 @@ document.addEventListener(
                                     "palentropia_arena_seleccion",
                                     JSON.stringify({
 
-                                        arena:
-                                            arena,
-
-                                        codigo:
-                                            codigoActual
+                                        arena: arena,
+                                        codigo: codigoActual
 
                                     })
                                 );
-
 
                                 codigoArenaInicial =
                                     codigoActual;
@@ -746,11 +502,9 @@ document.addEventListener(
 
                 }
 
-
                 return;
 
             }
-
 
             await window.PALNAVEGADOR.aleatorio();
 
@@ -770,9 +524,59 @@ document.addEventListener(
 
 </script>
 
-<!-- =====================================================
-     BOTÓN ARENA
-     ===================================================== -->
+<script>
+
+function abrirIndiceTorneo() {
+
+    const matriz =
+        window.MATRIXFILTRO &&
+        Array.isArray(
+            window.MATRIXFILTRO.datos
+        )
+            ? window.MATRIXFILTRO.datos
+            : [];
+
+    localStorage.setItem(
+        "palentropia_matriz_combatientes",
+        JSON.stringify(matriz)
+    );
+
+    window.location.href =
+        "../torneo/index.html";
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        const boton =
+            document.getElementById(
+                "botonIndiceTorneo"
+            );
+
+        if (!boton) {
+
+            return;
+
+        }
+
+        boton.addEventListener(
+            "click",
+            function(event) {
+
+                event.preventDefault();
+
+                abrirIndiceTorneo();
+
+            }
+        );
+
+    }
+);
+
+</script>
 
 <script>
 
@@ -781,13 +585,11 @@ function abrirArenaDesdeVisor() {
     const codigo =
         window.PALNAVEGADOR.codigoActual;
 
-
     if (!codigo) {
 
         return;
 
     }
-
 
     const url =
         "../arena2/pruebaarena_2.html" +
@@ -795,16 +597,10 @@ function abrirArenaDesdeVisor() {
         encodeURIComponent(codigo) +
         "&arena=1";
 
-
     window.location.href =
         url;
 
 }
-
-
-/* =====================================================
-   CONECTAR BOTÓN ARENA
-   ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -815,13 +611,11 @@ document.addEventListener(
                 "botonArena"
             );
 
-
         if (!botonArena) {
 
             return;
 
         }
-
 
         botonArena.addEventListener(
             "click",
@@ -834,4 +628,5 @@ document.addEventListener(
 </script>
 
 </body>
+
 </html>
