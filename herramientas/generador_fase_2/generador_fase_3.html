@@ -142,8 +142,6 @@
 
     <!-- =================================================
          ÍNDICE DEL TORNEO
-         RUTA CORRECTA DESDE:
-         herramientas/generador_fase_2/
          ================================================= -->
 
     <a id="botonIndiceTorneo"
@@ -705,10 +703,9 @@ document.addEventListener(
 function abrirIndiceTorneo() {
 
     /*
-    Primero actualizamos MATRIXFILTRO.
-
-    No modificamos matrixfiltro.js.
-    No modificamos matrixnavegador.js.
+    =====================================================
+    MATRIZ DE PARTICIPANTES
+    =====================================================
     */
 
     let matriz = [];
@@ -746,7 +743,9 @@ function abrirIndiceTorneo() {
 
 
     /*
-    Normalizamos J1 y eliminamos duplicados.
+    =====================================================
+    NORMALIZAR MATRIZ
+    =====================================================
     */
 
     matriz =
@@ -767,12 +766,55 @@ function abrirIndiceTorneo() {
 
 
     /*
-    Transferimos la matriz al índice del torneo.
+    =====================================================
+    CRITERIO DE BÚSQUEDA DEL TORNEO
+    =====================================================
+
+    CAB16 utiliza buscarUniversal como campo
+    real del buscador.
+
+    Guardamos exactamente el texto introducido.
+    No lo transformamos aquí.
+
+    La transformación visual se realizará
+    posteriormente en combates.html.
+    */
+
+    const campoBusqueda =
+        document.getElementById(
+            "buscarUniversal"
+        );
+
+
+    const criterioTorneo =
+        campoBusqueda
+            ? String(
+                campoBusqueda.value || ""
+              ).trim()
+            : "";
+
+
+    /*
+    =====================================================
+    GUARDAR PARTICIPANTES
+    =====================================================
     */
 
     localStorage.setItem(
         "palentropia_matriz_combatientes",
         JSON.stringify(matriz)
+    );
+
+
+    /*
+    =====================================================
+    GUARDAR CRITERIO DEL TORNEO
+    =====================================================
+    */
+
+    localStorage.setItem(
+        "palentropia_criterio_torneo",
+        criterioTorneo
     );
 
 
@@ -782,17 +824,16 @@ function abrirIndiceTorneo() {
     );
 
 
+    console.log(
+        "PalEntropía — criterio del torneo:",
+        criterioTorneo
+    );
+
+
     /*
-    RUTA CORRECTA:
-
-    visor:
-    herramientas/generador_fase_2/generador_fase_3.html
-
-    torneo:
-    herramientas/torneo/index.html
-
-    Por tanto:
-    ../torneo/index.html
+    =====================================================
+    IR AL ÍNDICE DEL TORNEO
+    =====================================================
     */
 
     window.location.href =
