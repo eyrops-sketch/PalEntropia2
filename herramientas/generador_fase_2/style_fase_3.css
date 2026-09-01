@@ -223,6 +223,7 @@ h1{
  transform:scale(.92);
 }
 
+
 /*=========================================================
  VÍDEO
 =========================================================*/
@@ -772,7 +773,7 @@ h2{
  color:#aaa;
  padding:4px 9px;
  border-radius:12px;
-  }
+}
 /*=========================================================
  BUSCADOR UNIVERSAL — CAB15 / CAB16
 =========================================================*/
@@ -794,41 +795,29 @@ h2{
 
 #botonBuscarUniversal{
  order:0;
-
  width:38px;
  height:38px;
-
  min-width:38px;
  min-height:38px;
-
  padding:0;
-
  display:inline-flex;
  align-items:center;
  justify-content:center;
-
  background:#151719;
  color:#fff;
-
  border:1px solid #62d6ff;
  border-radius:9px;
-
  font-size:17px;
-
  cursor:pointer;
-
  box-shadow:
   0 0 8px rgba(98,214,255,.14);
-
  transition:.20s;
 }
 
 #botonBuscarUniversal:hover{
  background:#1d2529;
  color:#62d6ff;
-
  border-color:#62d6ff;
-
  box-shadow:
   0 0 14px rgba(98,214,255,.30);
 }
@@ -844,32 +833,22 @@ h2{
 
 #labelBusquedaUniversal{
  order:1;
-
  height:38px;
  min-height:38px;
-
  display:inline-flex;
  align-items:center;
  justify-content:center;
-
  padding:0 14px;
-
  color:#fff;
-
  background:#151719;
-
  border:1px solid #62d6ff;
  border-radius:9px;
-
  font-size:19px;
  font-weight:600;
-
  line-height:1;
  letter-spacing:.3px;
-
  white-space:nowrap;
  text-align:center;
-
  box-shadow:
   0 0 8px rgba(98,214,255,.14);
 }
@@ -890,34 +869,25 @@ h2{
 
 #labelResultadosCab16{
  margin:8px 0 10px;
-
  text-align:center;
-
  color:#62d6ff;
-
  font-size:14px;
  font-weight:600;
 }
-
 
 #checkBusquedaCab16{
  display:flex;
  align-items:center;
  justify-content:center;
-
  gap:7px;
-
  margin:8px auto 12px;
-
  color:#aaa;
-
  font-size:13px;
 }
 
 #checkBusquedaCab16 input{
  accent-color:#62d6ff;
 }
-
 
 #resultadosCab16{
  display:flex;
@@ -926,34 +896,24 @@ h2{
  width:100%;
 }
 
-
 .resultadoCab16{
  width:100%;
-
  padding:10px 12px;
-
  background:#151719;
  color:#fff;
-
  border:1px solid #25292c;
  border-left:3px solid #62d6ff;
-
  border-radius:9px;
-
  font-size:15px;
  font-weight:600;
-
  text-align:center;
-
  cursor:pointer;
-
  transition:.20s;
 }
 
 .resultadoCab16:hover{
  background:#22343d;
  border-color:#62d6ff;
-
  box-shadow:
   0 0 10px rgba(98,214,255,.20);
 }
@@ -969,40 +929,27 @@ h2{
 
 #visorBuscadorUniversal{
  display:none;
-
  position:fixed;
  inset:0;
-
  width:100vw;
  height:100vh;
-
  padding:20px;
-
  background:rgba(0,0,0,.92);
-
  z-index:999997;
-
  justify-content:center;
  align-items:center;
 }
 
-
 #ventanaBuscadorUniversal{
  position:relative;
-
  width:90%;
  max-width:700px;
  max-height:80vh;
-
  overflow:auto;
-
  padding:25px;
-
  background:#181a1c;
-
  border:2px solid #62d6ff;
  border-radius:18px;
-
  box-shadow:
   0 0 25px rgba(98,214,255,.35),
   0 10px 35px rgba(0,0,0,.45);
@@ -1015,26 +962,17 @@ h2{
 
 #cerrarBuscadorUniversal{
  position:absolute;
-
  top:10px;
  right:12px;
-
  width:36px;
  height:36px;
-
  padding:0;
-
  border:none;
-
  background:none;
-
  color:#fff;
-
  font-size:28px;
  line-height:36px;
-
  cursor:pointer;
-
  z-index:2;
 }
 
@@ -1045,13 +983,9 @@ h2{
 
 #ventanaBuscadorUniversal h2{
  margin:0;
-
  padding:0 35px 0 0;
-
  text-align:center;
-
  color:#62d6ff;
-
  font-size:24px;
  line-height:1.2;
 }
@@ -1063,23 +997,15 @@ h2{
 
 #buscarUniversal{
  display:block;
-
  width:90%;
-
  margin:20px auto;
-
  padding:10px;
-
  font-size:18px;
-
  text-align:center;
-
  background:#151719;
  color:#fff;
-
  border:2px solid #62d6ff;
  border-radius:10px;
-
  outline:none;
 }
 
@@ -1121,7 +1047,6 @@ h2{
  body{
   padding:15px;
  }
-
 
  /*-------------------------------------------------------
     CABECERA
@@ -1286,28 +1211,20 @@ h2{
   min-height:38px;
  }
 
-
  #botonBuscarUniversal{
   width:38px;
   height:38px;
-
   min-width:38px;
   min-height:38px;
-
   font-size:16px;
-
   border-radius:8px;
  }
-
 
  #labelBusquedaUniversal{
   height:38px;
   min-height:38px;
-
   padding:0 12px;
-
   font-size:18px;
-
   border-radius:8px;
  }
 
@@ -1322,27 +1239,22 @@ h2{
   padding:20px;
  }
 
-
  #ventanaBuscadorUniversal h2{
   font-size:22px;
  }
-
 
  #buscarUniversal{
   width:95%;
   font-size:17px;
  }
 
-
  #labelResultadosCab16{
   font-size:13px;
  }
 
-
  #checkBusquedaCab16{
   font-size:12px;
  }
-
 
  .resultadoCab16{
   padding:10px;
@@ -1361,15 +1273,14 @@ h2{
   top:10px;
  }
 
-
  #botonAleatorio{
   width:34px;
   height:34px;
   right:50px;
   top:10px;
  }
-
 }
+
 
 /*=========================================================
  BOTÓN ARENA — OCULTO TEMPORALMENTE
@@ -1378,6 +1289,8 @@ h2{
 #botonArena{
  display:none!important;
 }
+
+
 /*=========================================================
  FIN STYLE.CSS
 =========================================================*/
