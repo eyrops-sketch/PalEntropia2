@@ -4,15 +4,19 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>PalEntropía — Torneo</title>
 
-<link rel="stylesheet" href="index.css">
+<link rel="stylesheet"
+      href="index.css">
 
 </head>
 
 <body>
+
 
 <!-- =====================================================
      BOTÓN MENÚ PRINCIPAL
@@ -50,6 +54,7 @@
 
 <main id="torneo">
 
+
     <section id="cabeceraTorneo">
 
         <h2>⚔️ Torneo PalEntropía</h2>
@@ -66,6 +71,7 @@
          ================================================= -->
 
     <section id="indiceTorneo">
+
 
         <div class="bloqueTorneo">
 
@@ -86,13 +92,14 @@
 
             <h3>📋 Participantes</h3>
 
-            <a
+            <button
+                id="botonParticipantes"
                 class="botonTorneo"
-                href="participantes.html">
+                type="button">
 
                 Ver participantes
 
-            </a>
+            </button>
 
         </div>
 
@@ -126,7 +133,27 @@
 
         </div>
 
+
     </section>
+
+
+    <!-- =================================================
+         PARTICIPANTES
+         ================================================= -->
+
+    <section
+        id="panelParticipantes"
+        style="display:none;">
+
+        <h2>
+            📋 Participantes
+        </h2>
+
+        <div id="listaParticipantes">
+        </div>
+
+    </section>
+
 
 </main>
 
@@ -138,7 +165,7 @@
 <section id="volver">
 
     <a
-        href="../../index.html"
+        href="../../generador_fase_2/generador_fase_3.html"
         id="botonVolver">
 
         ← Volver al visor
@@ -149,15 +176,7 @@
 
 
 <!-- =====================================================
-     MATRIXNAVEGADOR
-     NO SE MODIFICA
-     ===================================================== -->
-
-<script src="../generador_fase_2/matrixnavegador.js"></script>
-
-
-<!-- =====================================================
-     CARGA DE LA MATRIZ DEL TORNEO
+     PARTICIPANTES DEL TORNEO
      ===================================================== -->
 
 <script>
@@ -165,119 +184,464 @@
 window.MATRIZ_COMBATIENTES_TORNEO = [];
 
 
-async function cargarMatrizCombatientesTorneo() {
+/* =====================================================
+   CARGAR PARTICIPANTES
+   ===================================================== */
+
+async function cargarParticipantesTorneo() {
+
+    const lista =
+        document.getElementById(
+            "listaParticipantes"
+        );
+
+
+    if (!lista) {
+
+        return;
+
+    }
+
+
+    lista.innerHTML = "";
+
+
+    /*
+    Recuperamos exclusivamente los J1
+    preparados por el visor.
+    */
+
+    const matrizGuardada =
+        localStorage.getItem(
+            "palentropia_matriz_combatientes"
+        );
+
+
+    if (!matrizGuardada) {
+
+        lista.innerHTML =
+            "<p>No hay participantes cargados.</p>";
+
+        return;
+
+    }
+
+
+    let matrizJ1;
+
 
     try {
 
-        if (
-            !window.MatrixNavegador
-        ) {
-
-            console.error(
-                "No se encontró MatrixNavegador."
+        matrizJ1 =
+            JSON.parse(
+                matrizGuardada
             );
-
-            return;
-
-        }
-
-
-        /*
-        La matriz de J1 procede de los registros
-        disponibles actualmente en PALNAVEGADOR.
-        */
-
-        let matrizJ1 = [];
-
-
-        if (
-            window.PALNAVEGADOR &&
-            Array.isArray(
-                window.PALNAVEGADOR.matriz
-            )
-        ) {
-
-            matrizJ1 =
-                window.PALNAVEGADOR.matriz
-                    .map(
-                        registro =>
-                            registro &&
-                            registro.j1
-                    )
-                    .filter(Boolean);
-
-        }
-
-
-        /*
-        Si PALNAVEGADOR mantiene los códigos
-        en otra propiedad, usamos codigoActual
-        como respaldo para el registro actual.
-        */
-
-        if (
-            !matrizJ1.length &&
-            window.PALNAVEGADOR &&
-            window.PALNAVEGADOR.codigoActual
-        ) {
-
-            matrizJ1 = [
-                window.PALNAVEGADOR.codigoActual
-            ];
-
-        }
-
-
-        /*
-        Obtener los registros completos mediante
-        MatrixNavegador, sin modificarlo.
-        */
-
-        window.MATRIZ_COMBATIENTES_TORNEO =
-            await window.MatrixNavegador.obtener(
-                matrizJ1
-            );
-
-
-        console.log(
-            "Matriz de combatientes del torneo:",
-            window.MATRIZ_COMBATIENTES_TORNEO
-        );
 
     }
 
     catch (error) {
 
         console.error(
-            "Error cargando la matriz de combatientes:",
+            "Matriz de combatientes no válida:",
             error
         );
+
+        lista.innerHTML =
+            "<p>No se pudo cargar la matriz de participantes.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        !Array.isArray(matrizJ1) ||
+        !matrizJ1.length
+    ) {
+
+        lista.innerHTML =
+            "<p>No hay participantes cargados.</p>";
+
+        return;
+
+    }
+
+
+    /*
+    Limpiamos y normalizamos J1.
+    */
+
+    matrizJ1 =
+        matrizJ1
+            .map(
+                codigo =>
+                    String(
+                        codigo || ""
+                    ).trim()
+            )
+            .filter(
+                codigo =>
+                    codigo !== ""
+            );
+
+
+    /*
+    =====================================================
+    PALEOFICHAS.JSON
+    =====================================================
+    */
+
+    const respuestaJSON =
+        await fetch(
+            "../generador_fase_2/paleofichas.json"
+        );
+
+
+    if (!respuestaJSON.ok) {
+
+        throw new Error(
+            "No se pudo cargar paleofichas.json."
+        );
+
+    }
+
+
+    const datosJSON =
+        await respuestaJSON.json();
+
+
+    /*
+    =====================================================
+    MASTER.CSV
+    =====================================================
+    */
+
+    const respuestaMaster =
+        await fetch(
+            "../generador_fase_2/master.csv"
+        );
+
+
+    if (!respuestaMaster.ok) {
+
+        throw new Error(
+            "No se pudo cargar master.csv."
+        );
+
+    }
+
+
+    const textoMaster =
+        await respuestaMaster.text();
+
+
+    /*
+    =====================================================
+    MAPA J1 → J2
+    =====================================================
+    */
+
+    const mapaNombres =
+        new Map();
+
+
+    /*
+    paleofichas.json puede contener los registros
+    como array.
+    */
+
+    if (
+        Array.isArray(
+            datosJSON
+        )
+    ) {
+
+        datosJSON.forEach(
+            registro => {
+
+                if (
+                    !registro
+                ) {
+
+                    return;
+
+                }
+
+
+                const j1 =
+                    String(
+                        registro.j1 ||
+                        registro.codigo ||
+                        registro.J1 ||
+                        ""
+                    ).trim();
+
+
+                const j2 =
+                    String(
+                        registro.j2 ||
+                        registro.nombre ||
+                        registro.J2 ||
+                        ""
+                    ).trim();
+
+
+                if (
+                    j1 &&
+                    j2
+                ) {
+
+                    mapaNombres.set(
+                        j1,
+                        j2
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+    =====================================================
+    MAPA DEL MASTER
+    =====================================================
+    */
+
+    const mapaMaster =
+        new Map();
+
+
+    const lineas =
+        textoMaster.split(
+            /\r?\n/
+        );
+
+
+    lineas.forEach(
+        linea => {
+
+            if (
+                !linea.trim()
+            ) {
+
+                return;
+
+            }
+
+
+            const columnas =
+                linea.split(",");
+
+
+            if (
+                columnas.length < 21
+            ) {
+
+                return;
+
+            }
+
+
+            const j1 =
+                String(
+                    columnas[0] || ""
+                ).trim();
+
+
+            if (
+                !j1
+            ) {
+
+                return;
+
+            }
+
+
+            mapaMaster.set(
+                j1,
+                columnas
+            );
+
+        }
+    );
+
+
+    /*
+    =====================================================
+    CONSTRUIR MATRIZ FINAL
+    =====================================================
+    */
+
+    const participantes = [];
+
+
+    matrizJ1.forEach(
+        j1 => {
+
+            const columnas =
+                mapaMaster.get(
+                    j1
+                );
+
+
+            /*
+            J2 se obtiene de paleofichas.json.
+            */
+
+            const j2 =
+                mapaNombres.get(
+                    j1
+                ) || "";
+
+
+            if (
+                !columnas
+            ) {
+
+                return;
+
+            }
+
+
+            participantes.push({
+
+                j1:
+                    j1,
+
+                j2:
+                    j2,
+
+                master:
+                    columnas
+
+            });
+
+        }
+    );
+
+
+    window.MATRIZ_COMBATIENTES_TORNEO =
+        participantes;
+
+
+    /*
+    =====================================================
+    MOSTRAR SOLO J1 Y J2
+    =====================================================
+    */
+
+    participantes.forEach(
+        participante => {
+
+            const fila =
+                document.createElement(
+                    "div"
+                );
+
+
+            fila.className =
+                "participanteTorneo";
+
+
+            fila.textContent =
+                participante.j1 +
+                " — " +
+                participante.j2;
+
+
+            lista.appendChild(
+                fila
+            );
+
+        }
+    );
+
+
+    if (
+        !participantes.length
+    ) {
+
+        lista.innerHTML =
+            "<p>No se encontraron participantes.</p>";
 
     }
 
 }
 
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        cargarMatrizCombatientesTorneo();
-
-    }
-);
-
-</script>
-
-
-<!-- =====================================================
-     BOTÓN MENÚ PRINCIPAL
-     ===================================================== -->
-
-<script>
+/* =====================================================
+   BOTÓN PARTICIPANTES
+   ===================================================== */
 
 document
-    .getElementById("botonMenuPrincipal")
+    .getElementById(
+        "botonParticipantes"
+    )
+    .addEventListener(
+        "click",
+        async function() {
+
+            const panel =
+                document.getElementById(
+                    "panelParticipantes"
+                );
+
+
+            if (
+                panel.style.display ===
+                "none"
+            ) {
+
+                panel.style.display =
+                    "block";
+
+
+                try {
+
+                    await cargarParticipantesTorneo();
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Error cargando participantes:",
+                        error
+                    );
+
+                    document
+                        .getElementById(
+                            "listaParticipantes"
+                        )
+                        .innerHTML =
+                            "<p>Error cargando participantes.</p>";
+
+                }
+
+            }
+
+            else {
+
+                panel.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   BOTÓN MENÚ PRINCIPAL
+   ===================================================== */
+
+document
+    .getElementById(
+        "botonMenuPrincipal"
+    )
     .addEventListener(
         "click",
         function() {
