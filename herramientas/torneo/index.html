@@ -1,1 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PalEntropía — Torneo</title>
+
+<link rel="stylesheet" href="index.css">
+
+</head>
+
+<body>
+
+<!-- =====================================================
+     BOTÓN MENÚ PRINCIPAL
+     ===================================================== -->
+
+<button
+    id="botonMenuPrincipal"
+    type="button"
+    title="Volver al menú principal"
+    aria-label="Volver al menú principal">
+
+    🏠
+
+</button>
+
+
+<!-- =====================================================
+     CABECERA
+     ===================================================== -->
+
+<header id="cabecera">
+
+    <h1>PalEntropía</h1>
+
+    <div id="subtitulo">
+        Torneo
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     CONTENEDOR PRINCIPAL
+     ===================================================== -->
+
+<main id="torneo">
+
+    <section id="cabeceraTorneo">
+
+        <h2>⚔️ Torneo PalEntropía</h2>
+
+        <p>
+            Índice del torneo
+        </p>
+
+    </section>
+
+
+    <!-- =================================================
+         ÍNDICE DEL TORNEO
+         ================================================= -->
+
+    <section id="indiceTorneo">
+
+        <div class="bloqueTorneo">
+
+            <h3>🏆 Torneo</h3>
+
+            <a
+                class="botonTorneo"
+                href="torneo.html">
+
+                Entrar al torneo
+
+            </a>
+
+        </div>
+
+
+        <div class="bloqueTorneo">
+
+            <h3>📋 Participantes</h3>
+
+            <a
+                class="botonTorneo"
+                href="participantes.html">
+
+                Ver participantes
+
+            </a>
+
+        </div>
+
+
+        <div class="bloqueTorneo">
+
+            <h3>⚔️ Combates</h3>
+
+            <a
+                class="botonTorneo"
+                href="combates.html">
+
+                Ver combates
+
+            </a>
+
+        </div>
+
+
+        <div class="bloqueTorneo">
+
+            <h3>🏅 Clasificación</h3>
+
+            <a
+                class="botonTorneo"
+                href="clasificacion.html">
+
+                Ver clasificación
+
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     VOLVER AL VISOR
+     ===================================================== -->
+
+<section id="volver">
+
+    <a
+        href="../../index.html"
+        id="botonVolver">
+
+        ← Volver al visor
+
+    </a>
+
+</section>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script>
+
+document
+    .getElementById("botonMenuPrincipal")
+    .addEventListener(
+        "click",
+        function() {
+
+            window.location.href =
+                "../../index.html";
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>
