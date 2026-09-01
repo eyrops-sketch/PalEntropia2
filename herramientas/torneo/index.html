@@ -1,10 +1,27 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport"
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>PalEntropía — Torneo</title><link rel="stylesheet"
-      href="index.css"></head><body><!-- =====================================================
+<title>PalEntropía — Torneo</title>
+
+<link rel="stylesheet"
+      href="index.css">
+
+</head>
+
+<body>
+
+<!-- =====================================================
      BOTÓN MENÚ PRINCIPAL
-     ===================================================== --><button
+     ===================================================== -->
+
+<button
 id="botonMenuPrincipal"
 type="button"
 title="Volver al menú principal"
@@ -12,19 +29,35 @@ aria-label="Volver al menú principal">
 
 🏠
 
-</button><!-- =====================================================
+</button>
+
+
+<!-- =====================================================
      CABECERA
-     ===================================================== --><header id="cabecera"><h1>PalEntropía</h1>
+     ===================================================== -->
+
+<header id="cabecera">
+
+<h1>PalEntropía</h1>
 
 <div id="subtitulo">
     Torneo
 </div>
 
-</header><!-- =====================================================
-     CONTENEDOR PRINCIPAL
-     ===================================================== --><main id="torneo"><section id="cabeceraTorneo">
+</header>
 
-    <h2>⚔️ Torneo PalEntropía</h2>
+
+<!-- =====================================================
+     CONTENEDOR PRINCIPAL
+     ===================================================== -->
+
+<main id="torneo">
+
+<section id="cabeceraTorneo">
+
+    <h2 id="tituloCabeceraTorneo">
+        ⚔️ Torneo PalEntropía
+    </h2>
 
     <p>
         Índice del torneo
@@ -42,7 +75,9 @@ aria-label="Volver al menú principal">
 
     <div class="bloqueTorneo">
 
-        <h3>🏆 Torneo</h3>
+        <h3 id="tituloBloqueTorneo">
+            🏆 Torneo
+        </h3>
 
         <a
             class="botonTorneo"
@@ -121,9 +156,16 @@ aria-label="Volver al menú principal">
 
 </section>
 
-</main><!-- =====================================================
+</main>
+
+
+<!-- =====================================================
      VOLVER AL VISOR
-     ===================================================== --><section id="volver"><a
+     ===================================================== -->
+
+<section id="volver">
+
+<a
     href="../generador_fase_2/generador_fase_3.html"
     id="botonVolver">
 
@@ -131,11 +173,178 @@ aria-label="Volver al menú principal">
 
 </a>
 
-</section><!-- =====================================================
+</section>
+
+
+<!-- =====================================================
      PARTICIPANTES DEL TORNEO
-     ===================================================== --><script>
+     ===================================================== -->
+
+<script>
 
 window.MATRIZ_COMBATIENTES_TORNEO = [];
+
+
+/* =====================================================
+   CRITERIO IDENTIFICATIVO DEL TORNEO
+   ===================================================== */
+
+function obtenerCriterioTorneo() {
+
+    const criterio =
+        localStorage.getItem(
+            "palentropia_criterio_torneo"
+        );
+
+
+    if (
+        !criterio ||
+        !String(criterio).trim()
+    ) {
+
+        return "";
+
+    }
+
+
+    const valor =
+        String(
+            criterio
+        ).trim();
+
+
+    /*
+    =====================================================
+    TRANSFORMACIONES DE PRESENTACIÓN
+    =====================================================
+    */
+
+    const equivalencias = {
+
+        "perm":
+            "Pérmico",
+
+        "chord":
+            "Chordata",
+
+        "placen":
+            "Placentaria"
+
+    };
+
+
+    const clave =
+        valor.toLowerCase();
+
+
+    if (
+        equivalencias[clave]
+    ) {
+
+        return equivalencias[clave];
+
+    }
+
+
+    /*
+    Los códigos se conservan tal como fueron introducidos:
+    006
+    006_0
+    006_01
+    */
+
+    return valor;
+
+}
+
+
+/* =====================================================
+   MOSTRAR IDENTIFICADOR DEL TORNEO
+   ===================================================== */
+
+function mostrarIdentificadorTorneo() {
+
+    const criterio =
+        obtenerCriterioTorneo();
+
+
+    if (!criterio) {
+
+        return;
+
+    }
+
+
+    const subtitulo =
+        document.getElementById(
+            "subtitulo"
+        );
+
+
+    const tituloCabecera =
+        document.getElementById(
+            "tituloCabeceraTorneo"
+        );
+
+
+    const tituloBloque =
+        document.getElementById(
+            "tituloBloqueTorneo"
+        );
+
+
+    /*
+    =====================================================
+    CABECERA SUPERIOR
+    =====================================================
+    */
+
+    if (subtitulo) {
+
+        subtitulo.textContent =
+            "Torneo " +
+            criterio;
+
+    }
+
+
+    /*
+    =====================================================
+    CABECERA PRINCIPAL
+    =====================================================
+    */
+
+    if (tituloCabecera) {
+
+        tituloCabecera.textContent =
+            "⚔️ Torneo " +
+            criterio;
+
+    }
+
+
+    /*
+    =====================================================
+    BLOQUE TORNEO
+    =====================================================
+    */
+
+    if (tituloBloque) {
+
+        tituloBloque.textContent =
+            "🏆 Torneo " +
+            criterio;
+
+    }
+
+}
+
+
+/* =====================================================
+   INICIALIZAR IDENTIFICADOR
+   ===================================================== */
+
+mostrarIdentificadorTorneo();
 
 
 /* =====================================================
@@ -352,8 +561,7 @@ async function cargarParticipantesTorneo() {
 
     }
 
-
-    /*
+/*
     =====================================================
     MAPA DEL MASTER
     =====================================================
@@ -597,4 +805,8 @@ document
         }
     );
 
-</script></body></html>
+</script>
+
+</body>
+
+</html>
