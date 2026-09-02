@@ -1,1 +1,572 @@
+/* =========================================================
+   PALENTROPÍA
+   ARENA — COMBATE ESTÁNDAR
+   ========================================================= */
 
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+}
+
+body{
+  background:#05080b;
+  color:#dff7ff;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:14px;
+}
+
+
+/* =========================================================
+   CABECERA
+   ========================================================= */
+
+#cabecera{
+  width:100%;
+  padding:16px 12px 14px;
+  text-align:center;
+  border-bottom:1px solid #16313d;
+  background:#080d11;
+  box-shadow:0 2px 12px rgba(0,0,0,.35);
+}
+
+#cabecera .titulo{
+  font-size:22px;
+  font-weight:bold;
+  color:#62d6ff;
+  letter-spacing:.3px;
+}
+
+#cabecera .subtitulo{
+  margin-top:5px;
+  font-size:13px;
+  color:#9bb5bf;
+}
+
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+   ========================================================= */
+
+#arena{
+  width:100%;
+  max-width:1100px;
+  margin:0 auto;
+  padding:12px;
+}
+
+
+/* =========================================================
+   PANELES
+   ========================================================= */
+
+.panel{
+  width:100%;
+  margin-bottom:12px;
+  padding:14px;
+  border:1px solid #17313d;
+  border-radius:12px;
+  background:#091116;
+  box-shadow:0 0 12px rgba(0,0,0,.3);
+}
+
+.panel h2{
+  margin:0 0 14px;
+  padding:0;
+  font-size:17px;
+  color:#62d6ff;
+}
+
+
+/* =========================================================
+   CONFIGURACIÓN
+   ========================================================= */
+
+.entrada-combatiente{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.campo{
+  flex:1;
+}
+
+.campo label{
+  display:block;
+  margin-bottom:6px;
+  color:#b8d5de;
+  font-weight:bold;
+}
+
+.campo input{
+  width:100%;
+  height:42px;
+  padding:0 12px;
+  border:1px solid #28505e;
+  border-radius:8px;
+  outline:none;
+  background:#050a0d;
+  color:#e8fbff;
+  font-size:15px;
+}
+
+.campo input:focus{
+  border-color:#62d6ff;
+  box-shadow:0 0 8px rgba(98,214,255,.15);
+}
+
+.nombre-combatiente{
+  min-height:20px;
+  margin-top:6px;
+  color:#62d6ff;
+  font-size:13px;
+}
+
+.vs{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:28px;
+  color:#8aa4ad;
+  font-size:13px;
+  font-weight:bold;
+}
+
+
+#botonPreparar{
+  width:100%;
+  min-height:44px;
+  margin-top:14px;
+  padding:10px 14px;
+  border:1px solid #62d6ff;
+  border-radius:9px;
+  background:#0c2028;
+  color:#62d6ff;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:bold;
+  transition:.2s;
+}
+
+#botonPreparar:hover{
+  background:#62d6ff;
+  color:#031018;
+}
+
+#botonPreparar:active{
+  transform:scale(.98);
+}
+
+
+.mensaje{
+  min-height:20px;
+  margin-top:10px;
+  color:#91aeb8;
+  font-size:12px;
+  text-align:center;
+}
+
+
+/* =========================================================
+   ZONA DE COMBATIENTES
+   ========================================================= */
+
+.zona-combatientes{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+
+.tarjeta-combatiente{
+  width:100%;
+  padding:13px;
+  border:1px solid #21404b;
+  border-radius:12px;
+  background:#0a1318;
+  box-shadow:0 0 12px rgba(0,0,0,.28);
+}
+
+
+.cabecera-combatiente{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.nombre{
+  font-size:17px;
+  font-weight:bold;
+  color:#e7fbff;
+}
+
+.codigo{
+  margin-top:3px;
+  color:#75939d;
+  font-size:12px;
+}
+
+.perfil{
+  flex-shrink:0;
+  padding:5px 8px;
+  border:1px solid #254c59;
+  border-radius:7px;
+  background:#071015;
+  color:#62d6ff;
+  font-size:11px;
+  font-weight:bold;
+}
+
+
+/* =========================================================
+   VIDA
+   ========================================================= */
+
+.vida{
+  margin-bottom:12px;
+}
+
+.vida-texto{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:5px;
+  color:#b9d3da;
+  font-size:12px;
+}
+
+.barra-vida{
+  width:100%;
+  height:9px;
+  overflow:hidden;
+  border:1px solid #21404b;
+  border-radius:6px;
+  background:#05090c;
+}
+
+.vida-relleno{
+  width:100%;
+  height:100%;
+  border-radius:5px;
+  background:#62d6ff;
+  transition:width .25s ease;
+}
+
+
+/* =========================================================
+   ESTADÍSTICAS
+   ========================================================= */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:6px;
+}
+
+.stat{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:5px;
+  min-height:34px;
+  padding:6px 7px;
+  border:1px solid #17343f;
+  border-radius:7px;
+  background:#071015;
+}
+
+.stat span{
+  color:#91aeb8;
+  font-size:11px;
+}
+
+.stat strong{
+  color:#dff7ff;
+  font-size:13px;
+}
+
+
+.estado{
+  min-height:18px;
+  margin-top:10px;
+  color:#819da6;
+  font-size:11px;
+  line-height:1.4;
+}
+
+
+/* =========================================================
+   CENTRO DEL COMBATE
+   ========================================================= */
+
+.centro-combate{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:58px;
+  gap:4px;
+}
+
+.icono-vs{
+  font-size:22px;
+}
+
+.turno{
+  color:#62d6ff;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.iniciativa{
+  color:#78949d;
+  font-size:10px;
+  text-align:center;
+}
+
+
+/* =========================================================
+   ACCIONES
+   ========================================================= */
+
+.botones-acciones{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.accion{
+  width:100%;
+  min-height:43px;
+  padding:8px;
+  border:1px solid #28505e;
+  border-radius:8px;
+  background:#08141a;
+  color:#dff7ff;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:bold;
+  transition:.2s;
+}
+
+.accion:hover:not(:disabled){
+  border-color:#62d6ff;
+  background:#10242d;
+}
+
+.accion:active:not(:disabled){
+  transform:scale(.97);
+}
+
+.accion:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+.accion.defensa{
+  border-color:#41616b;
+}
+
+
+.boton-auto{
+  width:100%;
+  min-height:43px;
+  margin-top:9px;
+  padding:9px;
+  border:1px solid #62d6ff;
+  border-radius:8px;
+  background:#0c2028;
+  color:#62d6ff;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:bold;
+  transition:.2s;
+}
+
+.boton-auto:hover:not(:disabled){
+  background:#62d6ff;
+  color:#031018;
+}
+
+.boton-auto:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+
+/* =========================================================
+   REGISTRO
+   ========================================================= */
+
+.registro-combate{
+  width:100%;
+  max-height:300px;
+  overflow-y:auto;
+  padding:8px;
+  border:1px solid #17343f;
+  border-radius:8px;
+  background:#050a0d;
+}
+
+.registro-vacio{
+  padding:8px;
+  color:#627d86;
+  font-size:12px;
+  text-align:center;
+}
+
+.linea-registro{
+  padding:7px 5px;
+  border-bottom:1px solid #122830;
+  color:#aac4cc;
+  font-size:12px;
+  line-height:1.4;
+}
+
+.linea-registro:last-child{
+  border-bottom:0;
+}
+
+
+/* =========================================================
+   RESULTADO
+   ========================================================= */
+
+.resultado-oculto{
+  display:none;
+}
+
+#resultado{
+  text-align:center;
+}
+
+.resultado-icono{
+  margin-bottom:5px;
+  font-size:38px;
+}
+
+#resultadoTitulo{
+  margin-bottom:8px;
+  color:#62d6ff;
+}
+
+#resultadoTexto{
+  margin-bottom:15px;
+  color:#a8c1c9;
+  font-size:13px;
+}
+
+#botonNuevoCombate{
+  min-height:42px;
+  padding:9px 16px;
+  border:1px solid #62d6ff;
+  border-radius:8px;
+  background:#0c2028;
+  color:#62d6ff;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:bold;
+}
+
+#botonNuevoCombate:hover{
+  background:#62d6ff;
+  color:#031018;
+}
+
+
+/* =========================================================
+   TABLET / ESCRITORIO
+   ========================================================= */
+
+@media (min-width:700px){
+
+  #arena{
+    padding:18px;
+  }
+
+  .entrada-combatiente{
+    flex-direction:row;
+    align-items:center;
+  }
+
+  .vs{
+    min-width:45px;
+    padding-top:20px;
+  }
+
+  #botonPreparar{
+    max-width:360px;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  .zona-combatientes{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 80px minmax(0,1fr);
+    align-items:center;
+    gap:12px;
+  }
+
+  .centro-combate{
+    min-height:100%;
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+}
+
+
+@media (min-width:900px){
+
+  #arena{
+    padding:24px;
+  }
+
+  .panel{
+    padding:18px;
+  }
+
+  .tarjeta-combatiente{
+    padding:16px;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar{
+  width:7px;
+  height:7px;
+}
+
+::-webkit-scrollbar-track{
+  background:#05090c;
+}
+
+::-webkit-scrollbar-thumb{
+  background:#21404b;
+  border-radius:5px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+  background:#62d6ff;
+}
