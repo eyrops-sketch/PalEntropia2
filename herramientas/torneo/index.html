@@ -204,50 +204,64 @@ async function crearCopaRandom() {
 
     try {
 
+        /*
+        =================================================
+        CARGAR MASTER.CSV
+        =================================================
+        */
+
         const respuesta =
             await fetch(
-                "../generador_fase_2/paleofichas.json"
+                "../generador_fase_2/master.csv"
             );
 
 
         if (!respuesta.ok) {
 
             throw new Error(
-                "No se pudo cargar paleofichas.json."
+                "No se pudo cargar master.csv."
             );
 
         }
 
 
-        const datos =
-            await respuesta.json();
-
-
-        if (
-            !Array.isArray(datos)
-        ) {
-
-            throw new Error(
-                "paleofichas.json no contiene una matriz válida."
-            );
-
-        }
+        const textoMaster =
+            await respuesta.text();
 
 
         /*
         =================================================
-        OBTENER TODOS LOS J1 DISPONIBLES
+        OBTENER TODOS LOS J1
         =================================================
         */
 
         const todosLosJ1 = [];
 
 
-        datos.forEach(
-            registro => {
+        const lineas =
+            textoMaster.split(
+                /\r?\n/
+            );
+
+
+        lineas.forEach(
+            linea => {
 
                 if (
-                    !registro
+                    !linea.trim()
+                ) {
+
+                    return;
+
+                }
+
+
+                const columnas =
+                    linea.split(",");
+
+
+                if (
+                    columnas.length < 21
                 ) {
 
                     return;
@@ -257,16 +271,29 @@ async function crearCopaRandom() {
 
                 const j1 =
                     String(
-                        registro.j1 ||
-                        registro.codigo ||
-                        registro.J1 ||
-                        ""
+                        columnas[0] || ""
                     ).trim();
 
 
+                /*
+                Evitamos la cabecera
+                y los duplicados.
+                */
+
                 if (
-                    j1 &&
-                    !todosLosJ1.includes(j1)
+                    !j1 ||
+                    j1.toLowerCase() === "j1"
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    !todosLosJ1.includes(
+                        j1
+                    )
                 ) {
 
                     todosLosJ1.push(
@@ -284,7 +311,7 @@ async function crearCopaRandom() {
         ) {
 
             throw new Error(
-                "No hay al menos 16 paleofichas disponibles."
+                "No hay al menos 16 participantes válidos en master.csv."
             );
 
         }
@@ -292,7 +319,7 @@ async function crearCopaRandom() {
 
         /*
         =================================================
-        BARAJAR
+        BARAJAR FISHER-YATES
         =================================================
         */
 
@@ -366,7 +393,7 @@ async function crearCopaRandom() {
 
 
         console.log(
-            "🏆 Copa random creada:",
+            "🏆 Copa Random creada:",
             participantes
         );
 
@@ -382,6 +409,7 @@ async function crearCopaRandom() {
             error
         );
 
+
         return [];
 
     }
@@ -390,7 +418,7 @@ async function crearCopaRandom() {
 
 
 /* =====================================================
-   COMPROBAR / CREAR TORNEO INICIAL
+   INICIALIZAR TORNEO
    ===================================================== */
 
 async function inicializarTorneo() {
@@ -403,27 +431,52 @@ async function inicializarTorneo() {
 
     /*
     =====================================================
-    SI YA HAY PARTICIPANTES
-    NO HACEMOS NADA
+    SI YA EXISTEN PARTICIPANTES
+    NO HACER NADA
     =====================================================
     */
 
     if (
-        guardado &&
-        String(guardado).trim()
+        guardado
     ) {
 
-        return;
+        try {
+
+            const matriz =
+                JSON.parse(
+                    guardado
+                );
+
+
+            if (
+                Array.isArray(
+                    matriz
+                ) &&
+                matriz.length > 0
+            ) {
+
+                return;
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.warn(
+                "La matriz existente no es válida. Se creará una Copa Random."
+            );
+
+        }
 
     }
 
 
     /*
     =====================================================
-    LOCALSTORAGE SIN PARTICIPANTES
+    LOCALSTORAGE VACÍO
     → CREAR COPA RANDOM
-    =====================================================
-    */
+    ===================================================== */
 
     await crearCopaRandom();
 
@@ -444,7 +497,9 @@ function obtenerCriterioTorneo() {
 
     if (
         !criterio ||
-        !String(criterio).trim()
+        !String(
+            criterio
+        ).trim()
     ) {
 
         return "";
@@ -483,10 +538,14 @@ function obtenerCriterioTorneo() {
 
 
     if (
-        equivalencias[clave]
+        equivalencias[
+            clave
+        ]
     ) {
 
-        return equivalencias[clave];
+        return equivalencias[
+            clave
+        ];
 
     }
 
@@ -511,7 +570,9 @@ function mostrarIdentificadorTorneo() {
         obtenerCriterioTorneo();
 
 
-    if (!criterio) {
+    if (
+        !criterio
+    ) {
 
         return;
 
@@ -542,7 +603,9 @@ function mostrarIdentificadorTorneo() {
     =====================================================
     */
 
-    if (subtitulo) {
+    if (
+        subtitulo
+    ) {
 
         subtitulo.textContent =
             "Torneo " +
@@ -557,7 +620,9 @@ function mostrarIdentificadorTorneo() {
     =====================================================
     */
 
-    if (tituloCabecera) {
+    if (
+        tituloCabecera
+    ) {
 
         tituloCabecera.textContent =
             "⚔️ Torneo " +
@@ -572,7 +637,9 @@ function mostrarIdentificadorTorneo() {
     =====================================================
     */
 
-    if (tituloBloque) {
+    if (
+        tituloBloque
+    ) {
 
         tituloBloque.textContent =
             "🏆 Torneo " +
@@ -595,14 +662,17 @@ async function cargarParticipantesTorneo() {
         );
 
 
-    if (!lista) {
+    if (
+        !lista
+    ) {
 
         return;
 
     }
 
 
-    lista.innerHTML = "";
+    lista.innerHTML =
+        "";
 
 
     /*
@@ -616,7 +686,9 @@ async function cargarParticipantesTorneo() {
         );
 
 
-    if (!matrizGuardada) {
+    if (
+        !matrizGuardada
+    ) {
 
         lista.innerHTML =
             "<p>No hay participantes cargados.</p>";
@@ -654,7 +726,9 @@ async function cargarParticipantesTorneo() {
 
 
     if (
-        !Array.isArray(matrizJ1) ||
+        !Array.isArray(
+            matrizJ1
+        ) ||
         !matrizJ1.length
     ) {
 
@@ -696,7 +770,9 @@ async function cargarParticipantesTorneo() {
         );
 
 
-    if (!respuestaJSON.ok) {
+    if (
+        !respuestaJSON.ok
+    ) {
 
         throw new Error(
             "No se pudo cargar paleofichas.json."
@@ -721,7 +797,9 @@ async function cargarParticipantesTorneo() {
         );
 
 
-    if (!respuestaMaster.ok) {
+    if (
+        !respuestaMaster.ok
+    ) {
 
         throw new Error(
             "No se pudo cargar master.csv."
@@ -808,13 +886,13 @@ async function cargarParticipantesTorneo() {
         new Map();
 
 
-    const lineas =
+    const lineasMaster =
         textoMaster.split(
             /\r?\n/
         );
 
 
-    lineas.forEach(
+    lineasMaster.forEach(
         linea => {
 
             if (
@@ -846,7 +924,8 @@ async function cargarParticipantesTorneo() {
 
 
             if (
-                !j1
+                !j1 ||
+                j1.toLowerCase() === "j1"
             ) {
 
                 return;
@@ -960,8 +1039,6 @@ async function cargarParticipantesTorneo() {
     }
 
 }
-
-
 /* =====================================================
    BOTÓN PARTICIPANTES
    ===================================================== */
@@ -1001,6 +1078,7 @@ document
                         "Error cargando participantes:",
                         error
                     );
+
 
                     document
                         .getElementById(
@@ -1049,7 +1127,21 @@ document
 
 (async function() {
 
+    /*
+    Primero comprobamos si existe
+    un torneo guardado.
+
+    Si no existe, se crea automáticamente
+    una Copa Random de 16 participantes.
+    */
+
     await inicializarTorneo();
+
+
+    /*
+    Después mostramos el nombre
+    correcto del torneo.
+    */
 
     mostrarIdentificadorTorneo();
 
