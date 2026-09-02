@@ -734,19 +734,25 @@ h2{
 }
 
 .botonNavegacion{
- width:38px;
- height:38px;
- border-radius:50%;
- border:1px solid #62d6ff;
- background:#151719;
- color:#62d6ff;
- cursor:pointer;
- font-size:16px;
- display:inline-flex;
- align-items:center;
- justify-content:center;
- box-shadow:0 0 7px rgba(98,214,255,.12);
- transition:.20s;
+  width:38px;
+  height:38px;
+  min-width:38px;
+  min-height:38px;
+  padding:0;
+  margin:0;
+  border-radius:50%;
+  border:1px solid #62d6ff;
+  background:#151719;
+  color:#62d6ff;
+  cursor:pointer;
+  font-size:16px;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  box-shadow:0 0 7px rgba(98,214,255,.12);
+  transition:.20s;
 }
 
 .botonNavegacion:hover{
