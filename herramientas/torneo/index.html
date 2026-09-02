@@ -186,6 +186,251 @@ window.MATRIZ_COMBATIENTES_TORNEO = [];
 
 
 /* =====================================================
+   CLAVES DEL TORNEO
+   ===================================================== */
+
+const CLAVE_MATRIZ_COMBATIENTES =
+    "palentropia_matriz_combatientes";
+
+const CLAVE_CRITERIO_TORNEO =
+    "palentropia_criterio_torneo";
+
+
+/* =====================================================
+   CREAR COPA RANDOM
+   ===================================================== */
+
+async function crearCopaRandom() {
+
+    try {
+
+        const respuesta =
+            await fetch(
+                "../generador_fase_2/paleofichas.json"
+            );
+
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No se pudo cargar paleofichas.json."
+            );
+
+        }
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if (
+            !Array.isArray(datos)
+        ) {
+
+            throw new Error(
+                "paleofichas.json no contiene una matriz válida."
+            );
+
+        }
+
+
+        /*
+        =================================================
+        OBTENER TODOS LOS J1 DISPONIBLES
+        =================================================
+        */
+
+        const todosLosJ1 = [];
+
+
+        datos.forEach(
+            registro => {
+
+                if (
+                    !registro
+                ) {
+
+                    return;
+
+                }
+
+
+                const j1 =
+                    String(
+                        registro.j1 ||
+                        registro.codigo ||
+                        registro.J1 ||
+                        ""
+                    ).trim();
+
+
+                if (
+                    j1 &&
+                    !todosLosJ1.includes(j1)
+                ) {
+
+                    todosLosJ1.push(
+                        j1
+                    );
+
+                }
+
+            }
+        );
+
+
+        if (
+            todosLosJ1.length < 16
+        ) {
+
+            throw new Error(
+                "No hay al menos 16 paleofichas disponibles."
+            );
+
+        }
+
+
+        /*
+        =================================================
+        BARAJAR
+        =================================================
+        */
+
+        for (
+            let i =
+                todosLosJ1.length - 1;
+
+            i > 0;
+
+            i--
+        ) {
+
+            const j =
+                Math.floor(
+                    Math.random() *
+                    (i + 1)
+                );
+
+
+            const temporal =
+                todosLosJ1[i];
+
+
+            todosLosJ1[i] =
+                todosLosJ1[j];
+
+
+            todosLosJ1[j] =
+                temporal;
+
+        }
+
+
+        /*
+        =================================================
+        SELECCIONAR 16
+        =================================================
+        */
+
+        const participantes =
+            todosLosJ1.slice(
+                0,
+                16
+            );
+
+
+        /*
+        =================================================
+        GUARDAR PARTICIPANTES
+        =================================================
+        */
+
+        localStorage.setItem(
+            CLAVE_MATRIZ_COMBATIENTES,
+            JSON.stringify(
+                participantes
+            )
+        );
+
+
+        /*
+        =================================================
+        GUARDAR NOMBRE DEL TORNEO
+        =================================================
+        */
+
+        localStorage.setItem(
+            CLAVE_CRITERIO_TORNEO,
+            "copa random"
+        );
+
+
+        console.log(
+            "🏆 Copa random creada:",
+            participantes
+        );
+
+
+        return participantes;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Error creando Copa Random:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+/* =====================================================
+   COMPROBAR / CREAR TORNEO INICIAL
+   ===================================================== */
+
+async function inicializarTorneo() {
+
+    const guardado =
+        localStorage.getItem(
+            CLAVE_MATRIZ_COMBATIENTES
+        );
+
+
+    /*
+    =====================================================
+    SI YA HAY PARTICIPANTES
+    NO HACEMOS NADA
+    =====================================================
+    */
+
+    if (
+        guardado &&
+        String(guardado).trim()
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+    =====================================================
+    LOCALSTORAGE SIN PARTICIPANTES
+    → CREAR COPA RANDOM
+    =====================================================
+    */
+
+    await crearCopaRandom();
+
+}
+
+
+/* =====================================================
    CRITERIO IDENTIFICATIVO DEL TORNEO
    ===================================================== */
 
@@ -193,7 +438,7 @@ function obtenerCriterioTorneo() {
 
     const criterio =
         localStorage.getItem(
-            "palentropia_criterio_torneo"
+            CLAVE_CRITERIO_TORNEO
         );
 
 
@@ -247,10 +492,8 @@ function obtenerCriterioTorneo() {
 
 
     /*
-    Los códigos se conservan tal como fueron introducidos:
-    006
-    006_0
-    006_01
+    Los códigos y nombres se conservan
+    tal como fueron introducidos.
     */
 
     return valor;
@@ -341,13 +584,6 @@ function mostrarIdentificadorTorneo() {
 
 
 /* =====================================================
-   INICIALIZAR IDENTIFICADOR
-   ===================================================== */
-
-mostrarIdentificadorTorneo();
-
-
-/* =====================================================
    CARGAR PARTICIPANTES
    ===================================================== */
 
@@ -371,12 +607,12 @@ async function cargarParticipantesTorneo() {
 
     /*
     Recuperamos exclusivamente los J1
-    preparados por el visor.
+    preparados por el visor o por Copa Random.
     */
 
     const matrizGuardada =
         localStorage.getItem(
-            "palentropia_matriz_combatientes"
+            CLAVE_MATRIZ_COMBATIENTES
         );
 
 
@@ -805,6 +1041,19 @@ document
 
         }
     );
+
+
+/* =====================================================
+   INICIALIZACIÓN
+   ===================================================== */
+
+(async function() {
+
+    await inicializarTorneo();
+
+    mostrarIdentificadorTorneo();
+
+})();
 
 </script>
 
