@@ -1,16 +1,12 @@
-/*
-========================================================
-PALARENA
-standar.js v1.0
-PalEntropía
-
-MOTOR DE COMBATE ESTÁNDAR
-========================================================
-*/
+/* ========================================================
+   PALARENA standar.js v1.1
+   PalEntropía
+   MOTOR DE COMBATE ESTÁNDAR
+======================================================== */
 
 window.PALARENA_STANDAR = {
 
-    version: "1.0",
+    version: "1.1",
 
     configuracion: {
 
@@ -18,12 +14,17 @@ window.PALARENA_STANDAR = {
 
         bonificacion_dominante: 0.15,
 
-        iniciativa_velocidad: 0.70,
+        /* ==============================================
+           FACTOR IMPREVISIBLE
+        ============================================== */
 
+        factor_imprevisible_min: 0.92,
+        factor_imprevisible_max: 1.08,
+
+        iniciativa_velocidad: 0.70,
         iniciativa_tactica: 0.30,
 
         dano_base: 10,
-
         dano_por_ataque: 0.20,
 
         defensa_divisor: 200,
@@ -33,15 +34,26 @@ window.PALARENA_STANDAR = {
         multiplicador_critico: 1.50,
 
         critico_base: 5,
-
         critico_tactica: 0.10,
 
         esquiva_velocidad: 0.10,
 
+        /* ==============================================
+           FALLO DE ATAQUE
+        ============================================== */
+
+        fallo_base: 8,
+        fallo_reduccion_tactica: 0.04,
+
+        /* ==============================================
+           ATAQUE POTENTE
+        ============================================== */
+
+        coste_ataque_potente_hp: 0.05,
+
         reduccion_defensa: 0.50,
 
         max_turnos: 100
-
     },
 
 
@@ -56,7 +68,6 @@ window.PALARENA_STANDAR = {
         return Number.isFinite(numero)
             ? numero
             : 0;
-
     },
 
 
@@ -69,7 +80,6 @@ window.PALARENA_STANDAR = {
                 Math.round(valor)
             )
         );
-
     },
 
 
@@ -78,7 +88,6 @@ window.PALARENA_STANDAR = {
         return Math.random() *
             (max - min) +
             min;
-
     },
 
 
@@ -88,7 +97,22 @@ window.PALARENA_STANDAR = {
             Math.random() *
             (max - min + 1)
         ) + min;
+    },
 
+
+    /* ==================================================
+       FACTOR IMPREVISIBLE
+    ================================================== */
+
+    obtenerFactorImprevisible() {
+
+        return this.aleatorio(
+            this.configuracion
+                .factor_imprevisible_min,
+
+            this.configuracion
+                .factor_imprevisible_max
+        );
     },
 
 
@@ -124,45 +148,44 @@ window.PALARENA_STANDAR = {
                 atributo: "tactica",
                 valor: indicadores.tactica
             }
-
         ];
 
 
         const maximo = Math.max(
             ...atributos.map(
                 function(item) {
+
                     return item.valor;
                 }
             )
         );
 
 
-        let candidatos = atributos.filter(
-            function(item) {
+        let candidatos =
+            atributos.filter(
+                function(item) {
 
-                return item.valor === maximo;
-
-            }
-        );
+                    return item.valor === maximo;
+                }
+            );
 
 
         if (candidatos.length > 1) {
 
-            const tactica = candidatos.find(
-                function(item) {
+            const tactica =
+                candidatos.find(
+                    function(item) {
 
-                    return item.atributo === "tactica";
-
-                }
-            );
+                        return item.atributo ===
+                            "tactica";
+                    }
+                );
 
 
             if (tactica) {
 
                 candidatos = [tactica];
-
             }
-
         }
 
 
@@ -177,16 +200,16 @@ window.PALARENA_STANDAR = {
 
         return {
 
-            atributo: elegido.atributo,
+            atributo:
+                elegido.atributo,
 
-            valor: elegido.valor,
+            valor:
+                elegido.valor,
 
             bonificacion:
                 this.configuracion
                     .bonificacion_dominante
-
         };
-
     },
 
 
@@ -207,13 +230,11 @@ window.PALARENA_STANDAR = {
             resistencia: "aguante",
 
             tactica: "tactico"
-
         };
 
 
         return perfiles[atributo] ||
             "equilibrado";
-
     },
 
 
@@ -221,7 +242,11 @@ window.PALARENA_STANDAR = {
        VALORES EFECTIVOS
     ================================================== */
 
-    obtenerEfectivos(indicadores, dominante) {
+    obtenerEfectivos(
+        indicadores,
+        dominante,
+        factor
+    ) {
 
         const efectivos = {
 
@@ -249,24 +274,69 @@ window.PALARENA_STANDAR = {
                 this.limitar(
                     indicadores.tactica
                 )
-
         };
 
+
+        /*
+           Primero se aplica la bonificación
+           del atributo dominante.
+        */
 
         efectivos[dominante.atributo] =
             this.limitar(
 
-                efectivos[dominante.atributo] *
+                efectivos[
+                    dominante.atributo
+                ] *
+
                 (
                     1 +
                     dominante.bonificacion
                 )
+            );
 
+
+        /*
+           Después se aplica el factor
+           imprevisible propio del combate.
+        */
+
+        efectivos.ataque =
+            this.limitar(
+                efectivos.ataque *
+                factor
+            );
+
+
+        efectivos.defensa =
+            this.limitar(
+                efectivos.defensa *
+                factor
+            );
+
+
+        efectivos.velocidad =
+            this.limitar(
+                efectivos.velocidad *
+                factor
+            );
+
+
+        efectivos.resistencia =
+            this.limitar(
+                efectivos.resistencia *
+                factor
+            );
+
+
+        efectivos.tactica =
+            this.limitar(
+                efectivos.tactica *
+                factor
             );
 
 
         return efectivos;
-
     },
 
 
@@ -291,9 +361,7 @@ window.PALARENA_STANDAR = {
                 this.configuracion
                     .iniciativa_tactica
             )
-
         );
-
     },
 
 
@@ -310,7 +378,6 @@ window.PALARENA_STANDAR = {
             );
 
             return null;
-
         }
 
 
@@ -321,7 +388,6 @@ window.PALARENA_STANDAR = {
             );
 
             return null;
-
         }
 
 
@@ -333,7 +399,6 @@ window.PALARENA_STANDAR = {
         if (!stats) {
 
             return null;
-
         }
 
 
@@ -345,7 +410,6 @@ window.PALARENA_STANDAR = {
         if (!indicadores) {
 
             return null;
-
         }
 
 
@@ -361,10 +425,21 @@ window.PALARENA_STANDAR = {
             );
 
 
+        /*
+           Cada combatiente obtiene su propio
+           factor imprevisible al comenzar
+           el combate.
+        */
+
+        const factor =
+            this.obtenerFactorImprevisible();
+
+
         const efectivos =
             this.obtenerEfectivos(
                 indicadores,
-                dominante
+                dominante,
+                factor
             );
 
 
@@ -391,7 +466,6 @@ window.PALARENA_STANDAR = {
                 ficha.nombre ||
                 "",
 
-
             stats: {
 
                 e1: stats.e1,
@@ -405,7 +479,6 @@ window.PALARENA_STANDAR = {
                 e9: stats.e9,
                 e10: stats.e10,
                 e11: stats.e11
-
             },
 
 
@@ -425,7 +498,6 @@ window.PALARENA_STANDAR = {
 
                 tactica:
                     indicadores.tactica
-
             },
 
 
@@ -445,7 +517,6 @@ window.PALARENA_STANDAR = {
 
                 tactica:
                     efectivos.tactica
-
             },
 
 
@@ -459,11 +530,18 @@ window.PALARENA_STANDAR = {
 
                 bonificacion:
                     dominante.bonificacion
-
             },
 
 
             perfil: perfil,
+
+            /*
+               Guardamos el factor para que
+               forme parte del estado del combate.
+            */
+
+            factor_imprevisible:
+                factor,
 
 
             hp: hpMax,
@@ -479,9 +557,7 @@ window.PALARENA_STANDAR = {
             defendiendo: false,
 
             derrotado: false
-
         };
-
     },
 
 
@@ -494,7 +570,6 @@ window.PALARENA_STANDAR = {
         if (!combatiente) {
 
             return;
-
         }
 
 
@@ -504,9 +579,7 @@ window.PALARENA_STANDAR = {
             "A002",
             "A003",
             "D001"
-
         ];
-
     },
 
 
@@ -534,7 +607,6 @@ window.PALARENA_STANDAR = {
         ) {
 
             return null;
-
         }
 
 
@@ -549,7 +621,6 @@ window.PALARENA_STANDAR = {
 
 
         let primero;
-
         let segundo;
 
 
@@ -559,7 +630,6 @@ window.PALARENA_STANDAR = {
         ) {
 
             primero = combatiente1;
-
             segundo = combatiente2;
 
         }
@@ -570,7 +640,6 @@ window.PALARENA_STANDAR = {
         ) {
 
             primero = combatiente2;
-
             segundo = combatiente1;
 
         }
@@ -582,7 +651,6 @@ window.PALARENA_STANDAR = {
             ) {
 
                 primero = combatiente1;
-
                 segundo = combatiente2;
 
             }
@@ -590,11 +658,8 @@ window.PALARENA_STANDAR = {
             else {
 
                 primero = combatiente2;
-
                 segundo = combatiente1;
-
             }
-
         }
 
 
@@ -604,22 +669,24 @@ window.PALARENA_STANDAR = {
 
             turno: 1,
 
-            primero: primero.codigo,
+            primero:
+                primero.codigo,
 
-            segundo: segundo.codigo,
+            segundo:
+                segundo.codigo,
 
-            combatiente1: combatiente1,
+            combatiente1:
+                combatiente1,
 
-            combatiente2: combatiente2,
+            combatiente2:
+                combatiente2,
 
             historial: [],
 
             ganador: null,
 
             perdedor: null
-
         };
-
     },
 
 
@@ -635,7 +702,6 @@ window.PALARENA_STANDAR = {
         ) {
 
             return combate.combatiente1;
-
         }
 
 
@@ -645,12 +711,10 @@ window.PALARENA_STANDAR = {
         ) {
 
             return combate.combatiente2;
-
         }
 
 
         return null;
-
     },
 
 
@@ -668,18 +732,18 @@ window.PALARENA_STANDAR = {
         ) {
 
             return null;
-
         }
 
 
         return combatiente.efectos.find(
+
             function(efecto) {
 
-                return efecto.codigo === codigo;
-
+                return efecto.codigo ===
+                    codigo;
             }
-        ) || null;
 
+        ) || null;
     },
         /* ==================================================
        APLICAR EFECTO
@@ -697,7 +761,6 @@ window.PALARENA_STANDAR = {
         ) {
 
             return null;
-
         }
 
 
@@ -709,7 +772,6 @@ window.PALARENA_STANDAR = {
         if (!base) {
 
             return null;
-
         }
 
 
@@ -717,7 +779,9 @@ window.PALARENA_STANDAR = {
 
             const curacion =
                 Math.round(
+
                     objetivo.hp_max *
+
                     (
                         base.potencia /
                         100
@@ -731,7 +795,9 @@ window.PALARENA_STANDAR = {
 
             objetivo.hp =
                 Math.min(
+
                     objetivo.hp_max,
+
                     objetivo.hp +
                     curacion
                 );
@@ -750,9 +816,7 @@ window.PALARENA_STANDAR = {
                     hpAnterior,
 
                 duracion: 0
-
             };
-
         }
 
 
@@ -785,9 +849,7 @@ window.PALARENA_STANDAR = {
                 duracion: base.duracion,
 
                 renovado: true
-
             };
-
         }
 
 
@@ -802,7 +864,6 @@ window.PALARENA_STANDAR = {
             potencia: base.potencia,
 
             turnos: base.duracion
-
         };
 
 
@@ -824,9 +885,7 @@ window.PALARENA_STANDAR = {
             duracion: base.duracion,
 
             renovado: false
-
         };
-
     },
 
 
@@ -842,7 +901,6 @@ window.PALARENA_STANDAR = {
         ) {
 
             return [];
-
         }
 
 
@@ -850,6 +908,7 @@ window.PALARENA_STANDAR = {
 
 
         combatiente.efectos.forEach(
+
             function(efecto) {
 
                 if (
@@ -864,7 +923,9 @@ window.PALARENA_STANDAR = {
 
                     combatiente.hp =
                         Math.max(
+
                             0,
+
                             combatiente.hp -
                             dano
                         );
@@ -885,24 +946,21 @@ window.PALARENA_STANDAR = {
                             " recibe " +
                             dano +
                             " de daño progresivo."
-
                     });
-
                 }
 
 
                 efecto.turnos--;
-
             }
         );
 
 
         combatiente.efectos =
             combatiente.efectos.filter(
+
                 function(efecto) {
 
                     return efecto.turnos > 0;
-
                 }
             );
 
@@ -913,13 +971,12 @@ window.PALARENA_STANDAR = {
 
             combatiente.hp = 0;
 
-            combatiente.derrotado = true;
-
+            combatiente.derrotado =
+                true;
         }
 
 
         return resultados;
-
     },
 
 
@@ -935,7 +992,9 @@ window.PALARENA_STANDAR = {
 
         const efecto =
             this.obtenerEfecto(
+
                 combatiente,
+
                 "E003"
             );
 
@@ -944,14 +1003,12 @@ window.PALARENA_STANDAR = {
 
             defensa -=
                 efecto.potencia;
-
         }
 
 
         return this.limitar(
             defensa
         );
-
     },
 
 
@@ -967,7 +1024,9 @@ window.PALARENA_STANDAR = {
 
         const efecto =
             this.obtenerEfecto(
+
                 combatiente,
+
                 "E004"
             );
 
@@ -976,14 +1035,12 @@ window.PALARENA_STANDAR = {
 
             velocidad -=
                 efecto.potencia;
-
         }
 
 
         return this.limitar(
             velocidad
         );
-
     },
 
 
@@ -994,9 +1051,9 @@ window.PALARENA_STANDAR = {
     obtenerTactica(combatiente) {
 
         return this.limitar(
+
             combatiente.efectivos.tactica
         );
-
     },
 
 
@@ -1010,13 +1067,16 @@ window.PALARENA_STANDAR = {
             this.obtenerVelocidad(
                 objetivo
             ) *
+
             this.configuracion
                 .esquiva_velocidad;
 
 
         const efecto =
             this.obtenerEfecto(
+
                 objetivo,
+
                 "E002"
             );
 
@@ -1025,7 +1085,6 @@ window.PALARENA_STANDAR = {
 
             probabilidad +=
                 efecto.potencia;
-
         }
 
 
@@ -1046,9 +1105,72 @@ window.PALARENA_STANDAR = {
 
             dado:
                 dado
-
         };
+    },
 
+
+    /* ==================================================
+       FALLO DE ATAQUE
+    ================================================== */
+
+    comprobarFallo(atacante) {
+
+        /*
+           La táctica reduce la posibilidad
+           de cometer un fallo.
+
+           Con 0 de táctica:
+           8 % de fallo.
+
+           Con 100 de táctica:
+           aproximadamente 4 %.
+        */
+
+        const tactica =
+            this.obtenerTactica(
+                atacante
+            );
+
+
+        let probabilidad =
+            this.configuracion
+                .fallo_base
+            -
+            (
+                tactica *
+                this.configuracion
+                    .fallo_reduccion_tactica
+            );
+
+
+        probabilidad =
+            Math.max(
+                4,
+                Math.min(
+                    8,
+                    probabilidad
+                )
+            );
+
+
+        const dado =
+            this.aleatorio(
+                0,
+                100
+            );
+
+
+        return {
+
+            fallo:
+                dado < probabilidad,
+
+            probabilidad:
+                probabilidad,
+
+            dado:
+                dado
+        };
     },
 
 
@@ -1072,9 +1194,7 @@ window.PALARENA_STANDAR = {
                 probabilidad: 0,
 
                 dado: 100
-
             };
-
         }
 
 
@@ -1084,9 +1204,11 @@ window.PALARENA_STANDAR = {
 
 
         probabilidad +=
+
             this.obtenerTactica(
                 atacante
             ) *
+
             this.configuracion
                 .critico_tactica;
 
@@ -1108,9 +1230,7 @@ window.PALARENA_STANDAR = {
 
             dado:
                 dado
-
         };
-
     },
 
 
@@ -1133,6 +1253,7 @@ window.PALARENA_STANDAR = {
 
             (
                 atacante.efectivos.ataque *
+
                 this.configuracion
                     .dano_por_ataque
             );
@@ -1144,7 +1265,9 @@ window.PALARENA_STANDAR = {
 
         const aumento =
             this.obtenerEfecto(
+
                 atacante,
+
                 "E007"
             );
 
@@ -1152,12 +1275,13 @@ window.PALARENA_STANDAR = {
         if (aumento) {
 
             dano *=
+
                 1 +
+
                 (
                     aumento.potencia /
                     100
                 );
-
         }
 
 
@@ -1168,7 +1292,9 @@ window.PALARENA_STANDAR = {
 
 
         dano *=
+
             1 -
+
             (
                 defensa /
                 this.configuracion
@@ -1178,6 +1304,7 @@ window.PALARENA_STANDAR = {
 
         const variacion =
             this.aleatorio(
+
                 1 -
                 this.configuracion
                     .variacion_dano,
@@ -1194,7 +1321,9 @@ window.PALARENA_STANDAR = {
 
         const critico =
             this.comprobarCritico(
+
                 atacante,
+
                 ataque
             );
 
@@ -1204,15 +1333,17 @@ window.PALARENA_STANDAR = {
         ) {
 
             dano *=
+
                 this.configuracion
                     .multiplicador_critico;
-
         }
 
 
         dano =
             Math.max(
+
                 1,
+
                 Math.round(dano)
             );
 
@@ -1232,9 +1363,7 @@ window.PALARENA_STANDAR = {
 
             defensa:
                 defensa
-
         };
-
     },
 
 
@@ -1258,9 +1387,7 @@ window.PALARENA_STANDAR = {
 
                 mensaje:
                     "Falta standar-ataques.js."
-
             };
-
         }
 
 
@@ -1278,11 +1405,13 @@ window.PALARENA_STANDAR = {
                 mensaje:
                     "Ataque no encontrado: " +
                     codigo
-
             };
-
         }
 
+
+        /* ==============================================
+           DEFENDER
+        ============================================== */
 
         if (
             ataque.tipo === "defensa"
@@ -1307,11 +1436,115 @@ window.PALARENA_STANDAR = {
                 mensaje:
                     atacante.nombre +
                     " adopta una posición defensiva."
-
             };
-
         }
 
+
+        /* ==============================================
+           COSTE DEL ATAQUE POTENTE
+        ============================================== */
+
+        let costeHp = 0;
+
+
+        if (
+            ataque.codigo === "A002"
+        ) {
+
+            costeHp =
+                Math.max(
+
+                    1,
+
+                    Math.round(
+
+                        atacante.hp_max *
+
+                        this.configuracion
+                            .coste_ataque_potente_hp
+                    )
+                );
+        }
+
+
+        /* ==============================================
+           FALLO
+        ============================================== */
+
+        const fallo =
+            this.comprobarFallo(
+                atacante
+            );
+
+
+        /*
+           El coste del ataque potente se paga
+           incluso si el ataque falla.
+        */
+
+        if (
+            costeHp > 0
+        ) {
+
+            atacante.hp =
+                Math.max(
+
+                    1,
+
+                    atacante.hp -
+                    costeHp
+                );
+
+
+            if (
+                atacante.hp <= 0
+            ) {
+
+                atacante.hp = 1;
+            }
+        }
+
+
+        if (
+            fallo.fallo
+        ) {
+
+            return {
+
+                tipo: "ataque",
+
+                codigo:
+                    ataque.codigo,
+
+                nombre:
+                    ataque.nombre,
+
+                dano: 0,
+
+                fallo: true,
+
+                esquiva: false,
+
+                critico: false,
+
+                coste_hp: costeHp,
+
+                probabilidad_fallo:
+                    fallo.probabilidad,
+
+                dado_fallo:
+                    fallo.dado,
+
+                mensaje:
+                    atacante.nombre +
+                    " falla el ataque."
+            };
+        }
+
+
+        /* ==============================================
+           ESQUIVA
+        ============================================== */
 
         const esquiva =
             this.comprobarEsquiva(
@@ -1335,23 +1568,38 @@ window.PALARENA_STANDAR = {
 
                 dano: 0,
 
+                fallo: false,
+
                 esquiva: true,
 
                 critico: false,
 
+                coste_hp: costeHp,
+
+                probabilidad_esquiva:
+                    esquiva.probabilidad,
+
+                dado_esquiva:
+                    esquiva.dado,
+
                 mensaje:
                     objetivo.nombre +
                     " esquiva el ataque."
-
             };
-
         }
 
 
+        /* ==============================================
+           CALCULAR DAÑO
+        ============================================== */
+
         const resultado =
             this.calcularDano(
+
                 atacante,
+
                 objetivo,
+
                 ataque
             );
 
@@ -1360,26 +1608,35 @@ window.PALARENA_STANDAR = {
             resultado.dano;
 
 
+        /* ==============================================
+           DEFENDER
+        ============================================== */
+
         if (
             objetivo.defendiendo
         ) {
 
             dano =
                 Math.max(
+
                     1,
+
                     Math.round(
+
                         dano *
+
                         this.configuracion
                             .reduccion_defensa
                     )
                 );
-
         }
 
 
         objetivo.hp =
             Math.max(
+
                 0,
+
                 objetivo.hp -
                 dano
             );
@@ -1393,9 +1650,12 @@ window.PALARENA_STANDAR = {
 
             objetivo.derrotado =
                 true;
-
         }
 
+
+        /* ==============================================
+           EFECTO
+        ============================================== */
 
         let efecto = null;
 
@@ -1410,14 +1670,14 @@ window.PALARENA_STANDAR = {
 
 
             if (
-                codigoEfecto === "E00X"
+                codigoEfecto ===
+                "E00X"
             ) {
 
                 codigoEfecto =
                     this.obtenerEfectoPerfil(
                         atacante
                     );
-
             }
 
 
@@ -1425,13 +1685,14 @@ window.PALARENA_STANDAR = {
 
                 efecto =
                     this.aplicarEfecto(
+
                         atacante,
+
                         objetivo,
+
                         codigoEfecto
                     );
-
             }
-
         }
 
 
@@ -1447,6 +1708,8 @@ window.PALARENA_STANDAR = {
 
             dano: dano,
 
+            fallo: false,
+
             critico:
                 resultado.critico,
 
@@ -1457,15 +1720,15 @@ window.PALARENA_STANDAR = {
 
             efecto: efecto,
 
+            coste_hp: costeHp,
+
             hp_restante:
                 objetivo.hp
-
         };
-
     },
-        /* ==================================================
-       EFECTO SEGÚN PERFIL
-    ================================================== */
+    /* ==================================================
+   EFECTO SEGÚN PERFIL
+================================================== */
 
     obtenerEfectoPerfil(combatiente) {
 
@@ -1482,29 +1745,27 @@ window.PALARENA_STANDAR = {
             tactico: "E006",
 
             equilibrado: "E006"
-
         };
 
 
         return efectos[
             combatiente.perfil
         ] || "E006";
-
     },
 
 
-    /* ==================================================
-       IA
-    ================================================== */
+/* ==================================================
+   IA
+================================================== */
 
     decidirAccion(combatiente) {
 
         const hpPorcentaje =
+
             (
                 combatiente.hp /
                 combatiente.hp_max
-            ) *
-            100;
+            ) * 100;
 
 
         const tactica =
@@ -1520,15 +1781,25 @@ window.PALARENA_STANDAR = {
             );
 
 
+        /*
+           Si tiene muy poca vida,
+           aumenta la posibilidad de defender.
+        */
+
         if (
             hpPorcentaje <= 25 &&
             dado <= 30
         ) {
 
             return "D001";
-
         }
 
+
+        /*
+           Táctica alta:
+           utiliza con mayor frecuencia
+           el ataque táctico.
+        */
 
         if (
             tactica >= 70
@@ -1537,21 +1808,23 @@ window.PALARENA_STANDAR = {
             if (dado <= 40) {
 
                 return "A003";
-
             }
 
 
             if (dado <= 65) {
 
                 return "A002";
-
             }
 
 
             return "A001";
-
         }
 
+
+        /*
+           Táctica media:
+           comportamiento equilibrado.
+        */
 
         if (
             tactica >= 40
@@ -1560,51 +1833,54 @@ window.PALARENA_STANDAR = {
             if (dado <= 25) {
 
                 return "A003";
-
             }
 
 
             if (dado <= 55) {
 
                 return "A002";
-
             }
 
 
             if (dado <= 90) {
 
                 return "A001";
-
             }
 
 
             return "D001";
-
         }
 
 
-        if (dado <= 60) {
+        /*
+           Táctica baja:
+           comportamiento más directo,
+           pero sin abusar del ataque potente.
+        */
+
+        if (
+            dado <= 60
+        ) {
 
             return "A001";
-
         }
 
 
-        if (dado <= 90) {
+        if (
+            dado <= 90
+        ) {
 
             return "A002";
-
         }
 
 
         return "D001";
-
     },
 
 
-    /* ==================================================
-       EJECUTAR ACCIÓN
-    ================================================== */
+/* ==================================================
+   EJECUTAR ACCIÓN
+================================================== */
 
     ejecutarAccion(
         atacante,
@@ -1617,19 +1893,24 @@ window.PALARENA_STANDAR = {
 
 
         return this.ejecutarAtaque(
+
             atacante,
+
             objetivo,
+
             accion
         );
-
     },
 
 
-    /* ==================================================
-       FINALIZAR COMBATE
-    ================================================== */
+/* ==================================================
+   FINALIZAR COMBATE
+================================================== */
 
-    finalizar(combate, ganador) {
+    finalizar(
+        combate,
+        ganador
+    ) {
 
         combate.estado =
             "finalizado";
@@ -1640,30 +1921,35 @@ window.PALARENA_STANDAR = {
 
 
         combate.perdedor =
+
             (
                 combate.combatiente1.codigo ===
                 ganador.codigo
             )
 
-                ? combate.combatiente2.codigo
+                ?
 
-                : combate.combatiente1.codigo;
+                combate.combatiente2.codigo
+
+                :
+
+                combate.combatiente1.codigo;
 
 
         ganador.derrotado =
             false;
-
     },
 
 
-    /* ==================================================
-       DESEMPATE POR LÍMITE
-    ================================================== */
+/* ==================================================
+   DESEMPATE POR LÍMITE
+================================================== */
 
     finalizarPorLimite(combate) {
 
         const c1 =
             combate.combatiente1;
+
 
         const c2 =
             combate.combatiente2;
@@ -1673,7 +1959,8 @@ window.PALARENA_STANDAR = {
 
 
         if (
-            c1.hp > c2.hp
+            c1.hp >
+            c2.hp
         ) {
 
             ganador = c1;
@@ -1681,7 +1968,8 @@ window.PALARENA_STANDAR = {
         }
 
         else if (
-            c2.hp > c1.hp
+            c2.hp >
+            c1.hp
         ) {
 
             ganador = c2;
@@ -1727,10 +2015,12 @@ window.PALARENA_STANDAR = {
         else {
 
             ganador =
-                Math.random() < 0.5
-                    ? c1
-                    : c2;
 
+                Math.random() < 0.5
+
+                    ? c1
+
+                    : c2;
         }
 
 
@@ -1738,13 +2028,12 @@ window.PALARENA_STANDAR = {
             combate,
             ganador
         );
-
     },
 
 
-    /* ==================================================
-       EJECUTAR TURNO
-    ================================================== */
+/* ==================================================
+   EJECUTAR TURNO
+================================================== */
 
     ejecutarTurno(combate) {
 
@@ -1755,7 +2044,6 @@ window.PALARENA_STANDAR = {
         ) {
 
             return null;
-
         }
 
 
@@ -1770,20 +2058,23 @@ window.PALARENA_STANDAR = {
             );
 
             return null;
-
         }
 
 
         const primero =
             this.obtenerCombatiente(
+
                 combate,
+
                 combate.primero
             );
 
 
         const segundo =
             this.obtenerCombatiente(
+
                 combate,
+
                 combate.segundo
             );
 
@@ -1794,12 +2085,14 @@ window.PALARENA_STANDAR = {
 
         const efectosPrimero =
             this.procesarEfectos(
+
                 primero
             );
 
 
         const efectosSegundo =
             this.procesarEfectos(
+
                 segundo
             );
 
@@ -1809,14 +2102,17 @@ window.PALARENA_STANDAR = {
         ) {
 
             this.finalizar(
+
                 combate,
+
                 segundo
             );
 
 
             return {
 
-                turno: turnoActual,
+                turno:
+                    turnoActual,
 
                 efectosPrimero:
                     efectosPrimero,
@@ -1826,9 +2122,7 @@ window.PALARENA_STANDAR = {
 
                 ganador:
                     segundo.codigo
-
             };
-
         }
 
 
@@ -1837,14 +2131,17 @@ window.PALARENA_STANDAR = {
         ) {
 
             this.finalizar(
+
                 combate,
+
                 primero
             );
 
 
             return {
 
-                turno: turnoActual,
+                turno:
+                    turnoActual,
 
                 efectosPrimero:
                     efectosPrimero,
@@ -1854,22 +2151,28 @@ window.PALARENA_STANDAR = {
 
                 ganador:
                     primero.codigo
-
             };
-
         }
 
 
+        /* ==========================================
+           ACCIÓN DEL PRIMERO
+        ========================================== */
+
         const accionPrimero =
             this.decidirAccion(
+
                 primero
             );
 
 
         const resultadoPrimero =
             this.ejecutarAccion(
+
                 primero,
+
                 segundo,
+
                 accionPrimero
             );
 
@@ -1896,11 +2199,11 @@ window.PALARENA_STANDAR = {
 
             resultado:
                 resultadoPrimero
-
         };
 
 
         combate.historial.push(
+
             registroPrimero
         );
 
@@ -1910,26 +2213,35 @@ window.PALARENA_STANDAR = {
         ) {
 
             this.finalizar(
+
                 combate,
+
                 primero
             );
 
 
             return registroPrimero;
-
         }
 
 
+        /* ==========================================
+           ACCIÓN DEL SEGUNDO
+        ========================================== */
+
         const accionSegundo =
             this.decidirAccion(
+
                 segundo
             );
 
 
         const resultadoSegundo =
             this.ejecutarAccion(
+
                 segundo,
+
                 primero,
+
                 accionSegundo
             );
 
@@ -1956,11 +2268,11 @@ window.PALARENA_STANDAR = {
 
             resultado:
                 resultadoSegundo
-
         };
 
 
         combate.historial.push(
+
             registroSegundo
         );
 
@@ -1970,7 +2282,9 @@ window.PALARENA_STANDAR = {
         ) {
 
             this.finalizar(
+
                 combate,
+
                 segundo
             );
 
@@ -1982,14 +2296,13 @@ window.PALARENA_STANDAR = {
 
                 segundo:
                     registroSegundo
-
             };
-
         }
 
 
         primero.defendiendo =
             false;
+
 
         segundo.defendiendo =
             false;
@@ -2011,15 +2324,13 @@ window.PALARENA_STANDAR = {
 
             estado:
                 combate.estado
-
         };
-
     },
 
 
-    /* ==================================================
-       EJECUTAR COMBATE COMPLETO
-    ================================================== */
+/* ==================================================
+   EJECUTAR COMBATE COMPLETO
+================================================== */
 
     ejecutarCombate(
         ficha1,
@@ -2028,7 +2339,9 @@ window.PALARENA_STANDAR = {
 
         const combate =
             this.crearCombate(
+
                 ficha1,
+
                 ficha2
             );
 
@@ -2036,7 +2349,6 @@ window.PALARENA_STANDAR = {
         if (!combate) {
 
             return null;
-
         }
 
 
@@ -2046,27 +2358,25 @@ window.PALARENA_STANDAR = {
         ) {
 
             this.ejecutarTurno(
+
                 combate
             );
-
         }
 
 
         return combate;
-
     },
 
 
-    /* ==================================================
-       RESUMEN
-    ================================================== */
+/* ==================================================
+   RESUMEN
+================================================== */
 
     obtenerResumen(combate) {
 
         if (!combate) {
 
             return null;
-
         }
 
 
@@ -2103,8 +2413,11 @@ window.PALARENA_STANDAR = {
                     combate.combatiente1.dominante,
 
                 perfil:
-                    combate.combatiente1.perfil
+                    combate.combatiente1.perfil,
 
+                factor_imprevisible:
+                    combate.combatiente1
+                        .factor_imprevisible
             },
 
 
@@ -2126,16 +2439,17 @@ window.PALARENA_STANDAR = {
                     combate.combatiente2.dominante,
 
                 perfil:
-                    combate.combatiente2.perfil
+                    combate.combatiente2.perfil,
 
+                factor_imprevisible:
+                    combate.combatiente2
+                        .factor_imprevisible
             },
 
 
             acciones:
                 combate.historial.length
-
         };
-
     }
 
 };
@@ -2146,56 +2460,72 @@ window.PALARENA_STANDAR = {
 ====================================================== */
 
 window.crearCombatienteEstandar =
+
     function(ficha) {
 
         return window.PALARENA_STANDAR
-            .crearCombatiente(ficha);
-
+            .crearCombatiente(
+                ficha
+            );
     };
 
 
 window.crearCombateEstandar =
-    function(ficha1, ficha2) {
+
+    function(
+        ficha1,
+        ficha2
+    ) {
 
         return window.PALARENA_STANDAR
             .crearCombate(
+
                 ficha1,
+
                 ficha2
             );
-
     };
 
 
 window.ejecutarTurnoEstandar =
+
     function(combate) {
 
         return window.PALARENA_STANDAR
-            .ejecutarTurno(combate);
-
+            .ejecutarTurno(
+                combate
+            );
     };
 
 
 window.ejecutarCombateEstandar =
-    function(ficha1, ficha2) {
+
+    function(
+        ficha1,
+        ficha2
+    ) {
 
         return window.PALARENA_STANDAR
             .ejecutarCombate(
+
                 ficha1,
+
                 ficha2
             );
-
     };
 
 
 window.obtenerResumenEstandar =
+
     function(combate) {
 
         return window.PALARENA_STANDAR
-            .obtenerResumen(combate);
-
+            .obtenerResumen(
+                combate
+            );
     };
 
 
 /* ======================================================
-   FIN STANDAR.JS
+   FIN STANDAR.JS v1.1
 ====================================================== */
