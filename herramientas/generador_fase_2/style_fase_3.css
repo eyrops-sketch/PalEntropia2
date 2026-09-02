@@ -1296,6 +1296,48 @@ h2{
  display:none!important;
 }
 
+/*=========================================================
+  BOTÓN ÍNDICE DEL TORNEO
+=========================================================*/
+#botonIndiceTorneo{
+  width:38px;
+  height:38px;
+  min-width:38px;
+  min-height:38px;
+  padding:0;
+  margin:0;
+  border-radius:50%;
+  border:1px solid #62d6ff;
+  background:#151719;
+  color:#62d6ff;
+  cursor:pointer;
+  font-size:16px;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  text-decoration:none;
+  box-shadow:0 0 7px rgba(98,214,255,.12);
+  transition:.20s;
+}
+
+#botonIndiceTorneo:hover{
+  background:#62d6ff;
+  color:#001018;
+  box-shadow:0 0 12px rgba(98,214,255,.30);
+}
+
+#botonIndiceTorneo:active{
+  transform:scale(.92);
+}
+
+
+
+
+
+
+
 
 /*=========================================================
  FIN STYLE.CSS
