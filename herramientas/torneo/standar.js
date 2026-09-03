@@ -407,7 +407,7 @@ window.PALARENA_STANDAR = {
             equilibrado: "E006"
         };
         return efectos[combatiente.perfil] || "E006";
-                                                         }
+   }
        decidirAccion(atacante, objetivo) {
         if (!atacante || !objetivo) { return "A001"; }
         const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
@@ -618,6 +618,7 @@ window.PALARENA_STANDAR = {
         };
     }
 };
+
 window.crearCombatienteEstandar = (ficha, reglas) => window.PALARENA_STANDAR.crearCombatiente(ficha, reglas);
 window.crearCombateEstandar = (ficha1, ficha2, reglas) => window.PALARENA_STANDAR.crearCombate(ficha1, ficha2, reglas);
 window.ejecutarTurnoEstandar = (combate) => window.PALARENA_STANDAR.ejecutarTurno(combate);
@@ -626,4 +627,4 @@ window.obtenerResumenEstandar = (combate) => window.PALARENA_STANDAR.obtenerResu
 /* ==================================================
    FIN STANDAR.JS v1.2
 ================================================== */
-           
+                                
