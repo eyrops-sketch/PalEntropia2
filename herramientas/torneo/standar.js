@@ -73,6 +73,7 @@ window.PALARENA_STANDAR = {
         ============================================== */
 
         coste_ataque_potente_hp: 0.05,
+        fatiga_minima_ataque_potente: 50,
 
         /* ==============================================
            FATIGA
@@ -107,10 +108,8 @@ window.PALARENA_STANDAR = {
         error_defensa_base: 15,
         error_defensa_reduccion_inteligencia: 0.05,
         error_defensa_reduccion_tactica: 0.04,
-
         error_defensa_fatiga_umbral: 40,
         error_defensa_fatiga_incremento: 0.10,
-
         error_defensa_min: 5,
         error_defensa_max: 25,
 
@@ -183,8 +182,7 @@ window.PALARENA_STANDAR = {
     aleatorio(min, max) {
 
         return Math.random() *
-            (max - min) +
-            min;
+            (max - min) + min;
     },
 
     enteroAleatorio(min, max) {
@@ -341,6 +339,7 @@ window.PALARENA_STANDAR = {
             Math.max(
                 ...atributos.map(
                     function(item) {
+
                         return item.valor;
                     }
                 )
@@ -525,9 +524,14 @@ window.PALARENA_STANDAR = {
             );
 
         /*
-           Finalmente se aplica el factor
-           imprevisible propio del combate.
+               /*
+           El factor imprevisible introduce una
+           pequeña variación individual en cada
+           combatiente.
         */
+
+        factor =
+            Number(factor) || 1;
 
         efectivos.ataque =
             this.limitar(
@@ -563,29 +567,6 @@ window.PALARENA_STANDAR = {
     },
 
     /* ==================================================
-       INICIATIVA
-    ================================================== */
-
-    calcularIniciativa(efectivos) {
-
-        return Math.round(
-
-            (
-                efectivos.velocidad *
-                this.configuracion
-                    .iniciativa_velocidad
-            )
-
-            +
-
-            (
-                efectivos.tactica *
-                this.configuracion
-                    .iniciativa_tactica
-            )
-        );
-    },
-       /* ==================================================
        CREAR COMBATIENTE
     ================================================== */
 
@@ -595,38 +576,36 @@ window.PALARENA_STANDAR = {
     ) {
 
         if (!ficha) {
-
-            console.error(
-                "PALARENA_STANDAR: ficha no válida."
-            );
-
             return null;
         }
 
-        if (!window.PALARENA_STATS) {
+        const indicadores = {
 
-            console.error(
-                "PALARENA_STANDAR: falta palarenastats.js."
-            );
+            ataque:
+                this.numero(
+                    ficha.e5
+                ),
 
-            return null;
-        }
+            defensa:
+                this.numero(
+                    ficha.e6
+                ),
 
-        const stats =
-            window.PALARENA_STATS
-                .obtenerStats(ficha);
+            velocidad:
+                this.numero(
+                    ficha.e7
+                ),
 
-        if (!stats) {
-            return null;
-        }
+            resistencia:
+                this.numero(
+                    ficha.e3
+                ),
 
-        const indicadores =
-            window.PALARENA_STATS
-                .calcular(stats);
-
-        if (!indicadores) {
-            return null;
-        }
+            tactica:
+                this.numero(
+                    ficha.e11
+                )
+        };
 
         const dominante =
             this.obtenerDominante(
@@ -638,18 +617,8 @@ window.PALARENA_STANDAR = {
                 dominante.atributo
             );
 
-        /*
-           Cada combatiente obtiene su propio
-           factor imprevisible.
-        */
-
         const factor =
             this.obtenerFactorImprevisible();
-
-        /*
-           Coeficiente configurable.
-           1.00 = combate estándar puro.
-        */
 
         const coeficiente =
             this.obtenerCoeficienteCombate(
@@ -666,12 +635,10 @@ window.PALARENA_STANDAR = {
             );
 
         const hpMax =
-            this.configuracion.hp_base +
-            efectivos.resistencia;
-
-        const iniciativa =
-            this.calcularIniciativa(
-                efectivos
+            this.configuracion
+                .hp_base +
+            Math.round(
+                efectivos.resistencia
             );
 
         return {
@@ -684,89 +651,13 @@ window.PALARENA_STANDAR = {
             nombre:
                 ficha.j2 ||
                 ficha.nombre ||
-                "",
-
-            stats: {
-
-                e1: stats.e1,
-                e2: stats.e2,
-                e3: stats.e3,
-                e4: stats.e4,
-                e5: stats.e5,
-                e6: stats.e6,
-                e7: stats.e7,
-                e8: stats.e8,
-                e9: stats.e9,
-                e10: stats.e10,
-                e11: stats.e11
-            },
-
-            indicadores: {
-
-                ataque:
-                    indicadores.ataque,
-
-                defensa:
-                    indicadores.defensa,
-
-                velocidad:
-                    indicadores.velocidad,
-
-                resistencia:
-                    indicadores.resistencia,
-
-                tactica:
-                    indicadores.tactica
-            },
-
-            efectivos: {
-
-                ataque:
-                    efectivos.ataque,
-
-                defensa:
-                    efectivos.defensa,
-
-                velocidad:
-                    efectivos.velocidad,
-
-                resistencia:
-                    efectivos.resistencia,
-
-                tactica:
-                    efectivos.tactica
-            },
-
-            dominante: {
-
-                atributo:
-                    dominante.atributo,
-
-                valor:
-                    dominante.valor,
-
-                bonificacion:
-                    dominante.bonificacion
-            },
-
-            perfil:
-                perfil,
-
-            factor_imprevisible:
-                factor,
-
-            coeficiente_combate:
-                coeficiente,
+                "Desconocido",
 
             hp:
                 hpMax,
 
             hp_max:
                 hpMax,
-
-            /*
-               La fatiga comienza siempre al 100 %.
-            */
 
             fatiga:
                 this.configuracion
@@ -776,8 +667,26 @@ window.PALARENA_STANDAR = {
                 this.configuracion
                     .fatiga_max,
 
-            iniciativa:
-                iniciativa,
+            stats:
+                ficha,
+
+            indicadores:
+                indicadores,
+
+            efectivos:
+                efectivos,
+
+            dominante:
+                dominante.atributo,
+
+            perfil:
+                perfil,
+
+            factor_imprevisible:
+                factor,
+
+            coeficiente_combate:
+                coeficiente,
 
             ataques: [],
 
@@ -789,25 +698,6 @@ window.PALARENA_STANDAR = {
             derrotado:
                 false
         };
-    },
-
-    /* ==================================================
-       ASIGNAR ATAQUES
-    ================================================== */
-
-    asignarAtaques(combatiente) {
-
-        if (!combatiente) {
-            return;
-        }
-
-        combatiente.ataques = [
-
-            "A001",
-            "A002",
-            "A003",
-            "D001"
-        ];
     },
 
     /* ==================================================
@@ -836,7 +726,6 @@ window.PALARENA_STANDAR = {
             !combatiente1 ||
             !combatiente2
         ) {
-
             return null;
         }
 
@@ -848,12 +737,36 @@ window.PALARENA_STANDAR = {
             combatiente2
         );
 
+        const iniciativa1 =
+            (
+                combatiente1.efectivos.velocidad *
+                this.configuracion
+                    .iniciativa_velocidad
+            ) +
+            (
+                combatiente1.efectivos.tactica *
+                this.configuracion
+                    .iniciativa_tactica
+            );
+
+        const iniciativa2 =
+            (
+                combatiente2.efectivos.velocidad *
+                this.configuracion
+                    .iniciativa_velocidad
+            ) +
+            (
+                combatiente2.efectivos.tactica *
+                this.configuracion
+                    .iniciativa_tactica
+            );
+
         let primero;
         let segundo;
 
         if (
-            combatiente1.iniciativa >
-            combatiente2.iniciativa
+            iniciativa1 >
+            iniciativa2
         ) {
 
             primero =
@@ -861,11 +774,10 @@ window.PALARENA_STANDAR = {
 
             segundo =
                 combatiente2;
-        }
 
-        else if (
-            combatiente2.iniciativa >
-            combatiente1.iniciativa
+        } else if (
+            iniciativa2 >
+            iniciativa1
         ) {
 
             primero =
@@ -873,12 +785,12 @@ window.PALARENA_STANDAR = {
 
             segundo =
                 combatiente1;
-        }
 
-        else {
+        } else {
 
             if (
-                Math.random() < 0.5
+                Math.random() <
+                0.5
             ) {
 
                 primero =
@@ -886,9 +798,8 @@ window.PALARENA_STANDAR = {
 
                 segundo =
                     combatiente2;
-            }
 
-            else {
+            } else {
 
                 primero =
                     combatiente2;
@@ -901,7 +812,7 @@ window.PALARENA_STANDAR = {
         return {
 
             estado:
-                "combate",
+                "activo",
 
             turno:
                 1,
@@ -924,15 +835,12 @@ window.PALARENA_STANDAR = {
                 null,
 
             perdedor:
-                null,
-
-            reglas:
-                reglas || null
+                null
         };
     },
 
     /* ==================================================
-       BUSCAR COMBATIENTE
+       OBTENER COMBATIENTE
     ================================================== */
 
     obtenerCombatiente(
@@ -941,10 +849,15 @@ window.PALARENA_STANDAR = {
     ) {
 
         if (
+            !combate
+        ) {
+            return null;
+        }
+
+        if (
             combate.combatiente1.codigo ===
             codigo
         ) {
-
             return combate.combatiente1;
         }
 
@@ -952,7 +865,6 @@ window.PALARENA_STANDAR = {
             combate.combatiente2.codigo ===
             codigo
         ) {
-
             return combate.combatiente2;
         }
 
@@ -960,31 +872,20 @@ window.PALARENA_STANDAR = {
     },
 
     /* ==================================================
-       BUSCAR EFECTO ACTIVO
+       ASIGNAR ATAQUES
     ================================================== */
 
-    obtenerEfecto(
-        combatiente,
-        codigo
+    asignarAtaques(
+        combatiente
     ) {
 
-        if (
-            !combatiente ||
-            !Array.isArray(
-                combatiente.efectos
-            )
-        ) {
+        combatiente.ataques = [
 
-            return null;
-        }
-
-        return combatiente.efectos.find(
-            function(efecto) {
-
-                return efecto.codigo ===
-                    codigo;
-            }
-        ) || null;
+            "A001",
+            "A002",
+            "A003",
+            "D001"
+        ];
     },
 
     /* ==================================================
@@ -999,7 +900,6 @@ window.PALARENA_STANDAR = {
             !combatiente ||
             !combatiente.fatiga_max
         ) {
-
             return 0;
         }
 
@@ -1014,7 +914,9 @@ window.PALARENA_STANDAR = {
         cantidad
     ) {
 
-        if (!combatiente) {
+        if (
+            !combatiente
+        ) {
             return 0;
         }
 
@@ -1033,7 +935,8 @@ window.PALARENA_STANDAR = {
                 )
             );
 
-        return anterior -
+        return
+            anterior -
             combatiente.fatiga;
     },
 
@@ -1045,7 +948,6 @@ window.PALARENA_STANDAR = {
             !combatiente ||
             combatiente.derrotado
         ) {
-
             return 0;
         }
 
@@ -1062,7 +964,8 @@ window.PALARENA_STANDAR = {
                     .fatiga_regeneracion_turno
             );
 
-        return combatiente.fatiga -
+        return
+            combatiente.fatiga -
             anterior;
     },
 
@@ -1110,11 +1013,9 @@ window.PALARENA_STANDAR = {
 
         return {
 
-            coste:
-                coste,
+            coste,
 
-            aplicada:
-                aplicada,
+            aplicada,
 
             fatiga_restante:
                 atacante.fatiga,
@@ -1124,6 +1025,50 @@ window.PALARENA_STANDAR = {
                     atacante
                 )
         };
+    },
+
+    /* ==================================================
+       EFECTOS
+    ================================================== */
+
+    obtenerEfecto(
+        combatiente,
+        codigo
+    ) {
+
+        if (
+            !combatiente ||
+            !combatiente.efectos
+        ) {
+            return null;
+        }
+
+        return combatiente.efectos.find(
+            function(efecto) {
+
+                return efecto.codigo ===
+                    codigo;
+            }
+        ) || null;
+    },
+      /* ==================================================
+       OBTENER EFECTO SEGÚN CÓDIGO
+    ================================================== */
+
+    obtenerEfectoEstandar(
+        codigo
+    ) {
+
+        if (
+            !window.PALARENA_STANDAR_EFECTOS
+        ) {
+            return null;
+        }
+
+        return window.PALARENA_STANDAR_EFECTOS
+            .obtener(
+                codigo
+            );
     },
 
     /* ==================================================
@@ -1137,16 +1082,16 @@ window.PALARENA_STANDAR = {
     ) {
 
         if (
-            !codigo ||
-            !window.PALARENA_STANDAR_EFECTOS
+            !objetivo ||
+            !codigo
         ) {
-
             return null;
         }
 
         const base =
-            window.PALARENA_STANDAR_EFECTOS
-                .obtener(codigo);
+            this.obtenerEfectoEstandar(
+                codigo
+            );
 
         if (!base) {
             return null;
@@ -1274,7 +1219,8 @@ window.PALARENA_STANDAR = {
                 false
         };
     },
-       /* ==================================================
+
+    /* ==================================================
        PROCESAR EFECTOS
     ================================================== */
 
@@ -1286,7 +1232,6 @@ window.PALARENA_STANDAR = {
             !combatiente ||
             !combatiente.efectos.length
         ) {
-
             return [];
         }
 
@@ -1436,7 +1381,6 @@ window.PALARENA_STANDAR = {
         if (
             !combatiente
         ) {
-
             return 0;
         }
 
@@ -1516,9 +1460,7 @@ window.PALARENA_STANDAR = {
         let probabilidad =
             this.configuracion
                 .fallo_base
-
             -
-
             (
                 tactica *
                 this.configuracion
@@ -1689,7 +1631,7 @@ window.PALARENA_STANDAR = {
             );
 
         /*
-           Por debajo del 40 % de fatiga
+           Por debajo del 40 %
            no existen golpes críticos.
         */
 
@@ -1747,33 +1689,23 @@ window.PALARENA_STANDAR = {
                 false
         };
     },
-
-    /* ==================================================
-       MULTIPLICADOR DE DAÑO SEGÚN VIDA
+       /* ==================================================
+       MULTIPLICADOR SEGÚN VIDA RESTANTE
     ================================================== */
 
     obtenerMultiplicadorVida(
-        objetivo
+        combatiente
     ) {
-
-        if (
-            !objetivo ||
-            objetivo.hp_max <= 0
-        ) {
-
-            return 1;
-        }
 
         const porcentaje =
             (
-                objetivo.hp /
-                objetivo.hp_max
+                combatiente.hp /
+                combatiente.hp_max
             ) * 100;
 
         if (
             porcentaje <= 10
         ) {
-
             return this.configuracion
                 .dano_vida_critica;
         }
@@ -1781,7 +1713,6 @@ window.PALARENA_STANDAR = {
         if (
             porcentaje <= 25
         ) {
-
             return this.configuracion
                 .dano_vida_10;
         }
@@ -1789,7 +1720,6 @@ window.PALARENA_STANDAR = {
         if (
             porcentaje <= 50
         ) {
-
             return this.configuracion
                 .dano_vida_25;
         }
@@ -1797,7 +1727,6 @@ window.PALARENA_STANDAR = {
         if (
             porcentaje <= 75
         ) {
-
             return this.configuracion
                 .dano_vida_50;
         }
@@ -1813,17 +1742,26 @@ window.PALARENA_STANDAR = {
     calcularDano(
         atacante,
         objetivo,
-        ataque
+        ataque,
+        defensaActiva,
+        critico
     ) {
+
+        const ataqueEfectivo =
+            this.limitar(
+                this.obtenerDefensa
+            );
+
+        const valorAtaque =
+            this.limitar(
+                atacante.efectivos.ataque
+            );
 
         let dano =
             this.configuracion
-                .dano_base
-
-            +
-
+                .dano_base +
             (
-                atacante.efectivos.ataque *
+                valorAtaque *
                 this.configuracion
                     .dano_por_ataque
             );
@@ -1831,38 +1769,35 @@ window.PALARENA_STANDAR = {
         dano *=
             ataque.potencia;
 
-        const aumento =
+        const efectoPotenciacion =
             this.obtenerEfecto(
                 atacante,
                 "E007"
             );
 
-        if (aumento) {
+        if (
+            efectoPotenciacion
+        ) {
 
             dano *=
                 1 +
                 (
-                    aumento.potencia /
+                    efectoPotenciacion.potencia /
                     100
                 );
         }
 
-        const defensa =
-            this.obtenerDefensa(
-                objetivo
-            );
+        if (
+            defensaActiva
+        ) {
+
+            dano *=
+                this.configuracion
+                    .reduccion_defensa;
+        }
 
         dano *=
-            1 -
-            (
-                defensa /
-                this.configuracion
-                    .defensa_divisor
-            );
-
-        const variacion =
             this.aleatorio(
-
                 1 -
                 this.configuracion
                     .variacion_dano,
@@ -1870,15 +1805,6 @@ window.PALARENA_STANDAR = {
                 1 +
                 this.configuracion
                     .variacion_dano
-            );
-
-        dano *=
-            variacion;
-
-        const critico =
-            this.comprobarCritico(
-                atacante,
-                ataque
             );
 
         if (
@@ -1890,23 +1816,17 @@ window.PALARENA_STANDAR = {
                     .multiplicador_critico;
         }
 
-        /*
-           El daño aumenta progresivamente
-           cuando la víctima está herida.
-        */
-
-        const multiplicadorVida =
+        dano *=
             this.obtenerMultiplicadorVida(
                 objetivo
             );
 
-        dano *=
-            multiplicadorVida;
-
         dano =
             Math.max(
                 1,
-                Math.round(dano)
+                Math.round(
+                    dano
+                )
             );
 
         return {
@@ -1924,19 +1844,12 @@ window.PALARENA_STANDAR = {
                 critico.dado,
 
             bloqueado_por_fatiga:
-                critico.bloqueado_por_fatiga,
-
-            defensa:
-                defensa,
-
-            multiplicador_vida:
-                multiplicadorVida
+                critico.bloqueado_por_fatiga
         };
     },
-       /* ==================================================
-       DAÑO DE CONTRAATAQUE
-       Se utiliza para la inversión de papeles.
-       No genera una segunda defensa ni recursión.
+
+    /* ==================================================
+       CALCULAR DAÑO DE CONTRAATAQUE
     ================================================== */
 
     calcularDanoContraataque(
@@ -1950,10 +1863,7 @@ window.PALARENA_STANDAR = {
                 "A001",
 
             nombre:
-                "Contraataque",
-
-            tipo:
-                "ataque",
+                "Ataque básico",
 
             potencia:
                 1.00,
@@ -1965,79 +1875,19 @@ window.PALARENA_STANDAR = {
                 null
         };
 
-        let dano =
-            this.configuracion
-                .dano_base
-
-            +
-
-            (
-                atacante.efectivos.ataque *
-                this.configuracion
-                    .dano_por_ataque
-            );
-
-        const variacion =
-            this.aleatorio(
-
-                1 -
-                this.configuracion
-                    .variacion_dano,
-
-                1 +
-                this.configuracion
-                    .variacion_dano
-            );
-
-        dano *=
-            variacion;
-
         const critico =
             this.comprobarCritico(
                 atacante,
                 ataque
             );
 
-        if (
-            critico.critico
-        ) {
-
-            dano *=
-                this.configuracion
-                    .multiplicador_critico;
-        }
-
-        const multiplicadorVida =
-            this.obtenerMultiplicadorVida(
-                objetivo
-            );
-
-        dano *=
-            multiplicadorVida;
-
-        dano =
-            Math.max(
-                1,
-                Math.round(dano)
-            );
-
-        return {
-
-            dano:
-                dano,
-
-            critico:
-                critico.critico,
-
-            probabilidad_critico:
-                critico.probabilidad,
-
-            dado_critico:
-                critico.dado,
-
-            multiplicador_vida:
-                multiplicadorVida
-        };
+        return this.calcularDano(
+            atacante,
+            objetivo,
+            ataque,
+            false,
+            critico
+        );
     },
 
     /* ==================================================
@@ -2051,39 +1901,114 @@ window.PALARENA_STANDAR = {
     ) {
 
         if (
+            !atacante ||
+            !objetivo ||
+            atacante.derrotado ||
+            objetivo.derrotado
+        ) {
+
+            return {
+
+                exito:
+                    false,
+
+                codigo:
+                    codigo,
+
+                mensaje:
+                    "Ataque no disponible."
+            };
+        }
+
+        if (
             !window.PALARENA_STANDAR_ATAQUES
         ) {
 
             return {
 
-                tipo:
-                    "error",
+                exito:
+                    false,
+
+                codigo:
+                    codigo,
 
                 mensaje:
-                    "Falta standar-ataques.js."
+                    "Base de ataques no disponible."
             };
         }
 
         const ataque =
             window.PALARENA_STANDAR_ATAQUES
-                .obtener(codigo);
+                .obtener(
+                    codigo
+                );
 
-        if (!ataque) {
+        if (
+            !ataque
+        ) {
 
             return {
 
-                tipo:
-                    "error",
+                exito:
+                    false,
+
+                codigo:
+                    codigo,
 
                 mensaje:
-                    "Ataque no encontrado: " +
-                    codigo
+                    "Ataque inexistente."
             };
         }
 
-        /* ==============================================
-           FATIGA DE LA ACCIÓN
-        ============================================== */
+        /*
+           ATAQUE POTENTE
+           Se bloquea cuando la fatiga está
+           por debajo del 50 %.
+
+           50 % exactos sí permiten utilizarlo.
+        */
+
+        if (
+            ataque.codigo === "A002" &&
+            this.obtenerFatigaPorcentaje(
+                atacante
+            ) <
+            this.configuracion
+                .fatiga_minima_ataque_potente
+        ) {
+
+            return {
+
+                exito:
+                    false,
+
+                bloqueado:
+                    true,
+
+                bloqueado_por_fatiga:
+                    true,
+
+                codigo:
+                    codigo,
+
+                mensaje:
+                    "Ataque potente bloqueado: fatiga insuficiente.",
+
+                fatiga:
+                    atacante.fatiga,
+
+                fatiga_porcentaje:
+                    this.obtenerFatigaPorcentaje(
+                        atacante
+                    )
+            };
+        }
+
+        /*
+           La fatiga de la acción solamente
+           se consume después de superar
+           el bloqueo del ataque potente.
+        */
 
         const fatigaAccion =
             this.aplicarFatigaAccion(
@@ -2091,12 +2016,12 @@ window.PALARENA_STANDAR = {
                 codigo
             );
 
-        /* ==============================================
+        /* ==================================================
            DEFENDER
-        ============================================== */
+        ================================================== */
 
         if (
-            ataque.tipo === "defensa"
+            ataque.codigo === "D001"
         ) {
 
             atacante.defendiendo =
@@ -2104,32 +2029,32 @@ window.PALARENA_STANDAR = {
 
             return {
 
-                tipo:
-                    "defensa",
+                exito:
+                    true,
 
                 codigo:
-                    ataque.codigo,
+                    codigo,
 
                 nombre:
                     ataque.nombre,
+
+                defensa:
+                    true,
 
                 dano:
                     0,
 
                 fatiga:
-                    fatigaAccion,
-
-                mensaje:
-                    atacante.nombre +
-                    " adopta una posición defensiva."
+                    fatigaAccion
             };
         }
 
-        /* ==============================================
-           COSTE DEL ATAQUE POTENTE
-        ============================================== */
+        /* ==================================================
+           COSTE DE VIDA — ATAQUE POTENTE
+        ================================================== */
 
-        let costeHp = 0;
+        let costeHp =
+            0;
 
         if (
             ataque.codigo === "A002"
@@ -2137,11 +2062,8 @@ window.PALARENA_STANDAR = {
 
             costeHp =
                 Math.max(
-
                     1,
-
                     Math.round(
-
                         atacante.hp_max *
                         this.configuracion
                             .coste_ataque_potente_hp
@@ -2149,267 +2071,41 @@ window.PALARENA_STANDAR = {
                 );
         }
 
-        /*
-           El coste del ataque potente se paga
-           incluso si falla o es esquivado.
-        */
-
         if (
             costeHp > 0
         ) {
 
             atacante.hp =
                 Math.max(
-
                     1,
-
                     atacante.hp -
                     costeHp
                 );
-
-            if (
-                atacante.hp <= 0
-            ) {
-
-                atacante.hp = 1;
-            }
         }
 
-        /* ==============================================
+        /* ==================================================
            FALLO DE ATAQUE
-        ============================================== */
+        ================================================== */
 
         const fallo =
             this.comprobarFallo(
                 atacante
             );
 
-        /*
-           Si el objetivo estaba defendiendo,
-           la defensa provoca cansancio al atacante
-           aunque el ataque termine fallando.
-        */
-
-        let fatigaDefensa =
-            null;
-
-        if (
-            objetivo.defendiendo
-        ) {
-
-            fatigaDefensa = {
-
-                coste:
-                    this.configuracion
-                        .fatiga_defensa_atacante,
-
-                aplicada:
-                    this.aplicarFatiga(
-                        atacante,
-                        this.configuracion
-                            .fatiga_defensa_atacante
-                    ),
-
-                fatiga_restante:
-                    atacante.fatiga
-            };
-        }
-
         if (
             fallo.fallo
         ) {
 
-            /*
-               Si el ataque falla contra una defensa activa,
-               se comprueba la defensa.
-
-               Defensa acertada + fallo de ataque =
-               inversión de papeles y contraataque.
-            */
-
-            if (
-                objetivo.defendiendo
-            ) {
-
-                const defensa =
-                    this.comprobarDefensa(
-                        objetivo
-                    );
-
-                if (
-                    defensa.acierto
-                ) {
-
-                    const contraataque =
-                        this.calcularDanoContraataque(
-                            objetivo,
-                            atacante
-                        );
-
-                    const danoContra =
-                        contraataque.dano;
-
-                    atacante.hp =
-                        Math.max(
-                            0,
-                            atacante.hp -
-                            danoContra
-                        );
-
-                    if (
-                        atacante.hp <= 0
-                    ) {
-
-                        atacante.hp = 0;
-
-                        atacante.derrotado =
-                            true;
-                    }
-
-                    return {
-
-                        tipo:
-                            "ataque",
-
-                        codigo:
-                            ataque.codigo,
-
-                        nombre:
-                            ataque.nombre,
-
-                        dano:
-                            0,
-
-                        fallo:
-                            true,
-
-                        esquiva:
-                            false,
-
-                        critico:
-                            false,
-
-                        coste_hp:
-                            costeHp,
-
-                        fatiga:
-                            fatigaAccion,
-
-                        fatiga_defensa:
-                            fatigaDefensa,
-
-                        probabilidad_fallo:
-                            fallo.probabilidad,
-
-                        dado_fallo:
-                            fallo.dado,
-
-                        defensa_acierto:
-                            true,
-
-                        fallo_defensa:
-                            false,
-
-                        probabilidad_error_defensa:
-                            defensa.probabilidad_error,
-
-                        dado_defensa:
-                            defensa.dado,
-
-                        inversion:
-                            true,
-
-                        contraataque:
-                            true,
-
-                        dano_contraataque:
-                            danoContra,
-
-                        critico_contraataque:
-                            contraataque.critico,
-
-                        hp_restante:
-                            objetivo.hp,
-
-                        hp_restante_atacante:
-                            atacante.hp,
-
-                        mensaje:
-                            objetivo.nombre +
-                            " bloquea el ataque y contraataca."
-                    };
-                }
-
-                /*
-                   Si también falla la defensa,
-                   el ataque simplemente ha fallado.
-                */
-
-                return {
-
-                    tipo:
-                        "ataque",
-
-                    codigo:
-                        ataque.codigo,
-
-                    nombre:
-                        ataque.nombre,
-
-                    dano:
-                        0,
-
-                    fallo:
-                        true,
-
-                    esquiva:
-                        false,
-
-                    critico:
-                        false,
-
-                    coste_hp:
-                        costeHp,
-
-                    fatiga:
-                        fatigaAccion,
-
-                    fatiga_defensa:
-                        fatigaDefensa,
-
-                    probabilidad_fallo:
-                        fallo.probabilidad,
-
-                    dado_fallo:
-                        fallo.dado,
-
-                    defensa_acierto:
-                        false,
-
-                    fallo_defensa:
-                        true,
-
-                    mensaje:
-                        atacante.nombre +
-                        " falla el ataque y " +
-                        objetivo.nombre +
-                        " comete un error defensivo."
-                };
-            }
-
             return {
 
-                tipo:
-                    "ataque",
+                exito:
+                    false,
 
                 codigo:
-                    ataque.codigo,
+                    codigo,
 
                 nombre:
                     ataque.nombre,
-
-                dano:
-                    0,
 
                 fallo:
                     true,
@@ -2417,8 +2113,8 @@ window.PALARENA_STANDAR = {
                 esquiva:
                     false,
 
-                critico:
-                    false,
+                dano:
+                    0,
 
                 coste_hp:
                     costeHp,
@@ -2426,21 +2122,172 @@ window.PALARENA_STANDAR = {
                 fatiga:
                     fatigaAccion,
 
-                probabilidad_fallo:
-                    fallo.probabilidad,
-
-                dado_fallo:
-                    fallo.dado,
-
                 mensaje:
-                    atacante.nombre +
-                    " falla el ataque."
+                    "El ataque falla."
             };
         }
 
-        /* ==============================================
+        /* ==================================================
+           DEFENSA ACTIVA
+        ================================================== */
+
+        if (
+            objetivo.defendiendo
+        ) {
+
+            const errorDefensa =
+                this.comprobarDefensa(
+                    objetivo
+                );
+
+            if (
+                errorDefensa.error
+            ) {
+
+                objetivo.defendiendo =
+                    false;
+
+            } else {
+
+                const fatigaDefensa =
+                    this.aplicarFatiga(
+                        atacante,
+                        this.configuracion
+                            .fatiga_defensa_atacante
+                    );
+
+                const critico =
+                    this.comprobarCritico(
+                        atacante,
+                        ataque
+                    );
+
+                let contraataque =
+                    false;
+
+                /*
+                   La defensa puede invertir
+                   el resultado del ataque.
+                */
+
+                if (
+                    this.configuracion
+                        .golpe_mortal &&
+                    errorDefensa.acierto
+                ) {
+
+                    objetivo.defendiendo =
+                        false;
+
+                    atacante.hp =
+                        0;
+
+                    atacante.derrotado =
+                        true;
+
+                    return {
+
+                        exito:
+                            true,
+
+                        codigo:
+                            codigo,
+
+                        nombre:
+                            ataque.nombre,
+
+                        defensa:
+                            true,
+
+                        inversion:
+                            true,
+
+                        golpe_mortal:
+                            true,
+
+                        dano:
+                            0,
+
+                        coste_hp:
+                            costeHp,
+
+                        fatiga:
+                            fatigaAccion,
+
+                        fatiga_defensa_atacante:
+                            fatigaDefensa,
+
+                        error_defensa:
+                            errorDefensa,
+
+                        mensaje:
+                            objetivo.nombre +
+                            " bloquea el ataque."
+                    };
+                }
+
+                const dano =
+                    this.calcularDano(
+                        atacante,
+                        objetivo,
+                        ataque,
+                        true,
+                        critico
+                    );
+
+                objetivo.hp =
+                    Math.max(
+                        0,
+                        objetivo.hp -
+                        dano.dano
+                    );
+
+                if (
+                    objetivo.hp <= 0
+                ) {
+
+                    objetivo.derrotado =
+                        true;
+                }
+
+                return {
+
+                    exito:
+                        true,
+
+                    codigo:
+                        codigo,
+
+                    nombre:
+                        ataque.nombre,
+
+                    defensa:
+                        true,
+
+                    dano:
+                        dano.dano,
+
+                    critico:
+                        dano.critico,
+
+                    coste_hp:
+                        costeHp,
+
+                    fatiga:
+                        fatigaAccion,
+
+                    fatiga_defensa_atacante:
+                        fatigaDefensa,
+
+                    error_defensa:
+                        errorDefensa
+                };
+            }
+        }
+
+        /* ==================================================
            ESQUIVA
-        ============================================== */
+        ================================================== */
 
         const esquiva =
             this.comprobarEsquiva(
@@ -2453,17 +2300,14 @@ window.PALARENA_STANDAR = {
 
             return {
 
-                tipo:
-                    "ataque",
+                exito:
+                    false,
 
                 codigo:
-                    ataque.codigo,
+                    codigo,
 
                 nombre:
                     ataque.nombre,
-
-                dano:
-                    0,
 
                 fallo:
                     false,
@@ -2471,8 +2315,8 @@ window.PALARENA_STANDAR = {
                 esquiva:
                     true,
 
-                critico:
-                    false,
+                dano:
+                    0,
 
                 coste_hp:
                     costeHp,
@@ -2480,279 +2324,96 @@ window.PALARENA_STANDAR = {
                 fatiga:
                     fatigaAccion,
 
-                fatiga_defensa:
-                    fatigaDefensa,
-
-                probabilidad_esquiva:
-                    esquiva.probabilidad,
-
-                dado_esquiva:
-                    esquiva.dado,
-
                 mensaje:
-                    objetivo.nombre +
-                    " esquiva el ataque."
+                    "El objetivo esquiva el ataque."
             };
         }
 
-        /* ==============================================
-           CALCULAR DAÑO
-        ============================================== */
+        /* ==================================================
+           DAÑO
+        ================================================== */
 
-        const resultado =
-            this.calcularDano(
+        const critico =
+            this.comprobarCritico(
                 atacante,
-                objetivo,
                 ataque
             );
 
-        let dano =
-            resultado.dano;
-
-        /* ==============================================
-           DEFENSA ACTIVA
-        ============================================== */
-
-        let defensaResultado =
-            null;
-
-        if (
-            objetivo.defendiendo
-        ) {
-
-            defensaResultado =
-                this.comprobarDefensa(
-                    objetivo
-                );
-
-            /*
-               ERROR DE DEFENSA + CRÍTICO =
-               GOLPE MORTAL.
-            */
-
-            if (
-                defensaResultado.error &&
-                resultado.critico &&
-                this.configuracion
-                    .golpe_mortal
-            ) {
-
-                const hpAnterior =
-                    objetivo.hp;
-
-                objetivo.hp = 0;
-
-                objetivo.derrotado =
-                    true;
-
-                return {
-
-                    tipo:
-                        "ataque",
-
-                    codigo:
-                        ataque.codigo,
-
-                    nombre:
-                        ataque.nombre,
-
-                    dano:
-                        hpAnterior,
-
-                    dano_base:
-                        resultado.dano,
-
-                    fallo:
-                        false,
-
-                    esquiva:
-                        false,
-
-                    critico:
-                        true,
-
-                    golpe_mortal:
-                        true,
-
-                    coste_hp:
-                        costeHp,
-
-                    fatiga:
-                        fatigaAccion,
-
-                    fatiga_defensa:
-                        fatigaDefensa,
-
-                    defensa_acierto:
-                        false,
-
-                    fallo_defensa:
-                        true,
-
-                    probabilidad_error_defensa:
-                        defensaResultado
-                            .probabilidad_error,
-
-                    dado_defensa:
-                        defensaResultado.dado,
-
-                    multiplicador_vida:
-                        resultado
-                            .multiplicador_vida,
-
-                    hp_restante:
-                        0,
-
-                    mensaje:
-                        atacante.nombre +
-                        " consigue un GOLPE MORTAL."
-                };
-            }
-
-            /*
-               Defensa acertada:
-               reducción fuerte del daño.
-            */
-
-            if (
-                defensaResultado.acierto
-            ) {
-
-                dano =
-                    Math.max(
-
-                        1,
-
-                        Math.round(
-
-                            dano *
-                            this.configuracion
-                                .reduccion_defensa
-                        )
-                    );
-            }
-        }
-
-        /* ==============================================
-           APLICAR DAÑO
-        ============================================== */
+        const dano =
+            this.calcularDano(
+                atacante,
+                objetivo,
+                ataque,
+                false,
+                critico
+            );
 
         objetivo.hp =
             Math.max(
-
                 0,
-
                 objetivo.hp -
-                dano
+                dano.dano
             );
 
         if (
             objetivo.hp <= 0
         ) {
 
-            objetivo.hp = 0;
-
             objetivo.derrotado =
                 true;
         }
 
-        /* ==============================================
+        /* ==================================================
            EFECTO
-        ============================================== */
+        ================================================== */
 
-        let efecto = null;
+        let efectoAplicado =
+            null;
 
         if (
             ataque.efecto &&
             !objetivo.derrotado
         ) {
 
-            let codigoEfecto =
-                ataque.efecto;
-
-            if (
-                codigoEfecto ===
-                "E00X"
-            ) {
-
-                codigoEfecto =
-                    this.obtenerEfectoPerfil(
-                        atacante
-                    );
-            }
-
-            if (codigoEfecto) {
-
-                efecto =
-                    this.aplicarEfecto(
-                        atacante,
-                        objetivo,
-                        codigoEfecto
-                    );
-            }
+            efectoAplicado =
+                this.aplicarEfecto(
+                    atacante,
+                    objetivo,
+                    ataque.efecto
+                );
         }
 
         return {
 
-            tipo:
-                "ataque",
+            exito:
+                true,
 
             codigo:
-                ataque.codigo,
+                codigo,
 
             nombre:
                 ataque.nombre,
 
-            dano:
-                dano,
-
-            dano_base:
-                resultado.dano,
-
             fallo:
                 false,
-
-            critico:
-                resultado.critico,
 
             esquiva:
                 false,
 
-            defensa:
-                resultado.defensa,
+            dano:
+                dano.dano,
 
-            defensa_acierto:
-                defensaResultado
-                    ? defensaResultado.acierto
-                    : false,
+            critico:
+                dano.critico,
 
-            fallo_defensa:
-                defensaResultado
-                    ? defensaResultado.error
-                    : false,
+            probabilidad_critico:
+                dano.probabilidad_critico,
 
-            probabilidad_error_defensa:
-                defensaResultado
-                    ? defensaResultado
-                        .probabilidad_error
-                    : 0,
+            dado_critico:
+                dano.dado_critico,
 
-            dado_defensa:
-                defensaResultado
-                    ? defensaResultado.dado
-                    : 100,
-
-            golpe_mortal:
-                false,
-
-            inversion:
-                false,
-
-            contraataque:
-                false,
-
-            efecto:
-                efecto,
+            bloqueado_por_fatiga:
+                dano.bloqueado_por_fatiga,
 
             coste_hp:
                 costeHp,
@@ -2760,15 +2421,8 @@ window.PALARENA_STANDAR = {
             fatiga:
                 fatigaAccion,
 
-            fatiga_defensa:
-                fatigaDefensa,
-
-            multiplicador_vida:
-                resultado
-                    .multiplicador_vida,
-
-            hp_restante:
-                objetivo.hp
+            efecto:
+                efectoAplicado
         };
     },
        /* ==================================================
@@ -2806,81 +2460,72 @@ window.PALARENA_STANDAR = {
     },
 
     /* ==================================================
-       IA
-       Inteligencia = variedad y adaptación.
-       Táctica = calidad de la decisión.
+       DECIDIR ACCIÓN
     ================================================== */
 
     decidirAccion(
-        combatiente,
+        atacante,
         objetivo
     ) {
 
+        if (
+            !atacante ||
+            !objetivo
+        ) {
+            return "A001";
+        }
+
         const hpPorcentaje =
             (
-                combatiente.hp /
-                combatiente.hp_max
+                atacante.hp /
+                atacante.hp_max
             ) * 100;
 
         const fatiga =
             this.obtenerFatigaPorcentaje(
-                combatiente
+                atacante
             );
 
         const inteligencia =
             this.obtenerInteligencia(
-                combatiente
+                atacante
             );
 
         const tactica =
             this.obtenerTactica(
-                combatiente
+                atacante
             );
 
         const ataque =
             this.limitar(
-                combatiente.efectivos.ataque
+                atacante.efectivos.ataque
             );
 
         const defensa =
-            this.limitar(
-                combatiente.efectivos.defensa
+            this.obtenerDefensa(
+                atacante
             );
 
         const velocidad =
-            this.limitar(
-                combatiente.efectivos.velocidad
+            this.obtenerVelocidad(
+                atacante
             );
 
         const resistencia =
             this.limitar(
-                combatiente.efectivos.resistencia
+                atacante.efectivos.resistencia
             );
 
-        let hpObjetivo =
-            100;
+        const hpObjetivo =
+            (
+                objetivo.hp /
+                objetivo.hp_max
+            ) * 100;
 
-        let fatigaObjetivo =
-            100;
-
-        if (objetivo) {
-
-            hpObjetivo =
-                (
-                    objetivo.hp /
-                    objetivo.hp_max
-                ) * 100;
-
-            fatigaObjetivo =
-                this.obtenerFatigaPorcentaje(
-                    objetivo
-                );
-        }
-
-        /*
-           Puntuaciones base.
-           La IA no elige únicamente por azar.
-        */
+        const fatigaObjetivo =
+            this.obtenerFatigaPorcentaje(
+                objetivo
+            );
 
         const puntuaciones = {
 
@@ -2897,43 +2542,41 @@ window.PALARENA_STANDAR = {
                 20
         };
 
-        /* ==============================================
-           A001 — ATAQUE BÁSICO
-        ============================================== */
+        /* ==================================================
+           ATAQUE BÁSICO
+        ================================================== */
 
         puntuaciones.A001 +=
-            ataque * 0.25;
+            ataque * 0.20;
 
         puntuaciones.A001 +=
-            velocidad * 0.10;
-
-        /*
-           Es una opción estable cuando hay
-           poca inteligencia o pocos recursos.
-        */
+            resistencia * 0.10;
 
         if (
-            inteligencia < 40
+            hpObjetivo <= 50
         ) {
 
             puntuaciones.A001 +=
-                18;
+                8;
         }
 
-        /* ==============================================
-           A002 — ATAQUE POTENTE
-        ============================================== */
+        if (
+            fatigaObjetivo <= 30
+        ) {
+
+            puntuaciones.A001 +=
+                5;
+        }
+
+        /* ==================================================
+           ATAQUE POTENTE
+        ================================================== */
 
         puntuaciones.A002 +=
             ataque * 0.35;
 
         puntuaciones.A002 +=
             tactica * 0.15;
-
-        /*
-           Es más atractivo cuando el rival
-           está debilitado.
-        */
 
         if (
             hpObjetivo <= 50
@@ -2951,10 +2594,6 @@ window.PALARENA_STANDAR = {
                 12;
         }
 
-        /*
-           Pero es peligroso con poca vida propia.
-        */
-
         if (
             hpPorcentaje <= 50
         ) {
@@ -2970,10 +2609,6 @@ window.PALARENA_STANDAR = {
             puntuaciones.A002 -=
                 25;
         }
-
-        /*
-           También consume mucha fatiga.
-        */
 
         if (
             fatiga < 40
@@ -2983,76 +2618,48 @@ window.PALARENA_STANDAR = {
                 25;
         }
 
-        /* ==============================================
-           A003 — ATAQUE TÁCTICO
-        ============================================== */
+        /* ==================================================
+           ATAQUE TÁCTICO
+        ================================================== */
 
         puntuaciones.A003 +=
-            tactica * 0.40;
+            tactica * 0.30;
 
         puntuaciones.A003 +=
-            inteligencia * 0.30;
-
-        /*
-           Mayor interés cuando todavía existe
-           suficiente fatiga para actuar con calidad.
-        */
+            inteligencia * 0.15;
 
         if (
-            fatiga >= 60
+            fatigaObjetivo < 50
+        ) {
+
+            puntuaciones.A003 +=
+                10;
+        }
+
+        if (
+            hpObjetivo <= 50
         ) {
 
             puntuaciones.A003 +=
                 8;
         }
 
-        /*
-           Si ya existe un efecto útil en el objetivo,
-           reduce su prioridad para evitar repetición.
-        */
-
-        if (
-            objetivo &&
-            this.obtenerEfecto(
-                objetivo,
-                this.obtenerEfectoPerfil(
-                    combatiente
-                )
-            )
-        ) {
-
-            puntuaciones.A003 -=
-                12;
-        }
-
-        /* ==============================================
-           D001 — DEFENSA
-        ============================================== */
+        /* ==================================================
+           DEFENSA
+        ================================================== */
 
         puntuaciones.D001 +=
-            defensa * 0.45;
+            defensa * 0.20;
 
         puntuaciones.D001 +=
-            resistencia * 0.20;
-
-        /*
-           La defensa gana mucho valor con poca vida.
-        */
-
-        if (
-            hpPorcentaje <= 75
-        ) {
-
-            puntuaciones.D001 +=
-                12;
-        }
+            resistencia * 0.15;
 
         if (
             hpPorcentaje <= 50
         ) {
 
             puntuaciones.D001 +=
-                22;
+                20;
         }
 
         if (
@@ -3060,124 +2667,154 @@ window.PALARENA_STANDAR = {
         ) {
 
             puntuaciones.D001 +=
-                35;
+                20;
         }
 
-        /*
-           Con poca fatiga defender es una opción
-           especialmente eficiente.
-        */
-
         if (
-            fatiga < 20
+            fatiga < 40
         ) {
 
             puntuaciones.D001 +=
-                30;
-        }
-
-        /*
-           Si el rival tiene un ataque fuerte,
-           la defensa gana valor.
-        */
-
-        if (
-            objetivo &&
-            objetivo.efectivos.ataque >= 70
-        ) {
-
-            puntuaciones.D001 +=
-                18;
-        }
-
-        /*
-           Si el rival está casi derrotado,
-           hay menos necesidad de defender.
-        */
-
-        if (
-            hpObjetivo <= 20
-        ) {
-
-            puntuaciones.D001 -=
                 15;
         }
 
-        /* ==============================================
+        /* ==================================================
            INTELIGENCIA
-        ============================================== */
-
-        /*
-           Con inteligencia baja se favorecen
-           opciones conservadoras y previsibles.
-        */
+        ================================================== */
 
         if (
-            inteligencia <= 39
+            inteligencia >= 70
         ) {
 
-            puntuaciones.A001 +=
-                20;
-
-            puntuaciones.A002 -=
+            puntuaciones.A002 +=
                 8;
 
-            puntuaciones.A003 -=
-                12;
-        }
-
-        /*
-           Inteligencia media-baja:
-           algo de variedad, pero todavía conservadora.
-        */
-
-        else if (
-            inteligencia <= 59
-        ) {
-
-            puntuaciones.A001 +=
+            puntuaciones.A003 +=
                 8;
 
-            puntuaciones.A003 -=
-                3;
+            puntuaciones.D001 +=
+                5;
         }
 
-        /*
-           Inteligencia alta:
-           considera más alternativas.
-        */
-
-        else if (
-            inteligencia >= 80
+        if (
+            inteligencia >= 85
         ) {
 
             puntuaciones.A003 +=
                 10;
+        }
+
+        /* ==================================================
+           FATIGA
+        ================================================== */
+
+        if (
+            fatiga >= 75
+        ) {
 
             puntuaciones.A002 +=
+                8;
+        }
+
+        if (
+            fatiga <= 25
+        ) {
+
+            puntuaciones.A001 +=
+                10;
+
+            puntuaciones.A003 +=
+                8;
+
+            puntuaciones.D001 +=
+                8;
+        }
+
+        /* ==================================================
+           VELOCIDAD
+        ================================================== */
+
+        if (
+            velocidad >= 70
+        ) {
+
+            puntuaciones.A001 +=
+                5;
+
+            puntuaciones.A003 +=
                 5;
         }
 
-        /*
-           Evita acciones absurdas.
-           Si la vida es crítica, la defensa conserva
-           una prioridad mínima.
-        */
+        /* ==================================================
+           RESISTENCIA
+        ================================================== */
 
         if (
-            hpPorcentaje <= 15
+            resistencia >= 70
         ) {
 
             puntuaciones.D001 +=
-                20;
-
-            puntuaciones.A002 -=
-                20;
+                5;
         }
 
-        /*
-           La IA no utiliza acciones imposibles.
-        */
+        /* ==================================================
+           PERFIL
+        ================================================== */
+
+        const efectoPerfil =
+            this.obtenerEfectoPerfil(
+                atacante
+            );
+
+        if (
+            efectoPerfil === "E007"
+        ) {
+
+            puntuaciones.A001 +=
+                5;
+
+            puntuaciones.A002 +=
+                8;
+        }
+
+        if (
+            efectoPerfil === "E003"
+        ) {
+
+            puntuaciones.A003 +=
+                5;
+        }
+
+        if (
+            efectoPerfil === "E002"
+        ) {
+
+            puntuaciones.A001 +=
+                5;
+        }
+
+        if (
+            efectoPerfil === "E005"
+        ) {
+
+            puntuaciones.A001 +=
+                5;
+
+            puntuaciones.D001 +=
+                5;
+        }
+
+        if (
+            efectoPerfil === "E006"
+        ) {
+
+            puntuaciones.A003 +=
+                8;
+        }
+
+        /* ==================================================
+           DISPONIBILIDAD
+        ================================================== */
 
         const disponibles = [
             "A001",
@@ -3185,31 +2822,40 @@ window.PALARENA_STANDAR = {
             "A003",
             "D001"
         ];
-
-        /*
-           Temperatura de decisión:
-           poca inteligencia = poca variación.
-           mucha inteligencia = mayor variedad.
+              /*
+           El ataque potente solamente está disponible
+           cuando la fatiga es igual o superior al 50 %.
         */
 
-        const temperatura =
-            0.05 +
-            (
-                inteligencia /
-                100
-            ) * 0.35;
+        const indiceA002 =
+            disponibles.indexOf(
+                "A002"
+            );
+
+        if (
+            fatiga <
+            this.configuracion
+                .fatiga_minima_ataque_potente
+        ) {
+
+            if (
+                indiceA002 !== -1
+            ) {
+
+                disponibles.splice(
+                    indiceA002,
+                    1
+                );
+            }
+        }
+
+        /* ==================================================
+           RUIDO DE DECISIÓN
+        ================================================== */
 
         const candidatos =
             disponibles.map(
                 function(codigo) {
-
-                    const ruido =
-                        (
-                            Math.random() -
-                            0.5
-                        ) *
-                        100 *
-                        temperatura;
 
                     return {
 
@@ -3217,8 +2863,13 @@ window.PALARENA_STANDAR = {
                             codigo,
 
                         puntuacion:
-                            puntuaciones[codigo] +
-                            ruido
+                            puntuaciones[
+                                codigo
+                            ] +
+                            (
+                                Math.random() *
+                                10
+                            )
                     };
                 }
             );
@@ -3232,48 +2883,52 @@ window.PALARENA_STANDAR = {
         );
 
         /*
-           Con inteligencia baja se tiende claramente
-           hacia la mejor opción.
-           Con inteligencia alta se permite mayor
-           diversidad entre las mejores opciones.
+           La inteligencia alta puede introducir
+           una pequeña variación estratégica,
+           permitiendo ocasionalmente elegir
+           la segunda mejor opción.
         */
 
-        const mejor =
+        let elegido =
             candidatos[0];
 
-        const segunda =
-            candidatos[1];
-
         if (
-            segunda &&
-            inteligencia >= 70
+            candidatos.length > 1 &&
+            inteligencia >= 80 &&
+            Math.random() < 0.20
         ) {
 
-            const diferencia =
-                mejor.puntuacion -
-                segunda.puntuacion;
-
-            const umbral =
-                8 +
-                (
-                    inteligencia -
-                    70
-                ) * 0.20;
-
-            if (
-                diferencia < umbral &&
-                Math.random() <
-                (
-                    inteligencia /
-                    140
-                )
-            ) {
-
-                return segunda.codigo;
-            }
+            elegido =
+                candidatos[1];
         }
 
-        return mejor.codigo;
+        /*
+           Protección adicional:
+           nunca devolver A002 si la fatiga
+           está por debajo del umbral.
+        */
+
+        if (
+            elegido &&
+            elegido.codigo === "A002" &&
+            fatiga <
+            this.configuracion
+                .fatiga_minima_ataque_potente
+        ) {
+
+            elegido =
+                candidatos.find(
+                    function(item) {
+
+                        return item.codigo !==
+                            "A002";
+                    }
+                );
+        }
+
+        return elegido
+            ? elegido.codigo
+            : "A001";
     },
 
     /* ==================================================
@@ -3285,12 +2940,6 @@ window.PALARENA_STANDAR = {
         objetivo,
         accion
     ) {
-
-        /*
-           La defensa del turno anterior deja de estar
-           activa cuando el combatiente realiza una
-           nueva acción.
-        */
 
         atacante.defendiendo =
             false;
@@ -3306,119 +2955,75 @@ window.PALARENA_STANDAR = {
        FINALIZAR COMBATE
     ================================================== */
 
-    finalizar(
-        combate,
-        ganador
-    ) {
-
-        combate.estado =
-            "finalizado";
-
-        combate.ganador =
-            ganador.codigo;
-
-        combate.perdedor =
-            (
-                combate.combatiente1.codigo ===
-                ganador.codigo
-            )
-
-                ?
-
-                combate.combatiente2.codigo
-
-                :
-
-                combate.combatiente1.codigo;
-
-        ganador.derrotado =
-            false;
-    },
-
-    /* ==================================================
-       DESEMPATE POR LÍMITE
-    ================================================== */
-
-    finalizarPorLimite(
+    finalizarCombate(
         combate
     ) {
 
-        const c1 =
+        if (
+            !combate
+        ) {
+            return null;
+        }
+
+        const combatiente1 =
             combate.combatiente1;
 
-        const c2 =
+        const combatiente2 =
             combate.combatiente2;
 
-        let ganador;
+        if (
+            combatiente1.derrotado &&
+            combatiente2.derrotado
+        ) {
+
+            combate.estado =
+                "finalizado";
+
+            combate.ganador =
+                null;
+
+            combate.perdedor =
+                null;
+
+            return combate;
+        }
 
         if (
-            c1.hp >
-            c2.hp
+            combatiente1.derrotado
         ) {
 
-            ganador =
-                c1;
+            combate.estado =
+                "finalizado";
+
+            combate.ganador =
+                combatiente2.codigo;
+
+            combate.perdedor =
+                combatiente1.codigo;
+
+            return combate;
         }
 
-        else if (
-            c2.hp >
-            c1.hp
+        if (
+            combatiente2.derrotado
         ) {
 
-            ganador =
-                c2;
+            combate.estado =
+                "finalizado";
+
+            combate.ganador =
+                combatiente1.codigo;
+
+            combate.perdedor =
+                combatiente2.codigo;
+
+            return combate;
         }
 
-        else if (
-            c1.efectivos.resistencia >
-            c2.efectivos.resistencia
-        ) {
-
-            ganador =
-                c1;
-        }
-
-        else if (
-            c2.efectivos.resistencia >
-            c1.efectivos.resistencia
-        ) {
-
-            ganador =
-                c2;
-        }
-
-        else if (
-            c1.efectivos.tactica >
-            c2.efectivos.tactica
-        ) {
-
-            ganador =
-                c1;
-        }
-
-        else if (
-            c2.efectivos.tactica >
-            c1.efectivos.tactica
-        ) {
-
-            ganador =
-                c2;
-        }
-
-        else {
-
-            ganador =
-                Math.random() < 0.5
-                    ? c1
-                    : c2;
-        }
-
-        this.finalizar(
-            combate,
-            ganador
-        );
+        return combate;
     },
-       /* ==================================================
+
+    /* ==================================================
        EJECUTAR TURNO
     ================================================== */
 
@@ -3431,8 +3036,7 @@ window.PALARENA_STANDAR = {
             combate.estado ===
             "finalizado"
         ) {
-
-            return null;
+            return combate;
         }
 
         if (
@@ -3441,11 +3045,10 @@ window.PALARENA_STANDAR = {
                 .max_turnos
         ) {
 
-            this.finalizarPorLimite(
-                combate
-            );
+            combate.estado =
+                "finalizado";
 
-            return null;
+            return combate;
         }
 
         const primero =
@@ -3460,12 +3063,20 @@ window.PALARENA_STANDAR = {
                 combate.segundo
             );
 
-        const turnoActual =
-            combate.turno;
+        if (
+            !primero ||
+            !segundo
+        ) {
 
-        /* ==========================================
+            combate.estado =
+                "finalizado";
+
+            return combate;
+        }
+
+        /* ==================================================
            PROCESAR EFECTOS
-        ========================================== */
+        ================================================== */
 
         const efectosPrimero =
             this.procesarEfectos(
@@ -3477,59 +3088,34 @@ window.PALARENA_STANDAR = {
                 segundo
             );
 
-        if (
-            primero.derrotado
-        ) {
+        combate.historial.push({
 
-            this.finalizar(
-                combate,
-                segundo
-            );
+            tipo:
+                "efectos",
 
-            return {
+            turno:
+                combate.turno,
 
-                turno:
-                    turnoActual,
+            primero:
+                efectosPrimero,
 
-                efectosPrimero:
-                    efectosPrimero,
-
-                efectosSegundo:
-                    efectosSegundo,
-
-                ganador:
-                    segundo.codigo
-            };
-        }
+            segundo:
+                efectosSegundo
+        });
 
         if (
+            primero.derrotado ||
             segundo.derrotado
         ) {
 
-            this.finalizar(
-                combate,
-                primero
+            return this.finalizarCombate(
+                combate
             );
-
-            return {
-
-                turno:
-                    turnoActual,
-
-                efectosPrimero:
-                    efectosPrimero,
-
-                efectosSegundo:
-                    efectosSegundo,
-
-                ganador:
-                    primero.codigo
-            };
         }
 
-        /* ==========================================
+        /* ==================================================
            ACCIÓN DEL PRIMERO
-        ========================================== */
+        ================================================== */
 
         const accionPrimero =
             this.decidirAccion(
@@ -3544,49 +3130,39 @@ window.PALARENA_STANDAR = {
                 accionPrimero
             );
 
-        const registroPrimero = {
+        combate.historial.push({
+
+            tipo:
+                "accion",
 
             turno:
-                turnoActual,
-
-            codigo_atacante:
-                primero.codigo,
+                combate.turno,
 
             atacante:
-                primero.nombre,
-
-            codigo_objetivo:
-                segundo.codigo,
+                primero.codigo,
 
             objetivo:
-                segundo.nombre,
+                segundo.codigo,
 
             accion:
                 accionPrimero,
 
             resultado:
                 resultadoPrimero
-        };
-
-        combate.historial.push(
-            registroPrimero
-        );
+        });
 
         if (
             segundo.derrotado
         ) {
 
-            this.finalizar(
-                combate,
-                primero
+            return this.finalizarCombate(
+                combate
             );
-
-            return registroPrimero;
         }
 
-        /* ==========================================
+        /* ==================================================
            ACCIÓN DEL SEGUNDO
-        ========================================== */
+        ================================================== */
 
         const accionSegundo =
             this.decidirAccion(
@@ -3601,56 +3177,39 @@ window.PALARENA_STANDAR = {
                 accionSegundo
             );
 
-        const registroSegundo = {
+        combate.historial.push({
+
+            tipo:
+                "accion",
 
             turno:
-                turnoActual,
-
-            codigo_atacante:
-                segundo.codigo,
+                combate.turno,
 
             atacante:
-                segundo.nombre,
-
-            codigo_objetivo:
-                primero.codigo,
+                segundo.codigo,
 
             objetivo:
-                primero.nombre,
+                primero.codigo,
 
             accion:
                 accionSegundo,
 
             resultado:
                 resultadoSegundo
-        };
-
-        combate.historial.push(
-            registroSegundo
-        );
+        });
 
         if (
             primero.derrotado
         ) {
 
-            this.finalizar(
-                combate,
-                segundo
+            return this.finalizarCombate(
+                combate
             );
-
-            return {
-
-                primero:
-                    registroPrimero,
-
-                segundo:
-                    registroSegundo
-            };
         }
 
-        /* ==========================================
+        /* ==================================================
            REGENERACIÓN DE FATIGA
-        ========================================== */
+        ================================================== */
 
         const regeneracionPrimero =
             this.regenerarFatiga(
@@ -3662,10 +3221,24 @@ window.PALARENA_STANDAR = {
                 segundo
             );
 
-        /*
-           La defensa solo dura durante el turno
-           en el que se activó.
-        */
+        combate.historial.push({
+
+            tipo:
+                "regeneracion_fatiga",
+
+            turno:
+                combate.turno,
+
+            primero:
+                regeneracionPrimero,
+
+            segundo:
+                regeneracionSegundo
+        });
+
+        /* ==================================================
+           LIMPIAR DEFENSA
+        ================================================== */
 
         primero.defendiendo =
             false;
@@ -3675,49 +3248,19 @@ window.PALARENA_STANDAR = {
 
         combate.turno++;
 
-        return {
-
-            turno:
-                turnoActual,
-
-            primero:
-                registroPrimero,
-
-            segundo:
-                registroSegundo,
-
-            regeneracion_fatiga: {
-
-                primero:
-                    regeneracionPrimero,
-
-                segundo:
-                    regeneracionSegundo
-            },
-
-            estado:
-                combate.estado
-        };
+        return combate;
     },
-
-    /* ==================================================
-       EJECUTAR COMBATE COMPLETO
+       /* ==================================================
+       EJECUTAR COMBATE
     ================================================== */
 
     ejecutarCombate(
-        ficha1,
-        ficha2,
-        reglas
+        combate
     ) {
 
-        const combate =
-            this.crearCombate(
-                ficha1,
-                ficha2,
-                reglas
-            );
-
-        if (!combate) {
+        if (
+            !combate
+        ) {
             return null;
         }
 
@@ -3729,21 +3272,88 @@ window.PALARENA_STANDAR = {
             this.ejecutarTurno(
                 combate
             );
+
+            if (
+                combate.turno >
+                this.configuracion
+                    .max_turnos
+            ) {
+
+                combate.estado =
+                    "finalizado";
+
+                break;
+            }
         }
 
         return combate;
     },
 
     /* ==================================================
-       RESUMEN
+       OBTENER RESUMEN
     ================================================== */
 
     obtenerResumen(
         combate
     ) {
 
-        if (!combate) {
+        if (
+            !combate
+        ) {
             return null;
+        }
+
+        function resumen(
+            combatiente
+        ) {
+
+            return {
+
+                codigo:
+                    combatiente.codigo,
+
+                nombre:
+                    combatiente.nombre,
+
+                hp:
+                    combatiente.hp,
+
+                hp_max:
+                    combatiente.hp_max,
+
+                hp_porcentaje:
+                    (
+                        combatiente.hp /
+                        combatiente.hp_max
+                    ) * 100,
+
+                fatiga:
+                    combatiente.fatiga,
+
+                fatiga_max:
+                    combatiente.fatiga_max,
+
+                fatiga_porcentaje:
+                    (
+                        combatiente.fatiga /
+                        combatiente.fatiga_max
+                    ) * 100,
+
+                dominante:
+                    combatiente.dominante,
+
+                perfil:
+                    combatiente.perfil,
+
+                derrotado:
+                    combatiente.derrotado,
+
+                defendiendo:
+                    combatiente.defendiendo,
+
+                efectos:
+                    combatiente.efectos
+            };
         }
 
         return {
@@ -3754,99 +3364,37 @@ window.PALARENA_STANDAR = {
             turno:
                 combate.turno,
 
+            primero:
+                combate.primero,
+
+            segundo:
+                combate.segundo,
+
             ganador:
                 combate.ganador,
 
             perdedor:
                 combate.perdedor,
 
-            combatiente1: {
-
-                codigo:
-                    combate.combatiente1.codigo,
-
-                nombre:
-                    combate.combatiente1.nombre,
-
-                hp:
-                    combate.combatiente1.hp,
-
-                hp_max:
-                    combate.combatiente1.hp_max,
-
-                fatiga:
-                    combate.combatiente1.fatiga,
-
-                fatiga_max:
-                    combate.combatiente1.fatiga_max,
-
-                dominante:
-                    combate.combatiente1.dominante,
-
-                perfil:
-                    combate.combatiente1.perfil,
-
-                factor_imprevisible:
+            combatiente1:
+                resumen(
                     combate.combatiente1
-                        .factor_imprevisible,
+                ),
 
-                coeficiente_combate:
-                    combate.combatiente1
-                        .coeficiente_combate,
-
-                defendiendo:
-                    combate.combatiente1
-                        .defendiendo
-            },
-
-            combatiente2: {
-
-                codigo:
-                    combate.combatiente2.codigo,
-
-                nombre:
-                    combate.combatiente2.nombre,
-
-                hp:
-                    combate.combatiente2.hp,
-
-                hp_max:
-                    combate.combatiente2.hp_max,
-
-                fatiga:
-                    combate.combatiente2.fatiga,
-
-                fatiga_max:
-                    combate.combatiente2.fatiga_max,
-
-                dominante:
-                    combate.combatiente2.dominante,
-
-                perfil:
-                    combate.combatiente2.perfil,
-
-                factor_imprevisible:
+            combatiente2:
+                resumen(
                     combate.combatiente2
-                        .factor_imprevisible,
+                ),
 
-                coeficiente_combate:
-                    combate.combatiente2
-                        .coeficiente_combate,
-
-                defendiendo:
-                    combate.combatiente2
-                        .defendiendo
-            },
-
-            acciones:
-                combate.historial.length
+            historial:
+                combate.historial
         };
     }
 };
 
-/* ======================================================
+/* ==================================================
    EXPORTACIONES
-====================================================== */
+================================================== */
 
 window.crearCombatienteEstandar =
     function(
@@ -3889,16 +3437,12 @@ window.ejecutarTurnoEstandar =
 
 window.ejecutarCombateEstandar =
     function(
-        ficha1,
-        ficha2,
-        reglas
+        combate
     ) {
 
         return window.PALARENA_STANDAR
             .ejecutarCombate(
-                ficha1,
-                ficha2,
-                reglas
+                combate
             );
     };
 
@@ -3913,6 +3457,6 @@ window.obtenerResumenEstandar =
             );
     };
 
-/* ======================================================
+/* ==================================================
    FIN STANDAR.JS v1.2
-====================================================== */
+================================================== */
