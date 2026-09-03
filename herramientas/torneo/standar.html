@@ -1,0 +1,2563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PalEntropía — Combate estándar</title>
+  <link rel="stylesheet" href="standar.css">
+</head>
+
+<body>
+
+<header id="cabecera">
+  <div class="titulo">⚔️ PalEntropía</div>
+  <div class="subtitulo">Arena — Combate estándar</div>
+</header>
+
+<main id="arena">
+
+  <section id="configuracion" class="panel">
+
+    <h2>⚔️ Preparar combate</h2>
+
+    <div class="entrada-combatiente">
+
+      <div class="campo">
+
+        <label for="codigo1">🦖 Combatiente 1</label>
+
+        <input
+          type="text"
+          id="codigo1"
+          placeholder="Ej. 006_01"
+          autocomplete="off"
+        >
+
+        <div id="nombre1" class="nombre-combatiente">
+          —
+        </div>
+
+      </div>
+
+      <div class="vs">
+        VS
+      </div>
+
+      <div class="campo">
+
+        <label for="codigo2">🦕 Combatiente 2</label>
+
+        <input
+          type="text"
+          id="codigo2"
+          placeholder="Ej. 001_02"
+          autocomplete="off"
+        >
+
+        <div id="nombre2" class="nombre-combatiente">
+          —
+        </div>
+
+      </div>
+
+    </div>
+
+    <button id="botonPreparar" type="button">
+      ⚔️ Preparar combate
+    </button>
+
+    <div id="mensajeConfiguracion" class="mensaje">
+      Introduce los códigos J1 de las dos Paleofichas.
+    </div>
+
+  </section>
+
+
+  <section id="combatientes" class="zona-combatientes">
+
+    <article id="combatiente1" class="tarjeta-combatiente">
+
+      <div class="cabecera-combatiente">
+
+        <div>
+
+          <div id="c1Nombre" class="nombre">
+            —
+          </div>
+
+          <div id="c1Codigo" class="codigo">
+            —
+          </div>
+
+        </div>
+
+        <div id="c1Perfil" class="perfil">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="vida">
+
+        <div class="vida-texto">
+
+          <span>❤️ Vida</span>
+
+          <span id="c1VidaTexto">
+            — / —
+          </span>
+
+        </div>
+
+        <div class="barra-vida">
+
+          <div
+            id="c1VidaBarra"
+            class="vida-relleno">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="fatiga">
+
+        <div class="fatiga-texto">
+
+          <span>🟢 Fatiga</span>
+
+          <span id="c1FatigaTexto">
+            — / —
+          </span>
+
+        </div>
+
+        <div class="barra-fatiga">
+
+          <div
+            id="c1FatigaBarra"
+            class="fatiga-relleno">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div id="c1Stats" class="stats"></div>
+
+
+      <div id="c1Estado" class="estado">
+        —
+      </div>
+
+    </article>
+
+
+    <div class="centro-combate">
+
+      <div class="icono-vs">
+        ⚔️
+      </div>
+
+      <div id="turnoActual" class="turno">
+        Turno —
+      </div>
+
+      <div id="iniciativa" class="iniciativa">
+        —
+      </div>
+
+    </div>
+
+
+    <article id="combatiente2" class="tarjeta-combatiente">
+
+      <div class="cabecera-combatiente">
+
+        <div>
+
+          <div id="c2Nombre" class="nombre">
+            —
+          </div>
+
+          <div id="c2Codigo" class="codigo">
+            —
+          </div>
+
+        </div>
+
+        <div id="c2Perfil" class="perfil">
+          —
+        </div>
+
+      </div>
+
+
+      <div class="vida">
+
+        <div class="vida-texto">
+
+          <span>❤️ Vida</span>
+
+          <span id="c2VidaTexto">
+            — / —
+          </span>
+
+        </div>
+
+        <div class="barra-vida">
+
+          <div
+            id="c2VidaBarra"
+            class="vida-relleno">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="fatiga">
+
+        <div class="fatiga-texto">
+
+          <span>🟢 Fatiga</span>
+
+          <span id="c2FatigaTexto">
+            — / —
+          </span>
+
+        </div>
+
+        <div class="barra-fatiga">
+
+          <div
+            id="c2FatigaBarra"
+            class="fatiga-relleno">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div id="c2Stats" class="stats"></div>
+
+
+      <div id="c2Estado" class="estado">
+        —
+      </div>
+
+    </article>
+
+  </section>
+
+
+  <section id="acciones" class="panel">
+
+    <h2>🎯 Acciones</h2>
+
+    <div class="botones-acciones">
+
+      <button
+        id="botonA001"
+        class="accion"
+        type="button"
+        disabled>
+        ⚔️ Ataque básico
+      </button>
+
+      <button
+        id="botonA002"
+        class="accion"
+        type="button"
+        disabled>
+        💥 Ataque potente
+      </button>
+
+      <button
+        id="botonA003"
+        class="accion"
+        type="button"
+        disabled>
+        🧠 Ataque táctico
+      </button>
+
+      <button
+        id="botonD001"
+        class="accion defensa"
+        type="button"
+        disabled>
+        🛡️ Defender
+      </button>
+
+    </div>
+
+
+    <button
+      id="botonAuto"
+      class="boton-auto"
+      type="button"
+      disabled>
+      ▶️ Combate automático
+    </button>
+
+  </section>
+
+
+  <section id="registro" class="panel">
+
+    <h2>📜 Registro del combate</h2>
+
+    <div
+      id="registroCombate"
+      class="registro-combate">
+
+      <div class="registro-vacio">
+        El combate todavía no ha comenzado.
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section id="resultado" class="panel resultado-oculto">
+
+    <div id="resultadoIcono" class="resultado-icono">
+      🏆
+    </div>
+
+    <h2 id="resultadoTitulo">
+      —
+    </h2>
+
+    <div id="resultadoTexto">
+      —
+    </div>
+
+    <button
+      id="botonNuevoCombate"
+      type="button">
+      🔄 Nuevo combate
+    </button>
+
+  </section>
+
+</main>
+
+
+<script src="palarenastats.js"></script>
+<script src="standar-ataques.js"></script>
+<script src="standar-efectos.js"></script>
+<script src="standar.js"></script>
+
+<script>
+
+const RUTA_MASTER =
+  "../generador_fase_2/master.csv";
+
+const RUTA_PALEOFICHAS =
+  "../generador_fase_2/paleofichas.json";
+
+
+let fichas = [];
+let nombresPaleofichas = {};
+
+let ficha1 = null;
+let ficha2 = null;
+
+let combate = null;
+
+let combatiente1 = null;
+let combatiente2 = null;
+
+let combateActivo = false;
+
+
+const codigo1 =
+  document.getElementById("codigo1");
+
+const codigo2 =
+  document.getElementById("codigo2");
+
+const nombre1 =
+  document.getElementById("nombre1");
+
+const nombre2 =
+  document.getElementById("nombre2");
+
+
+const botonPreparar =
+  document.getElementById("botonPreparar");
+
+const mensajeConfiguracion =
+  document.getElementById(
+    "mensajeConfiguracion"
+  );
+
+
+const botonA001 =
+  document.getElementById("botonA001");
+
+const botonA002 =
+  document.getElementById("botonA002");
+
+const botonA003 =
+  document.getElementById("botonA003");
+
+const botonD001 =
+  document.getElementById("botonD001");
+
+const botonAuto =
+  document.getElementById("botonAuto");
+
+const botonNuevoCombate =
+  document.getElementById(
+    "botonNuevoCombate"
+  );
+
+
+async function cargarPaleofichas(){
+
+  try{
+
+    const respuesta =
+      await fetch(
+        RUTA_PALEOFICHAS
+      );
+
+    if(!respuesta.ok){
+
+      throw new Error(
+        "No se pudo cargar paleofichas.json"
+      );
+
+    }
+
+    const datos =
+      await respuesta.json();
+
+    nombresPaleofichas = {};
+
+
+    if(Array.isArray(datos)){
+
+      datos.forEach(function(ficha){
+
+        if(!ficha){
+          return;
+        }
+
+        const codigo =
+          ficha.j1 ||
+          ficha.codigo ||
+          "";
+
+        const nombre =
+          ficha.j2 ||
+          ficha.nombre ||
+          "";
+
+
+        if(codigo){
+
+          nombresPaleofichas[
+            String(codigo)
+              .trim()
+              .toLowerCase()
+          ] = nombre;
+
+        }
+
+      });
+
+    }else if(
+      datos &&
+      typeof datos === "object"
+    ){
+
+      Object.keys(datos).forEach(
+        function(clave){
+
+          const ficha =
+            datos[clave];
+
+          if(!ficha){
+            return;
+          }
+
+          const codigo =
+            ficha.j1 ||
+            ficha.codigo ||
+            clave;
+
+          const nombre =
+            ficha.j2 ||
+            ficha.nombre ||
+            "";
+
+
+          if(codigo){
+
+            nombresPaleofichas[
+              String(codigo)
+                .trim()
+                .toLowerCase()
+            ] = nombre;
+
+          }
+
+        }
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    nombresPaleofichas = {};
+
+  }
+
+}
+
+
+async function cargarMaster(){
+
+  try{
+
+    const respuesta =
+      await fetch(
+        RUTA_MASTER
+      );
+
+    if(!respuesta.ok){
+
+      throw new Error(
+        "No se pudo cargar master.csv"
+      );
+
+    }
+
+    const texto =
+      await respuesta.text();
+
+    fichas =
+      interpretarCSV(texto);
+
+    mensajeConfiguracion.textContent =
+      "Datos de Paleofichas cargados correctamente.";
+
+  }catch(error){
+
+    console.error(error);
+
+    mensajeConfiguracion.textContent =
+      "❌ Error al cargar master.csv.";
+
+  }
+
+}
+
+
+function interpretarCSV(texto){
+
+  const lineas =
+    texto
+      .split(/\r?\n/)
+      .map(linea => linea.trim())
+      .filter(Boolean);
+
+
+  if(lineas.length < 2){
+    return [];
+  }
+
+
+  const cabecera =
+    separarCSV(lineas[0]);
+
+  const resultado = [];
+
+
+  for(
+    let i = 1;
+    i < lineas.length;
+    i++
+  ){
+
+    const columnas =
+      separarCSV(lineas[i]);
+
+    if(!columnas.length){
+      continue;
+    }
+
+
+    const ficha = {};
+
+
+    for(
+      let j = 0;
+      j < cabecera.length;
+      j++
+    ){
+
+      ficha[cabecera[j]] =
+        columnas[j] !== undefined
+          ? columnas[j]
+          : "";
+
+    }
+
+
+    for(
+      let n = 1;
+      n <= 11;
+      n++
+    ){
+
+      const clave =
+        "e" + n;
+
+      if(
+        ficha[clave] !== undefined &&
+        ficha[clave] !== ""
+      ){
+
+        ficha[clave] =
+          Number(ficha[clave]);
+
+      }
+
+    }
+
+
+    resultado.push(ficha);
+
+  }
+
+
+  return resultado;
+
+}
+
+
+function separarCSV(linea){
+
+  const resultado = [];
+
+  let actual = "";
+
+  let comillas = false;
+
+
+  for(
+    let i = 0;
+    i < linea.length;
+    i++
+  ){
+
+    const caracter =
+      linea[i];
+
+
+    if(caracter === '"'){
+
+      comillas =
+        !comillas;
+
+      continue;
+
+    }
+
+
+    if(
+      caracter === "," &&
+      !comillas
+    ){
+
+      resultado.push(
+        actual.trim()
+      );
+
+      actual = "";
+
+    }else{
+
+      actual += caracter;
+
+    }
+
+  }
+
+
+  resultado.push(
+    actual.trim()
+  );
+
+
+  return resultado;
+
+}
+
+
+function obtenerNombrePaleoficha(codigo){
+
+  const clave =
+    String(codigo)
+      .trim()
+      .toLowerCase();
+
+
+  return (
+    nombresPaleofichas[clave] ||
+    ""
+  );
+
+}
+
+
+function buscarFicha(codigo){
+
+  const buscado =
+    String(codigo)
+      .trim()
+      .toLowerCase();
+
+
+  const ficha =
+    fichas.find(
+      ficha =>
+        String(ficha.j1)
+          .trim()
+          .toLowerCase() === buscado
+    );
+
+
+  if(!ficha){
+    return null;
+  }
+
+
+  const fichaCompleta = {
+    ...ficha
+  };
+
+
+  const nombre =
+    obtenerNombrePaleoficha(
+      ficha.j1
+    );
+
+
+  fichaCompleta.j2 =
+    nombre ||
+    ficha.j2 ||
+    ficha.nombre ||
+    "";
+
+
+  fichaCompleta.nombre =
+    fichaCompleta.j2;
+
+
+  return fichaCompleta;
+
+}
+
+
+function actualizarNombre(
+  input,
+  elemento
+){
+
+  const ficha =
+    buscarFicha(
+      input.value
+    );
+
+
+  if(ficha){
+
+    elemento.textContent =
+      ficha.j2 ||
+      "Sin nombre";
+
+  }else{
+
+    elemento.textContent =
+      "—";
+
+  }
+
+}
+
+
+codigo1.addEventListener(
+  "input",
+  function(){
+
+    actualizarNombre(
+      codigo1,
+      nombre1
+    );
+
+  }
+);
+
+
+codigo2.addEventListener(
+  "input",
+  function(){
+
+    actualizarNombre(
+      codigo2,
+      nombre2
+    );
+
+  }
+);
+
+
+botonPreparar.addEventListener(
+  "click",
+  prepararCombate
+);
+
+
+function prepararCombate(){
+
+  const valor1 =
+    codigo1.value.trim();
+
+  const valor2 =
+    codigo2.value.trim();
+
+
+  if(!valor1 || !valor2){
+
+    mostrarMensaje(
+      "Introduce los dos códigos J1."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    valor1.toLowerCase() ===
+    valor2.toLowerCase()
+  ){
+
+    mostrarMensaje(
+      "Los dos combatientes deben ser diferentes."
+    );
+
+    return;
+
+  }
+
+
+  ficha1 =
+    buscarFicha(valor1);
+
+  ficha2 =
+    buscarFicha(valor2);
+
+
+  if(!ficha1){
+
+    mostrarMensaje(
+      "No se encuentra la Paleoficha " +
+      valor1 +
+      "."
+    );
+
+    return;
+
+  }
+
+
+  if(!ficha2){
+
+    mostrarMensaje(
+      "No se encuentra la Paleoficha " +
+      valor2 +
+      "."
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    combate =
+      window.crearCombateEstandar(
+        ficha1,
+        ficha2
+      );
+
+
+    if(!combate){
+
+      throw new Error(
+        "No se pudo crear el combate."
+      );
+
+    }
+
+
+    combatiente1 =
+      combate.combatiente1;
+
+    combatiente2 =
+      combate.combatiente2;
+
+    combateActivo = true;
+
+
+    mostrarCombatientes();
+
+    activarBotones();
+
+    limpiarRegistro();
+
+
+    añadirRegistro(
+      "⚔️ Combate preparado: " +
+      combatiente1.nombre +
+      " (" +
+      combatiente1.codigo +
+      ")" +
+      " vs " +
+      combatiente2.nombre +
+      " (" +
+      combatiente2.codigo +
+      ")"
+    );
+
+
+    mostrarMensaje(
+      "Combate preparado correctamente."
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    mostrarMensaje(
+      "❌ Error al preparar el combate."
+    );
+
+  }
+
+}
+
+
+function mostrarCombatientes(){
+
+  if(
+    !combate ||
+    !combatiente1 ||
+    !combatiente2
+  ){
+
+    return;
+
+  }
+
+  document.getElementById(
+    "c1Nombre"
+  ).textContent =
+    combatiente1.nombre ||
+    "Sin nombre";
+
+  document.getElementById(
+    "c1Codigo"
+  ).textContent =
+    combatiente1.codigo ||
+    "—";
+
+  document.getElementById(
+    "c2Nombre"
+  ).textContent =
+    combatiente2.nombre ||
+    "Sin nombre";
+
+  document.getElementById(
+    "c2Codigo"
+  ).textContent =
+    combatiente2.codigo ||
+    "—";
+
+  document.getElementById(
+    "c1Perfil"
+  ).textContent =
+    obtenerNombrePerfil(
+      combatiente1
+    );
+
+  document.getElementById(
+    "c2Perfil"
+  ).textContent =
+    obtenerNombrePerfil(
+      combatiente2
+    );
+
+  mostrarVida(
+    combatiente1,
+    "c1"
+  );
+
+  mostrarVida(
+    combatiente2,
+    "c2"
+  );
+
+  mostrarFatiga(
+    combatiente1,
+    "c1"
+  );
+
+  mostrarFatiga(
+    combatiente2,
+    "c2"
+  );
+
+  mostrarStats(
+    combatiente1,
+    "c1Stats"
+  );
+
+  mostrarStats(
+    combatiente2,
+    "c2Stats"
+  );
+
+  mostrarEstado(
+    combatiente1,
+    "c1Estado"
+  );
+
+  mostrarEstado(
+    combatiente2,
+    "c2Estado"
+  );
+
+
+  document.getElementById(
+    "turnoActual"
+  ).textContent =
+    "Turno " +
+    combate.turno;
+
+
+  const primero =
+    combate.primero ===
+    combatiente1.codigo
+      ? combatiente1
+      : combatiente2;
+
+
+  const segundo =
+    combate.segundo ===
+    combatiente1.codigo
+      ? combatiente1
+      : combatiente2;
+
+
+  document.getElementById(
+    "iniciativa"
+  ).textContent =
+    "Iniciativa: " +
+    primero.nombre +
+    " → " +
+    segundo.nombre;
+
+}
+function obtenerNombrePerfil(
+  combatiente
+){
+
+  if(
+    combatiente &&
+    combatiente.perfil
+  ){
+
+    const perfiles = {
+
+      agresivo:
+        "🔥 Agresivo",
+
+      defensivo:
+        "🛡️ Defensivo",
+
+      rapido:
+        "⚡ Rápido",
+
+      aguante:
+        "❤️ Aguante",
+
+      tactico:
+        "🧠 Táctico"
+
+    };
+
+
+    return perfiles[
+      combatiente.perfil
+    ] ||
+    combatiente.perfil;
+
+  }
+
+
+  return "—";
+
+}
+
+
+function mostrarVida(
+  combatiente,
+  prefijo
+){
+
+  const vida =
+    Number(combatiente.hp) || 0;
+
+  const vidaMax =
+    Number(combatiente.hp_max) || 100;
+
+
+  const porcentaje =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        vida / vidaMax * 100
+      )
+    );
+
+
+  document.getElementById(
+    prefijo + "VidaTexto"
+  ).textContent =
+    Math.round(vida) +
+    " / " +
+    Math.round(vidaMax);
+
+
+  document.getElementById(
+    prefijo + "VidaBarra"
+  ).style.width =
+    porcentaje +
+    "%";
+
+}
+
+
+function mostrarFatiga(
+  combatiente,
+  prefijo
+){
+
+  const fatiga =
+    Number(combatiente.fatiga);
+
+
+  const fatigaMax =
+    Number(combatiente.fatiga_max) || 100;
+
+
+  const fatigaSegura =
+    Number.isFinite(fatiga)
+      ? Math.max(
+          0,
+          Math.min(
+            fatigaMax,
+            fatiga
+          )
+        )
+      : fatigaMax;
+
+
+  const porcentaje =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        fatigaSegura /
+        fatigaMax *
+        100
+      )
+    );
+
+
+  const texto =
+    document.getElementById(
+      prefijo + "FatigaTexto"
+    );
+
+
+  const barra =
+    document.getElementById(
+      prefijo + "FatigaBarra"
+    );
+
+
+  if(texto){
+
+    texto.textContent =
+      Math.round(fatigaSegura) +
+      " / " +
+      Math.round(fatigaMax);
+
+  }
+
+
+  if(barra){
+
+    barra.style.width =
+      porcentaje +
+      "%";
+
+  }
+
+}
+
+
+function mostrarStats(
+  combatiente,
+  elementoId
+){
+
+  const elemento =
+    document.getElementById(
+      elementoId
+    );
+
+
+  const stats =
+    combatiente.efectivos || {};
+
+
+  const ataque =
+    obtenerNumero(
+      stats.ataque
+    );
+
+  const defensa =
+    obtenerNumero(
+      stats.defensa
+    );
+
+  const velocidad =
+    obtenerNumero(
+      stats.velocidad
+    );
+
+  const resistencia =
+    obtenerNumero(
+      stats.resistencia
+    );
+
+  const tactica =
+    obtenerNumero(
+      stats.tactica
+    );
+
+
+  elemento.innerHTML = `
+
+    <div class="stat">
+      <span>⚔️ Ataque</span>
+      <strong>
+        ${Math.round(ataque)}
+      </strong>
+    </div>
+
+    <div class="stat">
+      <span>🛡️ Defensa</span>
+      <strong>
+        ${Math.round(defensa)}
+      </strong>
+    </div>
+
+    <div class="stat">
+      <span>⚡ Velocidad</span>
+      <strong>
+        ${Math.round(velocidad)}
+      </strong>
+    </div>
+
+    <div class="stat">
+      <span>❤️ Resistencia</span>
+      <strong>
+        ${Math.round(resistencia)}
+      </strong>
+    </div>
+
+    <div class="stat">
+      <span>🧠 Táctica</span>
+      <strong>
+        ${Math.round(tactica)}
+      </strong>
+    </div>
+
+  `;
+
+}
+
+
+function obtenerNumero(
+  valor
+){
+
+  const numero =
+    Number(valor);
+
+
+  return Number.isFinite(numero)
+    ? numero
+    : 0;
+
+}
+
+
+function mostrarEstado(
+  combatiente,
+  elementoId
+){
+
+  const elemento =
+    document.getElementById(
+      elementoId
+    );
+
+
+  const efectos =
+    Array.isArray(
+      combatiente.efectos
+    )
+      ? combatiente.efectos
+      : [];
+
+
+  const nombres = [];
+
+
+  if(
+    combatiente.defendiendo
+  ){
+
+    nombres.push(
+      "🛡️ Defendiendo"
+    );
+
+  }
+
+
+  efectos.forEach(
+    efecto => {
+
+      if(!efecto){
+        return;
+      }
+
+
+      const nombre =
+        efecto.nombre ||
+        efecto.codigo ||
+        "Efecto";
+
+
+      const turnos =
+        Number(efecto.turnos);
+
+
+      if(
+        Number.isFinite(turnos) &&
+        turnos > 0
+      ){
+
+        nombres.push(
+          nombre +
+          " (" +
+          turnos +
+          ")"
+        );
+
+      }else{
+
+        nombres.push(
+          nombre
+        );
+
+      }
+
+    }
+  );
+
+
+  if(
+    combatiente.derrotado
+  ){
+
+    nombres.push(
+      "☠️ Derrotado"
+    );
+
+  }
+
+
+  elemento.textContent =
+    nombres.length
+      ? nombres.join(" · ")
+      : "Sin efectos";
+
+}
+
+
+function activarBotones(){
+
+  botonA001.disabled = false;
+
+  botonA002.disabled = false;
+
+  botonA003.disabled = false;
+
+  botonD001.disabled = false;
+
+  botonAuto.disabled = false;
+
+}
+
+
+function desactivarBotones(){
+
+  botonA001.disabled = true;
+
+  botonA002.disabled = true;
+
+  botonA003.disabled = true;
+
+  botonD001.disabled = true;
+
+  botonAuto.disabled = true;
+
+}
+
+
+botonA001.addEventListener(
+  "click",
+  () =>
+    ejecutarAccionJugador(
+      "A001"
+    )
+);
+
+
+botonA002.addEventListener(
+  "click",
+  () =>
+    ejecutarAccionJugador(
+      "A002"
+    )
+);
+
+
+botonA003.addEventListener(
+  "click",
+  () =>
+    ejecutarAccionJugador(
+      "A003"
+    )
+);
+
+
+botonD001.addEventListener(
+  "click",
+  () =>
+    ejecutarAccionJugador(
+      "D001"
+    )
+);
+
+
+function ejecutarAccionJugador(
+  codigo
+){
+
+  if(
+    !combateActivo ||
+    !combate
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    /* ==========================
+       ACCIÓN DEL JUGADOR
+    ========================== */
+
+    const atacante =
+      combatiente1;
+
+    const objetivo =
+      combatiente2;
+
+
+    const resultadoJugador =
+      window.PALARENA_STANDAR
+        .ejecutarAccion(
+          atacante,
+          objetivo,
+          codigo
+        );
+
+
+    procesarResultado(
+      resultadoJugador,
+      combatiente1,
+      combatiente2
+    );
+
+
+    if(
+      combatiente1.derrotado ||
+      combatiente2.derrotado
+    ){
+
+      finalizarCombateManual();
+
+      return;
+
+    }
+
+
+    /* ==========================
+       RESPUESTA DE LA IA
+    ========================== */
+
+    const accionIA =
+      window.PALARENA_STANDAR
+        .decidirAccion(
+          combatiente2
+        );
+
+
+    const resultadoIA =
+      window.PALARENA_STANDAR
+        .ejecutarAccion(
+          combatiente2,
+          combatiente1,
+          accionIA
+        );
+
+
+    procesarResultado(
+      resultadoIA,
+      combatiente2,
+      combatiente1
+    );
+
+
+    if(
+      combatiente1.derrotado ||
+      combatiente2.derrotado
+    ){
+
+      finalizarCombateManual();
+
+      return;
+
+    }
+
+
+    /* ==========================
+       FIN DEL TURNO
+    ========================== */
+
+    if(
+      typeof window.PALARENA_STANDAR
+        .regenerarFatiga ===
+      "function"
+    ){
+
+      window.PALARENA_STANDAR
+        .regenerarFatiga(
+          combatiente1
+        );
+
+      window.PALARENA_STANDAR
+        .regenerarFatiga(
+          combatiente2
+        );
+
+    }
+
+
+    combatiente1.defendiendo =
+      false;
+
+    combatiente2.defendiendo =
+      false;
+
+
+    combate.turno++;
+
+
+    mostrarCombatientes();
+
+  }catch(error){
+
+    console.error(error);
+
+    añadirRegistro(
+      "❌ Error al ejecutar la acción."
+    );
+
+  }
+
+}
+
+
+function finalizarCombateManual(){
+
+  let ganador = null;
+
+
+  if(
+    combatiente1.derrotado
+  ){
+
+    ganador =
+      combatiente2;
+
+  }else if(
+    combatiente2.derrotado
+  ){
+
+    ganador =
+      combatiente1;
+
+  }
+
+
+  if(!ganador){
+    return;
+  }
+
+
+  window.PALARENA_STANDAR
+    .finalizar(
+      combate,
+      ganador
+    );
+
+
+  finalizarInterfaz({
+    ganador: ganador
+  });
+
+}
+
+
+function procesarResultado(
+  resultado,
+  atacante,
+  objetivo
+){
+
+  mostrarCombatientes();
+
+
+  if(!resultado){
+    return;
+  }
+
+
+  if(resultado.mensaje){
+
+    añadirRegistro(
+      resultado.mensaje
+    );
+
+  }
+
+
+  if(
+    resultado.dano !== undefined &&
+    resultado.dano > 0
+  ){
+
+    añadirRegistro(
+      "💥 " +
+      (
+        atacante &&
+        atacante.nombre
+          ? atacante.nombre
+          : resultado.nombre
+      ) +
+      " causa " +
+      resultado.dano +
+      " de daño a " +
+      (
+        objetivo &&
+        objetivo.nombre
+          ? objetivo.nombre
+          : "su oponente"
+      ) +
+      "."
+    );
+
+  }
+
+
+  if(resultado.critico){
+
+    añadirRegistro(
+      "💥 ¡Golpe crítico!"
+    );
+
+  }
+
+
+  if(resultado.golpe_mortal){
+
+    añadirRegistro(
+      "☠️ ¡GOLPE MORTAL!"
+    );
+
+  }
+
+
+  if(resultado.inversion){
+
+    añadirRegistro(
+      "🔄 ¡Inversión! La defensa provoca un contraataque."
+    );
+
+  }
+
+
+  if(resultado.contraataque){
+
+    añadirRegistro(
+      "⚡ ¡Contraataque!"
+    );
+
+  }
+
+
+  if(resultado.defensa){
+
+    if(
+      resultado.defensa ===
+      "acierto"
+    ){
+
+      añadirRegistro(
+        "🛡️ ¡Defensa acertada!"
+      );
+
+    }else if(
+      resultado.defensa ===
+      "error"
+    ){
+
+      añadirRegistro(
+        "⚠️ ¡Error de defensa!"
+      );
+
+    }
+
+  }
+
+
+  if(resultado.fallo){
+
+    añadirRegistro(
+      "❌ ¡El ataque falla!"
+    );
+
+  }
+
+
+  if(resultado.bloqueado_por_fatiga){
+
+    añadirRegistro(
+      "😓 ¡Crítico bloqueado por fatiga!"
+    );
+
+  }
+
+
+  if(resultado.esquiva){
+
+    añadirRegistro(
+      "💨 ¡Ataque esquivado!"
+    );
+
+  }
+
+
+  if(resultado.efecto){
+
+    const efecto =
+      resultado.efecto;
+
+
+    añadirRegistro(
+      "✨ " +
+      efecto.nombre +
+      " aplicado."
+    );
+
+  }
+
+
+  if(resultado.registro){
+
+    if(
+      Array.isArray(
+        resultado.registro
+      )
+    ){
+
+      resultado.registro.forEach(
+        mensaje =>
+          añadirRegistro(
+            mensaje
+          )
+      );
+
+    }else{
+
+      añadirRegistro(
+        resultado.registro
+      );
+
+    }
+
+  }
+
+
+  mostrarCombatientes();
+
+}
+
+
+botonAuto.addEventListener(
+  "click",
+  ejecutarCombateAutomatico
+);
+
+
+function ejecutarCombateAutomatico(){
+
+  if(
+    !combateActivo ||
+    !combate
+  ){
+
+    return;
+
+  }
+
+
+  desactivarBotones();
+
+
+  try{
+
+    let resultado;
+
+
+    while(
+      combate.estado !==
+      "finalizado"
+    ){
+
+      resultado =
+        window.ejecutarTurnoEstandar(
+          combate
+        );
+
+
+      if(resultado){
+
+        procesarTurnoAutomatico(
+          resultado
+        );
+
+      }
+
+    }
+
+
+    mostrarCombatientes();
+
+
+    mostrarResultadoCombate({
+
+      ganador:
+        combate.ganador ===
+        combatiente1.codigo
+          ? combatiente1
+          : combatiente2
+
+    });
+
+
+    combateActivo = false;
+
+  }catch(error){
+
+    console.error(error);
+
+    añadirRegistro(
+      "❌ Error durante el combate automático."
+    );
+
+    activarBotones();
+
+  }
+
+}
+function procesarTurnoAutomatico(
+  resultado
+){
+
+  if(
+    resultado.turno
+  ){
+
+    document.getElementById(
+      "turnoActual"
+    ).textContent =
+      "Turno " +
+      resultado.turno;
+
+  }
+
+
+  const registros = [];
+
+
+  if(resultado.primero){
+
+    registros.push(
+      resultado.primero
+    );
+
+  }
+
+
+  if(resultado.segundo){
+
+    registros.push(
+      resultado.segundo
+    );
+
+  }
+
+
+  registros.forEach(
+    registro => {
+
+      if(!registro){
+        return;
+      }
+
+
+      const datos =
+        registro.resultado;
+
+
+      if(!datos){
+        return;
+      }
+
+
+      if(datos.mensaje){
+
+        añadirRegistro(
+          datos.mensaje
+        );
+
+      }
+
+
+      if(
+        datos.dano !== undefined &&
+        datos.dano > 0
+      ){
+
+        añadirRegistro(
+          "💥 " +
+          registro.atacante +
+          " causa " +
+          datos.dano +
+          " de daño a " +
+          registro.objetivo +
+          "."
+        );
+
+      }
+
+
+      if(datos.critico){
+
+        añadirRegistro(
+          "💥 ¡Golpe crítico!"
+        );
+
+      }
+
+
+      if(datos.golpe_mortal){
+
+        añadirRegistro(
+          "☠️ ¡GOLPE MORTAL!"
+        );
+
+      }
+
+
+      if(datos.inversion){
+
+        añadirRegistro(
+          "🔄 ¡Inversión! La defensa provoca un contraataque."
+        );
+
+      }
+
+
+      if(datos.contraataque){
+
+        añadirRegistro(
+          "⚡ ¡Contraataque!"
+        );
+
+      }
+
+
+      if(datos.defensa){
+
+        if(
+          datos.defensa ===
+          "acierto"
+        ){
+
+          añadirRegistro(
+            "🛡️ ¡Defensa acertada!"
+          );
+
+        }else if(
+          datos.defensa ===
+          "error"
+        ){
+
+          añadirRegistro(
+            "⚠️ ¡Error de defensa!"
+          );
+
+        }
+
+      }
+
+
+      if(datos.fallo){
+
+        añadirRegistro(
+          "❌ ¡El ataque falla!"
+        );
+
+      }
+
+
+      if(
+        datos.bloqueado_por_fatiga
+      ){
+
+        añadirRegistro(
+          "😓 ¡Crítico bloqueado por fatiga!"
+        );
+
+      }
+
+
+      if(datos.esquiva){
+
+        añadirRegistro(
+          "💨 ¡Ataque esquivado!"
+        );
+
+      }
+
+
+      if(datos.efecto){
+
+        añadirRegistro(
+          "✨ " +
+          datos.efecto.nombre +
+          " aplicado."
+        );
+
+      }
+
+
+      if(datos.registro){
+
+        if(
+          Array.isArray(
+            datos.registro
+          )
+        ){
+
+          datos.registro.forEach(
+            mensaje =>
+              añadirRegistro(
+                mensaje
+              )
+          );
+
+        }else{
+
+          añadirRegistro(
+            datos.registro
+          );
+
+        }
+
+      }
+
+    }
+  );
+
+
+  mostrarCombatientes();
+
+}
+
+
+function finalizarInterfaz(
+  resultado
+){
+
+  combateActivo = false;
+
+  desactivarBotones();
+
+  mostrarResultadoCombate(
+    resultado
+  );
+
+}
+
+
+function mostrarResultadoCombate(
+  resultado
+){
+
+  if(!resultado){
+    return;
+  }
+
+
+  let ganador = null;
+
+
+  if(resultado.ganador){
+
+    if(
+      typeof resultado.ganador ===
+      "string"
+    ){
+
+      ganador =
+        window.PALARENA_STANDAR
+          .obtenerCombatiente(
+            combate,
+            resultado.ganador
+          );
+
+    }else{
+
+      ganador =
+        resultado.ganador;
+
+    }
+
+  }
+
+
+  if(
+    !ganador &&
+    combate
+  ){
+
+    if(
+      combate.ganador ===
+      combatiente1.codigo
+    ){
+
+      ganador =
+        combatiente1;
+
+    }else if(
+      combate.ganador ===
+      combatiente2.codigo
+    ){
+
+      ganador =
+        combatiente2;
+
+    }
+
+  }
+
+
+  const panel =
+    document.getElementById(
+      "resultado"
+    );
+
+
+  const titulo =
+    document.getElementById(
+      "resultadoTitulo"
+    );
+
+
+  const texto =
+    document.getElementById(
+      "resultadoTexto"
+    );
+
+
+  const icono =
+    document.getElementById(
+      "resultadoIcono"
+    );
+
+
+  if(ganador){
+
+    icono.textContent =
+      "🏆";
+
+
+    titulo.textContent =
+      "🏆 " +
+      (
+        ganador.nombre ||
+        "Ganador"
+      );
+
+
+    texto.textContent =
+      "El combate ha terminado.";
+
+  }else{
+
+    icono.textContent =
+      "⚔️";
+
+
+    titulo.textContent =
+      "⚔️ Combate terminado";
+
+
+    texto.textContent =
+      "Se ha determinado el resultado.";
+
+  }
+
+
+  panel.classList.remove(
+    "resultado-oculto"
+  );
+
+
+  mostrarCombatientes();
+
+}
+
+
+function limpiarRegistro(){
+
+  document.getElementById(
+    "registroCombate"
+  ).innerHTML = "";
+
+}
+
+
+function añadirRegistro(
+  texto
+){
+
+  const registro =
+    document.getElementById(
+      "registroCombate"
+    );
+
+
+  const linea =
+    document.createElement(
+      "div"
+    );
+
+
+  linea.className =
+    "linea-registro";
+
+
+  linea.textContent =
+    texto;
+
+
+  registro.appendChild(
+    linea
+  );
+
+
+  registro.scrollTop =
+    registro.scrollHeight;
+
+}
+
+
+function mostrarMensaje(
+  texto
+){
+
+  mensajeConfiguracion.textContent =
+    texto;
+
+}
+
+
+botonNuevoCombate.addEventListener(
+  "click",
+  function(){
+
+    combateActivo = false;
+
+    combate = null;
+
+    combatiente1 = null;
+
+    combatiente2 = null;
+
+    ficha1 = null;
+
+    ficha2 = null;
+
+
+    document.getElementById(
+      "resultado"
+    ).classList.add(
+      "resultado-oculto"
+    );
+
+
+    document.getElementById(
+      "turnoActual"
+    ).textContent =
+      "Turno —";
+
+
+    document.getElementById(
+      "iniciativa"
+    ).textContent =
+      "—";
+
+
+    nombre1.textContent =
+      "—";
+
+    nombre2.textContent =
+      "—";
+
+
+    document.getElementById(
+      "c1Nombre"
+    ).textContent =
+      "—";
+
+
+    document.getElementById(
+      "c1Codigo"
+    ).textContent =
+      "—";
+
+
+    document.getElementById(
+      "c2Nombre"
+    ).textContent =
+      "—";
+
+
+    document.getElementById(
+      "c2Codigo"
+    ).textContent =
+      "—";
+
+
+    document.getElementById(
+      "c1VidaTexto"
+    ).textContent =
+      "— / —";
+
+
+    document.getElementById(
+      "c2VidaTexto"
+    ).textContent =
+      "— / —";
+
+
+    document.getElementById(
+      "c1FatigaTexto"
+    ).textContent =
+      "— / —";
+
+
+    document.getElementById(
+      "c2FatigaTexto"
+    ).textContent =
+      "— / —";
+
+
+    document.getElementById(
+      "c1VidaBarra"
+    ).style.width =
+      "0%";
+
+
+    document.getElementById(
+      "c2VidaBarra"
+    ).style.width =
+      "0%";
+
+
+    document.getElementById(
+      "c1FatigaBarra"
+    ).style.width =
+      "0%";
+
+
+    document.getElementById(
+      "c2FatigaBarra"
+    ).style.width =
+      "0%";
+
+
+    document.getElementById(
+      "c1Perfil"
+    ).textContent =
+      "—";
+
+
+    document.getElementById(
+      "c2Perfil"
+    ).textContent =
+      "—";
+
+
+    document.getElementById(
+      "c1Stats"
+    ).innerHTML =
+      "";
+
+
+    document.getElementById(
+      "c2Stats"
+    ).innerHTML =
+      "";
+
+
+    document.getElementById(
+      "c1Estado"
+    ).textContent =
+      "—";
+
+
+    document.getElementById(
+      "c2Estado"
+    ).textContent =
+      "—";
+
+
+    /*
+      Se mantienen los códigos introducidos
+      para permitir preparar otro combate
+      rápidamente.
+    */
+
+    codigo1.value =
+      codigo1.value.trim();
+
+    codigo2.value =
+      codigo2.value.trim();
+
+
+    actualizarNombre(
+      codigo1,
+      nombre1
+    );
+
+
+    actualizarNombre(
+      codigo2,
+      nombre2
+    );
+
+
+    limpiarRegistro();
+
+    desactivarBotones();
+
+
+    mostrarMensaje(
+      "Introduce los códigos J1 de las dos Paleofichas."
+    );
+
+  }
+);
+
+
+/* ==========================
+   CARGA INICIAL
+========================== */
+
+async function iniciar(){
+
+  await cargarPaleofichas();
+
+  await cargarMaster();
+
+}
+
+
+iniciar();
+
+</script>
+
+</body>
+</html>
