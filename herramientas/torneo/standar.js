@@ -1,6 +1,6 @@
 /* ========================================================
    PALARENA standar.js v1.2 — PalEntropía
-   MOTOR DE COMBATE ESTÁNDAR
+   MOTOR DE COMBATE ESTÁNDAR (CON PUENTE COMPATIBLE)
 ======================================================== */
 window.PALARENA_STANDAR = {
     version: "1.2",
@@ -144,7 +144,13 @@ window.PALARENA_STANDAR = {
     },
     crearCombatiente(ficha, reglas) {
         if (!ficha) { return null; }
-        const indicadores = {
+        let indCalculados = null;
+        if (window.PALARENA_STATS && typeof window.PALARENA_STATS.calcularFicha === "function") {
+            indCalculados = window.PALARENA_STATS.calcularFicha(ficha);
+        } else if (typeof window.calcularStatsEstandar === "function") {
+            indCalculados = window.calcularStatsEstandar(ficha);
+        }
+        const indicadores = indCalculados || {
             ataque: this.numero(ficha.e5),
             defensa: this.numero(ficha.e6),
             velocidad: this.numero(ficha.e7),
@@ -407,7 +413,7 @@ window.PALARENA_STANDAR = {
             equilibrado: "E006"
         };
         return efectos[combatiente.perfil] || "E006";
-   }
+           }
        decidirAccion(atacante, objetivo) {
         if (!atacante || !objetivo) { return "A001"; }
         const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
@@ -627,4 +633,4 @@ window.obtenerResumenEstandar = (combate) => window.PALARENA_STANDAR.obtenerResu
 /* ==================================================
    FIN STANDAR.JS v1.2
 ================================================== */
-                                
+           
