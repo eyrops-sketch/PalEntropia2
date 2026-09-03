@@ -4,32 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PalEntropía — Combate estándar</title>
-
   <link rel="stylesheet" href="standar.css">
-
   <style>
     .victorias{
-      margin-bottom: 12px;
-    }
-
-    .serie-panel{
-      text-align: center;
-    }
-
-    .serie-info{
-      font-weight: bold;
-      margin-top: 8px;
-    }
-
-    .serie-victorias{
-      margin-top: 10px;
-      font-weight: bold;
+      margin-bottom:12px;
     }
   </style>
 </head>
-
 <body>
-
 <header id="cabecera">
   <div class="titulo">⚔️ PalEntropía</div>
   <div class="subtitulo">Arena — Combate estándar</div>
@@ -38,13 +20,11 @@
 <main id="arena">
 
   <section id="configuracion" class="panel">
-
     <h2>⚔️ Preparar combate</h2>
 
     <div class="entrada-combatiente">
 
       <div class="campo">
-
         <label for="codigo1">
           🦖 Combatiente 1
         </label>
@@ -62,7 +42,6 @@
         >
           —
         </div>
-
       </div>
 
       <div class="vs">
@@ -70,7 +49,6 @@
       </div>
 
       <div class="campo">
-
         <label for="codigo2">
           🦕 Combatiente 2
         </label>
@@ -88,7 +66,6 @@
         >
           —
         </div>
-
       </div>
 
     </div>
@@ -113,37 +90,21 @@
     >
       Introduce los códigos J1 de las dos Paleofichas.
     </div>
-
   </section>
 
   <section
     id="serie"
-    class="panel serie-panel"
+    class="panel"
   >
-
     <h2>🏆 Serie</h2>
 
-    <div
-      id="serieFormato"
-      class="serie-info"
-    >
+    <div id="serieFormato">
       Mejor de —
     </div>
 
-    <div
-      id="partidoActual"
-      class="serie-info"
-    >
+    <div id="partidoActual">
       Partido — / —
     </div>
-
-    <div
-      id="victoriasSerie"
-      class="serie-victorias"
-    >
-      —
-    </div>
-
   </section>
 
   <section
@@ -388,7 +349,8 @@
     </article>
 
   </section>
-    <section
+
+  <section
     id="acciones"
     class="panel"
   >
@@ -457,11 +419,9 @@
       id="registroCombate"
       class="registro-combate"
     >
-
       <div class="registro-vacio">
         El combate todavía no ha comenzado.
       </div>
-
     </div>
 
   </section>
@@ -503,7 +463,6 @@
 <script src="standar.js"></script>
 
 <script>
-
 const RUTA_MASTER =
   "../generador_fase_2/master.csv";
 
@@ -513,43 +472,30 @@ const RUTA_PALEOFICHAS =
 const CLAVE_REGLAS_TORNEO =
   "palentropia_reglas_torneo";
 
+const REGLAS_TORNEO_DEFECTO = {
+  partidosSerie: 1,
+  tipoCombate: "standard"
+};
+
 let fichas = [];
-
 let nombresPaleofichas = {};
-
 let ficha1 = null;
 let ficha2 = null;
-
 let combate = null;
-
 let combatiente1 = null;
 let combatiente2 = null;
-
 let combateActivo = false;
 
-/* ==================================================
-   ESTADO DE LA SERIE
-================================================== */
-
-let reglasTorneo = null;
+let reglasTorneo = {
+  ...REGLAS_TORNEO_DEFECTO
+};
 
 let serieActiva = false;
-
 let partidosSerie = 1;
-
-let tipoCombateSerie = "standard";
-
 let partidoActual = 0;
-
 let victorias1 = 0;
-
 let victorias2 = 0;
-
 let victoriasNecesarias = 1;
-
-/* ==================================================
-   ELEMENTOS
-================================================== */
 
 const codigo1 =
   document.getElementById(
@@ -616,33 +562,24 @@ const botonNuevoCombate =
     "botonNuevoCombate"
   );
 
-/* ==================================================
-   REGLAS DEL TORNEO
-================================================== */
-
 function obtenerReglasTorneo(){
-
-  const defecto = {
-    partidosSerie: 1,
-    tipoCombate: "standard"
-  };
 
   try{
 
-    const guardado =
+    const guardadas =
       localStorage.getItem(
         CLAVE_REGLAS_TORNEO
       );
 
-    if(!guardado){
+    if(!guardadas){
       return {
-        ...defecto
+        ...REGLAS_TORNEO_DEFECTO
       };
     }
 
     const reglas =
       JSON.parse(
-        guardado
+        guardadas
       );
 
     if(
@@ -650,12 +587,12 @@ function obtenerReglasTorneo(){
       typeof reglas !== "object"
     ){
       return {
-        ...defecto
+        ...REGLAS_TORNEO_DEFECTO
       };
     }
 
     return {
-      ...defecto,
+      ...REGLAS_TORNEO_DEFECTO,
       ...reglas
     };
 
@@ -664,62 +601,41 @@ function obtenerReglasTorneo(){
     console.error(error);
 
     return {
-      ...defecto
+      ...REGLAS_TORNEO_DEFECTO
     };
 
   }
 
 }
 
-/* ==================================================
-   CARGAR REGLAS ACTUALES
-================================================== */
-
 function cargarReglasTorneo(){
 
-  const reglas =
+  reglasTorneo =
     obtenerReglasTorneo();
 
-  let partidos =
+  const numero =
     Number(
-      reglas.partidosSerie
+      reglasTorneo.partidosSerie
     );
 
   if(
-    !Number.isInteger(partidos) ||
-    partidos < 1 ||
-    partidos % 2 === 0
+    Number.isInteger(numero) &&
+    numero >= 1 &&
+    numero % 2 === 1
   ){
-
-    partidos = 1;
-
+    partidosSerie = numero;
+  }else{
+    partidosSerie =
+      REGLAS_TORNEO_DEFECTO.partidosSerie;
   }
-
-  let tipo =
-    String(
-      reglas.tipoCombate || ""
-    ).trim();
 
   if(
-    tipo !== "standard"
+    reglasTorneo.tipoCombate !==
+    "standard"
   ){
-
-    tipo = "standard";
-
+    reglasTorneo.tipoCombate =
+      "standard";
   }
-
-  reglasTorneo = {
-    partidosSerie:
-      partidos,
-    tipoCombate:
-      tipo
-  };
-
-  partidosSerie =
-    partidos;
-
-  tipoCombateSerie =
-    tipo;
 
   victoriasNecesarias =
     Math.floor(
@@ -728,13 +644,7 @@ function cargarReglasTorneo(){
 
   actualizarInterfazSerie();
 
-  return reglasTorneo;
-
 }
-
-/* ==================================================
-   INTERFAZ DE SERIE
-================================================== */
 
 function actualizarInterfazSerie(){
 
@@ -748,88 +658,61 @@ function actualizarInterfazSerie(){
       "partidoActual"
     );
 
-  const victorias =
-    document.getElementById(
-      "victoriasSerie"
-    );
-
   if(formato){
 
     formato.textContent =
-      "🏆 Ganador de la serie — Mejor de " +
+      "Mejor de " +
       partidosSerie;
 
   }
 
   if(partido){
 
-    partido.textContent =
-      "Partido " +
-      partidoActual +
-      " / " +
-      partidosSerie;
+    if(partidoActual > 0){
 
-  }
-
-  if(victorias){
-
-    if(
-      combatiente1 &&
-      combatiente2
-    ){
-
-      victorias.textContent =
-        combatiente1.nombre +
-        ": " +
-        victorias1 +
-        " · " +
-        combatiente2.nombre +
-        ": " +
-        victorias2;
+      partido.textContent =
+        "Partido " +
+        partidoActual +
+        " / " +
+        partidosSerie;
 
     }else{
 
-      victorias.textContent =
-        "🏆 Victorias: " +
-        victorias1 +
-        " · " +
-        victorias2;
+      partido.textContent =
+        "Partido — / " +
+        partidosSerie;
 
     }
 
   }
 
-  const elemento1 =
+  const contador1 =
     document.getElementById(
       "c1Victorias"
     );
 
-  const elemento2 =
+  const contador2 =
     document.getElementById(
       "c2Victorias"
     );
 
-  if(elemento1){
+  if(contador1){
 
-    elemento1.textContent =
+    contador1.textContent =
       "🏆 Victorias: " +
       victorias1;
 
   }
 
-  if(elemento2){
+  if(contador2){
 
-    elemento2.textContent =
+    contador2.textContent =
       "🏆 Victorias: " +
       victorias2;
 
   }
 
 }
-
-/* ==================================================
-   CARGAR PALEOFICHAS
-================================================== */
 
 async function cargarPaleofichas(){
 
@@ -934,11 +817,7 @@ async function cargarPaleofichas(){
   }
 
 }
-
-/* ==================================================
-   CARGAR MASTER
-================================================== */
-
+<script>
 async function cargarMaster(){
 
   try{
@@ -978,11 +857,9 @@ async function cargarMaster(){
 
 }
 
-/* ==================================================
-   CSV
-================================================== */
-
-function interpretarCSV(texto){
+function interpretarCSV(
+  texto
+){
 
   const lineas =
     texto
@@ -994,9 +871,7 @@ function interpretarCSV(texto){
       .filter(Boolean);
 
   if(lineas.length < 2){
-
     return [];
-
   }
 
   const cabecera =
@@ -1069,12 +944,12 @@ function interpretarCSV(texto){
 
 }
 
-function separarCSV(linea){
+function separarCSV(
+  linea
+){
 
   const resultado = [];
-
   let actual = "";
-
   let comillas = false;
 
   for(
@@ -1122,13 +997,10 @@ function separarCSV(linea){
   return resultado;
 
 }
-<script>
 
-/* ==================================================
-   BÚSQUEDA DE PALEOFICHAS
-================================================== */
-
-function obtenerNombrePaleoficha(codigo){
+function obtenerNombrePaleoficha(
+  codigo
+){
 
   const clave =
     String(codigo)
@@ -1142,7 +1014,9 @@ function obtenerNombrePaleoficha(codigo){
 
 }
 
-function buscarFicha(codigo){
+function buscarFicha(
+  codigo
+){
 
   const buscado =
     String(codigo)
@@ -1159,9 +1033,7 @@ function buscarFicha(codigo){
     );
 
   if(!ficha){
-
     return null;
-
   }
 
   const fichaCompleta = {
@@ -1211,10 +1083,6 @@ function actualizarNombre(
 
 }
 
-/* ==================================================
-   EVENTOS DE CÓDIGOS
-================================================== */
-
 codigo1.addEventListener(
   "input",
   function(){
@@ -1239,136 +1107,130 @@ codigo2.addEventListener(
   }
 );
 
-/* ==================================================
-   PREPARAR COMBATE NORMAL
-================================================== */
-
 botonPreparar.addEventListener(
   "click",
-  function(){
-
-    iniciarCombateNormal();
-
-  }
+  prepararCombate
 );
-
-function iniciarCombateNormal(){
-
-  cargarReglasTorneo();
-
-  serieActiva =
-    false;
-
-  partidoActual =
-    0;
-
-  victorias1 =
-    0;
-
-  victorias2 =
-    0;
-
-  prepararPartido();
-
-}
-
-/* ==================================================
-   INICIAR SERIE
-================================================== */
 
 botonSerie.addEventListener(
   "click",
-  function(){
-
-    cargarReglasTorneo();
-
-    const valor1 =
-      codigo1.value.trim();
-
-    const valor2 =
-      codigo2.value.trim();
-
-    if(!valor1 || !valor2){
-
-      mostrarMensaje(
-        "Introduce los dos códigos J1."
-      );
-
-      return;
-
-    }
-
-    if(
-      valor1.toLowerCase() ===
-      valor2.toLowerCase()
-    ){
-
-      mostrarMensaje(
-        "Los dos combatientes deben ser diferentes."
-      );
-
-      return;
-
-    }
-
-    ficha1 =
-      buscarFicha(
-        valor1
-      );
-
-    ficha2 =
-      buscarFicha(
-        valor2
-      );
-
-    if(!ficha1){
-
-      mostrarMensaje(
-        "No se encuentra la Paleoficha " +
-        valor1 +
-        "."
-      );
-
-      return;
-
-    }
-
-    if(!ficha2){
-
-      mostrarMensaje(
-        "No se encuentra la Paleoficha " +
-        valor2 +
-        "."
-      );
-
-      return;
-
-    }
-
-    serieActiva =
-      true;
-
-    partidoActual =
-      0;
-
-    victorias1 =
-      0;
-
-    victorias2 =
-      0;
-
-    actualizarInterfazSerie();
-
-    iniciarSiguientePartido();
-
-  }
+  iniciarSerie
 );
 
-/* ==================================================
-   PREPARAR PARTIDO
-================================================== */
+function iniciarSerie(){
 
-function prepararPartido(){
+  cargarReglasTorneo();
+
+  const valor1 =
+    codigo1.value.trim();
+
+  const valor2 =
+    codigo2.value.trim();
+
+  if(!valor1 || !valor2){
+
+    mostrarMensaje(
+      "Introduce los dos códigos J1."
+    );
+
+    return;
+
+  }
+
+  if(
+    valor1.toLowerCase() ===
+    valor2.toLowerCase()
+  ){
+
+    mostrarMensaje(
+      "Los dos combatientes deben ser diferentes."
+    );
+
+    return;
+
+  }
+
+  const fichaBuscada1 =
+    buscarFicha(
+      valor1
+    );
+
+  const fichaBuscada2 =
+    buscarFicha(
+      valor2
+    );
+
+  if(!fichaBuscada1){
+
+    mostrarMensaje(
+      "No se encuentra la Paleoficha " +
+      valor1 +
+      "."
+    );
+
+    return;
+
+  }
+
+  if(!fichaBuscada2){
+
+    mostrarMensaje(
+      "No se encuentra la Paleoficha " +
+      valor2 +
+      "."
+    );
+
+    return;
+
+  }
+
+  ficha1 =
+    fichaBuscada1;
+
+  ficha2 =
+    fichaBuscada2;
+
+  serieActiva = true;
+  partidoActual = 0;
+  victorias1 = 0;
+  victorias2 = 0;
+
+  actualizarInterfazSerie();
+
+  iniciarSiguientePartido();
+
+}
+
+function iniciarSiguientePartido(){
+
+  if(
+    !serieActiva
+  ){
+    return;
+  }
+
+  if(
+    victorias1 >= victoriasNecesarias ||
+    victorias2 >= victoriasNecesarias
+  ){
+    return;
+  }
+
+  partidoActual++;
+
+  actualizarInterfazSerie();
+
+  document.getElementById(
+    "resultado"
+  ).classList.add(
+    "resultado-oculto"
+  );
+
+  prepararCombate();
+
+}
+
+function prepararCombate(){
 
   const valor1 =
     codigo1.value.trim();
@@ -1455,8 +1317,7 @@ function prepararPartido(){
     combatiente2 =
       combate.combatiente2;
 
-    combateActivo =
-      true;
+    combateActivo = true;
 
     mostrarCombatientes();
 
@@ -1477,18 +1338,13 @@ function prepararPartido(){
       ")"
     );
 
-    if(
-      serieActiva
-    ){
+    if(serieActiva){
 
       añadirRegistro(
-        "🏆 Serie — Mejor de " +
-        partidosSerie +
-        ". Partido " +
+        "🏆 Partido " +
         partidoActual +
         " / " +
-        partidosSerie +
-        "."
+        partidosSerie
       );
 
     }
@@ -1508,24 +1364,6 @@ function prepararPartido(){
   }
 
 }
-
-/* ==================================================
-   SIGUIENTE PARTIDO DE LA SERIE
-================================================== */
-
-function iniciarSiguientePartido(){
-
-  partidoActual++;
-
-  actualizarInterfazSerie();
-
-  prepararPartido();
-
-}
-
-/* ==================================================
-   MOSTRAR COMBATIENTES
-================================================== */
 
 function mostrarCombatientes(){
 
@@ -1617,8 +1455,6 @@ function mostrarCombatientes(){
     "c2"
   );
 
-  actualizarInterfazSerie();
-
   document.getElementById(
     "turnoActual"
   ).textContent =
@@ -1656,6 +1492,8 @@ function mostrarCombatientes(){
   ).textContent =
     iniciativa;
 
+  actualizarInterfazSerie();
+
 }
 
 function obtenerNombrePerfil(
@@ -1688,10 +1526,6 @@ function obtenerNombrePerfil(
   );
 
 }
-
-/* ==================================================
-   VIDA
-================================================== */
 
 function mostrarVida(
   combatiente,
@@ -1765,10 +1599,6 @@ function mostrarVida(
 
 }
 
-/* ==================================================
-   FATIGA
-================================================== */
-
 function mostrarFatiga(
   combatiente,
   prefijo
@@ -1841,10 +1671,6 @@ function mostrarFatiga(
 
 }
 
-/* ==================================================
-   STATS
-================================================== */
-
 function mostrarStats(
   combatiente,
   prefijo
@@ -1857,9 +1683,7 @@ function mostrarStats(
     );
 
   if(!stats){
-
     return;
-
   }
 
   const ataque =
@@ -1919,12 +1743,8 @@ function obtenerNumero(
     ? Math.round(numero)
     : 0;
 
-}
-
-/* ==================================================
-   ESTADO
-================================================== */
-
+    }
+  <script>
 function mostrarEstado(
   combatiente,
   prefijo
@@ -1937,9 +1757,7 @@ function mostrarEstado(
     );
 
   if(!estado){
-
     return;
-
   }
 
   const mensajes = [];
@@ -1974,9 +1792,7 @@ function mostrarEstado(
       function(efecto){
 
         if(!efecto){
-
           return;
-
         }
 
         const nombre =
@@ -2033,14 +1849,16 @@ function mostrarEstado(
 
 }
 
-/* ==================================================
-   BOTONES
-================================================== */
-
 function activarBotones(){
 
   botonA001.disabled =
     false;
+
+  /*
+     A002 solamente está
+     disponible con 50 % o más
+     de fatiga.
+  */
 
   botonA002.disabled =
     Number(combatiente1.fatiga) <
@@ -2078,10 +1896,6 @@ function desactivarBotones(){
 
 }
 
-/* ==================================================
-   ACCIÓN DEL JUGADOR
-================================================== */
-
 function ejecutarAccionJugador(
   codigo
 ){
@@ -2094,6 +1908,14 @@ function ejecutarAccionJugador(
     return;
 
   }
+
+  /*
+     Protección de interfaz.
+     Aunque el motor también bloquea
+     A002 por debajo del mínimo,
+     la interfaz no permite solicitar
+     la acción en esas condiciones.
+  */
 
   if(
     codigo === "A002" &&
@@ -2114,6 +1936,10 @@ function ejecutarAccionJugador(
   }
 
   try{
+
+    /* ==========================
+       ACCIÓN DEL JUGADOR
+    ========================== */
 
     const atacante =
       combatiente1;
@@ -2147,6 +1973,10 @@ function ejecutarAccionJugador(
       return;
 
     }
+
+    /* ==========================
+       ACCIÓN DE LA IA
+    ========================== */
 
     const accionIA =
       window.PALARENA_STANDAR
@@ -2210,6 +2040,12 @@ function ejecutarAccionJugador(
 
     mostrarCombatientes();
 
+    /*
+       Actualiza el estado del botón
+       A002 después de la regeneración
+       de fatiga.
+    */
+
     activarBotones();
 
   }catch(error){
@@ -2224,10 +2060,6 @@ function ejecutarAccionJugador(
 
 }
 
-/* ==================================================
-   PROCESAR RESULTADO
-================================================== */
-
 function procesarResultado(
   resultado,
   atacante,
@@ -2235,9 +2067,7 @@ function procesarResultado(
 ){
 
   if(!resultado){
-
     return;
-
   }
 
   if(resultado.mensaje){
@@ -2384,12 +2214,7 @@ function procesarResultado(
 
   mostrarCombatientes();
 
-            }
-  <script>
-
-/* ==================================================
-   BOTONES DE ACCIÓN
-================================================== */
+}
 
 botonA001.addEventListener(
   "click",
@@ -2439,11 +2264,6 @@ botonAuto.addEventListener(
   "click",
   ejecutarCombateAutomatico
 );
-
-/* ==================================================
-   COMBATE AUTOMÁTICO
-   UN SOLO PARTIDO
-================================================== */
 
 function ejecutarCombateAutomatico(){
 
@@ -2506,10 +2326,6 @@ function ejecutarCombateAutomatico(){
 
 }
 
-/* ==================================================
-   PROCESAR TURNO AUTOMÁTICO
-================================================== */
-
 function procesarTurnoAutomatico(
   registros
 ){
@@ -2528,9 +2344,7 @@ function procesarTurnoAutomatico(
     function(registro){
 
       if(!registro){
-
         return;
-
       }
 
       if(
@@ -2560,9 +2374,7 @@ function procesarTurnoAutomatico(
               function(datos){
 
                 if(!datos){
-
                   return;
-
                 }
 
                 if(datos.mensaje){
@@ -2605,9 +2417,7 @@ function procesarTurnoAutomatico(
         registro.resultado;
 
       if(!datos){
-
         return;
-
       }
 
       if(datos.mensaje){
@@ -2757,12 +2567,8 @@ function procesarTurnoAutomatico(
 
   mostrarCombatientes();
 
-}
-
-/* ==================================================
-   FINALIZAR PARTIDO / SERIE
-================================================== */
-
+    }
+<script>
 function finalizarInterfaz(
   resultado
 ){
@@ -2780,27 +2586,27 @@ function finalizarInterfaz(
       resultado
     );
 
-  }else{
-
-    mostrarResultadoCombate(
-      resultado
-    );
+    return;
 
   }
 
-}
+  mostrarResultadoCombate(
+    resultado
+  );
 
-/* ==================================================
-   FINALIZAR PARTIDO DE SERIE
-================================================== */
+}
 
 function finalizarPartidoSerie(
   resultado
 ){
 
+  if(!resultado){
+    return;
+  }
+
   let ganador = null;
 
-  if(resultado && resultado.ganador){
+  if(resultado.ganador){
 
     if(
       typeof resultado.ganador ===
@@ -2877,10 +2683,10 @@ function finalizarPartidoSerie(
   actualizarInterfazSerie();
 
   añadirRegistro(
-    "🏆 Partido " +
-    partidoActual +
-    " ganado por " +
+    "🏆 " +
     ganador.nombre +
+    " gana el partido " +
+    partidoActual +
     "."
   );
 
@@ -2916,17 +2722,13 @@ function finalizarPartidoSerie(
 
   }
 
-  mostrarResultadoPartido(
+  mostrarResultadoPartidoSerie(
     ganador
   );
 
 }
 
-/* ==================================================
-   RESULTADO DE PARTIDO
-================================================== */
-
-function mostrarResultadoPartido(
+function mostrarResultadoPartidoSerie(
   ganador
 ){
 
@@ -2961,16 +2763,8 @@ function mostrarResultadoPartido(
     "Partido " +
     partidoActual +
     " terminado. " +
-    "Marcador: " +
-    victorias1 +
-    " - " +
-    victorias2 +
-    ". " +
-    "Siguiente partido: " +
-    (partidoActual + 1) +
-    " / " +
-    partidosSerie +
-    ".";
+    ganador.nombre +
+    " gana el partido.";
 
   botonNuevoCombate.textContent =
     "▶️ Siguiente partido";
@@ -2979,13 +2773,7 @@ function mostrarResultadoPartido(
     "resultado-oculto"
   );
 
-  mostrarCombatientes();
-
 }
-
-/* ==================================================
-   RESULTADO FINAL DE SERIE
-================================================== */
 
 function mostrarResultadoSerie(
   ganador
@@ -3015,8 +2803,7 @@ function mostrarResultadoSerie(
     "🏆";
 
   titulo.textContent =
-    "🏆 Ganador de la serie — " +
-    "Mejor de " +
+    "🏆 Ganador de la serie — Mejor de " +
     partidosSerie;
 
   texto.textContent =
@@ -3034,32 +2821,16 @@ function mostrarResultadoSerie(
     "resultado-oculto"
   );
 
-  añadirRegistro(
-    "🏆 GANADOR DE LA SERIE: " +
-    ganador.nombre +
-    " — " +
-    victorias1 +
-    " - " +
-    victorias2 +
-    "."
-  );
-
   mostrarCombatientes();
 
 }
-
-/* ==================================================
-   RESULTADO COMBATE NORMAL
-================================================== */
 
 function mostrarResultadoCombate(
   resultado
 ){
 
   if(!resultado){
-
     return;
-
   }
 
   let ganador = null;
@@ -3171,10 +2942,6 @@ function mostrarResultadoCombate(
 
 }
 
-/* ==================================================
-   REGISTRO
-================================================== */
-
 function limpiarRegistro(){
 
   document.getElementById(
@@ -3222,27 +2989,19 @@ function mostrarMensaje(
 
 }
 
-/* ==================================================
-   BOTÓN NUEVO COMBATE / SIGUIENTE PARTIDO
-================================================== */
-
 botonNuevoCombate.addEventListener(
   "click",
   function(){
 
     if(
       serieActiva &&
+      partidoActual <
+        partidosSerie &&
       victorias1 <
         victoriasNecesarias &&
       victorias2 <
         victoriasNecesarias
     ){
-
-      document.getElementById(
-        "resultado"
-      ).classList.add(
-        "resultado-oculto"
-      );
 
       iniciarSiguientePartido();
 
@@ -3394,6 +3153,12 @@ botonNuevoCombate.addEventListener(
     ).textContent =
       "—";
 
+    /*
+       Se mantienen los códigos introducidos
+       para permitir preparar otro combate
+       rápidamente.
+    */
+
     codigo1.value =
       codigo1.value.trim();
 
@@ -3410,8 +3175,6 @@ botonNuevoCombate.addEventListener(
       nombre2
     );
 
-    actualizarInterfazSerie();
-
     limpiarRegistro();
 
     desactivarBotones();
@@ -3423,12 +3186,14 @@ botonNuevoCombate.addEventListener(
       "Introduce los códigos J1 de las dos Paleofichas."
     );
 
+    actualizarInterfazSerie();
+
   }
 );
 
-/* ==================================================
+/* ==========================
    CARGA INICIAL
-================================================== */
+========================== */
 
 async function iniciar(){
 
@@ -3438,11 +3203,20 @@ async function iniciar(){
 
   await cargarMaster();
 
+  actualizarNombre(
+    codigo1,
+    nombre1
+  );
+
+  actualizarNombre(
+    codigo2,
+    nombre2
+);
+
 }
 
 iniciar();
 
 </script>
-
 </body>
-</html>
+</html>  
