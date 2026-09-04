@@ -1,7 +1,7 @@
 conf,hp_base,bonificacion_dominante,factor_imprevisible_min,factor_imprevisible_max,coeficiente_combate,coeficiente_combate_min,coeficiente_combate_max,iniciativa_velocidad,iniciativa_tactica,dano_base,dano_por_ataque,defensa_divisor,variacion_dano,multiplicador_critico,critico_base,critico_tactica,fatiga_minima_critico,esquiva_velocidad,fallo_base,fallo_reduccion_tactica,coste_ataque_potente_hp,fatiga_minima_ataque_potente,fatiga_max,fatiga_inicial,fatiga_regeneracion_turno,coste_fatiga_A001,coste_fatiga_A002,coste_fatiga_A003,coste_fatiga_D001,fatiga_defensa_atacante,reduccion_defensa,error_defensa_base,error_defensa_reduccion_inteligencia,error_defensa_reduccion_tactica,error_defensa_fatiga_umbral,error_defensa_fatiga_incremento,error_defensa_min,error_defensa_max,golpe_mortal,dano_vida_75,dano_vida_50,dano_vida_25,dano_vida_10,dano_vida_critica,max_turnos,general,escenariojug1,escenariojug2
 standard,100,0.15,0.78,1.22,1.00,0.50,1.50,0.70,0.30,4,0.10,200,0.25,2.50,10,0.15,20,0.15,14,0.03,0.14,65,100,100,6,8,38,10,20,15,0.35,45,0.03,0.02,50,0.20,15,65,false,1.00,1.05,1.15,1.25,1.35,100,1,1,1
-dificil,70,0.05,0.65,1.35,0.85,0.35,1.70,0.70,0.30,2,0.07,200,0.35,3.00,5,0.05,80,0.25,20,0.01,0.22,85,100,100,3,15,55,18,30,25,0.45,35,0.01,0.01,60,0.30,5,80,false,1.00,1.15,1.30,1.50,1.75,100,1,1,1
-
-
-
-
+dificil,70,0.05,0.65,1.35,0.85,0.35,1.70,0.70,0.30,2,0.07,200,0.35,3.00,5,0.05,80,0.25,20,0.01,0.22,85,100,100,3,15,55,18,30,25,0.45,35,0.01,0.01,60,0.30,5,80,false,1.00,1.15,1.30,1.50,1.75,100,1.15,1,1
+sin_critico,100,0.15,0.78,1.22,1.00,0.50,1.50,0.70,0.30,4,0.10,200,0.25,1.00,0,0.00,100,0.15,14,0.03,0.14,65,100,100,6,8,38,10,20,15,0.35,45,0.03,0.02,50,0.20,15,65,false,1.00,1.05,1.15,1.25,1.35,100,1,1,1
+defensa_aumentada,100,0.15,0.78,1.22,1.00,0.50,1.50,0.70,0.30,4,0.10,350,0.25,2.50,10,0.15,20,0.15,18,0.04,0.14,65,100,100,6,8,38,10,25,20,0.65,30,0.04,0.03,40,0.25,10,50,false,1.00,1.05,1.15,1.25,1.35,100,0.9,1,1
+desgaste_extremo,80,0.10,0.70,1.30,0.80,0.40,1.60,0.70,0.30,3,0.08,200,0.30,2.00,8,0.10,50,0.20,16,0.02,0.18,75,100,100,2,12,45,14,25,20,0.40,40,0.02,0.02,55,0.25,10,70,false,1.00,1.10,1.20,1.35,1.50,100,1.25,1,1
+frenesi_mesozoico,50,0.20,0.60,1.40,0.60,0.20,2.00,0.90,0.10,6,0.15,150,0.40,3.50,15,0.20,15,0.30,22,0.01,0.10,50,100,100,8,10,40,12,15,10,0.25,50,0.05,0.04,40,0.15,20,70,false,1.00,1.00,1.10,1.20,1.30,60,0.60,1,1
