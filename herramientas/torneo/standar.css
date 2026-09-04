@@ -1,5 +1,6 @@
 /* ========================================================
-   PALENTROPÍA — ESTILOS DE LA ARENA (STANDAR.CSS)
+   PALENTROPÍA — ARENA COMBATE ESTÁNDAR
+   STANDAR.CSS
    ======================================================== */
 
 * {
@@ -16,6 +17,11 @@ body {
     padding: 20px;
 }
 
+
+/* ========================================================
+   CABECERA
+   ======================================================== */
+
 #cabecera {
     text-align: center;
     margin-bottom: 24px;
@@ -25,7 +31,9 @@ body {
     font-size: 2.2rem;
     font-weight: bold;
     color: #58a6ff;
-    text-shadow: 0 0 15px rgba(88, 166, 255, 0.6), 0 0 5px rgba(88, 166, 255, 0.4);
+    text-shadow:
+        0 0 15px rgba(88, 166, 255, 0.6),
+        0 0 5px rgba(88, 166, 255, 0.4);
     letter-spacing: 1px;
 }
 
@@ -35,7 +43,12 @@ body {
     letter-spacing: 0.5px;
 }
 
-#arena {
+
+/* ========================================================
+   CONTENEDOR PRINCIPAL
+   ======================================================== */
+
+main {
     max-width: 950px;
     margin: 0 auto;
     display: flex;
@@ -44,25 +57,45 @@ body {
     width: 100%;
 }
 
-/* --- PANELES CON RELIEVE Y FILOS CELESTES DE NEÓN --- */
+
+/* ========================================================
+   PANELES
+   ======================================================== */
+
 .panel {
-    background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+    background: linear-gradient(
+        135deg,
+        #161b22 0%,
+        #0d1117 100%
+    );
+
     border: 2px solid #58a6ff;
     border-radius: 14px;
     padding: 20px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 0 12px rgba(88, 166, 255, 0.25);
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.6),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        0 0 12px rgba(88, 166, 255, 0.25);
+
     position: relative;
     overflow: hidden;
 }
 
 .panel::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, #58a6ff, #bc8cff);
+
+    background: linear-gradient(
+        90deg,
+        #58a6ff,
+        #bc8cff
+    );
+
     box-shadow: 0 0 10px #58a6ff;
 }
 
@@ -70,512 +103,888 @@ body {
     font-size: 1.2rem;
     margin-bottom: 14px;
     color: #58a6ff;
-    border-bottom: 1px solid rgba(88, 166, 255, 0.4);
+
+    border-bottom: 1px solid
+        rgba(88, 166, 255, 0.4);
+
     padding-bottom: 8px;
-    text-shadow: 0 0 10px rgba(88, 166, 255, 0.4);
+
+    text-shadow:
+        0 0 10px rgba(88, 166, 255, 0.4);
 }
 
-/* --- ENTRADA DE COMBATIENTES --- */
-.entrada-combatiente {
-    display: flex;
+
+/* ========================================================
+   CONFIGURACIÓN DE COMBATIENTES
+   ======================================================== */
+
+.configuracion-combatientes {
+    display: grid;
+    grid-template-columns: 1fr 70px 1fr;
     align-items: center;
     gap: 15px;
-    margin-bottom: 15px;
+    width: 100%;
 }
 
-.campo {
-    flex: 1;
+.config-combatiente {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-.campo label {
+.config-combatiente label {
     font-size: 0.85rem;
     color: #58a6ff;
     font-weight: bold;
 }
 
-.campo input {
+.config-combatiente input {
+    width: 100%;
+
     background-color: #080b10;
+
     border: 1.5px solid #58a6ff;
     border-radius: 8px;
+
     padding: 12px;
+
     color: #f0f6fc;
     font-size: 1rem;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 0 6px rgba(88, 166, 255, 0.2);
+
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 6px rgba(88, 166, 255, 0.2);
+
     transition: all 0.2s ease;
 }
 
-.campo input:focus {
+.config-combatiente input:focus {
     outline: none;
+
     border-color: #79c0ff;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 0 12px rgba(88, 166, 255, 0.6);
+
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 12px rgba(88, 166, 255, 0.6);
 }
 
-.nombre-combatiente {
+.nombre-config {
     font-size: 0.95rem;
     color: #79c0ff;
     min-height: 20px;
     font-weight: 600;
 }
 
-.vs {
+.config-vs {
+    text-align: center;
+
     font-weight: bold;
     color: #58a6ff;
     font-size: 1.3rem;
-    padding-top: 15px;
-    text-shadow: 0 0 10px rgba(88, 166, 255, 0.6);
+
+    text-shadow:
+        0 0 10px rgba(88, 166, 255, 0.6);
 }
 
-/* --- CONTROL MANUAL (2 POR FILA CON RELIEVE Y FILOS CELESTES) --- */
-.control-manual {
-    margin-bottom: 15px;
-    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-    padding: 14px 16px;
-    border-radius: 10px;
-    border: 1.5px solid #58a6ff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.08), 0 0 8px rgba(88, 166, 255, 0.2);
-}
-
-.control-manual-titulo {
-    font-size: 0.85rem;
-    color: #8b949e;
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-
-.control-manual-opciones {
+.botones-configuracion {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 15px;
 }
 
-.opcion-control {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #f0f6fc;
-    cursor: pointer;
-    background: linear-gradient(180deg, #21262d 0%, #161b22 100%);
-    border: 1.5px solid #58a6ff;
-    padding: 10px 12px;
-    border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-    transition: all 0.2s ease;
-}
 
-.opcion-control:hover {
-    background: linear-gradient(180deg, #30363d 0%, #21262d 100%);
-    border-color: #79c0ff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 8px rgba(88, 166, 255, 0.4);
-}
+/* ========================================================
+   ARENA DE COMBATE
+   ======================================================== */
 
-.opcion-control input[type="radio"] {
-    accent-color: #58a6ff;
-}
-/* --- ZONA DE COMBATIENTES (TARJETAS CON RELIEVE Y FILOS CELESTES) --- */
-.zona-combatientes {
+.arena-combate {
     display: grid;
-    grid-template-columns: 1fr 90px 1fr;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        90px
+        minmax(0, 1fr);
+
     gap: 15px;
+
     align-items: stretch;
+
     width: 100%;
-    max-width: 100%;
 }
+
+
+/* ========================================================
+   TARJETAS DE COMBATIENTES
+   ======================================================== */
 
 .tarjeta-combatiente {
-    background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+    background: linear-gradient(
+        135deg,
+        #161b22 0%,
+        #0d1117 100%
+    );
+
     border: 2px solid #58a6ff;
     border-radius: 14px;
+
     padding: 16px;
+
     display: flex;
     flex-direction: column;
     gap: 14px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 0 12px rgba(88, 166, 255, 0.25);
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.6),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        0 0 12px rgba(88, 166, 255, 0.25);
+
     position: relative;
     overflow: hidden;
+
     width: 100%;
     min-width: 0;
 }
 
 .tarjeta-combatiente::before {
-    content: '';
+    content: "";
+
     position: absolute;
     top: 0;
     left: 0;
+
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, #58a6ff, #bc8cff);
+
+    background: linear-gradient(
+        90deg,
+        #58a6ff,
+        #bc8cff
+    );
+
     box-shadow: 0 0 10px #58a6ff;
 }
+
+
+/* ========================================================
+   IMAGEN i3
+   ======================================================== */
+
+.contenedor-imagen-combatiente {
+    width: 100%;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background-color: #080b10;
+
+    border: 1.5px solid #58a6ff;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    aspect-ratio: 9 / 16;
+
+    max-height: 360px;
+
+    box-shadow:
+        inset 0 0 12px rgba(88, 166, 255, 0.3),
+        0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.contenedor-imagen-combatiente img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    display: block;
+
+    transition: transform 0.3s ease;
+}
+
+.contenedor-imagen-combatiente img:hover {
+    transform: scale(1.03);
+}
+
+
+/* ========================================================
+   CABECERA DEL COMBATIENTE
+   ======================================================== */
 
 .cabecera-combatiente {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+
+    gap: 10px;
 }
 
-/* NOMBRES DE LOS ANIMALES MÁS GRANDES Y DESTACADOS */
-.tarjeta-combatiente .nombre {
+.nombre-combatiente {
     font-weight: 800;
     font-size: 1.35rem;
+
     color: #f0f6fc;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(88, 166, 255, 0.3);
+
+    text-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 8px rgba(88, 166, 255, 0.3);
+
     line-height: 1.2;
 }
 
-.tarjeta-combatiente .codigo {
+.codigo-combatiente {
     font-size: 0.8rem;
+
     color: #58a6ff;
+
     font-family: monospace;
     font-weight: bold;
+
     margin-top: 2px;
 }
 
-.tarjeta-combatiente .perfil {
+.perfil-combatiente {
     font-size: 0.8rem;
-    background: linear-gradient(180deg, #21262d 0%, #161b22 100%);
+
+    background: linear-gradient(
+        180deg,
+        #21262d 0%,
+        #161b22 100%
+    );
+
     padding: 5px 10px;
+
     border-radius: 10px;
+
     border: 1.5px solid #58a6ff;
+
     color: #58a6ff;
+
     font-weight: 600;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.3);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* --- CONTENEDOR E IMAGEN 9:16 VERTICAL CON RELIEVE --- */
-.contenedor-imagen-combatiente {
-    width: 100%;
-    overflow: hidden;
-    border-radius: 10px;
-    background-color: #080b10;
-    border: 1.5px solid #58a6ff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    aspect-ratio: 9 / 16;
-    max-height: 360px;
-    box-shadow: inset 0 0 12px rgba(88, 166, 255, 0.3), 0 4px 8px rgba(0,0,0,0.5);
-}
 
-.imagen-combatiente {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-    transition: transform 0.3s ease;
-}
+/* ========================================================
+   VICTORIAS
+   ======================================================== */
 
-.imagen-combatiente:hover {
-    transform: scale(1.03);
-}
-
-.victorias-serie {
+.marcador-victorias {
     font-size: 1.05rem;
+
     color: #f0f6fc;
     font-weight: bold;
-    background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
+
+    background: linear-gradient(
+        180deg,
+        #161b22 0%,
+        #0d1117 100%
+    );
+
     padding: 10px 14px;
+
     border-radius: 8px;
+
     border: 1.5px solid #58a6ff;
+
     text-align: center;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 4px 8px rgba(0,0,0,0.4), 0 0 8px rgba(88, 166, 255, 0.2);
+
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.8),
+        0 4px 8px rgba(0, 0, 0, 0.4),
+        0 0 8px rgba(88, 166, 255, 0.2);
 }
 
-/* --- BARRAS DE VIDA Y FATIGA CON RELIEVE --- */
-.vida, .fatiga {
+
+/* ========================================================
+   VIDA
+   ======================================================== */
+
+.estado-vida,
+.estado-fatiga {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-.vida-texto, .fatiga-texto {
+.texto-barra {
     display: flex;
     justify-content: space-between;
+
     font-size: 0.8rem;
+
     color: #8b949e;
+
     font-weight: 600;
 }
 
-.barra-vida, .barra-fatiga {
-    background-color: #080b10;
-    border-radius: 6px;
+.barra {
+    width: 100%;
     height: 12px;
+
+    background-color: #080b10;
+
+    border-radius: 6px;
+
     overflow: hidden;
+
     border: 1.5px solid #58a6ff;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.9);
+
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
-.vida-relleno {
-    background: linear-gradient(180deg, #2ea043 0%, #238636 100%);
+.barra-vida {
     height: 100%;
     width: 100%;
-    box-shadow: 0 0 8px rgba(46, 160, 67, 0.6);
+
+    background: linear-gradient(
+        180deg,
+        #2ea043 0%,
+        #238636 100%
+    );
+
+    box-shadow:
+        0 0 8px rgba(46, 160, 67, 0.6);
+
     transition: width 0.3s ease;
 }
 
-.fatiga-relleno {
-    background: linear-gradient(180deg, #d29922 0%, #9e6a03 100%);
+.barra-fatiga {
     height: 100%;
-    width: 100%;
-    box-shadow: 0 0 8px rgba(210, 153, 34, 0.6);
+    width: 0%;
+
+    background: linear-gradient(
+        180deg,
+        #d29922 0%,
+        #9e6a03 100%
+    );
+
+    box-shadow:
+        0 0 8px rgba(210, 153, 34, 0.6);
+
     transition: width 0.3s ease;
 }
 
-/* --- ESTADÍSTICAS Y CENTRO DE COMBATE CON RELIEVE --- */
-.stats {
+
+/* ========================================================
+   ESTADÍSTICAS
+   ======================================================== */
+
+.stats-combatiente {
     display: grid;
+
     grid-template-columns: 1fr 1fr;
+
     gap: 6px;
+
     font-size: 0.8rem;
     font-weight: 500;
+
     background-color: #080b10;
+
     padding: 10px;
+
     border-radius: 8px;
+
     border: 1.5px solid #58a6ff;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
-.estado {
-    font-size: 0.85rem;
-    color: #79c0ff;
-    min-height: 22px;
-    font-weight: 600;
+.stats-combatiente .stat {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 5px;
+
+    color: #8b949e;
 }
+
+.stats-combatiente .stat strong {
+    color: #f0f6fc;
+}
+
+
+/* ========================================================
+   ESTADO
+   ======================================================== */
+
+.estado-combatiente {
+    font-size: 0.85rem;
+
+    color: #79c0ff;
+
+    min-height: 22px;
+
+    font-weight: 600;
+
+    text-align: center;
+}
+
+
+/* ========================================================
+   CENTRO DEL COMBATE
+   ======================================================== */
 
 .centro-combate {
     display: flex;
+
     flex-direction: column;
+
     justify-content: center;
     align-items: center;
+
     gap: 8px;
+
     text-align: center;
-    background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+
+    background: linear-gradient(
+        135deg,
+        #161b22 0%,
+        #0d1117 100%
+    );
+
     border: 2px solid #58a6ff;
+
     border-radius: 14px;
+
     padding: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 0 12px rgba(88, 166, 255, 0.25);
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.6),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        0 0 12px rgba(88, 166, 255, 0.25);
 }
 
-.icono-vs {
-    font-size: 1.6rem;
-    text-shadow: 0 0 10px rgba(88, 166, 255, 0.6);
-}
-
-.turno {
+.indicador-turno {
     font-size: 0.9rem;
+
     font-weight: bold;
+
     color: #58a6ff;
 }
 
-.iniciativa {
+.indicador-iniciativa {
     font-size: 0.75rem;
+
     color: #8b949e;
 }
-/* --- BOTONES Y ACCIONES (CON RELIEVE ESCULPIDO 3D Y FILOS CELESTES) --- */
+
+.accion-combate {
+    font-size: 0.75rem;
+
+    color: #79c0ff;
+
+    text-align: center;
+}
+
+
+/* ========================================================
+   BOTONES
+   ======================================================== */
+
 button {
     cursor: pointer;
-    background: linear-gradient(180deg, #2ea043 0%, #238636 100%);
+
+    background: linear-gradient(
+        180deg,
+        #2ea043 0%,
+        #238636 100%
+    );
+
     color: white;
+
     border: 1.5px solid #58a6ff;
+
     border-radius: 10px;
+
     padding: 12px 18px;
+
     font-size: 0.95rem;
+
     font-weight: bold;
+
     transition: all 0.2s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 6px rgba(88, 166, 255, 0.3);
+
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 0 6px rgba(88, 166, 255, 0.3);
 }
 
 button:hover:not(:disabled) {
-    background: linear-gradient(180deg, #3fb950 0%, #2ea043 100%);
+    background: linear-gradient(
+        180deg,
+        #3fb950 0%,
+        #2ea043 100%
+    );
+
     transform: translateY(-1px);
-    box-shadow: 0 6px 14px rgba(46, 160, 67, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 10px rgba(88, 166, 255, 0.5);
+
+    box-shadow:
+        0 6px 14px rgba(46, 160, 67, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 0 10px rgba(88, 166, 255, 0.5);
 }
 
 button:active:not(:disabled) {
     transform: translateY(1px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(0,0,0,0.5);
+
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.4),
+        inset 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 button:disabled {
-    background: linear-gradient(180deg, #21262d 0%, #161b22 100%);
+    background: linear-gradient(
+        180deg,
+        #21262d 0%,
+        #161b22 100%
+    );
+
     border-color: #30363d;
+
     color: #484f58;
+
     cursor: not-allowed;
+
     box-shadow: none;
 }
 
+
+/* ========================================================
+   BOTÓN PREPARAR
+   ======================================================== */
+
 #botonPreparar {
     width: 100%;
-    margin-bottom: 10px;
-    background: linear-gradient(180deg, #388bfd 0%, #1f6feb 100%);
+
+    background: linear-gradient(
+        180deg,
+        #388bfd 0%,
+        #1f6feb 100%
+    );
+
     border: 1.5px solid #79c0ff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 8px rgba(56, 139, 253, 0.5);
+
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 0 8px rgba(56, 139, 253, 0.5);
 }
 
 #botonPreparar:hover:not(:disabled) {
-    background: linear-gradient(180deg, #58a6ff 0%, #388bfd 100%);
-    box-shadow: 0 6px 14px rgba(56, 139, 253, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(88, 166, 255, 0.7);
+    background: linear-gradient(
+        180deg,
+        #58a6ff 0%,
+        #388bfd 100%
+    );
+
+    box-shadow:
+        0 6px 14px rgba(56, 139, 253, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        0 0 14px rgba(88, 166, 255, 0.7);
 }
+
+
+/* ========================================================
+   BOTÓN SERIE
+   ======================================================== */
 
 #botonSerie {
     width: 100%;
-    background: linear-gradient(180deg, #a371f7 0%, #8957e5 100%);
+
+    background: linear-gradient(
+        180deg,
+        #a371f7 0%,
+        #8957e5 100%
+    );
+
     border: 1.5px solid #d2a8ff;
-    margin-left: 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 8px rgba(137, 87, 229, 0.5);
+
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 0 8px rgba(137, 87, 229, 0.5);
 }
 
 #botonSerie:hover:not(:disabled) {
-    background: linear-gradient(180deg, #bc8cff 0%, #a371f7 100%);
-    box-shadow: 0 6px 14px rgba(137, 87, 229, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(188, 140, 255, 0.7);
+    background: linear-gradient(
+        180deg,
+        #bc8cff 0%,
+        #a371f7 100%
+    );
+
+    box-shadow:
+        0 6px 14px rgba(137, 87, 229, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        0 0 14px rgba(188, 140, 255, 0.7);
 }
 
-.mensaje {
-    margin-top: 10px;
-    font-size: 0.85rem;
-    color: #8b949e;
-    text-align: center;
-}
 
-.botones-acciones {
+/* ========================================================
+   ACCIONES
+   ======================================================== */
+
+.acciones-combate {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
     gap: 12px;
-    margin-bottom: 12px;
 }
 
-.accion {
-    background: linear-gradient(180deg, #21262d 0%, #161b22 100%);
-    border: 1.5px solid #58a6ff;
-    color: #f0f6fc;
-    border-radius: 10px;
-}
-
-.accion:hover:not(:disabled) {
-    background: linear-gradient(180deg, #30363d 0%, #21262d 100%);
-    border-color: #79c0ff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 10px rgba(88, 166, 255, 0.5);
-}
-
-.accion.defensa {
-    background: linear-gradient(180deg, #388bfd 0%, #1f6feb 100%);
-}
-
-.accion.defensa:hover:not(:disabled) {
-    background: linear-gradient(180deg, #58a6ff 0%, #388bfd 100%);
-    box-shadow: 0 4px 12px rgba(56, 139, 253, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 12px rgba(88, 166, 255, 0.6);
-}
-
-.boton-auto {
+.acciones-combate button {
     width: 100%;
-    background: linear-gradient(180deg, #a371f7 0%, #8957e5 100%);
-    border-radius: 10px;
-    border: 1.5px solid #d2a8ff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 8px rgba(137, 87, 229, 0.5);
 }
 
-.boton-auto:hover:not(:disabled) {
-    background: linear-gradient(180deg, #bc8cff 0%, #a371f7 100%);
-    box-shadow: 0 6px 14px rgba(137, 87, 229, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(188, 140, 255, 0.7);
+#botonDefensa {
+    background: linear-gradient(
+        180deg,
+        #388bfd 0%,
+        #1f6feb 100%
+    );
 }
 
-/* --- REGISTRO Y RESULTADOS --- */
+#botonEspecial {
+    background: linear-gradient(
+        180deg,
+        #a371f7 0%,
+        #8957e5 100%
+    );
+}
+
+
+/* ========================================================
+   RESULTADO
+   ======================================================== */
+
+.resultado-combate {
+    text-align: center;
+
+    min-height: 30px;
+
+    font-size: 1rem;
+
+    color: #f0f6fc;
+
+    font-weight: 600;
+}
+
+.resultado-serie {
+    text-align: center;
+
+    min-height: 25px;
+
+    font-size: 1rem;
+
+    color: #f0f6fc;
+
+    font-weight: 600;
+}
+
+
+/* ========================================================
+   MARCADOR DE SERIE
+   ======================================================== */
+
+.marcador-serie {
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        50px
+        1fr;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.marcador-serie-combatiente {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 10px;
+
+    background-color: #080b10;
+
+    border: 1.5px solid #58a6ff;
+
+    border-radius: 8px;
+
+    padding: 10px 12px;
+}
+
+.marcador-serie-combatiente strong {
+    font-size: 1.2rem;
+
+    color: #58a6ff;
+}
+
+.serie-vs {
+    text-align: center;
+
+    font-weight: bold;
+
+    color: #bc8cff;
+}
+
+
+/* ========================================================
+   REGISTRO
+   ======================================================== */
+
 .registro-combate {
     background-color: #080b10;
-    border: 1.5px solid #58a6ff;
-    border-radius: 10px;
-    padding: 14px;
-    max-height: 220px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 0.85rem;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.9), 0 0 8px rgba(88, 166, 255, 0.15);
-}
 
-.registro-vacio {
-    color: #484f58;
-    text-align: center;
-    font-style: italic;
+    border: 1.5px solid #58a6ff;
+
+    border-radius: 10px;
+
+    padding: 14px;
+
+    max-height: 220px;
+
+    overflow-y: auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+    font-size: 0.85rem;
+
+    box-shadow:
+        inset 0 2px 6px rgba(0, 0, 0, 0.9),
+        0 0 8px rgba(88, 166, 255, 0.15);
 }
 
 .linea-registro {
     border-bottom: 1px solid #21262d;
+
     padding-bottom: 4px;
 }
 
-.resultado-oculto {
-    display: none;
-}
 
-#resultado {
-    text-align: center;
+/* ========================================================
+   BOTONES FINALES
+   ======================================================== */
+
+.botones-finales {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
+    justify-content: center;
 }
 
-.resultado-icono {
-    font-size: 2.5rem;
+.botones-finales button {
+    width: 100%;
 }
 
-#resultadoTitulo {
-    font-size: 1.4rem;
-    color: #58a6ff;
-}
 
-#resultadoTexto {
-    font-size: 0.95rem;
-    color: #8b949e;
-}
+/* ========================================================
+   RESPONSIVE — MÓVIL
+   ======================================================== */
 
-/* --- DISEÑO ADAPTABLE (RESPONSIVE MÓVIL Y PC) --- */
 @media (max-width: 768px) {
+
     body {
         padding: 10px;
     }
 
-    #arena {
+    main {
         max-width: 100%;
         gap: 12px;
     }
 
-    .zona-combatientes {
+    .panel {
+        padding: 14px;
+    }
+
+
+    /* CONFIGURACIÓN */
+
+    .configuracion-combatientes {
         grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+    .config-vs {
+        font-size: 1.1rem;
+    }
+
+    .botones-configuracion {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* COMBATIENTES */
+
+    .arena-combate {
+        grid-template-columns: 1fr;
+
         gap: 15px;
-        width: 100%;
     }
 
     .tarjeta-combatiente {
         width: 100%;
-        max-width: 100%;
     }
+
+
+    /* IMÁGENES */
+
+    .contenedor-imagen-combatiente {
+        width: 100%;
+
+        max-height: none;
+
+        aspect-ratio: 9 / 16;
+    }
+
+
+    /* CENTRO */
 
     .centro-combate {
         flex-direction: row;
+
         justify-content: space-around;
+
         padding: 12px;
+
+        min-height: 70px;
     }
 
-    .entrada-combatiente {
-        flex-direction: column;
-        gap: 10px;
-    }
 
-    .vs {
-        padding-top: 0;
-        text-align: center;
-    }
+    /* ACCIONES */
 
-    .botones-acciones {
+    .acciones-combate {
         grid-template-columns: 1fr;
     }
-   }
+
+
+    /* SERIE */
+
+    .marcador-serie {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .serie-vs {
+        order: -1;
+    }
+
+}
