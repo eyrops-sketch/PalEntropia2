@@ -154,6 +154,59 @@ body{
 }
 
 
+/* =========================================================
+   CONTROL MANUAL (ESTRUCTURA CORREGIDA)
+   ========================================================= */
+
+.control-manual{
+  margin-top:14px;
+  padding:10px 12px;
+  border:1px solid #1a3c4a;
+  border-radius:9px;
+  background:#060d12;
+}
+
+.control-manual-titulo{
+  margin-bottom:8px;
+  color:#b8d5de;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.control-manual-opciones{
+  display:flex;
+  gap:12px;
+}
+
+.opcion-control{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:38px;
+  padding:6px 10px;
+  border:1px solid #28505e;
+  border-radius:7px;
+  background:#03070a;
+  color:#dff7ff;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+
+.opcion-control:hover{
+  border-color:#62d6ff;
+  background:#0a171f;
+}
+
+.opcion-control input[type="radio"]{
+  accent-color:#62d6ff;
+  cursor:pointer;
+}
+
+
 #botonPreparar{
   width:100%;
   min-height:44px;
@@ -536,7 +589,6 @@ body{
   color:#031018;
 }
 
-/* Botón de retorno personalizado */
 #botonVolverCruces{
   width:100%;
   min-height:40px;
