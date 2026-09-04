@@ -477,39 +477,52 @@
       }  
   }  
 
-  async function mostrarCombatientes(){      
-      if(!combate || !combatiente1 || !combatiente2){ return; }      
-      document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";      
-      document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";      
-      document.getElementById("c1Perfil").textContent = obtenerNombrePerfil(combatiente1.perfil);      
-      document.getElementById("c2Nombre").textContent = combatiente2.nombre || "—";      
-      document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";      
-      document.getElementById("c2Perfil").textContent = obtenerNombrePerfil(combatiente2.perfil);      
+  async function mostrarCombatientes(){
+    if(!combate || !combatiente1 || !combatiente2){ return; }
+    document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";
+    document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";
+    document.getElementById("c1Perfil").textContent = obtenerNombrePerfil(combatiente1.perfil);
+    document.getElementById("c2Nombre").textContent = combatiente2.nombre || "—";
+    document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";
+    document.getElementById("c2Perfil").textContent = obtenerNombrePerfil(combatiente2.perfil);
 
-      // --- CARGA DINÁMICA DE IMÁGENES (I3) CON BUSCARUTA ---
-      try {
-          const res1 = await window.BUSCARUTA.buscar(combatiente1.codigo);
-          const img1El = document.getElementById("c1Imagen");
-          const imgI3_1 = res1.imagenes.find(img => img.tipo === "i3");
-          if (imgI3_1 && imgI3_1.ruta) {
-              img1El.src = imgI3_1.ruta;
-              img1El.style.display = "block";
-          } else {
-              img1El.style.display = "none";
-          }
+    try {
+        const res1 = await window.BUSCARUTA.buscar(combatiente1.codigo);
+        const img1El = document.getElementById("c1Imagen");
+        const cont1El = img1El.closest(".contenedor-imagen-combatiente");
+        const imgI3_1 = res1 && res1.imagenes ? res1.imagenes.find(img => img.tipo === "i3") : null;
 
-          const res2 = await window.BUSCARUTA.buscar(combatiente2.codigo);
-          const img2El = document.getElementById("c2Imagen");
-          const imgI3_2 = res2.imagenes.find(img => img.tipo === "i3");
-          if (imgI3_2 && imgI3_2.ruta) {
-              img2El.src = imgI3_2.ruta;
-              img2El.style.display = "block";
-          } else {
-              img2El.style.display = "none";
-          }
-      } catch (e) {
-          console.warn("No se pudieron cargar las imágenes i3 de los combatientes:", e);
-      }
+        if (imgI3_1 && imgI3_1.ruta) {
+            img1El.src = imgI3_1.ruta;
+            img1El.style.display = "block";
+            if (cont1El) cont1El.style.display = "block";
+        } else {
+            img1El.src = "";
+            img1El.style.display = "none";
+            if (cont1El) cont1El.style.display = "none";
+        }
+
+        const res2 = await window.BUSCARUTA.buscar(combatiente2.codigo);
+        const img2El = document.getElementById("c2Imagen");
+        const cont2El = img2El.closest(".contenedor-imagen-combatiente");
+        const imgI3_2 = res2 && res2.imagenes ? res2.imagenes.find(img => img.tipo === "i3") : null;
+
+        if (imgI3_2 && imgI3_2.ruta) {
+            img2El.src = imgI3_2.ruta;
+            img2El.style.display = "block";
+            if (cont2El) cont2El.style.display = "block";
+        } else {
+            img2El.src = "";
+            img2El.style.display = "none";
+            if (cont2El) cont2El.style.display = "none";
+        }
+    } catch (err) {
+        console.error("Error al cargar imágenes con BUSCARUTA:", err);
+    }
+
+    actualizarEstadisticasVisuales();
+  }
+    
       // -----------------------------------------------------
 
       mostrarVida(combatiente1, "c1");      
