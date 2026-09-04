@@ -196,17 +196,15 @@
       try{          
           const reglas = JSON.parse(guardado);          
           return {              
-              ...REGLAS_TORNEO_DEFECTO,              
-              ...reglas,
-              tipoCombate: reglas.tipoCombate || (reglas.coeficientes && reglas.coeficientes.conf) || REGLAS_TORNEO_DEFECTO.tipoCombate,
-              partidosSerie: Number(reglas.partidosSerie) || REGLAS_TORNEO_DEFECTO.partidosSerie
+              partidosSerie: Number(reglas.partidosSerie) || REGLAS_TORNEO_DEFECTO.partidosSerie,              
+              tipoCombate: reglas.tipoCombate || (reglas.coeficientes && reglas.coeficientes.conf) || REGLAS_TORNEO_DEFECTO.tipoCombate          
           };      
       }catch(error){          
           console.error("Reglas del torneo no válidas:", error);          
           return { ...REGLAS_TORNEO_DEFECTO };      
       }  
   }
-    function actualizarInterfazSerie(){      
+      function actualizarInterfazSerie(){      
       const c1Victorias = document.getElementById("c1Victorias");      
       const c2Victorias = document.getElementById("c2Victorias");      
       if(c1Victorias){          
@@ -587,8 +585,8 @@
           mensajes.push("—");   
       }      
       estado.textContent = mensajes.join(" · ");  
-  }
-    function activarBotones(){      
+                           }
+      function activarBotones(){      
       const combatienteManual = controlManual === 1 ? combatiente1 : combatiente2;      
       botonA001.disabled = false;      
       botonA002.disabled = Number(combatienteManual.fatiga) < window.PALARENA_STANDAR.configuracion.fatiga_minima_ataque_potente;      
@@ -935,7 +933,7 @@
       desactivarBotones();      
       botonNuevoCombate.textContent = "🔄 Nuevo combate";      
       actualizarInterfazSerie();      
-      mostrarMensaje("Introduce los códigos J1 de las dos Paleofichas.");  
+      mostrarMensaje("Introduce los códigos J1 de las two Paleofichas.");  
   });  
 
   botonVolverCruces.addEventListener("click", function(){      
@@ -944,7 +942,8 @@
 
   async function iniciar(){      
       await cargarPaleofichas();      
-      await cargarMaster();  }  
+      await cargarMaster();  
+  }  
 
   iniciar();  
 </script>  
