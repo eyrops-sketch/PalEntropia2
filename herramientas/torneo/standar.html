@@ -479,7 +479,8 @@
       }  
   }  
 
-function mostrarCombatientes(){      
+      
+async function mostrarCombatientes(){      
     if(!combate || !combatiente1 || !combatiente2){ return; }      
     document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";      
     document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";      
@@ -488,9 +489,9 @@ function mostrarCombatientes(){
     document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";      
     document.getElementById("c2Perfil").textContent = obtenerNombrePerfil(combatiente2.perfil);      
 
-    // Llamada limpia al archivo externo
-    if (typeof window.cargarImagenesCombatientes === "function") {
-        window.cargarImagenesCombatientes(combatiente1.codigo, combatiente2.codigo);
+    // Llamada asíncrona limpia al archivo externo
+    if (typeof window.cargarImagenesCombatientesAsync === "function") {
+        await window.cargarImagenesCombatientesAsync(combatiente1.codigo, combatiente2.codigo);
     }
 
     actualizarEstadisticasVisuales();
@@ -513,6 +514,7 @@ function mostrarCombatientes(){
     }
     document.getElementById("iniciativa").textContent = iniciativa;
 }
+
 
 
       // -----------------------------------------------------
