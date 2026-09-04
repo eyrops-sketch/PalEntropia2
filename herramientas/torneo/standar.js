@@ -1,11 +1,11 @@
 /* ========================================================
-   PALARENA standar.js v1.3.1
+   PALARENA standar.js v1.3.2
    PalEntropía
-   MOTOR DE COMBATE ESTÁNDAR — REEQUILIBRADO Y CORREGIDO
+   MOTOR DE COMBATE ESTÁNDAR — REEQUILIBRADO Y COMPATIBLE
    ======================================================== */
 
 window.PALARENA_STANDAR = {
-    version: "1.3.1",
+    version: "1.3.2",
     configuracion: {
         hp_base: 100,
         bonificacion_dominante: 0.15,
@@ -157,27 +157,31 @@ window.PALARENA_STANDAR = {
 
     crearCombatiente(ficha, reglas) {
         if (!ficha) { return null; }
+        const f = Array.isArray(ficha) ? {
+            j1: ficha[0], j2: ficha[1], e3: ficha[2], e5: ficha[12], e6: ficha[13], e7: ficha[14], e11: ficha[20]
+        } : ficha;
+
         const indicadores = {
-            ataque: this.numero(ficha.e5),
-            defensa: this.numero(ficha.e6),
-            velocidad: this.numero(ficha.e7),
-            resistencia: this.numero(ficha.e3),
-            tactica: this.numero(ficha.e11)
+            ataque: this.numero(f.e5),
+            defensa: this.numero(f.e6),
+            velocidad: this.numero(f.e7),
+            resistencia: this.numero(f.e3),
+            tactica: this.numero(f.e11)
         };
         const dominante = this.obtenerDominante(indicadores);
         const perfil = this.obtenerPerfil(dominante.atributo);
         const factor = this.obtenerFactorImprevisible();
-        const coeficiente = this.obtenerCoeficienteCombate(ficha, reglas);
+        const coeficiente = this.obtenerCoeficienteCombate(f, reglas);
         const efectivos = this.obtenerEfectivos(indicadores, dominante, factor, coeficiente);
         const hpMax = this.configuracion.hp_base + Math.round(efectivos.resistencia * 1.2);
         return {
-            codigo: ficha.j1 || ficha.codigo || "",
-            nombre: ficha.j2 || ficha.nombre || "Desconocido",
+            codigo: f.j1 || f.codigo || "",
+            nombre: f.j2 || f.nombre || "Desconocido",
             hp: hpMax,
             hp_max: hpMax,
             fatiga: this.configuracion.fatiga_inicial,
             fatiga_max: this.configuracion.fatiga_max,
-            stats: ficha,
+            stats: f,
             indicadores: indicadores,
             efectivos: efectivos,
             dominante: dominante.atributo,
@@ -274,7 +278,8 @@ window.PALARENA_STANDAR = {
             fatiga_restante: atacante.fatiga,
             fatiga_porcentaje: this.obtenerFatigaPorcentaje(atacante)
         };
-    }
+        }
+
        obtenerEfecto(combatiente, codigo) {
         if (!combatiente || !combatiente.efectos) { return null; }
         return combatiente.efectos.find(function(efecto) { return efecto.codigo === codigo; }) || null;
@@ -463,7 +468,7 @@ window.PALARENA_STANDAR = {
             dado_critico: critico.dado,
             bloqueado_por_fatiga: critico.bloqueado_por_fatiga
         };
-}
+    }
     ejecutarAtaque(atacante, objetivo, codigo) {
         if (!atacante || !objetivo || atacante.derrotado || objetivo.derrotado) {
             return { exito: false, codigo: codigo, mensaje: "Ataque no disponible." };
@@ -761,6 +766,6 @@ window.ejecutarCombateEstandar = function(combate) { return window.PALARENA_STAN
 window.obtenerResumenEstandar = function(combate) { return window.PALARENA_STANDAR.obtenerResumen(combate); };
 
 /* ==================================================
-   FIN STANDAR.JS v1.3.1
+   FIN STANDAR.JS v1.3.2
    ================================================== */
            
