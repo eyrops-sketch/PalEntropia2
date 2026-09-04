@@ -55,10 +55,11 @@ window.PALARENA_STANDAR = (function() {
         if (guardado) {
             try {
                 const reglas = JSON.parse(guardado);
-                if (reglas.coeficientes && typeof reglas.coeficientes === "object") {
+                const coefs = reglas.coeficientes || reglas;
+                if (coefs && typeof coefs === "object") {
                     configuracionGlobal = {
                         ...configuracionGlobal,
-                        ...reglas.coeficientes
+                        ...coefs
                     };
                 }
             } catch (e) {
@@ -92,8 +93,7 @@ window.PALARENA_STANDAR = (function() {
             tactica: baseTac * coefGeneral
         };
     }
-
-       function crearCombatiente(ficha, esJugador2 = false) {
+        function crearCombatiente(ficha, esJugador2 = false) {
         sincronizarConfiguracionDesdeStorage();
         const config = configuracionGlobal;
         const efectivos = calcularStatsEfectivos(ficha, config);
@@ -193,7 +193,7 @@ window.PALARENA_STANDAR = (function() {
         if (combate.combatiente2.codigo === codigo) return combate.combatiente2;
         return null;
     }
-       return {
+        return {
         get configuracion() {
             sincronizarConfiguracionDesdeStorage();
             return configuracionGlobal;
@@ -241,4 +241,3 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
-
