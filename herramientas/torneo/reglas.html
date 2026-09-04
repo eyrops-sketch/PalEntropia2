@@ -172,61 +172,6 @@ const CLAVE_CRITERIO_TORNEO =
 
 
 /* =====================================================
-   CSV INCORPORADO POR DEFECTO
-   ===================================================== */
-
-const CSV_CONFIG_DEFAULT = `parametro,standard
-hp_base,100
-bonificacion_dominante,0.15
-factor_imprevisible_min,0.78
-factor_imprevisible_max,1.22
-coeficiente_combate,1.00
-coeficiente_combate_min,0.50
-coeficiente_combate_max,1.50
-iniciativa_velocidad,0.70
-iniciativa_tactica,0.30
-dano_base,4
-dano_por_ataque,0.10
-defensa_divisor,200
-variacion_dano,0.25
-multiplicador_critico,2.50
-critico_base,10
-critico_tactica,0.15
-fatiga_minima_critico,20
-esquiva_velocidad,0.15
-fallo_base,14
-fallo_reduccion_tactica,0.03
-coste_ataque_potente_hp,0.14
-fatiga_minima_ataque_potente,65
-fatiga_max,100
-fatiga_inicial,100
-fatiga_regeneracion_turno,6
-coste_fatiga_A001,8
-coste_fatiga_A002,38
-coste_fatiga_A003,10
-coste_fatiga_D001,20
-fatiga_defensa_atacante,15
-reduccion_defensa,0.35
-error_defensa_base,45
-error_defensa_reduccion_inteligencia,0.03
-error_defensa_reduccion_tactica,0.02
-error_defensa_fatiga_umbral,50
-error_defensa_fatiga_incremento,0.20
-error_defensa_min,15
-error_defensa_max,65
-golpe_mortal,false
-dano_vida_75,1.00
-dano_vida_50,1.05
-dano_vida_25,1.15
-dano_vida_10,1.25
-dano_vida_critica,1.35
-max_turnos,100
-general,1
-escenariojug1,1
-escenariojug2,1`;
-
-
-/* =====================================================
    REGLAS POR DEFECTO
    ===================================================== */
 
@@ -240,40 +185,41 @@ const REGLAS_TORNEO_DEFECTO = {
 
 
 /* =====================================================
-   PROCESAR CSV INCORPORADO
+   CARGAR MODOS DESDE EL CSV
    ===================================================== */
 
-function parsearCSVTexto(textoCSV, nombreConfig = "standard") {
-    let configExterna = {};
-    try {
-        const lineas = textoCSV.split("\n");
-        if (lineas.length === 0) return configExterna;
+async function cargarModosDesdeCSV() {
+    const selectTipo = document.getElementById("tipoCombate");
+    if (!selectTipo) return;
 
-        const cabecera = lineas[0].trim().split(",");
-        const indiceColumna = cabecera.indexOf(nombreConfig);
-        
-        if (indiceColumna === -1) return configExterna;
+    try {
+        const respuesta = await fetch("config.csv");
+        const texto = await respuesta.text();
+        const lineas = texto.split("\n");
+
+        if (lineas.length < 2) return;
+
+        selectTipo.innerHTML = "";
 
         for (let i = 1; i < lineas.length; i++) {
             const linea = lineas[i].trim();
             if (!linea) continue;
-            
-            const partes = linea.split(",");
-            const parametro = partes[0] ? partes[0].trim() : "";
-            let val = partes[indiceColumna] !== undefined ? partes[indiceColumna].trim() : "";
 
-            if (parametro && val !== "") {
-                if (val === "true") val = true;
-                else if (val === "false") val = false;
-                else if (!isNaN(val)) val = Number(val);
-                
-                configExterna[parametro] = val;
+            const valores = linea.split(",");
+            const modo = valores[0] ? valores[0].trim() : "";
+
+            if (modo) {
+                const opcion = document.createElement("option");
+                opcion.value = modo;
+                opcion.textContent = modo.charAt(0).toUpperCase() + modo.slice(1);
+                selectTipo.appendChild(opcion);
             }
         }
     } catch (err) {
-        console.warn("Error al procesar el CSV integrado:", err);
+        console.warn("No se pudo leer el CSV en reglas.html, manteniendo opción por defecto.", err);
     }
-    return configExterna;
+
+    cargarReglasEnInterfaz();
 }
 
 
@@ -292,8 +238,7 @@ function obtenerReglasTorneo() {
     if (!guardado) {
 
         return {
-            ...REGLAS_TORNEO_DEFECTO,
-            coeficientes: parsearCSVTexto(CSV_CONFIG_DEFAULT, "standard")
+            ...REGLAS_TORNEO_DEFECTO
         };
 
     }
@@ -311,9 +256,7 @@ function obtenerReglasTorneo() {
 
             ...REGLAS_TORNEO_DEFECTO,
 
-            ...reglas,
-
-            coeficientes: reglas.coeficientes || parsearCSVTexto(CSV_CONFIG_DEFAULT, reglas.tipoCombate || "standard")
+            ...reglas
 
         };
 
@@ -328,8 +271,7 @@ function obtenerReglasTorneo() {
 
 
         return {
-            ...REGLAS_TORNEO_DEFECTO,
-            coeficientes: parsearCSVTexto(CSV_CONFIG_DEFAULT, "standard")
+            ...REGLAS_TORNEO_DEFECTO
         };
 
     }
@@ -338,10 +280,10 @@ function obtenerReglasTorneo() {
 
 
 /* =====================================================
-   GUARDAR REGLAS AUTOMÁTICAMENTE
+   GUARDAR REGLAS Y COEFICIENTES
    ===================================================== */
 
-function guardarReglasTorneo() {
+async function guardarReglasTorneo() {
 
     const partidos =
         Number(
@@ -356,7 +298,45 @@ function guardarReglasTorneo() {
             "tipoCombate"
         ).value;
 
-    const coeficientesExtraidos = parsearCSVTexto(CSV_CONFIG_DEFAULT, tipo);
+
+    let configExterna = {};
+
+    try {
+        const respuesta = await fetch("config.csv");
+        const texto = await respuesta.text();
+        const lineas = texto.split("\n");
+
+        if (lineas.length >= 2) {
+            const cabecera = lineas[0].trim().split(",");
+
+            for (let i = 1; i < lineas.length; i++) {
+                const linea = lineas[i].trim();
+                if (!linea) continue;
+
+                const valores = linea.split(",");
+                const modoFila = valores[0] ? valores[0].trim() : "";
+
+                if (modoFila === tipo) {
+                    for (let j = 1; j < cabecera.length; j++) {
+                        const parametro = cabecera[j].trim();
+                        let val = valores[j] !== undefined ? valores[j].trim() : "";
+
+                        if (parametro && val !== "") {
+                            if (val === "true") val = true;
+                            else if (val === "false") val = false;
+                            else if (!isNaN(val)) val = Number(val);
+
+                            configExterna[parametro] = val;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    } catch (err) {
+        console.error("Error al extraer coeficientes al guardar reglas:", err);
+    }
+
 
     localStorage.setItem(
 
@@ -371,7 +351,7 @@ function guardarReglasTorneo() {
                 tipo,
 
             coeficientes:
-                coeficientesExtraidos
+                configExterna
 
         })
 
@@ -656,13 +636,13 @@ document
     )
     .addEventListener(
         "input",
-        function() {
+        async function() {
 
             if (
                 validarPartidosSerie()
             ) {
 
-                guardarReglasTorneo();
+                await guardarReglasTorneo();
 
             }
 
@@ -680,9 +660,9 @@ document
     )
     .addEventListener(
         "change",
-        function() {
+        async function() {
 
-            guardarReglasTorneo();
+            await guardarReglasTorneo();
 
         }
     );
@@ -713,9 +693,8 @@ document
 
 mostrarIdentificadorTorneo();
 
-cargarReglasEnInterfaz();
+cargarModosDesdeCSV();
 
-// Asegurar que se guarde de forma predeterminada con los coeficientes del CSV integrado
 guardarReglasTorneo();
 
 
