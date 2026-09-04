@@ -1,49 +1,44 @@
 window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
 
-    if (!window.BUSCARUTA) {
-        return;
-    }
-
     /*
     ========================================================
-    FUNCIONES AUXILIARES
+    PalEntropía
+    loadimagen.js
+
+    Cargador de imagen i3 para Arena estándar
+
+    CASO 1
+    Excepciones
+    -> BUSCARUTA
+
+    CASO 2
+    Arquitectura antigua 001_01 -> 005_15
+    -> búsqueda directa
+    -> herramientas/generador/paleofichas.json
+    -> paleofichas/volXXX/
+
+    CASO 3
+    Arquitectura nueva
+    -> BUSCARUTA
     ========================================================
     */
 
-    function normalizarDirectorio(nombre) {
 
-        return (
-            String(nombre)
-            .trim()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "_")
-            .replace(/^_+|_+$/g, "")
-        );
-    }
+    /*
+    ========================================================
+    VARIABLES
+    ========================================================
+    */
+
+    let datosJSON = null;
+    let cargandoJSON = null;
 
 
-    function normalizarArchivo(nombre) {
-
-        let texto =
-            String(nombre)
-            .trim()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-zA-Z0-9]+/g, "_")
-            .replace(/^_+|_+$/g, "");
-
-        if (!texto) {
-            return "";
-        }
-
-        return (
-            texto.charAt(0).toUpperCase() +
-            texto.slice(1)
-        );
-    }
-
+    /*
+    ========================================================
+    COMPROBAR IMAGEN
+    ========================================================
+    */
 
     function comprobarImagen(ruta) {
 
@@ -64,29 +59,286 @@ window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
     }
 
 
-    async function buscarImagenAntigua(j1, j2) {
+    /*
+    ========================================================
+    CARGAR PALEOFICHAS.JSON
+    ========================================================
+    */
 
-        if (!j1 || !j2) {
+    async function cargarJSON() {
+
+        if (datosJSON) {
+            return datosJSON;
+        }
+
+        if (cargandoJSON) {
+            return cargandoJSON;
+        }
+
+        cargandoJSON =
+            fetch(
+                "../generador/paleofichas.json",
+                {
+                    cache: "default"
+                }
+            )
+            .then(respuesta => {
+
+                if (!respuesta.ok) {
+                    throw new Error(
+                        "No se pudo cargar herramientas/generador/paleofichas.json"
+                    );
+                }
+
+                return respuesta.json();
+            })
+            .then(datos => {
+
+                datosJSON = datos;
+
+                return datos;
+            })
+            .catch(error => {
+
+                cargandoJSON = null;
+
+                throw error;
+            });
+
+        return cargandoJSON;
+    }
+
+
+    /*
+    ========================================================
+    BUSCAR REGISTRO
+    ========================================================
+    */
+
+    function buscarRegistro(datos, j1) {
+
+        if (!datos) {
             return null;
         }
 
-        const partes = String(j1).split("_");
+
+        /*
+        JSON EN FORMA DE ARRAY
+        */
+
+        if (Array.isArray(datos)) {
+
+            for (const registro of datos) {
+
+                if (
+                    !registro ||
+                    typeof registro !== "object"
+                ) {
+                    continue;
+                }
+
+                const codigo =
+                    registro.j1 ||
+                    registro.codigo;
+
+                if (
+                    codigo &&
+                    String(codigo).trim() === j1
+                ) {
+                    return registro;
+                }
+            }
+
+            return null;
+        }
+
+
+        /*
+        JSON EN FORMA DE OBJETO
+        */
+
+        if (typeof datos === "object") {
+
+            if (
+                datos[j1] &&
+                typeof datos[j1] === "object"
+            ) {
+                return datos[j1];
+            }
+
+
+            for (const clave of Object.keys(datos)) {
+
+                const registro =
+                    datos[clave];
+
+                if (
+                    !registro ||
+                    typeof registro !== "object"
+                ) {
+                    continue;
+                }
+
+                const codigo =
+                    registro.j1 ||
+                    registro.codigo;
+
+                if (
+                    codigo &&
+                    String(codigo).trim() === j1
+                ) {
+                    return registro;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    /*
+    ========================================================
+    OBTENER J2
+    ========================================================
+    */
+
+    async function obtenerJ2(j1) {
+
+        const datos =
+            await cargarJSON();
+
+        const registro =
+            buscarRegistro(
+                datos,
+                j1
+            );
+
+        if (!registro) {
+            return null;
+        }
+
+        const j2 =
+            registro.j2 ||
+            registro.nombre;
+
+        if (
+            j2 === undefined ||
+            j2 === null
+        ) {
+            return null;
+        }
+
+        return String(j2).trim();
+    }
+
+
+    /*
+    ========================================================
+    NORMALIZAR DIRECTORIO
+    ========================================================
+    */
+
+    function normalizarDirectorio(nombre) {
+
+        return (
+            String(nombre)
+            .trim()
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .toLowerCase()
+            .replace(
+                /[^a-z0-9]+/g,
+                "_"
+            )
+            .replace(
+                /^_+|_+$/g,
+                ""
+            )
+        );
+    }
+
+
+    /*
+    ========================================================
+    NORMALIZAR ARCHIVO
+    ========================================================
+    */
+
+    function normalizarArchivo(nombre) {
+
+        let texto =
+            String(nombre)
+            .trim()
+            .normalize("NFD")
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .replace(
+                /[^a-zA-Z0-9]+/g,
+                "_"
+            )
+            .replace(
+                /^_+|_+$/g,
+                ""
+            );
+
+        if (!texto) {
+            return "";
+        }
+
+        return (
+            texto.charAt(0).toUpperCase() +
+            texto.slice(1)
+        );
+    }
+
+
+    /*
+    ========================================================
+    BUSCAR IMAGEN ARQUITECTURA ANTIGUA
+    ========================================================
+    */
+
+    async function buscarImagenCaso2(
+        j1,
+        tipo
+    ) {
+
+        const j2 =
+            await obtenerJ2(j1);
+
+        if (!j2) {
+            return null;
+        }
+
+
+        const partes =
+            String(j1).split("_");
 
         if (partes.length !== 2) {
             return null;
         }
 
-        /*
-        La arquitectura antigua utiliza:
 
-        paleofichas/
-        vol005/
-        005_09_uintatherium/
-        Uintatherium_i3.png
+        /*
+        MUY IMPORTANTE
+
+        005
+        y no
+
+        5
         */
 
         const volumen =
-            partes[0].padStart(3, "0");
+            partes[0].padStart(
+                3,
+                "0"
+            );
+
 
         const directorio =
             normalizarDirectorio(j2);
@@ -94,9 +346,14 @@ window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
         const archivo =
             normalizarArchivo(j2);
 
-        if (!directorio || !archivo) {
+
+        if (
+            !directorio ||
+            !archivo
+        ) {
             return null;
         }
+
 
         const extensiones = [
             ".png",
@@ -105,7 +362,11 @@ window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
             ".webp"
         ];
 
-        for (const extension of extensiones) {
+
+        for (
+            const extension
+            of extensiones
+        ) {
 
             const ruta =
                 "../../paleofichas/" +
@@ -117,101 +378,99 @@ window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
                 directorio +
                 "/" +
                 archivo +
-                "_i3" +
+                "_" +
+                tipo +
                 extension;
 
+
             const existe =
-                await comprobarImagen(ruta);
+                await comprobarImagen(
+                    ruta
+                );
+
 
             if (existe) {
                 return ruta;
             }
         }
 
+
         return null;
     }
 
 
-    async function obtenerImagenI3(codigo) {
+    /*
+    ========================================================
+    DETERMINAR SI ES CASO 2
+    ========================================================
+    */
 
-        if (!codigo) {
-            return null;
-        }
-
-        /*
-        Primero se utiliza BUSCARUTA normalmente.
-        Esto mantiene intactos:
-
-        - excepciones
-        - arquitectura nueva
-        - rutas ya correctas
-        */
-
-        const resultado =
-            await window.BUSCARUTA.buscar(codigo);
-
-        const imagenI3 =
-            resultado &&
-            resultado.imagenes
-                ? resultado.imagenes.find(
-                    imagen => imagen.tipo === "i3"
-                )
-                : null;
-
-
-        /*
-        ====================================================
-        CASO 2 — ARQUITECTURA ANTIGUA
-        ====================================================
-
-        buscaruta.js genera actualmente:
-
-        vol5/
-
-        pero la estructura real utiliza:
-
-        vol005/
-
-        Por eso solamente aquí hacemos la
-        reconstrucción de la ruta.
-        */
+    function esCaso2(j1) {
 
         if (
-            resultado &&
-            resultado.caso === "caso2" &&
-            resultado.j2
+            !/^\d{3}_\d{2}$/.test(j1)
         ) {
+            return false;
+        }
 
-            /*
-            Si BUSCARUTA ya encuentra la imagen,
-            se conserva esa ruta.
-            */
+        if (
+            j1 === "001_12" ||
+            j1 === "002_04" ||
+            j1 === "003_14" ||
+            j1 === "004_14"
+        ) {
+            return false;
+        }
 
-            if (
-                imagenI3 &&
-                imagenI3.ruta
-            ) {
-                return imagenI3.ruta;
-            }
+        const partes =
+            j1.split("_");
+
+        const volumen =
+            Number(partes[0]);
+
+        const ficha =
+            Number(partes[1]);
+
+        return (
+            volumen >= 1 &&
+            volumen <= 5 &&
+            ficha >= 1 &&
+            ficha <= 15
+        );
+    }
 
 
-            /*
-            Si BUSCARUTA no la encuentra,
-            buscamos directamente en la estructura
-            antigua correcta.
-            */
+    /*
+    ========================================================
+    OBTENER RUTA I3
+    ========================================================
+    */
 
-            const rutaAntigua =
-                await buscarImagenAntigua(
-                    codigo,
-                    resultado.j2
-                );
+    async function obtenerRutaI3(j1) {
 
-            if (rutaAntigua) {
-                return rutaAntigua;
-            }
+        j1 =
+            String(j1)
+            .trim()
+            .toUpperCase();
 
-            return null;
+
+        /*
+        ====================================================
+        CASO 2
+        ====================================================
+
+        NO UTILIZAMOS BUSCARUTA.
+
+        Se busca directamente en la arquitectura
+        antigua real.
+        */
+
+        if (esCaso2(j1)) {
+
+            return await buscarImagenCaso2(
+                j1,
+                "i3"
+            );
         }
 
 
@@ -220,16 +479,36 @@ window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
         CASO 1 Y CASO 3
         ====================================================
 
-        Se mantiene exactamente el comportamiento
-        proporcionado por BUSCARUTA.
+        BUSCARUTA sigue funcionando exactamente
+        como hasta ahora.
         */
 
+        const resultado =
+            await window.BUSCARUTA.buscar(
+                j1
+            );
+
+
         if (
-            imagenI3 &&
-            imagenI3.ruta
+            resultado &&
+            resultado.imagenes
         ) {
-            return imagenI3.ruta;
+
+            const imagenI3 =
+                resultado.imagenes.find(
+                    imagen =>
+                        imagen.tipo === "i3"
+                );
+
+
+            if (
+                imagenI3 &&
+                imagenI3.ruta
+            ) {
+                return imagenI3.ruta;
+            }
         }
+
 
         return null;
     }
@@ -237,132 +516,104 @@ window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
 
     /*
     ========================================================
-    CARGA COMBATIENTE 1
+    MOSTRAR / OCULTAR IMAGEN
+    ========================================================
+    */
+
+    async function cargarImagen(
+        codigo,
+        idImagen
+    ) {
+
+        if (!codigo) {
+            return;
+        }
+
+
+        const imagen =
+            document.getElementById(
+                idImagen
+            );
+
+
+        if (!imagen) {
+            return;
+        }
+
+
+        const contenedor =
+            imagen.closest(
+                ".contenedor-imagen-combatiente"
+            );
+
+
+        const ruta =
+            await obtenerRutaI3(
+                codigo
+            );
+
+
+        if (ruta) {
+
+            imagen.src =
+                ruta;
+
+            imagen.style.display =
+                "block";
+
+            if (contenedor) {
+
+                contenedor.style.display =
+                    "block";
+            }
+
+        } else {
+
+            imagen.src =
+                "";
+
+            imagen.style.display =
+                "none";
+
+            if (contenedor) {
+
+                contenedor.style.display =
+                    "none";
+            }
+        }
+    }
+
+
+    /*
+    ========================================================
+    CARGAR COMBATIENTE 1
     ========================================================
     */
 
     try {
 
-        if (codigo1) {
-
-            const img1El =
-                document.getElementById(
-                    "c1Imagen"
-                );
-
-            const cont1El =
-                img1El
-                    ? img1El.closest(
-                        ".contenedor-imagen-combatiente"
-                    )
-                    : null;
-
-
-            const ruta1 =
-                await obtenerImagenI3(
-                    codigo1
-                );
-
-
-            if (
-                img1El &&
-                ruta1
-            ) {
-
-                img1El.src =
-                    ruta1;
-
-                img1El.style.display =
-                    "block";
-
-                if (cont1El) {
-
-                    cont1El.style.display =
-                        "block";
-                }
-
-            } else if (img1El) {
-
-                img1El.src =
-                    "";
-
-                img1El.style.display =
-                    "none";
-
-                if (cont1El) {
-
-                    cont1El.style.display =
-                        "none";
-                }
-            }
-        }
+        await cargarImagen(
+            codigo1,
+            "c1Imagen"
+        );
 
 
         /*
         ====================================================
-        CARGA COMBATIENTE 2
+        CARGAR COMBATIENTE 2
         ====================================================
         */
 
-        if (codigo2) {
+        await cargarImagen(
+            codigo2,
+            "c2Imagen"
+        );
 
-            const img2El =
-                document.getElementById(
-                    "c2Imagen"
-                );
-
-            const cont2El =
-                img2El
-                    ? img2El.closest(
-                        ".contenedor-imagen-combatiente"
-                    )
-                    : null;
-
-
-            const ruta2 =
-                await obtenerImagenI3(
-                    codigo2
-                );
-
-
-            if (
-                img2El &&
-                ruta2
-            ) {
-
-                img2El.src =
-                    ruta2;
-
-                img2El.style.display =
-                    "block";
-
-                if (cont2El) {
-
-                    cont2El.style.display =
-                        "block";
-                }
-
-            } else if (img2El) {
-
-                img2El.src =
-                    "";
-
-                img2El.style.display =
-                    "none";
-
-                if (cont2El) {
-
-                    cont2El.style.display =
-                        "none";
-                }
-            }
-        }
-
-    } catch (e) {
+    } catch (error) {
 
         console.warn(
             "No se pudieron cargar las imágenes i3:",
-            e
+            error
         );
     }
 };
