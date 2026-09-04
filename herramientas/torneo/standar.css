@@ -84,48 +84,62 @@ body{
 
 
 /* =========================================================
-   CONFIGURACIÓN
+   CONFIGURACIÓN Y SELECCIÓN DE COMBATIENTES
    ========================================================= */
 
 .entrada-combatiente{
   display:flex;
   flex-direction:column;
   gap:12px;
+  padding:4px;
+  border:1px dashed #1a3c4a;
+  border-radius:10px;
+  background:#060d12;
 }
 
 .campo{
   flex:1;
+  padding:8px;
 }
 
 .campo label{
-  display:block;
+  display:flex;
+  align-items:center;
+  gap:6px;
   margin-bottom:6px;
   color:#b8d5de;
   font-weight:bold;
+  font-size:13px;
 }
 
 .campo input{
   width:100%;
-  height:42px;
-  padding:0 12px;
+  height:44px;
+  padding:0 14px;
   border:1px solid #28505e;
-  border-radius:8px;
+  border-radius:9px;
   outline:none;
-  background:#050a0d;
+  background:#03070a;
   color:#e8fbff;
-  font-size:15px;
+  font-size:16px;
+  font-weight:bold;
+  letter-spacing:.5px;
+  transition:all .2s ease;
 }
 
 .campo input:focus{
   border-color:#62d6ff;
-  box-shadow:0 0 8px rgba(98,214,255,.15);
+  background:#071219;
+  box-shadow:0 0 10px rgba(98,214,255,.2);
 }
 
 .nombre-combatiente{
-  min-height:20px;
+  min-height:22px;
   margin-top:6px;
+  padding-left:2px;
   color:#62d6ff;
   font-size:13px;
+  font-weight:bold;
 }
 
 .vs{
@@ -134,8 +148,9 @@ body{
   justify-content:center;
   min-height:28px;
   color:#8aa4ad;
-  font-size:13px;
+  font-size:14px;
   font-weight:bold;
+  letter-spacing:1px;
 }
 
 
@@ -187,7 +202,7 @@ body{
 
 .tarjeta-combatiente{
   width:100%;
-  padding:13px;
+  padding:14px;
   border:1px solid #21404b;
   border-radius:12px;
   background:#0a1318;
@@ -502,20 +517,44 @@ body{
 }
 
 #botonNuevoCombate{
-  min-height:42px;
-  padding:9px 16px;
+  width:100%;
+  min-height:44px;
+  padding:10px 16px;
   border:1px solid #62d6ff;
   border-radius:8px;
   background:#0c2028;
   color:#62d6ff;
   cursor:pointer;
-  font-size:13px;
+  font-size:14px;
   font-weight:bold;
+  margin-bottom:8px;
+  transition:.2s;
 }
 
 #botonNuevoCombate:hover{
   background:#62d6ff;
   color:#031018;
+}
+
+/* Botón de retorno personalizado */
+#botonVolverCruces{
+  width:100%;
+  min-height:40px;
+  padding:8px 14px;
+  border:1px solid #485c63;
+  border-radius:8px;
+  background:#11181c;
+  color:#b6cdd4;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:bold;
+  transition:.2s;
+}
+
+#botonVolverCruces:hover{
+  border-color:#ffaa5e;
+  color:#ffeaab;
+  background:#1a1510;
 }
 
 
