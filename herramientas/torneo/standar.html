@@ -477,7 +477,7 @@
       }  
   }  
 
-  async function mostrarCombatientes(){
+  function mostrarCombatientes(){
     if(!combate || !combatiente1 || !combatiente2){ return; }
     document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";
     document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";
@@ -486,42 +486,44 @@
     document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";
     document.getElementById("c2Perfil").textContent = obtenerNombrePerfil(combatiente2.perfil);
 
-    try {
-        const res1 = await window.BUSCARUTA.buscar(combatiente1.codigo);
-        const img1El = document.getElementById("c1Imagen");
-        const cont1El = img1El.closest(".contenedor-imagen-combatiente");
-        const imgI3_1 = res1 && res1.imagenes ? res1.imagenes.find(img => img.tipo === "i3") : null;
+    // Carga de imágenes sin bloquear el flujo sincrónico del combate
+    if (window.BUSCARUTA) {
+        window.BUSCARUTA.buscar(combatiente1.codigo).then(res1 => {
+            const img1El = document.getElementById("c1Imagen");
+            const cont1El = img1El ? img1El.closest(".contenedor-imagen-combatiente") : null;
+            const imgI3_1 = res1 && res1.imagenes ? res1.imagenes.find(img => img.tipo === "i3") : null;
 
-        if (imgI3_1 && imgI3_1.ruta) {
-            img1El.src = imgI3_1.ruta;
-            img1El.style.display = "block";
-            if (cont1El) cont1El.style.display = "block";
-        } else {
-            img1El.src = "";
-            img1El.style.display = "none";
-            if (cont1El) cont1El.style.display = "none";
-        }
+            if (img1El && imgI3_1 && imgI3_1.ruta) {
+                img1El.src = imgI3_1.ruta;
+                img1El.style.display = "block";
+                if (cont1El) cont1El.style.display = "block";
+            } else if (img1El) {
+                img1El.src = "";
+                img1El.style.display = "none";
+                if (cont1El) cont1El.style.display = "none";
+            }
+        }).catch(err => console.error("Error img 1:", err));
 
-        const res2 = await window.BUSCARUTA.buscar(combatiente2.codigo);
-        const img2El = document.getElementById("c2Imagen");
-        const cont2El = img2El.closest(".contenedor-imagen-combatiente");
-        const imgI3_2 = res2 && res2.imagenes ? res2.imagenes.find(img => img.tipo === "i3") : null;
+        window.BUSCARUTA.buscar(combatiente2.codigo).then(res2 => {
+            const img2El = document.getElementById("c2Imagen");
+            const cont2El = img2El ? img2El.closest(".contenedor-imagen-combatiente") : null;
+            const imgI3_2 = res2 && res2.imagenes ? res2.imagenes.find(img => img.tipo === "i3") : null;
 
-        if (imgI3_2 && imgI3_2.ruta) {
-            img2El.src = imgI3_2.ruta;
-            img2El.style.display = "block";
-            if (cont2El) cont2El.style.display = "block";
-        } else {
-            img2El.src = "";
-            img2El.style.display = "none";
-            if (cont2El) cont2El.style.display = "none";
-        }
-    } catch (err) {
-        console.error("Error al cargar imágenes con BUSCARUTA:", err);
+            if (img2El && imgI3_2 && imgI3_2.ruta) {
+                img2El.src = imgI3_2.ruta;
+                img2El.style.display = "block";
+                if (cont2El) cont2El.style.display = "block";
+            } else if (img2El) {
+                img2El.src = "";
+                img2El.style.display = "none";
+                if (cont2El) cont2El.style.display = "none";
+            }
+        }).catch(err => console.error("Error img 2:", err));
     }
 
     actualizarEstadisticasVisuales();
-  }
+}
+
     
       // -----------------------------------------------------
 
