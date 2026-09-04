@@ -1,9 +1,265 @@
+/* ========================================================
+   PALARENA standar.js — REEQUILIBRADO TÁCTICO Y BLINDADO
+   PalEntropía
+   ======================================================== */
+
+window.PALARENA_STANDAR = {
+    version: "1.3.3",
+    configuracion: {
+        hp_base: 100,
+        bonificacion_dominante: 0.15,
+        factor_imprevisible_min: 0.92,
+        factor_imprevisible_max: 1.08,
+        coeficiente_combate: 1.00,
+        coeficiente_combate_min: 0.50,
+        coeficiente_combate_max: 1.50,
+        iniciativa_velocidad: 0.60,
+        iniciativa_tactica: 0.40,
+        dano_base: 8,
+        dano_por_ataque: 0.15,
+        defensa_divisor: 120,
+        variacion_dano: 0.08,
+        multiplicador_critico: 1.40,
+        critico_base: 5,
+        critico_tactica: 0.08,
+        fatiga_minima_critico: 35,
+        esquiva_velocidad: 0.08,
+        fallo_base: 10,
+        fallo_reduccion_tactica: 0.05,
+        coste_ataque_potente_hp: 0.04,
+        fatiga_minima_ataque_potente: 45,
+        fatiga_max: 100,
+        fatiga_inicial: 100,
+        fatiga_regeneracion_turno: 7,
+        coste_fatiga_A001: 7,
+        coste_fatiga_A002: 18,
+        coste_fatiga_A003: 10,
+        coste_fatiga_D001: 4,
+        fatiga_defensa_atacante: 10,
+        reduccion_defensa: 0.50,
+        error_defensa_base: 12,
+        error_defensa_reduccion_inteligencia: 0.04,
+        error_defensa_reduccion_tactica: 0.04,
+        error_defensa_fatiga_umbral: 40,
+        error_defensa_fatiga_incremento: 0.08,
+        error_defensa_min: 4,
+        error_defensa_max: 20,
+        golpe_mortal: false,
+        dano_vida_75: 1.00,
+        dano_vida_50: 1.04,
+        dano_vida_25: 1.10,
+        dano_vida_10: 1.18,
+        dano_vida_critica: 1.25,
+        max_turnos: 100
+    },
+
+    numero(valor) {
+        const numero = Number(valor);
+        return Number.isFinite(numero) ? numero : 0;
+    },
+
+    limitar(valor) {
+        return Math.max(0, Math.min(100, Math.round(valor)));
+    },
+
+    limitarCoeficiente(valor) {
+        const minimo = this.configuracion.coeficiente_combate_min;
+        const maximo = this.configuracion.coeficiente_combate_max;
+        return Math.max(minimo, Math.min(maximo, this.numero(valor)));
+    },
+
+    aleatorio(min, max) {
+        return Math.random() * (max - min) + min;
+    },
+
+    enteroAleatorio(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+
+    obtenerCoeficienteCombate(ficha, reglas) {
+        let coeficiente = this.configuracion.coeficiente_combate;
+        if (ficha && Number.isFinite(Number(ficha.coeficiente_combate))) {
+            coeficiente = Number(ficha.coeficiente_combate);
+        }
+        if (reglas && reglas.coeficientes_combate && ficha) {
+            const codigo = ficha.j1 || ficha.codigo || "";
+            if (Number.isFinite(Number(reglas.coeficientes_combate[codigo]))) {
+                coeficiente = Number(reglas.coeficientes_combate[codigo]);
+            }
+        }
+        if (reglas && Number.isFinite(Number(reglas.coeficiente_combate))) {
+            coeficiente = Number(reglas.coeficiente_combate);
+        }
+        return this.limitarCoeficiente(coeficiente);
+    },
+
+    obtenerFactorImprevisible() {
+        return this.aleatorio(this.configuracion.factor_imprevisible_min, this.configuracion.factor_imprevisible_max);
+    },
+
+    obtenerDominante(indicadores) {
+        const atributos = [
+            { atributo: "ataque", valor: indicadores.ataque },
+            { atributo: "defensa", valor: indicadores.defensa },
+            { atributo: "velocidad", valor: indicadores.velocidad },
+            { atributo: "resistencia", valor: indicadores.resistencia },
+            { atributo: "tactica", valor: indicadores.tactica }
+        ];
+        const maximo = Math.max(...atributos.map(function(item) { return item.valor; }));
+        let candidatos = atributos.filter(function(item) { return item.valor === maximo; });
+        if (candidatos.length > 1) {
+            const tactica = candidatos.find(function(item) { return item.atributo === "tactica"; });
+            if (tactica) { candidatos = [tactica]; }
+        }
+        const elegido = candidatos[this.enteroAleatorio(0, candidatos.length - 1)];
+        return {
+            atributo: elegido.atributo,
+            valor: elegido.valor,
+            bonificacion: this.configuracion.bonificacion_dominante
+        };
+    },
+
+    obtenerPerfil(atributo) {
+        const perfiles = {
+            ataque: "agresivo",
+            defensa: "defensivo",
+            velocidad: "rapido",
+            resistencia: "aguante",
+            tactica: "tactico"
+        };
+        return perfiles[atributo] || "equilibrado";
+    },
+
+    obtenerEfectivos(indicadores, dominante, factor, coeficiente) {
+        const efectivos = {
+            ataque: this.limitar(indicadores.ataque),
+            defensa: this.limitar(indicadores.defensa),
+            velocidad: this.limitar(indicadores.velocidad),
+            resistencia: this.limitar(indicadores.resistencia),
+            tactica: this.limitar(indicadores.tactica)
+        };
+        efectivos[dominante.atributo] = this.limitar(efectivos[dominante.atributo] * (1 + dominante.bonificacion));
+        coeficiente = this.limitarCoeficiente(coeficiente);
+        efectivos.ataque = this.limitar(efectivos.ataque * coeficiente);
+        efectivos.defensa = this.limitar(efectivos.defensa * coeficiente);
+        efectivos.velocidad = this.limitar(efectivos.velocidad * coeficiente);
+        efectivos.resistencia = this.limitar(efectivos.resistencia * coeficiente);
+        efectivos.tactica = this.limitar(efectivos.tactica * coeficiente);
+        factor = Number(factor) || 1;
+        efectivos.ataque = this.limitar(efectivos.ataque * factor);
+        efectivos.defensa = this.limitar(efectivos.defensa * factor);
+        efectivos.velocidad = this.limitar(efectivos.velocidad * factor);
+        efectivos.resistencia = this.limitar(efectivos.resistencia * factor);
+        efectivos.tactica = this.limitar(efectivos.tactica * factor);
+        return efectivos;
+    },
+
+    crearCombatiente(ficha, reglas) {
+        if (!ficha) { return null; }
+        const f = Array.isArray(ficha) ? {
+            j1: ficha[0], j2: ficha[1], e3: ficha[2], e5: ficha[12], e6: ficha[13], e7: ficha[14], e11: ficha[20]
+        } : ficha;
+
+        const indicadores = {
+            ataque: this.numero(f.e5 !== undefined ? f.e5 : f[12]),
+            defensa: this.numero(f.e6 !== undefined ? f.e6 : f[13]),
+            velocidad: this.numero(f.e7 !== undefined ? f.e7 : f[14]),
+            resistencia: this.numero(f.e3 !== undefined ? f.e3 : f[2]),
+            tactica: this.numero(f.e11 !== undefined ? f.e11 : f[20])
+        };
+        const dominante = this.obtenerDominante(indicadores);
+        const perfil = this.obtenerPerfil(dominante.atributo);
+        const factor = this.obtenerFactorImprevisible();
+        const coeficiente = this.obtenerCoeficienteCombate(f, reglas);
+        const efectivos = this.obtenerEfectivos(indicadores, dominante, factor, coeficiente);
+        const hpMax = this.configuracion.hp_base + Math.round(efectivos.resistencia * 1.2);
+        return {
+            codigo: f.j1 || f.codigo || (Array.isArray(ficha) ? ficha[0] : "") || "",
+            nombre: f.j2 || f.nombre || (Array.isArray(ficha) ? ficha[1] : "") || "Desconocido",
+            hp: hpMax,
+            hp_max: hpMax,
+            fatiga: this.configuracion.fatiga_inicial,
+            fatiga_max: this.configuracion.fatiga_max,
+            stats: f,
+            indicadores: indicadores,
+            efectivos: efectivos,
+            dominante: dominante.atributo,
+            perfil: perfil,
+            factor_imprevisible: factor,
+            coeficiente_combate: coeficiente,
+            ataques: [],
+            efectos: [],
+            defendiendo: false,
+            derrotado: false
+        };
+    },
+
+    crearCombate(ficha1, ficha2, reglas) {
+        const combatiente1 = this.crearCombatiente(ficha1, reglas);
+        const combatiente2 = this.crearCombatiente(ficha2, reglas);
+        if (!combatiente1 || !combatiente2) { return null; }
+        this.asignarAtaques(combatiente1);
+        this.asignarAtaques(combatiente2);
+        const iniciativa1 = (combatiente1.efectivos.velocidad * this.configuracion.iniciativa_velocidad) + (combatiente1.efectivos.tactica * this.configuracion.iniciativa_tactica);
+        const iniciativa2 = (combatiente2.efectivos.velocidad * this.configuracion.iniciativa_velocidad) + (combatiente2.efectivos.tactica * this.configuracion.iniciativa_tactica);
+        let primero, segundo;
+        if (iniciativa1 > iniciativa2) {
+            primero = combatiente1; segundo = combatiente2;
+        } else if (iniciativa2 > iniciativa1) {
+            primero = combatiente2; segundo = combatiente1;
+        } else {
+            if (Math.random() < 0.5) { primero = combatiente1; segundo = combatiente2; }
+            else { primero = combatiente2; segundo = combatiente1; }
+        }
+        return {
+            estado: "activo",
+            turno: 1,
+            primero: primero.codigo,
+            segundo: segundo.codigo,
+            combatiente1: combatiente1,
+            combatiente2: combatiente2,
+            historial: [],
+            ganador: null,
+            perdedor: null
+        };
+    },
+
+    obtenerCombatiente(combate, codigo) {
+        if (!combate) { return null; }
+        if (combate.combatiente1.codigo === codigo) { return combate.combatiente1; }
+        if (combate.combatiente2.codigo === codigo) { return combate.combatiente2; }
+        return null;
+    },
+
+    asignarAtaques(combatiente) {
+        combatiente.ataques = ["A001", "A002", "A003", "D001"];
+    },
+
+    obtenerFatigaPorcentaje(combatiente) {
+        if (!combatiente || !combatiente.fatiga_max) { return 0; }
+        return (combatiente.fatiga / combatiente.fatiga_max) * 100;
+    },
+
+    aplicarFatiga(combatiente, cantidad) {
+        if (!combatiente) { return 0; }
+        const anterior = this.numero(combatiente.fatiga);
+        combatiente.fatiga = Math.max(0, Math.min(combatiente.fatiga_max, anterior - this.numero(cantidad)));
+        return anterior - combatiente.fatiga;
+    },
+
+    regenerarFatiga(combatiente) {
+        if (!combatiente || combatiente.derrotado) { return 0; }
+        const anterior = this.numero(combatiente.fatiga);
+        combatiente.fatiga = Math.min(combatiente.fatiga_max, anterior + this.configuracion.fatiga_regeneracion_turno);
+        return combatiente.fatiga - anterior;
+    },
+
     obtenerCosteFatiga(codigo, atacante) {
         const costes = {
-            A001: 7,
-            A002: 18,
-            A003: 10,
-            D001: 4
+            A001: this.configuracion.coste_fatiga_A001,
+            A002: this.configuracion.coste_fatiga_A002,
+            A003: this.configuracion.coste_fatiga_A003,
+            D001: this.configuracion.coste_fatiga_D001
         };
         let baseCoste = costes[codigo] || 0;
         if (atacante && atacante.efectivos.velocidad > 75 && codigo !== "D001") {
@@ -22,6 +278,109 @@
             fatiga_porcentaje: this.obtenerFatigaPorcentaje(atacante)
         };
     },
+        obtenerEfecto(combatiente, codigo) {
+        if (!combatiente || !combatiente.efectos) { return null; }
+        return combatiente.efectos.find(function(efecto) { return efecto.codigo === codigo; }) || null;
+    },
+
+    obtenerEfectoEstandar(codigo) {
+        if (!window.PALARENA_STANDAR_EFECTOS) { return null; }
+        return window.PALARENA_STANDAR_EFECTOS.obtener(codigo);
+    },
+
+    aplicarEfecto(atacante, objetivo, codigo) {
+        if (!objetivo || !codigo) { return null; }
+        const base = this.obtenerEfectoEstandar(codigo);
+        if (!base) { return null; }
+        if (codigo === "E001") {
+            const curacion = Math.round(objetivo.hp_max * (base.potencia / 100));
+            const hpAnterior = objetivo.hp;
+            objetivo.hp = Math.min(objetivo.hp_max, objetivo.hp + curacion);
+            return {
+                codigo: codigo,
+                nombre: base.nombre,
+                tipo: "curacion",
+                potencia: objetivo.hp - hpAnterior,
+                duracion: 0
+            };
+        }
+        const existente = this.obtenerEfecto(objetivo, codigo);
+        if (existente) {
+            existente.turnos = base.duracion;
+            existente.potencia = base.potencia;
+            return {
+                codigo: codigo,
+                nombre: base.nombre,
+                tipo: base.tipo,
+                potencia: base.potencia,
+                duracion: base.duracion,
+                renovado: true
+            };
+        }
+        const efecto = {
+            codigo: codigo,
+            nombre: base.nombre,
+            tipo: base.tipo,
+            potencia: base.potencia,
+            turnos: base.duracion
+        };
+        objetivo.efectos.push(efecto);
+        return {
+            codigo: codigo,
+            nombre: base.nombre,
+            tipo: base.tipo,
+            potencia: base.potencia,
+            duracion: base.duracion,
+            renovado: false
+        };
+    },
+
+    procesarEfectos(combatiente) {
+        if (!combatiente || !combatiente.efectos.length) { return []; }
+        const resultados = [];
+        combatiente.efectos.forEach(function(efecto) {
+            if (efecto.codigo === "E005") {
+                const dano = Number(efecto.potencia) || 0;
+                combatiente.hp = Math.max(0, combatiente.hp - dano);
+                resultados.push({
+                    codigo: efecto.codigo,
+                    nombre: efecto.nombre,
+                    dano: dano,
+                    mensaje: combatiente.nombre + " recibe " + dano + " de daño progresivo."
+                });
+            }
+            efecto.turnos--;
+        });
+        combatiente.efectos = combatiente.efectos.filter(function(efecto) { return efecto.turnos > 0; });
+        if (combatiente.hp <= 0) {
+            combatiente.hp = 0;
+            combatiente.derrotado = true;
+        }
+        return resultados;
+    },
+
+    obtenerDefensa(combatiente) {
+        let defensa = combatiente.efectivos.defensa;
+        const efecto = this.obtenerEfecto(combatiente, "E003");
+        if (efecto) { defensa -= efecto.potencia; }
+        return this.limitar(defensa);
+    },
+
+    obtenerVelocidad(combatiente) {
+        let velocidad = combatiente.efectivos.velocidad;
+        const efecto = this.obtenerEfecto(combatiente, "E004");
+        if (efecto) { velocidad -= efecto.potencia; }
+        return this.limitar(velocidad);
+    },
+
+    obtenerTactica(combatiente) {
+        return this.limitar(combatiente.efectivos.tactica);
+    },
+
+    obtenerInteligencia(combatiente) {
+        if (!combatiente) { return 0; }
+        return this.limitar(combatiente.stats.e11 !== undefined ? combatiente.stats.e11 : combatiente.stats[20]);
+    },
 
     comprobarEsquiva(objetivo) {
         let probabilidad = this.obtenerVelocidad(objetivo) * 0.12;
@@ -39,6 +398,7 @@
         const dado = this.aleatorio(0, 100);
         return { fallo: dado < probabilidad, probabilidad: probabilidad, dado: dado };
     },
+
     comprobarDefensa(defensor) {
         const inteligencia = this.obtenerInteligencia(defensor);
         const tactica = this.obtenerTactica(defensor);
@@ -87,7 +447,6 @@
         if (efectoPotenciacion) {
             dano *= 1 + (efectoPotenciacion.potencia / 100);
         }
-        // Mitigación por ratio de defensa para que los tanques resistan de verdad
         const ratioDefensa = valorDefensa / (valorDefensa + valorAtaque + 50);
         let mitigacion = 1 - (ratioDefensa * 0.85);
         dano *= mitigacion;
@@ -109,7 +468,7 @@
             bloqueado_por_fatiga: critico.bloqueado_por_fatiga
         };
     },
-    calcularDanoContraataque(atacante, objetivo) {
+        calcularDanoContraataque(atacante, objetivo) {
         const ataque = { codigo: "A001", nombre: "Ataque básico", potencia: 1.00, critico: true, efecto: null };
         const critico = this.comprobarCritico(atacante, ataque);
         return this.calcularDano(atacante, objetivo, ataque, false, critico);
@@ -421,8 +780,8 @@
             segundo: combate.segundo,
             ganador: combate.ganador,
             perdedor: combate.perdedor,
-            combatiente1: resumen(combate.combatiente1),
-            combatiente2: resumen(combate.combatiente2),
+            combatiente1: resumen(combatiente.combatiente1),
+            combatiente2: resumen(combatiente.combatiente2),
             historial: combate.historial
         };
     }
@@ -435,5 +794,6 @@ window.ejecutarCombateEstandar = function(combate) { return window.PALARENA_STAN
 window.obtenerResumenEstandar = function(combate) { return window.PALARENA_STANDAR.obtenerResumen(combate); };
 
 /* ==================================================
-   FIN STANDAR.JS — REEQUILIBRADO TÁCTICO v1.3
+   FIN STANDAR.JS — v1.3.3 REEQUILIBRADO Y BLINDADO
    ================================================== */
+        
