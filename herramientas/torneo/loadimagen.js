@@ -15,6 +15,26 @@ window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
     try {
         if (codigo1) {
             const res1 = await window.BUSCARUTA.buscar(codigo1);
+           
+            
+            alert(
+    codigo1 +
+    " → caso: " +
+    (res1 ? res1.caso : "SIN RESPUESTA") +
+    " → i3: " +
+    (
+        res1 &&
+        res1.imagenes &&
+        res1.imagenes.find(img => img.tipo === "i3")
+            ? res1.imagenes.find(img => img.tipo === "i3").ruta || "RUTA NULL"
+            : "SIN I3"
+    )
+);
+            
+            
+            
+            
+            
             const img1El = document.getElementById("c1Imagen");
             const cont1El = img1El ? img1El.closest(".contenedor-imagen-combatiente") : null;
             const imgI3_1 = res1 && res1.imagenes ? res1.imagenes.find(img => img.tipo === "i3") : null;
