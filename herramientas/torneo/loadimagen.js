@@ -1,8 +1,9 @@
-window.cargarImagenesCombatientes = function(codigo1, codigo2) {
+window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
     if (!window.BUSCARUTA) { return; }
 
-    if (codigo1) {
-        window.BUSCARUTA.buscar(codigo1).then(res1 => {
+    try {
+        if (codigo1) {
+            const res1 = await window.BUSCARUTA.buscar(codigo1);
             const img1El = document.getElementById("c1Imagen");
             const cont1El = img1El ? img1El.closest(".contenedor-imagen-combatiente") : null;
             const imgI3_1 = res1 && res1.imagenes ? res1.imagenes.find(img => img.tipo === "i3") : null;
@@ -16,11 +17,10 @@ window.cargarImagenesCombatientes = function(codigo1, codigo2) {
                 img1El.style.display = "none";
                 if (cont1El) cont1El.style.display = "none";
             }
-        }).catch(err => console.error("Error img 1:", err));
-    }
+        }
 
-    if (codigo2) {
-        window.BUSCARUTA.buscar(codigo2).then(res2 => {
+        if (codigo2) {
+            const res2 = await window.BUSCARUTA.buscar(codigo2);
             const img2El = document.getElementById("c2Imagen");
             const cont2El = img2El ? img2El.closest(".contenedor-imagen-combatiente") : null;
             const imgI3_2 = res2 && res2.imagenes ? res2.imagenes.find(img => img.tipo === "i3") : null;
@@ -34,7 +34,8 @@ window.cargarImagenesCombatientes = function(codigo1, codigo2) {
                 img2El.style.display = "none";
                 if (cont2El) cont2El.style.display = "none";
             }
-        }).catch(err => console.error("Error img 2:", err));
+        }
+    } catch (e) {
+        console.warn("No se pudieron cargar las imágenes i3:", e);
     }
 };
-
