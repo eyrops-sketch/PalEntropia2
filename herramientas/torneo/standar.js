@@ -2,14 +2,15 @@
    PALARENA standar.js v1.2
    PalEntropía
    MOTOR DE COMBATE ESTÁNDAR
-======================================================== */
+   ======================================================== */
+
 window.PALARENA_STANDAR = {
     version: "1.2",
     configuracion: {
         hp_base: 100,
         bonificacion_dominante: 0.15,
-        factor_imprevisible_min: 0.92,
-        factor_imprevisible_max: 1.08,
+        factor_imprevisible_min: 0.78,
+        factor_imprevisible_max: 1.22,
         coeficiente_combate: 1.00,
         coeficiente_combate_min: 0.50,
         coeficiente_combate_max: 1.50,
@@ -18,14 +19,14 @@ window.PALARENA_STANDAR = {
         dano_base: 10,
         dano_por_ataque: 0.20,
         defensa_divisor: 200,
-        variacion_dano: 0.10,
-        multiplicador_critico: 1.50,
-        critico_base: 5,
-        critico_tactica: 0.10,
-        fatiga_minima_critico: 40,
-        esquiva_velocidad: 0.10,
-        fallo_base: 8,
-        fallo_reduccion_tactica: 0.04,
+        variacion_dano: 0.25,
+        multiplicador_critico: 2.50,
+        critico_base: 10,
+        critico_tactica: 0.15,
+        fatiga_minima_critico: 20,
+        esquiva_velocidad: 0.15,
+        fallo_base: 14,
+        fallo_reduccion_tactica: 0.03,
         coste_ataque_potente_hp: 0.05,
         fatiga_minima_ataque_potente: 50,
         fatiga_max: 100,
@@ -34,17 +35,17 @@ window.PALARENA_STANDAR = {
         coste_fatiga_A001: 8,
         coste_fatiga_A002: 18,
         coste_fatiga_A003: 10,
-        coste_fatiga_D001: 5,
-        fatiga_defensa_atacante: 12,
-        reduccion_defensa: 0.30,
-        error_defensa_base: 15,
-        error_defensa_reduccion_inteligencia: 0.05,
-        error_defensa_reduccion_tactica: 0.04,
-        error_defensa_fatiga_umbral: 40,
-        error_defensa_fatiga_incremento: 0.10,
-        error_defensa_min: 5,
-        error_defensa_max: 25,
-        golpe_mortal: true,
+        coste_fatiga_D001: 20,
+        fatiga_defensa_atacante: 15,
+        reduccion_defensa: 0.85,
+        error_defensa_base: 45,
+        error_defensa_reduccion_inteligencia: 0.03,
+        error_defensa_reduccion_tactica: 0.02,
+        error_defensa_fatiga_umbral: 50,
+        error_defensa_fatiga_incremento: 0.20,
+        error_defensa_min: 15,
+        error_defensa_max: 65,
+        golpe_mortal: false,
         dano_vida_75: 1.00,
         dano_vida_50: 1.05,
         dano_vida_25: 1.15,
@@ -251,7 +252,7 @@ window.PALARENA_STANDAR = {
             fatiga_porcentaje: this.obtenerFatigaPorcentaje(atacante)
         };
     },
-    obtenerEfecto(combatiente, codigo) {
+       obtenerEfecto(combatiente, codigo) {
         if (!combatiente || !combatiente.efectos) { return null; }
         return combatiente.efectos.find(function(efecto) { return efecto.codigo === codigo; }) || null;
     },
@@ -358,7 +359,7 @@ window.PALARENA_STANDAR = {
     comprobarFallo(atacante) {
         const tactica = this.obtenerTactica(atacante);
         let probabilidad = this.configuracion.fallo_base - (tactica * this.configuracion.fallo_reduccion_tactica);
-        probabilidad = Math.max(4, Math.min(8, probabilidad));
+        probabilidad = Math.max(4, Math.min(18, probabilidad));
         const dado = this.aleatorio(0, 100);
         return { fallo: dado < probabilidad, probabilidad: probabilidad, dado: dado };
     },
@@ -377,7 +378,7 @@ window.PALARENA_STANDAR = {
         const error = dado < probabilidad;
         return { error: error, acierto: !error, probabilidad_error: probabilidad, dado: dado };
     },
-       comprobarCritico(atacante, ataque) {
+    comprobarCritico(atacante, ataque) {
         if (!ataque.critico) {
             return { critico: false, probabilidad: 0, dado: 100, bloqueado_por_fatiga: false };
         }
@@ -411,7 +412,7 @@ window.PALARENA_STANDAR = {
         }
         dano *= this.aleatorio(1 - this.configuracion.variacion_dano, 1 + this.configuracion.variacion_dano);
         if (critico.critico) {
-            dano *= this.configuracion.multiplicador_critico;
+            dano = objetivo.hp_max * 0.50;
         }
         dano *= this.obtenerMultiplicadorVida(objetivo);
         dano = Math.max(1, Math.round(dano));
@@ -428,7 +429,7 @@ window.PALARENA_STANDAR = {
         const critico = this.comprobarCritico(atacante, ataque);
         return this.calcularDano(atacante, objetivo, ataque, false, critico);
     },
-    ejecutarAtaque(atacante, objetivo, codigo) {
+       ejecutarAtaque(atacante, objetivo, codigo) {
         if (!atacante || !objetivo || atacante.derrotado || objetivo.derrotado) {
             return { exito: false, codigo: codigo, mensaje: "Ataque no disponible." };
         }
@@ -512,6 +513,10 @@ window.PALARENA_STANDAR = {
                 const dano = this.calcularDano(atacante, objetivo, ataque, true, critico);
                 objetivo.hp = Math.max(0, objetivo.hp - dano.dano);
                 if (objetivo.hp <= 0) { objetivo.derrotado = true; }
+                if (critico.critico) {
+                    atacante.fatiga = Math.max(0, atacante.fatiga - 35);
+                    atacante.hp = Math.max(1, atacante.hp - Math.round(atacante.hp_max * 0.18));
+                }
                 return {
                     exito: true,
                     codigo: codigo,
@@ -548,6 +553,10 @@ window.PALARENA_STANDAR = {
         if (ataque.efecto && !objetivo.derrotado) {
             efectoAplicado = this.aplicarEfecto(atacante, objetivo, ataque.efecto);
         }
+        if (critico.critico) {
+            atacante.fatiga = Math.max(0, atacante.fatiga - 35);
+            atacante.hp = Math.max(1, atacante.hp - Math.round(atacante.hp_max * 0.18));
+        }
         return {
             exito: true,
             codigo: codigo,
@@ -557,7 +566,7 @@ window.PALARENA_STANDAR = {
             dano: dano.dano,
             critico: dano.critico,
             probabilidad_critico: dano.probabilidad_critico,
-            dado_critico: dano.dado_critico,
+            dado_critico: critico.dado,
             bloqueado_por_fatiga: dano.bloqueado_por_fatiga,
             coste_hp: costeHp,
             fatiga: fatigaAccion,
@@ -649,7 +658,7 @@ window.PALARENA_STANDAR = {
         }
         return elegido ? elegido.codigo : "A001";
     },
-          ejecutarAccion(atacante, objetivo, accion) {
+    ejecutarAccion(atacante, objetivo, accion) {
         atacante.defendiendo = false;
         return this.ejecutarAtaque(atacante, objetivo, accion);
     },
@@ -758,7 +767,8 @@ window.crearCombateEstandar = function(ficha1, ficha2, reglas) { return window.P
 window.ejecutarTurnoEstandar = function(combate) { return window.PALARENA_STANDAR.ejecutarTurno(combate); };
 window.ejecutarCombateEstandar = function(combate) { return window.PALARENA_STANDAR.ejecutarCombate(combate); };
 window.obtenerResumenEstandar = function(combate) { return window.PALARENA_STANDAR.obtenerResumen(combate); };
+
 /* ==================================================
    FIN STANDAR.JS v1.2
-================================================== */
-
+   ================================================== */
+       
