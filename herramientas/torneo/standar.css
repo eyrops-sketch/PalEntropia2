@@ -10,7 +10,7 @@
 
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #0d1117;
+    background-color: #080b10;
     color: #e1e4e8;
     line-height: 1.5;
     padding: 20px;
@@ -25,7 +25,7 @@ body {
     font-size: 2.2rem;
     font-weight: bold;
     color: #58a6ff;
-    text-shadow: 0 0 12px rgba(88, 166, 255, 0.4);
+    text-shadow: 0 0 15px rgba(88, 166, 255, 0.6), 0 0 5px rgba(88, 166, 255, 0.4);
     letter-spacing: 1px;
 }
 
@@ -44,24 +44,38 @@ body {
     width: 100%;
 }
 
+/* --- PANELES CON RELIEVE Y FILOS CELESTES DE NEÓN --- */
 .panel {
-    background-color: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+    border: 2px solid #58a6ff;
+    border-radius: 14px;
     padding: 20px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 0 12px rgba(88, 166, 255, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #58a6ff, #bc8cff);
+    box-shadow: 0 0 10px #58a6ff;
 }
 
 .panel h2 {
     font-size: 1.2rem;
     margin-bottom: 14px;
     color: #58a6ff;
-    border-bottom: 1px solid #30363d;
+    border-bottom: 1px solid rgba(88, 166, 255, 0.4);
     padding-bottom: 8px;
-    text-shadow: 0 0 8px rgba(88, 166, 255, 0.2);
+    text-shadow: 0 0 10px rgba(88, 166, 255, 0.4);
 }
 
-/* --- ENTRADA DE COMBATIENTES Y CONTROLES --- */
+/* --- ENTRADA DE COMBATIENTES --- */
 .entrada-combatiente {
     display: flex;
     align-items: center;
@@ -83,63 +97,87 @@ body {
 }
 
 .campo input {
-    background-color: #0d1117;
-    border: 1px solid #30363d;
+    background-color: #080b10;
+    border: 1.5px solid #58a6ff;
     border-radius: 8px;
     padding: 12px;
     color: #f0f6fc;
     font-size: 1rem;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 0 6px rgba(88, 166, 255, 0.2);
     transition: all 0.2s ease;
 }
 
 .campo input:focus {
     outline: none;
-    border-color: #58a6ff;
-    box-shadow: 0 0 10px rgba(88, 166, 255, 0.4);
+    border-color: #79c0ff;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 0 12px rgba(88, 166, 255, 0.6);
 }
 
 .nombre-combatiente {
-    font-size: 0.85rem;
-    color: #58a6ff;
-    min-height: 18px;
+    font-size: 0.95rem;
+    color: #79c0ff;
+    min-height: 20px;
+    font-weight: 600;
 }
 
 .vs {
     font-weight: bold;
     color: #58a6ff;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     padding-top: 15px;
-    text-shadow: 0 0 6px rgba(88, 166, 255, 0.3);
+    text-shadow: 0 0 10px rgba(88, 166, 255, 0.6);
 }
 
+/* --- CONTROL MANUAL (2 POR FILA CON RELIEVE Y FILOS CELESTES) --- */
 .control-manual {
     margin-bottom: 15px;
-    background-color: #0d1117;
-    padding: 12px 16px;
-    border-radius: 8px;
-    border: 1px solid #30363d;
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1.5px solid #58a6ff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.08), 0 0 8px rgba(88, 166, 255, 0.2);
 }
 
 .control-manual-titulo {
     font-size: 0.85rem;
     color: #8b949e;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-weight: bold;
 }
 
 .control-manual-opciones {
-    display: flex;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
 }
 
 .opcion-control {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #f0f6fc;
     cursor: pointer;
+    background: linear-gradient(180deg, #21262d 0%, #161b22 100%);
+    border: 1.5px solid #58a6ff;
+    padding: 10px 12px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.2s ease;
 }
-/* --- ZONA DE COMBATIENTES (TARJETAS SÍTRICAS Y ESTÉTICA SYNTHWAVE) --- */
+
+.opcion-control:hover {
+    background: linear-gradient(180deg, #30363d 0%, #21262d 100%);
+    border-color: #79c0ff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 8px rgba(88, 166, 255, 0.4);
+}
+
+.opcion-control input[type="radio"] {
+    accent-color: #58a6ff;
+}
+/* --- ZONA DE COMBATIENTES (TARJETAS CON RELIEVE Y FILOS CELESTES) --- */
 .zona-combatientes {
     display: grid;
     grid-template-columns: 1fr 90px 1fr;
@@ -150,30 +188,29 @@ body {
 }
 
 .tarjeta-combatiente {
-    background-color: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+    border: 2px solid #58a6ff;
+    border-radius: 14px;
     padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    gap: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 0 12px rgba(88, 166, 255, 0.25);
     position: relative;
     overflow: hidden;
     width: 100%;
     min-width: 0;
 }
 
-/* Filo superior celeste brillante estilo Synthwave */
 .tarjeta-combatiente::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, #58a6ff, #8957e5);
-    box-shadow: 0 0 8px #58a6ff;
+    height: 4px;
+    background: linear-gradient(90deg, #58a6ff, #bc8cff);
+    box-shadow: 0 0 10px #58a6ff;
 }
 
 .cabecera-combatiente {
@@ -182,43 +219,52 @@ body {
     align-items: flex-start;
 }
 
+/* NOMBRES DE LOS ANIMALES MÁS GRANDES Y DESTACADOS */
 .tarjeta-combatiente .nombre {
-    font-weight: bold;
-    font-size: 1.1rem;
+    font-weight: 800;
+    font-size: 1.35rem;
     color: #f0f6fc;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(88, 166, 255, 0.3);
+    line-height: 1.2;
 }
 
 .tarjeta-combatiente .codigo {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: #58a6ff;
     font-family: monospace;
+    font-weight: bold;
+    margin-top: 2px;
 }
 
 .tarjeta-combatiente .perfil {
     font-size: 0.8rem;
-    background-color: #0d1117;
-    padding: 4px 10px;
-    border-radius: 12px;
-    border: 1px solid #30363d;
+    background: linear-gradient(180deg, #21262d 0%, #161b22 100%);
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: 1.5px solid #58a6ff;
     color: #58a6ff;
+    font-weight: 600;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* --- CONTENEDOR E IMAGEN I3 --- */
+/* --- CONTENEDOR E IMAGEN 9:16 VERTICAL CON RELIEVE --- */
 .contenedor-imagen-combatiente {
     width: 100%;
     overflow: hidden;
-    border-radius: 8px;
-    background-color: #0d1117;
-    border: 1px solid #30363d;
+    border-radius: 10px;
+    background-color: #080b10;
+    border: 1.5px solid #58a6ff;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 140px;
+    aspect-ratio: 9 / 16;
+    max-height: 360px;
+    box-shadow: inset 0 0 12px rgba(88, 166, 255, 0.3), 0 4px 8px rgba(0,0,0,0.5);
 }
 
 .imagen-combatiente {
     width: 100%;
-    height: 170px;
+    height: 100%;
     object-fit: cover;
     object-position: center;
     display: block;
@@ -230,18 +276,18 @@ body {
 }
 
 .victorias-serie {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     color: #f0f6fc;
     font-weight: bold;
-    background-color: #0d1117;
-    padding: 8px 12px;
+    background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
+    padding: 10px 14px;
     border-radius: 8px;
-    border: 1px solid #30363d;
+    border: 1.5px solid #58a6ff;
     text-align: center;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 4px 8px rgba(0,0,0,0.4), 0 0 8px rgba(88, 166, 255, 0.2);
 }
 
-/* --- BARRAS DE VIDA Y FATIGA --- */
+/* --- BARRAS DE VIDA Y FATIGA CON RELIEVE --- */
 .vida, .fatiga {
     display: flex;
     flex-direction: column;
@@ -253,47 +299,53 @@ body {
     justify-content: space-between;
     font-size: 0.8rem;
     color: #8b949e;
+    font-weight: 600;
 }
 
 .barra-vida, .barra-fatiga {
-    background-color: #0d1117;
+    background-color: #080b10;
     border-radius: 6px;
-    height: 10px;
+    height: 12px;
     overflow: hidden;
-    border: 1px solid #30363d;
+    border: 1.5px solid #58a6ff;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.9);
 }
 
 .vida-relleno {
-    background: linear-gradient(90deg, #238636, #2ea043);
+    background: linear-gradient(180deg, #2ea043 0%, #238636 100%);
     height: 100%;
     width: 100%;
+    box-shadow: 0 0 8px rgba(46, 160, 67, 0.6);
     transition: width 0.3s ease;
 }
 
 .fatiga-relleno {
-    background: linear-gradient(90deg, #9e6a03, #d29922);
+    background: linear-gradient(180deg, #d29922 0%, #9e6a03 100%);
     height: 100%;
     width: 100%;
+    box-shadow: 0 0 8px rgba(210, 153, 34, 0.6);
     transition: width 0.3s ease;
 }
 
-/* --- ESTADÍSTICAS Y ESTADOS --- */
+/* --- ESTADÍSTICAS Y CENTRO DE COMBATE CON RELIEVE --- */
 .stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 6px;
     font-size: 0.8rem;
-    background-color: #0d1117;
+    font-weight: 500;
+    background-color: #080b10;
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #30363d;
+    border: 1.5px solid #58a6ff;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
 }
 
 .estado {
-    font-size: 0.8rem;
-    color: #58a6ff;
-    min-height: 20px;
-    font-weight: 500;
+    font-size: 0.85rem;
+    color: #79c0ff;
+    min-height: 22px;
+    font-weight: 600;
 }
 
 .centro-combate {
@@ -303,18 +355,20 @@ body {
     align-items: center;
     gap: 8px;
     text-align: center;
-    background-color: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 12px;
-    padding: 10px;
+    background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+    border: 2px solid #58a6ff;
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 0 12px rgba(88, 166, 255, 0.25);
 }
 
 .icono-vs {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
+    text-shadow: 0 0 10px rgba(88, 166, 255, 0.6);
 }
 
 .turno {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: bold;
     color: #58a6ff;
 }
@@ -323,28 +377,34 @@ body {
     font-size: 0.75rem;
     color: #8b949e;
 }
-/* --- BOTONES Y ACCIONES (ESTILO REDONDEADO SYNTHWAVE) --- */
+/* --- BOTONES Y ACCIONES (CON RELIEVE ESCULPIDO 3D Y FILOS CELESTES) --- */
 button {
     cursor: pointer;
-    background-color: #238636;
+    background: linear-gradient(180deg, #2ea043 0%, #238636 100%);
     color: white;
-    border: none;
-    border-radius: 8px;
+    border: 1.5px solid #58a6ff;
+    border-radius: 10px;
     padding: 12px 18px;
     font-size: 0.95rem;
     font-weight: bold;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 6px rgba(88, 166, 255, 0.3);
 }
 
 button:hover:not(:disabled) {
-    background-color: #2ea043;
+    background: linear-gradient(180deg, #3fb950 0%, #2ea043 100%);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(46, 160, 67, 0.4);
+    box-shadow: 0 6px 14px rgba(46, 160, 67, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 10px rgba(88, 166, 255, 0.5);
+}
+
+button:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(0,0,0,0.5);
 }
 
 button:disabled {
-    background-color: #21262d;
+    background: linear-gradient(180deg, #21262d 0%, #161b22 100%);
+    border-color: #30363d;
     color: #484f58;
     cursor: not-allowed;
     box-shadow: none;
@@ -353,23 +413,27 @@ button:disabled {
 #botonPreparar {
     width: 100%;
     margin-bottom: 10px;
-    background-color: #1f6feb;
+    background: linear-gradient(180deg, #388bfd 0%, #1f6feb 100%);
+    border: 1.5px solid #79c0ff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 8px rgba(56, 139, 253, 0.5);
 }
 
 #botonPreparar:hover:not(:disabled) {
-    background-color: #388bfd;
-    box-shadow: 0 4px 12px rgba(56, 139, 253, 0.4);
+    background: linear-gradient(180deg, #58a6ff 0%, #388bfd 100%);
+    box-shadow: 0 6px 14px rgba(56, 139, 253, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(88, 166, 255, 0.7);
 }
 
 #botonSerie {
     width: 100%;
-    background-color: #8957e5;
+    background: linear-gradient(180deg, #a371f7 0%, #8957e5 100%);
+    border: 1.5px solid #d2a8ff;
     margin-left: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 8px rgba(137, 87, 229, 0.5);
 }
 
 #botonSerie:hover:not(:disabled) {
-    background-color: #a371f7;
-    box-shadow: 0 4px 12px rgba(163, 113, 247, 0.4);
+    background: linear-gradient(180deg, #bc8cff 0%, #a371f7 100%);
+    box-shadow: 0 6px 14px rgba(137, 87, 229, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(188, 140, 255, 0.7);
 }
 
 .mensaje {
@@ -387,41 +451,45 @@ button:disabled {
 }
 
 .accion {
-    background-color: #21262d;
-    border: 1px solid #30363d;
+    background: linear-gradient(180deg, #21262d 0%, #161b22 100%);
+    border: 1.5px solid #58a6ff;
     color: #f0f6fc;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
 .accion:hover:not(:disabled) {
-    background-color: #30363d;
-    border-color: #58a6ff;
-    box-shadow: 0 0 8px rgba(88, 166, 255, 0.2);
+    background: linear-gradient(180deg, #30363d 0%, #21262d 100%);
+    border-color: #79c0ff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2), 0 0 10px rgba(88, 166, 255, 0.5);
 }
 
 .accion.defensa {
-    background-color: #1f6feb;
+    background: linear-gradient(180deg, #388bfd 0%, #1f6feb 100%);
 }
 
 .accion.defensa:hover:not(:disabled) {
-    background-color: #388bfd;
+    background: linear-gradient(180deg, #58a6ff 0%, #388bfd 100%);
+    box-shadow: 0 4px 12px rgba(56, 139, 253, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 12px rgba(88, 166, 255, 0.6);
 }
 
 .boton-auto {
     width: 100%;
-    background-color: #8957e5;
-    border-radius: 8px;
+    background: linear-gradient(180deg, #a371f7 0%, #8957e5 100%);
+    border-radius: 10px;
+    border: 1.5px solid #d2a8ff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 8px rgba(137, 87, 229, 0.5);
 }
 
 .boton-auto:hover:not(:disabled) {
-    background-color: #a371f7;
+    background: linear-gradient(180deg, #bc8cff 0%, #a371f7 100%);
+    box-shadow: 0 6px 14px rgba(137, 87, 229, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 14px rgba(188, 140, 255, 0.7);
 }
 
 /* --- REGISTRO Y RESULTADOS --- */
 .registro-combate {
-    background-color: #0d1117;
-    border: 1px solid #30363d;
-    border-radius: 8px;
+    background-color: #080b10;
+    border: 1.5px solid #58a6ff;
+    border-radius: 10px;
     padding: 14px;
     max-height: 220px;
     overflow-y: auto;
@@ -429,6 +497,7 @@ button:disabled {
     flex-direction: column;
     gap: 6px;
     font-size: 0.85rem;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.9), 0 0 8px rgba(88, 166, 255, 0.15);
 }
 
 .registro-vacio {
@@ -493,7 +562,7 @@ button:disabled {
     .centro-combate {
         flex-direction: row;
         justify-content: space-around;
-        padding: 10px;
+        padding: 12px;
     }
 
     .entrada-combatiente {
@@ -509,5 +578,4 @@ button:disabled {
     .botones-acciones {
         grid-template-columns: 1fr;
     }
-}
-
+   }
