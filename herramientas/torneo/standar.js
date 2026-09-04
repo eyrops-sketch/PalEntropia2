@@ -1,11 +1,11 @@
 /* ========================================================
-   PALARENA standar.js v1.2
+   PALARENA standarconf1.js v1.3
    PalEntropía
-   MOTOR DE COMBATE ESTÁNDAR
+   MOTOR DE COMBATE - CONFIGURACIÓN BALANCEADA 1
    ======================================================== */
 
 window.PALARENA_STANDAR = {
-    version: "1.2",
+    version: "1.3",
     configuracion: {
         hp_base: 100,
         bonificacion_dominante: 0.15,
@@ -16,8 +16,8 @@ window.PALARENA_STANDAR = {
         coeficiente_combate_max: 1.50,
         iniciativa_velocidad: 0.70,
         iniciativa_tactica: 0.30,
-        dano_base: 10,
-        dano_por_ataque: 0.20,
+        dano_base: 4,
+        dano_por_ataque: 0.10,
         defensa_divisor: 200,
         variacion_dano: 0.25,
         multiplicador_critico: 2.50,
@@ -37,7 +37,7 @@ window.PALARENA_STANDAR = {
         coste_fatiga_A003: 10,
         coste_fatiga_D001: 20,
         fatiga_defensa_atacante: 15,
-        reduccion_defensa: 0.85,
+        reduccion_defensa: 0.35,
         error_defensa_base: 45,
         error_defensa_reduccion_inteligencia: 0.03,
         error_defensa_reduccion_tactica: 0.02,
@@ -765,10 +765,10 @@ window.PALARENA_STANDAR = {
 window.crearCombatienteEstandar = function(ficha, reglas) { return window.PALARENA_STANDAR.crearCombatiente(ficha, reglas); };
 window.crearCombateEstandar = function(ficha1, ficha2, reglas) { return window.PALARENA_STANDAR.crearCombate(ficha1, ficha2, reglas); };
 window.ejecutarTurnoEstandar = function(combate) { return window.PALARENA_STANDAR.ejecutarTurno(combate); };
-window.ejecutarCombateEstandar = function(combate) { return window.PALARENA_STANDAR.ejecutarCombate(combate); };
+window.ejecutarCombateEstandar = function(combate) { return window.PALARE_STANDAR.ejecutarCombate(combate); };
 window.obtenerResumenEstandar = function(combate) { return window.PALARENA_STANDAR.obtenerResumen(combate); };
 
 /* ==================================================
-   FIN STANDAR.JS v1.2
+   FIN STANDARCONF1.JS v1.3
    ================================================== */
-   
+           
