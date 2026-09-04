@@ -151,6 +151,7 @@
 <script src="standar-ataques.js"></script>  
 <script src="standar-efectos.js"></script>  
 <script src="buscaruta.js"></script>  
+<script src="loadimagen.js"></script>
 <script src="standar.js"></script>  
 <script>  
   const RUTA_MASTER = "../generador_fase_2/master.csv";  
@@ -478,39 +479,42 @@
       }  
   }  
 
-  async function mostrarCombatientes(){      
-      if(!combate || !combatiente1 || !combatiente2){ return; }      
-      document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";      
-      document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";      
-      document.getElementById("c1Perfil").textContent = obtenerNombrePerfil(combatiente1.perfil);      
-      document.getElementById("c2Nombre").textContent = combatiente2.nombre || "—";      
-      document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";      
-      document.getElementById("c2Perfil").textContent = obtenerNombrePerfil(combatiente2.perfil);      
+function mostrarCombatientes(){      
+    if(!combate || !combatiente1 || !combatiente2){ return; }      
+    document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";      
+    document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";      
+    document.getElementById("c1Perfil").textContent = obtenerNombrePerfil(combatiente1.perfil);      
+    document.getElementById("c2Nombre").textContent = combatiente2.nombre || "—";      
+    document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";      
+    document.getElementById("c2Perfil").textContent = obtenerNombrePerfil(combatiente2.perfil);      
 
-      // --- CARGA DINÁMICA DE IMÁGENES (I3) CON BUSCARUTA ---
-      try {
-          const res1 = await window.BUSCARUTA.buscar(combatiente1.codigo);
-          const img1El = document.getElementById("c1Imagen");
-          const imgI3_1 = res1.imagenes.find(img => img.tipo === "i3");
-          if (imgI3_1 && imgI3_1.ruta) {
-              img1El.src = imgI3_1.ruta;
-              img1El.style.display = "block";
-          } else {
-              img1El.style.display = "none";
-          }
+    // Llamada limpia al archivo externo
+    if (typeof window.cargarImagenesCombatientes === "function") {
+        window.cargarImagenesCombatientes(combatiente1.codigo, combatiente2.codigo);
+    }
 
-          const res2 = await window.BUSCARUTA.buscar(combatiente2.codigo);
-          const img2El = document.getElementById("c2Imagen");
-          const imgI3_2 = res2.imagenes.find(img => img.tipo === "i3");
-          if (imgI3_2 && imgI3_2.ruta) {
-              img2El.src = imgI3_2.ruta;
-              img2El.style.display = "block";
-          } else {
-              img2El.style.display = "none";
-          }
-      } catch (e) {
-          console.warn("No se pudieron cargar las imágenes i3 de los combatientes:", e);
-      }
+    actualizarEstadisticasVisuales();
+    mostrarVida(combatiente1, "c1");
+    mostrarVida(combatiente2, "c2");
+    mostrarFatiga(combatiente1, "c1");
+    mostrarFatiga(combatiente2, "c2");
+    mostrarStats(combatiente1, "c1");
+    mostrarStats(combatiente2, "c2");
+    mostrarEstado(combatiente1, "c1");
+    mostrarEstado(combatiente2, "c2");
+    actualizarInterfazSerie();
+    
+    document.getElementById("turnoActual").textContent = "Turno " + (combate.turno || "—");
+    let iniciativa = "—";
+    if(combate.iniciativa){
+        iniciativa = combate.iniciativa;
+    }else if(combatiente1.iniciativa !== undefined && combatiente2.iniciativa !== undefined){
+        iniciativa = combatiente1.iniciativa + " / " + combatiente2.iniciativa;
+    }
+    document.getElementById("iniciativa").textContent = iniciativa;
+}
+
+
       // -----------------------------------------------------
 
       mostrarVida(combatiente1, "c1");      
