@@ -27,13 +27,13 @@ window.PALARENA_STANDAR = {
         esquiva_velocidad: 0.15,
         fallo_base: 14,
         fallo_reduccion_tactica: 0.03,
-        coste_ataque_potente_hp: 0.05,
-        fatiga_minima_ataque_potente: 50,
+        coste_ataque_potente_hp: 0.14,
+        fatiga_minima_ataque_potente: 65,
         fatiga_max: 100,
         fatiga_inicial: 100,
         fatiga_regeneracion_turno: 6,
         coste_fatiga_A001: 8,
-        coste_fatiga_A002: 18,
+        coste_fatiga_A002: 38,
         coste_fatiga_A003: 10,
         coste_fatiga_D001: 20,
         fatiga_defensa_atacante: 15,
@@ -523,7 +523,7 @@ window.PALARENA_STANDAR = {
                     nombre: ataque.nombre,
                     defensa: true,
                     dano: dano.dano,
-                    critico: dano.critico,
+                    critico: critico.critico,
                     coste_hp: costeHp,
                     fatiga: fatigaAccion,
                     fatiga_defensa_atacante: fatigaDefensa,
@@ -564,7 +564,7 @@ window.PALARENA_STANDAR = {
             fallo: false,
             esquiva: false,
             dano: dano.dano,
-            critico: dano.critico,
+            critico: critico.critico,
             probabilidad_critico: dano.probabilidad_critico,
             dado_critico: critico.dado,
             bloqueado_por_fatiga: dano.bloqueado_por_fatiga,
@@ -771,4 +771,4 @@ window.obtenerResumenEstandar = function(combate) { return window.PALARENA_STAND
 /* ==================================================
    FIN STANDAR.JS v1.2
    ================================================== */
-       
+   
