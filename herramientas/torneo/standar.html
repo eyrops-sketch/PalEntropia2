@@ -204,7 +204,8 @@
           return { ...REGLAS_TORNEO_DEFECTO };      
       }  
   }
-      function actualizarInterfazSerie(){      
+    
+  function actualizarInterfazSerie(){      
       const c1Victorias = document.getElementById("c1Victorias");      
       const c2Victorias = document.getElementById("c2Victorias");      
       if(c1Victorias){          
@@ -585,11 +586,15 @@
           mensajes.push("—");   
       }      
       estado.textContent = mensajes.join(" · ");  
-                           }
+  }
       function activarBotones(){      
       const combatienteManual = controlManual === 1 ? combatiente1 : combatiente2;      
+      const config = window.PALARENA_STANDAR.configuracion;
+      const permiteCritico = Number(config.multiplicador_critico) > 1.0;
+
       botonA001.disabled = false;      
-      botonA002.disabled = Number(combatienteManual.fatiga) < window.PALARENA_STANDAR.configuracion.fatiga_minima_ataque_potente;      
+      // Bloquea automáticamente A002 si el modo no permite críticos o falta fatiga
+      botonA002.disabled = !permiteCritico || Number(combatienteManual.fatiga) < config.fatiga_minima_ataque_potente;      
       botonA003.disabled = false;      
       botonD001.disabled = false;      
       botonAuto.disabled = false;  
@@ -607,8 +612,11 @@
       if(!combateActivo || !combate){ return; }      
       const atacanteJugador = controlManual === 1 ? combatiente1 : combatiente2;      
       const objetivoJugador = controlManual === 1 ? combatiente2 : combatiente1;      
-      if(codigo === "A002" && Number(atacanteJugador.fatiga) < window.PALARENA_STANDAR.configuracion.fatiga_minima_ataque_potente){          
-          añadirRegistro("😓 Ataque potente bloqueado: fatiga insuficiente.");          
+      const config = window.PALARENA_STANDAR.configuracion;
+      const permiteCritico = Number(config.multiplicador_critico) > 1.0;
+
+      if(codigo === "A002" && (!permiteCritico || Number(atacanteJugador.fatiga) < config.fatiga_minima_ataque_potente)){          
+          añadirRegistro("😓 Ataque potente bloqueado: críticos no permitidos o fatiga insuficiente.");          
           activarBotones();          
           return;   
       }      
@@ -620,7 +628,7 @@
               return;     
           }          
           const accionIA = window.PALARENA_STANDAR.decidirAccion(objetivoJugador, atacanteJugador);          
-          const resultadoIA = window.PALARENA_STANDAR.ejecutarAccion(objetivoJugador, objetivoJugador, accionIA);          
+          const resultadoIA = window.PALARENA_STANDAR.ejecutarAccion(objetivoJugador, atacanteJugador, accionIA);          
           procesarResultado(resultadoIA, objetivoJugador, atacanteJugador);          
           if(atacanteJugador.derrotado){              
               finalizarInterfaz({ ganador: objetivoJugador });              
@@ -933,7 +941,7 @@
       desactivarBotones();      
       botonNuevoCombate.textContent = "🔄 Nuevo combate";      
       actualizarInterfazSerie();      
-      mostrarMensaje("Introduce los códigos J1 de las two Paleofichas.");  
+      mostrarMensaje("Introduce los códigos J1 de las dos Paleofichas.");  
   });  
 
   botonVolverCruces.addEventListener("click", function(){      
