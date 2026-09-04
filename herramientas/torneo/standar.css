@@ -1,788 +1,418 @@
-/* =========================================================
-   PALENTROPÍA
-   ARENA — COMBATE ESTÁNDAR
-   ========================================================= */
+/* ========================================================
+   PALENTROPÍA — ESTILOS DE LA ARENA (STANDAR.CSS)
+   ======================================================== */
 
-*{
-  box-sizing:border-box;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-html,
-body{
-  margin:0;
-  padding:0;
-  min-height:100%;
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #121418;
+    color: #e1e4e8;
+    line-height: 1.5;
+    padding: 20px;
 }
 
-body{
-  background:#05080b;
-  color:#dff7ff;
-  font-family:Arial,Helvetica,sans-serif;
-  font-size:14px;
+#cabecera {
+    text-align: center;
+    margin-bottom: 24px;
 }
 
-
-/* =========================================================
-   CABECERA
-   ========================================================= */
-
-#cabecera{
-  width:100%;
-  padding:16px 12px 14px;
-  text-align:center;
-  border-bottom:1px solid #16313d;
-  background:#080d11;
-  box-shadow:0 2px 12px rgba(0,0,0,.35);
-}
-
-#cabecera .titulo{
-  font-size:22px;
-  font-weight:bold;
-  color:#62d6ff;
-  letter-spacing:.3px;
-}
-
-#cabecera .subtitulo{
-  margin-top:5px;
-  font-size:13px;
-  color:#9bb5bf;
-}
-
-
-/* =========================================================
-   CONTENEDOR PRINCIPAL
-   ========================================================= */
-
-#arena{
-  width:100%;
-  max-width:1100px;
-  margin:0 auto;
-  padding:12px;
-}
-
-
-/* =========================================================
-   PANELES
-   ========================================================= */
-
-.panel{
-  width:100%;
-  margin-bottom:12px;
-  padding:14px;
-  border:1px solid #17313d;
-  border-radius:12px;
-  background:#091116;
-  box-shadow:0 0 12px rgba(0,0,0,.3);
-}
-
-.panel h2{
-  margin:0 0 14px;
-  padding:0;
-  font-size:17px;
-  color:#62d6ff;
-}
-
-
-/* =========================================================
-   CONFIGURACIÓN Y SELECCIÓN DE COMBATIENTES
-   ========================================================= */
-
-.entrada-combatiente{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  padding:4px;
-  border:1px dashed #1a3c4a;
-  border-radius:10px;
-  background:#060d12;
-}
-
-.campo{
-  flex:1;
-  padding:8px;
-}
-
-.campo label{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  margin-bottom:6px;
-  color:#b8d5de;
-  font-weight:bold;
-  font-size:13px;
-}
-
-.campo input{
-  width:100%;
-  height:44px;
-  padding:0 14px;
-  border:1px solid #28505e;
-  border-radius:9px;
-  outline:none;
-  background:#03070a;
-  color:#e8fbff;
-  font-size:16px;
-  font-weight:bold;
-  letter-spacing:.5px;
-  transition:all .2s ease;
-}
-
-.campo input:focus{
-  border-color:#62d6ff;
-  background:#071219;
-  box-shadow:0 0 10px rgba(98,214,255,.2);
-}
-
-.nombre-combatiente{
-  min-height:22px;
-  margin-top:6px;
-  padding-left:2px;
-  color:#62d6ff;
-  font-size:13px;
-  font-weight:bold;
-}
-
-.vs{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:28px;
-  color:#8aa4ad;
-  font-size:14px;
-  font-weight:bold;
-  letter-spacing:1px;
-}
-
-
-/* =========================================================
-   CONTROL MANUAL (ESTRUCTURA CORREGIDA)
-   ========================================================= */
-
-.control-manual{
-  margin-top:14px;
-  padding:10px 12px;
-  border:1px solid #1a3c4a;
-  border-radius:9px;
-  background:#060d12;
-}
-
-.control-manual-titulo{
-  margin-bottom:8px;
-  color:#b8d5de;
-  font-size:13px;
-  font-weight:bold;
-}
-
-.control-manual-opciones{
-  display:flex;
-  gap:12px;
-}
-
-.opcion-control{
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  min-height:38px;
-  padding:6px 10px;
-  border:1px solid #28505e;
-  border-radius:7px;
-  background:#03070a;
-  color:#dff7ff;
-  font-size:13px;
-  font-weight:bold;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-
-.opcion-control:hover{
-  border-color:#62d6ff;
-  background:#0a171f;
-}
-
-.opcion-control input[type="radio"]{
-  accent-color:#62d6ff;
-  cursor:pointer;
-}
-
-
-#botonPreparar{
-  width:100%;
-  min-height:44px;
-  margin-top:14px;
-  padding:10px 14px;
-  border:1px solid #62d6ff;
-  border-radius:9px;
-  background:#0c2028;
-  color:#62d6ff;
-  cursor:pointer;
-  font-size:15px;
-  font-weight:bold;
-  transition:.2s;
-}
-
-#botonPreparar:hover{
-  background:#62d6ff;
-  color:#031018;
-}
-
-#botonPreparar:active{
-  transform:scale(.98);
-}
-
-
-.mensaje{
-  min-height:20px;
-  margin-top:10px;
-  color:#91aeb8;
-  font-size:12px;
-  text-align:center;
+#cabecera .titulo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #f0f6fc;
 }
 
-
-/* =========================================================
-   ZONA DE COMBATIENTES
-   ========================================================= */
-
-.zona-combatientes{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-bottom:12px;
-}
-
-
-.tarjeta-combatiente{
-  width:100%;
-  padding:14px;
-  border:1px solid #21404b;
-  border-radius:12px;
-  background:#0a1318;
-  box-shadow:0 0 12px rgba(0,0,0,.28);
-}
-
-
-.cabecera-combatiente{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:12px;
+#cabecera .subtitulo {
+    font-size: 0.95rem;
+    color: #8b949e;
 }
 
-.nombre{
-  font-size:17px;
-  font-weight:bold;
-  color:#e7fbff;
+#arena {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.codigo{
-  margin-top:3px;
-  color:#75939d;
-  font-size:12px;
+.panel {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 20px;
 }
 
-.perfil{
-  flex-shrink:0;
-  padding:5px 8px;
-  border:1px solid #254c59;
-  border-radius:7px;
-  background:#071015;
-  color:#62d6ff;
-  font-size:11px;
-  font-weight:bold;
+.panel h2 {
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+    color: #f0f6fc;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 8px;
 }
-
 
-/* =========================================================
-   VIDA
-   ========================================================= */
-
-.vida{
-  margin-bottom:12px;
+/* --- ENTRADA DE COMBATIENTES --- */
+.entrada-combatiente {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
 }
 
-.vida-texto{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  margin-bottom:5px;
-  color:#b9d3da;
-  font-size:12px;
+.campo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.barra-vida{
-  width:100%;
-  height:9px;
-  overflow:hidden;
-  border:1px solid #21404b;
-  border-radius:6px;
-  background:#05090c;
+.campo label {
+    font-size: 0.85rem;
+    color: #8b949e;
+    font-weight: bold;
 }
 
-.vida-relleno{
-  width:100%;
-  height:100%;
-  border-radius:5px;
-  background:#62d6ff;
-  transition:width .25s ease;
+.campo input {
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 10px;
+    color: #f0f6fc;
+    font-size: 1rem;
 }
-
-
-/* =========================================================
-   FATIGA
-   ========================================================= */
 
-.fatiga{
-  margin-bottom:12px;
+.campo input:focus {
+    outline: none;
+    border-color: #58a6ff;
 }
 
-.fatiga-texto{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  margin-bottom:5px;
-  color:#b9d3da;
-  font-size:12px;
+.nombre-combatiente {
+    font-size: 0.85rem;
+    color: #58a6ff;
+    min-height: 18px;
 }
 
-.barra-fatiga{
-  width:100%;
-  height:8px;
-  overflow:hidden;
-  border:1px solid #21404b;
-  border-radius:6px;
-  background:#05090c;
+.vs {
+    font-weight: bold;
+    color: #8b949e;
+    font-size: 1.1rem;
+    padding-top: 15px;
 }
 
-.fatiga-relleno{
-  width:100%;
-  height:100%;
-  border-radius:5px;
-  background:#62d6ff;
-  transition:width .25s ease;
+/* --- CONTROL MANUAL --- */
+.control-manual {
+    margin-bottom: 15px;
+    background-color: #0d1117;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid #30363d;
 }
 
-
-/* =========================================================
-   ESTADÍSTICAS
-   ========================================================= */
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:6px;
+.control-manual-titulo {
+    font-size: 0.85rem;
+    color: #8b949e;
+    margin-bottom: 8px;
+    font-weight: bold;
 }
 
-.stat{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:5px;
-  min-height:34px;
-  padding:6px 7px;
-  border:1px solid #17343f;
-  border-radius:7px;
-  background:#071015;
+.control-manual-opciones {
+    display: flex;
+    gap: 20px;
 }
 
-.stat span{
-  color:#91aeb8;
-  font-size:11px;
+.opcion-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
 }
 
-.stat strong{
-  color:#dff7ff;
-  font-size:13px;
+/* --- BOTONES GENERALES --- */
+button {
+    cursor: pointer;
+    background-color: #238636;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
 }
-
 
-.estado{
-  min-height:18px;
-  margin-top:10px;
-  color:#819da6;
-  font-size:11px;
-  line-height:1.4;
+button:hover:not(:disabled) {
+    background-color: #2ea043;
 }
 
-
-/* =========================================================
-   CENTRO DEL COMBATE
-   ========================================================= */
-
-.centro-combate{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  min-height:58px;
-  gap:4px;
+button:disabled {
+    background-color: #21262d;
+    color: #484f58;
+    cursor: not-allowed;
 }
 
-.icono-vs{
-  font-size:22px;
+#botonSerie {
+    background-color: #1f6feb;
+    margin-left: 8px;
 }
 
-.turno{
-  color:#62d6ff;
-  font-size:13px;
-  font-weight:bold;
+#botonSerie:hover:not(:disabled) {
+    background-color: #388bfd;
 }
 
-.iniciativa{
-  color:#78949d;
-  font-size:10px;
-  text-align:center;
+.mensaje {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #8b949e;
 }
-
-
-/* =========================================================
-   ACCIONES
-   ========================================================= */
-
-.botones-acciones{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
+/* --- ZONA DE COMBATIENTES (TARJETAS) --- */
+.zona-combatientes {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 15px;
+    align-items: stretch;
 }
 
-.accion{
-  width:100%;
-  min-height:43px;
-  padding:8px;
-  border:1px solid #28505e;
-  border-radius:8px;
-  background:#08141a;
-  color:#dff7ff;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:bold;
-  transition:.2s;
+.tarjeta-combatiente {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.accion:hover:not(:disabled){
-  border-color:#62d6ff;
-  background:#10242d;
+.cabecera-combatiente {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
-.accion:active:not(:disabled){
-  transform:scale(.97);
+.tarjeta-combatiente .nombre {
+    font-weight: bold;
+    font-size: 1.05rem;
+    color: #f0f6fc;
 }
 
-.accion:disabled{
-  opacity:.35;
-  cursor:not-allowed;
+.tarjeta-combatiente .codigo {
+    font-size: 0.75rem;
+    color: #8b949e;
 }
 
-.accion.defensa{
-  border-color:#41616b;
+.tarjeta-combatiente .perfil {
+    font-size: 0.8rem;
+    background-color: #21262d;
+    padding: 3px 8px;
+    border-radius: 12px;
+    border: 1px solid #30363d;
 }
-
 
-.boton-auto{
-  width:100%;
-  min-height:43px;
-  margin-top:9px;
-  padding:9px;
-  border:1px solid #62d6ff;
-  border-radius:8px;
-  background:#0c2028;
-  color:#62d6ff;
-  cursor:pointer;
-  font-size:13px;
-  font-weight:bold;
-  transition:.2s;
+/* --- CONTENEDOR E IMAGEN I3 --- */
+.contenedor-imagen-combatiente {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 130px;
 }
 
-.boton-auto:hover:not(:disabled){
-  background:#62d6ff;
-  color:#031018;
+.imagen-combatiente {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.3s ease;
 }
 
-.boton-auto:disabled{
-  opacity:.35;
-  cursor:not-allowed;
+.imagen-combatiente:hover {
+    transform: scale(1.02);
 }
 
-
-/* =========================================================
-   REGISTRO
-   ========================================================= */
-
-.registro-combate{
-  width:100%;
-  max-height:300px;
-  overflow-y:auto;
-  padding:8px;
-  border:1px solid #17343f;
-  border-radius:8px;
-  background:#050a0d;
+.victorias-serie {
+    font-size: 0.95rem;
+    color: #f0f6fc;
+    font-weight: bold;
+    background-color: #21262d;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #30363d;
+    text-align: center;
+    margin-top: 4px;
 }
 
-.registro-vacio{
-  padding:8px;
-  color:#627d86;
-  font-size:12px;
-  text-align:center;
+/* --- BARRAS DE VIDA Y FATIGA --- */
+.vida, .fatiga {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.linea-registro{
-  padding:7px 5px;
-  border-bottom:1px solid #122830;
-  color:#aac4cc;
-  font-size:12px;
-  line-height:1.4;
+.vida-texto, .fatiga-texto {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #8b949e;
 }
 
-.linea-registro:last-child{
-  border-bottom:0;
+.barra-vida, .barra-fatiga {
+    background-color: #0d1117;
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+    border: 1px solid #30363d;
 }
-
 
-/* =========================================================
-   RESULTADO
-   ========================================================= */
-
-.resultado-oculto{
-  display:none;
+.vida-relleno {
+    background-color: #238636;
+    height: 100%;
+    width: 100%;
+    transition: width 0.3s ease;
 }
 
-#resultado{
-  text-align:center;
+.fatiga-relleno {
+    background-color: #d29922;
+    height: 100%;
+    width: 100%;
+    transition: width 0.3s ease;
 }
 
-.resultado-icono{
-  margin-bottom:5px;
-  font-size:38px;
+/* --- ESTADÍSTICAS Y ESTADOS --- */
+.stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    font-size: 0.8rem;
+    background-color: #0d1117;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #30363d;
 }
 
-#resultadoTitulo{
-  margin-bottom:8px;
-  color:#62d6ff;
+.estado {
+    font-size: 0.8rem;
+    color: #8b949e;
+    min-height: 20px;
 }
 
-#resultadoTexto{
-  margin-bottom:15px;
-  color:#a8c1c9;
-  font-size:13px;
+/* --- CENTRO DE COMBATE (VS Y TURNOS) --- */
+.centro-combate {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
 }
 
-#botonNuevoCombate{
-  width:100%;
-  min-height:44px;
-  padding:10px 16px;
-  border:1px solid #62d6ff;
-  border-radius:8px;
-  background:#0c2028;
-  color:#62d6ff;
-  cursor:pointer;
-  font-size:14px;
-  font-weight:bold;
-  margin-bottom:8px;
-  transition:.2s;
+.icono-vs {
+    font-size: 1.5rem;
 }
 
-#botonNuevoCombate:hover{
-  background:#62d6ff;
-  color:#031018;
+.turno {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #f0f6fc;
 }
 
-#botonVolverCruces{
-  width:100%;
-  min-height:40px;
-  padding:8px 14px;
-  border:1px solid #485c63;
-  border-radius:8px;
-  background:#11181c;
-  color:#b6cdd4;
-  cursor:pointer;
-  font-size:13px;
-  font-weight:bold;
-  transition:.2s;
+.iniciativa {
+    font-size: 0.75rem;
+    color: #8b949e;
 }
 
-#botonVolverCruces:hover{
-  border-color:#ffaa5e;
-  color:#ffeaab;
-  background:#1a1510;
+/* --- ACCIONES --- */
+.botones-acciones {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
 }
-
-
-/* =========================================================
-   SERIE
-   ========================================================= */
 
-#botonSerie{
-  width:100%;
-  min-height:44px;
-  margin-top:10px;
-  padding:10px 14px;
-  border:1px solid #d8b4ff;
-  border-radius:9px;
-  background:#170f24;
-  color:#e5c8ff;
-  cursor:pointer;
-  font-size:14px;
-  font-weight:bold;
-  transition:.2s;
-  box-shadow:0 0 8px rgba(216,180,255,.08);
+.accion {
+    background-color: #21262d;
+    border: 1px solid #30363d;
+    color: #f0f6fc;
 }
 
-#botonSerie:hover{
-  background:#2a183d;
-  border-color:#f0d9ff;
-  color:#f5eaff;
-  box-shadow:0 0 12px rgba(216,180,255,.18);
+.accion:hover:not(:disabled) {
+    background-color: #30363d;
+    border-color: #8b949e;
 }
 
-#botonSerie:active{
-  transform:scale(.98);
+.accion.defensa {
+    background-color: #1f6feb;
 }
 
-
-.informacion-serie{
-  width:100%;
-  margin-top:12px;
-  padding:10px 12px;
-  border:1px solid #3d2850;
-  border-radius:9px;
-  background:#0c1016;
-  text-align:center;
-  box-shadow:0 0 10px rgba(0,0,0,.25);
+.accion.defensa:hover:not(:disabled) {
+    background-color: #388bfd;
 }
 
-#tituloSerie{
-  margin-bottom:5px;
-  color:#d8b4ff;
-  font-size:14px;
-  font-weight:bold;
+.boton-auto {
+    width: 100%;
+    background-color: #8957e5;
 }
 
-#serieFormato{
-  color:#b9cbd2;
-  font-size:12px;
+.boton-auto:hover:not(:disabled) {
+    background-color: #a371f7;
 }
 
-#partidoSerie{
-  margin-top:4px;
-  color:#62d6ff;
-  font-size:12px;
-  font-weight:bold;
+/* --- REGISTRO --- */
+.registro-combate {
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.85rem;
 }
 
-
-.victorias-serie{
-  margin-top:8px;
-  padding:5px 8px;
-  border:1px solid #294653;
-  border-radius:7px;
-  background:#071015;
-  color:#d8b4ff;
-  font-size:11px;
-  font-weight:bold;
-  text-align:center;
+.registro-vacio {
+    color: #484f58;
+    text-align: center;
+    font-style: italic;
 }
-
-
-/* =========================================================
-   TABLET / ESCRITORIO
-   ========================================================= */
-
-@media (min-width:700px){
-
-  #arena{
-    padding:18px;
-  }
-
-  .entrada-combatiente{
-    flex-direction:row;
-    align-items:center;
-  }
-
-  .vs{
-    min-width:45px;
-    padding-top:20px;
-  }
-
-  #botonPreparar{
-    max-width:360px;
-    display:block;
-    margin-left:auto;
-    margin-right:auto;
-  }
 
-  #botonSerie{
-    max-width:360px;
-    display:block;
-    margin-left:auto;
-    margin-right:auto;
-  }
-
-  .informacion-serie{
-    max-width:500px;
-    margin-left:auto;
-    margin-right:auto;
-  }
-
-  .zona-combatientes{
-    display:grid;
-    grid-template-columns:minmax(0,1fr) 80px minmax(0,1fr);
-    align-items:center;
-    gap:12px;
-  }
-
-  .centro-combate{
-    min-height:100%;
-  }
-
-  .stats{
-    grid-template-columns:1fr;
-  }
-
+.linea-registro {
+    border-bottom: 1px solid #21262d;
+    padding-bottom: 4px;
 }
-
 
-@media (min-width:900px){
-
-  #arena{
-    padding:24px;
-  }
-
-  .panel{
-    padding:18px;
-  }
-
-  .tarjeta-combatiente{
-    padding:16px;
-  }
-
-  .stats{
-    grid-template-columns:repeat(2,1fr);
-  }
-
+/* --- RESULTADO FINAL --- */
+.resultado-oculto {
+    display: none;
 }
-
-
-/* =========================================================
-   SCROLLBAR
-   ========================================================= */
 
-::-webkit-scrollbar{
-  width:7px;
-  height:7px;
+#resultado {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
 
-::-webkit-scrollbar-track{
-  background:#05090c;
+.resultado-icono {
+    font-size: 2.5rem;
 }
 
-::-webkit-scrollbar-thumb{
-  background:#21404b;
-  border-radius:5px;
+#resultadoTitulo {
+    font-size: 1.4rem;
+    color: #f0f6fc;
 }
 
-::-webkit-scrollbar-thumb:hover{
-  background:#62d6ff;
+#resultadoTexto {
+    font-size: 0.95rem;
+    color: #8b949e;
 }
