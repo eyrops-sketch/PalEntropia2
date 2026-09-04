@@ -1,16 +1,26 @@
 window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
     if (!window.BUSCARUTA) { return; }
 
+    function corregirRutaCaso2(ruta) {
+        if (!ruta) { return ruta; }
+
+        return ruta.replace(
+            /\/paleofichas\/vol(\d+)\//,
+            function(_, volumen) {
+                return "/paleofichas/vol" + String(volumen).padStart(3, "0") + "/";
+            }
+        );
+    }
+
     try {
         if (codigo1) {
             const res1 = await window.BUSCARUTA.buscar(codigo1);
-            alert(JSON.stringify(res1));
             const img1El = document.getElementById("c1Imagen");
             const cont1El = img1El ? img1El.closest(".contenedor-imagen-combatiente") : null;
             const imgI3_1 = res1 && res1.imagenes ? res1.imagenes.find(img => img.tipo === "i3") : null;
 
             if (img1El && imgI3_1 && imgI3_1.ruta) {
-                img1El.src = imgI3_1.ruta;
+                img1El.src = corregirRutaCaso2(imgI3_1.ruta);
                 img1El.style.display = "block";
                 if (cont1El) cont1El.style.display = "block";
             } else if (img1El) {
@@ -27,7 +37,7 @@ window.cargarImagenesCombatientesAsync = async function(codigo1, codigo2) {
             const imgI3_2 = res2 && res2.imagenes ? res2.imagenes.find(img => img.tipo === "i3") : null;
 
             if (img2El && imgI3_2 && imgI3_2.ruta) {
-                img2El.src = imgI3_2.ruta;
+                img2El.src = corregirRutaCaso2(imgI3_2.ruta);
                 img2El.style.display = "block";
                 if (cont2El) cont2El.style.display = "block";
             } else if (img2El) {
