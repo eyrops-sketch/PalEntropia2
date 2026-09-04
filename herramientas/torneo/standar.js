@@ -77,13 +77,13 @@ window.PALARENA_STANDAR = (function() {
     });
 
     function calcularStatsEfectivos(ficha, config) {
-        const coefGeneral = Number(config.general) || 1;
-        const e = ficha.e || [];
-        const baseAtq = Number(e[0]) || 50;
-        const baseDef = Number(e[1]) || 50;
-        const baseVel = Number(e[2]) || 50;
-        const baseRes = Number(e[3]) || 50;
-        const baseTac = Number(e[4]) || 50;
+        const coefGeneral = Number(config.general) !== undefined && !isNaN(Number(config.general)) ? Number(config.general) : 1;
+        
+        const baseAtq = Number(ficha.e1 !== undefined ? ficha.e1 : (ficha.e && ficha.e[0] !== undefined ? ficha.e[0] : 50)) || 50;
+        const baseDef = Number(ficha.e2 !== undefined ? ficha.e2 : (ficha.e && ficha.e[1] !== undefined ? ficha.e[1] : 50)) || 50;
+        const baseVel = Number(ficha.e3 !== undefined ? ficha.e3 : (ficha.e && ficha.e[2] !== undefined ? ficha.e[2] : 50)) || 50;
+        const baseRes = Number(ficha.e4 !== undefined ? ficha.e4 : (ficha.e && ficha.e[3] !== undefined ? ficha.e[3] : 50)) || 50;
+        const baseTac = Number(ficha.e5 !== undefined ? ficha.e5 : (ficha.e && ficha.e[4] !== undefined ? ficha.e[4] : 50)) || 50;
 
         return {
             ataque: baseAtq * coefGeneral,
