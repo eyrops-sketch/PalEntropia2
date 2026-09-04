@@ -1,11 +1,11 @@
 /* ========================================================
-   PALARENA standar.js v1.3
+   PALARENA standar.js v1.3.1
    PalEntropía
-   MOTOR DE COMBATE ESTÁNDAR — REEQUILIBRADO
+   MOTOR DE COMBATE ESTÁNDAR — REEQUILIBRADO Y CORREGIDO
    ======================================================== */
 
 window.PALARENA_STANDAR = {
-    version: "1.3",
+    version: "1.3.1",
     configuracion: {
         hp_base: 100,
         bonificacion_dominante: 0.15,
@@ -247,8 +247,7 @@ window.PALARENA_STANDAR = {
     regenerarFatiga(combatiente) {
         if (!combatiente || combatiente.derrotado) { return 0; }
         const anterior = this.numero(combatiente.fatiga);
-        const bonusFatiga = Math.round(this.obtenerResistencia(combatiente) * 0.05);
-        combatiente.fatiga = Math.min(combatiente.fatiga_max, anterior + this.configuracion.fatiga_regeneracion_turno + bonusFatiga);
+        combatiente.fatiga = Math.min(combatiente.fatiga_max, anterior + this.configuracion.fatiga_regeneracion_turno);
         return combatiente.fatiga - anterior;
     },
 
@@ -375,10 +374,6 @@ window.PALARENA_STANDAR = {
         return this.limitar(combatiente.efectivos.tactica);
     },
 
-    obtenerResistencia(combatiente) {
-        return this.limitar(combatiente.efectivos.resistencia);
-    },
-
     obtenerInteligencia(combatiente) {
         if (!combatiente) { return 0; }
         return this.limitar(combatiente.stats.e11);
@@ -468,7 +463,7 @@ window.PALARENA_STANDAR = {
             dado_critico: critico.dado,
             bloqueado_por_fatiga: critico.bloqueado_por_fatiga
         };
-    }
+}
     ejecutarAtaque(atacante, objetivo, codigo) {
         if (!atacante || !objetivo || atacante.derrotado || objetivo.derrotado) {
             return { exito: false, codigo: codigo, mensaje: "Ataque no disponible." };
@@ -579,7 +574,7 @@ window.PALARENA_STANDAR = {
             dano: dano.dano,
             critico: dano.critico,
             probabilidad_critico: dano.probabilidad_critico,
-            dado_critico: dano.dado_critico,
+            dado_critico: dano.dado,
             bloqueado_por_fatiga: dano.bloqueado_por_fatiga,
             coste_hp: costeHp,
             fatiga: fatigaAccion,
@@ -766,5 +761,6 @@ window.ejecutarCombateEstandar = function(combate) { return window.PALARENA_STAN
 window.obtenerResumenEstandar = function(combate) { return window.PALARENA_STANDAR.obtenerResumen(combate); };
 
 /* ==================================================
-   FIN STANDAR.JS v1.3
+   FIN STANDAR.JS v1.3.1
    ================================================== */
+           
