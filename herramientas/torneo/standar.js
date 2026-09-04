@@ -162,8 +162,11 @@ window.PALARENA_STANDAR = (function() {
         let critico = false;
 
         if (codigoAccion === "A002") {
-            danoBase *= config.multiplicador_critico;
-            critico = true;
+            const multiCrit = Number(config.multiplicador_critico) || 1.0;
+            if (multiCrit > 1.0) {
+                danoBase *= multiCrit;
+                critico = true;
+            }
         }
 
         const defensaObjetivo = objetivo.defendiendo ? objetivo.efectivos.defensa * (1 + config.reduccion_defensa) : objetivo.efectivos.defensa;
