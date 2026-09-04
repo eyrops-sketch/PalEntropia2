@@ -219,6 +219,7 @@ async function cargarModosDesdeCSV() {
         console.warn("No se pudo leer el CSV en reglas.html, manteniendo opción por defecto.", err);
     }
 
+    // Una vez creadas las opciones del desplegable, cargamos la configuración guardada
     cargarReglasEnInterfaz();
 }
 
@@ -693,9 +694,8 @@ document
 
 mostrarIdentificadorTorneo();
 
+// SÓLO cargamos y leemos los modos existentes. Ya no se invoca a guardarReglasTorneo() a ciegas aquí.
 cargarModosDesdeCSV();
-
-guardarReglasTorneo();
 
 
 </script>
