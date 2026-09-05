@@ -21,17 +21,23 @@
         <div class="entrada-combatiente">
             <div class="campo">
                 <label for="codigo1">🦖 Combatiente 1</label>
-                <input type="text" id="codigo1" placeholder="Ej. 006_01" autocomplete="off">
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <input type="text" id="codigo1" placeholder="Ej. 006_01" autocomplete="off" readonly style="flex: 1;">
+                    <button type="button" id="botonCambiar1" style="padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>
+                </div>
                 <div id="nombre1" class="nombre-combatiente">—</div>
             </div>
             <div class="vs">VS</div>
             <div class="campo">
                 <label for="codigo2">🦕 Combatiente 2</label>
-                <input type="text" id="codigo2" placeholder="Ej. 001_02" autocomplete="off">
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <input type="text" id="codigo2" placeholder="Ej. 001_02" autocomplete="off" readonly style="flex: 1;">
+                    <button type="button" id="botonCambiar2" style="padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>
+                </div>
                 <div id="nombre2" class="nombre-combatiente">—</div>
             </div>
         </div>
-        <div id="controlManual" class="control-manual">
+                <div id="controlManual" class="control-manual">
             <div class="control-manual-titulo">🎮 Control manual</div>
             <div class="control-manual-opciones">
                 <label class="opcion-control"><input type="radio" name="controlManual" value="1" checked><span>Combatiente 1</span></label>
@@ -47,7 +53,7 @@
             <div id="partidoSerie">—</div>
         </div>
     </section>
-        <section id="combatientes" class="zona-combatientes">
+    <section id="combatientes" class="zona-combatientes">
         <article id="combatiente1" class="tarjeta-combatiente">
             <div class="cabecera-combatiente">
                 <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>
@@ -74,7 +80,7 @@
             <div id="c2Estado" class="estado">—</div>
         </article>
     </section>
-    <section id="acciones" class="panel">
+        <section id="acciones" class="panel">
         <h2>🎯 Acciones</h2>
         <div class="botones-acciones">
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>
@@ -84,7 +90,7 @@
         </div>
         <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>
     </section>
-        <section id="registro" class="panel">
+    <section id="registro" class="panel">
         <h2>📜 Registro del combate</h2>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
@@ -127,7 +133,7 @@
 const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json";
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null;
 let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false;
-let partidosSerie = 1, victorias1 = 0, victorias2 = 0, partidoActual = 0, victoriasNecesarias = 1;
+let partidosSerie = 1, victorias1 = 0, victorias2 = 0, partidoActual = 1, victoriasNecesarias = 1;
 const CLAVE_REGLAS = "palentropia_reglas_torneo", REGLAS_DEF = { partidosSerie: 1, tipoCombate: "normal" };
 const codigo1 = document.getElementById("codigo1"), codigo2 = document.getElementById("codigo2");
 const nombre1 = document.getElementById("nombre1"), nombre2 = document.getElementById("nombre2");
@@ -139,6 +145,7 @@ const botonNuevoCombate = document.getElementById("botonNuevoCombate"), botonVol
 const botonInfoModalidades = document.getElementById("botonInfoModalidades"), modalModalidades = document.getElementById("modalModalidades"), botonCerrarModal = document.getElementById("botonCerrarModal");
 const labelModalidadActual = document.getElementById("labelModalidadActual");
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
+const botonCambiar1 = document.getElementById("botonCambiar1"), botonCambiar2 = document.getElementById("botonCambiar2");
 
 function obtenerReglasTorneo() {
     const g = localStorage.getItem(CLAVE_REGLAS);
@@ -206,10 +213,22 @@ function buscarFicha(codigo) {
     const buscado = String(codigo).trim().toLowerCase(), ficha = fichas.find(f => String(f.j1).trim().toLowerCase() === buscado);
     if (!ficha) return null; const fc = { ...ficha }; fc.j2 = nombresPaleofichas[buscado] || ficha.j2 || ficha.nombre || ""; fc.nombre = fc.j2; return fc;
 }
-
 function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
 codigo1.addEventListener("input", () => actualizarNombre(codigo1, nombre1));
 codigo2.addEventListener("input", () => actualizarNombre(codigo2, nombre2));
+
+botonCambiar1.addEventListener("click", () => {
+    codigo1.readOnly = !codigo1.readOnly;
+    codigo1.focus();
+    mostrarMensaje(codigo1.readOnly ? "Combatiente 1 bloqueado." : "Introduce un nuevo código J1 para el Combatiente 1.");
+});
+
+botonCambiar2.addEventListener("click", () => {
+    codigo2.readOnly = !codigo2.readOnly;
+    codigo2.focus();
+    mostrarMensaje(codigo2.readOnly ? "Combatiente 2 bloqueado." : "Introduce un nuevo código J1 para el Combatiente 2.");
+});
+
 controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { controlManual = Number(ctrl.value); if (combateActivo) activarBotones(); }));
 botonPreparar.addEventListener("click", prepararCombate);
 botonSerie.addEventListener("click", prepararSerie);
@@ -244,9 +263,18 @@ function prepararCombate() {
 function prepararSerie() {
     if (!validarYPrepararDatos()) return;
     const reg = obtenerReglasTorneo();
-    partidosSerie = Number(reg.partidosSerie); victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
-    victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = true; serieTerminada = false; partidoRegistrado = false;
-    limpiarRegistro(); actualizarInterfazSerie(); iniciarPartidoSerie();
+    partidosSerie = Number(reg.partidosSerie) || 1; 
+    victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
+    victorias1 = 0; 
+    victorias2 = 0; 
+    partidoActual = 1; 
+    serieActiva = true; 
+    serieTerminada = false; 
+    partidoRegistrado = false;
+    document.getElementById("resultado").classList.add("resultado-oculto");
+    limpiarRegistro(); 
+    actualizarInterfazSerie(); 
+    iniciarPartidoSerie();
 }
 
 function iniciarPartidoSerie() {
@@ -336,7 +364,8 @@ function interpretarRes(res, at, ob) {
     if (res.efecto) añadirRegistro(`✨ ${res.efecto.nombre} aplicado.`);
     if (res.registro) (Array.isArray(res.registro) ? res.registro : [res.registro]).forEach(m => añadirRegistro(m));
 }
-    function ejecutarAccionJugador(cod) {
+
+function ejecutarAccionJugador(cod) {
     if (!combateActivo || !combate) return;
     const at = controlManual === 1 ? combatiente1 : combatiente2, ob = controlManual === 1 ? combatiente2 : combatiente1;
     const cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;
@@ -434,9 +463,6 @@ botonNuevoCombate.addEventListener("click", () => {
     document.getElementById("turnoActual").textContent = "Turno —";
     document.getElementById("iniciativa").textContent = "—";
     
-    nombre1.textContent = "—";
-    nombre2.textContent = "—";
-    
     ["c1Nombre", "c2Nombre"].forEach(id => document.getElementById(id).textContent = "—");
     ["c1Codigo", "c2Codigo"].forEach(id => document.getElementById(id).textContent = "—");
     ["c1VidaTexto", "c2VidaTexto"].forEach(id => document.getElementById(id).textContent = "— / —");
@@ -446,20 +472,19 @@ botonNuevoCombate.addEventListener("click", () => {
     ["c1Stats", "c2Stats"].forEach(id => document.getElementById(id).innerHTML = "");
     ["c1Estado", "c2Estado"].forEach(id => document.getElementById(id).textContent = "—");
     
-    codigo1.value = "";
-    codigo2.value = "";
-    
     limpiarRegistro();
     desactivarBotones();
     botonNuevoCombate.textContent = "🔄 Nuevo combate";
     actualizarInterfazSerie();
-    mostrarMensaje("Introduce los códigos J1 de las dos Paleofichas.");
+    mostrarMensaje("Combatientes bloqueados. Listo para reiniciar o repetir serie.");
 });
 
 botonVolverCruces.addEventListener("click", () => { window.location.href = "index.html"; });
 
-(async () => { await cargarPaleofichas(); await cargarMaster(); })();
+(async () => {
+    await cargarPaleofichas();
+    await cargarMaster();
+})();
 </script>
 </body>
 </html>
-
