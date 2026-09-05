@@ -264,7 +264,8 @@ window.ejecutarTurnoEstandar = function(combate) {
     const c1 = combate.combatiente1;
     const c2 = combate.combatiente2;
 
-    const res1 = window.PALARENA_STANDAR.ejecutarAccion(c1, c2, "A001");
+    const accion1 = window.PALARENA_STANDAR.decidirAccion(c1, c2);
+    const res1 = window.PALARENA_STANDAR.ejecutarAccion(c1, c2, accion1);
     combate.historial.push({ tipo: "accion", atacante: c1.codigo, objetivo: c2.codigo, resultado: res1 });
 
     if (c2.derrotado) {
@@ -273,7 +274,8 @@ window.ejecutarTurnoEstandar = function(combate) {
         return;
     }
 
-    const res2 = window.PALARENA_STANDAR.ejecutarAccion(c2, c1, "A001");
+    const accion2 = window.PALARENA_STANDAR.decidirAccion(c2, c1);
+    const res2 = window.PALARENA_STANDAR.ejecutarAccion(c2, c1, accion2);
     combate.historial.push({ tipo: "accion", atacante: c2.codigo, objetivo: c1.codigo, resultado: res2 });
 
     if (c1.derrotado) {
@@ -293,4 +295,3 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
-    
