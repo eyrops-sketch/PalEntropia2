@@ -130,7 +130,7 @@
 <script src="../generador_fase_2/buscaruta.js"></script>
 <script src="loadimagen.js"></script>
 <script>
-const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json";
+    const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json";
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null;
 let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false;
 let partidosSerie = 1, victorias1 = 0, victorias2 = 0, partidoActual = 1, victoriasNecesarias = 1;
@@ -213,6 +213,7 @@ function buscarFicha(codigo) {
     const buscado = String(codigo).trim().toLowerCase(), ficha = fichas.find(f => String(f.j1).trim().toLowerCase() === buscado);
     if (!ficha) return null; const fc = { ...ficha }; fc.j2 = nombresPaleofichas[buscado] || ficha.j2 || ficha.nombre || ""; fc.nombre = fc.j2; return fc;
 }
+
 function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
 codigo1.addEventListener("input", () => actualizarNombre(codigo1, nombre1));
 codigo2.addEventListener("input", () => actualizarNombre(codigo2, nombre2));
@@ -243,8 +244,7 @@ function validarYPrepararDatos() {
     if (!ficha1 || !ficha2) { mostrarMensaje("No se encuentran una o ambas Paleofichas."); return null; }
     return true;
 }
-
-function prepararCombate() {
+    function prepararCombate() {
     if (!validarYPrepararDatos()) return;
     const reg = obtenerReglasTorneo(); partidosSerie = Number(reg.partidosSerie) || 1; victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
     victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = partidosSerie > 1; serieTerminada = false; partidoRegistrado = false; actualizarInterfazSerie();
@@ -412,14 +412,30 @@ function procesarTurnoAuto(regs) {
 function finalizarInterfaz(res) { combateActivo = false; desactivarBotones(); mostrarResCombate(res); if (serieActiva && !partidoRegistrado) registrarResSerie(res && res.ganador); }
 
 function registrarResSerie(gRes) {
-    if (!serieActiva || serieTerminada || partidoRegistrado) return; partidoRegistrado = true;
+    if (!serieActiva || serieTerminada || partidoRegistrado) return; 
+    partidoRegistrado = true;
     let g = gRes ? (typeof gRes === "string" ? (gRes === combatiente1.codigo ? combatiente1 : combatiente2) : gRes) : null;
-    if (g) { if (g.codigo === combatiente1.codigo) victorias1++; else if (g.codigo === combatiente2.codigo) victorias2++; }
+    
+    if (g) { 
+        if (g.codigo === combatiente1.codigo) victorias1++; 
+        else if (g.codigo === combatiente2.codigo) victorias2++; 
+    }
+    
     actualizarInterfazSerie();
-    if (victorias1 >= victoriasNecesarias || victorias2 >= victoriasNecesarias) { serieTerminada = true; serieActiva = false; mostrarResSerie(victorias1 > victorias2 ? combatiente1 : combatiente2); botonNuevoCombate.textContent = "🔄 Nueva serie"; return; }
-    botonNuevoCombate.textContent = "▶️ Siguiente partido";
+    
+    if (victorias1 >= victoriasNecesarias || victorias2 >= victoriasNecesarias) { 
+        serieTerminada = true; 
+        serieActiva = false; 
+        mostrarResSerie(victorias1 > victorias2 ? combatiente1 : combatiente2); 
+        botonNuevoCombate.textContent = "🔄 Nueva serie"; 
+        return; 
+    }
+    
     if (g) añadirRegistro(`🏆 ${g.nombre} gana el partido ${partidoActual}.`);
     añadirRegistro(`📊 Marcador: ${victorias1} - ${victorias2}`);
+    
+    partidoActual++;
+    botonNuevoCombate.textContent = "▶️ Siguiente partido";
 }
 
 function mostrarResSerie(g) {
@@ -443,6 +459,11 @@ function añadirRegistro(txt) { const reg = document.getElementById("registroCom
 function mostrarMensaje(txt) { mensajeConfiguracion.textContent = txt; }
 
 botonNuevoCombate.addEventListener("click", () => {
+    if (serieActiva && !serieTerminada) {
+        iniciarPartidoSerie();
+        return;
+    }
+
     combateActivo = false;
     serieActiva = false;
     serieTerminada = false;
@@ -450,7 +471,7 @@ botonNuevoCombate.addEventListener("click", () => {
     partidosSerie = 1;
     victorias1 = 0;
     victorias2 = 0;
-    partidoActual = 0;
+    partidoActual = 1;
     victoriasNecesarias = 1;
     
     combate = null;
