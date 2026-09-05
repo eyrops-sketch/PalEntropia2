@@ -47,7 +47,7 @@
             <div id="partidoSerie">—</div>
         </div>
     </section>
-    <section id="combatientes" class="zona-combatientes">
+       <section id="combatientes" class="zona-combatientes">
         <article id="combatiente1" class="tarjeta-combatiente">
             <div class="cabecera-combatiente">
                 <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>
@@ -74,8 +74,7 @@
             <div id="c2Estado" class="estado">—</div>
         </article>
     </section>
-
-      <section id="acciones" class="panel">
+    <section id="acciones" class="panel">
         <h2>🎯 Acciones</h2>
         <div class="botones-acciones">
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>
@@ -85,7 +84,7 @@
         </div>
         <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>
     </section>
-    <section id="registro" class="panel">
+        <section id="registro" class="panel">
         <h2>📜 Registro del combate</h2>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
@@ -140,21 +139,25 @@ const botonNuevoCombate = document.getElementById("botonNuevoCombate"), botonVol
 const botonInfoModalidades = document.getElementById("botonInfoModalidades"), modalModalidades = document.getElementById("modalModalidades"), botonCerrarModal = document.getElementById("botonCerrarModal");
 const labelModalidadActual = document.getElementById("labelModalidadActual");
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
+
 function obtenerReglasTorneo() {
     const g = localStorage.getItem(CLAVE_REGLAS);
     if (!g) return { ...REGLAS_DEF };
     try { const r = JSON.parse(g); return { partidosSerie: Number(r.partidosSerie) || 1, tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal" }; } catch (e) { return { ...REGLAS_DEF }; }
 }
+
 function obtenerConfiguracionActiva() {
     const reg = obtenerReglasTorneo();
     const modoActivo = reg.tipoCombate || "normal";
     return fichas.find(f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()) || fichas[0];
 }
+
 function actualizarInterfazModalidad() {
     const reg = obtenerReglasTorneo();
     const nombreModo = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";
     if (labelModalidadActual) labelModalidadActual.innerHTML = `📜 Modalidad actual: <strong>${nombreModo}</strong>`;
 }
+
 function actualizarInterfazSerie() {
     const c1v = document.getElementById("c1Victorias"), c2v = document.getElementById("c2Victorias");
     if (c1v) c1v.textContent = "🏆 Victorias: " + victorias1;
@@ -162,6 +165,7 @@ function actualizarInterfazSerie() {
     if (!serieActiva) { informacionSerie.style.display = "none"; serieFormato.textContent = "—"; partidoSerie.textContent = "—"; return; }
     informacionSerie.style.display = ""; serieFormato.textContent = "Mejor de " + partidosSerie; partidoSerie.textContent = "Partido " + partidoActual + " / " + partidosSerie;
 }
+
 async function cargarPaleofichas() {
     try {
         const res = await fetch(RUTA_PALEOFICHAS); if (!res.ok) throw new Error();
@@ -170,6 +174,7 @@ async function cargarPaleofichas() {
         Array.isArray(datos) ? datos.forEach(proc) : (datos && Object.values(datos).forEach(proc));
     } catch (e) { nombresPaleofichas = {}; }
 }
+
 async function cargarMaster() {
     try {
         const res = await fetch(RUTA_MASTER); if (!res.ok) throw new Error();
@@ -177,6 +182,7 @@ async function cargarMaster() {
         actualizarInterfazModalidad();
     } catch (e) { mensajeConfiguracion.textContent = "❌ Error al cargar master.csv."; }
 }
+
 function interpretarCSV(texto) {
     const lineas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     if (lineas.length < 2) return [];
@@ -189,15 +195,18 @@ function interpretarCSV(texto) {
     }
     return resultado;
 }
+
 function separarCSV(linea) {
     const res = []; let act = "", com = false;
     for (let i = 0; i < linea.length; i++) { const c = linea[i]; if (c === '"') { com = !com; continue; } if (c === "," && !com) { res.push(act.trim()); act = ""; } else act += c; }
     res.push(act.trim()); return res;
 }
+
 function buscarFicha(codigo) {
     const buscado = String(codigo).trim().toLowerCase(), ficha = fichas.find(f => String(f.j1).trim().toLowerCase() === buscado);
     if (!ficha) return null; const fc = { ...ficha }; fc.j2 = nombresPaleofichas[buscado] || ficha.j2 || ficha.nombre || ""; fc.nombre = fc.j2; return fc;
 }
+
 function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
 codigo1.addEventListener("input", () => actualizarNombre(codigo1, nombre1));
 codigo2.addEventListener("input", () => actualizarNombre(codigo2, nombre2));
@@ -206,6 +215,7 @@ botonPreparar.addEventListener("click", prepararCombate);
 botonSerie.addEventListener("click", prepararSerie);
 botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; });
 botonCerrarModal.addEventListener("click", () => { modalModalidades.style.display = "none"; });
+
 function validarYPrepararDatos() {
     const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();
     if (!v1 || !v2) { mostrarMensaje("Introduce los dos códigos J1."); return null; }
@@ -214,6 +224,7 @@ function validarYPrepararDatos() {
     if (!ficha1 || !ficha2) { mostrarMensaje("No se encuentran una o ambas Paleofichas."); return null; }
     return true;
 }
+
 function prepararCombate() {
     if (!validarYPrepararDatos()) return;
     const reg = obtenerReglasTorneo(); partidosSerie = Number(reg.partidosSerie) || 1; victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
@@ -229,6 +240,7 @@ function prepararCombate() {
         mostrarMensaje("Combate preparado correctamente.");
     } catch (e) { mostrarMensaje("❌ Error al preparar el combate."); }
 }
+
 function prepararSerie() {
     if (!validarYPrepararDatos()) return;
     const reg = obtenerReglasTorneo();
@@ -236,6 +248,7 @@ function prepararSerie() {
     victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = true; serieTerminada = false; partidoRegistrado = false;
     limpiarRegistro(); actualizarInterfazSerie(); iniciarPartidoSerie();
 }
+
 function iniciarPartidoSerie() {
     if (!serieActiva || serieTerminada) return;
     try {
@@ -255,15 +268,12 @@ function mostrarCombatientes() {
     if (!combate || !combatiente1 || !combatiente2) return;
     const reg = obtenerReglasTorneo();
     const nombreModoTexto = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";
-
     document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";
     document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";
     document.getElementById("c1Perfil").textContent = nombreModoTexto;
-    
     document.getElementById("c2Nombre").textContent = combatiente2.nombre || "—";
     document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";
     document.getElementById("c2Perfil").textContent = nombreModoTexto;
-
     mostrarBarra(combatiente1.hp, combatiente1.hp_max, "c1VidaTexto", "c1VidaBarra");
     mostrarBarra(combatiente2.hp, combatiente2.hp_max, "c2VidaTexto", "c2VidaBarra");
     mostrarBarra(combatiente1.fatiga, combatiente1.fatiga_max, "c1FatigaTexto", "c1FatigaBarra");
@@ -274,12 +284,14 @@ function mostrarCombatientes() {
     document.getElementById("turnoActual").textContent = "Turno " + (combate.turno || "—");
     document.getElementById("iniciativa").textContent = combate.iniciativa || (combatiente1.iniciativa !== undefined && combatiente2.iniciativa !== undefined ? combatiente1.iniciativa + " / " + combatiente2.iniciativa : "—");
 }
+
 function mostrarBarra(v, maxV, idT, idB) {
     const act = Number(v), mx = Number(maxV) || 100, seg = Number.isFinite(act) ? Math.max(0, Math.min(mx, act)) : mx;
     const txt = document.getElementById(idT), bar = document.getElementById(idB);
     if (txt) txt.textContent = Math.round(seg) + " / " + Math.round(mx);
     if (bar) bar.style.width = Math.max(0, Math.min(100, (seg / mx) * 100)) + "%";
 }
+
 function mostrarStats(c, pref) {
     const st = document.getElementById(pref + "Stats"); if (!st) return;
     const ef = c.efectivos || {};
@@ -289,17 +301,21 @@ function mostrarStats(c, pref) {
         return `<div>${ic[k]} ${lb[k]}: ${Number.isFinite(Number(ef[k])) ? Math.round(Number(ef[k])) : 0}</div>`;
     }).join("");
 }
+
 function mostrarEstado(c, pref) {
     const est = document.getElementById(pref + "Estado"); if (!est) return;
     const m = []; if (c.derrotado) m.push("☠️ Derrotado"); if (c.defendiendo) m.push("🛡️ Defendiendo");
     if (Array.isArray(c.efectos)) c.efectos.forEach(ef => { if (ef) { const nom = ef.nombre || ef.codigo || "Efecto", dur = ef.turnos !== undefined ? ef.turnos : ef.duracion; m.push(dur !== undefined && dur > 0 ? `✨ ${nom} (${dur})` : `✨ ${nom}`); } });
     est.textContent = m.length ? m.join(" · ") : "—";
 }
+
 function activarBotones() {
     const cm = controlManual === 1 ? combatiente1 : combatiente2, cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;
     botonA001.disabled = false; botonA002.disabled = !pc || Number(cm.fatiga) < cfg.fatiga_minima_ataque_potente; botonA003.disabled = botonD001.disabled = botonAuto.disabled = false;
 }
+
 function desactivarBotones() { botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; }
+
 function interpretarRes(res, at, ob) {
     if (!res) return;
     if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) {
@@ -320,7 +336,7 @@ function interpretarRes(res, at, ob) {
     if (res.efecto) añadirRegistro(`✨ ${res.efecto.nombre} aplicado.`);
     if (res.registro) (Array.isArray(res.registro) ? res.registro : [res.registro]).forEach(m => añadirRegistro(m));
 }
-function ejecutarAccionJugador(cod) {
+    function ejecutarAccionJugador(cod) {
     if (!combateActivo || !combate) return;
     const at = controlManual === 1 ? combatiente1 : combatiente2, ob = controlManual === 1 ? combatiente2 : combatiente1;
     const cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;
@@ -335,17 +351,23 @@ function ejecutarAccionJugador(cod) {
         combatiente1.defendiendo = combatiente2.defendiendo = false; combate.turno++; mostrarCombatientes(); activarBotones();
     } catch (e) { añadirRegistro("❌ Error durante la acción."); }
 }
+
 botonA001.addEventListener("click", () => ejecutarAccionJugador("A001"));
 botonA002.addEventListener("click", () => ejecutarAccionJugador("A002"));
 botonA003.addEventListener("click", () => ejecutarAccionJugador("A003"));
 botonD001.addEventListener("click", () => ejecutarAccionJugador("D001"));
+
 botonAuto.addEventListener("click", () => {
     if (!combateActivo || !combate) return; desactivarBotones();
     try {
         while (combate.estado !== "finalizado") { const len = combate.historial.length; window.ejecutarTurnoEstandar(combate); procesarTurnoAuto(combate.historial.slice(len)); }
-        mostrarCombatientes(); mostrarResCombate({ ganador: combate.ganador }); combateActivo = false; registrarResSerie(combate.ganador);
+        mostrarCombatientes(); 
+        const ganadorFinal = mostrarResCombate({ ganador: combate.ganador }); 
+        combateActivo = false; 
+        registrarResSerie(combate.ganador);
     } catch (e) { añadirRegistro("❌ Error durante el combate automático."); activarBotones(); }
 });
+
 function procesarTurnoAuto(regs) {
     if (!Array.isArray(regs)) return;
     regs.forEach(reg => {
@@ -357,7 +379,9 @@ function procesarTurnoAuto(regs) {
     });
     mostrarCombatientes();
 }
+
 function finalizarInterfaz(res) { combateActivo = false; desactivarBotones(); mostrarResCombate(res); if (serieActiva && !partidoRegistrado) registrarResSerie(res && res.ganador); }
+
 function registrarResSerie(gRes) {
     if (!serieActiva || serieTerminada || partidoRegistrado) return; partidoRegistrado = true;
     let g = gRes ? (typeof gRes === "string" ? (gRes === combatiente1.codigo ? combatiente1 : combatiente2) : gRes) : null;
@@ -368,11 +392,13 @@ function registrarResSerie(gRes) {
     if (g) añadirRegistro(`🏆 ${g.nombre} gana el partido ${partidoActual}.`);
     añadirRegistro(`📊 Marcador: ${victorias1} - ${victorias2}`);
 }
+
 function mostrarResSerie(g) {
     document.getElementById("resultadoIcono").textContent = "🏆"; document.getElementById("resultadoTitulo").textContent = "🏆 " + (g.nombre || "Ganador");
     document.getElementById("resultadoTexto").textContent = `Gana la serie ${victorias1} - ${victorias2} (Mejor de ${partidosSerie}).`;
     document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes();
 }
+
 function mostrarResCombate(res) {
     if (!res) return;
     let g = res.ganador ? (typeof res.ganador === "string" ? window.PALARENA_STANDAR.obtenerCombatiente(combate, res.ganador) : res.ganador) : null;
@@ -382,9 +408,11 @@ function mostrarResCombate(res) {
     document.getElementById("resultadoTexto").textContent = g ? "El combate ha terminado." : "Se ha determinado el resultado.";
     document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes(); return g;
 }
+
 function limpiarRegistro() { document.getElementById("registroCombate").innerHTML = ""; }
 function añadirRegistro(txt) { const reg = document.getElementById("registroCombate"), lin = document.createElement("div"); lin.className = "linea-registro"; lin.textContent = txt; reg.appendChild(lin); reg.scrollTop = reg.scrollHeight; }
 function mostrarMensaje(txt) { mensajeConfiguracion.textContent = txt; }
+
 botonNuevoCombate.addEventListener("click", () => {
     if (serieActiva && !combateActivo && partidoRegistrado) { partidoActual++; iniciarPartidoSerie(); return; }
     if (serieTerminada) { serieActiva = serieTerminada = false; partidosSerie = 1; victorias1 = victorias2 = partidoActual = 0; victoriasNecesarias = 1; partidoRegistrado = false; actualizarInterfazSerie(); prepararSerie(); return; }
@@ -403,11 +431,10 @@ botonNuevoCombate.addEventListener("click", () => {
     actualizarNombre(codigo1, nombre1); actualizarNombre(codigo2, nombre2); limpiarRegistro(); desactivarBotones();
     botonNuevoCombate.textContent = "🔄 Nuevo combate"; actualizarInterfazSerie(); mostrarMensaje("Introduce los códigos J1 de las dos Paleofichas.");
 });
+
 botonVolverCruces.addEventListener("click", () => { window.location.href = "index.html"; });
+
 (async () => { await cargarPaleofichas(); await cargarMaster(); })();
 </script>
 </body>
 </html>
-
-    
-    
