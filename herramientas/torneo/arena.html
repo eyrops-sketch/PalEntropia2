@@ -14,6 +14,10 @@
 <main id="arena">
     <section id="configuracion" class="panel">
         <h2>⚔️ Preparar combate</h2>
+        <div class="modalidad-info" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 4px;">
+            <div id="labelModalidadActual">📜 Modalidad actual: <strong>Normal</strong></div>
+            <button id="botonInfoModalidades" type="button" style="padding: 4px 10px; cursor: pointer;">ℹ️ Ver modalidades</button>
+        </div>
         <div class="entrada-combatiente">
             <div class="campo">
                 <label for="codigo1">🦖 Combatiente 1</label>
@@ -35,7 +39,7 @@
             </div>
         </div>
         <button id="botonPreparar" type="button">⚔️ Preparar combate</button>
-        <button id="botonSerie" type="button">🏆 Mejor de la serie</button>
+        <button id="botonSerie" type="button" style="display: block;">🏆 Mejor de la serie</button>
         <div id="mensajeConfiguracion" class="mensaje">Introduce los códigos J1 de las dos Paleofichas.</div>
         <div id="informacionSerie" class="informacion-serie" style="display: none;">
             <div id="tituloSerie">🏆 Serie</div>
@@ -70,7 +74,7 @@
             <div id="c2Estado" class="estado">—</div>
         </article>
     </section>
-        <section id="acciones" class="panel">
+       <section id="acciones" class="panel">
         <h2>🎯 Acciones</h2>
         <div class="botones-acciones">
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>
@@ -92,6 +96,27 @@
         <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>
     </section>
 </main>
+<div id="modalModalidades" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: #222; color: #fff; padding: 20px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+        <h3>📖 Guía de Modalidades de Juego</h3>
+        <div id="contenidoModalidades" style="margin: 15px 0; font-size: 0.9em; line-height: 1.4;">
+            <p><strong>Normal:</strong> Experiencia equilibrada estándar con parámetros base.</p>
+            <p><strong>Difícil:</strong> Menor vida base y mayor letalidad para duelos desafiantes.</p>
+            <p><strong>Sin crítico:</strong> Combates tácticos puros sin multiplicador crítico.</p>
+            <p><strong>Defensa aumentada:</strong> Defensas muy reforzadas que alargan los intercambios.</p>
+            <p><strong>Desgaste extremo:</strong> Menor regeneración y alta exigencia de fatiga.</p>
+            <p><strong>Frenesí mesozoico:</strong> Partidas ultrarrápidas con daños masivos.</p>
+            <p><strong>Depredador al límite:</strong> Ofensivas letales con bonificaciones altas.</p>
+            <p><strong>Cataclismo carbonífero:</strong> Entorno caótico con altísima variabilidad de daño.</p>
+            <p><strong>Acorazados cretácicos:</strong> Tanques masivos de alta resistencia y divisor defensivo extremo.</p>
+            <p><strong>Instinto primigenio:</strong> Furia desatada con críticos hiperpotenciados.</p>
+            <p><strong>Reflejos abismales:</strong> Duelos ágiles con esquivas constantes.</p>
+            <p><strong>Balance ancestral:</strong> Coeficientes comprimidos para nivelar estadísticas.</p>
+            <p><strong>Furia desatada:</strong> Compensador agresivo para equilibrar Stats muy bajos.</p>
+        </div>
+        <button id="botonCerrarModal" type="button" style="padding: 6px 15px; cursor: pointer;">Cerrar</button>
+    </div>
+</div>
 <script src="palarenastats.js"></script>
 <script src="standar-ataques.js"></script>
 <script src="standar-efectos.js"></script>
@@ -103,7 +128,7 @@ const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../gen
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null;
 let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false;
 let partidosSerie = 1, victorias1 = 0, victorias2 = 0, partidoActual = 0, victoriasNecesarias = 1;
-const CLAVE_REGLAS = "palentropia_reglas_torneo", REGLAS_DEF = { partidosSerie: 1, tipoCombate: "standard" };
+const CLAVE_REGLAS = "palentropia_reglas_torneo", REGLAS_DEF = { partidosSerie: 1, tipoCombate: "normal" };
 const codigo1 = document.getElementById("codigo1"), codigo2 = document.getElementById("codigo2");
 const nombre1 = document.getElementById("nombre1"), nombre2 = document.getElementById("nombre2");
 const botonPreparar = document.getElementById("botonPreparar"), botonSerie = document.getElementById("botonSerie");
@@ -111,12 +136,19 @@ const mensajeConfiguracion = document.getElementById("mensajeConfiguracion"), in
 const serieFormato = document.getElementById("serieFormato"), partidoSerie = document.getElementById("partidoSerie");
 const botonA001 = document.getElementById("botonA001"), botonA002 = document.getElementById("botonA002"), botonA003 = document.getElementById("botonA003"), botonD001 = document.getElementById("botonD001"), botonAuto = document.getElementById("botonAuto");
 const botonNuevoCombate = document.getElementById("botonNuevoCombate"), botonVolverCruces = document.getElementById("botonVolverCruces");
+const botonInfoModalidades = document.getElementById("botonInfoModalidades"), modalModalidades = document.getElementById("modalModalidades"), botonCerrarModal = document.getElementById("botonCerrarModal");
+const labelModalidadActual = document.getElementById("labelModalidadActual");
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
 
-function obtenerReglasTorneo() {
+   function obtenerReglasTorneo() {
     const g = localStorage.getItem(CLAVE_REGLAS);
     if (!g) return { ...REGLAS_DEF };
-    try { const r = JSON.parse(g); return { partidosSerie: Number(r.partidosSerie) || 1, tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "standard" }; } catch (e) { return { ...REGLAS_DEF }; }
+    try { const r = JSON.parse(g); return { partidosSerie: Number(r.partidosSerie) || 1, tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal" }; } catch (e) { return { ...REGLAS_DEF }; }
+}
+function actualizarInterfazModalidad() {
+    const reg = obtenerReglasTorneo();
+    const nombreModo = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";
+    if (labelModalidadActual) labelModalidadActual.innerHTML = `📜 Modalidad actual: <strong>${nombreModo}</strong>`;
 }
 function actualizarInterfazSerie() {
     const c1v = document.getElementById("c1Victorias"), c2v = document.getElementById("c2Victorias");
@@ -137,6 +169,7 @@ async function cargarMaster() {
     try {
         const res = await fetch(RUTA_MASTER); if (!res.ok) throw new Error();
         fichas = interpretarCSV(await res.text()); mensajeConfiguracion.textContent = "Datos de Paleofichas cargados correctamente.";
+        actualizarInterfazModalidad();
     } catch (e) { mensajeConfiguracion.textContent = "❌ Error al cargar master.csv."; }
 }
 function interpretarCSV(texto) {
@@ -166,6 +199,8 @@ codigo2.addEventListener("input", () => actualizarNombre(codigo2, nombre2));
 controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { controlManual = Number(ctrl.value); if (combateActivo) activarBotones(); }));
 botonPreparar.addEventListener("click", prepararCombate);
 botonSerie.addEventListener("click", prepararSerie);
+botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; });
+botonCerrarModal.addEventListener("click", () => { modalModalidades.style.display = "none"; });
 function validarYPrepararDatos() {
     const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();
     if (!v1 || !v2) { mostrarMensaje("Introduce los dos códigos J1."); return null; }
@@ -191,7 +226,6 @@ function prepararCombate() {
 function prepararSerie() {
     if (!validarYPrepararDatos()) return;
     const reg = obtenerReglasTorneo();
-    if (reg.tipoCombate !== "standard") { mostrarMensaje("❌ El tipo de combate configurado no es compatible con Combate estándar."); return; }
     partidosSerie = Number(reg.partidosSerie); victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
     victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = true; serieTerminada = false; partidoRegistrado = false;
     limpiarRegistro(); actualizarInterfazSerie(); iniciarPartidoSerie();
@@ -208,7 +242,8 @@ function iniciarPartidoSerie() {
         añadirRegistro("⚔️ " + combatiente1.nombre + " (" + combatiente1.codigo + ") vs " + combatiente2.nombre + " (" + combatiente2.codigo + ")");
         mostrarMensaje("Partido " + partidoActual + " preparado correctamente."); actualizarInterfazSerie();
     } catch (e) { combateActivo = false; mostrarMensaje("❌ Error al preparar el partido."); }
-}
+    }
+
     function mostrarCombatientes() {
     if (!combate || !combatiente1 || !combatiente2) return;
     document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";
