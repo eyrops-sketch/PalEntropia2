@@ -98,7 +98,7 @@
         <div id="resultadoIcono" class="resultado-icono">🏆</div>
         <h2 id="resultadoTitulo">—</h2>
         <div id="resultadoTexto">—</div>
-        <button id="botonNuevoCombate" type="button">🔄 Nuevo combate</button>
+        <button id="botonNuevoCombate" type="button">▶️ Siguiente partido</button>
         <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>
     </section>
 </main>
@@ -130,7 +130,7 @@
 <script src="../generador_fase_2/buscaruta.js"></script>
 <script src="loadimagen.js"></script>
 <script>
-    const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json";
+const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json";
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null;
 let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false;
 let partidosSerie = 1, victorias1 = 0, victorias2 = 0, partidoActual = 1, victoriasNecesarias = 1;
@@ -244,7 +244,7 @@ function validarYPrepararDatos() {
     if (!ficha1 || !ficha2) { mostrarMensaje("No se encuentran una o ambas Paleofichas."); return null; }
     return true;
 }
-    function prepararCombate() {
+function prepararCombate() {
     if (!validarYPrepararDatos()) return;
     const reg = obtenerReglasTorneo(); partidosSerie = Number(reg.partidosSerie) || 1; victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
     victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = partidosSerie > 1; serieTerminada = false; partidoRegistrado = false; actualizarInterfazSerie();
@@ -427,7 +427,7 @@ function registrarResSerie(gRes) {
         serieTerminada = true; 
         serieActiva = false; 
         mostrarResSerie(victorias1 > victorias2 ? combatiente1 : combatiente2); 
-        botonNuevoCombate.textContent = "🔄 Nueva serie"; 
+        botonNuevoCombate.textContent = "🏆 Fin de serie"; 
         return; 
     }
     
@@ -463,41 +463,9 @@ botonNuevoCombate.addEventListener("click", () => {
         iniciarPartidoSerie();
         return;
     }
-
-    combateActivo = false;
-    serieActiva = false;
-    serieTerminada = false;
-    partidoRegistrado = false;
-    partidosSerie = 1;
-    victorias1 = 0;
-    victorias2 = 0;
-    partidoActual = 1;
-    victoriasNecesarias = 1;
-    
-    combate = null;
-    combatiente1 = null;
-    combatiente2 = null;
-    ficha1 = null;
-    ficha2 = null;
-
+    // Si la serie ya terminó, este botón al hacer clic simplemente oculta el resultado o te deja volver a cruces
     document.getElementById("resultado").classList.add("resultado-oculto");
-    document.getElementById("turnoActual").textContent = "Turno —";
-    document.getElementById("iniciativa").textContent = "—";
-    
-    ["c1Nombre", "c2Nombre"].forEach(id => document.getElementById(id).textContent = "—");
-    ["c1Codigo", "c2Codigo"].forEach(id => document.getElementById(id).textContent = "—");
-    ["c1VidaTexto", "c2VidaTexto"].forEach(id => document.getElementById(id).textContent = "— / —");
-    ["c1FatigaTexto", "c2FatigaTexto"].forEach(id => document.getElementById(id).textContent = "— / —");
-    ["c1VidaBarra", "c2VidaBarra", "c1FatigaBarra", "c2FatigaBarra"].forEach(id => document.getElementById(id).style.width = "0%");
-    ["c1Perfil", "c2Perfil"].forEach(id => document.getElementById(id).textContent = "—");
-    ["c1Stats", "c2Stats"].forEach(id => document.getElementById(id).innerHTML = "");
-    ["c1Estado", "c2Estado"].forEach(id => document.getElementById(id).textContent = "—");
-    
-    limpiarRegistro();
-    desactivarBotones();
-    botonNuevoCombate.textContent = "🔄 Nuevo combate";
-    actualizarInterfazSerie();
-    mostrarMensaje("Combatientes bloqueados. Listo para reiniciar o repetir serie.");
+    mostrarMensaje("Serie finalizada. Vuelve a los cruces para el siguiente emparejamiento.");
 });
 
 botonVolverCruces.addEventListener("click", () => { window.location.href = "index.html"; });
