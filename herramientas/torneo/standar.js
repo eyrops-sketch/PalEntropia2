@@ -47,7 +47,8 @@ window.PALARENA_STANDAR = (function() {
         max_turnos: 100,
         general: 1,
         escenariojug1: 1,
-        escenariojug2: 1
+        escenariojug2: 1,
+        ia_peso_aleatorio: 0.40
     };
 
     function sincronizarConfiguracionDesdeStorage() {
@@ -116,7 +117,6 @@ window.PALARENA_STANDAR = (function() {
 
     function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
         sincronizarConfiguracionDesdeStorage();
-        // Si se pasa una configuración de modo específica, la fusionamos temporalmente
         if (configPersonalizada && typeof configPersonalizada === "object") {
             configuracionGlobal = { ...configuracionGlobal, ...configPersonalizada };
         }
@@ -175,7 +175,6 @@ window.PALARENA_STANDAR = (function() {
         const defensaObjetivo = objetivo.defendiendo ? objetivo.efectivos.defensa * (1 + Number(config.reduccion_defensa)) : objetivo.efectivos.defensa;
         let danoReducido = Math.max(1, danoBase - (defensaObjetivo / Number(config.defensa_divisor)));
 
-        // APLICACIÓN DE VARIACIÓN ALEATORIA DE DAÑO (Rompe los combates idénticos)
         const variacion = Number(config.variacion_dano) || 0.25;
         const factorAleatorio = 1 + (Math.random() * (variacion * 2) - variacion);
         let danoFinal = Math.max(1, Math.round(danoReducido * factorAleatorio));
@@ -193,10 +192,51 @@ window.PALARENA_STANDAR = (function() {
     }
 
     function decidirAccion(atacante, objetivo) {
-        if (atacante.fatiga < configuracionGlobal.fatiga_minima_ataque_potente) {
-            return "A001";
+        const config = configuracionGlobal;
+        const fatigaActual = Number(atacante.fatiga) || 0;
+        const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
+        const objetivoHpPorcentaje = (objetivo.hp / objetivo.hp_max) * 100;
+
+        const pesoAleatorio = Number(config.ia_peso_aleatorio) !== undefined && !isNaN(Number(config.ia_peso_aleatorio)) ? Number(config.ia_peso_aleatorio) : 0.40;
+
+        if (Math.random() < pesoAleatorio) {
+            const accionesDisponibles = ["A001", "A003"];
+            const costePotente = Number(config.coste_fatiga_A002) || 38;
+            const fatigaMinPotente = Number(config.fatiga_minima_ataque_potente) || 65;
+            const multiCrit = Number(config.multiplicador_critico) || 1.0;
+
+            if (multiCrit > 1.0 && fatigaActual >= fatigaMinPotente && fatigaActual >= costePotente) {
+                accionesDisponibles.push("A002");
+            }
+            const costeDefensa = Number(config.coste_fatiga_D001) || 20;
+            if (fatigaActual >= costeDefensa) {
+                accionesDisponibles.push("D001");
+            }
+
+            return accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
         }
-        return Math.random() < 0.5 ? "A001" : "A003";
+
+        const costePotente = Number(config.coste_fatiga_A002) || 38;
+        const fatigaMinPotente = Number(config.fatiga_minima_ataque_potente) || 65;
+        const multiCrit = Number(config.multiplicador_critico) || 1.0;
+
+        if (multiCrit > 1.0 && fatigaActual >= fatigaMinPotente && fatigaActual >= costePotente) {
+            if (objetivoHpPorcentaje < 35 || hpPorcentaje > 60) {
+                return "A002";
+            }
+        }
+
+        const costeDefensa = Number(config.coste_fatiga_D001) || 20;
+        if (hpPorcentaje < 30 && fatigaActual > costeDefensa && !atacante.defendiendo) {
+            return "D001";
+        }
+
+        const costeTactico = Number(config.coste_fatiga_A003) || 10;
+        if (fatigaActual >= costeTactico && (atacante.efectivos.tactica > 40 || Math.random() < 0.50)) {
+            return "A003";
+        }
+
+        return "A001";
     }
 
     function obtenerCombatiente(combate, codigo) {
@@ -253,4 +293,4 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
-
+    
