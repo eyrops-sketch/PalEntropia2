@@ -128,7 +128,7 @@ body {
     text-shadow: 0 0 10px rgba(88, 166, 255, 0.6);
 }
 
-/* --- CONTROL MANUAL (2 POR FILA CON RELIEVE Y FILOS CELESTES) --- */
+/* --- CONTROL MANUAL --- */
 .control-manual {
     margin-bottom: 15px;
     background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
@@ -178,14 +178,13 @@ body {
     accent-color: #58a6ff;
 }
 
-/* --- ZONA DE COMBATIENTES (TARJETAS CON RELIEVE Y FILOS CELESTES) --- */
+/* --- ZONA DE COMBATIENTES --- */
 .zona-combatientes {
     display: grid;
     grid-template-columns: 1fr 90px 1fr;
     gap: 15px;
     align-items: stretch;
     width: 100%;
-    max-width: 100%;
 }
 
 .tarjeta-combatiente {
@@ -220,7 +219,6 @@ body {
     align-items: flex-start;
 }
 
-/* NOMBRES DE LOS ANIMALES MÁS GRANDES Y DESTACADOS */
 .tarjeta-combatiente .nombre {
     font-weight: 800;
     font-size: 1.35rem;
@@ -248,7 +246,7 @@ body {
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* --- CONTENEDOR E IMAGEN 9:16 VERTICAL CON RELIEVE --- */
+/* --- IMAGEN COMBATIENTE --- */
 .contenedor-imagen-combatiente {
     width: 100%;
     overflow: hidden;
@@ -288,7 +286,7 @@ body {
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 4px 8px rgba(0,0,0,0.4), 0 0 8px rgba(88, 166, 255, 0.2);
 }
 
-/* --- BARRAS DE VIDA Y FATIGA CON RELIEVE --- */
+/* --- BARRAS DE VIDA Y FATIGA --- */
 .vida, .fatiga {
     display: flex;
     flex-direction: column;
@@ -328,7 +326,7 @@ body {
     transition: width 0.3s ease;
 }
 
-/* --- ESTADÍSTICAS Y CENTRO DE COMBATE CON RELIEVE --- */
+/* --- ESTADÍSTICAS Y CENTRO DE COMBATE --- */
 .stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -379,7 +377,7 @@ body {
     color: #8b949e;
 }
 
-/* --- BOTONES Y ACCIONES (CON RELIEVE ESCULPIDO 3D Y FILOS CELESTES) --- */
+/* --- BOTONES Y ACCIONES --- */
 button {
     cursor: pointer;
     background: linear-gradient(180deg, #2ea043 0%, #238636 100%);
@@ -540,45 +538,14 @@ button:disabled {
     color: #8b949e;
 }
 
-/* --- DISEÑO ADAPTABLE (RESPONSIVE MÓVIL Y PC) --- */
+/* --- RESPONSIVE --- */
 @media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    #arena {
-        max-width: 100%;
-        gap: 12px;
-    }
-
-    .zona-combatientes {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        width: 100%;
-    }
-
-    .tarjeta-combatiente {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .centro-combate {
-        flex-direction: row;
-        justify-content: space-around;
-        padding: 12px;
-    }
-
-    .entrada-combatiente {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .vs {
-        padding-top: 0;
-        text-align: center;
-    }
-
-    .botones-acciones {
-        grid-template-columns: 1fr;
-    }
+    body { padding: 10px; }
+    #arena { max-width: 100%; gap: 12px; }
+    .zona-combatientes { grid-template-columns: 1fr; gap: 15px; }
+    .tarjeta-combatiente { width: 100%; max-width: 100%; }
+    .centro-combate { flex-direction: row; justify-content: space-around; padding: 12px; }
+    .entrada-combatiente { flex-direction: column; gap: 10px; }
+    .vs { padding-top: 0; text-align: center; }
+    .botones-acciones { grid-template-columns: 1fr; }
 }
