@@ -262,6 +262,8 @@ function prepararCombate() {
 
 function prepararSerie() {
     if (!validarYPrepararDatos()) return;
+    
+    // Volver a leer la configuración y reglas actuales justo al iniciar la serie
     const reg = obtenerReglasTorneo();
     partidosSerie = Number(reg.partidosSerie) || 1; 
     victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
@@ -271,11 +273,17 @@ function prepararSerie() {
     serieActiva = true; 
     serieTerminada = false; 
     partidoRegistrado = false;
+    
     document.getElementById("resultado").classList.add("resultado-oculto");
     limpiarRegistro(); 
     actualizarInterfazSerie(); 
+    
+    // Actualizar también la etiqueta visual de la modalidad en la interfaz
+    actualizarInterfazModalidad();
+    
     iniciarPartidoSerie();
 }
+
 
 function iniciarPartidoSerie() {
     if (!serieActiva || serieTerminada) return;
