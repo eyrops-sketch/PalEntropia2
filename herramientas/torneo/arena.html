@@ -74,7 +74,8 @@
             <div id="c2Estado" class="estado">—</div>
         </article>
     </section>
-       <section id="acciones" class="panel">
+
+      <section id="acciones" class="panel">
         <h2>🎯 Acciones</h2>
         <div class="botones-acciones">
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>
@@ -139,11 +140,15 @@ const botonNuevoCombate = document.getElementById("botonNuevoCombate"), botonVol
 const botonInfoModalidades = document.getElementById("botonInfoModalidades"), modalModalidades = document.getElementById("modalModalidades"), botonCerrarModal = document.getElementById("botonCerrarModal");
 const labelModalidadActual = document.getElementById("labelModalidadActual");
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
-
-   function obtenerReglasTorneo() {
+function obtenerReglasTorneo() {
     const g = localStorage.getItem(CLAVE_REGLAS);
     if (!g) return { ...REGLAS_DEF };
     try { const r = JSON.parse(g); return { partidosSerie: Number(r.partidosSerie) || 1, tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal" }; } catch (e) { return { ...REGLAS_DEF }; }
+}
+function obtenerConfiguracionActiva() {
+    const reg = obtenerReglasTorneo();
+    const modoActivo = reg.tipoCombate || "normal";
+    return fichas.find(f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()) || fichas[0];
 }
 function actualizarInterfazModalidad() {
     const reg = obtenerReglasTorneo();
@@ -214,7 +219,8 @@ function prepararCombate() {
     const reg = obtenerReglasTorneo(); partidosSerie = Number(reg.partidosSerie) || 1; victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
     victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = partidosSerie > 1; serieTerminada = false; partidoRegistrado = false; actualizarInterfazSerie();
     try {
-        combate = window.crearCombateEstandar(ficha1, ficha2); if (!combate) throw new Error();
+        const configActiva = obtenerConfiguracionActiva();
+        combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();
         combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true;
         mostrarCombatientes(); activarBotones(); limpiarRegistro();
         if (window.cargarImagenesCombatientesAsync) window.cargarImagenesCombatientesAsync(combatiente1.codigo, combatiente2.codigo);
@@ -233,7 +239,8 @@ function prepararSerie() {
 function iniciarPartidoSerie() {
     if (!serieActiva || serieTerminada) return;
     try {
-        combate = window.crearCombateEstandar(ficha1, ficha2); if (!combate) throw new Error();
+        const configActiva = obtenerConfiguracionActiva();
+        combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();
         combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true; partidoRegistrado = false;
         document.getElementById("resultado").classList.add("resultado-oculto");
         mostrarCombatientes(); activarBotones(); limpiarRegistro();
@@ -242,16 +249,21 @@ function iniciarPartidoSerie() {
         añadirRegistro("⚔️ " + combatiente1.nombre + " (" + combatiente1.codigo + ") vs " + combatiente2.nombre + " (" + combatiente2.codigo + ")");
         mostrarMensaje("Partido " + partidoActual + " preparado correctamente."); actualizarInterfazSerie();
     } catch (e) { combateActivo = false; mostrarMensaje("❌ Error al preparar el partido."); }
-    }
+}
 
-    function mostrarCombatientes() {
+function mostrarCombatientes() {
     if (!combate || !combatiente1 || !combatiente2) return;
+    const reg = obtenerReglasTorneo();
+    const nombreModoTexto = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";
+
     document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";
     document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";
-    document.getElementById("c1Perfil").textContent = obtenerPerfil(combatiente1.perfil);
+    document.getElementById("c1Perfil").textContent = nombreModoTexto;
+    
     document.getElementById("c2Nombre").textContent = combatiente2.nombre || "—";
     document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";
-    document.getElementById("c2Perfil").textContent = obtenerPerfil(combatiente2.perfil);
+    document.getElementById("c2Perfil").textContent = nombreModoTexto;
+
     mostrarBarra(combatiente1.hp, combatiente1.hp_max, "c1VidaTexto", "c1VidaBarra");
     mostrarBarra(combatiente2.hp, combatiente2.hp_max, "c2VidaTexto", "c2VidaBarra");
     mostrarBarra(combatiente1.fatiga, combatiente1.fatiga_max, "c1FatigaTexto", "c1FatigaBarra");
@@ -262,7 +274,6 @@ function iniciarPartidoSerie() {
     document.getElementById("turnoActual").textContent = "Turno " + (combate.turno || "—");
     document.getElementById("iniciativa").textContent = combate.iniciativa || (combatiente1.iniciativa !== undefined && combatiente2.iniciativa !== undefined ? combatiente1.iniciativa + " / " + combatiente2.iniciativa : "—");
 }
-function obtenerPerfil(p) { return { agresivo: "🔥 Agresivo", defensivo: "🛡️ Defensivo", rapido: "⚡ Rápido", aguante: "❤️ Aguante", tactico: "🧠 Táctico" }[p] || p || "—"; }
 function mostrarBarra(v, maxV, idT, idB) {
     const act = Number(v), mx = Number(maxV) || 100, seg = Number.isFinite(act) ? Math.max(0, Math.min(mx, act)) : mx;
     const txt = document.getElementById(idT), bar = document.getElementById(idB);
@@ -397,3 +408,6 @@ botonVolverCruces.addEventListener("click", () => { window.location.href = "inde
 </script>
 </body>
 </html>
+
+    
+    
