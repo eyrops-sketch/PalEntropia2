@@ -93,9 +93,9 @@ window.PALARENA_STANDAR = (function() {
             tactica: baseTac * coefGeneral
         };
     }
-        function crearCombatiente(ficha, esJugador2 = false) {
-        sincronizarConfiguracionDesdeStorage();
-        const config = configuracionGlobal;
+
+    function crearCombatiente(ficha, configPersonalizada = null) {
+        const config = configPersonalizada || configuracionGlobal;
         const efectivos = calcularStatsEfectivos(ficha, config);
         const hpMax = config.hp_base * (efectivos.resistencia / 50);
 
@@ -114,10 +114,15 @@ window.PALARENA_STANDAR = (function() {
         };
     }
 
-    function crearCombateEstandar(ficha1, ficha2) {
+    function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
         sincronizarConfiguracionDesdeStorage();
-        const c1 = crearCombatiente(ficha1, false);
-        const c2 = crearCombatiente(ficha2, true);
+        // Si se pasa una configuración de modo específica, la fusionamos temporalmente
+        if (configPersonalizada && typeof configPersonalizada === "object") {
+            configuracionGlobal = { ...configuracionGlobal, ...configPersonalizada };
+        }
+        const config = configuracionGlobal;
+        const c1 = crearCombatiente(ficha1, config);
+        const c2 = crearCombatiente(ficha2, config);
 
         return {
             combatiente1: c1,
@@ -130,7 +135,6 @@ window.PALARENA_STANDAR = (function() {
     }
 
     function regenerarFatiga(combatiente) {
-        sincronizarConfiguracionDesdeStorage();
         const config = configuracionGlobal;
         combatiente.fatiga = Math.min(
             combatiente.fatiga_max,
@@ -139,7 +143,6 @@ window.PALARENA_STANDAR = (function() {
     }
 
     function ejecutarAccion(atacante, objetivo, codigoAccion) {
-        sincronizarConfiguracionDesdeStorage();
         const config = configuracionGlobal;
         let costeFatiga = 0;
 
@@ -158,7 +161,7 @@ window.PALARENA_STANDAR = (function() {
             };
         }
 
-        let danoBase = config.dano_base + (atacante.efectivos.ataque * config.dano_por_ataque);
+        let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
 
         if (codigoAccion === "A002") {
@@ -169,8 +172,13 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        const defensaObjetivo = objetivo.defendiendo ? objetivo.efectivos.defensa * (1 + config.reduccion_defensa) : objetivo.efectivos.defensa;
-        let danoFinal = Math.max(1, danoBase - (defensaObjetivo / config.defensa_divisor));
+        const defensaObjetivo = objetivo.defendiendo ? objetivo.efectivos.defensa * (1 + Number(config.reduccion_defensa)) : objetivo.efectivos.defensa;
+        let danoReducido = Math.max(1, danoBase - (defensaObjetivo / Number(config.defensa_divisor)));
+
+        // APLICACIÓN DE VARIACIÓN ALEATORIA DE DAÑO (Rompe los combates idénticos)
+        const variacion = Number(config.variacion_dano) || 0.25;
+        const factorAleatorio = 1 + (Math.random() * (variacion * 2) - variacion);
+        let danoFinal = Math.max(1, Math.round(danoReducido * factorAleatorio));
 
         objetivo.hp = Math.max(0, objetivo.hp - danoFinal);
         if (objetivo.hp <= 0) {
@@ -179,7 +187,7 @@ window.PALARENA_STANDAR = (function() {
 
         return {
             mensaje: `${atacante.nombre} ejecuta ${codigoAccion} contra ${objetivo.nombre}.`,
-            dano: Math.round(danoFinal),
+            dano: danoFinal,
             critico: critico
         };
     }
@@ -196,7 +204,8 @@ window.PALARENA_STANDAR = (function() {
         if (combate.combatiente2.codigo === codigo) return combate.combatiente2;
         return null;
     }
-        return {
+
+    return {
         get configuracion() {
             sincronizarConfiguracionDesdeStorage();
             return configuracionGlobal;
@@ -244,3 +253,4 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
+
