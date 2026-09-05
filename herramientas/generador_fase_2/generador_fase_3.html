@@ -181,10 +181,10 @@
     <button id="botonArena"
             type="button"
             title="Arena"
-            aria-label="Arena">  
-          
-       ⚔️
-          
+            aria-label="Arena">
+
+        ⚔️
+
     </button>
 
 
@@ -711,46 +711,147 @@ function abrirIndiceTorneo() {
     let matriz = [];
 
 
-    if (
-        window.MATRIXFILTRO &&
-        typeof window.MATRIXFILTRO.actualizar ===
-        "function"
-    ) {
-
-        matriz =
-            window.MATRIXFILTRO.actualizar();
-
-    }
-
-
     /*
-    Si MATRIXFILTRO no tiene resultados,
-    usamos directamente su matriz actual.
+    =====================================================
+    SI EXISTE UNA MATRIZ DEL BUSCADOR
+    =====================================================
     */
 
     if (
-        !Array.isArray(matriz) &&
-        window.MATRIXFILTRO &&
-        Array.isArray(
-            window.MATRIXFILTRO.datos
-        )
+        window.PALNAVEGADOR &&
+        typeof window.PALNAVEGADOR.estaEnMatriz ===
+        "function" &&
+        window.PALNAVEGADOR.estaEnMatriz()
     ) {
 
+        if (
+            window.MATRIXFILTRO &&
+            typeof window.MATRIXFILTRO.actualizar ===
+            "function"
+        ) {
+
+            matriz =
+                window.MATRIXFILTRO.actualizar();
+
+        }
+
+
+        /*
+        Si MATRIXFILTRO no devuelve resultados,
+        usamos directamente su matriz actual.
+        */
+
+        if (
+            !Array.isArray(matriz) &&
+            window.MATRIXFILTRO &&
+            Array.isArray(
+                window.MATRIXFILTRO.datos
+            )
+        ) {
+
+            matriz =
+                window.MATRIXFILTRO.datos;
+
+        }
+
+
+        /*
+        Normalizar matriz.
+        */
+
         matriz =
-            window.MATRIXFILTRO.datos;
+            Array.isArray(matriz)
+                ? matriz
+                    .map(
+                        codigo =>
+                            String(
+                                codigo || ""
+                            ).trim()
+                    )
+                    .filter(Boolean)
+                    .filter(
+                        (codigo, indice, array) =>
+                            array.indexOf(codigo) === indice
+                    )
+                : [];
 
     }
 
 
     /*
     =====================================================
-    NORMALIZAR MATRIZ
+    SELECCIÓN RÁPIDA
     =====================================================
+
+    Cuando NO hay una matriz activa:
+
+        15 aleatorias del conjunto general
+        +
+        la paleoficha actualmente cargada
+        =
+        16 participantes
     */
 
-    matriz =
-        Array.isArray(matriz)
-            ? matriz
+    if (
+        !window.PALNAVEGADOR ||
+        !window.PALNAVEGADOR.estaEnMatriz ||
+        !window.PALNAVEGADOR.estaEnMatriz()
+    ) {
+
+        const codigoActual =
+            window.PALNAVEGADOR &&
+            window.PALNAVEGADOR.codigoActual
+                ? String(
+                    window.PALNAVEGADOR.codigoActual
+                  ).trim()
+                : "";
+
+
+        /*
+        =================================================
+        OBTENER CONJUNTO GENERAL
+        =================================================
+        */
+
+        const registros =
+            window.PALNAVEGADOR &&
+            Array.isArray(
+                window.PALNAVEGADOR.registros
+            )
+                ? window.PALNAVEGADOR.registros
+                : [];
+
+
+        /*
+        =================================================
+        OBTENER CÓDIGOS
+        =================================================
+        */
+
+        let todosLosCodigos =
+            registros
+                .map(
+                    registro => {
+
+                        if (
+                            window.PALNAVEGADOR &&
+                            typeof window.PALNAVEGADOR
+                                .obtenerCodigoRegistro ===
+                            "function"
+                        ) {
+
+                            return window.PALNAVEGADOR
+                                .obtenerCodigoRegistro(
+                                    registro
+                                );
+
+                        }
+
+
+                        return "";
+
+                    }
+                )
                 .map(
                     codigo =>
                         String(
@@ -761,11 +862,83 @@ function abrirIndiceTorneo() {
                 .filter(
                     (codigo, indice, array) =>
                         array.indexOf(codigo) === indice
-                )
-            : [];
+                );
 
 
-    /*
+        /*
+        =================================================
+        EXCLUIR LA PALEOFICHA ACTUAL
+        =================================================
+        */
+
+        todosLosCodigos =
+            todosLosCodigos.filter(
+                codigo =>
+                    codigo !== codigoActual
+            );
+
+
+        /*
+        =================================================
+        MEZCLAR ALEATORIAMENTE
+        =================================================
+        */
+
+        for (
+            let i =
+                todosLosCodigos.length - 1;
+            i > 0;
+            i--
+        ) {
+
+            const j =
+                Math.floor(
+                    Math.random() *
+                    (i + 1)
+                );
+
+
+            [
+                todosLosCodigos[i],
+                todosLosCodigos[j]
+            ] =
+            [
+                todosLosCodigos[j],
+                todosLosCodigos[i]
+            ];
+
+        }
+
+
+        /*
+        =================================================
+        TOMAR 15 ALEATORIAS
+        =================================================
+        */
+
+        matriz =
+            todosLosCodigos.slice(
+                0,
+                15
+            );
+
+
+        /*
+        =================================================
+        AÑADIR LA PALEOFICHA ACTUAL
+        =================================================
+        */
+
+        if (codigoActual) {
+
+            matriz.push(
+                codigoActual
+            );
+
+        }
+
+    }
+/*
     =====================================================
     CRITERIO DE BÚSQUEDA DEL TORNEO
     =====================================================
