@@ -245,6 +245,26 @@ window.PALARENA_STANDAR = (function() {
         return null;
     }
 
+    function reiniciarSerieCombatientes(combate) {
+        if (!combate) return;
+        combate.turno = 1;
+        combate.estado = "en_curso";
+        combate.historial = [];
+        combate.ganador = null;
+        if (combate.combatiente1) {
+            combate.combatiente1.hp = combate.combatiente1.hp_max;
+            combate.combatiente1.fatiga = configuracionGlobal.fatiga_inicial;
+            combate.combatiente1.derrotado = false;
+            combate.combatiente1.defendiendo = false;
+        }
+        if (combate.combatiente2) {
+            combate.combatiente2.hp = combate.combatiente2.hp_max;
+            combate.combatiente2.fatiga = configuracionGlobal.fatiga_inicial;
+            combate.combatiente2.derrotado = false;
+            combate.combatiente2.defendiendo = false;
+        }
+    }
+
     return {
         get configuracion() {
             sincronizarConfiguracionDesdeStorage();
@@ -254,13 +274,16 @@ window.PALARENA_STANDAR = (function() {
         ejecutarAccion,
         decidirAccion,
         regenerarFatiga,
-        obtenerCombatiente
+        obtenerCombatiente,
+        reiniciarSerieCombatientes
     };
 })();
 
 window.crearCombateEstandar = window.PALARENA_STANDAR.crearCombateEstandar;
+window.reiniciarSerieCombatientes = window.PALARENA_STANDAR.reiniciarSerieCombatientes;
+
 window.ejecutarTurnoEstandar = function(combate) {
-    if (combate.estado === "finalizado") return;
+    if (!combate || combate.estado === "finalizado") return;
     const c1 = combate.combatiente1;
     const c2 = combate.combatiente2;
 
@@ -295,3 +318,4 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
+
