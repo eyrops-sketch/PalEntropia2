@@ -44,8 +44,8 @@
                 <label class="opcion-control"><input type="radio" name="controlManual" value="2"><span>Combatiente 2</span></label>
             </div>
         </div>
-        <button id="botonPreparar" type="button">⚔️ Preparar combate</button>
-        <button id="botonSerie" type="button" style="display: block;">🏆 Mejor de la serie</button>
+        <button id="botonPreparar" type="button" style="display: none;" aria-hidden="true">⚔️ Preparar combate</button>
+        <button id="botonSerie" type="button" style="display: block;">🏆 Iniciar la serie</button>
         <div id="mensajeConfiguracion" class="mensaje">Introduce los códigos J1 de las dos Paleofichas.</div>
         <div id="informacionSerie" class="informacion-serie" style="display: none;">
             <div id="tituloSerie">🏆 Serie</div>
@@ -463,7 +463,6 @@ botonNuevoCombate.addEventListener("click", () => {
         iniciarPartidoSerie();
         return;
     }
-    // Si la serie ya terminó, este botón al hacer clic simplemente oculta el resultado o te deja volver a cruces
     document.getElementById("resultado").classList.add("resultado-oculto");
     mostrarMensaje("Serie finalizada. Vuelve a los cruces para el siguiente emparejamiento.");
 });
