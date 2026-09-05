@@ -47,7 +47,7 @@
             <div id="partidoSerie">—</div>
         </div>
     </section>
-       <section id="combatientes" class="zona-combatientes">
+        <section id="combatientes" class="zona-combatientes">
         <article id="combatiente1" class="tarjeta-combatiente">
             <div class="cabecera-combatiente">
                 <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>
@@ -414,11 +414,29 @@ function añadirRegistro(txt) { const reg = document.getElementById("registroCom
 function mostrarMensaje(txt) { mensajeConfiguracion.textContent = txt; }
 
 botonNuevoCombate.addEventListener("click", () => {
-    if (serieActiva && !combateActivo && partidoRegistrado) { partidoActual++; iniciarPartidoSerie(); return; }
-    if (serieTerminada) { serieActiva = serieTerminada = false; partidosSerie = 1; victorias1 = victorias2 = partidoActual = 0; victoriasNecesarias = 1; partidoRegistrado = false; actualizarInterfazSerie(); prepararSerie(); return; }
-    combateActivo = false; combate = combatiente1 = combatiente2 = ficha1 = ficha2 = null; serieActiva = serieTerminada = false; partidosSerie = 1; victorias1 = victorias2 = partidoActual = 0; victoriasNecesarias = 1; partidoRegistrado = false;
-    document.getElementById("resultado").classList.add("resultado-oculto"); document.getElementById("turnoActual").textContent = "Turno —"; document.getElementById("iniciativa").textContent = "—";
-    nombre1.textContent = nombre2.textContent = "—";
+    combateActivo = false;
+    serieActiva = false;
+    serieTerminada = false;
+    partidoRegistrado = false;
+    partidosSerie = 1;
+    victorias1 = 0;
+    victorias2 = 0;
+    partidoActual = 0;
+    victoriasNecesarias = 1;
+    
+    combate = null;
+    combatiente1 = null;
+    combatiente2 = null;
+    ficha1 = null;
+    ficha2 = null;
+
+    document.getElementById("resultado").classList.add("resultado-oculto");
+    document.getElementById("turnoActual").textContent = "Turno —";
+    document.getElementById("iniciativa").textContent = "—";
+    
+    nombre1.textContent = "—";
+    nombre2.textContent = "—";
+    
     ["c1Nombre", "c2Nombre"].forEach(id => document.getElementById(id).textContent = "—");
     ["c1Codigo", "c2Codigo"].forEach(id => document.getElementById(id).textContent = "—");
     ["c1VidaTexto", "c2VidaTexto"].forEach(id => document.getElementById(id).textContent = "— / —");
@@ -427,9 +445,15 @@ botonNuevoCombate.addEventListener("click", () => {
     ["c1Perfil", "c2Perfil"].forEach(id => document.getElementById(id).textContent = "—");
     ["c1Stats", "c2Stats"].forEach(id => document.getElementById(id).innerHTML = "");
     ["c1Estado", "c2Estado"].forEach(id => document.getElementById(id).textContent = "—");
-    codigo1.value = codigo1.value.trim(); codigo2.value = codigo2.value.trim();
-    actualizarNombre(codigo1, nombre1); actualizarNombre(codigo2, nombre2); limpiarRegistro(); desactivarBotones();
-    botonNuevoCombate.textContent = "🔄 Nuevo combate"; actualizarInterfazSerie(); mostrarMensaje("Introduce los códigos J1 de las dos Paleofichas.");
+    
+    codigo1.value = "";
+    codigo2.value = "";
+    
+    limpiarRegistro();
+    desactivarBotones();
+    botonNuevoCombate.textContent = "🔄 Nuevo combate";
+    actualizarInterfazSerie();
+    mostrarMensaje("Introduce los códigos J1 de las dos Paleofichas.");
 });
 
 botonVolverCruces.addEventListener("click", () => { window.location.href = "index.html"; });
@@ -438,3 +462,4 @@ botonVolverCruces.addEventListener("click", () => { window.location.href = "inde
 </script>
 </body>
 </html>
+
