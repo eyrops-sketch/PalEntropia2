@@ -89,6 +89,22 @@
 <section id="controlesNavegacion"
          aria-label="Navegación de paleofichas">
 
+
+    <!-- =================================================
+         BOTÓN ARENA DIRECTA
+         ================================================= -->
+
+    <a id="botonModoArena"
+       class="botonNavegacion"
+       href="../torneo/arena.html"
+       title="Arena"
+       aria-label="Arena">
+
+        ⚔️
+
+    </a>
+
+
     <button id="botonPrimero"
             class="botonNavegacion"
             type="button"
@@ -692,8 +708,6 @@ document.addEventListener(
 );
 
 </script>
-
-
 <!-- =====================================================
      BOTÓN ÍNDICE DEL TORNEO
      ===================================================== -->
@@ -786,9 +800,13 @@ function abrirIndiceTorneo() {
     Cuando NO hay una matriz activa:
 
         15 aleatorias del conjunto general
+
         +
+
         la paleoficha actualmente cargada
+
         =
+
         16 participantes
     */
 
@@ -846,7 +864,6 @@ function abrirIndiceTorneo() {
                                 );
 
                         }
-
 
                         return "";
 
@@ -938,7 +955,9 @@ function abrirIndiceTorneo() {
         }
 
     }
-/*
+
+
+    /*
     =====================================================
     CRITERIO DE BÚSQUEDA DEL TORNEO
     =====================================================
@@ -991,6 +1010,18 @@ function abrirIndiceTorneo() {
     );
 
 
+    /*
+    =====================================================
+    ACTIVAR MODO TORNEO
+    =====================================================
+    */
+
+    localStorage.setItem(
+        "palentropia_modotorneo",
+        "true"
+    );
+
+
     console.log(
         "PalEntropía — matriz transferida al torneo:",
         matriz
@@ -1000,6 +1031,12 @@ function abrirIndiceTorneo() {
     console.log(
         "PalEntropía — criterio del torneo:",
         criterioTorneo
+    );
+
+
+    console.log(
+        "PalEntropía — modotorneo:",
+        true
     );
 
 
@@ -1050,7 +1087,128 @@ document.addEventListener(
 
 
 <!-- =====================================================
-     BOTÓN ARENA
+     BOTÓN ARENA DIRECTA
+     ===================================================== -->
+
+<script>
+
+function abrirModoArena() {
+
+    /*
+    =====================================================
+    OBTENER J1 ACTUAL
+    =====================================================
+    */
+
+    const codigo =
+        window.PALNAVEGADOR &&
+        window.PALNAVEGADOR.codigoActual
+            ? String(
+                window.PALNAVEGADOR.codigoActual
+              ).trim()
+            : "";
+
+
+    if (!codigo) {
+
+        return;
+
+    }
+
+
+    /*
+    =====================================================
+    ACTIVAR MODO ARENA
+    =====================================================
+    */
+
+    localStorage.setItem(
+        "palentropia_modotorneo",
+        "false"
+    );
+
+
+    /*
+    =====================================================
+    CONSERVAR J1 ACTUAL
+    =====================================================
+    */
+
+    localStorage.setItem(
+        "palentropia_arena_seleccion",
+        JSON.stringify({
+
+            arena: "directa",
+
+            codigo:
+                codigo
+
+        })
+    );
+
+
+    console.log(
+        "PalEntropía — modo arena:",
+        false
+    );
+
+
+    console.log(
+        "PalEntropía — j1 conservado:",
+        codigo
+    );
+
+
+    /*
+    =====================================================
+    IR A ARENA.HTML
+    =====================================================
+    */
+
+    window.location.href =
+        "../torneo/arena.html" +
+        "?codigo=" +
+        encodeURIComponent(codigo);
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        const botonArena =
+            document.getElementById(
+                "botonModoArena"
+            );
+
+
+        if (!botonArena) {
+
+            return;
+
+        }
+
+
+        botonArena.addEventListener(
+            "click",
+            function(event) {
+
+                event.preventDefault();
+
+                abrirModoArena();
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+
+<!-- =====================================================
+     BOTÓN ARENA DE LA FICHA
      ===================================================== -->
 
 <script>
@@ -1110,4 +1268,5 @@ document.addEventListener(
 
 
 </body>
+
 </html>
