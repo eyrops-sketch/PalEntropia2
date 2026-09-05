@@ -70,7 +70,7 @@
             <div id="c2Estado" class="estado">—</div>
         </article>
     </section>
-      <section id="acciones" class="panel">
+        <section id="acciones" class="panel">
         <h2>🎯 Acciones</h2>
         <div class="botones-acciones">
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>
@@ -88,9 +88,7 @@
         <div id="resultadoIcono" class="resultado-icono">🏆</div>
         <h2 id="resultadoTitulo">—</h2>
         <div id="resultadoTexto">—</div>
-        <button id="botonNuevoCombate" type="button">🔄 Nuevo combate</button>
-
-
+        <button id="botonNuevoCombate" type="button" style="display: none;">🔄 Nuevo combate</button>
         <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>
     </section>
 </main>
@@ -115,7 +113,7 @@ const botonA001 = document.getElementById("botonA001"), botonA002 = document.get
 const botonNuevoCombate = document.getElementById("botonNuevoCombate"), botonVolverCruces = document.getElementById("botonVolverCruces");
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
 
- function obtenerReglasTorneo() {
+function obtenerReglasTorneo() {
     const g = localStorage.getItem(CLAVE_REGLAS);
     if (!g) return { ...REGLAS_DEF };
     try { const r = JSON.parse(g); return { partidosSerie: Number(r.partidosSerie) || 1, tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "standard" }; } catch (e) { return { ...REGLAS_DEF }; }
@@ -210,8 +208,8 @@ function iniciarPartidoSerie() {
         añadirRegistro("⚔️ " + combatiente1.nombre + " (" + combatiente1.codigo + ") vs " + combatiente2.nombre + " (" + combatiente2.codigo + ")");
         mostrarMensaje("Partido " + partidoActual + " preparado correctamente."); actualizarInterfazSerie();
     } catch (e) { combateActivo = false; mostrarMensaje("❌ Error al preparar el partido."); }
-                                                      }
-  function mostrarCombatientes() {
+}
+    function mostrarCombatientes() {
     if (!combate || !combatiente1 || !combatiente2) return;
     document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";
     document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";
@@ -258,6 +256,10 @@ function activarBotones() {
 function desactivarBotones() { botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; }
 function interpretarRes(res, at, ob) {
     if (!res) return;
+    if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) {
+        res.dano = Math.round(res.dano * 0.5);
+        añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%.");
+    }
     if (res.mensaje) añadirRegistro(res.mensaje);
     if (res.dano !== undefined && res.dano > 0) añadirRegistro(`💥 ${at.nombre} causa ${res.dano} de daño a ${ob.nombre}.`);
     if (res.critico) añadirRegistro("💥 ¡Golpe crítico!");
@@ -304,7 +306,7 @@ function procesarTurnoAuto(regs) {
         if (!reg) return;
         if (reg.tipo === "efectos") { [reg.primero, reg.segundo].forEach(ra => { if (Array.isArray(ra)) ra.forEach(d => { if (d && d.mensaje) añadirRegistro(d.mensaje); }); }); return; }
         if (reg.tipo === "accion" && reg.resultado) {
-            interpretarRes(reg.resultado, { nombre: reg.atacante === combatiente1.codigo ? combatiente1.nombre : combatiente2.nombre }, { nombre: reg.objetivo === combatiente1.codigo ? combatiente1.nombre : combatiente2.nombre });
+            interpretarRes(reg.resultado, { nombre: reg.atacante === combatiente1.codigo ? combatiente1.nombre : combatiente2.nombre, fatiga: reg.atacante === combatiente1.codigo ? combatiente1.fatiga : combatiente2.fatiga }, { nombre: reg.objetivo === combatiente1.codigo ? combatiente1.nombre : combatiente2.nombre });
         }
     });
     mostrarCombatientes();
@@ -360,4 +362,3 @@ botonVolverCruces.addEventListener("click", () => { window.location.href = "inde
 </script>
 </body>
 </html>
-
