@@ -83,8 +83,8 @@
             <div id="c2Stats" class="stats"></div>
             <div id="c2Estado" class="estado">—</div>
         </article>
-        </section>
-        <section id="acciones" class="panel">
+    </section>
+    <section id="acciones" class="panel">
         <h2>🎯 Acciones</h2>
         <div class="botones-acciones">
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>
@@ -94,7 +94,7 @@
         </div>
         <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>
     </section>
-    <section id="registro" class="panel">
+        <section id="registro" class="panel">
         <h2>📜 Registro del combate</h2>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
@@ -127,7 +127,7 @@
         <button id="botonCerrarModal" type="button" style="padding: 6px 15px; cursor: pointer;">Cerrar</button>
     </div>
 </div>
-   <script src="palarenastats.js"></script>
+<script src="palarenastats.js"></script>
 <script src="standar-ataques.js"></script>
 <script src="standar-efectos.js"></script>
 <script src="standar.js"></script>
@@ -413,7 +413,7 @@ function mostrarResSerie(g) {
     document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes();
 }
 function mostrarResCombate(res) {
-if (!res) return;
+      if (!res) return;
     let g = res.ganador ? (typeof res.ganador === "string" ? window.PALARENA_STANDAR.obtenerCombatiente(combate, res.ganador) : res.ganador) : null;
     if (!g && combate) g = combate.ganador === combatiente1.codigo ? combatiente1 : (combate.ganador === combatiente2.codigo ? combatiente2 : null);
     document.getElementById("resultadoIcono").textContent = g ? "🏆" : "⚔️";
@@ -441,15 +441,25 @@ document.addEventListener("DOMContentLoaded", async function() {
     await cargarPaleofichas();
     await cargarMaster();
 
+    // Actualizar la interfaz superior con la modalidad y reglas actuales desde el inicio
+    actualizarInterfazModalidad();
+    actualizarInterfazSerie();
+
     const modoTorneo = localStorage.getItem("palentropia_modotorneo") === "true";
     const parametros = new URLSearchParams(window.location.search);
     const codigoUrl = parametros.get("codigo");
     const slotUrl = parametros.get("slot");
 
-    // Inyectar el botón central VS de selección individual y los indicadores ✅
-    const contenedorVs = document.querySelector(".centro-combate");
-    if (contenedorVs) {
-        const btnCentral = document.createElement("button");
+    // Limpiar duplicados previos del botón central si los hubiera
+    const viejoBoton = document.getElementById("botonCentralVisor");
+    if (viejoBoton) viejoBoton.remove();
+
+    // 1. Inyectar el botón central de búsqueda exactamente en el "VS" del panel de preparación
+    const elementoVs = document.querySelector(".entrada-combatiente .vs");
+    let btnCentral = null;
+    
+    if (elementoVs) {
+        btnCentral = document.createElement("button");
         btnCentral.type = "button";
         btnCentral.id = "botonCentralVisor";
         btnCentral.className = "boton-central-seleccion";
@@ -462,13 +472,18 @@ document.addEventListener("DOMContentLoaded", async function() {
             localStorage.setItem("palentropia_slot_activo", slotActivo);
             localStorage.setItem("palentropia_modotorneo", "false");
             
-            window.location.href = "../generador_fase_2/index.html?arena=" + slotActivo;
+            window.location.href = "https://palentropia.es/herramientas/generador_fase_2/generador_fase_3.html?arena=" + slotActivo;
         });
         
-        contenedorVs.parentNode.insertBefore(btnCentral, contenedorVs);
+        if (!modoTorneo) {
+            elementoVs.innerHTML = "";
+            elementoVs.appendChild(btnCentral);
+        } else {
+            elementoVs.innerHTML = "VS";
+        }
     }
 
-    // Añadir checks (✅) a las etiquetas de los combatientes
+    // 2. Asegurar checks (✅) en las etiquetas de los combatientes
     const labelC1 = document.querySelector('label[for="codigo1"]');
     const labelC2 = document.querySelector('label[for="codigo2"]');
     if (labelC1 && !document.getElementById("checkSlot1")) {
@@ -486,7 +501,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         labelC2.appendChild(span2);
     }
 
-    // Función para actualizar visibilidad de checks y foco manual visual
     function actualizarFocoYChecks(slot) {
         const check1 = document.getElementById("checkSlot1");
         const check2 = document.getElementById("checkSlot2");
@@ -514,7 +528,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
     }
 
-    // Escuchar cambios en los radio buttons de control manual para mover el foco y el check
     controlesManual.forEach(ctrl => {
         ctrl.addEventListener("change", function() {
             const val = this.value;
@@ -528,8 +541,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     if (modoTorneo) {
         // --- MODO TORNEO ---
         document.body.classList.add("modo-torneo");
-        const btnCentral = document.getElementById("botonCentralVisor");
-        if (btnCentral) btnCentral.style.display = "none";
+        if (elementoVs) elementoVs.innerHTML = "VS";
         
         const matrizJSON = localStorage.getItem("palentropia_matriz_combatientes");
         if (matrizJSON) {
@@ -546,51 +558,39 @@ document.addEventListener("DOMContentLoaded", async function() {
             }
         }
         
-        botonPreparar.style.display = "none";
-        botonSerie.style.display = "block";
-        
     } else {
         // --- MODO COMBATE INDIVIDUAL ---
         document.body.classList.remove("modo-torneo");
-        const btnCentral = document.getElementById("botonCentralVisor");
         if (btnCentral) btnCentral.style.display = "flex";
 
-        botonPreparar.style.display = "block";
-        botonSerie.style.display = "none";
+        const slotDestino = slotUrl || localStorage.getItem("palentropia_slot_activo") || "1";
 
-        if (codigoUrl && slotUrl) {
-            if (slotUrl === "1") {
+        // Trasladar estrictamente el código a su caja de texto correspondiente sin iniciar combates automáticos
+        if (codigoUrl) {
+            if (slotDestino === "1") {
                 codigo1.value = codigoUrl;
                 actualizarNombre(codigo1, nombre1);
-            } else if (slotUrl === "2") {
+            } else if (slotDestino === "2") {
                 codigo2.value = codigoUrl;
                 actualizarNombre(codigo2, nombre2);
             }
-            const radioTarget = document.querySelector(`input[name="controlManual"][value="${slotUrl}"]`);
-            if (radioTarget) {
-                radioTarget.checked = true;
-                controlManual = Number(slotUrl);
-            }
-            actualizarFocoYChecks(slotUrl);
-        } else {
-            const slotGuardado = localStorage.getItem("palentropia_slot_activo") || "1";
-            const radioTarget = document.querySelector(`input[name="controlManual"][value="${slotGuardado}"]`);
-            if (radioTarget) {
-                radioTarget.checked = true;
-                controlManual = Number(slotGuardado);
-            }
-            actualizarFocoYChecks(slotGuardado);
         }
 
-        // Si ya tenemos ambos códigos rellenos tras la carga, auto-preparar el combate individual
-        if (codigo1.value.trim() && codigo2.value.trim()) {
-            prepararCombate();
+        const radioTarget = document.querySelector(`input[name="controlManual"][value="${slotDestino}"]`);
+        if (radioTarget) {
+            radioTarget.checked = true;
+            controlManual = Number(slotDestino);
         }
+        actualizarFocoYChecks(slotDestino);
+
+        if (codigo1.value.trim()) actualizarNombre(codigo1, nombre1);
+        if (codigo2.value.trim()) actualizarNombre(codigo2, nombre2);
     }
 });
 </script>
 </body>
 </html>
+
 
     
     
