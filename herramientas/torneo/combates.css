@@ -740,3 +740,44 @@ button.versusCombate:hover:not(:disabled) {
 button.versusCombate:active:not(:disabled) {
     transform: scale(0.95);
 }
+
+
+/* =====================================================
+   CORRECCIÓN DE REJILLA Y ESTILOS PARA COMBATES FINALIZADOS
+   ===================================================== */
+
+/* Rejilla de combatientes adaptada para acomodar el marcador central */
+.cruceCombate .participantesCombate {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Tarjeta cuando el combate ya ha finalizado */
+.cruceCombate.combateFinalizado {
+    border-color: rgba(255, 215, 0, 0.45);
+    background: linear-gradient(145deg, rgba(28, 42, 60, 0.96), rgba(12, 22, 34, 0.96));
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.12);
+}
+
+/* Estilo para el combatiente que ha ganado la serie */
+.participanteCombate.ganadorTorneo {
+    border-color: #ffd700;
+    background: linear-gradient(145deg, rgba(62, 53, 15, 0.9), rgba(30, 26, 8, 0.95));
+    color: #ffe680;
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.25), 0 0 12px rgba(255, 215, 0, 0.2);
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+}
+
+/* Estilo limpio para el marcador numérico de victorias en medio */
+.marcadorSerie {
+    font-family: monospace, sans-serif;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #58a6ff;
+    text-align: center;
+    padding: 0 4px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 8px rgba(88, 166, 255, 0.4);
+}
