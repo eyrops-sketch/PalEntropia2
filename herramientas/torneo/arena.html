@@ -24,7 +24,7 @@
                 <a href="https://palentropia.es/herramientas/torneo/reglas.html" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>
             </div>
         </div>
-        <div class="entrada-combatiente">
+             <div class="entrada-combatiente">
             <div class="campo">
                 <label for="codigo1">🦖 Combatiente 1</label>
                 <div style="display: flex; gap: 5px; align-items: center;">
@@ -43,7 +43,6 @@
                 <div id="nombre2" class="nombre-combatiente">—</div>
             </div>
         </div>
-        
         <div id="controlManual" class="control-manual">
             <div class="control-manual-titulo">🎮 Control manual</div>
             <div class="control-manual-opciones">
@@ -60,7 +59,8 @@
             <div id="partidoSerie">—</div>
         </div>
     </section>
-    <section id="combatientes" class="zona-combatientes">
+
+        <section id="combatientes" class="zona-combatientes">
         <article id="combatiente1" class="tarjeta-combatiente">
             <div class="cabecera-combatiente">
                 <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>
@@ -91,7 +91,7 @@
             <div id="c2Estado" class="estado">—</div>
         </article>
     </section>
-        <section id="acciones" class="panel">
+    <section id="acciones" class="panel">
         <h2>🎯 Acciones</h2>
         <div class="botones-acciones">
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>
@@ -101,7 +101,7 @@
         </div>
         <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>
     </section>
-    <section id="registro" class="panel">
+        <section id="registro" class="panel">
         <h2>📜 Registro del combate</h2>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
@@ -110,9 +110,10 @@
         <h2 id="resultadoTitulo">—</h2>
         <div id="resultadoTexto">—</div>
         <button id="botonNuevoCombate" type="button">▶️ Siguiente</button>
-        <button id="botonVolverCruces" type="button" class="ocultar-en-individual">↩️ Volver a los cruces</button>
+        <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>
     </section>
 </main>
+
 <div id="modalModalidades" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">
     <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">
@@ -134,7 +135,8 @@
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Balance ancestral:</strong> Coeficientes comprimidos para nivelar estadísticas.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Furia desatada:</strong> Compensador agresivo para equilibrar Stats muy bajos.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Apex letal:</strong> Máximo nivel de riesgo y daño crítico desbocado.</div>
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</div>
+        </div>
+               <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Muerte súbita:</strong> Duelos hiperletales de un solo acierto e iniciativa radical 50/50.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 1:</strong> Factor de penalización específico del 60% al rendimiento del primer combatiente.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 2:</strong> Factor de penalización específico del 60% al rendimiento del segundo combatiente.</div>
@@ -152,6 +154,7 @@
         </div>
     </div>
 </div>
+
 <div id="modalGuiaCombate" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">
     <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">
@@ -177,7 +180,6 @@
 <script src="standar.js"></script>
 <script src="../generador_fase_2/buscaruta.js"></script>
 <script src="loadimagen.js"></script>
-
 <script>
 const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json";
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null;
@@ -358,7 +360,6 @@ async function iniciarPartidoSerie() {
         mostrarMensaje("Partido " + partidoActual + " preparado correctamente."); actualizarInterfazSerie();
     } catch (e) { combateActivo = false; mostrarMensaje("❌ Error al preparar el partido."); }
 }
-
 function mostrarCombatientes() {
     if (!combate || !combatiente1 || !combatiente2) return;
     const reg = obtenerReglasTorneo();
@@ -444,6 +445,20 @@ function ejecutarAccionJugador(cod) {
     } catch (e) { añadirRegistro("❌ Error durante la acción."); }
 }
 
+botonA001.addEventListener("click", () => ejecutarAccionJugador("A001"));
+botonA002.addEventListener("click", () => ejecutarAccionJugador("A002"));
+botonA003.addEventListener("click", () => ejecutarAccionJugador("A003"));
+botonD001.addEventListener("click", () => ejecutarAccionJugador("D001"));
+botonAuto.addEventListener("click", () => {
+    if (!combateActivo || !combate) return; desactivarBotones();
+    try {
+        while (combate.estado !== "finalizado") { const len = combate.historial.length; window.ejecutarTurnoEstandar(combate); procesarTurnoAuto(combate.historial.slice(len)); }
+        mostrarCombatientes();
+        const ganadorFinal = mostrarResCombate({ ganador: combate.ganador });
+        combateActivo = false; registrarResSerie(combate.ganador);
+    } catch (e) { añadirRegistro("❌ Error durante el combate automático."); activarBotones(); }
+});
+
 function procesarTurnoAuto(regs) {
     if (!Array.isArray(regs)) return;
     regs.forEach(reg => {
@@ -491,7 +506,6 @@ function mostrarResCombate(res) {
     document.getElementById("resultadoTexto").textContent = g ? "El combate ha terminado." : "Se ha determinado el resultado.";
     document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes();
     
-    // Sincronizar victoria con el torneo si procede
     const datosTorneo = localStorage.getItem("palentropia_combate_activo");
     if (datosTorneo && g) {
         try {
@@ -517,7 +531,16 @@ botonNuevoCombate.addEventListener("click", () => {
     document.getElementById("resultado").classList.add("resultado-oculto");
     mostrarMensaje("Serie finalizada. Vuelve a los cruces para el siguiente emparejamiento.");
 });
-botonVolverCruces.addEventListener("click", () => { window.location.href = "combates.html"; });
+botonVolverCruces.addEventListener("click", () => {
+    const datosTorneo = localStorage.getItem("palentropia_combate_activo");
+    if (datosTorneo) {
+        try {
+            const t = JSON.parse(datosTorneo);
+            if (t && t.modoTorneo) { window.location.href = "combates.html"; return; }
+        } catch(e) {}
+    }
+    window.location.href = "index.html";
+});
 
 document.addEventListener("DOMContentLoaded", async function() {
     await cargarPaleofichas();
@@ -525,7 +548,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     actualizarInterfazModalidad();
     actualizarInterfazSerie();
 
-    // --- INTEGRACIÓN AUTOMÁTICA DEL MODO TORNEO ---
     const datosTorneoGuardado = localStorage.getItem("palentropia_combate_activo");
     if (datosTorneoGuardado) {
         try {
@@ -544,20 +566,29 @@ document.addEventListener("DOMContentLoaded", async function() {
                 const botonAjustesReglas = document.getElementById("botonAjustesReglas");
                 if (botonAjustesReglas) botonAjustesReglas.style.display = "none";
 
-                setTimeout(() => {
-                    if (typeof prepararCombate === "function" && fichas.length > 0) {
-                        prepararCombate();
+                const comprobarFichas = setInterval(() => {
+                    if (fichas.length > 0) {
+                        clearInterval(comprobarFichas);
+                        if (typeof prepararCombate === "function") { prepararCombate(); }
                     }
-                }, 300);
+                }, 100);
                 return;
             }
         } catch (e) { console.error("Error al procesar modo torneo:", e); }
     }
 
-    // Comportamiento individual estándar
+    localStorage.removeItem("palentropia_combate_activo");
+    codigo1.readOnly = false;
+    codigo2.readOnly = false;
+    if (botonCambiar1) botonCambiar1.style.display = "block";
+    if (botonCambiar2) botonCambiar2.style.display = "block";
+    const botonAjustesReglas = document.getElementById("botonAjustesReglas");
+    if (botonAjustesReglas) botonAjustesReglas.style.display = "flex";
+
     const parametros = new URLSearchParams(window.location.search);
     const codigoUrl = parametros.get("codigo"), slotUrl = parametros.get("slot");
     const slotDestino = slotUrl || localStorage.getItem("palentropia_slot_activo") || "1";
+    
     if (codigoUrl) {
         if (slotDestino === "1") { codigo1.value = codigoUrl; localStorage.setItem("palentropia_codigo1", codigoUrl); }
         else if (slotDestino === "2") { codigo2.value = codigoUrl; localStorage.setItem("palentropia_codigo2", codigoUrl); }
@@ -575,12 +606,3 @@ document.addEventListener("DOMContentLoaded", async function() {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-    
-    
-        
