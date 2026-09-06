@@ -100,8 +100,7 @@
         </div>
         <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>
     </section>
-
-       <section id="registro" class="panel">
+        <section id="registro" class="panel">
         <h2>📜 Registro del combate</h2>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
@@ -134,7 +133,7 @@
         <button id="botonCerrarModal" type="button" style="padding: 6px 15px; cursor: pointer;">Cerrar</button>
     </div>
 </div>
-    <script src="palarenastats.js"></script>
+<script src="palarenastats.js"></script>
 <script src="standar-ataques.js"></script>
 <script src="standar-efectos.js"></script>
 <script src="standar.js"></script>
@@ -388,9 +387,9 @@ botonAuto.addEventListener("click", () => {
     try {
         while (combate.estado !== "finalizado") { const len = combate.historial.length; window.ejecutarTurnoEstandar(combate); procesarTurnoAuto(combate.historial.slice(len)); }
         mostrarCombatientes();
+        registrarResSerie(combate.ganador);
         const ganadorFinal = mostrarResCombate({ ganador: combate.ganador });
         combateActivo = false;
-        registrarResSerie(combate.ganador);
     } catch (e) { añadirRegistro("❌ Error durante el combate automático."); activarBotones(); }
 });
 function procesarTurnoAuto(regs) {
@@ -418,31 +417,52 @@ function registrarResSerie(gRes) {
         serieTerminada = true;
         serieActiva = false;
         mostrarResSerie(victorias1 > victorias2 ? combatiente1 : combatiente2);
-        botonNuevoCombate.textContent = "🏆 Fin de serie";
         return;
     }
     if (g) añadirRegistro(`🏆 ${g.nombre} gana el partido ${partidoActual}.`);
     añadirRegistro(`📊 Marcador: ${victorias1} - ${victorias2}`);
     partidoActual++;
-    botonNuevoCombate.textContent = "▶️ Siguiente partido";
 }
 function mostrarResSerie(g) {
-    document.getElementById("resultadoIcono").textContent = "🏆"; document.getElementById("resultadoTitulo").textContent = "🏆 " + (g.nombre || "Ganador");
+    document.getElementById("resultadoIcono").textContent = "🏆"; 
+    document.getElementById("resultadoTitulo").textContent = "🏆 " + (g.nombre || "Ganador de la Serie");
     document.getElementById("resultadoTexto").textContent = `Gana la serie ${victorias1} - ${victorias2} (Mejor de ${partidosSerie}).`;
+    
     const instrucciones = document.getElementById("textoInstrucciones");
     if (instrucciones) instrucciones.style.display = "none";
-    document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes();
+
+    if (botonNuevoCombate) {
+        botonNuevoCombate.style.display = "inline-block";
+        botonNuevoCombate.textContent = "🏆 Fin de serie";
+    }
+
+    document.getElementById("resultado").classList.remove("resultado-oculto"); 
+    mostrarCombatientes();
 }
 function mostrarResCombate(res) {
     if (!res) return;
     let g = res.ganador ? (typeof res.ganador === "string" ? window.PALARENA_STANDAR.obtenerCombatiente(combate, res.ganador) : res.ganador) : null;
     if (!g && combate) g = combate.ganador === combatiente1.codigo ? combatiente1 : (combate.ganador === combatiente2.codigo ? combatiente2 : null);
+    
     document.getElementById("resultadoIcono").textContent = g ? "🏆" : "⚔️";
     document.getElementById("resultadoTitulo").textContent = g ? "🏆 " + (g.nombre || "Ganador") : "⚔️ Combate terminado";
-    document.getElementById("resultadoTexto").textContent = g ? "El combate ha terminado." : "Se ha determinado el resultado.";
+    document.getElementById("resultadoTexto").textContent = g ? `Victoria en este partido para ${g.nombre}.` : "El combate ha finalizado.";
+    
     const instrucciones = document.getElementById("textoInstrucciones");
     if (instrucciones) instrucciones.style.display = "none";
-    document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes(); return g;
+
+    if (botonNuevoCombate) {
+        if (serieActiva && !serieTerminada) {
+            botonNuevoCombate.style.display = "none";
+        } else {
+            botonNuevoCombate.style.display = "inline-block";
+            botonNuevoCombate.textContent = "▶️ Siguiente partido";
+        }
+    }
+
+    document.getElementById("resultado").classList.remove("resultado-oculto"); 
+    mostrarCombatientes(); 
+    return g;
 }
 function limpiarRegistro() { document.getElementById("registroCombate").innerHTML = ""; }
 function añadirRegistro(txt) { const reg = document.getElementById("registroCombate"), lin = document.createElement("div"); lin.className = "linea-registro"; lin.textContent = txt; reg.appendChild(lin); reg.scrollTop = reg.scrollHeight; }
@@ -619,3 +639,4 @@ document.addEventListener("DOMContentLoaded", async function() {
 </script>
 </body>
 </html>
+
