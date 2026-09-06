@@ -24,7 +24,7 @@
                 <a href="https://palentropia.es/herramientas/torneo/reglas.html" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>
             </div>
         </div>
-         <div class="entrada-combatiente">
+                <div class="entrada-combatiente">
             <div class="campo">
                 <label for="codigo1">🦖 Combatiente 1</label>
                 <div style="display: flex; gap: 5px; align-items: center;">
@@ -59,7 +59,6 @@
             <div id="partidoSerie">—</div>
         </div>
     </section>
-
 
         <section id="combatientes" class="zona-combatientes">
         <article id="combatiente1" class="tarjeta-combatiente">
@@ -102,9 +101,7 @@
         </div>
         <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>
     </section>
-
-
-    <section id="registro" class="panel">
+       <section id="registro" class="panel">
         <h2>📜 Registro del combate</h2>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
@@ -112,7 +109,7 @@
         <div id="resultadoIcono" class="resultado-icono">🏆</div>
         <h2 id="resultadoTitulo">—</h2>
         <div id="resultadoTexto">—</div>
-        <button id="botonNuevoCombate" type="button" style="display: none;">▶️ Siguiente partido</button>
+        <button id="botonNuevoCombate" type="button" style="display: none;">▶️ Siguiente</button>
         <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>
     </section>
 </main>
@@ -139,8 +136,7 @@
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Furia desatada:</strong> Compensador agresivo para equilibrar Stats muy bajos.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Apex letal:</strong> Máximo nivel de riesgo y daño crítico desbocado.</div>
         </div>
-
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</div>
+                    <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Muerte súbita:</strong> Duelos hiperletales de un solo acierto e iniciativa radical 50/50.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 1:</strong> Factor de penalización específico del 60% al rendimiento del primer combatiente.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 2:</strong> Factor de penalización específico del 60% al rendimiento del segundo combatiente.</div>
@@ -184,7 +180,6 @@
 <script src="standar.js"></script>
 <script src="../generador_fase_2/buscaruta.js"></script>
 <script src="loadimagen.js"></script>
-
 
 <script>
 const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json";
@@ -387,8 +382,7 @@ function mostrarEstado(c, pref) {
     const m = []; if (c.derrotado) m.push("☠️ Derrotado"); if (c.defendiendo) m.push("🛡️ Defendiendo");
     if (Array.isArray(c.efectos)) c.efectos.forEach(ef => { if (ef) { const nom = ef.nombre || ef.codigo || "Efecto", dur = ef.turnos !== undefined ? ef.turnos : ef.duracion; m.push(dur !== undefined && dur > 0 ? `✨ ${nom} (${dur})` : `✨ ${nom}`); } });
     est.textContent = m.length ? m.join(" · ") : "—";
-}
-
+    }
 function activarBotones() {
     const cm = controlManual === 1 ? combatiente1 : combatiente2, cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;
     botonA001.disabled = false; botonA002.disabled = !pc || Number(cm.fatiga) < cfg.fatiga_minima_ataque_potente; botonA003.disabled = botonD001.disabled = botonAuto.disabled = false;
@@ -472,16 +466,34 @@ function registrarResSerie(gRes) {
     if (g) añadirRegistro(`🏆 ${g.nombre} gana el partido ${partidoActual}.`);
     añadirRegistro(`📊 Marcador: ${victorias1} - ${victorias2}`);
     partidoActual++; 
-    if (botonNuevoCombate) { botonNuevoCombate.style.display = "inline-block"; botonNuevoCombate.textContent = "▶️ Siguiente partido"; }
+    if (botonNuevoCombate) { botonNuevoCombate.style.display = "inline-block"; botonNuevoCombate.textContent = "▶️ Siguiente"; }
 }
 
 function mostrarResSerie(g) {
     document.getElementById("resultadoIcono").textContent = "🏆";
-    document.getElementById("resultadoTitulo").textContent = "🏆 Serie finalizada";
-    document.getElementById("resultadoTexto").textContent = `Vencedor absoluto de la eliminatoria: ${g.nombre || "Ganador"} (${victorias1} - ${victorias2}).`;
+    document.getElementById("resultadoTitulo").textContent = "🏆 " + (g.nombre || "Ganador");
+    document.getElementById("resultadoTexto").textContent = `Vencedor absoluto de la eliminatoria: ${g.nombre} (${victorias1} - ${victorias2}).`;
     document.getElementById("resultado").classList.remove("resultado-oculto");
     if (botonNuevoCombate) botonNuevoCombate.style.display = "none";
     mostrarCombatientes();
+
+    const datosTorneo = localStorage.getItem("palentropia_combate_activo");
+    if (datosTorneo && g) {
+        try {
+            const torneoInfo = JSON.parse(datosTorneo);
+            if (torneoInfo && torneoInfo.modoTorneo === true) {
+                localStorage.setItem("palentropia_ultimo_ganador", JSON.stringify({
+                    combateNumero: torneoInfo.combateNumero,
+                    ganadorCodigo: g.codigo,
+                    ganadorNombre: g.nombre,
+                    victorias1: victorias1,
+                    victorias2: victorias2,
+                    combatiente1Codigo: combatiente1.codigo,
+                    combatiente2Codigo: combatiente2.codigo
+                }));
+            }
+        } catch (e) { console.error("Error registrando ganador de torneo:", e); }
+    }
 }
 
 function mostrarResCombate(res) {
@@ -496,20 +508,6 @@ function mostrarResCombate(res) {
     
     if (botonNuevoCombate) botonNuevoCombate.style.display = (serieActiva && !serieTerminada) ? "inline-block" : "none";
     mostrarCombatientes();
-    
-    const datosTorneo = localStorage.getItem("palentropia_combate_activo");
-    if (datosTorneo && g) {
-        try {
-            const torneoInfo = JSON.parse(datosTorneo);
-            if (torneoInfo && torneoInfo.modoTorneo === true) {
-                localStorage.setItem("palentropia_ultimo_ganador", JSON.stringify({
-                    combateNumero: torneoInfo.combateNumero,
-                    ganadorCodigo: g.codigo,
-                    ganadorNombre: g.nombre
-                }));
-            }
-        } catch (e) { console.error("Error registrando ganador de torneo:", e); }
-    }
     return g;
 }
 
@@ -525,7 +523,10 @@ if (botonNuevoCombate) {
 
 if (botonVolverCruces) {
     botonVolverCruces.addEventListener("click", () => {
-        localStorage.removeItem("palentropia_combate_activo");
+        if (serieActiva && !serieTerminada) {
+            const confirmarSalida = confirm("⚠️ La serie del torneo está en curso. Si vuelves a los cruces ahora, se interrumpirá el asalto actual. ¿Deseas continuar?");
+            if (!confirmarSalida) return;
+        }
         window.location.href = "combates.html";
     });
 }
@@ -568,15 +569,3 @@ document.addEventListener("DOMContentLoaded", async function() {
 </body>
 </html>
 
-
-
-
-
-
-    
-
-    
-
-
-        
-    
