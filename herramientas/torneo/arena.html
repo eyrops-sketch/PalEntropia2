@@ -43,7 +43,8 @@
                 <div id="nombre2" class="nombre-combatiente">—</div>
             </div>
         </div>
-                <div id="controlManual" class="control-manual">
+
+           <div id="controlManual" class="control-manual">
             <div class="control-manual-titulo">🎮 Control manual</div>
             <div class="control-manual-opciones">
                 <label class="opcion-control"><input type="radio" name="controlManual" value="1" checked><span>Combatiente 1</span></label>
@@ -112,26 +113,31 @@
         <button id="botonVolverCruces" type="button" class="ocultar-en-individual">↩️ Volver a los cruces</button>
     </section>
 </main>
-<div id="modalModalidades" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
-    <div style="background: #222; color: #fff; padding: 20px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
-        <h3>📖 Guía de Modalidades de Juego</h3>
-        <div id="contenidoModalidades" style="margin: 15px 0; font-size: 0.9em; line-height: 1.4; display: flex; flex-direction: column; gap: 8px;">
-            <p style="margin: 0;"><strong>Normal:</strong> Experiencia equilibrada estándar con parámetros base.</p>
-            <p style="margin: 0;"><strong>Difícil:</strong> Menor vida base y mayor letalidad para duelos desafiantes.</p>
-            <p style="margin: 0;"><strong>Sin crítico:</strong> Combates tácticos puros sin multiplicador crítico.</p>
-            <p style="margin: 0;"><strong>Defensa aumentada:</strong> Defensas muy reforzadas que alargan los intercambios.</p>
-            <p style="margin: 0;"><strong>Desgaste extremo:</strong> Menor regeneración y alta exigencia de fatiga.</p>
-            <p style="margin: 0;"><strong>Frenesí mesozoico:</strong> Partidas ultrarrápidas con daños masivos.</p>
-            <p style="margin: 0;"><strong>Depredador al límite:</strong> Ofensivas letales con bonificaciones altas.</p>
-            <p style="margin: 0;"><strong>Cataclismo carbonífero:</strong> Entorno caótico con altísima variabilidad de daño.</p>
-            <p style="margin: 0;"><strong>Acorazados cretácicos:</strong> Tanques masivos de alta resistencia y divisor defensivo extremo.</p>
-            <p style="margin: 0;"><strong>Instinto primigenio:</strong> Furia desatada con críticos hiperpotenciados.</p>
-            <p style="margin: 0;"><strong>Reflejos abismales:</strong> Duelos ágiles con esquivas constantes.</p>
-            <p style="margin: 0;"><strong>Balance ancestral:</strong> Coeficientes comprimidos para nivelar estadísticas.</p>
-            <p style="margin: 0;"><strong>Furia desatada:</strong> Compensador agresivo para equilibrar Stats muy bajos.</p>
-            <p style="margin: 0; background: rgba(88, 166, 255, 0.15); padding: 6px 10px; border-radius: 4px; border-left: 3px solid #58a6ff;"><strong>Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</p>
+<div id="modalModalidades" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">
+            <h3 style="margin: 0; font-size: 1.15rem; color: #58a6ff;">📖 Guía de Modalidades de Juego</h3>
+            <button id="botonCerrarModal" type="button" style="background: transparent; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px 8px;">✕</button>
         </div>
-        <button id="botonCerrarModal" type="button" style="padding: 6px 15px; cursor: pointer;">Cerrar</button>
+        <div id="contenidoModalidades" style="margin: 0 0 20px 0; font-size: 0.9rem; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Normal:</strong> Experiencia equilibrada estándar con parámetros base.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Difícil:</strong> Menor vida base y mayor letalidad para duelos desafiantes.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Sin crítico:</strong> Combates tácticos puros sin multiplicador crítico.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Defensa aumentada:</strong> Defensas muy reforzadas que alargan los intercambios.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Desgaste extremo:</strong> Menor regeneración y alta exigencia de fatiga.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Frenesí mesozoico:</strong> Partidas ultrarrápidas con daños masivos.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Depredador al límite:</strong> Ofensivas letales con bonificaciones altas.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Cataclismo carbonífero:</strong> Entorno caótico con altísima variabilidad de daño.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Acorazados cretácicos:</strong> Tanques masivos de alta resistencia y divisor defensivo extremo.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Instinto primigenio:</strong> Furia desatada con críticos hiperpotenciados.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Reflejos abismales:</strong> Duelos ágiles con esquivas constantes.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Balance ancestral:</strong> Coeficientes comprimidos para nivelar estadísticas.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Furia desatada:</strong> Compensador agresivo para equilibrar Stats muy bajos.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</div>
+        </div>
+        <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">
+            <button id="botonCerrarModalBtn" type="button" style="background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cerrar</button>
+        </div>
     </div>
 </div>
 
@@ -172,7 +178,7 @@ const mensajeConfiguracion = document.getElementById("mensajeConfiguracion"), in
 const serieFormato = document.getElementById("serieFormato"), partidoSerie = document.getElementById("partidoSerie");
 const botonA001 = document.getElementById("botonA001"), botonA002 = document.getElementById("botonA002"), botonA003 = document.getElementById("botonA003"), botonD001 = document.getElementById("botonD001"), botonAuto = document.getElementById("botonAuto");
 const botonNuevoCombate = document.getElementById("botonNuevoCombate"), botonVolverCruces = document.getElementById("botonVolverCruces");
-const botonInfoModalidades = document.getElementById("botonInfoModalidades"), modalModalidades = document.getElementById("modalModalidades"), botonCerrarModal = document.getElementById("botonCerrarModal");
+const botonInfoModalidades = document.getElementById("botonInfoModalidades"), modalModalidades = document.getElementById("modalModalidades"), botonCerrarModal = document.getElementById("botonCerrarModal"), botonCerrarModalBtn = document.getElementById("botonCerrarModalBtn");
 const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), modalGuiaCombate = document.getElementById("modalGuiaCombate"), cierraGuiaCruz = document.getElementById("cierraGuiaCruz"), cierraGuiaBtn = document.getElementById("cierraGuiaBtn");
 const labelModalidadActual = document.getElementById("labelModalidadActual");
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
@@ -237,7 +243,8 @@ function buscarFicha(codigo) {
     if (!ficha) return null; const fc = { ...ficha }; fc.j2 = nombresPaleofichas[buscado] || ficha.j2 || ficha.nombre || ""; fc.nombre = fc.j2; return fc;
 }
 function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
- codigo1.addEventListener("input", () => {
+
+codigo1.addEventListener("input", () => {
     actualizarNombre(codigo1, nombre1);
     localStorage.setItem("palentropia_codigo1", codigo1.value);
 });
@@ -259,7 +266,8 @@ controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { controlM
 botonPreparar.addEventListener("click", prepararCombate);
 botonSerie.addEventListener("click", prepararSerie);
 botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; });
-botonCerrarModal.addEventListener("click", () => { modalModalidades.style.display = "none"; });
+if (botonCerrarModal) botonCerrarModal.addEventListener("click", () => { modalModalidades.style.display = "none"; });
+if (botonCerrarModalBtn) botonCerrarModalBtn.addEventListener("click", () => { modalModalidades.style.display = "none"; });
 
 if (botonAbrirGuiaCombate && modalGuiaCombate) {
     botonAbrirGuiaCombate.addEventListener("click", () => { modalGuiaCombate.style.display = "flex"; });
@@ -469,6 +477,7 @@ botonNuevoCombate.addEventListener("click", () => {
     mostrarMensaje("Serie finalizada. Vuelve a los cruces para el siguiente emparejamiento.");
 });
 botonVolverCruces.addEventListener("click", () => { window.location.href = "index.html"; });
+
 document.addEventListener("DOMContentLoaded", async function() {
     await cargarPaleofichas();
     await cargarMaster();
