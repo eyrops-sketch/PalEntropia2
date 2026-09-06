@@ -1,94 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PalEntropía — Reglas del torneo</title>
-
-<link rel="stylesheet"
-      href="reglas.css">
-
+<link rel="stylesheet" href="reglas.css">
 </head>
-
 <body>
-
-
 <!-- =====================================================
      BOTÓN MENÚ PRINCIPAL
      ===================================================== -->
-
 <button
     id="botonMenuPrincipal"
     type="button"
     title="Volver al menú principal"
     aria-label="Volver al menú principal">
-
     🏠
-
 </button>
-
-
 <!-- =====================================================
      CABECERA
      ===================================================== -->
-
 <header id="cabecera">
-
     <h1>PalEntropía</h1>
-
     <div id="subtitulo">
         Reglas del torneo
     </div>
-
 </header>
-
-
 <!-- =====================================================
      CONTENEDOR PRINCIPAL
      ===================================================== -->
-
 <main id="torneo">
-
-
     <section id="cabeceraTorneo">
-
         <h2 id="tituloCabeceraTorneo">
             ⚙️ Reglas del torneo
         </h2>
-
         <p id="criterioTorneo">
             Configuración del torneo
         </p>
-
     </section>
-
-
     <!-- =================================================
          REGLAS DEL TORNEO
          ================================================= -->
-
     <section id="reglasTorneo">
-
-
         <!-- =============================================
              PARTIDOS POR SERIE
              ============================================= -->
-
         <div class="bloqueTorneo">
-
             <h3>
                 ⚔️ Partidos por serie
             </h3>
-
             <p>
                 Número de combates que debe disputar cada serie.
             </p>
-
             <input
                 id="partidosSerie"
                 type="number"
@@ -97,117 +60,77 @@
                 value="1"
                 inputmode="numeric"
                 aria-label="Número de partidos por serie">
-
             <div id="avisoPartidosSerie"></div>
-
         </div>
-
-
         <!-- =============================================
              TIPO DE COMBATE
              ============================================= -->
-
         <div class="bloqueTorneo">
-
             <h3>
                 🎲 Tipo de combate
             </h3>
-
             <p>
                 Sistema utilizado para resolver los combates.
             </p>
-
             <select
                 id="tipoCombate"
                 aria-label="Tipo de combate">
-
                 <option value="standard">
                     Standard
                 </option>
-
             </select>
-
         </div>
-
-
     </section>
-
-
 </main>
-
-
 <!-- =====================================================
-     VOLVER AL ÍNDICE DEL TORNEO
+     VOLVER AL ÍNDICE O ARENA
      ===================================================== -->
-
 <section id="volver">
-
     <a
         href="index.html"
         id="botonVolver">
-
-        ← Volver al torneo
-
+        ← Volver
     </a>
-
 </section>
-
-
 <!-- =====================================================
      JAVASCRIPT
      ===================================================== -->
-
 <script>
-
-
 /* =====================================================
    CLAVES DE LOCALSTORAGE
    ===================================================== */
-
 const CLAVE_REGLAS_TORNEO =
     "palentropia_reglas_torneo";
-
 const CLAVE_CRITERIO_TORNEO =
     "palentropia_criterio_torneo";
-
+const CLAVE_MODO_TORNEO =
+    "palentropia_modotorneo";
 
 /* =====================================================
    REGLAS POR DEFECTO
    ===================================================== */
-
 const REGLAS_TORNEO_DEFECTO = {
-
     partidosSerie: 1,
-
     tipoCombate: "standard"
-
 };
-
 
 /* =====================================================
    CARGAR MODOS DESDE EL CSV
    ===================================================== */
-
 async function cargarModosDesdeCSV() {
     const selectTipo = document.getElementById("tipoCombate");
     if (!selectTipo) return;
-
     try {
         const respuesta = await fetch("config.csv");
         const texto = await respuesta.text();
         const lineas = texto.split("\n");
-
         if (lineas.length < 2) return;
-
         selectTipo.innerHTML = "";
-
         for (let i = 1; i < lineas.length; i++) {
             const linea = lineas[i].trim();
             if (!linea) continue;
-
             const valores = linea.split(",");
             const modo = valores[0] ? valores[0].trim() : "";
-
             if (modo) {
                 const opcion = document.createElement("option");
                 opcion.value = modo;
@@ -218,115 +141,76 @@ async function cargarModosDesdeCSV() {
     } catch (err) {
         console.warn("No se pudo leer el CSV en reglas.html, manteniendo opción por defecto.", err);
     }
-
-    // Una vez creadas las opciones del desplegable, cargamos la configuración guardada
     cargarReglasEnInterfaz();
 }
-
-
 /* =====================================================
    OBTENER REGLAS
    ===================================================== */
-
 function obtenerReglasTorneo() {
-
     const guardado =
         localStorage.getItem(
             CLAVE_REGLAS_TORNEO
         );
-
-
     if (!guardado) {
-
         return {
             ...REGLAS_TORNEO_DEFECTO
         };
-
     }
-
-
     try {
-
         const reglas =
             JSON.parse(
                 guardado
             );
-
-
         return {
-
             ...REGLAS_TORNEO_DEFECTO,
-
             ...reglas
-
         };
-
     }
-
     catch (error) {
-
         console.error(
             "Reglas del torneo no válidas:",
             error
         );
-
-
         return {
             ...REGLAS_TORNEO_DEFECTO
         };
-
     }
-
 }
-
 
 /* =====================================================
    GUARDAR REGLAS Y COEFICIENTES
    ===================================================== */
-
 async function guardarReglasTorneo() {
-
     const partidos =
         Number(
             document.getElementById(
                 "partidosSerie"
             ).value
         );
-
-
     const tipo =
         document.getElementById(
             "tipoCombate"
         ).value;
-
-
     let configExterna = {};
-
     try {
         const respuesta = await fetch("config.csv");
         const texto = await respuesta.text();
         const lineas = texto.split("\n");
-
         if (lineas.length >= 2) {
             const cabecera = lineas[0].trim().split(",");
-
             for (let i = 1; i < lineas.length; i++) {
                 const linea = lineas[i].trim();
                 if (!linea) continue;
-
                 const valores = linea.split(",");
                 const modoFila = valores[0] ? valores[0].trim() : "";
-
                 if (modoFila === tipo) {
                     for (let j = 1; j < cabecera.length; j++) {
                         const parametro = cabecera[j].trim();
                         let val = valores[j] !== undefined ? valores[j].trim() : "";
-
                         if (parametro && val !== "") {
                             if (val === "true") val = true;
                             else if (val === "false") val = false;
                             else if (!isNaN(val)) val = Number(val);
-
                             configExterna[parametro] = val;
                         }
                     }
@@ -337,202 +221,117 @@ async function guardarReglasTorneo() {
     } catch (err) {
         console.error("Error al extraer coeficientes al guardar reglas:", err);
     }
-
-
     localStorage.setItem(
-
         CLAVE_REGLAS_TORNEO,
-
         JSON.stringify({
-
             partidosSerie:
                 partidos,
-
             tipoCombate:
                 tipo,
-
             coeficientes:
                 configExterna
-
         })
-
     );
-
 }
-
 
 /* =====================================================
    OBTENER CRITERIO DEL TORNEO
    ===================================================== */
-
 function obtenerCriterioTorneo() {
-
     const criterio =
         localStorage.getItem(
             CLAVE_CRITERIO_TORNEO
         );
-
-
     if (
         !criterio ||
         !String(criterio).trim()
     ) {
-
         return "";
-
     }
-
-
     const valor =
         String(
             criterio
         ).trim();
-
-
     const equivalencias = {
-
         "perm":
             "Pérmico",
-
         "chord":
             "Chordata",
-
         "placen":
             "Placentaria"
-
     };
-
-
     const clave =
         valor.toLowerCase();
-
-
     return (
         equivalencias[clave] ||
         valor
     );
-
 }
-
 
 /* =====================================================
    MOSTRAR IDENTIFICADOR DEL TORNEO
    ===================================================== */
-
 function mostrarIdentificadorTorneo() {
-
     const criterio =
         obtenerCriterioTorneo();
-
-
     if (!criterio) {
-
         return;
-
     }
-
-
     const subtitulo =
         document.getElementById(
             "subtitulo"
         );
-
-
     const titulo =
         document.getElementById(
             "tituloCabeceraTorneo"
         );
-
-
     const descripcion =
         document.getElementById(
             "criterioTorneo"
         );
-
-
     if (subtitulo) {
-
         subtitulo.textContent =
             "Reglas — " +
             criterio;
-
     }
-
-
     if (titulo) {
-
         titulo.textContent =
             "⚙️ Reglas del torneo — " +
             criterio;
-
     }
-
-
     if (descripcion) {
-
         descripcion.textContent =
             "Configuración del torneo — " +
             criterio;
-
     }
-
 }
-
-
 /* =====================================================
    CARGAR REGLAS EN LA INTERFAZ
    ===================================================== */
-
 function cargarReglasEnInterfaz() {
-
     const reglas =
         obtenerReglasTorneo();
-
-
     const partidos =
         document.getElementById(
             "partidosSerie"
         );
-
-
     const tipo =
         document.getElementById(
             "tipoCombate"
         );
-
-
     let valorPartidos =
         Number(
             reglas.partidosSerie
         );
-
-
-    /*
-    Si el valor almacenado no es válido,
-    volvemos a 1.
-    */
-
     if (
         !Number.isInteger(valorPartidos) ||
         valorPartidos < 1 ||
         valorPartidos % 2 === 0
     ) {
-
         valorPartidos = 1;
-
     }
-
-
     partidos.value =
         valorPartidos;
-
-
-    /*
-    =====================================================
-    TIPO DE COMBATE
-    =====================================================
-    */
-
     const opcionExiste =
         Array.from(
             tipo.options
@@ -541,95 +340,52 @@ function cargarReglasEnInterfaz() {
                 opcion.value ===
                 reglas.tipoCombate
         );
-
-
     if (opcionExiste) {
-
         tipo.value =
             reglas.tipoCombate;
-
     }
-
     else {
-
         tipo.value =
             "standard";
-
     }
-
 }
 
-
 /* =====================================================
-   VALIDAR PARTIDOS POR SERIE
+   VALIDAR Y GUARDAR EVENTOS
    ===================================================== */
-
 function validarPartidosSerie() {
-
     const campo =
         document.getElementById(
             "partidosSerie"
         );
-
-
     const aviso =
         document.getElementById(
             "avisoPartidosSerie"
         );
-
-
     const valor =
         Number(
             campo.value
         );
-
-
-    /*
-    Campo vacío
-    */
-
     if (
         campo.value === ""
     ) {
-
         aviso.textContent =
             "Introduce un número impar.";
-
         return false;
-
     }
-
-
-    /*
-    Solo enteros positivos impares
-    */
-
     if (
         !Number.isInteger(valor) ||
         valor < 1 ||
         valor % 2 === 0
     ) {
-
         aviso.textContent =
             "Debe ser un número impar: 1, 3, 5, 7...";
-
         return false;
-
     }
-
-
     aviso.textContent =
         "";
-
-
     return true;
-
 }
-
-
-/* =====================================================
-   CAMBIO DE PARTIDOS POR SERIE
-   ===================================================== */
 
 document
     .getElementById(
@@ -638,22 +394,13 @@ document
     .addEventListener(
         "input",
         async function() {
-
             if (
                 validarPartidosSerie()
             ) {
-
                 await guardarReglasTorneo();
-
             }
-
         }
     );
-
-
-/* =====================================================
-   CAMBIO DE TIPO DE COMBATE
-   ===================================================== */
 
 document
     .getElementById(
@@ -662,17 +409,13 @@ document
     .addEventListener(
         "change",
         async function() {
-
             await guardarReglasTorneo();
-
         }
     );
-
 
 /* =====================================================
    BOTÓN MENÚ PRINCIPAL
    ===================================================== */
-
 document
     .getElementById(
         "botonMenuPrincipal"
@@ -680,26 +423,31 @@ document
     .addEventListener(
         "click",
         function() {
-
             window.location.href =
                 "../../index.html";
-
         }
     );
-
 
 /* =====================================================
    INICIALIZACIÓN
    ===================================================== */
+window.addEventListener("DOMContentLoaded", () => {
+    // Configurar el botón Volver dinámicamente según si venimos de torneo o individual
+    const esTorneo = localStorage.getItem(CLAVE_MODO_TORNEO) === "true";
+    const botonVolver = document.getElementById("botonVolver");
+    if (botonVolver) {
+        if (esTorneo) {
+            botonVolver.href = "index.html";
+            botonVolver.textContent = "← Volver";
+        } else {
+            botonVolver.href = "arena.html";
+            botonVolver.textContent = "← Volver";
+        }
+    }
 
-mostrarIdentificadorTorneo();
-
-// SÓLO cargamos y leemos los modos existentes. Ya no se invoca a guardarReglasTorneo() a ciegas aquí.
-cargarModosDesdeCSV();
-
-
+    mostrarIdentificadorTorneo();
+    cargarModosDesdeCSV();
+});
 </script>
-
 </body>
-
 </html>
