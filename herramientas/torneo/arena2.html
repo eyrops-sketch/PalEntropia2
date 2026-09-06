@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PalEntropía — Combate estándar</title>
+    <title>PalEntropía — Combate de Torneo</title>
     <link rel="stylesheet" href="standar_torneo.css">
 </head>
 <body>
 <header id="cabecera">
     <div class="titulo">⚔️ PalEntropía</div>
-    <div class="subtitulo">Arena — Combate estándar</div>
+    <div class="subtitulo">Arena — Cuadro de Torneo</div>
 </header>
 <main id="arena">
     <section id="configuracion" class="panel">
@@ -24,12 +24,12 @@
                 <a href="https://palentropia.es/herramientas/torneo/reglas.html" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>
             </div>
         </div>
-             <div class="entrada-combatiente">
+         <div class="entrada-combatiente">
             <div class="campo">
                 <label for="codigo1">🦖 Combatiente 1</label>
                 <div style="display: flex; gap: 5px; align-items: center;">
                     <input type="text" id="codigo1" placeholder="Ej. 006_01" autocomplete="off" readonly style="flex: 1;">
-                    <button type="button" id="botonCambiar1" style="padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>
+                    <button type="button" id="botonCambiar1" style="display: none; padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>
                 </div>
                 <div id="nombre1" class="nombre-combatiente">—</div>
             </div>
@@ -38,7 +38,7 @@
                 <label for="codigo2">🦕 Combatiente 2</label>
                 <div style="display: flex; gap: 5px; align-items: center;">
                     <input type="text" id="codigo2" placeholder="Ej. 001_02" autocomplete="off" readonly style="flex: 1;">
-                    <button type="button" id="botonCambiar2" style="padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>
+                    <button type="button" id="botonCambiar2" style="display: none; padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>
                 </div>
                 <div id="nombre2" class="nombre-combatiente">—</div>
             </div>
@@ -52,13 +52,14 @@
         </div>
         <button id="botonPreparar" type="button" style="display: none;" aria-hidden="true">⚔️ Preparar combate</button>
         <button id="botonSerie" type="button" style="display: block;">🏆 Iniciar la serie</button>
-        <div id="mensajeConfiguracion" class="mensaje">Introduce los códigos J1 de las dos Paleofichas.</div>
+        <div id="mensajeConfiguracion" class="mensaje">Cargando datos del torneo...</div>
         <div id="informacionSerie" class="informacion-serie" style="display: none;">
             <div id="tituloSerie">🏆 Serie</div>
             <div id="serieFormato">—</div>
             <div id="partidoSerie">—</div>
         </div>
     </section>
+
 
         <section id="combatientes" class="zona-combatientes">
         <article id="combatiente1" class="tarjeta-combatiente">
@@ -101,7 +102,9 @@
         </div>
         <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>
     </section>
-        <section id="registro" class="panel">
+
+
+    <section id="registro" class="panel">
         <h2>📜 Registro del combate</h2>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
@@ -109,7 +112,7 @@
         <div id="resultadoIcono" class="resultado-icono">🏆</div>
         <h2 id="resultadoTitulo">—</h2>
         <div id="resultadoTexto">—</div>
-        <button id="botonNuevoCombate" type="button">▶️ Siguiente</button>
+        <button id="botonNuevoCombate" type="button" style="display: none;">▶️ Siguiente partido</button>
         <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>
     </section>
 </main>
@@ -136,7 +139,8 @@
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Furia desatada:</strong> Compensador agresivo para equilibrar Stats muy bajos.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Apex letal:</strong> Máximo nivel de riesgo y daño crítico desbocado.</div>
         </div>
-               <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</div>
+
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Muerte súbita:</strong> Duelos hiperletales de un solo acierto e iniciativa radical 50/50.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 1:</strong> Factor de penalización específico del 60% al rendimiento del primer combatiente.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 2:</strong> Factor de penalización específico del 60% al rendimiento del segundo combatiente.</div>
@@ -180,6 +184,8 @@
 <script src="standar.js"></script>
 <script src="../generador_fase_2/buscaruta.js"></script>
 <script src="loadimagen.js"></script>
+
+
 <script>
 const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json";
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null;
@@ -198,7 +204,6 @@ const botonInfoModalidades = document.getElementById("botonInfoModalidades"), mo
 const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), modalGuiaCombate = document.getElementById("modalGuiaCombate"), cierraGuiaCruz = document.getElementById("cierraGuiaCruz"), cierraGuiaBtn = document.getElementById("cierraGuiaBtn");
 const labelModalidadActual = document.getElementById("labelModalidadActual");
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
-const botonCambiar1 = document.getElementById("botonCambiar1"), botonCambiar2 = document.getElementById("botonCambiar2");
 
 function obtenerReglasTorneo() {
     const g = localStorage.getItem(CLAVE_REGLAS);
@@ -233,7 +238,7 @@ async function cargarPaleofichas() {
 async function cargarMaster() {
     try {
         const res = await fetch(RUTA_MASTER); if (!res.ok) throw new Error();
-        fichas = interpretarCSV(await res.text()); mensajeConfiguracion.textContent = "Datos de Paleofichas cargados correctamente.";
+        fichas = interpretarCSV(await res.text()); mensajeConfiguracion.textContent = "Combatientes del torneo cargados correctamente.";
         actualizarInterfazModalidad();
     } catch (e) { mensajeConfiguracion.textContent = "❌ Error al cargar master.csv."; }
 }
@@ -260,12 +265,7 @@ function buscarFicha(codigo) {
 }
 function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
 
-codigo1.addEventListener("input", () => { actualizarNombre(codigo1, nombre1); localStorage.setItem("palentropia_codigo1", codigo1.value); });
-codigo2.addEventListener("input", () => { actualizarNombre(codigo2, nombre2); localStorage.setItem("palentropia_codigo2", codigo2.value); });
-botonCambiar1.addEventListener("click", () => { codigo1.readOnly = !codigo1.readOnly; codigo1.focus(); mostrarMensaje(codigo1.readOnly ? "Combatiente 1 bloqueado." : "Introduce un nuevo código J1 para el Combatiente 1."); });
-botonCambiar2.addEventListener("click", () => { codigo2.readOnly = !codigo2.readOnly; codigo2.focus(); mostrarMensaje(codigo2.readOnly ? "Combatiente 2 bloqueado." : "Introduce un nuevo código J1 para el Combatiente 2."); });
 controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { controlManual = Number(ctrl.value); if (combateActivo) activarBotones(); }));
-botonPreparar.addEventListener("click", prepararCombate);
 botonSerie.addEventListener("click", prepararSerie);
 botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; });
 if (botonCerrarModal) botonCerrarModal.addEventListener("click", () => { modalModalidades.style.display = "none"; });
@@ -318,23 +318,6 @@ async function aplicarConfiguracionAleatoriaSiEstaActivo() {
     } catch (err) { console.warn("Error al aplicar configuración aleatoria:", err); }
 }
 
-async function prepararCombate() {
-    if (!validarYPrepararDatos()) return;
-    await aplicarConfiguracionAleatoriaSiEstaActivo();
-    const reg = obtenerReglasTorneo(); partidosSerie = Number(reg.partidosSerie) || 1; victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
-    victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = partidosSerie > 1; serieTerminada = false; partidoRegistrado = false; actualizarInterfazSerie();
-    try {
-        const configActiva = obtenerConfiguracionActiva();
-        combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();
-        combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true;
-        mostrarCombatientes(); activarBotones(); limpiarRegistro();
-        if (window.cargarImagenesCombatientesAsync) window.cargarImagenesCombatientesAsync(combatiente1.codigo, combatiente2.codigo);
-        if (partidosSerie > 1) añadirRegistro("🏆 Serie (Mejor de " + partidosSerie + ") — Partido 1 / " + partidosSerie);
-        añadirRegistro("⚔️ Combate preparado: " + combatiente1.nombre + " (" + combatiente1.codigo + ") vs " + combatiente2.nombre + " (" + combatiente2.codigo + ")");
-        mostrarMensaje("Combate preparado correctamente.");
-    } catch (e) { mostrarMensaje("❌ Error al preparar el combate."); }
-}
-
 async function prepararSerie() {
     if (!validarYPrepararDatos()) return;
     await aplicarConfiguracionAleatoriaSiEstaActivo();
@@ -355,11 +338,12 @@ async function iniciarPartidoSerie() {
         document.getElementById("resultado").classList.add("resultado-oculto");
         mostrarCombatientes(); activarBotones(); limpiarRegistro();
         if (window.cargarImagenesCombatientesAsync) window.cargarImagenesCombatientesAsync(combatiente1.codigo, combatiente2.codigo);
-        añadirRegistro("🏆 Serie — Partido " + partidoActual + " / " + partidosSerie);
+        añadirRegistro("🏆 Asalto del Torneo — Partido " + partidoActual + " / " + partidosSerie);
         añadirRegistro("⚔️ " + combatiente1.nombre + " (" + combatiente1.codigo + ") vs " + combatiente2.nombre + " (" + combatiente2.codigo + ")");
-        mostrarMensaje("Partido " + partidoActual + " preparado correctamente."); actualizarInterfazSerie();
+        mostrarMensaje("¡Asalto en curso!"); actualizarInterfazSerie();
     } catch (e) { combateActivo = false; mostrarMensaje("❌ Error al preparar el partido."); }
 }
+
 function mostrarCombatientes() {
     if (!combate || !combatiente1 || !combatiente2) return;
     const reg = obtenerReglasTorneo();
@@ -482,29 +466,36 @@ function registrarResSerie(gRes) {
     if (victorias1 >= victoriasNecesarias || victorias2 >= victoriasNecesarias) {
         serieTerminada = true; serieActiva = false;
         mostrarResSerie(victorias1 > victorias2 ? combatiente1 : combatiente2);
-        botonNuevoCombate.textContent = "🏆 Fin de serie";
+        if (botonNuevoCombate) botonNuevoCombate.style.display = "none";
         return;
     }
     if (g) añadirRegistro(`🏆 ${g.nombre} gana el partido ${partidoActual}.`);
     añadirRegistro(`📊 Marcador: ${victorias1} - ${victorias2}`);
-    partidoActual++; botonNuevoCombate.textContent = "▶️ Siguiente";
+    partidoActual++; 
+    if (botonNuevoCombate) { botonNuevoCombate.style.display = "inline-block"; botonNuevoCombate.textContent = "▶️ Siguiente partido"; }
 }
 
 function mostrarResSerie(g) {
     document.getElementById("resultadoIcono").textContent = "🏆";
-    document.getElementById("resultadoTitulo").textContent = "🏆 " + (g.nombre || "Ganador");
-    document.getElementById("resultadoTexto").textContent = `Gana la serie ${victorias1} - ${victorias2} (Mejor de ${partidosSerie}).`;
-    document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes();
+    document.getElementById("resultadoTitulo").textContent = "🏆 Serie finalizada";
+    document.getElementById("resultadoTexto").textContent = `Vencedor absoluto de la eliminatoria: ${g.nombre || "Ganador"} (${victorias1} - ${victorias2}).`;
+    document.getElementById("resultado").classList.remove("resultado-oculto");
+    if (botonNuevoCombate) botonNuevoCombate.style.display = "none";
+    mostrarCombatientes();
 }
 
 function mostrarResCombate(res) {
     if (!res) return;
     let g = res.ganador ? (typeof res.ganador === "string" ? window.PALARENA_STANDAR.obtenerCombatiente(combate, res.ganador) : res.ganador) : null;
     if (!g && combate) g = combate.ganador === combatiente1.codigo ? combatiente1 : (combate.ganador === combatiente2.codigo ? combatiente2 : null);
+    
     document.getElementById("resultadoIcono").textContent = g ? "🏆" : "⚔️";
-    document.getElementById("resultadoTitulo").textContent = g ? "🏆 " + (g.nombre || "Ganador") : "⚔️ Combate terminado";
-    document.getElementById("resultadoTexto").textContent = g ? "El combate ha terminado." : "Se ha determinado el resultado.";
-    document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes();
+    document.getElementById("resultadoTitulo").textContent = g ? "🏆 " + (g.nombre || "Ganador") : "⚔️ Asalto terminado";
+    document.getElementById("resultadoTexto").textContent = g ? `El vencedor del asalto es ${g.nombre} (${g.codigo}).` : "Se ha determinado el resultado.";
+    document.getElementById("resultado").classList.remove("resultado-oculto"); 
+    
+    if (botonNuevoCombate) botonNuevoCombate.style.display = (serieActiva && !serieTerminada) ? "inline-block" : "none";
+    mostrarCombatientes();
     
     const datosTorneo = localStorage.getItem("palentropia_combate_activo");
     if (datosTorneo && g) {
@@ -526,21 +517,18 @@ function limpiarRegistro() { document.getElementById("registroCombate").innerHTM
 function añadirRegistro(txt) { const reg = document.getElementById("registroCombate"), lin = document.createElement("div"); lin.className = "linea-registro"; lin.textContent = txt; reg.appendChild(lin); reg.scrollTop = reg.scrollHeight; }
 function mostrarMensaje(txt) { mensajeConfiguracion.textContent = txt; }
 
-botonNuevoCombate.addEventListener("click", () => {
-    if (serieActiva && !serieTerminada) { iniciarPartidoSerie(); return; }
-    document.getElementById("resultado").classList.add("resultado-oculto");
-    mostrarMensaje("Serie finalizada. Vuelve a los cruces para el siguiente emparejamiento.");
-});
-botonVolverCruces.addEventListener("click", () => {
-    const datosTorneo = localStorage.getItem("palentropia_combate_activo");
-    if (datosTorneo) {
-        try {
-            const t = JSON.parse(datosTorneo);
-            if (t && t.modoTorneo) { window.location.href = "combates.html"; return; }
-        } catch(e) {}
-    }
-    window.location.href = "index.html";
-});
+if (botonNuevoCombate) {
+    botonNuevoCombate.addEventListener("click", () => {
+        if (serieActiva && !serieTerminada) { iniciarPartidoSerie(); return; }
+    });
+}
+
+if (botonVolverCruces) {
+    botonVolverCruces.addEventListener("click", () => {
+        localStorage.removeItem("palentropia_combate_activo");
+        window.location.href = "combates.html";
+    });
+}
 
 document.addEventListener("DOMContentLoaded", async function() {
     await cargarPaleofichas();
@@ -560,49 +548,35 @@ document.addEventListener("DOMContentLoaded", async function() {
 
                 codigo1.readOnly = true;
                 codigo2.readOnly = true;
-                if (botonCambiar1) botonCambiar1.style.display = "none";
-                if (botonCambiar2) botonCambiar2.style.display = "none";
                 
                 const botonAjustesReglas = document.getElementById("botonAjustesReglas");
-                if (botonAjustesReglas) botonAjustesReglas.style.display = "none";
+                if (botonAjustesReglas) botonAjustesReglas.style.display = "flex";
 
                 const comprobarFichas = setInterval(() => {
                     if (fichas.length > 0) {
                         clearInterval(comprobarFichas);
-                        if (typeof prepararCombate === "function") { prepararCombate(); }
+                        if (typeof prepararSerie === "function") { 
+                            prepararSerie(); 
+                        }
                     }
                 }, 100);
-                return;
             }
         } catch (e) { console.error("Error al procesar modo torneo:", e); }
     }
-
-    localStorage.removeItem("palentropia_combate_activo");
-    codigo1.readOnly = false;
-    codigo2.readOnly = false;
-    if (botonCambiar1) botonCambiar1.style.display = "block";
-    if (botonCambiar2) botonCambiar2.style.display = "block";
-    const botonAjustesReglas = document.getElementById("botonAjustesReglas");
-    if (botonAjustesReglas) botonAjustesReglas.style.display = "flex";
-
-    const parametros = new URLSearchParams(window.location.search);
-    const codigoUrl = parametros.get("codigo"), slotUrl = parametros.get("slot");
-    const slotDestino = slotUrl || localStorage.getItem("palentropia_slot_activo") || "1";
-    
-    if (codigoUrl) {
-        if (slotDestino === "1") { codigo1.value = codigoUrl; localStorage.setItem("palentropia_codigo1", codigoUrl); }
-        else if (slotDestino === "2") { codigo2.value = codigoUrl; localStorage.setItem("palentropia_codigo2", codigoUrl); }
-    }
-    const codigoGuardado1 = localStorage.getItem("palentropia_codigo1");
-    const codigoGuardado2 = localStorage.getItem("palentropia_codigo2");
-    if (codigoGuardado1 && !codigo1.value) codigo1.value = codigoGuardado1;
-    if (codigoGuardado2 && !codigo2.value) codigo2.value = codigoGuardado2;
-
-    const radioTarget = document.querySelector(`input[name="controlManual"][value="${slotDestino}"]`);
-    if (radioTarget) { radioTarget.checked = true; controlManual = Number(slotDestino); }
-    if (codigo1.value.trim()) actualizarNombre(codigo1, nombre1);
-    if (codigo2.value.trim()) actualizarNombre(codigo2, nombre2);
 });
 </script>
 </body>
 </html>
+
+
+
+
+
+
+    
+
+    
+
+
+        
+    
