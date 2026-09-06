@@ -622,5 +622,10 @@ body:not(.modo-torneo) .ocultar-en-individual {
     transform: scale(1.08);
 }
 
+.boton-auto {
+    margin-top: 12px;
+    border-top: 1px solid rgba(88, 166, 255, 0.3);
+    padding-top: 12px;
+}
 
 
