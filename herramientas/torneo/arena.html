@@ -16,7 +16,10 @@
         <h2>⚔️ Preparar combate</h2>
         <div class="modalidad-info" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 4px;">
             <div id="labelModalidadActual">📜 Modalidad actual: <strong>Normal</strong></div>
-            <button id="botonInfoModalidades" type="button" style="padding: 4px 10px; cursor: pointer;">ℹ️ Ver modalidades</button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button id="botonInfoModalidades" type="button" style="padding: 4px 10px; cursor: pointer;" title="Ver modalidades">ℹ️ Ver modalidades</button>
+                <a href="https://palentropia.es/herramientas/torneo/reglas.html" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>
+            </div>
         </div>
         <div class="entrada-combatiente">
             <div class="campo">
@@ -103,7 +106,7 @@
         <h2 id="resultadoTitulo">—</h2>
         <div id="resultadoTexto">—</div>
         <button id="botonNuevoCombate" type="button">▶️ Siguiente partido</button>
-        <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>
+        <button id="botonVolverCruces" type="button" class="ocultar-en-individual">↩️ Volver a los cruces</button>
     </section>
 </main>
 <div id="modalModalidades" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
@@ -188,7 +191,7 @@ async function cargarMaster() {
         actualizarInterfazModalidad();
     } catch (e) { mensajeConfiguracion.textContent = "❌ Error al cargar master.csv."; }
 }
-function interpretarCSV(texto) {
+    function interpretarCSV(texto) {
     const lineas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     if (lineas.length < 2) return [];
     const cabecera = separarCSV(lineas[0]), resultado = [];
@@ -211,8 +214,14 @@ function buscarFicha(codigo) {
 }
 function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
 
-codigo1.addEventListener("input", () => actualizarNombre(codigo1, nombre1));
-codigo2.addEventListener("input", () => actualizarNombre(codigo2, nombre2));
+codigo1.addEventListener("input", () => {
+    actualizarNombre(codigo1, nombre1);
+    localStorage.setItem("palentropia_codigo1", codigo1.value);
+});
+codigo2.addEventListener("input", () => {
+    actualizarNombre(codigo2, nombre2);
+    localStorage.setItem("palentropia_codigo2", codigo2.value);
+});
 
 botonCambiar1.addEventListener("click", () => {
     codigo1.readOnly = !codigo1.readOnly;
@@ -413,7 +422,7 @@ function mostrarResSerie(g) {
     document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes();
 }
 function mostrarResCombate(res) {
-      if (!res) return;
+    if (!res) return;
     let g = res.ganador ? (typeof res.ganador === "string" ? window.PALARENA_STANDAR.obtenerCombatiente(combate, res.ganador) : res.ganador) : null;
     if (!g && combate) g = combate.ganador === combatiente1.codigo ? combatiente1 : (combate.ganador === combatiente2.codigo ? combatiente2 : null);
     document.getElementById("resultadoIcono").textContent = g ? "🏆" : "⚔️";
@@ -434,14 +443,14 @@ botonNuevoCombate.addEventListener("click", () => {
     mostrarMensaje("Serie finalizada. Vuelve a los cruces para el siguiente emparejamiento.");
 });
 botonVolverCruces.addEventListener("click", () => { window.location.href = "index.html"; });
-/* =========================================================
+
+ /* =========================================================
    LÓGICA DE ENCLAVAMIENTO, URL Y MODO INDIVIDUAL VS TORNEO
    ======================================================== */
 document.addEventListener("DOMContentLoaded", async function() {
     await cargarPaleofichas();
     await cargarMaster();
 
-    // Actualizar la interfaz superior con la modalidad y reglas actuales desde el inicio
     actualizarInterfazModalidad();
     actualizarInterfazSerie();
 
@@ -450,7 +459,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     const codigoUrl = parametros.get("codigo");
     const slotUrl = parametros.get("slot");
 
-    // Limpiar duplicados previos del botón central si los hubiera
     const viejoBoton = document.getElementById("botonCentralVisor");
     if (viejoBoton) viejoBoton.remove();
 
@@ -565,16 +573,23 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         const slotDestino = slotUrl || localStorage.getItem("palentropia_slot_activo") || "1";
 
-        // Trasladar estrictamente el código a su caja de texto correspondiente sin iniciar combates automáticos
+        // 1. Cargar código nuevo si viene en la URL y actualizar su localStorage respectivo
         if (codigoUrl) {
             if (slotDestino === "1") {
                 codigo1.value = codigoUrl;
-                actualizarNombre(codigo1, nombre1);
+                localStorage.setItem("palentropia_codigo1", codigoUrl);
             } else if (slotDestino === "2") {
                 codigo2.value = codigoUrl;
-                actualizarNombre(codigo2, nombre2);
+                localStorage.setItem("palentropia_codigo2", codigoUrl);
             }
         }
+
+        // 2. Recuperar ambos códigos guardados para que NUNCA se borren al alternar slots
+        const codigoGuardado1 = localStorage.getItem("palentropia_codigo1");
+        const codigoGuardado2 = localStorage.getItem("palentropia_codigo2");
+
+        if (codigoGuardado1 && !codigo1.value) codigo1.value = codigoGuardado1;
+        if (codigoGuardado2 && !codigo2.value) codigo2.value = codigoGuardado2;
 
         const radioTarget = document.querySelector(`input[name="controlManual"][value="${slotDestino}"]`);
         if (radioTarget) {
@@ -591,6 +606,4 @@ document.addEventListener("DOMContentLoaded", async function() {
 </body>
 </html>
 
-
-    
     
