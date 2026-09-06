@@ -81,7 +81,6 @@ function crearParticipantesDatos(matrizJ1, mapaNombres) {
     });
     return participantes;
 }
-
 function barajar(matriz) {
     const resultado = [...matriz];
     for (let i = resultado.length - 1; i > 0; i--) {
@@ -102,13 +101,14 @@ function calcularRondaPrevia(cantidad) {
     const sobrantes = cantidad - cuadro;
     return { cuadro: cuadro, sobrantes: sobrantes, combates: sobrantes };
 }
-function crearCruces(participantes) {
+
+ function crearCruces(participantes, numeroInicio = 1) {
     const cruces = [];
     for (let i = 0; i < participantes.length; i += 2) {
         const participante1 = participantes[i];
         const participante2 = participantes[i + 1];
         if (participante1 && participante2) {
-            cruces.push({ numero: cruces.length + 1, participante1: participante1, participante2: participante2, ganador: null });
+            cruces.push({ numero: numeroInicio + cruces.length, participante1: participante1, participante2: participante2, ganador: null });
         }
     }
     return cruces;
@@ -120,35 +120,53 @@ function generarTorneo(participantes) {
     const participantesBarajados = barajar(participantes);
     const cuadro = calcularCuadroPrincipal(cantidad);
     const sobrantes = cantidad - cuadro;
+    
+    let crucesActuales = [];
+    let numeroCombateGlobal = 1;
+
     if (sobrantes === 0) {
         const participantesCuadro = barajar(participantesBarajados);
-        rondas.push({ nombre: "Primera ronda", tipo: "principal", participantes: participantesCuadro, reservas: [], cruces: crearCruces(participantesCuadro) });
-        return rondas;
+        crucesActuales = crearCruces(participantesCuadro, numeroCombateGlobal);
+        rondas.push({ nombre: "Primera ronda", tipo: "principal", participantes: participantesCuadro, reservas: [], cruces: crucesActuales });
+        numeroCombateGlobal += crucesActuales.length;
+    } else {
+        const cantidadParaPrevia = sobrantes * 2;
+        const participantesPrevia = participantesBarajados.slice(0, cantidadParaPrevia);
+        const pasanDirectamente = participantesBarajados.slice(cantidadParaPrevia);
+        const crucesPrevia = crearCruces(participantesPrevia, numeroCombateGlobal);
+        rondas.push({ nombre: "Ronda previa", tipo: "previa", participantes: participantesPrevia, reservas: pasanDirectamente, cruces: crucesPrevia });
+        numeroCombateGlobal += crucesPrevia.length;
+
+        const marcadoresGanadores = crucesPrevia.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));
+        const siguiente = barajar([...marcadoresGanadores, ...pasanDirectamente]);
+        crucesActuales = crearCruces(siguiente, numeroCombateGlobal);
+        rondas.push({ nombre: "Cuadro principal", tipo: "principal", participantes: siguiente, reservas: [], cruces: crucesActuales });
+        numeroCombateGlobal += crucesActuales.length;
     }
-    const cantidadParaPrevia = sobrantes * 2;
-    const participantesPrevia = participantesBarajados.slice(0, cantidadParaPrevia);
-    const pasanDirectamente = participantesBarajados.slice(cantidadParaPrevia);
-    const crucesPrevia = crearCruces(participantesPrevia);
-    rondas.push({ nombre: "Ronda previa", tipo: "previa", participantes: participantesPrevia, reservas: pasanDirectamente, cruces: crucesPrevia });
-    
-    const marcadoresGanadores = [];
-    for (let i = 0; i < crucesPrevia.length; i++) {
-        marcadoresGanadores.push({ tipo: "ganador_previa", combate: i + 1, etiqueta: "Ganador combate " + (i + 1) });
+
+    // Generar rondas avanzadas sucesivas (Cuartos, Semifinales, Final) de forma automática
+    while (crucesActuales.length > 1) {
+        const siguientesCrucesParticipantes = crucesActuales.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));
+        crucesActuales = crearCruces(siguientesCrucesParticipantes, numeroCombateGlobal);
+        
+        let nombreRonda = "Cuartos de final";
+        if (crucesActuales.length === 2) nombreRonda = "Semifinales";
+        if (crucesActuales.length === 1) nombreRonda = "Gran Final";
+
+        rondas.push({ nombre: nombreRonda, tipo: "eliminatoria", participantes: [], reservas: [], cruces: crucesActuales });
+        numeroCombateGlobal += crucesActuales.length;
     }
-    const siguiente = [...marcadoresGanadores, ...pasanDirectamente];
-    const siguienteBarajado = barajar(siguiente);
-    rondas.push({ nombre: "Cuadro principal", tipo: "principal", participantes: siguienteBarajado, reservas: [], cruces: crearCruces(siguienteBarajado) });
     return rondas;
 }
 
-   function obtenerTextoParticipante(participante) {
+    function obtenerTextoParticipante(participante) {
     if (participante && typeof participante === "object" && participante.j1) {
         return participante.j2 ? participante.j2 + " (" + participante.j1 + ")" : participante.j1;
     }
     if (typeof participante === "string") return participante;
     return "—";
 }
-function crearParticipanteVisual(participante) {
+function crearParticipanteVisual(participante, datosSeries) {
     const elemento = document.createElement("div");
     elemento.className = "participanteCombate";
     if (participante && typeof participante === "object" && participante.j1) {
@@ -156,13 +174,27 @@ function crearParticipanteVisual(participante) {
         elemento.dataset.codigo = participante.j1;
         return elemento;
     }
-    if (participante && participante.tipo === "ganador_previa") {
-        elemento.textContent = "🏆 " + participante.etiqueta;
-        elemento.classList.add("ganadorPendiente");
+    if (participante && (participante.tipo === "ganador_previa" || participante.tipo === "ganador_combate")) {
+        const origenNum = participante.combate;
+        const resOrigen = datosSeries[origenNum];
+        if (resOrigen && resOrigen.ganadorNombre) {
+            elemento.textContent = resOrigen.ganadorNombre;
+            elemento.dataset.codigo = resOrigen.ganadorCodigo;
+            elemento.classList.add("ganadorDecidido");
+        } else {
+            elemento.textContent = "🏆 " + participante.etiqueta;
+            elemento.classList.add("ganadorPendiente");
+        }
         return elemento;
     }
     elemento.textContent = "—";
     return elemento;
+}
+    function resolverParticipanteReal(p, datosSeries) {
+    if (p && p.tipo === "ganador_combate" && datosSeries[p.combate]) {
+        return { j1: datosSeries[p.combate].ganadorCodigo, j2: datosSeries[p.combate].ganadorNombre };
+    }
+    return p;
 }
 function mostrarCruce(cruce) {
     const tarjeta = document.createElement("div");
@@ -181,16 +213,18 @@ function mostrarCruce(cruce) {
     const participantes = document.createElement("div");
     participantes.className = "participantesCombate";
 
+    const p1Real = resolverParticipanteReal(cruce.participante1, datosSeries);
+    const p2Real = resolverParticipanteReal(cruce.participante2, datosSeries);
+
     if (resCombate) {
-        const p1Codigo = typeof cruce.participante1 === "object" ? cruce.participante1.j1 : cruce.participante1;
-        const p2Codigo = typeof cruce.participante2 === "object" ? cruce.participante2.j1 : cruce.participante2;
-        
+        const p1Codigo = typeof p1Real === "object" ? p1Real.j1 : p1Real;
+        const p2Codigo = typeof p2Real === "object" ? p2Real.j1 : p2Real;
         const esP1Ganador = resCombate.ganadorCodigo === p1Codigo;
         const esP2Ganador = resCombate.ganadorCodigo === p2Codigo;
 
         const p1Div = document.createElement("div");
         p1Div.className = "participanteCombate" + (esP1Ganador ? " ganadorTorneo" : "");
-        p1Div.textContent = obtenerTextoParticipante(cruce.participante1) + (esP1Ganador ? " 👑" : "");
+        p1Div.textContent = obtenerTextoParticipante(p1Real) + (esP1Ganador ? " 👑" : "");
 
         const marcadorDiv = document.createElement("div");
         marcadorDiv.className = "marcadorSerie";
@@ -199,25 +233,26 @@ function mostrarCruce(cruce) {
 
         const p2Div = document.createElement("div");
         p2Div.className = "participanteCombate" + (esP2Ganador ? " ganadorTorneo" : "");
-        p2Div.textContent = obtenerTextoParticipante(cruce.participante2) + (esP2Ganador ? " 👑" : "");
+        p2Div.textContent = obtenerTextoParticipante(p2Real) + (esP2Ganador ? " 👑" : "");
 
         participantes.appendChild(p1Div);
         participantes.appendChild(marcadorDiv);
         participantes.appendChild(p2Div);
         tarjeta.classList.add("combateFinalizado");
     } else {
-        participantes.appendChild(crearParticipanteVisual(cruce.participante1));
+        participantes.appendChild(crearParticipanteVisual(cruce.participante1, datosSeries));
         const versus = document.createElement("button");
         versus.type = "button";
         versus.className = "versusCombate";
         versus.textContent = "⚔️";
         versus.title = "Lanzar combate en la Arena";
-        
-        const p1Valido = cruce.participante1 && (typeof cruce.participante1 === "string" || cruce.participante1.j1);
-        const p2Valido = cruce.participante2 && (typeof cruce.participante2 === "string" || cruce.participante2.j1);
+
+        const p1Valido = p1Real && (typeof p1Real === "string" || p1Real.j1);
+        const p2Valido = p2Real && (typeof p2Real === "string" || p2Real.j1);
+
         if (p1Valido && p2Valido) {
-            const codigo1 = typeof cruce.participante1 === "string" ? cruce.participante1 : cruce.participante1.j1;
-            const codigo2 = typeof cruce.participante2 === "string" ? cruce.participante2 : cruce.participante2.j1;
+            const codigo1 = typeof p1Real === "string" ? p1Real : p1Real.j1;
+            const codigo2 = typeof p2Real === "string" ? p2Real : p2Real.j1;
             versus.addEventListener("click", function() {
                 const datosCombateTorneo = { modoTorneo: true, combateNumero: cruce.numero, combatiente1: codigo1, combatiente2: codigo2 };
                 localStorage.setItem("palentropia_combate_activo", JSON.stringify(datosCombateTorneo));
@@ -229,13 +264,13 @@ function mostrarCruce(cruce) {
             versus.style.cursor = "default";
         }
         participantes.appendChild(versus);
-        participantes.appendChild(crearParticipanteVisual(cruce.participante2));
+        participantes.appendChild(crearParticipanteVisual(cruce.participante2, datosSeries));
     }
     tarjeta.appendChild(participantes);
     return tarjeta;
 }
 
- function mostrarRondas(rondas) {
+    function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
     rondas.forEach(ronda => {
@@ -299,7 +334,7 @@ function mostrarEstadoTorneo(participantes, informacion, fueGenerado) {
     estado.textContent += fueGenerado ? " Emparejamientos fijados." : " Emparejamientos guardados.";
 }
 
-async function iniciarCombates(forzarNuevo = false) {
+    async function iniciarCombates(forzarNuevo = false) {
     mostrarTituloTorneo();
     const matrizJ1 = obtenerParticipantes();
     const estado = document.getElementById("estadoCombates");
