@@ -445,7 +445,7 @@ function obtenerIdFase(numeroParticipantes) {
 
 
 /* =====================================================
-   GUARDAR ENTRADA AL TORNEO
+   GUARDAR ENTRADA AL TORNEO Y REDIRIGIR
    ===================================================== */
 
 function entrarDesdeFase(fase) {
@@ -473,6 +473,18 @@ function entrarDesdeFase(fase) {
         )
 
     );
+
+
+    /*
+    =====================================================
+    REDIRECCIÓN AUTOMÁTICA AL CUADRO DE COMBATES
+    =====================================================
+    */
+
+    window.location.href = "combates.html";
+
+}
+
 
 
     /*
