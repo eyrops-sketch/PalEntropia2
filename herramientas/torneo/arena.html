@@ -95,9 +95,13 @@
             <button id="botonA003" class="accion" type="button" disabled>🧠 Ataque táctico</button>
             <button id="botonD001" class="accion defensa" type="button" disabled>🛡️ Defender</button>
         </div>
+        <div id="textoInstrucciones" class="instrucciones-accion" style="display: none; text-align: center; font-size: 0.85rem; color: #8b949e; margin: 10px 0;">
+            Escoge acciones para combate manual o combate automático
+        </div>
         <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>
     </section>
-        <section id="registro" class="panel">
+
+       <section id="registro" class="panel">
         <h2>📜 Registro del combate</h2>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
@@ -130,7 +134,7 @@
         <button id="botonCerrarModal" type="button" style="padding: 6px 15px; cursor: pointer;">Cerrar</button>
     </div>
 </div>
-<script src="palarenastats.js"></script>
+    <script src="palarenastats.js"></script>
 <script src="standar-ataques.js"></script>
 <script src="standar-efectos.js"></script>
 <script src="standar.js"></script>
@@ -257,6 +261,8 @@ function prepararCombate() {
         combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();
         combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true;
         mostrarCombatientes(); activarBotones(); limpiarRegistro();
+        const instrucciones = document.getElementById("textoInstrucciones");
+        if (instrucciones) instrucciones.style.display = "block";
         if (window.cargarImagenesCombatientesAsync) window.cargarImagenesCombatientesAsync(combatiente1.codigo, combatiente2.codigo);
         if (partidosSerie > 1) añadirRegistro("🏆 Serie (Mejor de " + partidosSerie + ") — Partido 1 / " + partidosSerie);
         añadirRegistro("⚔️ Combate preparado: " + combatiente1.nombre + " (" + combatiente1.codigo + ") vs " + combatiente2.nombre + " (" + combatiente2.codigo + ")");
@@ -270,6 +276,8 @@ function prepararSerie() {
     victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
     victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = true; serieTerminada = false; partidoRegistrado = false;
     document.getElementById("resultado").classList.add("resultado-oculto");
+    const instrucciones = document.getElementById("textoInstrucciones");
+    if (instrucciones) instrucciones.style.display = "block";
     limpiarRegistro(); actualizarInterfazSerie();
     actualizarInterfazModalidad();
     iniciarPartidoSerie();
@@ -281,6 +289,8 @@ function iniciarPartidoSerie() {
         combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();
         combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true; partidoRegistrado = false;
         document.getElementById("resultado").classList.add("resultado-oculto");
+        const instrucciones = document.getElementById("textoInstrucciones");
+        if (instrucciones) instrucciones.style.display = "block";
         mostrarCombatientes(); activarBotones(); limpiarRegistro();
         if (window.cargarImagenesCombatientesAsync) window.cargarImagenesCombatientesAsync(combatiente1.codigo, combatiente2.codigo);
         añadirRegistro("🏆 Serie — Partido " + partidoActual + " / " + partidosSerie);
@@ -419,6 +429,8 @@ function registrarResSerie(gRes) {
 function mostrarResSerie(g) {
     document.getElementById("resultadoIcono").textContent = "🏆"; document.getElementById("resultadoTitulo").textContent = "🏆 " + (g.nombre || "Ganador");
     document.getElementById("resultadoTexto").textContent = `Gana la serie ${victorias1} - ${victorias2} (Mejor de ${partidosSerie}).`;
+    const instrucciones = document.getElementById("textoInstrucciones");
+    if (instrucciones) instrucciones.style.display = "none";
     document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes();
 }
 function mostrarResCombate(res) {
@@ -428,6 +440,8 @@ function mostrarResCombate(res) {
     document.getElementById("resultadoIcono").textContent = g ? "🏆" : "⚔️";
     document.getElementById("resultadoTitulo").textContent = g ? "🏆 " + (g.nombre || "Ganador") : "⚔️ Combate terminado";
     document.getElementById("resultadoTexto").textContent = g ? "El combate ha terminado." : "Se ha determinado el resultado.";
+    const instrucciones = document.getElementById("textoInstrucciones");
+    if (instrucciones) instrucciones.style.display = "none";
     document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes(); return g;
 }
 function limpiarRegistro() { document.getElementById("registroCombate").innerHTML = ""; }
@@ -605,5 +619,3 @@ document.addEventListener("DOMContentLoaded", async function() {
 </script>
 </body>
 </html>
-
-    
