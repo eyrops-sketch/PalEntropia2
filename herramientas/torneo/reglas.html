@@ -5,40 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PalEntropía — Reglas del torneo</title>
 <link rel="stylesheet" href="reglas.css">
-<style>
-main#torneo section#reglasTorneo select#tipoCombate {
-    background-color: #161b22 !important;
-    color: #c9d1d9 !important;
-    border: 1px solid #30363d !important;
-    padding: 10px 14px !important;
-    border-radius: 6px !important;
-    font-size: 0.95rem !important;
-    width: 100% !important;
-    max-width: 400px !important;
-    cursor: pointer !important;
-    outline: none !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
-    background-repeat: no-repeat !important;
-    background-position: right 12px center !important;
-    background-size: 16px !important;
-    padding-right: 36px !important;
-}
-
-main#torneo section#reglasTorneo select#tipoCombate:hover,
-main#torneo section#reglasTorneo select#tipoCombate:focus {
-    border-color: #58a6ff !important;
-    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15) !important;
-}
-
-main#torneo section#reglasTorneo select#tipoCombate option {
-    background-color: #161b22 !important;
-    color: #c9d1d9 !important;
-    padding: 8px !important;
-}
-</style>
 </head>
 <body>
 <!-- =====================================================
@@ -114,6 +80,27 @@ main#torneo section#reglasTorneo select#tipoCombate option {
                 </option>
             </select>
         </div>
+
+        <!-- =============================================
+             MODO ALEATORIO DE CONFIGURACIÓN
+             ============================================= -->
+        <div class="bloqueTorneo" style="display: flex; align-items: center; justify-content: space-between; gap: 15px; text-align: left;">
+             <div>
+                <h3 style="margin-bottom: 6px;">
+                    🎲 Configuración aleatoria
+                </h3>
+                <p style="margin: 0;">
+                    Selecciona un tipo de combate aleatorio al iniciar cada serie.
+                </p>
+            </div>
+            <label style="display: flex; align-items: center; cursor: pointer; padding-left: 10px;">
+                <input
+                    id="modoAleatorioConfig"
+                    type="checkbox"
+                    style="width: 24px; height: 24px; accent-color: #63d9ff; cursor: pointer;"
+                    aria-label="Activar modo aleatorio de configuración">
+            </label>
+        </div>
     </section>
 </main>
 <!-- =====================================================
@@ -133,12 +120,10 @@ main#torneo section#reglasTorneo select#tipoCombate option {
 /* =====================================================
    CLAVES DE LOCALSTORAGE
    ===================================================== */
-const CLAVE_REGLAS_TORNEO =
-    "palentropia_reglas_torneo";
-const CLAVE_CRITERIO_TORNEO =
-    "palentropia_criterio_torneo";
-const CLAVE_MODO_TORNEO =
-    "palentropia_modotorneo";
+const CLAVE_REGLAS_TORNEO = "palentropia_reglas_torneo";
+const CLAVE_CRITERIO_TORNEO = "palentropia_criterio_torneo";
+const CLAVE_MODO_TORNEO = "palentropia_modotorneo";
+const CLAVE_ALEATORIO_CONFIG = "palentropia_modo_aleatorio_config";
 
 /* =====================================================
    REGLAS POR DEFECTO
@@ -168,7 +153,7 @@ async function cargarModosDesdeCSV() {
             if (modo) {
                 const opcion = document.createElement("option");
                 opcion.value = modo;
-                opcion.textContent = modo.charAt(0).toUpperCase() + modo.slice(1);
+                opcion.textContent = modo.charAt(0).toUpperCase() + modo.slice(1).replace(/_/g, ' ');
                 selectTipo.appendChild(opcion);
             }
         }
@@ -177,37 +162,22 @@ async function cargarModosDesdeCSV() {
     }
     cargarReglasEnInterfaz();
 }
+
 /* =====================================================
    OBTENER REGLAS
    ===================================================== */
 function obtenerReglasTorneo() {
-    const guardado =
-        localStorage.getItem(
-            CLAVE_REGLAS_TORNEO
-        );
+    const guardado = localStorage.getItem(CLAVE_REGLAS_TORNEO);
     if (!guardado) {
-        return {
-            ...REGLAS_TORNEO_DEFECTO
-        };
+        return { ...REGLAS_TORNEO_DEFECTO };
     }
     try {
-        const reglas =
-            JSON.parse(
-                guardado
-            );
-        return {
-            ...REGLAS_TORNEO_DEFECTO,
-            ...reglas
-        };
+        const reglas = JSON.parse(guardado);
+        return { ...REGLAS_TORNEO_DEFECTO, ...reglas };
     }
     catch (error) {
-        console.error(
-            "Reglas del torneo no válidas:",
-            error
-        );
-        return {
-            ...REGLAS_TORNEO_DEFECTO
-        };
+        console.error("Reglas del torneo no válidas:", error);
+        return { ...REGLAS_TORNEO_DEFECTO };
     }
 }
 
@@ -215,16 +185,15 @@ function obtenerReglasTorneo() {
    GUARDAR REGLAS Y COEFICIENTES
    ===================================================== */
 async function guardarReglasTorneo() {
-    const partidos =
-        Number(
-            document.getElementById(
-                "partidosSerie"
-            ).value
-        );
-    const tipo =
-        document.getElementById(
-            "tipoCombate"
-        ).value;
+    const partidos = Number(document.getElementById("partidosSerie").value);
+    const tipo = document.getElementById("tipoCombate").value;
+    
+    // Guardar estado del checkbox aleatorio
+    const aleatorioCheck = document.getElementById("modoAleatorioConfig");
+    if (aleatorioCheck) {
+        localStorage.setItem(CLAVE_ALEATORIO_CONFIG, aleatorioCheck.checked ? "true" : "false");
+    }
+
     let configExterna = {};
     try {
         const respuesta = await fetch("config.csv");
@@ -258,12 +227,9 @@ async function guardarReglasTorneo() {
     localStorage.setItem(
         CLAVE_REGLAS_TORNEO,
         JSON.stringify({
-            partidosSerie:
-                partidos,
-            tipoCombate:
-                tipo,
-            coeficientes:
-                configExterna
+            partidosSerie: partidos,
+            tipoCombate: tipo,
+            coeficientes: configExterna
         })
     );
 }
@@ -272,115 +238,62 @@ async function guardarReglasTorneo() {
    OBTENER CRITERIO DEL TORNEO
    ===================================================== */
 function obtenerCriterioTorneo() {
-    const criterio =
-        localStorage.getItem(
-            CLAVE_CRITERIO_TORNEO
-        );
-    if (
-        !criterio ||
-        !String(criterio).trim()
-    ) {
+    const criterio = localStorage.getItem(CLAVE_CRITERIO_TORNEO);
+    if (!criterio || !String(criterio).trim()) {
         return "";
     }
-    const valor =
-        String(
-            criterio
-        ).trim();
+    const valor = String(criterio).trim();
     const equivalencias = {
-        "perm":
-            "Pérmico",
-        "chord":
-            "Chordata",
-        "placen":
-            "Placentaria"
+        "perm": "Pérmico",
+        "chord": "Chordata",
+        "placen": "Placentaria"
     };
-    const clave =
-        valor.toLowerCase();
-    return (
-        equivalencias[clave] ||
-        valor
-    );
+    const clave = valor.toLowerCase();
+    return equivalencias[clave] || valor;
 }
 
 /* =====================================================
    MOSTRAR IDENTIFICADOR DEL TORNEO
    ===================================================== */
 function mostrarIdentificadorTorneo() {
-    const criterio =
-        obtenerCriterioTorneo();
+    const criterio = obtenerCriterioTorneo();
     if (!criterio) {
         return;
     }
-    const subtitulo =
-        document.getElementById(
-            "subtitulo"
-        );
-    const titulo =
-        document.getElementById(
-            "tituloCabeceraTorneo"
-        );
-    const descripcion =
-        document.getElementById(
-            "criterioTorneo"
-        );
-    if (subtitulo) {
-        subtitulo.textContent =
-            "Reglas — " +
-            criterio;
-    }
-    if (titulo) {
-        titulo.textContent =
-            "⚙️ Reglas del torneo — " +
-            criterio;
-    }
-    if (descripcion) {
-        descripcion.textContent =
-            "Configuración del torneo — " +
-            criterio;
-    }
+    const subtitulo = document.getElementById("subtitulo");
+    const titulo = document.getElementById("tituloCabeceraTorneo");
+    const descripcion = document.getElementById("criterioTorneo");
+    if (subtitulo) { subtitulo.textContent = "Reglas — " + criterio; }
+    if (titulo) { titulo.textContent = "⚙️ Reglas del torneo — " + criterio; }
+    if (descripcion) { descripcion.textContent = "Configuración del torneo — " + criterio; }
 }
+
 /* =====================================================
    CARGAR REGLAS EN LA INTERFAZ
    ===================================================== */
 function cargarReglasEnInterfaz() {
-    const reglas =
-        obtenerReglasTorneo();
-    const partidos =
-        document.getElementById(
-            "partidosSerie"
-        );
-    const tipo =
-        document.getElementById(
-            "tipoCombate"
-        );
-    let valorPartidos =
-        Number(
-            reglas.partidosSerie
-        );
-    if (
-        !Number.isInteger(valorPartidos) ||
-        valorPartidos < 1 ||
-        valorPartidos % 2 === 0
-    ) {
+    const reglas = obtenerReglasTorneo();
+    const partidos = document.getElementById("partidosSerie");
+    const tipo = document.getElementById("tipoCombate");
+    
+    let valorPartidos = Number(reglas.partidosSerie);
+    if (!Number.isInteger(valorPartidos) || valorPartidos < 1 || valorPartidos % 2 === 0) {
         valorPartidos = 1;
     }
-    partidos.value =
-        valorPartidos;
-    const opcionExiste =
-        Array.from(
-            tipo.options
-        ).some(
-            opcion =>
-                opcion.value ===
-                reglas.tipoCombate
-        );
+    partidos.value = valorPartidos;
+    
+    const opcionExiste = Array.from(tipo.options).some(opcion => opcion.value === reglas.tipoCombate);
     if (opcionExiste) {
-        tipo.value =
-            reglas.tipoCombate;
+        tipo.value = reglas.tipoCombate;
+    } else {
+        tipo.value = "standard";
     }
-    else {
-        tipo.value =
-            "standard";
+
+    // Cargar estado del checkbox aleatorio
+    const aleatorioGuardado = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
+    const aleatorioCheckInput = document.getElementById("modoAleatorioConfig");
+    if (aleatorioCheckInput) {
+        aleatorioCheckInput.checked = aleatorioGuardado;
     }
 }
 
@@ -388,85 +301,49 @@ function cargarReglasEnInterfaz() {
    VALIDAR Y GUARDAR EVENTOS
    ===================================================== */
 function validarPartidosSerie() {
-    const campo =
-        document.getElementById(
-            "partidosSerie"
-        );
-    const aviso =
-        document.getElementById(
-            "avisoPartidosSerie"
-        );
-    const valor =
-        Number(
-            campo.value
-        );
-    if (
-        campo.value === ""
-    ) {
-        aviso.textContent =
-            "Introduce un número impar.";
+    const campo = document.getElementById("partidosSerie");
+    const aviso = document.getElementById("avisoPartidosSerie");
+    const valor = Number(campo.value);
+    if (campo.value === "") {
+        aviso.textContent = "Introduce un número impar.";
         return false;
     }
-    if (
-        !Number.isInteger(valor) ||
-        valor < 1 ||
-        valor % 2 === 0
-    ) {
-        aviso.textContent =
-            "Debe ser un número impar: 1, 3, 5, 7...";
+    if (!Number.isInteger(valor) || valor < 1 || valor % 2 === 0) {
+        aviso.textContent = "Debe ser un número impar: 1, 3, 5, 7...";
         return false;
     }
-    aviso.textContent =
-        "";
+    aviso.textContent = "";
     return true;
 }
 
-document
-    .getElementById(
-        "partidosSerie"
-    )
-    .addEventListener(
-        "input",
-        async function() {
-            if (
-                validarPartidosSerie()
-            ) {
-                await guardarReglasTorneo();
-            }
-        }
-    );
+document.getElementById("partidosSerie").addEventListener("input", async function() {
+    if (validarPartidosSerie()) {
+        await guardarReglasTorneo();
+    }
+});
 
-document
-    .getElementById(
-        "tipoCombate"
-    )
-    .addEventListener(
-        "change",
-        async function() {
-            await guardarReglasTorneo();
-        }
-    );
+document.getElementById("tipoCombate").addEventListener("change", async function() {
+    await guardarReglasTorneo();
+});
+
+const aleatorioInput = document.getElementById("modoAleatorioConfig");
+if (aleatorioInput) {
+    aleatorioInput.addEventListener("change", async function() {
+        await guardarReglasTorneo();
+    });
+}
 
 /* =====================================================
    BOTÓN MENÚ PRINCIPAL
    ===================================================== */
-document
-    .getElementById(
-        "botonMenuPrincipal"
-    )
-    .addEventListener(
-        "click",
-        function() {
-            window.location.href =
-                "../../index.html";
-        }
-    );
+document.getElementById("botonMenuPrincipal").addEventListener("click", function() {
+    window.location.href = "../../index.html";
+});
 
 /* =====================================================
    INICIALIZACIÓN
    ===================================================== */
 window.addEventListener("DOMContentLoaded", () => {
-    // Configurar el botón Volver dinámicamente según si venimos de torneo o individual
     const esTorneo = localStorage.getItem(CLAVE_MODO_TORNEO) === "true";
     const botonVolver = document.getElementById("botonVolver");
     if (botonVolver) {
@@ -485,3 +362,4 @@ window.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
