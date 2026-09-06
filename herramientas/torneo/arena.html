@@ -550,6 +550,47 @@ document.addEventListener("DOMContentLoaded", async function() {
     actualizarInterfazModalidad();
     actualizarInterfazSerie();
 
+    const parametros = new URLSearchParams(window.location.search);
+    const esModoIndividualForzado = parametros.get("individual") === "true" || !window.referrer.includes("combates.html");
+
+    if (esModoIndividualForzado) {
+        // --- MODO INDIVIDUAL ABSOLUTO ---
+        localStorage.removeItem("palentropia_combate_activo");
+        
+        codigo1.readOnly = false;
+        codigo2.readOnly = false;
+        if (botonCambiar1) botonCambiar1.style.display = "inline-block";
+        if (botonCambiar2) botonCambiar2.style.display = "inline-block";
+        
+        const botonAjustesReglas = document.getElementById("botonAjustesReglas");
+        if (botonAjustesReglas) botonAjustesReglas.style.display = "flex";
+
+        codigo1.value = "";
+        codigo2.value = "";
+        nombre1.textContent = "—";
+        nombre2.textContent = "—";
+
+        const codigoUrl = parametros.get("codigo"), slotUrl = parametros.get("slot");
+        const slotDestino = slotUrl || localStorage.getItem("palentropia_slot_activo") || "1";
+        
+        if (codigoUrl) {
+            if (slotDestino === "1") { codigo1.value = codigoUrl; localStorage.setItem("palentropia_codigo1", codigoUrl); }
+            else if (slotDestino === "2") { codigo2.value = codigoUrl; localStorage.setItem("palentropia_codigo2", codigoUrl); }
+        }
+        
+        const codigoGuardado1 = localStorage.getItem("palentropia_codigo1");
+        const codigoGuardado2 = localStorage.getItem("palentropia_codigo2");
+        if (codigoGuardado1 && !codigo1.value) codigo1.value = codigoGuardado1;
+        if (codigoGuardado2 && !codigo2.value) codigo2.value = codigoGuardado2;
+
+        const radioTarget = document.querySelector(`input[name="controlManual"][value="${slotDestino}"]`);
+        if (radioTarget) { radioTarget.checked = true; controlManual = Number(slotDestino); }
+        if (codigo1.value.trim()) actualizarNombre(codigo1, nombre1);
+        if (codigo2.value.trim()) actualizarNombre(codigo2, nombre2);
+        return;
+    }
+
+    // --- MODO TORNEO ---
     const datosTorneoGuardado = localStorage.getItem("palentropia_combate_activo");
     if (datosTorneoGuardado) {
         try {
@@ -574,39 +615,15 @@ document.addEventListener("DOMContentLoaded", async function() {
                         if (typeof prepararCombate === "function") { prepararCombate(); }
                     }
                 }, 100);
-                return;
             }
         } catch (e) { console.error("Error al procesar modo torneo:", e); }
     }
-
-    localStorage.removeItem("palentropia_combate_activo");
-    codigo1.readOnly = false;
-    codigo2.readOnly = false;
-    if (botonCambiar1) botonCambiar1.style.display = "block";
-    if (botonCambiar2) botonCambiar2.style.display = "block";
-    const botonAjustesReglas = document.getElementById("botonAjustesReglas");
-    if (botonAjustesReglas) botonAjustesReglas.style.display = "flex";
-
-    const parametros = new URLSearchParams(window.location.search);
-    const codigoUrl = parametros.get("codigo"), slotUrl = parametros.get("slot");
-    const slotDestino = slotUrl || localStorage.getItem("palentropia_slot_activo") || "1";
-    
-    if (codigoUrl) {
-        if (slotDestino === "1") { codigo1.value = codigoUrl; localStorage.setItem("palentropia_codigo1", codigoUrl); }
-        else if (slotDestino === "2") { codigo2.value = codigoUrl; localStorage.setItem("palentropia_codigo2", codigoUrl); }
-    }
-    const codigoGuardado1 = localStorage.getItem("palentropia_codigo1");
-    const codigoGuardado2 = localStorage.getItem("palentropia_codigo2");
-    if (codigoGuardado1 && !codigo1.value) codigo1.value = codigoGuardado1;
-    if (codigoGuardado2 && !codigo2.value) codigo2.value = codigoGuardado2;
-
-    const radioTarget = document.querySelector(`input[name="controlManual"][value="${slotDestino}"]`);
-    if (radioTarget) { radioTarget.checked = true; controlManual = Number(slotDestino); }
-    if (codigo1.value.trim()) actualizarNombre(codigo1, nombre1);
-    if (codigo2.value.trim()) actualizarNombre(codigo2, nombre2);
 });
 
 
+
+
+    
     
 </script>
 </body>
