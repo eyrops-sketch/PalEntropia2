@@ -459,15 +459,25 @@ function mostrarResCombate(res) {
     if (!res) return;
     let g = res.ganador ? (typeof res.ganador === "string" ? window.PALARENA_STANDAR.obtenerCombatiente(combate, res.ganador) : res.ganador) : null;
     if (!g && combate) g = combate.ganador === combatiente1.codigo ? combatiente1 : (combate.ganador === combatiente2.codigo ? combatiente2 : null);
+    
     document.getElementById("resultadoIcono").textContent = g ? "🏆" : "⚔️";
     document.getElementById("resultadoTitulo").textContent = g ? "🏆 " + (g.nombre || "Ganador") : "⚔️ Combate terminado";
     document.getElementById("resultadoTexto").textContent = g ? `Victoria en este partido para ${g.nombre}.` : "El combate ha finalizado.";
+    
     if (botonNuevoCombate) {
-        if (serieActiva && !serieTerminada) { botonNuevoCombate.style.display = "none"; }
-        else { botonNuevoCombate.style.display = "inline-block"; botonNuevoCombate.textContent = "▶️ Siguiente partido"; }
+        botonNuevoCombate.style.display = "inline-block";
+        botonNuevoCombate.style.height = "auto";
+        botonNuevoCombate.style.padding = "10px 16px";
+        botonNuevoCombate.style.lineHeight = "1.3";
+        // Texto compacto en dos líneas seguras sin desbordamiento
+        botonNuevoCombate.innerHTML = "▶️ Continuar (auto)<br>🔄 Reinicio (manual)";
     }
-    document.getElementById("resultado").classList.remove("resultado-oculto"); mostrarCombatientes(); return g;
+    
+    document.getElementById("resultado").classList.remove("resultado-oculto"); 
+    mostrarCombatientes(); 
+    return g;
 }
+
 function limpiarRegistro() { document.getElementById("registroCombate").innerHTML = ""; }
 function añadirRegistro(txt) { const reg = document.getElementById("registroCombate"), lin = document.createElement("div"); lin.className = "linea-registro"; lin.textContent = txt; reg.appendChild(lin); reg.scrollTop = reg.scrollHeight; }
 function mostrarMensaje(txt) { mensajeConfiguracion.textContent = txt; }
