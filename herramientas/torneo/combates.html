@@ -1001,92 +1001,46 @@ function crearParticipanteVisual(
 /* =====================================================
    CREAR TARJETA DE COMBATE
    ===================================================== */
+function mostrarCruce(     cruce ) {     const tarjeta =         document.createElement(             "div"         );     tarjeta.className =         "cruceCombate";     const numero =         document.createElement(             "div"         );     numero.className =         "numeroCombate";     numero.textContent =         "Combate " +         cruce.numero;     tarjeta.appendChild(         numero     );     const participantes =         document.createElement(             "div"         );     participantes.className =         "participantesCombate";     participantes.appendChild(         crearParticipanteVisual(             cruce.participante1         )     );     
+    /* =====================================================
+       VS / ESPADA INTERACTIVO (MODO TORNEO)
+       ===================================================== */
+    const versus = document.createElement("button");
+    versus.type = "button";
+    versus.className = "versusCombate";
+    versus.textContent = "⚔️";
+    versus.title = "Lanzar combate en la Arena";
 
-function mostrarCruce(
-    cruce
-) {
+    const p1Valido = cruce.participante1 && (typeof cruce.participante1 === "string" || cruce.participante1.j1);
+    const p2Valido = cruce.participante2 && (typeof cruce.participante2 === "string" || cruce.participante2.j1);
 
-    const tarjeta =
-        document.createElement(
-            "div"
-        );
+    if (p1Valido && p2Valido) {
+        const codigo1 = typeof cruce.participante1 === "string" ? cruce.participante1 : cruce.participante1.j1;
+        const codigo2 = typeof cruce.participante2 === "string" ? cruce.participante2 : cruce.participante2.j1;
 
+        versus.addEventListener("click", function() {
+            const datosCombateTorneo = {
+                modoTorneo: true,
+                combateNumero: cruce.numero,
+                combatiente1: codigo1,
+                combatiente2: codigo2
+            };
+            localStorage.setItem("palentropia_combate_activo", JSON.stringify(datosCombateTorneo));
+            window.location.href = "../generador_fase_2/arena.html";
+        });
+    } else {
+        versus.disabled = true;
+        versus.style.opacity = "0.35";
+        versus.style.cursor = "default";
+    }
 
-    tarjeta.className =
-        "cruceCombate";
-
-
-    const numero =
-        document.createElement(
-            "div"
-        );
-
-
-    numero.className =
-        "numeroCombate";
-
-
-    numero.textContent =
-        "Combate " +
-        cruce.numero;
-
-
-    tarjeta.appendChild(
-        numero
-    );
-
-
-    const participantes =
-        document.createElement(
-            "div"
-        );
-
-
-    participantes.className =
-        "participantesCombate";
-
-
-    participantes.appendChild(
-        crearParticipanteVisual(
-            cruce.participante1
-        )
-    );
-
-
-    const versus =
-        document.createElement(
-            "div"
-        );
-
-
-    versus.className =
-        "versusCombate";
-
-
-    versus.textContent =
-        "⚔️";
-
-
-    participantes.appendChild(
-        versus
-    );
-
-
+    participantes.appendChild(versus);
     participantes.appendChild(
         crearParticipanteVisual(
             cruce.participante2
         )
-    );
+    );     tarjeta.appendChild(         participantes     );     return tarjeta; }
 
-
-    tarjeta.appendChild(
-        participantes
-    );
-
-
-    return tarjeta;
-
-}
 
 
 /* =====================================================
