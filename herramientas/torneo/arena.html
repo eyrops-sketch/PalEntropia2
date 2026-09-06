@@ -43,8 +43,7 @@
                 <div id="nombre2" class="nombre-combatiente">—</div>
             </div>
         </div>
-
-           <div id="controlManual" class="control-manual">
+                <div id="controlManual" class="control-manual">
             <div class="control-manual-titulo">🎮 Control manual</div>
             <div class="control-manual-opciones">
                 <label class="opcion-control"><input type="radio" name="controlManual" value="1" checked><span>Combatiente 1</span></label>
@@ -171,6 +170,7 @@ let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate 
 let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false;
 let partidosSerie = 1, victorias1 = 0, victorias2 = 0, partidoActual = 1, victoriasNecesarias = 1;
 const CLAVE_REGLAS = "palentropia_reglas_torneo", REGLAS_DEF = { partidosSerie: 1, tipoCombate: "normal" };
+const CLAVE_ALEATORIO_CONFIG = "palentropia_modo_aleatorio_config";
 const codigo1 = document.getElementById("codigo1"), codigo2 = document.getElementById("codigo2");
 const nombre1 = document.getElementById("nombre1"), nombre2 = document.getElementById("nombre2");
 const botonPreparar = document.getElementById("botonPreparar"), botonSerie = document.getElementById("botonSerie");
@@ -244,7 +244,7 @@ function buscarFicha(codigo) {
 }
 function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
 
-codigo1.addEventListener("input", () => {
+ codigo1.addEventListener("input", () => {
     actualizarNombre(codigo1, nombre1);
     localStorage.setItem("palentropia_codigo1", codigo1.value);
 });
@@ -283,8 +283,25 @@ function validarYPrepararDatos() {
     if (!ficha1 || !ficha2) { mostrarMensaje("No se encuentran una o ambas Paleofichas."); return null; }
     return true;
 }
-function prepararCombate() {
+
+async function aplicarConfiguracionAleatoriaSiEstaActivo() {
+    const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
+    if (!esAleatorio || fichas.length === 0) return;
+    const modosUnicos = Array.from(new Set(fichas.map(f => String(f.conf).trim()).filter(Boolean)));
+    if (modosUnicos.length === 0) return;
+    const modoAleatorio = modosUnicos[Math.floor(Math.random() * modosUnicos.length)];
+    const reglasActuales = obtenerReglasTorneo();
+    reglasActuales.tipoCombate = modoAleatorio;
+    const fichaSeleccionada = fichas.find(f => String(f.conf).trim().toLowerCase() === modoAleatorio.toLowerCase());
+    if (fichaSeleccionada) {
+        reglasActuales.coeficientes = { ...fichaSeleccionada };
+    }
+    localStorage.setItem(CLAVE_REGLAS_TORNEO, JSON.stringify(reglasActuales));
+}
+
+async function prepararCombate() {
     if (!validarYPrepararDatos()) return;
+    await aplicarConfiguracionAleatoriaSiEstaActivo();
     const reg = obtenerReglasTorneo(); partidosSerie = Number(reg.partidosSerie) || 1; victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
     victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = partidosSerie > 1; serieTerminada = false; partidoRegistrado = false; actualizarInterfazSerie();
     try {
@@ -298,8 +315,10 @@ function prepararCombate() {
         mostrarMensaje("Combate preparado correctamente.");
     } catch (e) { mostrarMensaje("❌ Error al preparar el combate."); }
 }
-function prepararSerie() {
+
+async function prepararSerie() {
     if (!validarYPrepararDatos()) return;
+    await aplicarConfiguracionAleatoriaSiEstaActivo();
     const reg = obtenerReglasTorneo();
     partidosSerie = Number(reg.partidosSerie) || 1;
     victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
@@ -309,9 +328,11 @@ function prepararSerie() {
     actualizarInterfazModalidad();
     iniciarPartidoSerie();
 }
-function iniciarPartidoSerie() {
+
+async function iniciarPartidoSerie() {
     if (!serieActiva || serieTerminada) return;
     try {
+        await aplicarConfiguracionAleatoriaSiEstaActivo();
         const configActiva = obtenerConfiguracionActiva();
         combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();
         combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true; partidoRegistrado = false;
@@ -323,6 +344,7 @@ function iniciarPartidoSerie() {
         mostrarMensaje("Partido " + partidoActual + " preparado correctamente."); actualizarInterfazSerie();
     } catch (e) { combateActivo = false; mostrarMensaje("❌ Error al preparar el partido."); }
 }
+
 function mostrarCombatientes() {
     if (!combate || !combatiente1 || !combatiente2) return;
     const reg = obtenerReglasTorneo();
@@ -478,7 +500,7 @@ botonNuevoCombate.addEventListener("click", () => {
 });
 botonVolverCruces.addEventListener("click", () => { window.location.href = "index.html"; });
 
-document.addEventListener("DOMContentLoaded", async function() {
+  document.addEventListener("DOMContentLoaded", async function() {
     await cargarPaleofichas();
     await cargarMaster();
     actualizarInterfazModalidad();
