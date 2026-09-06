@@ -562,3 +562,21 @@ select#tipoCombate option {
     color: #c9d1d9;
     padding: 8px;
 }
+
+
+/* =====================================================
+   BLOQUE MODO ALEATORIO (CONFIGURACIÓN)
+   ===================================================== */
+
+.bloqueTorneo div h3 {
+    margin-bottom: 6px;
+}
+
+#modoAleatorioConfig {
+    appearance: auto;
+    -webkit-appearance: checkbox;
+    width: 24px;
+    height: 24px;
+    accent-color: #63d9ff;
+    cursor: pointer;
+}
