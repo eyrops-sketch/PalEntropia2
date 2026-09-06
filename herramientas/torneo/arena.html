@@ -286,18 +286,56 @@ function validarYPrepararDatos() {
 
 async function aplicarConfiguracionAleatoriaSiEstaActivo() {
     const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
-    if (!esAleatorio || fichas.length === 0) return;
-    const modosUnicos = Array.from(new Set(fichas.map(f => String(f.conf).trim()).filter(Boolean)));
-    if (modosUnicos.length === 0) return;
-    const modoAleatorio = modosUnicos[Math.floor(Math.random() * modosUnicos.length)];
-    const reglasActuales = obtenerReglasTorneo();
-    reglasActuales.tipoCombate = modoAleatorio;
-    const fichaSeleccionada = fichas.find(f => String(f.conf).trim().toLowerCase() === modoAleatorio.toLowerCase());
-    if (fichaSeleccionada) {
-        reglasActuales.coeficientes = { ...fichaSeleccionada };
+    if (!esAleatorio) return;
+
+    try {
+        const respuesta = await fetch("config.csv");
+        const texto = await respuesta.text();
+        const lineas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        if (lineas.length < 2) return;
+
+        const cabecera = lineas[0].split(",").map(c => c.trim());
+        const modosDisponibles = [];
+        const filasModos = {};
+
+        for (let i = 1; i < lineas.length; i++) {
+            const valores = lineas[i].split(",").map(v => v.trim());
+            const modo = valores[0];
+            if (modo) {
+                modosDisponibles.push(modo);
+                filasModos[modo] = valores;
+            }
+        }
+
+        if (modosDisponibles.length === 0) return;
+
+        const modoAleatorio = modosDisponibles[Math.floor(Math.random() * modosDisponibles.length)];
+        const valoresElegidos = filasModos[modoAleatorio];
+        let configExterna = {};
+
+        if (valoresElegidos) {
+            for (let j = 1; j < cabecera.length; j++) {
+                const parametro = cabecera[j];
+                let val = valoresElegidos[j] !== undefined ? valoresElegidos[j] : "";
+                if (parametro && val !== "") {
+                    if (val === "true") val = true;
+                    else if (val === "false") val = false;
+                    else if (!isNaN(val)) val = Number(val);
+                    configExterna[parametro] = val;
+                }
+            }
+        }
+
+        const reglasActuales = obtenerReglasTorneo();
+        reglasActuales.tipoCombate = modoAleatorio;
+        reglasActuales.coeficientes = configExterna;
+
+        localStorage.setItem(CLAVE_REGLAS, JSON.stringify(reglasActuales));
+    } catch (err) {
+        console.warn("Error al aplicar la configuración aleatoria:", err);
     }
-    localStorage.setItem(CLAVE_REGLAS_TORNEO, JSON.stringify(reglasActuales));
 }
+
 
 async function prepararCombate() {
     if (!validarYPrepararDatos()) return;
