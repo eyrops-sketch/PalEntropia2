@@ -1,1779 +1,376 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>PalEntropía — Combates</title>
-
-<link rel="stylesheet"
-      href="combates.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PalEntropía — Combates</title>
+    <link rel="stylesheet" href="combates.css">
 </head>
-
 <body>
-
-<!-- =====================================================
-     BOTÓN MENÚ PRINCIPAL
-     ===================================================== -->
-
-<button
-id="botonMenuPrincipal"
-type="button"
-title="Volver al menú principal"
-aria-label="Volver al menú principal">
-
-🏠
-
-</button>
-
-
-<!-- =====================================================
-     CABECERA
-     ===================================================== -->
-
+<button id="botonMenuPrincipal" type="button" title="Volver al menú principal" aria-label="Volver al menú principal"> 🏠 </button>
 <header id="cabecera">
-
-<h1>PalEntropía</h1>
-
-<div id="subtitulo">
-    Combates
-</div>
-
+    <h1>PalEntropía</h1>
+    <div id="subtitulo">Combates</div>
 </header>
-
-
-<!-- =====================================================
-     CONTENEDOR PRINCIPAL
-     ===================================================== -->
-
 <main id="combates">
-
-<section id="cabeceraCombates">
-
-<h2 id="tituloTorneo">
-    ⚔️ Torneo
-</h2>
-
-<p id="estadoCombates">
-    Preparando emparejamientos...
-</p>
-
-<!-- =====================================================
-     FORZAR NUEVOS EMPAREJAMIENTOS
-     ===================================================== -->
-
-<button
-id="botonRehacerEmparejamientos"
-type="button">
-
-🔄 Rehacer emparejamientos
-
-</button>
-
-</section>
-
-
-<!-- =================================================
-     RONDAS
-     ================================================= -->
-
-<section id="contenedorRondas">
-</section>
-
+    <section id="cabeceraCombates">
+        <h2 id="tituloTorneo">⚔️ Torneo</h2>
+        <p id="estadoCombates">Preparando emparejamientos...</p>
+        <button id="botonRehacerEmparejamientos" type="button"> 🔄 Rehacer emparejamientos </button>
+    </section>
+    <section id="contenedorRondas"></section>
 </main>
-
-
-<!-- =====================================================
-     VOLVER AL ÍNDICE
-     ===================================================== -->
-
 <section id="volver">
-
-<a
-href="index.html"
-id="botonVolver">
-
-← Volver al índice del torneo
-
-</a>
-
+    <a href="index.html" id="botonVolver"> ← Volver al índice del torneo </a>
 </section>
-
-
-<!-- =====================================================
-     MOTOR DEL TORNEO
-     ===================================================== -->
-
 <script>
-
 window.TORNEO_COMBATES = [];
-
-
-/* =====================================================
-   CLAVE DEL CUADRO GUARDADO
-   ===================================================== */
-
-const CLAVE_TORNEO_EMPAREJAMIENTOS =
-    "palentropia_emparejamientos_torneo";
-
-
-/* =====================================================
-   OBTENER CRITERIO DEL TORNEO
-   ===================================================== */
+const CLAVE_TORNEO_EMPAREJAMIENTOS = "palentropia_emparejamientos_torneo";
+const CLAVE_RESULTADOS_SERIES = "palentropia_resultados_series";
 
 function obtenerCriterioTorneo() {
-
-    const criterio =
-        localStorage.getItem(
-            "palentropia_criterio_torneo"
-        );
-
-    return String(
-        criterio || ""
-    ).trim();
-
+    const criterio = localStorage.getItem("palentropia_criterio_torneo");
+    return String(criterio || "").trim();
 }
-
-
-/* =====================================================
-   TRANSFORMAR CRITERIO PARA MOSTRAR
-   ===================================================== */
-
-function transformarCriterioTorneo(
-    criterio
-) {
-
-    const valor =
-        String(
-            criterio || ""
-        ).trim();
-
-    if (!valor) {
-
-        return "";
-
-    }
-
-
-    const equivalencias = {
-
-        "perm":
-            "Pérmico",
-
-        "chord":
-            "Chordata",
-
-        "placen":
-            "Placentaria"
-
-    };
-
-
-    const clave =
-        valor.toLowerCase();
-
-
-    if (
-        equivalencias[
-            clave
-        ]
-    ) {
-
-        return equivalencias[
-            clave
-        ];
-
-    }
-
-
-    /*
-    Los códigos se mantienen
-    exactamente como fueron introducidos.
-    */
-
+function transformarCriterioTorneo(criterio) {
+    const valor = String(criterio || "").trim();
+    if (!valor) return "";
+    const equivalencias = { "perm": "Pérmico", "chord": "Chordata", "placen": "Placentaria" };
+    const clave = valor.toLowerCase();
+    if (equivalencias[clave]) return equivalencias[clave];
     return valor;
-
 }
-
-
-/* =====================================================
-   MOSTRAR TÍTULO DEL TORNEO
-   ===================================================== */
-
 function mostrarTituloTorneo() {
-
-    const titulo =
-        document.getElementById(
-            "tituloTorneo"
-        );
-
-
-    if (!titulo) {
-
-        return;
-
-    }
-
-
-    const criterio =
-        obtenerCriterioTorneo();
-
-
-    const criterioMostrar =
-        transformarCriterioTorneo(
-            criterio
-        );
-
-
-    if (
-        criterioMostrar
-    ) {
-
-        titulo.textContent =
-            "⚔️ Torneo " +
-            criterioMostrar;
-
-    }
-
-    else {
-
-        titulo.textContent =
-            "⚔️ Torneo";
-
-    }
-
+    const titulo = document.getElementById("tituloTorneo");
+    if (!titulo) return;
+    const criterio = obtenerCriterioTorneo();
+    const criterioMostrar = transformarCriterioTorneo(criterio);
+    titulo.textContent = criterioMostrar ? "⚔️ Torneo " + criterioMostrar : "⚔️ Torneo";
 }
-
-
-/* =====================================================
-   OBTENER PARTICIPANTES
-   ===================================================== */
-
 function obtenerParticipantes() {
-
-    const guardado =
-        localStorage.getItem(
-            "palentropia_matriz_combatientes"
-        );
-
-
-    if (!guardado) {
-
-        return [];
-
-    }
-
-
+    const guardado = localStorage.getItem("palentropia_matriz_combatientes");
+    if (!guardado) return [];
     try {
-
-        const matriz =
-            JSON.parse(
-                guardado
-            );
-
-
-        if (
-            !Array.isArray(
-                matriz
-            )
-        ) {
-
-            return [];
-
-        }
-
-
-        return matriz
-            .map(
-                codigo =>
-                    String(
-                        codigo || ""
-                    ).trim()
-            )
-            .filter(
-                codigo =>
-                    codigo !== ""
-            );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Error leyendo participantes:",
-            error
-        );
-
-        return [];
-
-    }
-
+        const matriz = JSON.parse(guardado);
+        if (!Array.isArray(matriz)) return [];
+        return matriz.map(codigo => String(codigo || "").trim()).filter(codigo => codigo !== "");
+    } catch (error) { console.error("Error leyendo participantes:", error); return []; }
 }
-
-
-/* =====================================================
-   OBTENER J2
-   ===================================================== */
-
 async function obtenerMapaNombres() {
-
-    const mapaNombres =
-        new Map();
-
-
+    const mapaNombres = new Map();
     try {
-
-        const respuesta =
-            await fetch(
-                "../generador_fase_2/paleofichas.json"
-            );
-
-
-        if (!respuesta.ok) {
-
-            throw new Error(
-                "No se pudo cargar paleofichas.json."
-            );
-
-        }
-
-
-        const datos =
-            await respuesta.json();
-
-
-        if (
-            !Array.isArray(
-                datos
-            )
-        ) {
-
-            return mapaNombres;
-
-        }
-
-
-        datos.forEach(
-            registro => {
-
-                if (!registro) {
-
-                    return;
-
-                }
-
-
-                const j1 =
-                    String(
-                        registro.j1 ||
-                        registro.codigo ||
-                        registro.J1 ||
-                        ""
-                    ).trim();
-
-
-                const j2 =
-                    String(
-                        registro.j2 ||
-                        registro.nombre ||
-                        registro.J2 ||
-                        ""
-                    ).trim();
-
-
-                if (
-                    j1 &&
-                    j2
-                ) {
-
-                    mapaNombres.set(
-                        j1,
-                        j2
-                    );
-
-                }
-
-            }
-        );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Error cargando nombres J2:",
-            error
-        );
-
-    }
-
-
+        const respuesta = await fetch("../generador_fase_2/paleofichas.json");
+        if (!respuesta.ok) throw new Error();
+        const datos = await respuesta.json();
+        if (!Array.isArray(datos)) return mapaNombres;
+        datos.forEach(registro => {
+            if (!registro) return;
+            const j1 = String(registro.j1 || registro.codigo || registro.J1 || "").trim();
+            const j2 = String(registro.j2 || registro.nombre || registro.J2 || "").trim();
+            if (j1 && j2) mapaNombres.set(j1, j2);
+        });
+    } catch (error) { console.error("Error cargando nombres J2:", error); }
     return mapaNombres;
-
 }
-
-
-/* =====================================================
-   CONVERTIR PARTICIPANTES
-   J1 → J1 + J2
-   ===================================================== */
-
-function crearParticipantesDatos(
-    matrizJ1,
-    mapaNombres
-) {
-
+function crearParticipantesDatos(matrizJ1, mapaNombres) {
     const participantes = [];
-
-
-    matrizJ1.forEach(
-        codigo => {
-
-            const j1 =
-                String(
-                    codigo || ""
-                ).trim();
-
-
-            if (!j1) {
-
-                return;
-
-            }
-
-
-            const j2 =
-                mapaNombres.get(j1) ||
-                "";
-
-
-            participantes.push({
-
-                j1:
-                    j1,
-
-                j2:
-                    j2
-
-            });
-
-        }
-    );
-
-
+    matrizJ1.forEach(codigo => {
+        const j1 = String(codigo || "").trim();
+        if (!j1) return;
+        participantes.push({ j1: j1, j2: mapaNombres.get(j1) || "" });
+    });
     return participantes;
-
 }
 
-
-/* =====================================================
-   BARAJAR PARTICIPANTES
-   FISHER-YATES
-   ===================================================== */
-
-function barajar(
-    matriz
-) {
-
-    const resultado =
-        [...matriz];
-
-
-    for (
-        let i =
-            resultado.length - 1;
-
-        i > 0;
-
-        i--
-    ) {
-
-        const j =
-            Math.floor(
-                Math.random() *
-                (i + 1)
-            );
-
-
-        const temporal =
-            resultado[i];
-
-
-        resultado[i] =
-            resultado[j];
-
-
-        resultado[j] =
-            temporal;
-
+function barajar(matriz) {
+    const resultado = [...matriz];
+    for (let i = resultado.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temporal = resultado[i];
+        resultado[i] = resultado[j];
+        resultado[j] = temporal;
     }
-
-
     return resultado;
-
 }
-
-
-/* =====================================================
-   CALCULAR MAYOR POTENCIA DE 2
-   MENOR O IGUAL AL TOTAL
-   ===================================================== */
-
-function calcularCuadroPrincipal(
-    cantidad
-) {
-
-    let potencia =
-        1;
-
-
-    while (
-        potencia * 2 <=
-        cantidad
-    ) {
-
-        potencia *= 2;
-
-    }
-
-
+function calcularCuadroPrincipal(cantidad) {
+    let potencia = 1;
+    while (potencia * 2 <= cantidad) potencia *= 2;
     return potencia;
-
 }
-
-
-/* =====================================================
-   CALCULAR RONDA PREVIA
-   ===================================================== */
-
-function calcularRondaPrevia(
-    cantidad
-) {
-
-    const cuadro =
-        calcularCuadroPrincipal(
-            cantidad
-        );
-
-
-    const sobrantes =
-        cantidad -
-        cuadro;
-
-
-    return {
-
-        cuadro:
-            cuadro,
-
-        sobrantes:
-            sobrantes,
-
-        combates:
-            sobrantes
-
-    };
-
+function calcularRondaPrevia(cantidad) {
+    const cuadro = calcularCuadroPrincipal(cantidad);
+    const sobrantes = cantidad - cuadro;
+    return { cuadro: cuadro, sobrantes: sobrantes, combates: sobrantes };
 }
-
-
-/* =====================================================
-   CREAR CRUCES DE UNA LISTA
-   ===================================================== */
-
-function crearCruces(
-    participantes
-) {
-
+function crearCruces(participantes) {
     const cruces = [];
-
-
-    for (
-        let i = 0;
-
-        i < participantes.length;
-
-        i += 2
-    ) {
-
-        const participante1 =
-            participantes[i];
-
-
-        const participante2 =
-            participantes[i + 1];
-
-
-        if (
-            participante1 &&
-            participante2
-        ) {
-
-            cruces.push({
-
-                numero:
-                    cruces.length + 1,
-
-                participante1:
-                    participante1,
-
-                participante2:
-                    participante2,
-
-                ganador:
-                    null
-
-            });
-
+    for (let i = 0; i < participantes.length; i += 2) {
+        const participante1 = participantes[i];
+        const participante2 = participantes[i + 1];
+        if (participante1 && participante2) {
+            cruces.push({ numero: cruces.length + 1, participante1: participante1, participante2: participante2, ganador: null });
         }
-
     }
-
-
     return cruces;
-
 }
-
-
-/* =====================================================
-   GENERAR TORNEO
-   ===================================================== */
-
-function generarTorneo(
-    participantes
-) {
-
-    const cantidad =
-        participantes.length;
-
-
+function generarTorneo(participantes) {
+    const cantidad = participantes.length;
     const rondas = [];
-
-
-    if (
-        cantidad < 2
-    ) {
-
+    if (cantidad < 2) return rondas;
+    const participantesBarajados = barajar(participantes);
+    const cuadro = calcularCuadroPrincipal(cantidad);
+    const sobrantes = cantidad - cuadro;
+    if (sobrantes === 0) {
+        const participantesCuadro = barajar(participantesBarajados);
+        rondas.push({ nombre: "Primera ronda", tipo: "principal", participantes: participantesCuadro, reservas: [], cruces: crearCruces(participantesCuadro) });
         return rondas;
-
     }
-
-
-    /*
-    BARAJADO GENERAL
-    */
-
-    const participantesBarajados =
-        barajar(
-            participantes
-        );
-
-
-    const cuadro =
-        calcularCuadroPrincipal(
-            cantidad
-        );
-
-
-    const sobrantes =
-        cantidad -
-        cuadro;
-
-
-    /* =================================================
-       CUADRO DIRECTO
-       ================================================= */
-
-    if (
-        sobrantes === 0
-    ) {
-
-        const participantesCuadro =
-            barajar(
-                participantesBarajados
-            );
-
-
-        rondas.push({
-
-            nombre:
-                "Primera ronda",
-
-            tipo:
-                "principal",
-
-            participantes:
-                participantesCuadro,
-
-            reservas:
-                [],
-
-            cruces:
-                crearCruces(
-                    participantesCuadro
-                )
-
-        });
-
-
-        return rondas;
-
-    }
-
-
-    /* =================================================
-       RONDA PREVIA
-       ================================================= */
-
-    const cantidadParaPrevia =
-        sobrantes * 2;
-
-
-    const participantesPrevia =
-        participantesBarajados.slice(
-            0,
-            cantidadParaPrevia
-        );
-
-
-    const pasanDirectamente =
-        participantesBarajados.slice(
-            cantidadParaPrevia
-        );
-
-
-    const crucesPrevia =
-        crearCruces(
-            participantesPrevia
-        );
-
-
-    rondas.push({
-
-        nombre:
-            "Ronda previa",
-
-        tipo:
-            "previa",
-
-        participantes:
-            participantesPrevia,
-
-        reservas:
-            pasanDirectamente,
-
-        cruces:
-            crucesPrevia
-
-    });
-
-
-    /* =================================================
-       CUADRO PRINCIPAL
-       ================================================= */
-
+    const cantidadParaPrevia = sobrantes * 2;
+    const participantesPrevia = participantesBarajados.slice(0, cantidadParaPrevia);
+    const pasanDirectamente = participantesBarajados.slice(cantidadParaPrevia);
+    const crucesPrevia = crearCruces(participantesPrevia);
+    rondas.push({ nombre: "Ronda previa", tipo: "previa", participantes: participantesPrevia, reservas: pasanDirectamente, cruces: crucesPrevia });
+    
     const marcadoresGanadores = [];
-
-
-    for (
-        let i = 0;
-
-        i < crucesPrevia.length;
-
-        i++
-    ) {
-
-        marcadoresGanadores.push({
-
-            tipo:
-                "ganador_previa",
-
-            combate:
-                i + 1,
-
-            etiqueta:
-                "Ganador combate " +
-                (
-                    i + 1
-                )
-
-        });
-
+    for (let i = 0; i < crucesPrevia.length; i++) {
+        marcadoresGanadores.push({ tipo: "ganador_previa", combate: i + 1, etiqueta: "Ganador combate " + (i + 1) });
     }
-
-
-    const siguiente = [];
-
-
-    marcadoresGanadores.forEach(
-        ganador => {
-
-            siguiente.push(
-                ganador
-            );
-
-        }
-    );
-
-
-    pasanDirectamente.forEach(
-        participante => {
-
-            siguiente.push(
-                participante
-            );
-
-        }
-    );
-
-
-    /*
-    BARAJAR LAS PLAZAS DEL
-    CUADRO PRINCIPAL
-    */
-
-    const siguienteBarajado =
-        barajar(
-            siguiente
-        );
-
-
-    rondas.push({
-
-        nombre:
-            "Cuadro principal",
-
-        tipo:
-            "principal",
-
-        participantes:
-            siguienteBarajado,
-
-        reservas:
-            [],
-
-        cruces:
-            crearCruces(
-                siguienteBarajado
-            )
-
-    });
-
-
+    const siguiente = [...marcadoresGanadores, ...pasanDirectamente];
+    const siguienteBarajado = barajar(siguiente);
+    rondas.push({ nombre: "Cuadro principal", tipo: "principal", participantes: siguienteBarajado, reservas: [], cruces: crearCruces(siguienteBarajado) });
     return rondas;
-
 }
-/* =====================================================
-   OBTENER TEXTO DEL PARTICIPANTE
-   FORMATO:
 
-   Gastornis (006_01)
-   ===================================================== */
-
-function obtenerTextoParticipante(
-    participante
-) {
-
-    if (
-        participante &&
-        typeof participante ===
-        "object" &&
-        participante.j1
-    ) {
-
-        if (
-            participante.j2
-        ) {
-
-            return (
-                participante.j2 +
-                " (" +
-                participante.j1 +
-                ")"
-            );
-
-        }
-
-
-        return participante.j1;
-
+   function obtenerTextoParticipante(participante) {
+    if (participante && typeof participante === "object" && participante.j1) {
+        return participante.j2 ? participante.j2 + " (" + participante.j1 + ")" : participante.j1;
     }
-
-
-    if (
-        typeof participante ===
-        "string"
-    ) {
-
-        return participante;
-
-    }
-
-
+    if (typeof participante === "string") return participante;
     return "—";
-
 }
-
-
-/* =====================================================
-   CREAR ELEMENTO DE PARTICIPANTE
-   ===================================================== */
-
-function crearParticipanteVisual(
-    participante
-) {
-
-    const elemento =
-        document.createElement(
-            "div"
-        );
-
-
-    elemento.className =
-        "participanteCombate";
-
-
-    /*
-    PARTICIPANTE NORMAL
-    */
-
-    if (
-        participante &&
-        typeof participante ===
-        "object" &&
-        participante.j1
-    ) {
-
-        elemento.textContent =
-            obtenerTextoParticipante(
-                participante
-            );
-
-
-        elemento.dataset.codigo =
-            participante.j1;
-
-
+function crearParticipanteVisual(participante) {
+    const elemento = document.createElement("div");
+    elemento.className = "participanteCombate";
+    if (participante && typeof participante === "object" && participante.j1) {
+        elemento.textContent = obtenerTextoParticipante(participante);
+        elemento.dataset.codigo = participante.j1;
         return elemento;
-
     }
-
-
-    /*
-    GANADOR DE COMBATE PREVIO
-    */
-
-    if (
-        participante &&
-        participante.tipo ===
-        "ganador_previa"
-    ) {
-
-        elemento.textContent =
-            "🏆 " +
-            participante.etiqueta;
-
-
-        elemento.classList.add(
-            "ganadorPendiente"
-        );
-
-
+    if (participante && participante.tipo === "ganador_previa") {
+        elemento.textContent = "🏆 " + participante.etiqueta;
+        elemento.classList.add("ganadorPendiente");
         return elemento;
-
     }
-
-
-    elemento.textContent =
-        "—";
-
-
+    elemento.textContent = "—";
     return elemento;
-
 }
+function mostrarCruce(cruce) {
+    const tarjeta = document.createElement("div");
+    tarjeta.className = "cruceCombate";
+    tarjeta.dataset.combateId = cruce.numero;
 
+    const numero = document.createElement("div");
+    numero.className = "numeroCombate";
+    numero.textContent = "Combate " + cruce.numero;
+    tarjeta.appendChild(numero);
 
-/* =====================================================
-   CREAR TARJETA DE COMBATE
-   ===================================================== */
-function mostrarCruce(     cruce ) {     const tarjeta =         document.createElement(             "div"         );     tarjeta.className =         "cruceCombate";     const numero =         document.createElement(             "div"         );     numero.className =         "numeroCombate";     numero.textContent =         "Combate " +         cruce.numero;     tarjeta.appendChild(         numero     );     const participantes =         document.createElement(             "div"         );     participantes.className =         "participantesCombate";     participantes.appendChild(         crearParticipanteVisual(             cruce.participante1         )     );     
-    /* =====================================================
-       VS / ESPADA INTERACTIVO (MODO TORNEO)
-       ===================================================== */
-    const versus = document.createElement("button");
-    versus.type = "button";
-    versus.className = "versusCombate";
-    versus.textContent = "⚔️";
-    versus.title = "Lanzar combate en la Arena";
+    let datosSeries = {};
+    try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
+    const resCombate = datosSeries[cruce.numero];
 
-    const p1Valido = cruce.participante1 && (typeof cruce.participante1 === "string" || cruce.participante1.j1);
-    const p2Valido = cruce.participante2 && (typeof cruce.participante2 === "string" || cruce.participante2.j1);
+    const participantes = document.createElement("div");
+    participantes.className = "participantesCombate";
 
-    if (p1Valido && p2Valido) {
-        const codigo1 = typeof cruce.participante1 === "string" ? cruce.participante1 : cruce.participante1.j1;
-        const codigo2 = typeof cruce.participante2 === "string" ? cruce.participante2 : cruce.participante2.j1;
+    if (resCombate) {
+        const p1Codigo = typeof cruce.participante1 === "object" ? cruce.participante1.j1 : cruce.participante1;
+        const p2Codigo = typeof cruce.participante2 === "object" ? cruce.participante2.j1 : cruce.participante2;
+        
+        const esP1Ganador = resCombate.ganadorCodigo === p1Codigo;
+        const esP2Ganador = resCombate.ganadorCodigo === p2Codigo;
 
-        versus.addEventListener("click", function() {
-            const datosCombateTorneo = {
-                modoTorneo: true,
-                combateNumero: cruce.numero,
-                combatiente1: codigo1,
-                combatiente2: codigo2
-            };
-            localStorage.setItem("palentropia_combate_activo", JSON.stringify(datosCombateTorneo));
-            window.location.href = "arena2.html";
-        });
+        const p1Div = document.createElement("div");
+        p1Div.className = "participanteCombate" + (esP1Ganador ? " ganadorTorneo" : "");
+        p1Div.textContent = obtenerTextoParticipante(cruce.participante1) + (esP1Ganador ? " 👑" : "");
+
+        const marcadorDiv = document.createElement("div");
+        marcadorDiv.className = "marcadorSerie";
+        marcadorDiv.style.cssText = "font-weight: bold; padding: 0 8px; color: #58a6ff;";
+        marcadorDiv.textContent = `${resCombate.victorias1} - ${resCombate.victorias2}`;
+
+        const p2Div = document.createElement("div");
+        p2Div.className = "participanteCombate" + (esP2Ganador ? " ganadorTorneo" : "");
+        p2Div.textContent = obtenerTextoParticipante(cruce.participante2) + (esP2Ganador ? " 👑" : "");
+
+        participantes.appendChild(p1Div);
+        participantes.appendChild(marcadorDiv);
+        participantes.appendChild(p2Div);
+        tarjeta.classList.add("combateFinalizado");
     } else {
-        versus.disabled = true;
-        versus.style.opacity = "0.35";
-        versus.style.cursor = "default";
-    }
-
-    participantes.appendChild(versus);
-    participantes.appendChild(
-        crearParticipanteVisual(
-            cruce.participante2
-        )
-    );     tarjeta.appendChild(         participantes     );     return tarjeta; }
-
-
-
-/* =====================================================
-   MOSTRAR RONDAS
-   ===================================================== */
-
-function mostrarRondas(
-    rondas
-) {
-
-    const contenedor =
-        document.getElementById(
-            "contenedorRondas"
-        );
-
-
-    contenedor.innerHTML =
-        "";
-
-
-    rondas.forEach(
-        ronda => {
-
-            const bloque =
-                document.createElement(
-                    "section"
-                );
-
-
-            bloque.className =
-                "rondaTorneo";
-
-
-            const titulo =
-                document.createElement(
-                    "h2"
-                );
-
-
-            titulo.textContent =
-                ronda.nombre;
-
-
-            bloque.appendChild(
-                titulo
-            );
-
-
-            /*
-            PARTICIPANTES QUE PASAN DIRECTAMENTE
-            */
-
-            if (
-                ronda.reservas &&
-                ronda.reservas.length
-            ) {
-
-                const reservas =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                reservas.className =
-                    "pasanDirectamente";
-
-
-                const texto =
-                    document.createElement(
-                        "span"
-                    );
-
-
-                texto.innerHTML =
-                    "<strong>⏭ Pasan directamente:</strong> ";
-
-
-                reservas.appendChild(
-                    texto
-                );
-
-
-                ronda.reservas.forEach(
-                    (
-                        participante,
-                        indice
-                    ) => {
-
-                        const elemento =
-                            document.createElement(
-                                "span"
-                            );
-
-
-                        elemento.textContent =
-                            obtenerTextoParticipante(
-                                participante
-                            );
-
-
-                        if (
-                            indice > 0
-                        ) {
-
-                            reservas.appendChild(
-                                document.createTextNode(
-                                    " · "
-                                )
-                            );
-
-                        }
-
-
-                        reservas.appendChild(
-                            elemento
-                        );
-
-                    }
-                );
-
-
-                bloque.appendChild(
-                    reservas
-                );
-
-            }
-
-
-            /*
-            LISTA DE COMBATES
-            */
-
-            const lista =
-                document.createElement(
-                    "div"
-                );
-
-
-            lista.className =
-                "listaCombates";
-
-
-            ronda.cruces.forEach(
-                cruce => {
-
-                    lista.appendChild(
-                        mostrarCruce(
-                            cruce
-                        )
-                    );
-
-                }
-            );
-
-
-            bloque.appendChild(
-                lista
-            );
-
-
-            contenedor.appendChild(
-                bloque
-            );
-
+        participantes.appendChild(crearParticipanteVisual(cruce.participante1));
+        const versus = document.createElement("button");
+        versus.type = "button";
+        versus.className = "versusCombate";
+        versus.textContent = "⚔️";
+        versus.title = "Lanzar combate en la Arena";
+        
+        const p1Valido = cruce.participante1 && (typeof cruce.participante1 === "string" || cruce.participante1.j1);
+        const p2Valido = cruce.participante2 && (typeof cruce.participante2 === "string" || cruce.participante2.j1);
+        if (p1Valido && p2Valido) {
+            const codigo1 = typeof cruce.participante1 === "string" ? cruce.participante1 : cruce.participante1.j1;
+            const codigo2 = typeof cruce.participante2 === "string" ? cruce.participante2 : cruce.participante2.j1;
+            versus.addEventListener("click", function() {
+                const datosCombateTorneo = { modoTorneo: true, combateNumero: cruce.numero, combatiente1: codigo1, combatiente2: codigo2 };
+                localStorage.setItem("palentropia_combate_activo", JSON.stringify(datosCombateTorneo));
+                window.location.href = "arena2.html";
+            });
+        } else {
+            versus.disabled = true;
+            versus.style.opacity = "0.35";
+            versus.style.cursor = "default";
         }
-    );
-
+        participantes.appendChild(versus);
+        participantes.appendChild(crearParticipanteVisual(cruce.participante2));
+    }
+    tarjeta.appendChild(participantes);
+    return tarjeta;
 }
 
-
-/* =====================================================
-   COMPROBAR SI DOS LISTAS DE PARTICIPANTES
-   SON LAS MISMAS
-   ===================================================== */
-
-function mismosParticipantes(
-    participantesGuardados,
-    participantesActuales
-) {
-
-    if (
-        !Array.isArray(
-            participantesGuardados
-        ) ||
-        !Array.isArray(
-            participantesActuales
-        )
-    ) {
-
-        return false;
-
-    }
-
-
-    if (
-        participantesGuardados.length !==
-        participantesActuales.length
-    ) {
-
-        return false;
-
-    }
-
-
-    for (
-        let i = 0;
-
-        i < participantesActuales.length;
-
-        i++
-    ) {
-
-        if (
-            String(
-                participantesGuardados[i]
-            ) !==
-            String(
-                participantesActuales[i]
-            )
-        ) {
-
-            return false;
-
+ function mostrarRondas(rondas) {
+    const contenedor = document.getElementById("contenedorRondas");
+    contenedor.innerHTML = "";
+    rondas.forEach(ronda => {
+        const bloque = document.createElement("section");
+        bloque.className = "rondaTorneo";
+        const titulo = document.createElement("h2");
+        titulo.textContent = ronda.nombre;
+        bloque.appendChild(titulo);
+        if (ronda.reservas && ronda.reservas.length) {
+            const reservas = document.createElement("div");
+            reservas.className = "pasanDirectamente";
+            const texto = document.createElement("span");
+            texto.innerHTML = "<strong>⏭ Pasan directamente:</strong> ";
+            reservas.appendChild(texto);
+            ronda.reservas.forEach((participante, indice) => {
+                const elemento = document.createElement("span");
+                elemento.textContent = obtenerTextoParticipante(participante);
+                if (indice > 0) reservas.appendChild(document.createTextNode(" · "));
+                reservas.appendChild(elemento);
+            });
+            bloque.appendChild(reservas);
         }
-
+        const lista = document.createElement("div");
+        lista.className = "listaCombates";
+        ronda.cruces.forEach(cruce => { lista.appendChild(mostrarCruce(cruce)); });
+        bloque.appendChild(lista);
+        contenedor.appendChild(bloque);
+    });
+}
+function mismosParticipantes(pGuardados, pActuales) {
+    if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;
+    for (let i = 0; i < pActuales.length; i++) {
+        if (String(pGuardados[i]) !== String(pActuales[i])) return false;
     }
-
-
     return true;
-
 }
-
-
-/* =====================================================
-   GUARDAR EMPAREJAMIENTOS
-   ===================================================== */
-
-function guardarEmparejamientos(
-    participantes,
-    rondas
-) {
-
-    const datos = {
-
-        participantes:
-            participantes.map(
-                participante =>
-                    participante.j1
-            ),
-
-        rondas:
-            rondas,
-
-        criterio:
-            obtenerCriterioTorneo(),
-
-        fecha:
-            Date.now()
-
-    };
-
-
-    localStorage.setItem(
-
-        CLAVE_TORNEO_EMPAREJAMIENTOS,
-
-        JSON.stringify(
-            datos
-        )
-
-    );
-
+function guardarEmparejamientos(participantes, rondas) {
+    const datos = { participantes: participantes.map(p => p.j1), rondas: rondas, criterio: obtenerCriterioTorneo(), fecha: Date.now() };
+    localStorage.setItem(CLAVE_TORNEO_EMPAREJAMIENTOS, JSON.stringify(datos));
 }
-
-
-/* =====================================================
-   OBTENER EMPAREJAMIENTOS GUARDADOS
-   ===================================================== */
-
-function obtenerEmparejamientosGuardados(
-    participantes
-) {
-
-    const guardado =
-        localStorage.getItem(
-            CLAVE_TORNEO_EMPAREJAMIENTOS
-        );
-
-
-    if (!guardado) {
-
-        return null;
-
-    }
-
-
+function obtenerEmparejamientosGuardados(participantes) {
+    const guardado = localStorage.getItem(CLAVE_TORNEO_EMPAREJAMIENTOS);
+    if (!guardado) return null;
     try {
-
-        const datos =
-            JSON.parse(
-                guardado
-            );
-
-
-        if (
-            !datos ||
-            !Array.isArray(
-                datos.participantes
-            ) ||
-            !Array.isArray(
-                datos.rondas
-            )
-        ) {
-
-            return null;
-
-        }
-
-
-        const participantesActuales =
-            participantes.map(
-                participante =>
-                    participante.j1
-            );
-
-
-        /*
-        Si los participantes actuales
-        no son los mismos, el cuadro
-        guardado ya no es válido.
-        */
-
-        if (
-            !mismosParticipantes(
-                datos.participantes,
-                participantesActuales
-            )
-        ) {
-
-            return null;
-
-        }
-
-
+        const datos = JSON.parse(guardado);
+        if (!datos || !Array.isArray(datos.participantes) || !Array.isArray(datos.rondas)) return null;
+        const participantesActuales = participantes.map(p => p.j1);
+        if (!mismosParticipantes(datos.participantes, participantesActuales)) return null;
         return datos.rondas;
-
+    } catch (error) { console.error("Error leyendo emparejamientos:", error); return null; }
+}
+function eliminarEmparejamientosGuardados() { localStorage.removeItem(CLAVE_TORNEO_EMPAREJAMIENTOS); }
+function mostrarEstadoTorneo(participantes, informacion, fueGenerado) {
+    const estado = document.getElementById("estadoCombates");
+    if (!estado) return;
+    if (informacion.sobrantes > 0) {
+        estado.textContent = participantes.length + " participantes · " + informacion.combates + " combates de ronda previa · " + informacion.cuadro + " participantes en el cuadro principal.";
+    } else {
+        estado.textContent = participantes.length + " participantes · cuadro de " + informacion.cuadro + ".";
     }
-
-    catch (error) {
-
-        console.error(
-            "Error leyendo emparejamientos guardados:",
-            error
-        );
-
-
-        return null;
-
-    }
-
+    estado.textContent += fueGenerado ? " Emparejamientos fijados." : " Emparejamientos guardados.";
 }
 
-
-/* =====================================================
-   ELIMINAR EMPAREJAMIENTOS GUARDADOS
-   ===================================================== */
-
-function eliminarEmparejamientosGuardados() {
-
-    localStorage.removeItem(
-        CLAVE_TORNEO_EMPAREJAMIENTOS
-    );
-
-}
-
-
-/* =====================================================
-   ACTUALIZAR ESTADO
-   ===================================================== */
-
-function mostrarEstadoTorneo(
-    participantes,
-    informacion,
-    fueGenerado
-) {
-
-    const estado =
-        document.getElementById(
-            "estadoCombates"
-        );
-
-
-    if (!estado) {
-
-        return;
-
-    }
-
-
-    if (
-        informacion.sobrantes > 0
-    ) {
-
-        estado.textContent =
-            participantes.length +
-            " participantes · " +
-            informacion.combates +
-            " combates de ronda previa · " +
-            informacion.cuadro +
-            " participantes en el cuadro principal.";
-
-    }
-
-    else {
-
-        estado.textContent =
-            participantes.length +
-            " participantes · cuadro de " +
-            informacion.cuadro +
-            ".";
-
-    }
-
-
-    if (
-        fueGenerado
-    ) {
-
-        estado.textContent +=
-            " Emparejamientos fijados.";
-
-    }
-
-    else {
-
-        estado.textContent +=
-            " Emparejamientos guardados.";
-
-    }
-
-}
-
-
-/* =====================================================
-   GENERAR O RECUPERAR TORNEO
-   ===================================================== */
-
-async function iniciarCombates(
-    forzarNuevo = false
-) {
-
-    /* MOSTRAR CRITERIO DEL TORNEO */
-
+async function iniciarCombates(forzarNuevo = false) {
     mostrarTituloTorneo();
-
-
-    const matrizJ1 =
-        obtenerParticipantes();
-
-
-    const estado =
-        document.getElementById(
-            "estadoCombates"
-        );
-
-
-    if (
-        matrizJ1.length < 2
-    ) {
-
-        estado.textContent =
-            "No hay suficientes participantes para generar combates.";
-
-
-        window.TORNEO_COMBATES =
-            [];
-
-
+    const matrizJ1 = obtenerParticipantes();
+    const estado = document.getElementById("estadoCombates");
+    if (matrizJ1.length < 2) {
+        estado.textContent = "No hay suficientes participantes para generar combates.";
+        window.TORNEO_COMBATES = [];
         return;
-
     }
-
-
-    /* CARGAR J2 */
-
-    const mapaNombres =
-        await obtenerMapaNombres();
-
-
-    /* CREAR PARTICIPANTES CON J1 + J2 */
-
-    const participantes =
-        crearParticipantesDatos(
-            matrizJ1,
-            mapaNombres
-        );
-
-
-    if (
-        participantes.length < 2
-    ) {
-
-        estado.textContent =
-            "No hay suficientes participantes válidos para generar combates.";
-
-
-        window.TORNEO_COMBATES =
-            [];
-
-
+    const mapaNombres = await obtenerMapaNombres();
+    const participantes = crearParticipantesDatos(matrizJ1, mapaNombres);
+    if (participantes.length < 2) {
+        estado.textContent = "No hay suficientes participantes válidos para generar combates.";
+        window.TORNEO_COMBATES = [];
         return;
-
     }
 
-
-    /*
-    =====================================================
-    SI SE FUERZA UNA NUEVA GENERACIÓN
-    =====================================================
-    */
-
-    if (
-        forzarNuevo
-    ) {
-
-        eliminarEmparejamientosGuardados();
-
+    const ultimoGanadorJSON = localStorage.getItem("palentropia_ultimo_ganador");
+    if (ultimoGanadorJSON) {
+        try {
+            const infoGanador = JSON.parse(ultimoGanadorJSON);
+            let datosSeries = {};
+            try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
+            
+            datosSeries[infoGanador.combateNumero] = {
+                ganadorCodigo: infoGanador.ganadorCodigo,
+                ganadorNombre: infoGanador.ganadorNombre,
+                victorias1: infoGanador.victorias1,
+                victorias2: infoGanador.victorias2
+            };
+            localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(datosSeries));
+            localStorage.removeItem("palentropia_ultimo_ganador");
+        } catch (e) { console.error("Error procesando último ganador de la arena:", e); }
     }
 
+    if (forzarNuevo) eliminarEmparejamientosGuardados();
 
-    /*
-    =====================================================
-    INTENTAR RECUPERAR CUADRO EXISTENTE
-    =====================================================
-    */
-
-    let rondas =
-        obtenerEmparejamientosGuardados(
-            participantes
-        );
-
-
-    let fueGenerado =
-        false;
-
-
-    /*
-    =====================================================
-    SI NO EXISTE CUADRO VÁLIDO,
-    GENERAMOS UNO NUEVO
-    =====================================================
-    */
-
-    if (
-        !rondas
-    ) {
-
-        rondas =
-            generarTorneo(
-                participantes
-            );
-
-
-        guardarEmparejamientos(
-            participantes,
-            rondas
-        );
-
-
-        fueGenerado =
-            true;
-
+    let rondas = obtenerEmparejamientosGuardados(participantes);
+    let fueGenerado = false;
+    if (!rondas) {
+        rondas = generarTorneo(participantes);
+        guardarEmparejamientos(participantes, rondas);
+        fueGenerado = true;
     }
-
-
-    /*
-    =====================================================
-    GUARDAR EN MEMORIA
-    =====================================================
-    */
-
-    window.TORNEO_COMBATES =
-        rondas;
-
-
-    const informacion =
-        calcularRondaPrevia(
-            participantes.length
-        );
-
-
-    /*
-    =====================================================
-    ESTADO
-    =====================================================
-    */
-
-    mostrarEstadoTorneo(
-        participantes,
-        informacion,
-        fueGenerado
-    );
-
-
-    /*
-    =====================================================
-    MOSTRAR
-    =====================================================
-    */
-
-    mostrarRondas(
-        rondas
-    );
-
-
-    console.log(
-        "TORNEO_COMBATES:",
-        rondas
-    );
-
+    window.TORNEO_COMBATES = rondas;
+    const informacion = calcularRondaPrevia(participantes.length);
+    mostrarEstadoTorneo(participantes, informacion, fueGenerado);
+    mostrarRondas(rondas);
 }
 
-
-/* =====================================================
-   ARRANQUE
-   ===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        /* ---------------------------------------------
-           MENÚ PRINCIPAL
-        --------------------------------------------- */
-
-        const botonMenu =
-            document.getElementById(
-                "botonMenuPrincipal"
-            );
-
-
-        if (
-            botonMenu
-        ) {
-
-            botonMenu.addEventListener(
-                "click",
-                function() {
-
-                    window.location.href =
-                        "../../index.html";
-
-                }
-            );
-
-        }
-
-
-        /* ---------------------------------------------
-           REHACER EMPAREJAMIENTOS
-        --------------------------------------------- */
-
-        const botonRehacer =
-            document.getElementById(
-                "botonRehacerEmparejamientos"
-            );
-
-
-        if (
-            botonRehacer
-        ) {
-
-            botonRehacer.addEventListener(
-                "click",
-                async function() {
-
-                    const confirmar =
-                        confirm(
-                            "¿Quieres rehacer los emparejamientos del torneo?"
-                        );
-
-
-                    if (
-                        !confirmar
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    botonRehacer.disabled =
-                        true;
-
-
-                    try {
-
-                        await iniciarCombates(
-                            true
-                        );
-
-                    }
-
-                    catch (error) {
-
-                        console.error(
-                            "Error rehaciendo emparejamientos:",
-                            error
-                        );
-
-                    }
-
-
-                    botonRehacer.disabled =
-                        false;
-
-                }
-            );
-
-        }
-
-
-        /* ---------------------------------------------
-           INICIAR TORNEO
-        --------------------------------------------- */
-
-        iniciarCombates();
-
+document.addEventListener("DOMContentLoaded", function() {
+    const botonMenu = document.getElementById("botonMenuPrincipal");
+    if (botonMenu) {
+        botonMenu.addEventListener("click", function() {
+            window.location.href = "index.html";
+        });
     }
-);
-
+    const botonRehacer = document.getElementById("botonRehacerEmparejamientos");
+    if (botonRehacer) {
+        botonRehacer.addEventListener("click", async function() {
+            const confirmar = confirm("¿Quieres rehacer los emparejamientos del torneo y borrar los resultados actuales?");
+            if (!confirmar) return;
+            botonRehacer.disabled = true;
+            try {
+                localStorage.removeItem(CLAVE_RESULTADOS_SERIES);
+                await iniciarCombates(true);
+            } catch (error) { console.error("Error rehaciendo emparejamientos:", error); }
+            botonRehacer.disabled = false;
+        });
+    }
+    iniciarCombates();
+});
 </script>
-
 </body>
-
 </html>
