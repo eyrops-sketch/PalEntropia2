@@ -183,6 +183,8 @@ function generarTorneo(participantes) {
     return rondas;
 }
 
+
+    
 function filtrarRondasPorEntrada(rondas) {
     const guardado = localStorage.getItem(CLAVE_ENTRADA_TORNEO);
     if (!guardado) return rondas;
@@ -194,12 +196,12 @@ function filtrarRondasPorEntrada(rondas) {
         if (faseId === "principal") return rondas.filter(r => r.tipo !== "previa");
         
         const mapFases = {
-            "32avos": "Sesenta y cuatroavos de final",
-            "16avos": "Treintaidosavos de final",
-            "octavos": "Dieciseisavos de final",
-            "cuartos": "Octavos de final",
-            "semifinales": "Cuartos de final",
-            "final": "Semifinales"
+            "32avos": "Treintaidosavos de final",
+            "16avos": "Dieciseisavos de final",
+            "octavos": "Octavos de final",
+            "cuartos": "Cuartos de final",
+            "semifinales": "Semifinales",
+            "final": "Gran Final"
         };
         const nombreBusqueda = mapFases[faseId];
         if (!nombreBusqueda) return rondas;
@@ -209,6 +211,11 @@ function filtrarRondasPorEntrada(rondas) {
         return rondas;
     }
 }
+
+
+
+
+    
     function obtenerTextoParticipante(participante) {
     if (participante && typeof participante === "object" && participante.j1) {
         return participante.j2 ? participante.j2 + " (" + participante.j1 + ")" : participante.j1;
