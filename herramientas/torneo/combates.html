@@ -122,6 +122,9 @@ function crearCruces(participantes, numeroInicio = 1) {
     return cruces;
 }
 
+
+
+    
 function generarTorneo(participantes) {
     const cantidad = participantes.length;
     const rondas = [];
@@ -154,9 +157,9 @@ function generarTorneo(participantes) {
         crucesActuales = crearCruces(participantesCuadroPrincipal, numeroCombateGlobal);
         
         let nombreCuadroPrincipal = "Cuadro principal";
-        if (crucesActuales.length === 32) nombreCuadroPrincipal = "Dieciseisavos de final";
-        else if (crucesActuales.length === 16) nombreCuadroPrincipal = "Octavos de final";
-        else if (crucesActuales.length === 8) nombreCuadroPrincipal = "Cuartos de final";
+        if (crucesActuales.length === 32) nombreCuadroPrincipal = "Treintaidosavos de final";
+        else if (crucesActuales.length === 16) nombreCuadroPrincipal = "Dieciseisavos de final";
+        else if (crucesActuales.length === 8) nombreCuadroPrincipal = "Octavos de final";
 
         rondas.push({ nombre: nombreCuadroPrincipal, tipo: "principal", participantes: participantesCuadroPrincipal, reservas: [], cruces: crucesActuales });
         numeroCombateGlobal += crucesActuales.length;
@@ -184,9 +187,9 @@ function generarTorneo(participantes) {
         rondas.push({ nombre: nombreRonda, tipo: "eliminatoria", participantes: [], reservas: [], cruces: crucesActuales });
         numeroCombateGlobal += crucesActuales.length;
     }
-
     return rondas;
 }
+
     
 
 
