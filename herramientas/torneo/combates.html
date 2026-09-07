@@ -102,7 +102,11 @@ function calcularRondaPrevia(cantidad) {
     return { cuadro: cuadro, sobrantes: sobrantes, combates: sobrantes };
 }
 
- function crearCruces(participantes, numeroInicio = 1) {
+
+
+
+    
+function crearCruces(participantes, numeroInicio = 1) {
     const cruces = [];
     for (let i = 0; i < participantes.length; i += 2) {
         const participante1 = participantes[i];
@@ -114,6 +118,68 @@ function calcularRondaPrevia(cantidad) {
     return cruces;
 }
 function generarTorneo(participantes) {
+    const cantidad = participantes.length;
+    const rondas = [];
+    if (cantidad < 2) return rondas;
+    const participantesBarajados = barajar(participantes);
+    
+    const cuadroObjetivo = calcularCuadroPrincipal(cantidad);
+    const sobrantes = cantidad - cuadroObjetivo;
+    
+    let crucesActuales = [];
+    let numeroCombateGlobal = 1;
+
+    if (sobrantes === 0) {
+        const participantesCuadro = barajar(participantesBarajados);
+        crucesActuales = crearCruces(participantesCuadro, numeroCombateGlobal);
+        rondas.push({ nombre: "Primera ronda", tipo: "principal", participantes: participantesCuadro, reservas: [], cruces: crucesActuales });
+        numeroCombateGlobal += crucesActuales.length;
+    } else {
+        const cantidadCombatientesPrevia = sobrantes * 2;
+        const participantesPrevia = participantesBarajados.slice(0, cantidadCombatientesPrevia);
+        const pasanDirectamente = participantesBarajados.slice(cantidadCombatientesPrevia);
+        
+        const crucesPrevia = crearCruces(participantesPrevia, numeroCombateGlobal);
+        rondas.push({ nombre: "Ronda previa", tipo: "previa", participantes: participantesPrevia, reservas: pasanDirectamente, cruces: crucesPrevia });
+        numeroCombateGlobal += crucesPrevia.length;
+
+        const marcadoresGanadores = crucesPrevia.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));
+        const participantesCuadroPrincipal = barajar([...marcadoresGanadores, ...pasanDirectamente]);
+        
+        crucesActuales = crearCruces(participantesCuadroPrincipal, numeroCombateGlobal);
+        
+        // Asignación limpia del nombre inicial del cuadro según el tamaño de la potencia
+        let nombreCuadroPrincipal = "Cuadro principal";
+        if (crucesActuales.length === 32) nombreCuadroPrincipal = "Dieciseisavos de final";
+        else if (crucesActuales.length === 16) nombreCuadroPrincipal = "Octavos de final";
+        else if (crucesActuales.length === 8) nombreCuadroPrincipal = "Cuartos de final";
+
+        rondas.push({ nombre: nombreCuadroPrincipal, tipo: "principal", participantes: participantesCuadroPrincipal, reservas: [], cruces: crucesActuales });
+        numeroCombateGlobal += crucesActuales.length;
+    }
+
+    // Generar rondas avanzadas descendentes de forma precisa
+    while (crucesActuales.length > 1) {
+        const siguientesCrucesParticipantes = crucesActuales.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));
+        crucesActuales = crearCruces(siguientesCrucesParticipantes, numeroCombateGlobal);
+        
+        let nombreRonda = "Eliminatorias";
+        if (crucesActuales.length === 16) nombreRonda = "Octavos de final";
+        else if (crucesActuales.length === 8) nombreRonda = "Cuartos de final";
+        else if (crucesActuales.length === 4) nombreRonda = "Semifinales";
+        else if (crucesActuales.length === 2) nombreRonda = "Semifinales";
+        else if (crucesActuales.length === 1) nombreRonda = "Gran Final";
+
+        rondas.push({ nombre: nombreRonda, tipo: "eliminatoria", participantes: [], reservas: [], cruces: crucesActuales });
+        numeroCombateGlobal += crucesActuales.length;
+    }
+    return rondas;
+}
+
+
+    
+    
+    function generarTorneo(participantes) {
     const cantidad = participantes.length;
     const rondas = [];
     if (cantidad < 2) return rondas;
