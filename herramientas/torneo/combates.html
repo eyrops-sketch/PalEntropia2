@@ -341,7 +341,13 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
 
 
 
-    function mostrarRondas(rondas) {
+                            
+    
+
+
+
+    
+function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
 
@@ -374,7 +380,8 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
                     <div style="font-size: 56px; margin-bottom: 12px;">🏆</div>
                     <h2 style="margin: 0 0 16px 0; color: #d4af37; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">¡Gran Campeón del Torneo!</h2>
                     
-                    <div id="contenedorImagenCampeonUnico" style="margin: 0 auto 16px auto; width: 140px; height: 140px; border-radius: 50%; border: 3px solid #d4af37; overflow: hidden; background: #0d1117; display: flex; align-items: center; justify-content: center;">
+                    <div style="margin: 0 auto 16px auto; width: 140px; height: 140px; border-radius: 50%; border: 3px solid #d4af37; overflow: hidden; background: #0d1117; display: flex; align-items: center; justify-content: center;">
+                        <img id="imagenCampeonOficial" alt="${nombreCampeon}" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
 
                     <div style="font-size: 24px; font-weight: bold; color: #58a6ff; margin-bottom: 6px;">${nombreCampeon}</div>
@@ -393,24 +400,13 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
                 contenedor.appendChild(bannerCampeon);
 
                 setTimeout(() => {
-                    const contenedorImg = document.getElementById("contenedorImagenCampeonUnico");
-                    if (contenedorImg) {
-                        const img = document.createElement("img");
-                        img.alt = nombreCampeon;
-                        img.style.cssText = "width: 100%; height: 100%; object-fit: cover;";
-                        
-                        img.onerror = function() {
-                            this.remove();
-                            contenedorImg.innerHTML = '<span style="font-size:48px;">🦖</span>';
-                        };
-
+                    const imgElement = document.getElementById("imagenCampeonOficial");
+                    if (imgElement) {
                         if (typeof window.cargarImagenAsync === "function") {
-                            window.cargarImagenAsync(codigoCampeon, img);
+                            window.cargarImagenAsync(codigoCampeon, imgElement);
                         } else {
-                            img.src = `../generador_fase_2/imagenes/${codigoCampeon}.png`;
+                            imgElement.src = `../generador_fase_2/imagenes/${codigoCampeon}.png`;
                         }
-                        
-                        contenedorImg.appendChild(img);
                     }
 
                     const btnFicha = document.getElementById("botonPaleofichaCampeon");
@@ -426,7 +422,7 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
                             window.location.href = "entrada.html";
                         });
                     }
-                }, 100);
+                }, 150);
 
                 return;
             } else {
@@ -573,15 +569,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     iniciarCombates();
 });
-
-</script>   
+</script>
 </body>
 </html>
-    
-
-
-
-    
 
 
 
