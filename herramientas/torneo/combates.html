@@ -124,6 +124,7 @@ function crearCruces(participantes, numeroInicio = 1) {
     }
     return cruces;
 }
+
 function generarTorneo(participantes) {
     const cantidad = participantes.length;
     const rondas = [];
@@ -333,9 +334,7 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
         console.error("Error al registrar en palmarés:", e);
     }
 }
-
-
- function mostrarRondas(rondas) {
+function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
 
@@ -394,10 +393,21 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
                     if (imgElement) {
                         if (typeof window.cargarImagenAsync === "function") {
                             window.cargarImagenAsync(codigoCampeon, imgElement);
-                        } else if (typeof window.obtenerRutaImagen === "function") {
-                            imgElement.src = window.obtenerRutaImagen(codigoCampeon);
+                        } else if (typeof window.CARGARIMAGEN === "function") {
+                            window.CARGARIMAGEN(codigoCampeon, imgElement);
                         } else {
-                            imgElement.src = `../generador_fase_2/imagenes/${codigoCampeon}.png`;
+                            const rutaBase = `../generador_fase_2/imagenes/${codigoCampeon}.png`;
+                            imgElement.src = rutaBase;
+                            imgElement.onerror = function() {
+                                this.onerror = null;
+                                this.src = `../generador_fase_2/imagenes/${codigoCampeon}.jpg`;
+                                this.onerror = function() {
+                                    this.style.display = 'none';
+                                    if (this.parentElement) {
+                                        this.parentElement.innerHTML = '<span style="font-size:48px;">🦖</span>';
+                                    }
+                                };
+                            };
                         }
                     }
 
@@ -414,7 +424,7 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
                             window.location.href = "entrada.html";
                         });
                     }
-                }, 100);
+                }, 150);
 
                 return;
             } else {
@@ -565,11 +575,4 @@ document.addEventListener("DOMContentLoaded", function() {
 </body>
 </html>
 
-    
-
-
-
-    
-
-    
     
