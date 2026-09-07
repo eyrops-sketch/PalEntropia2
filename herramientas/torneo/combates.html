@@ -50,7 +50,7 @@ function mostrarTituloTorneo() {
     const criterioMostrar = transformarCriterioTorneo(criterio);
     titulo.textContent = criterioMostrar ? "⚔️ Torneo " + criterioMostrar : "⚔️ Torneo";
 }
-    function obtenerParticipantes() {
+function obtenerParticipantes() {
     const guardado = localStorage.getItem("palentropia_matriz_combatientes");
     if (!guardado) return [];
     try {
@@ -121,7 +121,8 @@ function crearCruces(participantes, numeroInicio = 1) {
     }
     return cruces;
 }
-    function generarTorneo(participantes) {
+
+function generarTorneo(participantes) {
     const cantidad = participantes.length;
     const rondas = [];
     if (cantidad < 2) return rondas;
@@ -207,7 +208,8 @@ function filtrarRondasPorEntrada(rondas) {
         return rondas;
     }
 }
-    function obtenerTextoParticipante(participante) {
+
+function obtenerTextoParticipante(participante) {
     if (participante && typeof participante === "object" && participante.j1) {
         return participante.j2 ? participante.j2 + " (" + participante.j1 + ")" : participante.j1;
     }
@@ -329,7 +331,8 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
         console.error("Error al registrar en palmarés:", e);
     }
 }
-    function mostrarRondas(rondas) {
+
+function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
 
@@ -389,7 +392,7 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
                     const btnFicha = document.getElementById("botonPaleofichaCampeon");
                     if (btnFicha) {
                         btnFicha.addEventListener("click", () => {
-                            window.location.href = `paleoficha.html?codigo=${codigoCampeon}`;
+                            window.location.href = `../generador_fase_2/generador_fase_3.html?codigo=${codigoCampeon}`;
                         });
                     }
 
@@ -550,3 +553,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </body>
 </html>
 
+    
+
+    
+    
