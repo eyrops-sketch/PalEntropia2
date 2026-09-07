@@ -346,232 +346,507 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
 
 
 
-    
+
 function mostrarRondas(rondas) {
-    const contenedor = document.getElementById("contenedorRondas");
-    contenedor.innerHTML = "";
+const contenedor = document.getElementById("contenedorRondas");
+contenedor.innerHTML = "";
 
-    const guardadoEntrada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);
-    let esVistaCampeon = false;
-    if (guardadoEntrada) {
-        try {
-            const datosEntrada = JSON.parse(guardadoEntrada);
-            if (datosEntrada.fase === "campeon") esVistaCampeon = true;
-        } catch (e) {}
-    }
+const guardadoEntrada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);  
+let esVistaCampeon = false;  
+if (guardadoEntrada) {  
+    try {  
+        const datosEntrada = JSON.parse(guardadoEntrada);  
+        if (datosEntrada.fase === "campeon") esVistaCampeon = true;  
+    } catch (e) {}  
+}  
 
-    if (esVistaCampeon && rondas.length > 0) {
-        const ultimaRonda = rondas[rondas.length - 1];
-        if (ultimaRonda && ultimaRonda.cruces && ultimaRonda.cruces.length > 0) {
-            const cruceFinal = ultimaRonda.cruces[0];
-            let datosSeries = {};
-            try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
-            const resFinal = datosSeries[cruceFinal.numero];
+if (esVistaCampeon && rondas.length > 0) {  
+    const ultimaRonda = rondas[rondas.length - 1];  
+    if (ultimaRonda && ultimaRonda.cruces && ultimaRonda.cruces.length > 0) {  
+        const cruceFinal = ultimaRonda.cruces[0];  
+        let datosSeries = {};  
+        try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}  
+        const resFinal = datosSeries[cruceFinal.numero];  
 
-            if (resFinal && resFinal.ganadorNombre) {
-                const codigoCampeon = resFinal.ganadorCodigo;
-                const nombreCampeon = resFinal.ganadorNombre;
+        if (resFinal && resFinal.ganadorNombre) {  
+            const codigoCampeon = String(resFinal.ganadorCodigo || "").trim().toUpperCase();  
+            const nombreCampeon = resFinal.ganadorNombre;  
 
-                const bannerCampeon = document.createElement("div");
-                bannerCampeon.className = "bannerCampeonEspecial";
-                bannerCampeon.style.cssText = "text-align: center; padding: 32px; margin-bottom: 24px; background: linear-gradient(135deg, #1f2428, #111418); border: 2px solid #d4af37; border-radius: 12px; color: #f0f6fc; box-shadow: 0 8px 24px rgba(0,0,0,0.5);";
+            // registrarPalmaresCampeon(codigoCampeon, nombreCampeon, resFinal);  
 
-                bannerCampeon.innerHTML = `
-                    <div style="font-size: 56px; margin-bottom: 12px;">🏆</div>
-                    <h2 style="margin: 0 0 16px 0; color: #d4af37; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">¡Gran Campeón del Torneo!</h2>
-                    
-                    <div style="margin: 0 auto 16px auto; width: 140px; height: 140px; border-radius: 50%; border: 3px solid #d4af37; overflow: hidden; background: #0d1117; display: flex; align-items: center; justify-content: center;">
-                        <img id="imagenCampeonOficial" alt="${nombreCampeon}" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
+            const bannerCampeon = document.createElement("div");  
+            bannerCampeon.className = "bannerCampeonEspecial";  
+            bannerCampeon.style.cssText = "text-align: center; padding: 32px; margin-bottom: 24px; background: linear-gradient(135deg, #1f2428, #111418); border: 2px solid #d4af37; border-radius: 12px; color: #f0f6fc; box-shadow: 0 8px 24px rgba(0,0,0,0.5);";  
 
-                    <div style="font-size: 24px; font-weight: bold; color: #58a6ff; margin-bottom: 6px;">${nombreCampeon}</div>
-                    <div style="font-size: 14px; color: #8b949e; margin-bottom: 20px;">Código: ${codigoCampeon} — Marcador de la Final: ${resFinal.victorias1} - ${resFinal.victorias2}</div>
+            bannerCampeon.innerHTML = `  
+                <div style="font-size: 56px; margin-bottom: 12px;">🏆</div>  
+                <h2 style="margin: 0 0 16px 0; color: #d4af37; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">¡Gran Campeón del Torneo!</h2>  
+                  
+                <div style="margin: 0 auto 16px auto; width: 140px; aspect-ratio: 9 / 16; border: 3px solid #d4af37; border-radius: 10px; overflow: hidden; background: #0d1117; display: flex; align-items: center; justify-content: center;">  
+                    <img id="imagenCampeonOficial" alt="${nombreCampeon}" style="width: 100%; height: 100%; object-fit: contain; display: block;">  
+                </div>  
 
-                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                        <button id="botonPaleofichaCampeon" type="button" style="padding: 10px 20px; background: #238636; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
-                            📖 Ver Paleoficha
-                        </button>
-                        <button id="botonRegresarTorneo" type="button" style="padding: 10px 20px; background: #30363d; color: #c9d1d9; border: 1px solid #484f58; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
-                            ← Volver a la selección de fase
-                        </button>
-                    </div>
-                `;
+                <div style="font-size: 24px; font-weight: bold; color: #58a6ff; margin-bottom: 6px;">${nombreCampeon}</div>  
+                <div style="font-size: 14px; color: #8b949e; margin-bottom: 20px;">Código: ${codigoCampeon} — Marcador de la Final: ${resFinal.victorias1} - ${resFinal.victorias2}</div>  
 
-                contenedor.appendChild(bannerCampeon);
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">  
+                    <button id="botonPaleofichaCampeon" type="button" style="padding: 10px 20px; background: #238636; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">  
+                        📖 Ver Paleoficha  
+                    </button>  
+                    <button id="botonRegresarTorneo" type="button" style="padding: 10px 20px; background: #30363d; color: #c9d1d9; border: 1px solid #484f58; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">  
+                        ← Volver a la selección de fase  
+                    </button>  
+                </div>  
+            `;  
 
-                setTimeout(() => {
-                    const imgElement = document.getElementById("imagenCampeonOficial");
-                    if (imgElement) {
-                        if (typeof window.cargarImagenAsync === "function") {
-                            window.cargarImagenAsync(codigoCampeon, imgElement);
-                        } else {
-                            imgElement.src = `../generador_fase_2/imagenes/${codigoCampeon}.png`;
+            contenedor.appendChild(bannerCampeon);  
+
+            setTimeout(() => {
+
+                const imgElement = document.getElementById("imagenCampeonOficial");
+
+                if (imgElement) {
+
+                    /*
+                    =====================================================
+                    BUSCADOR LOCAL DE RUTA DE IMAGEN
+                    MISMO PROTOCOLO QUE BUSCARUTA.JS
+                    =====================================================
+                    */
+
+                    const extensiones = [
+                        ".png",
+                        ".jpg",
+                        ".jpeg",
+                        ".webp"
+                    ];
+
+                    const comprobarImagen = ruta => {
+
+                        return new Promise(resolve => {
+
+                            const imagen = new Image();
+
+                            imagen.onload = () => resolve(true);
+
+                            imagen.onerror = () => resolve(false);
+
+                            imagen.src = ruta;
+
+                        });
+
+                    };
+
+                    const buscarImagen = async base => {
+
+                        for (const extension of extensiones) {
+
+                            const ruta = base + extension;
+
+                            if (await comprobarImagen(ruta)) {
+
+                                return ruta;
+
+                            }
+
                         }
+
+                        return null;
+
+                    };
+
+
+                    /*
+                    =====================================================
+                    NORMALIZAR NOMBRE PARA ARQUITECTURA ANTIGUA
+                    =====================================================
+                    */
+
+                    const normalizarNombre = texto => {
+
+                        return String(texto || "")
+                            .trim()
+                            .toLowerCase()
+                            .normalize("NFD")
+                            .replace(/[\u0300-\u036f]/g, "")
+                            .replace(/[^a-z0-9]+/g, "_")
+                            .replace(/^_+|_+$/g, "");
+
+                    };
+
+
+                    /*
+                    =====================================================
+                    RUTAS DE EXCEPCIÓN DE BUSCARUTA.JS
+                    =====================================================
+                    */
+
+                    const excepciones = {
+
+                        "001_12":
+                            "../multimedia/001_075/001_12_i3.jpg",
+
+                        "002_04":
+                            "../multimedia/001_075/002_04_i3.jpg",
+
+                        "003_14":
+                            "../multimedia/001_075/003_14_i3.jpg",
+
+                        "004_14":
+                            "../multimedia/001_075/004_14_i3.jpg"
+
+                    };
+
+
+                    let cargarRuta = null;
+
+
+                    /*
+                    =====================================================
+                    CASO 1 — EXCEPCIONES
+                    =====================================================
+                    */
+
+                    if (excepciones[codigoCampeon]) {
+
+                        if (
+                            await comprobarImagen(
+                                excepciones[codigoCampeon]
+                            )
+                        ) {
+
+                            cargarRuta =
+                                excepciones[codigoCampeon];
+
+                        }
+
                     }
 
-                    const btnFicha = document.getElementById("botonPaleofichaCampeon");
-                    if (btnFicha) {
-                        btnFicha.addEventListener("click", () => {
-                            window.location.href = `../generador_fase_2/generador_fase_3.html?codigo=${codigoCampeon}`;
-                        });
+
+                    /*
+                    =====================================================
+                    CASO 2 — ARQUITECTURA ANTIGUA
+                    001_01 → 005_15
+                    =====================================================
+                    */
+
+                    if (!cargarRuta) {
+
+                        const partes =
+                            codigoCampeon.split("_");
+
+                        if (partes.length === 2) {
+
+                            const volumen =
+                                parseInt(partes[0], 10);
+
+                            const ficha =
+                                parseInt(partes[1], 10);
+
+
+                            if (
+                                volumen >= 1 &&
+                                volumen <= 5 &&
+                                ficha >= 1 &&
+                                ficha <= 15 &&
+                                !excepciones[codigoCampeon]
+                            ) {
+
+                                const participanteEncontrado =
+                                    rondas
+                                        .flatMap(
+                                            ronda =>
+                                                Array.isArray(ronda.cruces)
+                                                    ? ronda.cruces
+                                                    : []
+                                        )
+                                        .flatMap(
+                                            cruce => [
+                                                cruce.participante1,
+                                                cruce.participante2
+                                            ]
+                                        )
+                                        .find(
+                                            participante =>
+                                                participante &&
+                                                String(
+                                                    participante.j1 ||
+                                                    participante.codigo ||
+                                                    ""
+                                                )
+                                                .trim()
+                                                .toUpperCase() ===
+                                                codigoCampeon
+                                        );
+
+
+                                const nombreFicha =
+
+                                    participanteEncontrado && (
+                                        participanteEncontrado.j2 ||
+                                        participanteEncontrado.nombre
+                                    )
+                                    ||
+
+                                    nombreCampeon;
+
+
+                                if (nombreFicha) {
+
+                                    const nombreNormalizado =
+                                        normalizarNombre(
+                                            nombreFicha
+                                        );
+
+
+                                    const volumenTexto =
+                                        String(volumen)
+                                            .padStart(3, "0");
+
+
+                                    const base =
+                                        `../../paleofichas/vol${volumenTexto}/` +
+                                        `${codigoCampeon}_${nombreNormalizado}/` +
+                                        `${nombreNormalizado}_i3`;
+
+
+                                    cargarRuta =
+                                        await buscarImagen(
+                                            base
+                                        );
+
+                                }
+
+                            }
+
+                        }
+
                     }
 
-                    const btnRegresar = document.getElementById("botonRegresarTorneo");
-                    if (btnRegresar) {
-                        btnRegresar.addEventListener("click", () => {
-                            window.location.href = "entrada.html";
-                        });
+
+                    /*
+                    =====================================================
+                    CASO 3 — ARQUITECTURA NUEVA
+                    006_01 EN ADELANTE
+                    =====================================================
+                    */
+
+                    if (!cargarRuta) {
+
+                        const base =
+                            `../multimedia/new/${codigoCampeon}_i3`;
+
+
+                        cargarRuta =
+                            await buscarImagen(
+                                base
+                            );
+
                     }
-                }, 150);
 
-                return;
-            } else {
-                const avisoPendiente = document.createElement("div");
-                avisoPendiente.style.cssText = "text-align: center; padding: 24px; color: #8b949e; background: #161b22; border-radius: 8px; margin-bottom: 20px;";
-                avisoPendiente.textContent = "🏆 La Gran Final aún no se ha disputado. ¡Juega el último combate para coronar al campeón!";
-                contenedor.appendChild(avisoPendiente);
-            }
-        }
-    }
 
-    rondas.forEach(ronda => {
-        const bloque = document.createElement("section");
-        bloque.className = "rondaTorneo";
-        const titulo = document.createElement("h2");
-        titulo.textContent = ronda.nombre;
-        bloque.appendChild(titulo);
-        if (ronda.reservas && ronda.reservas.length) {
-            const reservas = document.createElement("div");
-            reservas.className = "pasanDirectamente";
-            const texto = document.createElement("span");
-            texto.innerHTML = "<strong>⏭ Pasan directamente:</strong> ";
-            reservas.appendChild(texto);
-            ronda.reservas.forEach((participante, indice) => {
-                const elemento = document.createElement("span");
-                elemento.textContent = obtenerTextoParticipante(participante);
-                if (indice > 0) reservas.appendChild(document.createTextNode(" · "));
-                reservas.appendChild(elemento);
-            });
-            bloque.appendChild(reservas);
-        }
-        const lista = document.createElement("div");
-        lista.className = "listaCombates";
-        ronda.cruces.forEach(cruce => { lista.appendChild(mostrarCruce(cruce)); });
-        bloque.appendChild(lista);
-        contenedor.appendChild(bloque);
-    });
+                    /*
+                    =====================================================
+                    MOSTRAR IMAGEN
+                    =====================================================
+                    */
+
+                    if (cargarRuta) {
+
+                        imgElement.src =
+                            cargarRuta;
+
+                    } else {
+
+                        imgElement.style.display =
+                            "none";
+
+                        if (imgElement.parentElement) {
+
+                            imgElement.parentElement.innerHTML =
+                                '<span style="font-size:48px;">🦖</span>';
+
+                        }
+
+                    }
+
+                }
+
+
+                const btnFicha = document.getElementById("botonPaleofichaCampeon");  
+                if (btnFicha) {  
+                    btnFicha.addEventListener("click", () => {  
+                        window.location.href = `../generador_fase_2/generador_fase_3.html?codigo=${codigoCampeon}`;  
+                    });  
+                }  
+
+                const btnRegresar = document.getElementById("botonRegresarTorneo");  
+                if (btnRegresar) {  
+                    btnRegresar.addEventListener("click", () => {  
+                        window.location.href = "entrada.html";  
+                    });  
+                }  
+
+            }, 150);  
+
+            return;  
+        } else {  
+            const avisoPendiente = document.createElement("div");  
+            avisoPendiente.style.cssText = "text-align: center; padding: 24px; color: #8b949e; background: #161b22; border-radius: 8px; margin-bottom: 20px;";  
+            avisoPendiente.textContent = "🏆 La Gran Final aún no se ha disputado. ¡Juega el último combate para coronar al campeón!";  
+            contenedor.appendChild(avisoPendiente);  
+        }  
+    }  
+}  
+
+rondas.forEach(ronda => {  
+    const bloque = document.createElement("section");  
+    bloque.className = "rondaTorneo";  
+    const titulo = document.createElement("h2");  
+    titulo.textContent = ronda.nombre;  
+    bloque.appendChild(titulo);  
+    if (ronda.reservas && ronda.reservas.length) {  
+        const reservas = document.createElement("div");  
+        reservas.className = "pasanDirectamente";  
+        const texto = document.createElement("span");  
+        texto.innerHTML = "<strong>⏭ Pasan directamente:</strong> ";  
+        reservas.appendChild(texto);  
+        ronda.reservas.forEach((participante, indice) => {  
+            const elemento = document.createElement("span");  
+            elemento.textContent = obtenerTextoParticipante(participante);  
+            if (indice > 0) reservas.appendChild(document.createTextNode(" · "));  
+            reservas.appendChild(elemento);  
+        });  
+        bloque.appendChild(reservas);  
+    }  
+    const lista = document.createElement("div");  
+    lista.className = "listaCombates";  
+    ronda.cruces.forEach(cruce => { lista.appendChild(mostrarCruce(cruce)); });  
+    bloque.appendChild(lista);  
+    contenedor.appendChild(bloque);  
+});
+
 }
 
 function mismosParticipantes(pGuardados, pActuales) {
-    if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;
-    for (let i = 0; i < pActuales.length; i++) {
-        if (String(pGuardados[i]) !== String(pActuales[i])) return false;
-    }
-    return true;
+if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;
+for (let i = 0; i < pActuales.length; i++) {
+if (String(pGuardados[i]) !== String(pActuales[i])) return false;
+}
+return true;
 }
 
 function guardarEmparejamientos(participantes, rondas) {
-    const datos = { participantes: participantes.map(p => p.j1), rondas: rondas, criterio: obtenerCriterioTorneo(), fecha: Date.now() };
-    localStorage.setItem(CLAVE_TORNEO_EMPAREJAMIENTOS, JSON.stringify(datos));
+const datos = { participantes: participantes.map(p => p.j1), rondas: rondas, criterio: obtenerCriterioTorneo(), fecha: Date.now() };
+localStorage.setItem(CLAVE_TORNEO_EMPAREJAMIENTOS, JSON.stringify(datos));
 }
 
 function obtenerEmparejamientosGuardados(participantes) {
-    const guardado = localStorage.getItem(CLAVE_TORNEO_EMPAREJAMIENTOS);
-    if (!guardado) return null;
-    try {
-        const datos = JSON.parse(guardado);
-        if (!datos || !Array.isArray(datos.participantes) || !Array.isArray(datos.rondas)) return null;
-        const participantesActuales = participantes.map(p => p.j1);
-        if (!mismosParticipantes(datos.participantes, participantesActuales)) return null;
-        return datos.rondas;
-    } catch (error) { console.error("Error leyendo emparejamientos:", error); return null; }
+const guardado = localStorage.getItem(CLAVE_TORNEO_EMPAREJAMIENTOS);
+if (!guardado) return null;
+try {
+const datos = JSON.parse(guardado);
+if (!datos || !Array.isArray(datos.participantes) || !Array.isArray(datos.rondas)) return null;
+const participantesActuales = participantes.map(p => p.j1);
+if (!mismosParticipantes(datos.participantes, participantesActuales)) return null;
+return datos.rondas;
+} catch (error) { console.error("Error leyendo emparejamientos:", error); return null; }
 }
 
 function eliminarEmparejamientosGuardados() { localStorage.removeItem(CLAVE_TORNEO_EMPAREJAMIENTOS); }
 
 function mostrarEstadoTorneo(participantes, informacion, fueGenerado) {
-    const estado = document.getElementById("estadoCombates");
-    if (!estado) return;
-    if (informacion.sobrantes > 0) {
-        estado.textContent = participantes.length + " participantes · " + informacion.combates + " combates de ronda previa · " + informacion.cuadro + " participantes en el cuadro principal.";
-    } else {
-        estado.textContent = participantes.length + " participantes · cuadro de " + informacion.cuadro + ".";
-    }
-    estado.textContent += fueGenerado ? " Emparejamientos fijados." : " Emparejamientos guardados.";
+const estado = document.getElementById("estadoCombates");
+if (!estado) return;
+if (informacion.sobrantes > 0) {
+estado.textContent = participantes.length + " participantes · " + informacion.combates + " combates de ronda previa · " + informacion.cuadro + " participantes en el cuadro principal.";
+} else {
+estado.textContent = participantes.length + " participantes · cuadro de " + informacion.cuadro + ".";
 }
+estado.textContent += fueGenerado ? " Emparejamientos fijados." : " Emparejamientos guardados.";
+                        }
+    
 
 async function iniciarCombates(forzarNuevo = false) {
-    mostrarTituloTorneo();
-    const matrizJ1 = obtenerParticipantes();
-    const estado = document.getElementById("estadoCombates");
-    if (matrizJ1.length < 2) {
-        estado.textContent = "No hay suficientes participantes para generar combates.";
-        window.TORNEO_COMBATES = [];
-        return;
-    }
-    const mapaNombres = await obtenerMapaNombres();
-    const participantes = crearParticipantesDatos(matrizJ1, mapaNombres);
-    if (participantes.length < 2) {
-        estado.textContent = "No hay suficientes participantes válidos para generar combates.";
-        window.TORNEO_COMBATES = [];
-        return;
-    }
-    const ultimoGanadorJSON = localStorage.getItem("palentropia_ultimo_ganador");
-    if (ultimoGanadorJSON) {
-        try {
-            const infoGanador = JSON.parse(ultimoGanadorJSON);
-            let datosSeries = {};
-            try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
-            datosSeries[infoGanador.combateNumero] = {
-                ganadorCodigo: infoGanador.ganadorCodigo,
-                ganadorNombre: infoGanador.ganadorNombre,
-                victorias1: infoGanador.victorias1,
-                victorias2: infoGanador.victorias2
-            };
-            localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(datosSeries));
-            localStorage.removeItem("palentropia_ultimo_ganador");
-        } catch (e) { console.error("Error procesando último ganador de la arena:", e); }
-    }
-    if (forzarNuevo) eliminarEmparejamientosGuardados();
-    let rondas = obtenerEmparejamientosGuardados(participantes);
-    let fueGenerado = false;
-    if (!rondas) {
-        rondas = generarTorneo(participantes);
-        guardarEmparejamientos(participantes, rondas);
-        fueGenerado = true;
-    }
-    rondas = filtrarRondasPorEntrada(rondas);
-    window.TORNEO_COMBATES = rondas;
-    const informacion = calcularRondaPrevia(participantes.length);
-    mostrarEstadoTorneo(participantes, informacion, fueGenerado);
-    mostrarRondas(rondas);
+mostrarTituloTorneo();
+const matrizJ1 = obtenerParticipantes();
+const estado = document.getElementById("estadoCombates");
+if (matrizJ1.length < 2) {
+estado.textContent = "No hay suficientes participantes para generar combates.";
+window.TORNEO_COMBATES = [];
+return;
+}
+const mapaNombres = await obtenerMapaNombres();
+const participantes = crearParticipantesDatos(matrizJ1, mapaNombres);
+if (participantes.length < 2) {
+estado.textContent = "No hay suficientes participantes válidos para generar combates.";
+window.TORNEO_COMBATES = [];
+return;
+}
+const ultimoGanadorJSON = localStorage.getItem("palentropia_ultimo_ganador");
+if (ultimoGanadorJSON) {
+try {
+const infoGanador = JSON.parse(ultimoGanadorJSON);
+let datosSeries = {};
+try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
+datosSeries[infoGanador.combateNumero] = {
+ganadorCodigo: infoGanador.ganadorCodigo,
+ganadorNombre: infoGanador.ganadorNombre,
+victorias1: infoGanador.victorias1,
+victorias2: infoGanador.victorias2
+};
+localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(datosSeries));
+localStorage.removeItem("palentropia_ultimo_ganador");
+} catch (e) { console.error("Error procesando último ganador de la arena:", e); }
+}
+if (forzarNuevo) eliminarEmparejamientosGuardados();
+let rondas = obtenerEmparejamientosGuardados(participantes);
+let fueGenerado = false;
+if (!rondas) {
+rondas = generarTorneo(participantes);
+guardarEmparejamientos(participantes, rondas);
+fueGenerado = true;
+}
+rondas = filtrarRondasPorEntrada(rondas);
+window.TORNEO_COMBATES = rondas;
+const informacion = calcularRondaPrevia(participantes.length);
+mostrarEstadoTorneo(participantes, informacion, fueGenerado);
+mostrarRondas(rondas);
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    const botonMenu = document.getElementById("botonMenuPrincipal");
-    if (botonMenu) {
-        botonMenu.addEventListener("click", function() {
-            window.location.href = "index.html";
-        });
-    }
-    const botonRehacer = document.getElementById("botonRehacerEmparejamientos");
-    if (botonRehacer) {
-        botonRehacer.addEventListener("click", async function() {
-            const confirmar = confirm("¿Quieres rehacer los emparejamientos del torneo y borrar los resultados actuales?");
-            if (!confirmar) return;
-            botonRehacer.disabled = true;
-            try {
-                localStorage.removeItem(CLAVE_RESULTADOS_SERIES);
-                await iniciarCombates(true);
-            } catch (error) { console.error("Error rehaciendo emparejamientos:", error); }
-            botonRehacer.disabled = false;
-        });
-    }
-    iniciarCombates();
+const botonMenu = document.getElementById("botonMenuPrincipal");
+if (botonMenu) {
+botonMenu.addEventListener("click", function() {
+window.location.href = "index.html";
+});
+}
+const botonRehacer = document.getElementById("botonRehacerEmparejamientos");
+if (botonRehacer) {
+botonRehacer.addEventListener("click", async function() {
+const confirmar = confirm("¿Quieres rehacer los emparejamientos del torneo y borrar los resultados actuales?");
+if (!confirmar) return;
+botonRehacer.disabled = true;
+try {
+localStorage.removeItem(CLAVE_RESULTADOS_SERIES);
+await iniciarCombates(true);
+} catch (error) { console.error("Error rehaciendo emparejamientos:", error); }
+botonRehacer.disabled = false;
+});
+}
+iniciarCombates();
 });
 </script>
+
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
