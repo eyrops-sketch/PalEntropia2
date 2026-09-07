@@ -136,43 +136,28 @@ function obtenerParticipantes() {
             CLAVE_MATRIZ_COMBATIENTES
         );
 
-
     if (!guardado) {
-
         return [];
-
     }
 
-
     try {
-
         const participantes =
             JSON.parse(
                 guardado
             );
 
-
         if (!Array.isArray(participantes)) {
-
             return [];
-
         }
 
-
         return participantes;
-
     }
-
     catch (error) {
-
         console.error(
             "Participantes del torneo no válidos:",
             error
         );
-
-
         return [];
-
     }
 
 }
@@ -187,11 +172,8 @@ function calcularCuadroPrincipal(numeroParticipantes) {
     if (
         numeroParticipantes < 2
     ) {
-
         return 1;
-
     }
-
 
     return Math.pow(
         2,
@@ -212,27 +194,13 @@ function calcularCuadroPrincipal(numeroParticipantes) {
 function obtenerNombreFase(numeroParticipantes) {
 
     const nombres = {
-
-        2:
-            "Final",
-
-        4:
-            "Semifinales",
-
-        8:
-            "Cuartos",
-
-        16:
-            "Octavos",
-
-        32:
-            "16 avos",
-
-        64:
-            "32 avos"
-
+        2: "Final",
+        4: "Semifinales",
+        8: "Cuartos",
+        16: "Octavos",
+        32: "16 avos",
+        64: "32 avos"
     };
-
 
     return (
         nombres[numeroParticipantes] ||
@@ -253,7 +221,6 @@ function existeRondaPrevia(numeroParticipantes) {
             numeroParticipantes
         );
 
-
     return (
         numeroParticipantes >
         cuadro
@@ -271,136 +238,72 @@ function obtenerFasesDisponibles() {
     const participantes =
         obtenerParticipantes();
 
-
     const numero =
         participantes.length;
 
-
     const fases = [];
 
-
-    /*
-    =====================================================
-    CAMPEÓN
-    =====================================================
-    */
-
     fases.push({
-
-        id:
-            "campeon",
-
-        nombre:
-            "🏆 Campeón",
-
-        descripcion:
-            "Mostrar el ganador del torneo."
-
+        id: "campeon",
+        nombre: "🏆 Campeón",
+        descripcion: "Mostrar el ganador del torneo."
     });
-
-
-    /*
-    =====================================================
-    RONDA PREVIA
-    =====================================================
-    */
 
     if (
         existeRondaPrevia(
             numero
         )
     ) {
-
         fases.push({
-
-            id:
-                "previa",
-
-            nombre:
-                "⚔️ Ronda previa",
-
-            descripcion:
-                "Comenzar desde los combates preliminares."
-
+            id: "previa",
+            nombre: "⚔️ Ronda previa",
+            descripcion: "Comenzar desde los combates preliminares."
         });
-
     }
-
-
-    /*
-    =====================================================
-    CUADRO PRINCIPAL
-    =====================================================
-    */
 
     if (
         numero >= 2
     ) {
-
         const cuadro =
             calcularCuadroPrincipal(
                 numero
             );
 
-
         fases.push({
-
-            id:
-                "principal",
-
-            nombre:
-                "🏟️ Cuadro principal",
-
-            descripcion:
-                "Comenzar desde la primera ronda del cuadro."
-
+            id: "principal",
+            nombre: "🏟️ Cuadro principal",
+            descripcion: "Comenzar desde la primera ronda del cuadro."
         });
-
-
-        /*
-        =================================================
-        RONDAS DEL CUADRO
-        =================================================
-        */
 
         let participantesRonda =
             cuadro;
 
-
         while (
             participantesRonda >= 2
         ) {
-
             fases.push({
-
                 id:
                     obtenerIdFase(
                         participantesRonda
                     ),
-
                 nombre:
                     obtenerNombreFase(
                         participantesRonda
                     ),
-
                 descripcion:
                     "Entrar directamente en " +
                     obtenerNombreFase(
                         participantesRonda
                     ) +
                     "."
-
             });
-
 
             participantesRonda =
                 participantesRonda /
                 2;
-
         }
 
     }
-
 
     return fases;
 
@@ -414,27 +317,13 @@ function obtenerFasesDisponibles() {
 function obtenerIdFase(numeroParticipantes) {
 
     const ids = {
-
-        2:
-            "final",
-
-        4:
-            "semifinales",
-
-        8:
-            "cuartos",
-
-        16:
-            "octavos",
-
-        32:
-            "16avos",
-
-        64:
-            "32avos"
-
+        2: "final",
+        4: "semifinales",
+        8: "cuartos",
+        16: "octavos",
+        32: "16avos",
+        64: "32avos"
     };
-
 
     return (
         ids[numeroParticipantes] ||
@@ -451,77 +340,22 @@ function obtenerIdFase(numeroParticipantes) {
 function entrarDesdeFase(fase) {
 
     const datos = {
-
         fase:
             fase.id,
-
         nombre:
             fase.nombre,
-
         timestamp:
             Date.now()
-
     };
 
-
     localStorage.setItem(
-
         CLAVE_ENTRADA_TORNEO,
-
         JSON.stringify(
             datos
         )
-
     );
-
-
-    /*
-    =====================================================
-    REDIRECCIÓN AUTOMÁTICA AL CUADRO DE COMBATES
-    =====================================================
-    */
 
     window.location.href = "combates.html";
-
-}
-
-
-    /*
-    =====================================================
-    REDIRECCIÓN AUTOMÁTICA AL CUADRO DE COMBATES
-    =====================================================
-    */
-
-    window.location.href = "combates.html";
-
-}
-
-
-
-    /*
-    =====================================================
-    PUNTO DE FUTURA INVOCACIÓN DE LA ARENA
-    =====================================================
-
-    Aquí posteriormente conectaremos:
-
-        Arena(codigo1, codigo2, reglas)
-
-    Por ahora solamente guardamos
-    la fase seleccionada.
-    */
-
-
-    console.log(
-        "Entrada al torneo:",
-        datos
-    );
-
-
-    alert(
-        "Entrada seleccionada: " +
-        fase.nombre
-    );
 
 }
 
@@ -537,68 +371,52 @@ function mostrarFases() {
             "listaFases"
         );
 
+    if (!contenedor) {
+        return;
+    }
 
     contenedor.innerHTML =
         "";
 
-
     const fases =
         obtenerFasesDisponibles();
 
-
     fases.forEach(
         function(fase) {
-
-
             const boton =
                 document.createElement(
                     "button"
                 );
 
-
             boton.type =
                 "button";
-
 
             boton.className =
                 "botonFase";
 
-
             boton.dataset.fase =
                 fase.id;
 
-
             boton.innerHTML =
-
                 "<span class=\"nombreFase\">" +
-
                     fase.nombre +
-
                 "</span>" +
-
                 "<span class=\"descripcionFase\">" +
-
                     fase.descripcion +
-
                 "</span>";
-
 
             boton.addEventListener(
                 "click",
                 function() {
-
                     entrarDesdeFase(
                         fase
                     );
-
                 }
             );
-
 
             contenedor.appendChild(
                 boton
             );
-
         }
     );
 
@@ -616,40 +434,26 @@ function obtenerCriterioTorneo() {
             CLAVE_CRITERIO_TORNEO
         );
 
-
     if (
         !criterio ||
         !String(criterio).trim()
     ) {
-
         return "";
-
     }
-
 
     const valor =
         String(
             criterio
         ).trim();
 
-
     const equivalencias = {
-
-        "perm":
-            "Pérmico",
-
-        "chord":
-            "Chordata",
-
-        "placen":
-            "Placentaria"
-
+        "perm": "Pérmico",
+        "chord": "Chordata",
+        "placen": "Placentaria"
     };
-
 
     const clave =
         valor.toLowerCase();
-
 
     return (
         equivalencias[clave] ||
@@ -668,56 +472,41 @@ function mostrarIdentificadorTorneo() {
     const criterio =
         obtenerCriterioTorneo();
 
-
     if (!criterio) {
-
         return;
-
     }
-
 
     const subtitulo =
         document.getElementById(
             "subtitulo"
         );
 
-
     const titulo =
         document.getElementById(
             "tituloCabeceraTorneo"
         );
-
 
     const descripcion =
         document.getElementById(
             "criterioTorneo"
         );
 
-
     if (subtitulo) {
-
         subtitulo.textContent =
             "Entrar al torneo — " +
             criterio;
-
     }
 
-
     if (titulo) {
-
         titulo.textContent =
             "⚔️ Entrar al torneo — " +
             criterio;
-
     }
 
-
     if (descripcion) {
-
         descripcion.textContent =
             "Selecciona la fase desde la que quieres entrar — " +
             criterio;
-
     }
 
 }
@@ -727,19 +516,17 @@ function mostrarIdentificadorTorneo() {
    BOTÓN MENÚ PRINCIPAL
    ===================================================== */
 
-document
-    .getElementById(
-        "botonMenuPrincipal"
-    )
-    .addEventListener(
+const botonMenu = document.getElementById("botonMenuPrincipal");
+
+if (botonMenu) {
+    botonMenu.addEventListener(
         "click",
         function() {
-
             window.location.href =
                 "../../index.html";
-
         }
     );
+}
 
 
 /* =====================================================
@@ -749,7 +536,6 @@ document
 mostrarIdentificadorTorneo();
 
 mostrarFases();
-
 
 </script>
 
