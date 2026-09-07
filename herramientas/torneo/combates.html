@@ -124,7 +124,6 @@ function crearCruces(participantes, numeroInicio = 1) {
     }
     return cruces;
 }
-
 function generarTorneo(participantes) {
     const cantidad = participantes.length;
     const rondas = [];
@@ -211,7 +210,6 @@ function filtrarRondasPorEntrada(rondas) {
         return rondas;
     }
 }
-
 function obtenerTextoParticipante(participante) {
     if (participante && typeof participante === "object" && participante.j1) {
         return participante.j2 ? participante.j2 + " (" + participante.j1 + ")" : participante.j1;
@@ -334,6 +332,7 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
         console.error("Error al registrar en palmarés:", e);
     }
 }
+
 function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
@@ -393,21 +392,8 @@ function mostrarRondas(rondas) {
                     if (imgElement) {
                         if (typeof window.cargarImagenAsync === "function") {
                             window.cargarImagenAsync(codigoCampeon, imgElement);
-                        } else if (typeof window.CARGARIMAGEN === "function") {
-                            window.CARGARIMAGEN(codigoCampeon, imgElement);
                         } else {
-                            const rutaBase = `../generador_fase_2/imagenes/${codigoCampeon}.png`;
-                            imgElement.src = rutaBase;
-                            imgElement.onerror = function() {
-                                this.onerror = null;
-                                this.src = `../generador_fase_2/imagenes/${codigoCampeon}.jpg`;
-                                this.onerror = function() {
-                                    this.style.display = 'none';
-                                    if (this.parentElement) {
-                                        this.parentElement.innerHTML = '<span style="font-size:48px;">🦖</span>';
-                                    }
-                                };
-                            };
+                            imgElement.src = `../generador_fase_2/imagenes/${codigoCampeon}.png`;
                         }
                     }
 
@@ -424,7 +410,7 @@ function mostrarRondas(rondas) {
                             window.location.href = "entrada.html";
                         });
                     }
-                }, 150);
+                }, 100);
 
                 return;
             } else {
@@ -574,5 +560,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 </body>
 </html>
+
+
 
     
