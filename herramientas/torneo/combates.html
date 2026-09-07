@@ -108,6 +108,8 @@ function calcularRondaPrevia(cantidad) {
 
 
     
+
+
 function crearCruces(participantes, numeroInicio = 1) {
     const cruces = [];
     for (let i = 0; i < participantes.length; i += 2) {
@@ -121,13 +123,12 @@ function crearCruces(participantes, numeroInicio = 1) {
 }
 
 function generarTorneo(participantes) {
-function generarTorneo(participantes) {
     const cantidad = participantes.length;
     const rondas = [];
     if (cantidad < 2) return rondas;
     const participantesBarajados = barajar(participantes);
     
-    const cuadroObjetivo = calcularCuadroPrincipal(cantidad); // 64 para 93 participantes
+    const cuadroObjetivo = calcularCuadroPrincipal(cantidad);
     const sobrantes = cantidad - cuadroObjetivo;
     
     let crucesActuales = [];
@@ -139,27 +140,25 @@ function generarTorneo(participantes) {
         rondas.push({ nombre: "Primera ronda", tipo: "principal", participantes: participantesCuadro, reservas: [], cruces: crucesActuales });
         numeroCombateGlobal += crucesActuales.length;
     } else {
-        const cantidadCombatientesPrevia = sobrantes * 2; // 29 * 2 = 58 combatientes en previa (29 combates)
+        const cantidadCombatientesPrevia = sobrantes * 2;
         const participantesPrevia = participantesBarajados.slice(0, cantidadCombatientesPrevia);
-        const pasanDirectamente = participantesBarajados.slice(cantidadCombatientesPrevia); // Resto hasta 93 (64 combatientes / 32 parejas)
+        const pasanDirectamente = participantesBarajados.slice(cantidadCombatientesPrevia);
         
         const crucesPrevia = crearCruces(participantesPrevia, numeroCombateGlobal);
         rondas.push({ nombre: "Ronda previa", tipo: "previa", participantes: participantesPrevia, reservas: pasanDirectamente, cruces: crucesPrevia });
         numeroCombateGlobal += crucesPrevia.length;
 
         const marcadoresGanadores = crucesPrevia.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));
+        const participantesCuadroPrincipal = barajar([...marcadoresGanadores, ...pasanDirectamente]);
         
-        // Unimos los ganadores de la previa con los que pasaban directamente y filtramos exactamente para que sumen el cuadro objetivo (64 combatientes / 32 cruces)
-        const totalCuadro = barajar([...marcadoresGanadores, ...pasanDirectamente]).slice(0, cuadroObjetivo);
-        
-        crucesActuales = crearCruces(totalCuadro, numeroCombateGlobal);
+        crucesActuales = crearCruces(participantesCuadroPrincipal, numeroCombateGlobal);
         
         let nombreCuadroPrincipal = "Cuadro principal";
         if (crucesActuales.length === 32) nombreCuadroPrincipal = "Dieciseisavos de final";
         else if (crucesActuales.length === 16) nombreCuadroPrincipal = "Octavos de final";
         else if (crucesActuales.length === 8) nombreCuadroPrincipal = "Cuartos de final";
 
-        rondas.push({ nombre: nombreCuadroPrincipal, tipo: "principal", participantes: totalCuadro, reservas: [], cruces: crucesActuales });
+        rondas.push({ nombre: nombreCuadroPrincipal, tipo: "principal", participantes: participantesCuadroPrincipal, reservas: [], cruces: crucesActuales });
         numeroCombateGlobal += crucesActuales.length;
     }
 
@@ -170,34 +169,24 @@ function generarTorneo(participantes) {
         let nombreRonda = "Eliminatorias";
         const len = crucesActuales.length;
         
-        if (len === 512) {
-            nombreRonda = "Quinientos doceavos de final";
-        } else if (len === 256) {
-            nombreRonda = "Doscientos cincuenta y seisavos de final";
-        } else if (len === 128) {
-            nombreRonda = "Ciento veintiochoavos de final";
-        } else if (len === 64) {
-            nombreRonda = "Sesenta y cuatroavos de final";
-        } else if (len === 32) {
-            nombreRonda = "Treintaidosavos de final";
-        } else if (len === 16) {
-            nombreRonda = "Dieciseisavos de final";
-        } else if (len === 8) {
-            nombreRonda = "Octavos de final";
-        } else if (len === 4) {
-            nombreRonda = "Cuartos de final";
-        } else if (len === 2) {
-            nombreRonda = "Semifinales";
-        } else if (len === 1) {
-            nombreRonda = "Gran Final";
-        }
+        if (len === 1024) nombreRonda = "Mil veinticuatroavos de final";
+        else if (len === 512) nombreRonda = "Quinientos doceavos de final";
+        else if (len === 256) nombreRonda = "Doscientos cincuenta y seisavos de final";
+        else if (len === 128) nombreRonda = "Ciento veintiochoavos de final";
+        else if (len === 64) nombreRonda = "Sesenta y cuatroavos de final";
+        else if (len === 32) nombreRonda = "Treintaidosavos de final";
+        else if (len === 16) nombreRonda = "Dieciseisavos de final";
+        else if (len === 8) nombreRonda = "Octavos de final";
+        else if (len === 4) nombreRonda = "Cuartos de final";
+        else if (len === 2) nombreRonda = "Semifinales";
+        else if (len === 1) nombreRonda = "Gran Final";
 
         rondas.push({ nombre: nombreRonda, tipo: "eliminatoria", participantes: [], reservas: [], cruces: crucesActuales });
         numeroCombateGlobal += crucesActuales.length;
     }
+
     return rondas;
 }
-
     
 
 
