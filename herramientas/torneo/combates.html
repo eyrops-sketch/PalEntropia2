@@ -50,8 +50,7 @@ function mostrarTituloTorneo() {
     const criterioMostrar = transformarCriterioTorneo(criterio);
     titulo.textContent = criterioMostrar ? "⚔️ Torneo " + criterioMostrar : "⚔️ Torneo";
 }
-
-function obtenerParticipantes() {
+    function obtenerParticipantes() {
     const guardado = localStorage.getItem("palentropia_matriz_combatientes");
     if (!guardado) return [];
     try {
@@ -99,7 +98,7 @@ function barajar(matriz) {
     return resultado;
 }
 
-   function calcularCuadroPrincipal(cantidad) {
+function calcularCuadroPrincipal(cantidad) {
     let potencia = 1;
     while (potencia * 2 <= cantidad) potencia *= 2;
     return potencia;
@@ -122,8 +121,7 @@ function crearCruces(participantes, numeroInicio = 1) {
     }
     return cruces;
 }
-
-function generarTorneo(participantes) {
+    function generarTorneo(participantes) {
     const cantidad = participantes.length;
     const rondas = [];
     if (cantidad < 2) return rondas;
@@ -183,8 +181,6 @@ function generarTorneo(participantes) {
     return rondas;
 }
 
-
-    
 function filtrarRondasPorEntrada(rondas) {
     const guardado = localStorage.getItem(CLAVE_ENTRADA_TORNEO);
     if (!guardado) return rondas;
@@ -211,11 +207,6 @@ function filtrarRondasPorEntrada(rondas) {
         return rondas;
     }
 }
-
-
-
-
-    
     function obtenerTextoParticipante(participante) {
     if (participante && typeof participante === "object" && participante.j1) {
         return participante.j2 ? participante.j2 + " (" + participante.j1 + ")" : participante.j1;
@@ -319,11 +310,25 @@ function mostrarCruce(cruce) {
     return tarjeta;
 }
 
-
-
-
-    
-    function mostrarRondas(rondas) {
+function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
+    const CLAVE_PALMARES = "palentropia_palmares_historico";
+    try {
+        let historico = JSON.parse(localStorage.getItem(CLAVE_PALMARES) || "[]");
+        const yaRegistrado = historico.some(item => item.codigo === codigo);
+        if (!yaRegistrado) {
+            historico.push({
+                codigo: codigo,
+                nombre: nombre,
+                victorias1: datosFinal.victorias1,
+                victorias2: datosFinal.victorias2,
+                fecha: Date.now()
+            });
+            localStorage.setItem(CLAVE_PALMARES, JSON.stringify(historico));
+        }
+    } catch (e) {
+        console.error("Error al registrar en palmarés:", e);
+    }
+}
     function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
@@ -349,16 +354,12 @@ function mostrarCruce(cruce) {
                 const codigoCampeon = resFinal.ganadorCodigo;
                 const nombreCampeon = resFinal.ganadorNombre;
 
-                // -----------------------------------------------------
-                // GANCHO PARA FUTURO FICHERO DE PALMARÉS
-                // -----------------------------------------------------
                 // registrarPalmaresCampeon(codigoCampeon, nombreCampeon, resFinal);
 
                 const bannerCampeon = document.createElement("div");
                 bannerCampeon.className = "bannerCampeonEspecial";
                 bannerCampeon.style.cssText = "text-align: center; padding: 32px; margin-bottom: 24px; background: linear-gradient(135deg, #1f2428, #111418); border: 2px solid #d4af37; border-radius: 12px; color: #f0f6fc; box-shadow: 0 8px 24px rgba(0,0,0,0.5);";
 
-                // Contenedor de imagen (con ruta adaptada a la estructura del proyecto)
                 const rutaImagen = `../generador_fase_2/imagenes/${codigoCampeon}.png`;
 
                 bannerCampeon.innerHTML = `
@@ -384,7 +385,6 @@ function mostrarCruce(cruce) {
 
                 contenedor.appendChild(bannerCampeon);
 
-                // Eventos de los botones del banner
                 setTimeout(() => {
                     const btnFicha = document.getElementById("botonPaleofichaCampeon");
                     if (btnFicha) {
@@ -401,7 +401,7 @@ function mostrarCruce(cruce) {
                     }
                 }, 100);
 
-                return; // Detiene el renderizado estándar de rondas para mostrar exclusivamente la vista de campeón
+                return;
             } else {
                 const avisoPendiente = document.createElement("div");
                 avisoPendiente.style.cssText = "text-align: center; padding: 24px; color: #8b949e; background: #161b22; border-radius: 8px; margin-bottom: 20px;";
@@ -439,15 +439,6 @@ function mostrarCruce(cruce) {
     });
 }
 
-
-
-
-
-
-
-
-    
-    
 function mismosParticipantes(pGuardados, pActuales) {
     if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;
     for (let i = 0; i < pActuales.length; i++) {
@@ -558,3 +549,4 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 </body>
 </html>
+
