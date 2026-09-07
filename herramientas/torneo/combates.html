@@ -122,9 +122,6 @@ function crearCruces(participantes, numeroInicio = 1) {
     return cruces;
 }
 
-
-
-    
 function generarTorneo(participantes) {
     const cantidad = participantes.length;
     const rondas = [];
@@ -166,8 +163,8 @@ function generarTorneo(participantes) {
     }
 
     while (crucesActuales.length > 1) {
-        const siguientesCrucesParticipantes = crucesActuales.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));
-        crucesActuales = crearCruces(siguientesCrucesParticipantes, numeroCombateGlobal);
+        const participantesRonda = crucesActuales.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));
+        crucesActuales = crearCruces(participantesRonda, numeroCombateGlobal);
         
         let nombreRonda = "Eliminatorias";
         const len = crucesActuales.length;
@@ -184,11 +181,12 @@ function generarTorneo(participantes) {
         else if (len === 2) nombreRonda = "Semifinales";
         else if (len === 1) nombreRonda = "Gran Final";
 
-        rondas.push({ nombre: nombreRonda, tipo: "eliminatoria", participantes: [], reservas: [], cruces: crucesActuales });
+        rondas.push({ nombre: nombreRonda, tipo: "eliminatoria", participantes: participantesRonda, reservas: [], cruces: crucesActuales });
         numeroCombateGlobal += crucesActuales.length;
     }
     return rondas;
 }
+
 
     
 
