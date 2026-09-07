@@ -37,8 +37,7 @@
 <section id="volver">
     <a href="index.html" id="botonVolver"> ← Volver al índice del torneo </a>
 </section>
-
- <script>
+<script>
 window.TORNEO_COMBATES = [];
 const CLAVE_TORNEO_EMPAREJAMIENTOS = "palentropia_emparejamientos_torneo";
 const CLAVE_RESULTADOS_SERIES = "palentropia_resultados_series";
@@ -102,7 +101,7 @@ function crearParticipantesDatos(matrizJ1, mapaNombres) {
     });
     return participantes;
 }
-<script>
+    <script>
 function barajar(matriz) {
     const resultado = [...matriz];
     for (let i = resultado.length - 1; i > 0; i--) {
@@ -231,8 +230,7 @@ function filtrarRondasPorEntrada(rondas) {
         return rondas;
     }
 }
-
-<script>
+    <script>
 function obtenerTextoParticipante(participante) {
     if (participante && typeof participante === "object" && participante.j1) {
         return participante.j2 ? participante.j2 + " (" + participante.j1 + ")" : participante.j1;
@@ -335,8 +333,7 @@ function mostrarCruce(cruce) {
     tarjeta.appendChild(participantes);
     return tarjeta;
 }
-
-<script>
+    <script>
 function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
@@ -516,9 +513,8 @@ function mostrarRondas(rondas) {
         bloque.appendChild(lista);  
         contenedor.appendChild(bloque);  
     });
-}
-
-<script>
+            }
+    <script>
 function mismosParticipantes(pGuardados, pActuales) {
     if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;
     for (let i = 0; i < pActuales.length; i++) {
@@ -685,9 +681,8 @@ async function ejecutarSimulacionPorLotes(modoParcial = false) {
 
     localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(datosSeries));
     location.reload();
-            }
-
-   <script>
+}
+    <script>
 async function iniciarCombates(forzarNuevo = false) {
     mostrarTituloTorneo();
     const matrizJ1 = obtenerParticipantes();
@@ -787,7 +782,3 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 </body>
 </html>
-
-     
-
-     
