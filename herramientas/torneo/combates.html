@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PalEntropía — Combates</title>
     <link rel="stylesheet" href="combates.css">
+    <script src="palarenastats.js"></script>
+    <script src="standar-ataques.js"></script>
+    <script src="standar-efectos.js"></script>
+    <script src="standar.js"></script>
     <script src="../generador_fase_2/buscaruta.js"></script>
     <script src="loadimagen.js"></script>
 </head>
@@ -19,13 +23,22 @@
         <h2 id="tituloTorneo">⚔️ Torneo</h2>
         <p id="estadoCombates">Preparando emparejamientos...</p>
         <button id="botonRehacerEmparejamientos" type="button"> 🔄 Rehacer emparejamientos </button>
+        <div id="botonesSimulacionTorneo" style="margin-top: 12px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+            <button id="botonSimularParcial" type="button" style="padding: 8px 14px; background: #21262d; color: #c9d1d9; border: 1px solid #30363d; border-radius: 6px; cursor: pointer; font-size: 13px;">
+                ⚡ Simular hasta Rondas Finales
+            </button>
+            <button id="botonSimularTotal" type="button" style="padding: 8px 14px; background: #1f6feb; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold;">
+                🚀 Simular Torneo Completo
+            </button>
+        </div>
     </section>
     <section id="contenedorRondas"></section>
 </main>
 <section id="volver">
     <a href="index.html" id="botonVolver"> ← Volver al índice del torneo </a>
 </section>
-<script>
+
+ <script>
 window.TORNEO_COMBATES = [];
 const CLAVE_TORNEO_EMPAREJAMIENTOS = "palentropia_emparejamientos_torneo";
 const CLAVE_RESULTADOS_SERIES = "palentropia_resultados_series";
@@ -89,7 +102,7 @@ function crearParticipantesDatos(matrizJ1, mapaNombres) {
     });
     return participantes;
 }
-
+<script>
 function barajar(matriz) {
     const resultado = [...matriz];
     for (let i = resultado.length - 1; i > 0; i--) {
@@ -124,6 +137,7 @@ function crearCruces(participantes, numeroInicio = 1) {
     }
     return cruces;
 }
+
 function generarTorneo(participantes) {
     const cantidad = participantes.length;
     const rondas = [];
@@ -154,7 +168,11 @@ function generarTorneo(participantes) {
         crucesActuales = crearCruces(participantesCuadroPrincipal, numeroCombateGlobal);
         
         let nombreCuadroPrincipal = "Cuadro principal";
-        if (crucesActuales.length === 32) nombreCuadroPrincipal = "Treintaidosavos de final";
+        if (crucesActuales.length === 512) nombreCuadroPrincipal = "Quinientos doceavos de final";
+        else if (crucesActuales.length === 256) nombreCuadroPrincipal = "Doscientos cincuenta y seisavos de final";
+        else if (crucesActuales.length === 128) nombreCuadroPrincipal = "Ciento veintiochoavos de final";
+        else if (crucesActuales.length === 64) nombreCuadroPrincipal = "Sesenta y cuatroavos de final";
+        else if (crucesActuales.length === 32) nombreCuadroPrincipal = "Treintaidosavos de final";
         else if (crucesActuales.length === 16) nombreCuadroPrincipal = "Dieciseisavos de final";
         else if (crucesActuales.length === 8) nombreCuadroPrincipal = "Octavos de final";
         rondas.push({ nombre: nombreCuadroPrincipal, tipo: "principal", participantes: participantesCuadroPrincipal, reservas: [], cruces: crucesActuales });
@@ -167,8 +185,7 @@ function generarTorneo(participantes) {
         let nombreRonda = "Eliminatorias";
         const len = crucesActuales.length;
         
-        if (len === 1024) nombreRonda = "Mil veinticuatroavos de final";
-        else if (len === 512) nombreRonda = "Quinientos doceavos de final";
+        if (len === 512) nombreRonda = "Quinientos doceavos de final";
         else if (len === 256) nombreRonda = "Doscientos cincuenta y seisavos de final";
         else if (len === 128) nombreRonda = "Ciento veintiochoavos de final";
         else if (len === 64) nombreRonda = "Sesenta y cuatroavos de final";
@@ -195,6 +212,10 @@ function filtrarRondasPorEntrada(rondas) {
         if (faseId === "principal") return rondas.filter(r => r.tipo !== "previa");
         
         const mapFases = {
+            "512avos": "Quinientos doceavos de final",
+            "256avos": "Doscientos cincuenta y seisavos de final",
+            "128avos": "Ciento veintiochoavos de final",
+            "64avos": "Sesenta y cuatroavos de final",
             "32avos": "Treintaidosavos de final",
             "16avos": "Dieciseisavos de final",
             "octavos": "Octavos de final",
@@ -210,6 +231,8 @@ function filtrarRondasPorEntrada(rondas) {
         return rondas;
     }
 }
+
+<script>
 function obtenerTextoParticipante(participante) {
     if (participante && typeof participante === "object" && participante.j1) {
         return participante.j2 ? participante.j2 + " (" + participante.j1 + ")" : participante.j1;
@@ -313,40 +336,7 @@ function mostrarCruce(cruce) {
     return tarjeta;
 }
 
-function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
-    const CLAVE_PALMARES = "palentropia_palmares_historico";
-    try {
-        let historico = JSON.parse(localStorage.getItem(CLAVE_PALMARES) || "[]");
-        const yaRegistrado = historico.some(item => item.codigo === codigo);
-        if (!yaRegistrado) {
-            historico.push({
-                codigo: codigo,
-                nombre: nombre,
-                victorias1: datosFinal.victorias1,
-                victorias2: datosFinal.victorias2,
-                fecha: Date.now()
-            });
-            localStorage.setItem(CLAVE_PALMARES, JSON.stringify(historico));
-        }
-    } catch (e) {
-        console.error("Error al registrar en palmarés:", e);
-    }
-}
-
-
-
-
-
-
-
-
-
-                            
-    
-
-
-
-
+<script>
 function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
@@ -528,6 +518,7 @@ function mostrarRondas(rondas) {
     });
 }
 
+<script>
 function mismosParticipantes(pGuardados, pActuales) {
     if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;
     for (let i = 0; i < pActuales.length; i++) {
@@ -566,6 +557,137 @@ function mostrarEstadoTorneo(participantes, informacion, fueGenerado) {
     estado.textContent += fueGenerado ? " Emparejamientos fijados." : " Emparejamientos guardados.";
 }
 
+async function simularSerieAutomatica(ficha1, ficha2) {
+    let partidosSerie = 1;
+    try {
+        const reglasStorage = localStorage.getItem("palentropia_reglas_torneo");
+        if (reglasStorage) {
+            const r = JSON.parse(reglasStorage);
+            partidosSerie = Number(r.partidosSerie) || 1;
+        }
+    } catch (e) {}
+    
+    const victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
+    let victorias1 = 0;
+    let victorias2 = 0;
+
+    while (victorias1 < victoriasNecesarias && victorias2 < victoriasNecesarias) {
+        const combate = window.crearCombateEstandar(ficha1, ficha2);
+        if (!combate) break;
+
+        while (combate.estado !== "finalizado") {
+            window.ejecutarTurnoEstandar(combate);
+        }
+
+        if (combate.ganador === combate.combatiente1.codigo) {
+            victorias1++;
+        } else {
+            victorias2++;
+        }
+    }
+
+    const ganadorEs1 = victorias1 > victorias2;
+    return {
+        ganadorCodigo: ganadorEs1 ? ficha1.j1 : ficha2.j1,
+        ganadorNombre: ganadorEs1 ? ficha1.j2 : ficha2.j2,
+        victorias1: victorias1,
+        victorias2: victorias2
+    };
+}
+
+async function ejecutarSimulacionPorLotes(modoParcial = false) {
+    let datosSeries = {};
+    try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
+
+    const totalParticipantes = obtenerParticipantes().length;
+    const dejarCuartos = totalParticipantes >= 16;
+    const rondas = window.TORNEO_COMBATES;
+    if (!rondas || rondas.length === 0) return;
+
+    const mapaNombres = await obtenerMapaNombres();
+    let fichasMaster = [];
+    try {
+        const res = await fetch("../generador_fase_2/master.csv");
+        if (res.ok) {
+            const textoCSV = await res.text();
+            const lineas = textoCSV.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            if (lineas.length >= 2) {
+                const cabecera = lineas[0].split(",").map(c => c.trim());
+                for (let i = 1; i < lineas.length; i++) {
+                    const col = lineas[i].split(",").map(v => v.trim());
+                    if (!col.length) continue;
+                    const ficha = {};
+                    cabecera.forEach((cab, j) => ficha[cab] = col[j] !== undefined ? col[j] : "");
+                    for (let n = 1; n <= 11; n++) if (ficha["e" + n]) ficha["e" + n] = Number(ficha["e" + n]);
+                    fichasMaster.push(ficha);
+                }
+            }
+        }
+    } catch (e) {}
+
+    async function obtenerFichaParaSimular(participanteRef) {
+        let codigo = "";
+        if (typeof participanteRef === "string") codigo = participanteRef;
+        else if (participanteRef && participanteRef.j1) codigo = participanteRef.j1;
+
+        if (!codigo) return null;
+
+        if (fichasMaster.length > 0) {
+            const f = fichasMaster.find(x => String(x.j1).trim().toLowerCase() === codigo.toLowerCase());
+            if (f) {
+                return {
+                    j1: f.j1,
+                    j2: mapaNombres.get(codigo.toLowerCase()) || f.j2 || f.nombre || "",
+                    e1: f.e1, e2: f.e2, e3: f.e3, e4: f.e4, e5: f.e5,
+                    conf: f.conf
+                };
+            }
+        }
+        return { j1: codigo, j2: mapaNombres.get(codigo.toLowerCase()) || codigo };
+    }
+
+    const totalRondas = rondas.length;
+
+    for (let indexRonda = 0; indexRonda < totalRondas; indexRonda++) {
+        const ronda = rondas[indexRonda];
+        const esUltima = indexRonda === totalRondas - 1;
+        const esPenultima = indexRonda === totalRondas - 2;
+        const esAntepenultima = indexRonda === totalRondas - 3;
+
+        if (modoParcial) {
+            if (esUltima || esPenultima) continue;
+            if (dejarCuartos && esAntepenultima) continue;
+        }
+
+        if (ronda.cruces) {
+            for (const cruce of ronda.cruces) {
+                if (datosSeries[cruce.numero]) continue;
+
+                const p1Real = resolverParticipanteReal(cruce.participante1, datosSeries);
+                const p2Real = resolverParticipanteReal(cruce.participante2, datosSeries);
+
+                const ficha1Sim = await obtenerFichaParaSimular(p1Real);
+                const ficha2Sim = await obtenerFichaParaSimular(p2Real);
+
+                if (ficha1Sim && ficha2Sim && ficha1Sim.j1 && ficha2Sim.j1) {
+                    const resultadoSerie = await simularSerieAutomatica(ficha1Sim, ficha2Sim);
+                    datosSeries[cruce.numero] = {
+                        combateNumero: cruce.numero,
+                        ganadorCodigo: resultadoSerie.ganadorCodigo,
+                        ganadorNombre: resultadoSerie.ganadorNombre,
+                        victorias1: resultadoSerie.victorias1,
+                        victorias2: resultadoSerie.victorias2
+                    };
+                }
+            }
+        }
+    }
+
+    localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(datosSeries));
+    location.reload();
+            }
+
+   <script>
 async function iniciarCombates(forzarNuevo = false) {
     mostrarTituloTorneo();
     const matrizJ1 = obtenerParticipantes();
@@ -633,22 +755,39 @@ document.addEventListener("DOMContentLoaded", function() {
             botonRehacer.disabled = false;
         });
     }
+
+    const btnSimularTotal = document.getElementById("botonSimularTotal");
+    if (btnSimularTotal) {
+        btnSimularTotal.addEventListener("click", async function() {
+            if (confirm("¿Simular todo el torneo automáticamente utilizando las reglas de la arena?")) {
+                btnSimularTotal.disabled = true;
+                btnSimularTotal.textContent = "Simulando...";
+                await ejecutarSimulacionPorLotes(false);
+            }
+        });
+    }
+
+    const btnSimularParcial = document.getElementById("botonSimularParcial");
+    if (btnSimularParcial) {
+        btnSimularParcial.addEventListener("click", async function() {
+            const totalP = obtenerParticipantes().length;
+            const msg = totalP >= 16 
+                ? "¿Simular rondas anteriores dejando Cuartos, Semis y Final pendientes de jugar?"
+                : "¿Simular rondas anteriores dejando Semis y Final pendientes de jugar?";
+            if (confirm(msg)) {
+                btnSimularParcial.disabled = true;
+                btnSimularParcial.textContent = "Simulando...";
+                await ejecutarSimulacionPorLotes(true);
+            }
+        });
+    }
+
     iniciarCombates();
 });
 </script>
 </body>
 </html>
 
+     
 
-
-
-
-
-
-
-
-
-
-
-
-    
+     
