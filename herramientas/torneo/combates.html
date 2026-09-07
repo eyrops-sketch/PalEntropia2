@@ -109,6 +109,7 @@ function calcularRondaPrevia(cantidad) {
 
     
 function crearCruces(participantes, numeroInicio = 1) {
+function crearCruces(participantes, numeroInicio = 1) {
     const cruces = [];
     for (let i = 0; i < participantes.length; i += 2) {
         const participante1 = participantes[i];
@@ -119,6 +120,7 @@ function crearCruces(participantes, numeroInicio = 1) {
     }
     return cruces;
 }
+
 function generarTorneo(participantes) {
     const cantidad = participantes.length;
     const rondas = [];
@@ -150,16 +152,16 @@ function generarTorneo(participantes) {
         
         crucesActuales = crearCruces(participantesCuadroPrincipal, numeroCombateGlobal);
         
+        // Si el cuadro principal arranca con 64 combatientes, son 32 combates (Dieciseisavos)
         let nombreCuadroPrincipal = "Cuadro principal";
         if (crucesActuales.length === 32) nombreCuadroPrincipal = "Dieciseisavos de final";
         else if (crucesActuales.length === 16) nombreCuadroPrincipal = "Octavos de final";
-        else if (crucesActuales.length === 8) nombreCuadroPrincipal = "Cuartos de final";
 
         rondas.push({ nombre: nombreCuadroPrincipal, tipo: "principal", participantes: participantesCuadroPrincipal, reservas: [], cruces: crucesActuales });
         numeroCombateGlobal += crucesActuales.length;
     }
 
-    // Generador estricto basado en potencias exactas (halving simétrico)
+    // Bucle estricto de reducción a la mitad (halving exacto)
     while (crucesActuales.length > 1) {
         const siguientesCrucesParticipantes = crucesActuales.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));
         crucesActuales = crearCruces(siguientesCrucesParticipantes, numeroCombateGlobal);
@@ -169,7 +171,6 @@ function generarTorneo(participantes) {
         if (len === 16) nombreRonda = "Octavos de final";
         else if (len === 8) nombreRonda = "Cuartos de final";
         else if (len === 4) nombreRonda = "Semifinales";
-        else if (len === 2) nombreRonda = "Semifinales";
         else if (len === 1) nombreRonda = "Gran Final";
 
         rondas.push({ nombre: nombreRonda, tipo: "eliminatoria", participantes: [], reservas: [], cruces: crucesActuales });
@@ -177,6 +178,7 @@ function generarTorneo(participantes) {
     }
     return rondas;
 }
+
     
 
 
