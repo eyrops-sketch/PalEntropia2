@@ -165,16 +165,14 @@ function generarTorneo(participantes) {
 
 
     
-        while (crucesActuales.length > 1) {
+    while (crucesActuales.length > 1) {
         const siguientesCrucesParticipantes = crucesActuales.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));
         crucesActuales = crearCruces(siguientesCrucesParticipantes, numeroCombateGlobal);
         
         let nombreRonda = "Eliminatorias";
         const len = crucesActuales.length;
         
-        if (len === 1024) {
-            nombreRonda = "Mil veinticuatroavos de final";
-        } else if (len === 512) {
+        if (len === 512) {
             nombreRonda = "Quinientos doceavos de final";
         } else if (len === 256) {
             nombreRonda = "Doscientos cincuenta y seisavos de final";
