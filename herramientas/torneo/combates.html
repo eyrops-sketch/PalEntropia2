@@ -318,9 +318,99 @@ function mostrarCruce(cruce) {
     tarjeta.appendChild(participantes);
     return tarjeta;
 }
+
+
+
+
+    
+    function mostrarRondas(rondas) {
     function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
+
+    const guardadoEntrada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);
+    let esVistaCampeon = false;
+    if (guardadoEntrada) {
+        try {
+            const datosEntrada = JSON.parse(guardadoEntrada);
+            if (datosEntrada.fase === "campeon") esVistaCampeon = true;
+        } catch (e) {}
+    }
+
+    if (esVistaCampeon && rondas.length > 0) {
+        const ultimaRonda = rondas[rondas.length - 1];
+        if (ultimaRonda && ultimaRonda.cruces && ultimaRonda.cruces.length > 0) {
+            const cruceFinal = ultimaRonda.cruces[0];
+            let datosSeries = {};
+            try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
+            const resFinal = datosSeries[cruceFinal.numero];
+
+            if (resFinal && resFinal.ganadorNombre) {
+                const codigoCampeon = resFinal.ganadorCodigo;
+                const nombreCampeon = resFinal.ganadorNombre;
+
+                // -----------------------------------------------------
+                // GANCHO PARA FUTURO FICHERO DE PALMARÉS
+                // -----------------------------------------------------
+                // registrarPalmaresCampeon(codigoCampeon, nombreCampeon, resFinal);
+
+                const bannerCampeon = document.createElement("div");
+                bannerCampeon.className = "bannerCampeonEspecial";
+                bannerCampeon.style.cssText = "text-align: center; padding: 32px; margin-bottom: 24px; background: linear-gradient(135deg, #1f2428, #111418); border: 2px solid #d4af37; border-radius: 12px; color: #f0f6fc; box-shadow: 0 8px 24px rgba(0,0,0,0.5);";
+
+                // Contenedor de imagen (con ruta adaptada a la estructura del proyecto)
+                const rutaImagen = `../generador_fase_2/imagenes/${codigoCampeon}.png`;
+
+                bannerCampeon.innerHTML = `
+                    <div style="font-size: 56px; margin-bottom: 12px;">🏆</div>
+                    <h2 style="margin: 0 0 16px 0; color: #d4af37; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">¡Gran Campeón del Torneo!</h2>
+                    
+                    <div style="margin: 0 auto 16px auto; width: 140px; height: 140px; border-radius: 50%; border: 3px solid #d4af37; overflow: hidden; background: #0d1117; display: flex; align-items: center; justify-content: center;">
+                        <img src="${rutaImagen}" alt="${nombreCampeon}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\\'font-size:48px;\\'>🦖</span>';">
+                    </div>
+
+                    <div style="font-size: 24px; font-weight: bold; color: #58a6ff; margin-bottom: 6px;">${nombreCampeon}</div>
+                    <div style="font-size: 14px; color: #8b949e; margin-bottom: 20px;">Código: ${codigoCampeon} — Marcador de la Final: ${resFinal.victorias1} - ${resFinal.victorias2}</div>
+
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <button id="botonPaleofichaCampeon" type="button" style="padding: 10px 20px; background: #238636; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                            📖 Ver Paleoficha
+                        </button>
+                        <button id="botonRegresarTorneo" type="button" style="padding: 10px 20px; background: #30363d; color: #c9d1d9; border: 1px solid #484f58; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                            ← Volver a la selección de fase
+                        </button>
+                    </div>
+                `;
+
+                contenedor.appendChild(bannerCampeon);
+
+                // Eventos de los botones del banner
+                setTimeout(() => {
+                    const btnFicha = document.getElementById("botonPaleofichaCampeon");
+                    if (btnFicha) {
+                        btnFicha.addEventListener("click", () => {
+                            window.location.href = `paleoficha.html?codigo=${codigoCampeon}`;
+                        });
+                    }
+
+                    const btnRegresar = document.getElementById("botonRegresarTorneo");
+                    if (btnRegresar) {
+                        btnRegresar.addEventListener("click", () => {
+                            window.location.href = "entrada.html";
+                        });
+                    }
+                }, 100);
+
+                return; // Detiene el renderizado estándar de rondas para mostrar exclusivamente la vista de campeón
+            } else {
+                const avisoPendiente = document.createElement("div");
+                avisoPendiente.style.cssText = "text-align: center; padding: 24px; color: #8b949e; background: #161b22; border-radius: 8px; margin-bottom: 20px;";
+                avisoPendiente.textContent = "🏆 La Gran Final aún no se ha disputado. ¡Juega el último combate para coronar al campeón!";
+                contenedor.appendChild(avisoPendiente);
+            }
+        }
+    }
+
     rondas.forEach(ronda => {
         const bloque = document.createElement("section");
         bloque.className = "rondaTorneo";
@@ -349,6 +439,15 @@ function mostrarCruce(cruce) {
     });
 }
 
+
+
+
+
+
+
+
+    
+    
 function mismosParticipantes(pGuardados, pActuales) {
     if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;
     for (let i = 0; i < pActuales.length; i++) {
