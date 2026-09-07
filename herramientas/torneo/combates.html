@@ -160,21 +160,51 @@ function generarTorneo(participantes) {
         numeroCombateGlobal += crucesActuales.length;
     }
 
-    while (crucesActuales.length > 1) {
+
+
+
+
+    
+        while (crucesActuales.length > 1) {
         const siguientesCrucesParticipantes = crucesActuales.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));
         crucesActuales = crearCruces(siguientesCrucesParticipantes, numeroCombateGlobal);
         
         let nombreRonda = "Eliminatorias";
         const len = crucesActuales.length;
-        if (len === 16) nombreRonda = "Octavos de final";
-        else if (len === 8) nombreRonda = "Cuartos de final";
-        else if (len === 4) nombreRonda = "Semifinales";
-        else if (len === 2) nombreRonda = "Semifinales";
-        else if (len === 1) nombreRonda = "Gran Final";
+        
+        if (len === 1024) {
+            nombreRonda = "Mil veinticuatroavos de final";
+        } else if (len === 512) {
+            nombreRonda = "Quinientos doceavos de final";
+        } else if (len === 256) {
+            nombreRonda = "Doscientos cincuenta y seisavos de final";
+        } else if (len === 128) {
+            nombreRonda = "Ciento veintiochoavos de final";
+        } else if (len === 64) {
+            nombreRonda = "Sesenta y cuatroavos de final";
+        } else if (len === 32) {
+            nombreRonda = "Treintaidosavos de final";
+        } else if (len === 16) {
+            nombreRonda = "Dieciseisavos de final";
+        } else if (len === 8) {
+            nombreRonda = "Octavos de final";
+        } else if (len === 4) {
+            nombreRonda = "Cuartos de final";
+        } else if (len === 2) {
+            nombreRonda = "Semifinales";
+        } else if (len === 1) {
+            nombreRonda = "Gran Final";
+        }
 
         rondas.push({ nombre: nombreRonda, tipo: "eliminatoria", participantes: [], reservas: [], cruces: crucesActuales });
         numeroCombateGlobal += crucesActuales.length;
     }
+
+
+
+
+
+    
     return rondas;
 }
 
