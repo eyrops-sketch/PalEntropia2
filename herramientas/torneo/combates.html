@@ -513,8 +513,6 @@ function mostrarRondas(rondas) {
                             return null;
                         };
 
-                        const normalizarNombre = texto => String(texto || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
-
                         const excepciones = {
                             "001_12": "../multimedia/001_075/001_12_i3.jpg",
                             "002_04": "../multimedia/001_075/002_04_i3.jpg",
@@ -539,9 +537,9 @@ function mostrarRondas(rondas) {
                                     const participanteEncontrado = rondas.flatMap(r => Array.isArray(r.cruces) ? r.cruces : []).flatMap(c => [c.participante1, c.participante2]).find(p => p && String(p.j1 || p.codigo || "").trim().toUpperCase() === codigoCampeon);
                                     const nombreFicha = (participanteEncontrado && (participanteEncontrado.j2 || participanteEncontrado.nombre)) || nombreCampeon;
                                     if (nombreFicha) {
-                                        const nombreNormalizado = normalizarNombre(nombreFicha);
+                                        const nombreLimpio = String(nombreFicha).trim().replace(/[^a-zA-Z0-9_-]+/g, "_").replace(/^_+|_+$/g, "");
                                         const volumenTexto = String(volumen).padStart(3, "0");
-                                        const base = `../../paleofichas/vol${volumenTexto}/${codigoCampeon}_${nombreNormalizado}/${nombreNormalizado}_i3`;
+                                        const base = `../../paleofichas/vol${volumenTexto}/${codigoCampeon}_${nombreLimpio}/${nombreLimpio}_i3`;
                                         cargarRuta = await buscarImagen(base);
                                     }
                                 }
@@ -557,9 +555,6 @@ function mostrarRondas(rondas) {
                             imgElement.src = cargarRuta;
                         } else {
                             imgElement.style.display = "none";
-                            if (imgElement.parentElement) {
-                                imgElement.parentElement.innerHTML = '<span style="font-size:48px;">🦖</span>';
-                            }
                         }
                     }
 
@@ -615,6 +610,12 @@ function mostrarRondas(rondas) {
         contenedor.appendChild(bloque);  
     });
 }
+    
+
+
+
+    
+
     
 
     
