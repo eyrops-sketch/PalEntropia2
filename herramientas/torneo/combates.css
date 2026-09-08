@@ -806,3 +806,35 @@ button.versusCombate:active:not(:disabled) {
     letter-spacing: 0.5px;
     text-shadow: 0 0 8px rgba(88, 166, 255, 0.4);
 }
+
+
+/* Estilo del botón circular de simulación individual */
+.cruceCombate {
+    position: relative; /* Obligatorio para que el botón se posicione dentro de la tarjeta */
+}
+
+.botonSimularIndividual {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #21262d;
+    border: 1px solid #30363d;
+    color: #c9d1d9;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    z-index: 5;
+    padding: 0;
+}
+
+.botonSimularIndividual:hover {
+    background-color: #30363d;
+    border-color: #58a6ff;
+    color: #58a6ff;
+}
