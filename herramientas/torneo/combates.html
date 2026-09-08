@@ -250,6 +250,10 @@ function resolverParticipanteReal(p, datosSeries) {
     return p;
 }
 
+
+
+
+    
 function mostrarCruce(cruce) {
     const tarjeta = document.createElement("div");
     tarjeta.className = "cruceCombate";
@@ -308,11 +312,25 @@ function mostrarCruce(cruce) {
         }
         participantes.appendChild(versus);
         participantes.appendChild(crearParticipanteVisual(cruce.participante2, datosSeries));
+
+        const botonSimular = document.createElement("button");
+        botonSimular.type = "button";
+        botonSimular.className = "botonSimularIndividual";
+        botonSimular.textContent = "⚡";
+        botonSimular.title = "Simular combate individualmente";
+        tarjeta.appendChild(botonSimular);
     }
     tarjeta.appendChild(participantes);
     return tarjeta;
 }
 
+
+
+
+
+
+
+    
 function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
     const CLAVE_PALMARES = "palentropia_palmares_historico";
     try {
