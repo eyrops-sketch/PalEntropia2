@@ -446,170 +446,458 @@ function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
 
-    const guardadoEntrada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);  
-    let esVistaCampeon = false;  
-    if (guardadoEntrada) {  
-        try {  
-            const datosEntrada = JSON.parse(guardadoEntrada);  
-            if (datosEntrada.fase === "campeon") esVistaCampeon = true;  
-        } catch (e) {}  
-    }  
+    const guardadoEntrada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);
+    let esVistaCampeon = false;
 
-    if (esVistaCampeon && rondas.length > 0) {  
-        const ultimaRonda = rondas[rondas.length - 1];  
-        if (ultimaRonda && ultimaRonda.cruces && ultimaRonda.cruces.length > 0) {  
-            const cruceFinal = ultimaRonda.cruces[0];  
-            let datosSeries = {};  
-            try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}  
-            const resFinal = datosSeries[cruceFinal.numero];  
+    if (guardadoEntrada) {
+        try {
+            const datosEntrada = JSON.parse(guardadoEntrada);
+            if (datosEntrada.fase === "campeon") esVistaCampeon = true;
+        } catch (e) {}
+    }
 
-            if (resFinal && resFinal.ganadorNombre) {  
-                const codigoCampeon = String(resFinal.ganadorCodigo || "").trim().toUpperCase();  
-                const nombreCampeon = resFinal.ganadorNombre;  
+    if (esVistaCampeon && rondas.length > 0) {
+        const ultimaRonda = rondas[rondas.length - 1];
 
-                const bannerCampeon = document.createElement("div");  
-                bannerCampeon.className = "bannerCampeonEspecial";  
-                bannerCampeon.style.cssText = "text-align: center; padding: 32px; margin-bottom: 24px; background: linear-gradient(135deg, #1f2428, #111418); border: 2px solid #d4af37; border-radius: 12px; color: #f0f6fc; box-shadow: 0 8px 24px rgba(0,0,0,0.5);";  
+        if (
+            ultimaRonda &&
+            ultimaRonda.cruces &&
+            ultimaRonda.cruces.length > 0
+        ) {
+            const cruceFinal = ultimaRonda.cruces[0];
 
-                bannerCampeon.innerHTML = `  
-                    <div style="font-size: 56px; margin-bottom: 12px;">🏆</div>  
-                    <h2 style="margin: 0 0 16px 0; color: #d4af37; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">¡Gran Campeón del Torneo!</h2>  
-                      
-                    <div style="margin: 0 auto 16px auto; width: 140px; aspect-ratio: 9 / 16; border: 3px solid #d4af37; border-radius: 10px; overflow: hidden; background: #0d1117; display: flex; align-items: center; justify-content: center;">  
-                        <img id="imagenCampeonOficial" alt="${nombreCampeon}" style="width: 100%; height: 100%; object-fit: contain; display: block;">  
-                    </div>  
+            let datosSeries = {};
 
-                    <div style="font-size: 24px; font-weight: bold; color: #58a6ff; margin-bottom: 6px;">${nombreCampeon}</div>  
-                    <div style="font-size: 14px; color: #8b949e; margin-bottom: 20px;">Código: ${codigoCampeon} — Marcador de la Final: ${resFinal.victorias1} - ${resFinal.victorias2}</div>  
+            try {
+                datosSeries = JSON.parse(
+                    localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"
+                );
+            } catch (e) {}
 
-                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">  
-                        <button id="botonPaleofichaCampeon" type="button" style="padding: 10px 20px; background: #238636; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">  
-                            📖 Ver Paleoficha  
-                        </button>  
-                        <button id="botonRegresarTorneo" type="button" style="padding: 10px 20px; background: #30363d; color: #c9d1d9; border: 1px solid #484f58; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">  
-                            ← Volver a la selección de fase  
-                        </button>  
-                    </div>  
-                `;  
+            const resFinal = datosSeries[cruceFinal.numero];
 
-                contenedor.appendChild(bannerCampeon);  
+            if (resFinal && resFinal.ganadorNombre) {
+                const codigoCampeon = String(
+                    resFinal.ganadorCodigo || ""
+                ).trim().toUpperCase();
+
+                const nombreCampeon = resFinal.ganadorNombre;
+
+                const bannerCampeon = document.createElement("div");
+
+                bannerCampeon.className =
+                    "bannerCampeonEspecial";
+
+                bannerCampeon.style.cssText =
+                    "text-align: center; padding: 32px; margin-bottom: 24px; background: linear-gradient(135deg, #1f2428, #111418); border: 2px solid #d4af37; border-radius: 12px; color: #f0f6fc; box-shadow: 0 8px 24px rgba(0,0,0,0.5);";
+
+                bannerCampeon.innerHTML = `
+                    <div style="font-size: 56px; margin-bottom: 12px;">🏆</div>
+
+                    <h2 style="margin: 0 0 16px 0; color: #d4af37; font-size: 28px; text-transform: uppercase; letter-spacing: 2px;">
+                        ¡Gran Campeón del Torneo!
+                    </h2>
+
+                    <div style="margin: 0 auto 16px auto; width: 140px; aspect-ratio: 9 / 16; border: 3px solid #d4af37; border-radius: 10px; overflow: hidden; background: #0d1117; display: flex; align-items: center; justify-content: center;">
+
+                        <img
+                            id="imagenCampeonOficial"
+                            alt="${nombreCampeon}"
+                            style="width: 100%; height: 100%; object-fit: contain; display: block;"
+                        >
+
+                    </div>
+
+                    <div style="font-size: 24px; font-weight: bold; color: #58a6ff; margin-bottom: 6px;">
+                        ${nombreCampeon}
+                    </div>
+
+                    <div style="font-size: 14px; color: #8b949e; margin-bottom: 20px;">
+                        Código: ${codigoCampeon} — Marcador de la Final: ${resFinal.victorias1} - ${resFinal.victorias2}
+                    </div>
+
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+
+                        <button
+                            id="botonPaleofichaCampeon"
+                            type="button"
+                            style="padding: 10px 20px; background: #238636; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;"
+                        >
+                            📖 Ver Paleoficha
+                        </button>
+
+                        <button
+                            id="botonRegresarTorneo"
+                            type="button"
+                            style="padding: 10px 20px; background: #30363d; color: #c9d1d9; border: 1px solid #484f58; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;"
+                        >
+                            ← Volver a la selección de fase
+                        </button>
+
+                    </div>
+                `;
+
+                contenedor.appendChild(bannerCampeon);
 
                 setTimeout(async () => {
-                    const imgElement = document.getElementById("imagenCampeonOficial");
+
+                    const imgElement =
+                        document.getElementById(
+                            "imagenCampeonOficial"
+                        );
+
                     if (imgElement) {
-                        const extensiones = [".png", ".jpg", ".jpeg", ".webp"];
-                        const comprobarImagen = ruta => new Promise(resolve => {
-                            const imagen = new Image();
-                            imagen.onload = () => resolve(true);
-                            imagen.onerror = () => resolve(false);
-                            imagen.src = ruta;
-                        });
+
+                        const extensiones = [
+                            ".png",
+                            ".jpg",
+                            ".jpeg",
+                            ".webp"
+                        ];
+
+                        const comprobarImagen = ruta =>
+                            new Promise(resolve => {
+
+                                const imagen = new Image();
+
+                                imagen.onload = () =>
+                                    resolve(true);
+
+                                imagen.onerror = () =>
+                                    resolve(false);
+
+                                imagen.src = ruta;
+                            });
 
                         const buscarImagen = async base => {
+
                             for (const ext of extensiones) {
-                                const ruta = base + ext;
-                                if (await comprobarImagen(ruta)) return ruta;
+
+                                const ruta =
+                                    base + ext;
+
+                                if (
+                                    await comprobarImagen(
+                                        ruta
+                                    )
+                                ) {
+                                    return ruta;
+                                }
                             }
+
                             return null;
                         };
 
                         const excepciones = {
-                            "001_12": "../multimedia/001_075/001_12_i3.jpg",
-                            "002_04": "../multimedia/001_075/002_04_i3.jpg",
-                            "003_14": "../multimedia/001_075/003_14_i3.jpg",
-                            "004_14": "../multimedia/001_075/004_14_i3.jpg"
+
+                            "001_12":
+                                "../multimedia/001_075/001_12_i3.jpg",
+
+                            "002_04":
+                                "../multimedia/001_075/002_04_i3.jpg",
+
+                            "003_14":
+                                "../multimedia/001_075/003_14_i3.jpg",
+
+                            "004_14":
+                                "../multimedia/001_075/004_14_i3.jpg"
                         };
 
                         let cargarRuta = null;
 
                         if (excepciones[codigoCampeon]) {
-                            if (await comprobarImagen(excepciones[codigoCampeon])) {
-                                cargarRuta = excepciones[codigoCampeon];
+
+                            if (
+                                await comprobarImagen(
+                                    excepciones[codigoCampeon]
+                                )
+                            ) {
+                                cargarRuta =
+                                    excepciones[
+                                        codigoCampeon
+                                    ];
                             }
                         }
 
                         if (!cargarRuta) {
-                            const partes = codigoCampeon.split("_");
+
+                            const partes =
+                                codigoCampeon.split("_");
+
                             if (partes.length === 2) {
-                                const volumen = parseInt(partes[0], 10);
-                                const ficha = parseInt(partes[1], 10);
-                                if (volumen >= 1 && volumen <= 5 && ficha >= 1 && ficha <= 15) {
-                                    const participanteEncontrado = rondas.flatMap(r => Array.isArray(r.cruces) ? r.cruces : []).flatMap(c => [c.participante1, c.participante2]).find(p => p && String(p.j1 || p.codigo || "").trim().toUpperCase() === codigoCampeon);
-                                    const nombreFicha = (participanteEncontrado && (participanteEncontrado.j2 || participanteEncontrado.nombre)) || nombreCampeon;
+
+                                const volumen =
+                                    parseInt(
+                                        partes[0],
+                                        10
+                                    );
+
+                                const ficha =
+                                    parseInt(
+                                        partes[1],
+                                        10
+                                    );
+
+                                if (
+                                    volumen >= 1 &&
+                                    volumen <= 5 &&
+                                    ficha >= 1 &&
+                                    ficha <= 15
+                                ) {
+
+                                    const participanteEncontrado =
+                                        rondas
+                                            .flatMap(r =>
+                                                Array.isArray(
+                                                    r.cruces
+                                                )
+                                                    ? r.cruces
+                                                    : []
+                                            )
+                                            .flatMap(c => [
+                                                c.participante1,
+                                                c.participante2
+                                            ])
+                                            .find(
+                                                p =>
+                                                    p &&
+                                                    String(
+                                                        p.j1 ||
+                                                        p.codigo ||
+                                                        ""
+                                                    )
+                                                        .trim()
+                                                        .toUpperCase() ===
+                                                    codigoCampeon
+                                            );
+
+                                    const nombreFicha =
+                                        (
+                                            participanteEncontrado &&
+                                            (
+                                                participanteEncontrado.j2 ||
+                                                participanteEncontrado.nombre
+                                            )
+                                        ) ||
+                                        nombreCampeon;
+
                                     if (nombreFicha) {
-                                        const nombreLimpio = String(nombreFicha).trim().replace(/[^a-zA-Z0-9_-]+/g, "_").replace(/^_+|_+$/g, "");
-                                        const volumenTexto = String(volumen).padStart(3, "0");
-                                        const base = `../../paleofichas/vol${volumenTexto}/${codigoCampeon}_${nombreLimpio}/${nombreLimpio}_i3`;
-                                        cargarRuta = await buscarImagen(base);
+
+                                        const nombreLimpio =
+                                            String(
+                                                nombreFicha
+                                            )
+                                                .trim()
+                                                .replace(
+                                                    /[^a-zA-Z0-9_-]+/g,
+                                                    "_"
+                                                )
+                                                .replace(
+                                                    /^_+|_+$/g,
+                                                    ""
+                                                );
+
+                                        const volumenTexto =
+                                            String(
+                                                volumen
+                                            ).padStart(
+                                                3,
+                                                "0"
+                                            );
+
+                                        /*
+                                         * La carpeta de la nueva
+                                         * arquitectura va en minúsculas.
+                                         *
+                                         * Ejemplo:
+                                         * 003_01_chalicotherium
+                                         *
+                                         * mientras que el archivo
+                                         * conserva el nombre original:
+                                         * Chalicotherium_i3.png
+                                         */
+
+                                        const carpetaFicha =
+                                            nombreLimpio.toLowerCase();
+
+                                        const base =
+                                            `../../paleofichas/vol${volumenTexto}/${codigoCampeon}_${carpetaFicha}/${nombreLimpio}_i3`;
+
+                                        cargarRuta =
+                                            await buscarImagen(
+                                                base
+                                            );
                                     }
                                 }
                             }
                         }
 
                         if (!cargarRuta) {
-                            const base = `../multimedia/new/${codigoCampeon}_i3`;
-                            cargarRuta = await buscarImagen(base);
+
+                            const base =
+                                `../multimedia/new/${codigoCampeon}_i3`;
+
+                            cargarRuta =
+                                await buscarImagen(base);
                         }
 
                         if (cargarRuta) {
-                            imgElement.src = cargarRuta;
+
+                            imgElement.src =
+                                cargarRuta;
+
                         } else {
-                            imgElement.style.display = "none";
+
+                            imgElement.style.display =
+                                "none";
                         }
                     }
 
-                    const btnFicha = document.getElementById("botonPaleofichaCampeon");  
-                    if (btnFicha) {  
-                        btnFicha.addEventListener("click", () => {  
-                            window.location.href = `../generador_fase_2/generador_fase_3.html?codigo=${codigoCampeon}`;  
-                        });  
-                    }  
+                    const btnFicha =
+                        document.getElementById(
+                            "botonPaleofichaCampeon"
+                        );
 
-                    const btnRegresar = document.getElementById("botonRegresarTorneo");  
-                    if (btnRegresar) {  
-                        btnRegresar.addEventListener("click", () => {  
-                            window.location.href = "entrada.html";  
-                        });  
-                    }  
-                }, 150);  
+                    if (btnFicha) {
 
-                return;  
+                        btnFicha.addEventListener(
+                            "click",
+                            () => {
+
+                                window.location.href =
+                                    `../generador_fase_2/generador_fase_3.html?codigo=${codigoCampeon}`;
+                            }
+                        );
+                    }
+
+                    const btnRegresar =
+                        document.getElementById(
+                            "botonRegresarTorneo"
+                        );
+
+                    if (btnRegresar) {
+
+                        btnRegresar.addEventListener(
+                            "click",
+                            () => {
+
+                                window.location.href =
+                                    "entrada.html";
+                            }
+                        );
+                    }
+
+                }, 150);
+
+                return;
+
             } else {
-                const avisoPendiente = document.createElement("div");
-                avisoPendiente.style.cssText = "text-align: center; padding: 24px; color: #8b949e; background: #161b22; border-radius: 8px; margin-bottom: 20px;";
-                avisoPendiente.textContent = "🏆 La Gran Final aún no se ha disputado. ¡Juega el último combate para coronar al campeón!";
-                contenedor.appendChild(avisoPendiente);
-            }
-        }  
-    }  
 
-    rondas.forEach(ronda => {  
-        const bloque = document.createElement("section");  
-        bloque.className = "rondaTorneo";  
-        const titulo = document.createElement("h2");  
-        titulo.textContent = ronda.nombre;  
-        bloque.appendChild(titulo);  
-        if (ronda.reservas && ronda.reservas.length) {  
-            const reservas = document.createElement("div");  
-            reservas.className = "pasanDirectamente";  
-            const texto = document.createElement("span");  
-            texto.innerHTML = "<strong>⏭ Pasan directamente:</strong> ";  
-            reservas.appendChild(texto);  
-            ronda.reservas.forEach((participante, indice) => {  
-                const elemento = document.createElement("span");  
-                elemento.textContent = obtenerTextoParticipante(participante);  
-                if (indice > 0) reservas.appendChild(document.createTextNode(" · "));  
-                reservas.appendChild(elemento);  
-            });  
-            bloque.appendChild(reservas);  
-        }  
-        const lista = document.createElement("div");  
-        lista.className = "listaCombates";  
-        ronda.cruces.forEach(cruce => { lista.appendChild(mostrarCruce(cruce)); });  
-        bloque.appendChild(lista);  
-        contenedor.appendChild(bloque);  
+                const avisoPendiente =
+                    document.createElement("div");
+
+                avisoPendiente.style.cssText =
+                    "text-align: center; padding: 24px; color: #8b949e; background: #161b22; border-radius: 8px; margin-bottom: 20px;";
+
+                avisoPendiente.textContent =
+                    "🏆 La Gran Final aún no se ha disputado. ¡Juega el último combate para coronar al campeón!";
+
+                contenedor.appendChild(
+                    avisoPendiente
+                );
+            }
+        }
+    }
+
+    rondas.forEach(ronda => {
+
+        const bloque =
+            document.createElement("section");
+
+        bloque.className =
+            "rondaTorneo";
+
+        const titulo =
+            document.createElement("h2");
+
+        titulo.textContent =
+            ronda.nombre;
+
+        bloque.appendChild(titulo);
+
+        if (
+            ronda.reservas &&
+            ronda.reservas.length
+        ) {
+
+            const reservas =
+                document.createElement("div");
+
+            reservas.className =
+                "pasanDirectamente";
+
+            const texto =
+                document.createElement("span");
+
+            texto.innerHTML =
+                "<strong>⏭ Pasan directamente:</strong> ";
+
+            reservas.appendChild(texto);
+
+            ronda.reservas.forEach(
+                (participante, indice) => {
+
+                    const elemento =
+                        document.createElement("span");
+
+                    elemento.textContent =
+                        obtenerTextoParticipante(
+                            participante
+                        );
+
+                    if (indice > 0) {
+
+                        reservas.appendChild(
+                            document.createTextNode(
+                                " · "
+                            )
+                        );
+                    }
+
+                    reservas.appendChild(
+                        elemento
+                    );
+                }
+            );
+
+            bloque.appendChild(
+                reservas
+            );
+        }
+
+        const lista =
+            document.createElement("div");
+
+        lista.className =
+            "listaCombates";
+
+        ronda.cruces.forEach(cruce => {
+
+            lista.appendChild(
+                mostrarCruce(cruce)
+            );
+        });
+
+        bloque.appendChild(
+            lista
+        );
+
+        contenedor.appendChild(
+            bloque
+        );
     });
 }
+
     
 
 
