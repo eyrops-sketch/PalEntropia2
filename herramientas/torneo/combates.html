@@ -686,18 +686,17 @@ async function ejecutarSimulacionPorLotes(modoParcial = false) {
 async function iniciarCombates(forzarNuevo = false) {
     mostrarTituloTorneo();
 
-    // Limpieza de seguridad si el filtro de entrada no coincide con los participantes actuales
-const entradaGuardada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);
-if (entradaGuardada) {
-    try {
-        const datosEntrada = JSON.parse(entradaGuardada);
-        // Si venía de una fase específica pero hemos cambiado de número de participantes, la reseteamos
-        if (datosEntrada.fase && datosEntrada.fase !== "previa" && datosEntrada.fase !== "principal" && datosEntrada.fase !== "campeon") {
-            // Opcional: si prefieres conservar la vista de fase, déjalo; si no, quítalo con:
-            // localStorage.removeItem(CLAVE_ENTRADA_TORNEO);
-        }
-    } catch (e) {}
-}
+  // Limpieza automática de seguridad si cambia la entrada
+    const entradaGuardada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);
+    if (entradaGuardada) {
+        try {
+            const datosEntrada = JSON.parse(entradaGuardada);
+            if (datosEntrada.fase && datosEntrada.fase !== "previa" && datosEntrada.fase !== "principal" && datosEntrada.fase !== "campeon") {
+                localStorage.removeItem(CLAVE_ENTRADA_TORNEO);
+            }
+        } catch (e) {}
+    }
+
     
 
 
