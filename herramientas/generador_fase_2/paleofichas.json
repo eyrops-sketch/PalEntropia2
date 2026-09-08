@@ -556,6 +556,12 @@
     "nombre": "Stegosaurus",
     "dieta": "Herbívoro",
     "anatomia": "Dinosaurio herbívoro de gran tamaño, con cuerpo robusto, cabeza pequeña, pico córneo, doble fila de placas óseas a lo largo del dorso y cuatro grandes púas en el extremo de la cola, con extremidades posteriores más largas que las anteriores"
+  },
+  {
+    "codigo": "007_04",
+    "nombre": "Allosaurus",
+    "dieta": "Carnívoro",
+    "anatomia": "Dinosaurio terópodo de gran tamaño, con cráneo robusto y alargado, mandíbulas provistas de numerosos dientes aserrados, brazos relativamente cortos con tres dedos provistos de garras y extremidades posteriores largas y musculosas adaptadas a la locomoción bípeda"
   }
 ]
 
