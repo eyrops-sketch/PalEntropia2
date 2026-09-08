@@ -455,6 +455,10 @@ window.PALTAXON = {
 "007_03":{
   ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Thyreophora > Stegosauria > Stegosauridae > Stegosaurus",
   ta2:"Dinosaurio. Ornitisquio. Tireóforo. Estegosáurido."
+},
+"007_04":{
+  ta1:"Animalia > Chordata > Dinosauria > Saurischia > Theropoda > Tetanurae > Allosauroidea > Allosauridae > Allosaurus",
+  ta2:"Dinosaurio. Saurisquio. Terópodo. Alosáurido."
 }
   
 };
