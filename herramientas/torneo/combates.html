@@ -437,6 +437,11 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
     }
 }
 
+
+
+
+
+
 function mostrarRondas(rondas) {
     const contenedor = document.getElementById("contenedorRondas");
     contenedor.innerHTML = "";
@@ -492,75 +497,68 @@ function mostrarRondas(rondas) {
                 setTimeout(async () => {
                     const imgElement = document.getElementById("imagenCampeonOficial");
                     if (imgElement) {
-                        if (typeof window.cargarImagenAsync === "function") {
-                            window.cargarImagenAsync(codigoCampeon, imgElement);
-                        } else if (typeof window.obtenerRutaImagen === "function") {
-                            const ruta = await window.obtenerRutaImagen(codigoCampeon);
-                            if (ruta) imgElement.src = ruta;
-                        } else {
-                            const extensiones = [".png", ".jpg", ".jpeg", ".webp"];
-                            const comprobarImagen = ruta => new Promise(resolve => {
-                                const imagen = new Image();
-                                imagen.onload = () => resolve(true);
-                                imagen.onerror = () => resolve(false);
-                                imagen.src = ruta;
-                            });
+                        const extensiones = [".png", ".jpg", ".jpeg", ".webp"];
+                        const comprobarImagen = ruta => new Promise(resolve => {
+                            const imagen = new Image();
+                            imagen.onload = () => resolve(true);
+                            imagen.onerror = () => resolve(false);
+                            imagen.src = ruta;
+                        });
 
-                            const buscarImagen = async base => {
-                                for (const ext of extensiones) {
-                                    const ruta = base + ext;
-                                    if (await comprobarImagen(ruta)) return ruta;
-                                }
-                                return null;
-                            };
-
-                            const normalizarNombre = texto => String(texto || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
-
-                            const excepciones = {
-                                "001_12": "../multimedia/001_075/001_12_i3.jpg",
-                                "002_04": "../multimedia/001_075/002_04_i3.jpg",
-                                "003_14": "../multimedia/001_075/003_14_i3.jpg",
-                                "004_14": "../multimedia/001_075/004_14_i3.jpg"
-                            };
-
-                            let cargarRuta = null;
-
-                            if (excepciones[codigoCampeon]) {
-                                if (await comprobarImagen(excepciones[codigoCampeon])) {
-                                    cargarRuta = excepciones[codigoCampeon];
-                                }
+                        const buscarImagen = async base => {
+                            for (const ext of extensiones) {
+                                const ruta = base + ext;
+                                if (await comprobarImagen(ruta)) return ruta;
                             }
+                            return null;
+                        };
 
-                            if (!cargarRuta) {
-                                const partes = codigoCampeon.split("_");
-                                if (partes.length === 2) {
-                                    const volumen = parseInt(partes[0], 10);
-                                    const ficha = parseInt(partes[1], 10);
-                                    if (volumen >= 1 && volumen <= 5 && ficha >= 1 && ficha <= 15) {
-                                        const participanteEncontrado = rondas.flatMap(r => Array.isArray(r.cruces) ? r.cruces : []).flatMap(c => [c.participante1, c.participante2]).find(p => p && String(p.j1 || p.codigo || "").trim().toUpperCase() === codigoCampeon);
-                                        const nombreFicha = (participanteEncontrado && (participanteEncontrado.j2 || participanteEncontrado.nombre)) || nombreCampeon;
-                                        if (nombreFicha) {
-                                            const nombreNormalizado = normalizarNombre(nombreFicha);
-                                            const volumenTexto = String(volumen).padStart(3, "0");
-                                            const base = `../../paleofichas/vol${volumenTexto}/${codigoCampeon}_${nombreNormalizado}/${nombreNormalizado}_i3`;
-                                            cargarRuta = await buscarImagen(base);
-                                        }
+                        const normalizarNombre = texto => String(texto || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+
+                        const excepciones = {
+                            "001_12": "../multimedia/001_075/001_12_i3.jpg",
+                            "002_04": "../multimedia/001_075/002_04_i3.jpg",
+                            "003_14": "../multimedia/001_075/003_14_i3.jpg",
+                            "004_14": "../multimedia/001_075/004_14_i3.jpg"
+                        };
+
+                        let cargarRuta = null;
+
+                        if (excepciones[codigoCampeon]) {
+                            if (await comprobarImagen(excepciones[codigoCampeon])) {
+                                cargarRuta = excepciones[codigoCampeon];
+                            }
+                        }
+
+                        if (!cargarRuta) {
+                            const partes = codigoCampeon.split("_");
+                            if (partes.length === 2) {
+                                const volumen = parseInt(partes[0], 10);
+                                const ficha = parseInt(partes[1], 10);
+                                if (volumen >= 1 && volumen <= 5 && ficha >= 1 && ficha <= 15) {
+                                    const participanteEncontrado = rondas.flatMap(r => Array.isArray(r.cruces) ? r.cruces : []).flatMap(c => [c.participante1, c.participante2]).find(p => p && String(p.j1 || p.codigo || "").trim().toUpperCase() === codigoCampeon);
+                                    const nombreFicha = (participanteEncontrado && (participanteEncontrado.j2 || participanteEncontrado.nombre)) || nombreCampeon;
+                                    if (nombreFicha) {
+                                        const nombreNormalizado = normalizarNombre(nombreFicha);
+                                        const volumenTexto = String(volumen).padStart(3, "0");
+                                        const base = `../../paleofichas/vol${volumenTexto}/${codigoCampeon}_${nombreNormalizado}/${nombreNormalizado}_i3`;
+                                        cargarRuta = await buscarImagen(base);
                                     }
                                 }
                             }
+                        }
 
-                            if (!cargarRuta) {
-                                const base = `../multimedia/new/${codigoCampeon}_i3`;
-                                cargarRuta = await buscarImagen(base);
-                            }
+                        if (!cargarRuta) {
+                            const base = `../multimedia/new/${codigoCampeon}_i3`;
+                            cargarRuta = await buscarImagen(base);
+                        }
 
-                            if (cargarRuta) {
-                                imgElement.src = cargarRuta;
-                            } else {
-                                imgElement.style.display = "none";
-                                if (imgElement.parentElement) {
-                                    imgElement.parentElement.innerHTML = '<span style="font-size:48px;">🦖</span>';
-                                }
+                        if (cargarRuta) {
+                            imgElement.src = cargarRuta;
+                        } else {
+                            imgElement.style.display = "none";
+                            if (imgElement.parentElement) {
+                                imgElement.parentElement.innerHTML = '<span style="font-size:48px;">🦖</span>';
                             }
                         }
                     }
@@ -581,7 +579,12 @@ function mostrarRondas(rondas) {
                 }, 150);  
 
                 return;  
-            }  
+            } else {
+                const avisoPendiente = document.createElement("div");
+                avisoPendiente.style.cssText = "text-align: center; padding: 24px; color: #8b949e; background: #161b22; border-radius: 8px; margin-bottom: 20px;";
+                avisoPendiente.textContent = "🏆 La Gran Final aún no se ha disputado. ¡Juega el último combate para coronar al campeón!";
+                contenedor.appendChild(avisoPendiente);
+            }
         }  
     }  
 
@@ -612,7 +615,16 @@ function mostrarRondas(rondas) {
         contenedor.appendChild(bloque);  
     });
 }
+    
 
+    
+
+
+
+
+
+
+    
 function mismosParticipantes(pGuardados, pActuales) {
     if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;
     for (let i = 0; i < pActuales.length; i++) {
