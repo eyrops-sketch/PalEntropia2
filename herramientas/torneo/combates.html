@@ -66,7 +66,10 @@ function obtenerParticipantes() {
         return matriz.map(codigo => String(codigo || "").trim()).filter(codigo => codigo !== "");
     } catch (error) { console.error("Error leyendo participantes:", error); return []; }
 }
-    async function obtenerMapaNombres() {
+
+
+
+async function obtenerMapaNombres() {
     const mapaNombres = new Map();
     try {
         const respuesta = await fetch("../generador_fase_2/paleofichas.json");
@@ -103,7 +106,6 @@ function barajar(matriz) {
     }
     return resultado;
 }
-
 
 function calcularCuadroPrincipal(cantidad) {
     let potencia = 1;
@@ -181,8 +183,7 @@ function generarTorneo(participantes) {
     }
     return rondas;
 }
-    
-  function filtrarRondasPorEntrada(rondas) {
+function filtrarRondasPorEntrada(rondas) {
     const guardado = localStorage.getItem(CLAVE_ENTRADA_TORNEO);
     if (!guardado) return rondas;
     try {
@@ -246,7 +247,7 @@ function resolverParticipanteReal(p, datosSeries) {
     return p;
 }
 
- function mostrarCruce(cruce) {
+function mostrarCruce(cruce) {
     const tarjeta = document.createElement("div");
     tarjeta.className = "cruceCombate";
     tarjeta.dataset.combateId = cruce.numero;
@@ -413,9 +414,10 @@ function resolverParticipanteReal(p, datosSeries) {
     }
     tarjeta.appendChild(participantes);
     return tarjeta;
- }
+}
 
-    function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
+
+function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
     const CLAVE_PALMARES = "palentropia_palmares_historico";
     try {
         let historico = JSON.parse(localStorage.getItem(CLAVE_PALMARES) || "[]");
@@ -489,15 +491,87 @@ function mostrarRondas(rondas) {
 
                 setTimeout(async () => {
                     const imgElement = document.getElementById("imagenCampeonOficial");
-                    if (imgElement && typeof window.cargarImagenAsync === "function") {
-                        window.cargarImagenAsync(codigoCampeon, imgElement);
+                    if (imgElement) {
+                        if (typeof window.cargarImagenAsync === "function") {
+                            window.cargarImagenAsync(codigoCampeon, imgElement);
+                        } else if (typeof window.obtenerRutaImagen === "function") {
+                            const ruta = await window.obtenerRutaImagen(codigoCampeon);
+                            if (ruta) imgElement.src = ruta;
+                        } else {
+                            const extensiones = [".png", ".jpg", ".jpeg", ".webp"];
+                            const comprobarImagen = ruta => new Promise(resolve => {
+                                const imagen = new Image();
+                                imagen.onload = () => resolve(true);
+                                imagen.onerror = () => resolve(false);
+                                imagen.src = ruta;
+                            });
+
+                            const buscarImagen = async base => {
+                                for (const ext of extensiones) {
+                                    const ruta = base + ext;
+                                    if (await comprobarImagen(ruta)) return ruta;
+                                }
+                                return null;
+                            };
+
+                            const normalizarNombre = texto => String(texto || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+
+                            const excepciones = {
+                                "001_12": "../multimedia/001_075/001_12_i3.jpg",
+                                "002_04": "../multimedia/001_075/002_04_i3.jpg",
+                                "003_14": "../multimedia/001_075/003_14_i3.jpg",
+                                "004_14": "../multimedia/001_075/004_14_i3.jpg"
+                            };
+
+                            let cargarRuta = null;
+
+                            if (excepciones[codigoCampeon]) {
+                                if (await comprobarImagen(excepciones[codigoCampeon])) {
+                                    cargarRuta = excepciones[codigoCampeon];
+                                }
+                            }
+
+                            if (!cargarRuta) {
+                                const partes = codigoCampeon.split("_");
+                                if (partes.length === 2) {
+                                    const volumen = parseInt(partes[0], 10);
+                                    const ficha = parseInt(partes[1], 10);
+                                    if (volumen >= 1 && volumen <= 5 && ficha >= 1 && ficha <= 15) {
+                                        const participanteEncontrado = rondas.flatMap(r => Array.isArray(r.cruces) ? r.cruces : []).flatMap(c => [c.participante1, c.participante2]).find(p => p && String(p.j1 || p.codigo || "").trim().toUpperCase() === codigoCampeon);
+                                        const nombreFicha = (participanteEncontrado && (participanteEncontrado.j2 || participanteEncontrado.nombre)) || nombreCampeon;
+                                        if (nombreFicha) {
+                                            const nombreNormalizado = normalizarNombre(nombreFicha);
+                                            const volumenTexto = String(volumen).padStart(3, "0");
+                                            const base = `../../paleofichas/vol${volumenTexto}/${codigoCampeon}_${nombreNormalizado}/${nombreNormalizado}_i3`;
+                                            cargarRuta = await buscarImagen(base);
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (!cargarRuta) {
+                                const base = `../multimedia/new/${codigoCampeon}_i3`;
+                                cargarRuta = await buscarImagen(base);
+                            }
+
+                            if (cargarRuta) {
+                                imgElement.src = cargarRuta;
+                            } else {
+                                imgElement.style.display = "none";
+                                if (imgElement.parentElement) {
+                                    imgElement.parentElement.innerHTML = '<span style="font-size:48px;">🦖</span>';
+                                }
+                            }
+                        }
                     }
+
                     const btnFicha = document.getElementById("botonPaleofichaCampeon");  
                     if (btnFicha) {  
                         btnFicha.addEventListener("click", () => {  
                             window.location.href = `../generador_fase_2/generador_fase_3.html?codigo=${codigoCampeon}`;  
                         });  
                     }  
+
                     const btnRegresar = document.getElementById("botonRegresarTorneo");  
                     if (btnRegresar) {  
                         btnRegresar.addEventListener("click", () => {  
@@ -649,3 +723,5 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 </body>
 </html>
+
+    
