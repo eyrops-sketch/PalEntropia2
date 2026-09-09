@@ -400,37 +400,38 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
         // Comprobación de requisito mínimo: al menos 8 participantes para puntuar
         const cumpleMinimo = totalParticipantes >= 8;
 
-        // Puntos del campeón: coincide exactamente con el total de participantes (par o impar) si cumple el mínimo
+        // Puntos del campeón: coincide exactamente con el total de participantes
         const puntosCampeon = cumpleMinimo ? totalParticipantes : 0;
         
         let puntosSubcampeon = 0;
         let puntosSemifinalista = 0;
 
         if (cumpleMinimo) {
-            // Subcampeón: número par de la mitad del total de puntos del campeón
+            // Subcampeón: mitad del total de puntos, forzado a par
             const mitad = totalParticipantes / 2;
             puntosSubcampeon = Math.floor(mitad / 2) * 2;
             if (puntosSubcampeon <= 0 && mitad >= 1) puntosSubcampeon = 2;
 
-            // Semifinalistas: número par de la cuarta parte de los puntos del campeón (al haber al menos 8 participantes)
+            // Semifinalistas: cuarta parte de los puntos del campeón, forzado a par
             const cuartaparte = totalParticipantes / 4;
             puntosSemifinalista = Math.floor(cuartaparte / 2) * 2;
             if (puntosSemifinalista <= 0 && cuartaparte >= 1) puntosSemifinalista = 2;
         }
 
-        // Identificar subcampeón y semifinalistas desde las rondas
         let nombreSubcampeon = "Desconocido";
         let codigoSubcampeon = "";
         let listaSemifinalistas = [];
 
         if (window.TORNEO_COMBATES && window.TORNEO_COMBATES.length > 0) {
+            let datosSeries = {};
+            try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
+
             const rondas = window.TORNEO_COMBATES;
+
+            // 1. Identificar Subcampeón (perdedor de la última ronda / final)
             const ultimaRonda = rondas[rondas.length - 1];
-            
             if (ultimaRonda && ultimaRonda.cruces && ultimaRonda.cruces.length > 0) {
                 const cruceFinal = ultimaRonda.cruces[0];
-                let datosSeries = {};
-                try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
                 const resFinal = datosSeries[cruceFinal.numero];
                 
                 if (resFinal) {
@@ -441,33 +442,36 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
 
                     if (resFinal.ganadorCodigo === p1Cod) {
                         codigoSubcampeon = p2Cod;
-                        nombreSubcampeon = resFinal.combatiente2Codigo === p2Cod ? (resFinal.combatiente2Nombre || p2Cod) : p2Cod;
+                        nombreSubcampeon = resFinal.combatiente2Nombre || (typeof p2Real === "object" ? p2Real.j2 : p2Cod);
                     } else {
                         codigoSubcampeon = p1Cod;
-                        nombreSubcampeon = resFinal.combatiente1Codigo === p1Cod ? (resFinal.combatiente1Nombre || p1Cod) : p1Cod;
+                        nombreSubcampeon = resFinal.combatiente1Nombre || (typeof p1Real === "object" ? p1Real.j2 : p1Cod);
                     }
                 }
             }
 
-            // Extraer perdedores de semifinales si el torneo cumple el mínimo de 8 participantes
+            // 2. Identificar Semifinalistas (perdedores de la penúltima ronda)
             if (rondas.length >= 2 && cumpleMinimo) {
                 const rondaSemis = rondas[rondas.length - 2];
-                let datosSeries = {};
-                try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
-                
                 if (rondaSemis && rondaSemis.cruces) {
                     rondaSemis.cruces.forEach(cruce => {
                         const resCruce = datosSeries[cruce.numero];
-                        if (resCruce) {
+                        if (resCruce && resCruce.ganadorCodigo) {
                             const p1Real = resolverParticipanteReal(cruce.participante1, datosSeries);
                             const p2Real = resolverParticipanteReal(cruce.participante2, datosSeries);
                             const p1Cod = typeof p1Real === "object" ? p1Real.j1 : p1Real;
                             const p2Cod = typeof p2Real === "object" ? p2Real.j1 : p2Real;
                             
                             const perdedorCod = resCruce.ganadorCodigo === p1Cod ? p2Cod : p1Cod;
-                            const perdedorNombre = resCruce.ganadorCodigo === p1Cod ? (resCruce.combatiente2Nombre || p2Cod) : (resCruce.combatiente1Nombre || p1Cod);
+                            const perdedorNombre = resCruce.ganadorCodigo === p1Cod 
+                                ? (resCruce.combatiente2Nombre || (typeof p2Real === "object" ? p2Real.j2 : p2Cod))
+                                : (resCruce.combatiente1Nombre || (typeof p1Real === "object" ? p1Real.j2 : p1Cod));
                             
-                            listaSemifinalistas.push({ codigo: perdedorCod, nombre: perdedorNombre, puntos: puntosSemifinalista });
+                            listaSemifinalistas.push({ 
+                                codigo: perdedorCod, 
+                                nombre: perdedorNombre || perdedorCod, 
+                                puntos: puntosSemifinalista 
+                            });
                         }
                     });
                 }
