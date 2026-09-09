@@ -426,30 +426,23 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
 
             const rondas = window.TORNEO_COMBATES;
 
-            // Recopilar todos los cruces de todas las rondas
-            let todosLosCruces = [];
-            rondas.forEach(r => {
-                if (Array.isArray(r.cruces)) todosLosCruces.push(...r.cruces);
-                if (Array.isArray(r.partidos)) todosLosCruces.push(...r.partidos);
-            });
-
-            // Función auxiliar para resolver los datos de un participante en un cruce
-            function obtenerInfoParticipante(participanteRef) {
+            function obtenerDatosParticipante(participanteRef) {
                 const real = resolverParticipanteReal(participanteRef, datosSeries);
                 const codigo = typeof real === "object" ? (real.j1 || real.codigo || "") : String(real || "");
                 const nombre = typeof real === "object" ? (real.j2 || real.nombre || codigo) : codigo;
-                return { codigo: codigo.trim().toUpperCase(), nombre: nombre.trim() };
+                return { codigo: codigo.trim().toUpperCase(), nombre: String(nombre).trim() };
             }
 
-            // 1. Identificar la Gran Final (el último cruce o el de la última ronda)
+            // 1. Identificar Gran Final (última ronda, primer cruce)
             const ultimaRonda = rondas[rondas.length - 1];
-            const cruceFinal = ultimaRonda && ultimaRonda.cruces ? ultimaRonda.cruces[0] : null;
+            if (ultimaRonda && ultimaRonda.cruces && ultimaRonda.cruces.length > 0) {
+                const cruceFinal = ultimaRonda.cruces[0];
+                const numCruceFinal = cruceFinal.numero !== undefined ? cruceFinal.numero : cruceFinal.id;
+                const resFinal = datosSeries[numCruceFinal];
 
-            if (cruceFinal) {
-                const resFinal = datosSeries[cruceFinal.numero || cruceFinal.id];
                 if (resFinal) {
-                    const p1 = obtenerInfoParticipante(cruceFinal.participante1);
-                    const p2 = obtenerInfoParticipante(cruceFinal.participante2);
+                    const p1 = obtenerDatosParticipante(cruceFinal.participante1);
+                    const p2 = obtenerDatosParticipante(cruceFinal.participante2);
 
                     if (resFinal.ganadorCodigo === p1.codigo) {
                         codigoSubcampeon = p2.codigo;
@@ -458,41 +451,38 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
                         codigoSubcampeon = p1.codigo;
                         nombreSubcampeon = resFinal.combatiente1Nombre || p1.nombre;
                     }
-
-                    // 2. Identificar Semifinalistas rastreando los combates cuyos ganadores llegaron a la Final
-                    if (totalParticipantes >= 8) {
-                        todosLosCruces.forEach(cruce => {
-                            const numCruce = cruce.numero !== undefined ? cruce.numero : cruce.id;
-                            const resCruce = datosSeries[numCruce];
-
-                            if (resCruce && resCruce.ganadorCodigo) {
-                                // Si el ganador de este cruce es uno de los dos finalistas (campeón o subcampeón)
-                                if (resCruce.ganadorCodigo === codigoCampeon || resCruce.ganadorCodigo === codigoSubcampeon) {
-                                    // Verificamos que este cruce no sea la final en sí misma
-                                    if (numCruce !== (cruceFinal.numero || cruceFinal.id)) {
-                                        const cp1 = obtenerInfoParticipante(cruce.participante1);
-                                        const cp2 = obtenerInfoParticipante(cruce.participante2);
-
-                                        const perdedorCod = resCruce.ganadorCodigo === cp1.codigo ? cp2.codigo : cp1.codigo;
-                                        const perdedorNom = resCruce.ganadorCodigo === cp1.codigo 
-                                            ? (resCruce.combatiente2Nombre || cp2.nombre) 
-                                            : (resCruce.combatiente1Nombre || cp1.nombre);
-
-                                        if (perdedorCod && perdedorCod !== "UNDEFINED" && perdedorCod !== codigoCampeon && perdedorCod !== codigoSubcampeon) {
-                                            if (!listaSemifinalistas.some(s => s.codigo === perdedorCod)) {
-                                                listaSemifinalistas.push({
-                                                    codigo: perdedorCod,
-                                                    nombre: perdedorNom || perdedorCod,
-                                                    puntos: puntosSemifinalista
-                                                });
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
                 }
+            }
+
+            // 2. Identificar Semifinalistas de forma dinámica (la ronda con exactamente 2 cruces)
+            if (totalParticipantes >= 8) {
+                const rondaSemis = rondas.find(r => r.cruces && r.cruces.length === 2) || rondas[rondas.length - 2];
+                const crucesSemis = rondaSemis ? (rondaSemis.cruces || rondaSemis.partidos || []) : [];
+
+                crucesSemis.forEach(cruce => {
+                    const numCruce = cruce.numero !== undefined ? cruce.numero : cruce.id;
+                    const resCruce = datosSeries[numCruce];
+
+                    if (resCruce && resCruce.ganadorCodigo) {
+                        const p1 = obtenerDatosParticipante(cruce.participante1);
+                        const p2 = obtenerDatosParticipante(cruce.participante2);
+
+                        const perdedorCod = resCruce.ganadorCodigo === p1.codigo ? p2.codigo : p1.codigo;
+                        const perdedorNom = resCruce.ganadorCodigo === p1.codigo 
+                            ? (resCruce.combatiente2Nombre || p2.nombre) 
+                            : (resCruce.combatiente1Nombre || p1.nombre);
+
+                        if (perdedorCod && perdedorCod !== "UNDEFINED" && perdedorCod !== "") {
+                            if (!listaSemifinalistas.some(s => s.codigo === perdedorCod)) {
+                                listaSemifinalistas.push({
+                                    codigo: perdedorCod,
+                                    nombre: perdedorNom || perdedorCod,
+                                    puntos: puntosSemifinalista
+                                });
+                            }
+                        }
+                    }
+                });
             }
         }
 
@@ -529,6 +519,7 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
         alert("❌ Ocurrió un error al guardar en el palmarés.");
     }
 }
+    
 
 
 
