@@ -385,11 +385,19 @@ function mostrarCruce(cruce) {
     tarjeta.appendChild(participantes);     
     return tarjeta; 
 }
+
+
+    
  function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
     try {
         let historico = JSON.parse(localStorage.getItem(CLAVE_PALMARES) || "[]");
         const criterio = obtenerCriterioTorneo();
         const nombreTorneo = transformarCriterioTorneo(criterio) || "Torneo General";
+        
+        // Obtenemos el número total de participantes para asignarlo como puntos
+        const matrizParticipantes = obtenerParticipantes();
+        const totalParticipantes = matrizParticipantes.length;
+
         const fechaHora = new Date().toLocaleString("es-ES", {
             day: "2-digit",
             month: "2-digit",
@@ -403,6 +411,7 @@ function mostrarCruce(cruce) {
             fechaHora: fechaHora,
             codigo: codigoCampeon,
             nombre: nombreCampeon,
+            puntos: totalParticipantes, // 👈 Campo con los puntos obtenidos (total de participantes)
             victorias1: datosFinales.victorias1,
             victorias2: datosFinales.victorias2,
             timestamp: Date.now()
@@ -416,13 +425,17 @@ function mostrarCruce(cruce) {
         localStorage.removeItem(CLAVE_ENTRADA_TORNEO);
         localStorage.removeItem("palentropia_matriz_combatientes");
 
-        alert("🏆 ¡Campeón añadido al palmarés con éxito! El torneo actual se ha reiniciado.");
+        alert(`🏆 ¡Campeón añadido al palmarés con éxito! Se han registrado ${totalParticipantes} puntos. El torneo actual se ha reiniciado.`);
         window.location.href = "index.html";
     } catch (e) {
         console.error("Error al registrar en palmarés:", e);
         alert("❌ Ocurrió un error al guardar en el palmarés.");
     }
 }
+
+
+
+
 
 function descargarPalmaresJSON() {
     try {
