@@ -1,1 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PalEntropía — Palmarés Histórico</title>
+<link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+<!-- =====================================================
+     BOTÓN MENÚ PRINCIPAL
+     ===================================================== -->
+<button id="botonMenuPrincipal" type="button" title="Volver al menú principal" aria-label="Volver al menú principal">
+🏠
+</button>
+
+<!-- =====================================================
+     CABECERA
+     ===================================================== -->
+<header id="cabecera">
+<h1>PalEntropía</h1>
+<div id="subtitulo">Palmarés Histórico</div>
+</header>
+
+<!-- =====================================================
+     CONTENEDOR PRINCIPAL
+     ===================================================== -->
+<main id="torneo">
+
+<section id="cabeceraTorneo">
+    <h2>🏆 Salón de la Fama</h2>
+    <p>Historial de campeones y puntos obtenidos en los torneos</p>
+</section>
+
+<!-- =====================================================
+     LISTA DE CAMPEONES
+     ===================================================== -->
+<section id="indiceTorneo">
+    <div id="contenedorPalmares" style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+        <!-- Se cargará dinámicamente mediante JavaScript -->
+    </div>
+</section>
+
+</main>
+
+<!-- =====================================================
+     VOLVER AL ÍNDICE DEL TORNEO
+     ===================================================== -->
+<section id="volver">
+<a href="index.html" id="botonVolver">
+    ← Volver al índice del torneo
+</a>
+</section>
+
+<!-- =====================================================
+     LÓGICA DEL PALMARÉS
+     ===================================================== -->
+<script>
+const CLAVE_PALMARES = "palentropia_palmares_historico";
+
+function cargarPalmares() {
+    const contenedor = document.getElementById("contenedorPalmares");
+    contenedor.innerHTML = "";
+
+    let historico = [];
+    try {
+        historico = JSON.parse(localStorage.getItem(CLAVE_PALMARES) || "[]");
+    } catch (e) {
+        console.error("Error leyendo el palmarés:", e);
+    }
+
+    if (!historico.length) {
+        contenedor.innerHTML = `
+            <div class="bloqueTorneo" style="text-align: center; color: #aaa;">
+                <p>Todavía no hay ningún campeón registrado en el palmarés.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Ordenar de más reciente a más antiguo basándose en el timestamp o fecha
+    historico.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+    historico.forEach((item, index) => {
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "bloqueTorneo";
+        tarjeta.style.borderLeftColor = "#d4af37"; // Detalle dorado para el palmarés
+
+        const nombreTorneo = item.torneo || "Torneo General";
+        const fecha = item.fechaHora || "Fecha desconocida";
+        const nombreCampeon = item.nombre || "Desconocido";
+        const codigoCampeon = item.codigo || "";
+        const puntosObtenidos = item.puntos !== undefined ? item.puntos : "—";
+        const victorias1 = item.victorias1 !== undefined ? item.victorias1 : "";
+        const victorias2 = item.victorias2 !== undefined ? item.victorias2 : "";
+
+        tarjeta.innerHTML = `
+            <h3 style="color: #d4af37; display: flex; justify-content: space-between; align-items: center;">
+                <span>🏆 ${nombreTorneo}</span>
+                <span style="font-size: 13px; color: #8b949e; font-weight: normal;">${fecha}</span>
+            </h3>
+            <div style="font-size: 16px; color: #fff; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div>
+                    <strong>Campeón:</strong> <span style="color: #62d6ff;">${nombreCampeon}</span> <span style="font-size: 13px; color: #8b949e;">(${codigoCampeon})</span>
+                </div>
+                <div style="background: #1f2428; padding: 4px 10px; border-radius: 6px; border: 1px solid #30363d; font-size: 14px;">
+                    ⭐ <strong>Puntos:</strong> <span style="color: #d4af37; font-weight: bold;">${puntosObtenidos}</span> 
+                    ${victorias1 !== "" ? `&nbsp;|&nbsp; ⚔️ <strong>Final:</strong> ${victorias1} - ${victorias2}` : ""}
+                </div>
+            </div>
+        `;
+
+        contenedor.appendChild(tarjeta);
+    });
+}
+
+// Botón de menú principal
+document.getElementById("botonMenuPrincipal").addEventListener("click", function() {
+    window.location.href = "../../index.html";
+});
+
+document.addEventListener("DOMContentLoaded", cargarPalmares);
+</script>
+
+</body>
+</html>
 
