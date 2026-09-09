@@ -129,7 +129,24 @@ function cargarClasificacionGlobal() {
     });
 
     const listaRanking = Object.values(ranking);
-    listaRanking.sort((a, b) => b.puntosTotales - a.puntosTotales);
+    
+    // Criterios de desempate en cascada: 
+    // 1. Puntos totales (mayor)
+    // 2. Victorias / Campeonatos (mayor)
+    // 3. Subcampeonatos (mayor)
+    // 4. Si persiste, se mantiene el orden relativo
+    listaRanking.sort((a, b) => {
+        if (b.puntosTotales !== a.puntosTotales) {
+            return b.puntosTotales - a.puntosTotales;
+        }
+        if (b.campeonatos !== a.campeonatos) {
+            return b.campeonatos - a.campeonatos;
+        }
+        if (b.subcampeonatos !== a.subcampeonatos) {
+            return b.subcampeonatos - a.subcampeonatos;
+        }
+        return 0;
+    });
 
     listaRanking.forEach((combatiente, index) => {
         const tarjeta = document.createElement("div");
