@@ -562,6 +562,12 @@
     "nombre": "Allosaurus",
     "dieta": "Carnívoro",
     "anatomia": "Dinosaurio terópodo de gran tamaño, con cráneo robusto y alargado, mandíbulas provistas de numerosos dientes aserrados, brazos relativamente cortos con tres dedos provistos de garras y extremidades posteriores largas y musculosas adaptadas a la locomoción bípeda"
+  },
+  {
+    "codigo": "007_05",
+    "nombre": "Spinosaurus",
+    "dieta": "Piscívoro",
+    "anatomia": "Dinosaurio terópodo de gran tamaño, con hocico largo y estrecho, mandíbulas provistas de dientes cónicos, extremidades posteriores relativamente cortas, pies anchos y una gran vela dorsal formada por espinas neurales alargadas"
   }
 ]
 
