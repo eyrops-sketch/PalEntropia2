@@ -396,13 +396,28 @@ function mostrarCruce(cruce) {
 
 function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
     try {
-        let historico = JSON.parse(localStorage.getItem(CLAVE_PALMARES) || "[]");
+        /* =====================================================
+           CARGAR HISTÓRICO
+           ===================================================== */
+        let historico = [];
+        try {
+            historico = JSON.parse(localStorage.getItem(CLAVE_PALMARES) || "[]");
+            if (!Array.isArray(historico)) historico = [];
+        } catch (e) {
+            historico = [];
+        }
+
+        /* =====================================================
+           DATOS GENERALES DEL TORNEO
+           ===================================================== */
         const criterio = obtenerCriterioTorneo();
         const nombreTorneo = transformarCriterioTorneo(criterio) || "Torneo General";
-        
         const matrizParticipantes = obtenerParticipantes();
         const totalParticipantes = matrizParticipantes.length;
 
+        /* =====================================================
+           PUNTOS
+           ===================================================== */
         const puntosCampeon = totalParticipantes;
         
         const mitad = totalParticipantes / 2;
@@ -416,77 +431,199 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
             if (puntosSemifinalista <= 0 && cuartaparte >= 1) puntosSemifinalista = 2;
         }
 
+        /* =====================================================
+           VARIABLES
+           ===================================================== */
         let nombreSubcampeon = "Desconocido";
         let codigoSubcampeon = "";
         let listaSemifinalistas = [];
 
-        if (window.TORNEO_COMBATES && window.TORNEO_COMBATES.length > 0) {
-            let datosSeries = {};
-            try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
+        /* =====================================================
+           RESULTADOS DE LOS COMBATES
+           ===================================================== */
+        let datosSeries = {};
+        try {
+            datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}");
+        } catch (e) {
+            datosSeries = {};
+        }
 
-            const rondas = window.TORNEO_COMBATES;
+        /* =====================================================
+           RECUPERAR LAS RONDAS COMPLETAS
+           ===================================================== */
+        let rondasCompletas = null;
+        const emparejamientosGuardados = localStorage.getItem(CLAVE_TORNEO_EMPAREJAMIENTOS);
+        if (emparejamientosGuardados) {
+            try {
+                const datosGuardados = JSON.parse(emparejamientosGuardados);
+                if (datosGuardados && Array.isArray(datosGuardados.rondas)) {
+                    rondasCompletas = datosGuardados.rondas;
+                }
+            } catch (e) {
+                console.error("Error leyendo las rondas guardadas:", e);
+            }
+        }
 
-            function obtenerDatosParticipante(participanteRef) {
-                const real = resolverParticipanteReal(participanteRef, datosSeries);
-                const codigo = typeof real === "object" ? (real.j1 || real.codigo || "") : String(real || "");
-                const nombre = typeof real === "object" ? (real.j2 || real.nombre || codigo) : codigo;
-                return { codigo: codigo.trim().toUpperCase(), nombre: String(nombre).trim() };
+        if (!Array.isArray(rondasCompletas) || rondasCompletas.length === 0) {
+            rondasCompletas = Array.isArray(window.TORNEO_COMBATES) ? window.TORNEO_COMBATES : [];
+        }
+
+        /* =====================================================
+           NORMALIZAR CÓDIGO
+           ===================================================== */
+        function normalizarCodigo(codigo) {
+            return String(codigo || "").trim().toUpperCase();
+        }
+
+        /* =====================================================
+           OBTENER INFORMACIÓN REAL DEL PARTICIPANTE
+           ===================================================== */
+        function obtenerInfoParticipante(participanteRef) {
+            const real = resolverParticipanteReal(participanteRef, datosSeries);
+            let codigo = "";
+            let nombre = "";
+
+            if (real && typeof real === "object") {
+                codigo = real.j1 || real.codigo || "";
+                nombre = real.j2 || real.nombre || codigo;
+            } else {
+                codigo = String(real || "");
+                nombre = codigo;
             }
 
-            // 1. Identificar Gran Final (última ronda, primer cruce)
-            const ultimaRonda = rondas[rondas.length - 1];
-            if (ultimaRonda && ultimaRonda.cruces && ultimaRonda.cruces.length > 0) {
-                const cruceFinal = ultimaRonda.cruces[0];
-                const numCruceFinal = cruceFinal.numero !== undefined ? cruceFinal.numero : cruceFinal.id;
-                const resFinal = datosSeries[numCruceFinal];
+            return {
+                codigo: normalizarCodigo(codigo),
+                nombre: String(nombre || "").trim()
+            };
+        }
 
-                if (resFinal) {
-                    const p1 = obtenerDatosParticipante(cruceFinal.participante1);
-                    const p2 = obtenerDatosParticipante(cruceFinal.participante2);
+        /* =====================================================
+           IDENTIFICAR GRAN FINAL
+           ===================================================== */
+        let cruceFinal = null;
+        if (rondasCompletas.length > 0) {
+            let rondaFinal = rondasCompletas.find(function(ronda) {
+                if (!ronda) return false;
+                const nombre = String(ronda.nombre || "").trim().toLowerCase();
+                return nombre === "gran final";
+            });
 
-                    if (resFinal.ganadorCodigo === p1.codigo) {
-                        codigoSubcampeon = p2.codigo;
-                        nombreSubcampeon = resFinal.combatiente2Nombre || p2.nombre;
-                    } else {
-                        codigoSubcampeon = p1.codigo;
-                        nombreSubcampeon = resFinal.combatiente1Nombre || p1.nombre;
+            if (!rondaFinal) {
+                for (let i = rondasCompletas.length - 1; i >= 0; i--) {
+                    const ronda = rondasCompletas[i];
+                    if (ronda && Array.isArray(ronda.cruces) && ronda.cruces.length === 1) {
+                        rondaFinal = ronda;
+                        break;
                     }
                 }
             }
 
-            // 2. Identificar Semifinalistas de forma dinámica (la ronda con exactamente 2 cruces)
-            if (totalParticipantes >= 8) {
-                const rondaSemis = rondas.find(r => r.cruces && r.cruces.length === 2) || rondas[rondas.length - 2];
-                const crucesSemis = rondaSemis ? (rondaSemis.cruces || rondaSemis.partidos || []) : [];
+            if (rondaFinal && Array.isArray(rondaFinal.cruces) && rondaFinal.cruces.length > 0) {
+                cruceFinal = rondaFinal.cruces[0];
+            }
+        }
 
-                crucesSemis.forEach(cruce => {
-                    const numCruce = cruce.numero !== undefined ? cruce.numero : cruce.id;
-                    const resCruce = datosSeries[numCruce];
+        /* =====================================================
+           OBTENER SUBCAMPEÓN
+           ===================================================== */
+        if (cruceFinal) {
+            const numeroFinal = cruceFinal.numero !== undefined ? cruceFinal.numero : cruceFinal.id;
+            const resFinal = datosSeries[numeroFinal];
 
-                    if (resCruce && resCruce.ganadorCodigo) {
-                        const p1 = obtenerDatosParticipante(cruce.participante1);
-                        const p2 = obtenerDatosParticipante(cruce.participante2);
+            if (resFinal && resFinal.ganadorCodigo) {
+                const p1 = obtenerInfoParticipante(cruceFinal.participante1);
+                const p2 = obtenerInfoParticipante(cruceFinal.participante2);
+                const ganadorFinal = normalizarCodigo(resFinal.ganadorCodigo);
 
-                        const perdedorCod = resCruce.ganadorCodigo === p1.codigo ? p2.codigo : p1.codigo;
-                        const perdedorNom = resCruce.ganadorCodigo === p1.codigo 
-                            ? (resCruce.combatiente2Nombre || p2.nombre) 
-                            : (resCruce.combatiente1Nombre || p1.nombre);
+                if (ganadorFinal === p1.codigo) {
+                    codigoSubcampeon = p2.codigo;
+                    nombreSubcampeon = resFinal.combatiente2Nombre || p2.nombre || p2.codigo;
+                } else if (ganadorFinal === p2.codigo) {
+                    codigoSubcampeon = p1.codigo;
+                    nombreSubcampeon = resFinal.combatiente1Nombre || p1.nombre || p1.codigo;
+                }
+            }
+        }
 
-                        if (perdedorCod && perdedorCod !== "UNDEFINED" && perdedorCod !== "") {
-                            if (!listaSemifinalistas.some(s => s.codigo === perdedorCod)) {
-                                listaSemifinalistas.push({
-                                    codigo: perdedorCod,
-                                    nombre: perdedorNom || perdedorCod,
-                                    puntos: puntosSemifinalista
-                                });
-                            }
-                        }
+        /* =====================================================
+           IDENTIFICAR SEMIFINALISTAS
+           ===================================================== */
+        if (totalParticipantes >= 8 && puntosSemifinalista > 0) {
+            let rondaSemifinales = rondasCompletas.find(function(ronda) {
+                if (!ronda) return false;
+                const nombre = String(ronda.nombre || "").trim().toLowerCase();
+                return nombre === "semifinales";
+            });
+
+            if (!rondaSemifinales) {
+                rondaSemifinales = rondasCompletas.find(function(ronda) {
+                    return ronda && ronda.tipo === "eliminatoria" && Array.isArray(ronda.cruces) && ronda.cruces.length === 2;
+                });
+            }
+
+            if (!rondaSemifinales) {
+                for (let i = rondasCompletas.length - 1; i >= 0; i--) {
+                    const ronda = rondasCompletas[i];
+                    if (ronda && Array.isArray(ronda.cruces) && ronda.cruces.length === 2) {
+                        rondaSemifinales = ronda;
+                        break;
+                    }
+                }
+            }
+
+            if (rondaSemifinales && Array.isArray(rondaSemifinales.cruces)) {
+                rondaSemifinales.cruces.forEach(function(cruce) {
+                    if (!cruce) return;
+
+                    const numeroCruce = cruce.numero !== undefined ? cruce.numero : cruce.id;
+                    const resCruce = datosSeries[numeroCruce];
+
+                    if (!resCruce || !resCruce.ganadorCodigo) return;
+
+                    const p1 = obtenerInfoParticipante(cruce.participante1);
+                    const p2 = obtenerInfoParticipante(cruce.participante2);
+                    const ganadorCodigo = normalizarCodigo(resCruce.ganadorCodigo);
+
+                    let perdedorCodigo = "";
+                    let perdedorNombre = "";
+
+                    if (ganadorCodigo === p1.codigo) {
+                        perdedorCodigo = p2.codigo;
+                        perdedorNombre = resCruce.combatiente2Nombre || p2.nombre || p2.codigo;
+                    } else if (ganadorCodigo === p2.codigo) {
+                        perdedorCodigo = p1.codigo;
+                        perdedorNombre = resCruce.combatiente1Nombre || p1.nombre || p1.codigo;
+                    } else {
+                        return;
+                    }
+
+                    const campeonNormalizado = normalizarCodigo(codigoCampeon);
+                    const subcampeonNormalizado = normalizarCodigo(codigoSubcampeon);
+
+                    if (!perdedorCodigo || perdedorCodigo === "UNDEFINED" || perdedorCodigo === "NULL") return;
+                    if (perdedorCodigo === campeonNormalizado) return;
+                    if (perdedorCodigo === subcampeonNormalizado) return;
+
+                    const yaExiste = listaSemifinalistas.some(function(s) {
+                        return normalizarCodigo(s.codigo) === perdedorCodigo;
+                    });
+
+                    if (!yaExiste) {
+                        listaSemifinalistas.push({
+                            codigo: perdedorCodigo,
+                            nombre: perdedorNombre || perdedorCodigo,
+                            puntos: puntosSemifinalista
+                        });
                     }
                 });
             }
         }
 
-        const fechaHora = new Date().toLocaleString("es-ES", {
+        /* =====================================================
+           FECHA Y HORA
+           ===================================================== */
+        const ahora = new Date();
+        const fechaHora = ahora.toLocaleString("es-ES", {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",
@@ -494,31 +631,61 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
             minute: "2-digit"
         });
 
+        /* =====================================================
+           REGISTRAR TORNEO EN PALMARÉS
+           ===================================================== */
         historico.push({
             torneo: nombreTorneo,
             fechaHora: fechaHora,
-            campeon: { codigo: codigoCampeon, nombre: nombreCampeon, puntos: puntosCampeon },
-            subcampeon: { codigo: codigoSubcampeon, nombre: nombreSubcampeon, puntos: puntosSubcampeon },
+            campeon: {
+                codigo: normalizarCodigo(codigoCampeon),
+                nombre: String(nombreCampeon || "").trim(),
+                puntos: puntosCampeon
+            },
+            subcampeon: {
+                codigo: codigoSubcampeon,
+                nombre: nombreSubcampeon,
+                puntos: puntosSubcampeon
+            },
             semifinalistas: listaSemifinalistas,
-            victorias1: datosFinales.victorias1,
-            victorias2: datosFinales.victorias2,
+            victorias1: datosFinales ? datosFinales.victorias1 : undefined,
+            victorias2: datosFinales ? datosFinales.victorias2 : undefined,
             timestamp: Date.now()
         });
 
+        /* =====================================================
+           GUARDAR PALMARÉS
+           ===================================================== */
         localStorage.setItem(CLAVE_PALMARES, JSON.stringify(historico));
 
+        /* =====================================================
+           LIMPIAR DATOS DEL TORNEO
+           ===================================================== */
         localStorage.removeItem(CLAVE_TORNEO_EMPAREJAMIENTOS);
         localStorage.removeItem(CLAVE_RESULTADOS_SERIES);
         localStorage.removeItem(CLAVE_ENTRADA_TORNEO);
         localStorage.removeItem("palentropia_matriz_combatientes");
 
-        alert(`🏆 ¡Torneo registrado! Campeón: ${puntosCampeon} pts | Subcampeón: ${puntosSubcampeon} pts${puntosSemifinalista > 0 ? ` | Semifinalistas: ${puntosSemifinalista} pts` : ""}.`);
+        /* =====================================================
+           MENSAJE FINAL
+           ===================================================== */
+        alert(
+            "🏆 ¡Torneo registrado! Campeón: " + puntosCampeon +
+            " pts | Subcampeón: " + puntosSubcampeon + " pts" +
+            (puntosSemifinalista > 0 ? " | Semifinalistas: " + puntosSemifinalista + " pts" : "") + "."
+        );
+
+        /* =====================================================
+           VOLVER AL ÍNDICE
+           ===================================================== */
         window.location.href = "index.html";
+
     } catch (e) {
-        console.error("Error al registrar en palmarés:", e);
-        alert("❌ Ocurrió un error al guardar en el palmarés.");
+        console.error("Error registrando el palmarés:", e);
+        alert("❌ Ocurrió un error al registrar el palmarés.");
     }
-}
+                        }
+    
     
 
 
