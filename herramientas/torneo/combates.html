@@ -397,22 +397,18 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
         const matrizParticipantes = obtenerParticipantes();
         const totalParticipantes = matrizParticipantes.length;
 
-        // Comprobación de requisito mínimo: al menos 8 participantes para puntuar
+        // Requisito mínimo: al menos 8 participantes para puntuar
         const cumpleMinimo = totalParticipantes >= 8;
 
-        // Puntos del campeón: coincide exactamente con el total de participantes
         const puntosCampeon = cumpleMinimo ? totalParticipantes : 0;
-        
         let puntosSubcampeon = 0;
         let puntosSemifinalista = 0;
 
         if (cumpleMinimo) {
-            // Subcampeón: mitad del total de puntos, forzado a par
             const mitad = totalParticipantes / 2;
             puntosSubcampeon = Math.floor(mitad / 2) * 2;
             if (puntosSubcampeon <= 0 && mitad >= 1) puntosSubcampeon = 2;
 
-            // Semifinalistas: cuarta parte de los puntos del campeón, forzado a par
             const cuartaparte = totalParticipantes / 4;
             puntosSemifinalista = Math.floor(cuartaparte / 2) * 2;
             if (puntosSemifinalista <= 0 && cuartaparte >= 1) puntosSemifinalista = 2;
@@ -428,7 +424,7 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
 
             const rondas = window.TORNEO_COMBATES;
 
-            // 1. Identificar Subcampeón (perdedor de la última ronda / final)
+            // 1. Identificar Subcampeón (última ronda)
             const ultimaRonda = rondas[rondas.length - 1];
             if (ultimaRonda && ultimaRonda.cruces && ultimaRonda.cruces.length > 0) {
                 const cruceFinal = ultimaRonda.cruces[0];
@@ -450,31 +446,35 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
                 }
             }
 
-            // 2. Identificar Semifinalistas (perdedores de la penúltima ronda)
+            // 2. Identificar Semifinalistas (penúltima ronda) de forma robusta
             if (rondas.length >= 2 && cumpleMinimo) {
                 const rondaSemis = rondas[rondas.length - 2];
-                if (rondaSemis && rondaSemis.cruces) {
-                    rondaSemis.cruces.forEach(cruce => {
-                        const resCruce = datosSeries[cruce.numero];
-                        if (resCruce && resCruce.ganadorCodigo) {
-                            const p1Real = resolverParticipanteReal(cruce.participante1, datosSeries);
-                            const p2Real = resolverParticipanteReal(cruce.participante2, datosSeries);
-                            const p1Cod = typeof p1Real === "object" ? p1Real.j1 : p1Real;
-                            const p2Cod = typeof p2Real === "object" ? p2Real.j1 : p2Real;
-                            
-                            const perdedorCod = resCruce.ganadorCodigo === p1Cod ? p2Cod : p1Cod;
-                            const perdedorNombre = resCruce.ganadorCodigo === p1Cod 
-                                ? (resCruce.combatiente2Nombre || (typeof p2Real === "object" ? p2Real.j2 : p2Cod))
-                                : (resCruce.combatiente1Nombre || (typeof p1Real === "object" ? p1Real.j2 : p1Cod));
-                            
+                const crucesSemis = rondaSemis.cruces || rondaSemis.partidos || [];
+                
+                crucesSemis.forEach(cruce => {
+                    const numCruce = cruce.numero !== undefined ? cruce.numero : cruce.id;
+                    const resCruce = datosSeries[numCruce];
+                    
+                    if (resCruce && resCruce.ganadorCodigo) {
+                        const p1Real = resolverParticipanteReal(cruce.participante1, datosSeries);
+                        const p2Real = resolverParticipanteReal(cruce.participante2, datosSeries);
+                        const p1Cod = typeof p1Real === "object" ? p1Real.j1 : p1Real;
+                        const p2Cod = typeof p2Real === "object" ? p2Real.j1 : p2Real;
+                        
+                        const perdedorCod = resCruce.ganadorCodigo === p1Cod ? p2Cod : p1Cod;
+                        const perdedorNombre = resCruce.ganadorCodigo === p1Cod 
+                            ? (resCruce.combatiente2Nombre || (typeof p2Real === "object" ? p2Real.j2 : p2Cod))
+                            : (resCruce.combatiente1Nombre || (typeof p1Real === "object" ? p1Real.j2 : p1Cod));
+                        
+                        if (perdedorCod && perdedorCod !== "undefined" && perdedorCod !== "") {
                             listaSemifinalistas.push({ 
                                 codigo: perdedorCod, 
                                 nombre: perdedorNombre || perdedorCod, 
                                 puntos: puntosSemifinalista 
                             });
                         }
-                    });
-                }
+                    }
+                });
             }
         }
 
