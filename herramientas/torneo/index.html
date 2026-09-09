@@ -53,6 +53,15 @@
             <input type="file" id="inputImportarPalmares" accept=".json" style="display: none;">
         </div>
     </div>
+    <div class="bloqueTorneo" style="border-left: 4px solid #f85149; margin-top: 15px;">
+        <h3 style="color: #f85149;">⚠️ Zona de Limpieza de Datos</h3>
+        <p style="font-size: 13px; color: #8b949e; margin-bottom: 12px; line-height: 1.4;">
+            Atención: Esta acción borrará por completo todo el historial, el palmarés y los torneos en curso de este dispositivo. <strong>Asegúrate de descargar tus datos antes de limpiar si deseas conservarlos.</strong>
+        </p>
+        <button id="botonLimpiarDatos" type="button" class="botonTorneo" style="background: #da3633; border-color: #da3633; color: #fff; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; text-align: center;">
+            🧹 Limpiar y Borrar Todos los Datos
+        </button>
+    </div>
 </section>
 <section id="panelParticipantes" style="display:none;">
     <h2>📋 Participantes</h2>
@@ -156,7 +165,7 @@ async function cargarParticipantesTorneo() {
         lista.appendChild(item);
     });
 }
- document.getElementById("botonParticipantes").addEventListener("click", function() {
+document.getElementById("botonParticipantes").addEventListener("click", function() {
     const panel = document.getElementById("panelParticipantes");
     if (panel.style.display === "none") {
         panel.style.display = "block";
@@ -281,6 +290,29 @@ document.getElementById("inputImportarPalmares").addEventListener("change", func
     };
     lector.readAsText(archivo);
     event.target.value = "";
+});
+
+document.getElementById("botonLimpiarDatos").addEventListener("click", function() {
+    const primeraAviso = confirm("⚠️ ¿Estás totalmente seguro? Se borrará todo el palmarés histórico y los datos acumulados en este dispositivo.");
+    if (!primeraAviso) return;
+
+    const segundaAviso = confirm("🚨 ÚLTIMO AVISO: Si no has usado el botón de 'Descargar Datos' antes, perderás todo el progreso de forma permanente. ¿Proceder con la limpieza?");
+    if (!segundaAviso) return;
+
+    try {
+        localStorage.removeItem("palentropia_palmares_historico");
+        localStorage.removeItem("palentropia_matriz_combatientes");
+        localStorage.removeItem("palentropia_criterio_torneo");
+        localStorage.removeItem("palentropia_resultados_series");
+        localStorage.removeItem("palentropia_torneo_emparejamientos");
+
+        alert("🧹 ¡Limpieza completada! El sistema se ha restablecido por completo.");
+        location.reload();
+
+    } catch (e) {
+        console.error("Error al limpiar los datos:", e);
+        alert("❌ Ocurrió un error al intentar limpiar los datos.");
+    }
 });
 </script>
 </body>
