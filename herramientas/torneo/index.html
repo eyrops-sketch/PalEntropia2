@@ -48,7 +48,7 @@
                 📥 Descargar Datos
             </button>
             <button id="botonImportarTrigger" type="button" class="botonTorneo" style="background: #238636; border-color: #238636; color: #fff; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
-                📤 Importar Palmarés
+                📤 Importar Datos
             </button>
             <input type="file" id="inputImportarPalmares" accept=".json" style="display: none;">
         </div>
@@ -281,7 +281,7 @@ document.getElementById("inputImportarPalmares").addEventListener("change", func
 
             localStorage.setItem("palentropia_palmares_historico", JSON.stringify(contenidoJSON));
             
-            alert("✅ ¡Palmarés e historial importados correctamente!");
+            alert("✅ ¡Palmarés/historial importados correctamente!");
             location.reload();
 
         } catch (err) {
