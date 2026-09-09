@@ -75,36 +75,42 @@ function cargarClasificacionGlobal() {
     if (!historico.length) {
         contenedor.innerHTML = `
             <div class="bloqueTorneo" style="text-align: center; color: #aaa;">
-                <p>Todavía hay suficientes datos registrados para generar la clasificación.</p>
+                <p>Todavía no hay suficientes datos registrados para generar la clasificación.</p>
             </div>
         `;
         return;
     }
 
-    // Objeto para acumular estadísticas por combatiente (clave única: código)
     const ranking = {};
 
     function sumarPuntos(codigo, nombre, puntos, tipo) {
         if (!codigo) return;
-        if (!ranking[codigo]) {
-            ranking[codigo] = {
-                codigo: codigo,
-                nombre: nombre || codigo,
+        
+        const codigoLimpio = String(codigo).trim();
+        const nombreLimpio = (nombre && nombre.trim() !== "" && nombre.trim() !== codigoLimpio) ? nombre.trim() : codigoLimpio;
+
+        if (!ranking[codigoLimpio]) {
+            ranking[codigoLimpio] = {
+                codigo: codigoLimpio,
+                nombre: nombreLimpio,
                 puntosTotales: 0,
                 campeonatos: 0,
                 subcampeonatos: 0,
                 semifinales: 0
             };
+        } else {
+            if (nombreLimpio !== codigoLimpio) {
+                ranking[codigoLimpio].nombre = nombreLimpio;
+            }
         }
-        ranking[codigo].puntosTotales += puntos;
-        if (tipo === "campeon") ranking[codigo].campeonatos++;
-        if (tipo === "subcampeon") ranking[codigo].subcampeonatos++;
-        if (tipo === "semifinal") ranking[codigo].semifinales++;
+
+        ranking[codigoLimpio].puntosTotales += puntos;
+        if (tipo === "campeon") ranking[codigoLimpio].campeonatos++;
+        if (tipo === "subcampeon") ranking[codigoLimpio].subcampeonatos++;
+        if (tipo === "semifinal") ranking[codigoLimpio].semifinales++;
     }
 
-    // Procesar cada torneo del histórico
     historico.forEach(item => {
-        // Soporte retrocompatible para registros planos antiguos
         if (item.campeon) {
             sumarPuntos(item.campeon.codigo, item.campeon.nombre, item.campeon.puntos || 0, "campeon");
         } else if (item.codigo) {
@@ -122,27 +128,29 @@ function cargarClasificacionGlobal() {
         }
     });
 
-    // Convertir a array y ordenar de mayor a menor puntuación
     const listaRanking = Object.values(ranking);
     listaRanking.sort((a, b) => b.puntosTotales - a.puntosTotales);
 
-    // Renderizar filas del ranking
     listaRanking.forEach((combatiente, index) => {
         const tarjeta = document.createElement("div");
         tarjeta.className = "bloqueTorneo";
         
         let colorBorde = "#25292c";
-        let iconoPosicion = `#${index + 1}`;
-        if (index === 0) { colorBorde = "#d4af37"; iconoPosicion = "🥇"; }
-        else if (index === 1) { colorBorde = "#c0c0c0"; iconoPosicion = "🥈"; }
-        else if (index === 2) { colorBorde = "#cd7f32"; iconoPosicion = "🥉"; }
+        let medalla = "";
+        
+        if (index === 0) { colorBorde = "#d4af37"; medalla = "🥇"; }
+        else if (index === 1) { colorBorde = "#c0c0c0"; medalla = "🥈"; }
+        else if (index === 2) { colorBorde = "#cd7f32"; medalla = "🥉"; }
 
         tarjeta.style.borderLeft = `4px solid ${colorBorde}`;
 
         tarjeta.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <span style="font-size: 18px; font-weight: bold; width: 30px; text-align: center; color: #62d6ff;">${iconoPosicion}</span>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; min-width: 45px;">
+                        <span style="font-size: 15px; font-weight: bold; color: #62d6ff;">#${index + 1}</span>
+                        <span style="font-size: 16px; margin-top: 2px;">${medalla}</span>
+                    </div>
                     <div>
                         <strong style="font-size: 16px; color: #fff;">${combatiente.nombre}</strong> 
                         <span style="font-size: 13px; color: #8b949e;">(${combatiente.codigo})</span>
@@ -161,7 +169,6 @@ function cargarClasificacionGlobal() {
     });
 }
 
-// Botón de menú principal
 document.getElementById("botonMenuPrincipal").addEventListener("click", function() {
     window.location.href = "../../index.html";
 });
@@ -171,4 +178,3 @@ document.addEventListener("DOMContentLoaded", cargarClasificacionGlobal);
 
 </body>
 </html>
-
