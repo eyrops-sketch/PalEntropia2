@@ -1,1186 +1,287 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PalEntropía — Torneo</title>
-
-<link rel="stylesheet"
-      href="index.css">
-
+<link rel="stylesheet" href="index.css">
 </head>
-
 <body>
-
-<!-- =====================================================
-     BOTÓN MENÚ PRINCIPAL
-     ===================================================== -->
-
-<button
-id="botonMenuPrincipal"
-type="button"
-title="Volver al menú principal"
-aria-label="Volver al menú principal">
-
+<button id="botonMenuPrincipal" type="button" title="Volver al menú principal" aria-label="Volver al menú principal">
 🏠
-
 </button>
-
-
-<!-- =====================================================
-     CABECERA
-     ===================================================== -->
-
 <header id="cabecera">
-
 <h1>PalEntropía</h1>
-
-<div id="subtitulo">
-    Torneo
-</div>
-
+<div id="subtitulo">Torneo</div>
 </header>
-
-
-<!-- =====================================================
-     CONTENEDOR PRINCIPAL
-     ===================================================== -->
-
 <main id="torneo">
-
 <section id="cabeceraTorneo">
-
-    <h2 id="tituloCabeceraTorneo">
-        ⚔️ Torneo PalEntropía
-    </h2>
-
-    <p>
-        Índice del torneo
-    </p>
-
+    <h2 id="tituloCabeceraTorneo">⚔️ Torneo PalEntropía</h2>
+    <p>Índice del torneo</p>
 </section>
-
-
-<!-- =================================================
-     ÍNDICE DEL TORNEO
-     ================================================= -->
-
 <section id="indiceTorneo">
-
-
     <div class="bloqueTorneo">
-
-        <h3 id="tituloBloqueTorneo">
-            🏆 Torneo
-        </h3>
-
-        <a
-            class="botonTorneo"
-            href="entrada.html">
-
-            Seleccionar fase
-
-        </a>
-
+        <h3 id="tituloBloqueTorneo">🏆 Torneo</h3>
+        <a class="botonTorneo" href="entrada.html">Seleccionar fase</a>
     </div>
-
-
     <div class="bloqueTorneo">
-
         <h3>📋 Participantes</h3>
-
-        <button
-            id="botonParticipantes"
-            class="botonTorneo"
-            type="button">
-
-            Ver participantes
-
-        </button>
-
+        <button id="botonParticipantes" class="botonTorneo" type="button">Ver participantes</button>
     </div>
-
-
     <div class="bloqueTorneo">
-
         <h3>⚔️ Combates</h3>
-
-        <a
-            class="botonTorneo"
-            href="combates.html">
-
-            Ver combates
-
-        </a>
-
+        <a class="botonTorneo" href="combates.html">Ver combates</a>
     </div>
-
-
     <div class="bloqueTorneo">
-
         <h3>⚙️ Reglas del torneo</h3>
-
-        <a
-            class="botonTorneo"
-            href="reglas.html">
-
-            Configurar reglas
-
-        </a>
-
+        <a class="botonTorneo" href="reglas.html">Configurar reglas</a>
     </div>
-
-
-
-        <div class="bloqueTorneo">
-
+    <div class="bloqueTorneo">
         <h3>📜 Palmarés</h3>
-
-        <a
-            class="botonTorneo"
-            href="palmares.html">
-
-            Ver historial de campeones
-
-        </a>
-
-        </div>
-      
-          <div class="bloqueTorneo">
-
-        <h3>📊 Clasificación Global</h3>
-
-        <a
-            class="botonTorneo"
-            href="clasificacion.html">
-
-            Ver ranking histórico de puntos
-
-        </a>
-
-          </div>
-      
-
-      
-
-</section>
-
-
-<!-- =================================================
-     PARTICIPANTES
-     ================================================= -->
-
-<section
-    id="panelParticipantes"
-    style="display:none;">
-
-    <h2>
-        📋 Participantes
-    </h2>
-
-    <div id="listaParticipantes">
+        <a class="botonTorneo" href="palmares.html">Ver historial de campeones</a>
     </div>
-
+    <div class="bloqueTorneo">
+        <h3>📊 Clasificación Global</h3>
+        <a class="botonTorneo" href="clasificacion.html">Ver ranking histórico de puntos</a>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 15px;">
+            <button id="botonExportarDatos" type="button" class="botonTorneo" style="background: #1f6feb; border-color: #1f6feb; color: #fff; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                📥 Descargar Datos
+            </button>
+            <button id="botonImportarTrigger" type="button" class="botonTorneo" style="background: #238636; border-color: #238636; color: #fff; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                📤 Importar Palmarés
+            </button>
+            <input type="file" id="inputImportarPalmares" accept=".json" style="display: none;">
+        </div>
+    </div>
 </section>
-
+<section id="panelParticipantes" style="display:none;">
+    <h2>📋 Participantes</h2>
+    <div id="listaParticipantes"></div>
+</section>
 </main>
-
-
-<!-- =====================================================
-     VOLVER AL VISOR
-     ===================================================== -->
-
 <section id="volver">
-
-<a
-    href="../generador_fase_2/generador_fase_3.html"
-    id="botonVolver">
-
-    ← Volver al visor
-
-</a>
-
+<a href="../generador_fase_2/generador_fase_3.html" id="botonVolver">← Volver al visor</a>
 </section>
-
-
-<!-- =====================================================
-     PARTICIPANTES DEL TORNEO
-     ===================================================== -->
-
 <script>
-
 window.MATRIZ_COMBATIENTES_TORNEO = [];
-
-
-/* =====================================================
-   CLAVES DEL TORNEO
-   ===================================================== */
-
-const CLAVE_MATRIZ_COMBATIENTES =
-    "palentropia_matriz_combatientes";
-
-const CLAVE_CRITERIO_TORNEO =
-    "palentropia_criterio_torneo";
-
-
-/* =====================================================
-   CREAR COPA RANDOM
-   ===================================================== */
+const CLAVE_MATRIZ_COMBATIENTES = "palentropia_matriz_combatientes";
+const CLAVE_CRITERIO_TORNEO = "palentropia_criterio_torneo";
 
 async function crearCopaRandom() {
-
     try {
-
-        /*
-        =================================================
-        CARGAR MASTER.CSV
-        =================================================
-        */
-
-        const respuesta =
-            await fetch(
-                "../generador_fase_2/master.csv"
-            );
-
-
-        if (!respuesta.ok) {
-
-            throw new Error(
-                "No se pudo cargar master.csv."
-            );
-
-        }
-
-
-        const textoMaster =
-            await respuesta.text();
-
-
-        /*
-        =================================================
-        OBTENER TODOS LOS J1
-        =================================================
-        */
-
+        const respuesta = await fetch("../generador_fase_2/master.csv");
+        if (!respuesta.ok) throw new Error("No se pudo cargar master.csv.");
+        const textoMaster = await respuesta.text();
         const todosLosJ1 = [];
-
-
-        const lineas =
-            textoMaster.split(
-                /\r?\n/
-            );
-
-
-        lineas.forEach(
-            linea => {
-
-                if (
-                    !linea.trim()
-                ) {
-
-                    return;
-
-                }
-
-
-                const columnas =
-                    linea.split(",");
-
-
-                if (
-                    columnas.length < 21
-                ) {
-
-                    return;
-
-                }
-
-
-                const j1 =
-                    String(
-                        columnas[0] || ""
-                    ).trim();
-
-
-                /*
-                Evitamos la cabecera
-                y los duplicados.
-                */
-
-                if (
-                    !j1 ||
-                    j1.toLowerCase() === "j1"
-                ) {
-
-                    return;
-
-                }
-
-
-                if (
-                    !todosLosJ1.includes(
-                        j1
-                    )
-                ) {
-
-                    todosLosJ1.push(
-                        j1
-                    );
-
-                }
-
-            }
-        );
-
-
-        if (
-            todosLosJ1.length < 16
-        ) {
-
-            throw new Error(
-                "No hay al menos 16 participantes válidos en master.csv."
-            );
-
+        const lineas = textoMaster.split(/\r?\n/);
+        lineas.forEach(linea => {
+            if (!linea.trim()) return;
+            const columnas = linea.split(",");
+            if (columnas.length < 21) return;
+            const j1 = String(columnas[0] || "").trim();
+            if (!j1 || j1.toLowerCase() === "j1") return;
+            if (!todosLosJ1.includes(j1)) todosLosJ1.push(j1);
+        });
+        if (todosLosJ1.length < 16) throw new Error("No hay al menos 16 participantes válidos en master.csv.");
+        for (let i = todosLosJ1.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temporal = todosLosJ1[i];
+            todosLosJ1[i] = todosLosJ1[j];
+            todosLosJ1[j] = temporal;
         }
-
-
-        /*
-        =================================================
-        BARAJAR FISHER-YATES
-        =================================================
-        */
-
-        for (
-            let i =
-                todosLosJ1.length - 1;
-
-            i > 0;
-
-            i--
-        ) {
-
-            const j =
-                Math.floor(
-                    Math.random() *
-                    (i + 1)
-                );
-
-
-            const temporal =
-                todosLosJ1[i];
-
-
-            todosLosJ1[i] =
-                todosLosJ1[j];
-
-
-            todosLosJ1[j] =
-                temporal;
-
-        }
-
-
-        /*
-        =================================================
-        SELECCIONAR 16
-        =================================================
-        */
-
-        const participantes =
-            todosLosJ1.slice(
-                0,
-                16
-            );
-
-
-        /*
-        =================================================
-        GUARDAR PARTICIPANTES
-        =================================================
-        */
-
-        localStorage.setItem(
-            CLAVE_MATRIZ_COMBATIENTES,
-            JSON.stringify(
-                participantes
-            )
-        );
-
-
-        /*
-        =================================================
-        GUARDAR NOMBRE DEL TORNEO
-        =================================================
-        */
-
-        localStorage.setItem(
-            CLAVE_CRITERIO_TORNEO,
-            "copa random"
-        );
-
-
-        console.log(
-            "🏆 Copa Random creada:",
-            participantes
-        );
-
-
+        const participantes = todosLosJ1.slice(0, 16);
+        localStorage.setItem(CLAVE_MATRIZ_COMBATIENTES, JSON.stringify(participantes));
+        localStorage.setItem(CLAVE_CRITERIO_TORNEO, "copa random");
         return participantes;
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Error creando Copa Random:",
-            error
-        );
-
-
+    } catch (error) {
+        console.error("Error creando Copa Random:", error);
         return [];
-
     }
-
 }
-
-
-/* =====================================================
-   INICIALIZAR TORNEO
-   ===================================================== */
 
 async function inicializarTorneo() {
-
-    const guardado =
-        localStorage.getItem(
-            CLAVE_MATRIZ_COMBATIENTES
-        );
-
-
-    /*
-    =====================================================
-    SI YA EXISTEN PARTICIPANTES
-    NO HACER NADA
-    =====================================================
-    */
-
-    if (
-        guardado
-    ) {
-
+    const guardado = localStorage.getItem(CLAVE_MATRIZ_COMBATIENTES);
+    if (guardado) {
         try {
-
-            const matriz =
-                JSON.parse(
-                    guardado
-                );
-
-
-            if (
-                Array.isArray(
-                    matriz
-                ) &&
-                matriz.length > 0
-            ) {
-
-                return;
-
-            }
-
+            const matriz = JSON.parse(guardado);
+            if (Array.isArray(matriz) && matriz.length > 0) return;
+        } catch (error) {
+            console.warn("La matriz existente no es válida. Se creará una Copa Random.");
         }
-
-        catch (error) {
-
-            console.warn(
-                "La matriz existente no es válida. Se creará una Copa Random."
-            );
-
-        }
-
     }
-
-
-    /*
-    =====================================================
-    LOCALSTORAGE VACÍO
-    → CREAR COPA RANDOM
-    ===================================================== */
-
     await crearCopaRandom();
-
 }
-
-
-/* =====================================================
-   CRITERIO IDENTIFICATIVO DEL TORNEO
-   ===================================================== */
 
 function obtenerCriterioTorneo() {
-
-    const criterio =
-        localStorage.getItem(
-            CLAVE_CRITERIO_TORNEO
-        );
-
-
-    if (
-        !criterio ||
-        !String(
-            criterio
-        ).trim()
-    ) {
-
-        return "";
-
-    }
-
-
-    const valor =
-        String(
-            criterio
-        ).trim();
-
-
-    /*
-    =====================================================
-    TRANSFORMACIONES DE PRESENTACIÓN
-    =====================================================
-    */
-
-    const equivalencias = {
-
-        "perm":
-            "Pérmico",
-
-        "chord":
-            "Chordata",
-
-        "placen":
-            "Placentaria"
-
-    };
-
-
-    const clave =
-        valor.toLowerCase();
-
-
-    if (
-        equivalencias[
-            clave
-        ]
-    ) {
-
-        return equivalencias[
-            clave
-        ];
-
-    }
-
-
-    /*
-    Los códigos y nombres se conservan
-    tal como fueron introducidos.
-    */
-
+    const criterio = localStorage.getItem(CLAVE_CRITERIO_TORNEO);
+    if (!criterio || !String(criterio).trim()) return "";
+    const valor = String(criterio).trim();
+    const equivalencias = { "perm": "Pérmico", "chord": "Chordata", "placen": "Placentaria" };
+    const clave = valor.toLowerCase();
+    if (equivalencias[clave]) return equivalencias[clave];
     return valor;
-
 }
-
-
-/* =====================================================
-   MOSTRAR IDENTIFICADOR DEL TORNEO
-   ===================================================== */
 
 function mostrarIdentificadorTorneo() {
-
-    const criterio =
-        obtenerCriterioTorneo();
-
-
-    if (
-        !criterio
-    ) {
-
-        return;
-
-    }
-
-
-    const subtitulo =
-        document.getElementById(
-            "subtitulo"
-        );
-
-
-    const tituloCabecera =
-        document.getElementById(
-            "tituloCabeceraTorneo"
-        );
-
-
-    const tituloBloque =
-        document.getElementById(
-            "tituloBloqueTorneo"
-        );
-
-
-    /*
-    =====================================================
-    CABECERA SUPERIOR
-    =====================================================
-    */
-
-    if (
-        subtitulo
-    ) {
-
-        subtitulo.textContent =
-            "Torneo " +
-            criterio;
-
-    }
-
-
-    /*
-    =====================================================
-    CABECERA PRINCIPAL
-    =====================================================
-    */
-
-    if (
-        tituloCabecera
-    ) {
-
-        tituloCabecera.textContent =
-            "⚔️ Torneo " +
-            criterio;
-
-    }
-
-
-    /*
-    =====================================================
-    BLOQUE TORNEO
-    =====================================================
-    */
-
-    if (
-        tituloBloque
-    ) {
-
-        tituloBloque.textContent =
-            "🏆 Torneo " +
-            criterio;
-
-    }
-
+    const criterio = obtenerCriterioTorneo();
+    if (!criterio) return;
+    const subtitulo = document.getElementById("subtitulo");
+    const tituloCabecera = document.getElementById("tituloCabeceraTorneo");
+    const tituloBloque = document.getElementById("tituloBloqueTorneo");
+    if (subtitulo) subtitulo.textContent = "Torneo " + criterio;
+    if (tituloCabecera) tituloCabecera.textContent = "⚔️ Torneo " + criterio;
+    if (tituloBloque) tituloBloque.textContent = "🏆 Torneo " + criterio;
 }
-
-
-/* =====================================================
-   CARGAR PARTICIPANTES
-   ===================================================== */
 
 async function cargarParticipantesTorneo() {
-
-    const lista =
-        document.getElementById(
-            "listaParticipantes"
-        );
-
-
-    if (
-        !lista
-    ) {
-
+    const lista = document.getElementById("listaParticipantes");
+    if (!lista) return;
+    lista.innerHTML = "";
+    const matrizGuardada = localStorage.getItem(CLAVE_MATRIZ_COMBATIENTES);
+    if (!matrizGuardada) {
+        lista.innerHTML = "<p>No hay participantes cargados.</p>";
         return;
-
     }
-
-
-    lista.innerHTML =
-        "";
-
-
-    /*
-    Recuperamos exclusivamente los J1
-    preparados por el visor o por Copa Random.
-    */
-
-    const matrizGuardada =
-        localStorage.getItem(
-            CLAVE_MATRIZ_COMBATIENTES
-        );
-
-
-    if (
-        !matrizGuardada
-    ) {
-
-        lista.innerHTML =
-            "<p>No hay participantes cargados.</p>";
-
-        return;
-
-    }
-
-
     let matrizJ1;
-
-
-    try {
-
-        matrizJ1 =
-            JSON.parse(
-                matrizGuardada
-            );
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Matriz de combatientes no válida:",
-            error
-        );
-
-        lista.innerHTML =
-            "<p>No se pudo cargar la matriz de participantes.</p>";
-
+    try { matrizJ1 = JSON.parse(matrizGuardada); } catch(e) { matrizJ1 = []; }
+    if (!Array.isArray(matrizJ1) || matrizJ1.length === 0) {
+        lista.innerHTML = "<p>No hay participantes cargados.</p>";
         return;
-
     }
-
-
-    if (
-        !Array.isArray(
-            matrizJ1
-        ) ||
-        !matrizJ1.length
-    ) {
-
-        lista.innerHTML =
-            "<p>No hay participantes cargados.</p>";
-
-        return;
-
-    }
-
-
-    /*
-    Limpiamos y normalizamos J1.
-    */
-
-    matrizJ1 =
-        matrizJ1
-            .map(
-                codigo =>
-                    String(
-                        codigo || ""
-                    ).trim()
-            )
-            .filter(
-                codigo =>
-                    codigo !== ""
-            );
-
-
-    /*
-    =====================================================
-    PALEOFICHAS.JSON
-    =====================================================
-    */
-
-    const respuestaJSON =
-        await fetch(
-            "../generador_fase_2/paleofichas.json"
-        );
-
-
-    if (
-        !respuestaJSON.ok
-    ) {
-
-        throw new Error(
-            "No se pudo cargar paleofichas.json."
-        );
-
-    }
-
-
-    const datosJSON =
-        await respuestaJSON.json();
-
-
-    /*
-    =====================================================
-    MASTER.CSV
-    =====================================================
-    */
-
-    const respuestaMaster =
-        await fetch(
-            "../generador_fase_2/master.csv"
-        );
-
-
-    if (
-        !respuestaMaster.ok
-    ) {
-
-        throw new Error(
-            "No se pudo cargar master.csv."
-        );
-
-    }
-
-
-    const textoMaster =
-        await respuestaMaster.text();
-
-
-    /*
-    =====================================================
-    MAPA J1 → J2
-    =====================================================
-    */
-
-    const mapaNombres =
-        new Map();
-
-
-    if (
-        Array.isArray(
-            datosJSON
-        )
-    ) {
-
-        datosJSON.forEach(
-            registro => {
-
-                if (
-                    !registro
-                ) {
-
-                    return;
-
-                }
-
-
-                const j1 =
-                    String(
-                        registro.j1 ||
-                        registro.codigo ||
-                        registro.J1 ||
-                        ""
-                    ).trim();
-
-
-                const j2 =
-                    String(
-                        registro.j2 ||
-                        registro.nombre ||
-                        registro.J2 ||
-                        ""
-                    ).trim();
-
-
-                if (
-                    j1 &&
-                    j2
-                ) {
-
-                    mapaNombres.set(
-                        j1,
-                        j2
-                    );
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /*
-    =====================================================
-    MAPA DEL MASTER
-    =====================================================
-    */
-
-    const mapaMaster =
-        new Map();
-
-
-    const lineasMaster =
-        textoMaster.split(
-            /\r?\n/
-        );
-
-
-    lineasMaster.forEach(
-        linea => {
-
-            if (
-                !linea.trim()
-            ) {
-
-                return;
-
-            }
-
-
-            const columnas =
-                linea.split(",");
-
-
-            if (
-                columnas.length < 21
-            ) {
-
-                return;
-
-            }
-
-
-            const j1 =
-                String(
-                    columnas[0] || ""
-                ).trim();
-
-
-            if (
-                !j1 ||
-                j1.toLowerCase() === "j1"
-            ) {
-
-                return;
-
-            }
-
-
-            mapaMaster.set(
-                j1,
-                columnas
-            );
-
-        }
-    );
-
-
-    /*
-    =====================================================
-    CONSTRUIR MATRIZ FINAL
-    =====================================================
-    */
-
-    const participantes = [];
-
-
-    matrizJ1.forEach(
-        j1 => {
-
-            const columnas =
-                mapaMaster.get(
-                    j1
-                );
-
-
-            const j2 =
-                mapaNombres.get(
-                    j1
-                ) || "";
-
-
-            if (
-                !columnas
-            ) {
-
-                return;
-
-            }
-
-
-            participantes.push({
-
-                j1:
-                    j1,
-
-                j2:
-                    j2,
-
-                master:
-                    columnas
-
-            });
-
-        }
-    );
-
-
-    window.MATRIZ_COMBATIENTES_TORNEO =
-        participantes;
-
-
-    /*
-    =====================================================
-    MOSTRAR SOLO J1 Y J2
-    =====================================================
-    */
-
-    participantes.forEach(
-        participante => {
-
-            const fila =
-                document.createElement(
-                    "div"
-                );
-
-
-            fila.className =
-                "participanteTorneo";
-
-
-            fila.textContent =
-                participante.j1 +
-                " — " +
-                participante.j2;
-
-
-            lista.appendChild(
-                fila
-            );
-
-        }
-    );
-
-
-    if (
-        !participantes.length
-    ) {
-
-        lista.innerHTML =
-            "<p>No se encontraron participantes.</p>";
-
-    }
-
+    matrizJ1.forEach(j1 => {
+        const item = document.createElement("div");
+        item.style.padding = "6px 0";
+        item.style.borderBottom = "1px solid #30363d";
+        item.textContent = j1;
+        lista.appendChild(item);
+    });
 }
-/* =====================================================
-   BOTÓN PARTICIPANTES
-   ===================================================== */
+ document.getElementById("botonParticipantes").addEventListener("click", function() {
+    const panel = document.getElementById("panelParticipantes");
+    if (panel.style.display === "none") {
+        panel.style.display = "block";
+        cargarParticipantesTorneo();
+    } else {
+        panel.style.display = "none";
+    }
+});
 
-document
-    .getElementById(
-        "botonParticipantes"
-    )
-    .addEventListener(
-        "click",
-        async function() {
+document.getElementById("botonMenuPrincipal").addEventListener("click", function() {
+    window.location.href = "../generador_fase_2/generador_fase_3.html";
+});
 
-            const panel =
-                document.getElementById(
-                    "panelParticipantes"
-                );
-
-
-            if (
-                panel.style.display ===
-                "none"
-            ) {
-
-                panel.style.display =
-                    "block";
-
-
-                try {
-
-                    await cargarParticipantesTorneo();
-
-                }
-
-                catch (error) {
-
-                    console.error(
-                        "Error cargando participantes:",
-                        error
-                    );
-
-
-                    document
-                        .getElementById(
-                            "listaParticipantes"
-                        )
-                        .innerHTML =
-                            "<p>Error cargando participantes.</p>";
-
-                }
-
-            }
-
-            else {
-
-                panel.style.display =
-                    "none";
-
-            }
-
-        }
-    );
-
-
-/* =====================================================
-   BOTÓN MENÚ PRINCIPAL
-   ===================================================== */
-
-document
-    .getElementById(
-        "botonMenuPrincipal"
-    )
-    .addEventListener(
-        "click",
-        function() {
-
-            window.location.href =
-                "../../index.html";
-
-        }
-    );
-
-
-/* =====================================================
-   INICIALIZACIÓN
-   ===================================================== */
-
-(async function() {
-
-    /*
-    Primero comprobamos si existe
-    un torneo guardado.
-
-    Si no existe, se crea automáticamente
-    una Copa Random de 16 participantes.
-    */
-
+document.addEventListener("DOMContentLoaded", async function() {
     await inicializarTorneo();
-
-
-    /*
-    Después mostramos el nombre
-    correcto del torneo.
-    */
-
     mostrarIdentificadorTorneo();
+});
 
-})();
+document.getElementById("botonExportarDatos").addEventListener("click", function() {
+    try {
+        const palmaresHistorico = localStorage.getItem("palentropia_palmares_historico") || "[]";
+        
+        const blobPalmares = new Blob([palmaresHistorico], { type: "application/json" });
+        const urlPalmares = URL.createObjectURL(blobPalmares);
+        const enlacePalmares = document.createElement("a");
+        enlacePalmares.href = urlPalmares;
+        enlacePalmares.download = "palmares_palentropia.json";
+        document.body.appendChild(enlacePalmares);
+        enlacePalmares.click();
+        document.body.removeChild(enlacePalmares);
+        URL.revokeObjectURL(urlPalmares);
 
+        let historicoArray = [];
+        try { historicoArray = JSON.parse(palmaresHistorico); } catch (e) { historicoArray = []; }
+
+        const rankingMap = {};
+        historicoArray.forEach(item => {
+            function acumular(codigo, nombre, puntos, tipo) {
+                if (!codigo) return;
+                const codLimpio = String(codigo).trim();
+                const nomLimpio = (nombre && nombre.trim() !== "" && nombre.trim() !== codLimpio) ? nombre.trim() : codLimpio;
+
+                if (!rankingMap[codLimpio]) {
+                    rankingMap[codLimpio] = {
+                        codigo: codLimpio,
+                        nombre: nomLimpio,
+                        puntosTotales: 0,
+                        campeonatos: 0,
+                        subcampeonatos: 0,
+                        semifinales: 0
+                    };
+                } else if (nomLimpio !== codLimpio) {
+                    rankingMap[codLimpio].nombre = nomLimpio;
+                }
+
+                rankingMap[codLimpio].puntosTotales += puntos;
+                if (tipo === "campeon") rankingMap[codLimpio].campeonatos++;
+                if (tipo === "subcampeon") rankingMap[codLimpio].subcampeonatos++;
+                if (tipo === "semifinal") rankingMap[codLimpio].semifinales++;
+            }
+
+            if (item.campeon) acumular(item.campeon.codigo, item.campeon.nombre, item.campeon.puntos || 0, "campeon");
+            else if (item.codigo) acumular(item.codigo, item.nombre, item.puntos || 0, "campeon");
+
+            if (item.subcampeon) acumular(item.subcampeon.codigo, item.subcampeon.nombre, item.subcampeon.puntos || 0, "subcampeon");
+
+            if (Array.isArray(item.semifinalistas)) {
+                item.semifinalistas.forEach(semi => acumular(semi.codigo, semi.nombre, semi.puntos || 0, "semifinal"));
+            }
+        });
+
+        const listaClasificacion = Object.values(rankingMap);
+        listaClasificacion.sort((a, b) => {
+            if (b.puntosTotales !== a.puntosTotales) return b.puntosTotales - a.puntosTotales;
+            if (b.campeonatos !== a.campeonatos) return b.campeonatos - a.campeonatos;
+            if (b.subcampeonatos !== a.subcampeonatos) return b.subcampeonatos - a.subcampeonatos;
+            return 0;
+        });
+
+        const blobClasificacion = new Blob([JSON.stringify(listaClasificacion, null, 2)], { type: "application/json" });
+        const urlClasificacion = URL.createObjectURL(blobClasificacion);
+        const enlaceClasificacion = document.createElement("a");
+        enlaceClasificacion.href = urlClasificacion;
+        enlaceClasificacion.download = "clasificacion_global_palentropia.json";
+        document.body.appendChild(enlaceClasificacion);
+        enlaceClasificacion.click();
+        document.body.removeChild(enlaceClasificacion);
+        URL.revokeObjectURL(urlClasificacion);
+
+    } catch (e) {
+        console.error("Error al exportar los datos:", e);
+        alert("❌ No se pudieron generar los archivos de exportación.");
+    }
+});
+
+document.getElementById("botonImportarTrigger").addEventListener("click", function() {
+    document.getElementById("inputImportarPalmares").click();
+});
+
+document.getElementById("inputImportarPalmares").addEventListener("change", function(event) {
+    const archivo = event.target.files[0];
+    if (!archivo) return;
+
+    const lector = new FileReader();
+    lector.onload = function(e) {
+        try {
+            const contenidoJSON = JSON.parse(e.target.result);
+
+            if (!Array.isArray(contenidoJSON)) {
+                alert("❌ El archivo JSON no tiene un formato de palmarés válido.");
+                return;
+            }
+
+            localStorage.setItem("palentropia_palmares_historico", JSON.stringify(contenidoJSON));
+            
+            alert("✅ ¡Palmarés e historial importados correctamente!");
+            location.reload();
+
+        } catch (err) {
+            alert("❌ Ocurrió un error al leer el archivo JSON. Comprueba que sea un archivo íntegro.");
+        }
+    };
+    lector.readAsText(archivo);
+    event.target.value = "";
+});
 </script>
-
 </body>
-
 </html>
