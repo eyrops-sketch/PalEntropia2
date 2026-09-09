@@ -452,65 +452,186 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
                 const crucesSemis = rondaSemis.cruces || rondaSemis.partidos || [];
                 
                 crucesSemis.forEach(cruce => {
-                    const numCruce = cruce.numero !== undefined ? cruce.numero : cruce.id;
-                    const resCruce = datosSeries[numCruce];
-                    
-                    if (resCruce && resCruce.ganadorCodigo) {
-                        const p1Real = resolverParticipanteReal(cruce.participante1, datosSeries);
-                        const p2Real = resolverParticipanteReal(cruce.participante2, datosSeries);
-                        const p1Cod = typeof p1Real === "object" ? p1Real.j1 : p1Real;
-                        const p2Cod = typeof p2Real === "object" ? p2Real.j1 : p2Real;
-                        
-                        const perdedorCod = resCruce.ganadorCodigo === p1Cod ? p2Cod : p1Cod;
-                        const perdedorNombre = resCruce.ganadorCodigo === p1Cod 
-                            ? (resCruce.combatiente2Nombre || (typeof p2Real === "object" ? p2Real.j2 : p2Cod))
-                            : (resCruce.combatiente1Nombre || (typeof p1Real === "object" ? p1Real.j2 : p1Cod));
-                        
-                        if (perdedorCod && perdedorCod !== "undefined" && perdedorCod !== "") {
-                            listaSemifinalistas.push({ 
-                                codigo: perdedorCod, 
-                                nombre: perdedorNombre || perdedorCod, 
-                                puntos: puntosSemifinalista 
-                            });
-                        }
-                    }
-                });
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PalEntropía — Clasificación Global</title>
+<link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+<!-- =====================================================
+     BOTÓN MENÚ PRINCIPAL
+     ===================================================== -->
+<button id="botonMenuPrincipal" type="button" title="Volver al menú principal" aria-label="Volver al menú principal">
+🏠
+</button>
+
+<!-- =====================================================
+     CABECERA
+     ===================================================== -->
+<header id="cabecera">
+<h1>PalEntropía</h1>
+<div id="subtitulo">Ranking Histórico Global</div>
+</header>
+
+<!-- =====================================================
+     CONTENEDOR PRINCIPAL
+     ===================================================== -->
+<main id="torneo">
+
+<section id="cabeceraTorneo">
+    <h2>📊 Clasificación General</h2>
+    <p>Acumulado histórico de puntos de todos los torneos disputados</p>
+</section>
+
+<!-- =====================================================
+     TABLA / LISTA DE CLASIFICACIÓN
+     ===================================================== -->
+<section id="indiceTorneo">
+    <div id="contenedorClasificacion" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+        <!-- Se cargará dinámicamente mediante JavaScript -->
+    </div>
+</section>
+
+</main>
+
+<!-- =====================================================
+     VOLVER AL ÍNDICE DEL TORNEO
+     ===================================================== -->
+<section id="volver">
+<a href="index.html" id="botonVolver">
+    ← Volver al índice del torneo
+</a>
+</section>
+
+<!-- =====================================================
+     LÓGICA DE LA CLASIFICACIÓN GLOBAL
+     ===================================================== -->
+<script>
+const CLAVE_PALMARES = "palentropia_palmares_historico";
+
+function cargarClasificacionGlobal() {
+    const contenedor = document.getElementById("contenedorClasificacion");
+    contenedor.innerHTML = "";
+
+    let historico = [];
+    try {
+        historico = JSON.parse(localStorage.getItem(CLAVE_PALMARES) || "[]");
+    } catch (e) {
+        console.error("Error leyendo el palmarés:", e);
+    }
+
+    if (!historico.length) {
+        contenedor.innerHTML = `
+            <div class="bloqueTorneo" style="text-align: center; color: #aaa;">
+                <p>Todavía no hay suficientes datos registrados para generar la clasificación.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const ranking = {};
+
+    function sumarPuntos(codigo, nombre, puntos, tipo) {
+        if (!codigo) return;
+        
+        const codigoLimpio = String(codigo).trim();
+        const nombreLimpio = (nombre && nombre.trim() !== "" && nombre.trim() !== codigoLimpio) ? nombre.trim() : codigoLimpio;
+
+        if (!ranking[codigoLimpio]) {
+            ranking[codigoLimpio] = {
+                codigo: codigoLimpio,
+                nombre: nombreLimpio,
+                puntosTotales: 0,
+                campeonatos: 0,
+                subcampeonatos: 0,
+                semifinales: 0
+            };
+        } else {
+            if (nombreLimpio !== codigoLimpio) {
+                ranking[codigoLimpio].nombre = nombreLimpio;
             }
         }
 
-        const fechaHora = new Date().toLocaleString("es-ES", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-
-        historico.push({
-            torneo: nombreTorneo,
-            fechaHora: fechaHora,
-            campeon: { codigo: codigoCampeon, nombre: nombreCampeon, puntos: puntosCampeon },
-            subcampeon: { codigo: codigoSubcampeon, nombre: nombreSubcampeon, puntos: puntosSubcampeon },
-            semifinalistas: listaSemifinalistas,
-            victorias1: datosFinales.victorias1,
-            victorias2: datosFinales.victorias2,
-            timestamp: Date.now()
-        });
-
-        localStorage.setItem(CLAVE_PALMARES, JSON.stringify(historico));
-
-        localStorage.removeItem(CLAVE_TORNEO_EMPAREJAMIENTOS);
-        localStorage.removeItem(CLAVE_RESULTADOS_SERIES);
-        localStorage.removeItem(CLAVE_ENTRADA_TORNEO);
-        localStorage.removeItem("palentropia_matriz_combatientes");
-
-        alert(`🏆 ¡Torneo registrado! Campeón: ${puntosCampeon} pts | Subcampeón: ${puntosSubcampeon} pts${puntosSemifinalista > 0 ? ` | Semifinalistas: ${puntosSemifinalista} pts` : ""}.`);
-        window.location.href = "index.html";
-    } catch (e) {
-        console.error("Error al registrar en palmarés:", e);
-        alert("❌ Ocurrió un error al guardar en el palmarés.");
+        ranking[codigoLimpio].puntosTotales += puntos;
+        if (tipo === "campeon") ranking[codigoLimpio].campeonatos++;
+        if (tipo === "subcampeon") ranking[codigoLimpio].subcampeonatos++;
+        if (tipo === "semifinal") ranking[codigoLimpio].semifinales++;
     }
+
+    historico.forEach(item => {
+        if (item.campeon) {
+            sumarPuntos(item.campeon.codigo, item.campeon.nombre, item.campeon.puntos || 0, "campeon");
+        } else if (item.codigo) {
+            sumarPuntos(item.codigo, item.nombre, item.puntos || 0, "campeon");
+        }
+
+        if (item.subcampeon) {
+            sumarPuntos(item.subcampeon.codigo, item.subcampeon.nombre, item.subcampeon.puntos || 0, "subcampeon");
+        }
+
+        if (Array.isArray(item.semifinalistas)) {
+            item.semifinalistas.forEach(semi => {
+                sumarPuntos(semi.codigo, semi.nombre, semi.puntos || 0, "semifinal");
+            });
+        }
+    });
+
+    const listaRanking = Object.values(ranking);
+    listaRanking.sort((a, b) => b.puntosTotales - a.puntosTotales);
+
+    listaRanking.forEach((combatiente, index) => {
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "bloqueTorneo";
+        
+        let colorBorde = "#25292c";
+        let medalla = "";
+        
+        if (index === 0) { colorBorde = "#d4af37"; medalla = "🥇"; }
+        else if (index === 1) { colorBorde = "#c0c0c0"; medalla = "🥈"; }
+        else if (index === 2) { colorBorde = "#cd7f32"; medalla = "🥉"; }
+
+        tarjeta.style.borderLeft = `4px solid ${colorBorde}`;
+
+        tarjeta.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; min-width: 45px;">
+                        <span style="font-size: 15px; font-weight: bold; color: #62d6ff;">#${index + 1}</span>
+                        <span style="font-size: 16px; margin-top: 2px;">${medalla}</span>
+                    </div>
+                    <div>
+                        <strong style="font-size: 16px; color: #fff;">${combatiente.nombre}</strong> 
+                        <span style="font-size: 13px; color: #8b949e;">(${combatiente.codigo})</span>
+                        <div style="font-size: 12px; color: #8b949e; margin-top: 2px;">
+                            👑 ${combatiente.campeonatos} vit. | 🥈 ${combatiente.subcampeonatos} sub. | 🥉 ${combatiente.semifinales} semis
+                        </div>
+                    </div>
+                </div>
+                <div style="background: #1f2428; padding: 6px 14px; border-radius: 6px; border: 1px solid #30363d;">
+                    ⭐ <span style="color: #d4af37; font-weight: bold; font-size: 16px;">${combatiente.puntosTotales} pts</span>
+                </div>
+            </div>
+        `;
+
+        contenedor.appendChild(tarjeta);
+    });
 }
+
+document.getElementById("botonMenuPrincipal").addEventListener("click", function() {
+    window.location.href = "../../index.html";
+});
+
+document.addEventListener("DOMContentLoaded", cargarClasificacionGlobal);
+</script>
+
+</body>
+</html>
 
 
 
