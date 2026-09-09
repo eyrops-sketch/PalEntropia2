@@ -1,1 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Limpieza de Palmarés</title>
+    <style>
+        body { font-family: sans-serif; background: #0d1117; color: #f0f6fc; text-align: center; padding-top: 50px; }
+        .caja { max-width: 400px; margin: 0 auto; background: #161b22; border: 1px solid #30363d; padding: 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        button { background: #da3633; color: #fff; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 16px; }
+        button:hover { background: #f85149; }
+        #mensaje { margin-top: 15px; font-weight: bold; color: #58a6ff; }
+    </style>
+</head>
+<body>
+    <div class="caja">
+        <h2>🧹 Limpiar Palmarés</h2>
+        <p>Haz clic para eliminar los registros antiguos del palmarés y empezar de cero.</p>
+        <button type="button" onclick="limpiarPalmares()">Borrar Palmarés</button>
+        <div id="mensaje"></div>
+    </div>
+    <script>
+        function limpiarPalmares() {
+            const confirmarBorrado = confirm("⚠️ ¿Estás completamente seguro de que quieres borrar todo el histórico del palmarés? Esta acción eliminará los registros actuales de forma permanente.");
+            if (!confirmarBorrado) return;
+
+            localStorage.removeItem("palentropia_palmares_historico");
+            document.getElementById("mensaje").textContent = "✅ ¡Palmarés limpiado con éxito! Ya puedes borrar este archivo.";
+        }
+    </script>
+</body>
+</html>
 
