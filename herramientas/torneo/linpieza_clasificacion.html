@@ -1,1 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Limpieza de Clasificación y Palmarés</title>
+    <style>
+        body { font-family: sans-serif; background: #0d1117; color: #f0f6fc; text-align: center; padding-top: 50px; }
+        .caja { max-width: 400px; margin: 0 auto; background: #161b22; border: 1px solid #30363d; padding: 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        button { background: #da3633; color: #fff; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 16px; }
+        button:hover { background: #f85149; }
+        #mensaje { margin-top: 15px; font-weight: bold; color: #58a6ff; }
+    </style>
+</head>
+<body>
+    <div class="caja">
+        <h2>🧹 Limpiar Clasificación Histórica</h2>
+        <p>Haz clic para eliminar todos los registros del palmarés y reiniciar la clasificación global desde cero.</p>
+        <button type="button" onclick="limpiarClasificacion()">Borrar Clasificación</button>
+        <div id="mensaje"></div>
+    </div>
+    <script>
+        function limpiarClasificacion() {
+            const confirmarBorrado = confirm("⚠️ ¿Estás completamente seguro de que quieres borrar todo el histórico y la clasificación global? Esta acción eliminará los datos de forma permanente.");
+            if (!confirmarBorrado) return;
+
+            localStorage.removeItem("palentropia_palmares_historico");
+            document.getElementById("mensaje").textContent = "✅ ¡Clasificación e histórico limpiados con éxito! Ya puedes borrar este archivo.";
+        }
+    </script>
+</body>
+</html>
 
