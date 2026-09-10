@@ -471,6 +471,10 @@ window.PALTAXON = {
 "007_07":{
   ta1:"Animalia > Chordata > Reptilia > Squamata > Mosasauroidea > Mosasauridae > Mosasaurus",
   ta2:"Diápsido. Escamoso. Mosasauroideo. Mosasáurido."
+},
+"007_08":{
+  ta1:"Animalia > Chordata > Reptilia > Pterosauria > Pterodactyloidea > Ornithocheiridae > Ornithocheirus",
+  ta2:"Diápsido. Pterosaurio. Pterodactiloideo. Ornitoqueírido."
 }
   
 };
