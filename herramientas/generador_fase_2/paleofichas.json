@@ -568,6 +568,12 @@
     "nombre": "Spinosaurus",
     "dieta": "Piscívoro",
     "anatomia": "Dinosaurio terópodo de gran tamaño, con hocico largo y estrecho, mandíbulas provistas de dientes cónicos, extremidades posteriores relativamente cortas, pies anchos y una gran vela dorsal formada por espinas neurales alargadas"
+  },
+  {
+    "codigo": "007_06",
+    "nombre": "Brontosaurus",
+    "dieta": "Herbívoro",
+    "anatomia": "Saurópodo de gran tamaño, con cuerpo robusto, cuello largo y musculoso, cabeza pequeña, cola larga y pesada y extremidades columnares adaptadas a soportar su enorme masa corporal"
   }
 ]
 
