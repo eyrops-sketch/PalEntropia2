@@ -574,6 +574,12 @@
     "nombre": "Brontosaurus",
     "dieta": "Herbívoro",
     "anatomia": "Saurópodo de gran tamaño, con cuerpo robusto, cuello largo y musculoso, cabeza pequeña, cola larga y pesada y extremidades columnares adaptadas a soportar su enorme masa corporal"
+  },
+  {
+    "codigo": "007_07",
+    "nombre": "Mosasaurus",
+    "dieta": "Carnívoro",
+    "anatomia": "Reptil marino de gran tamaño, con cuerpo alargado y robusto, cráneo grande y alargado, mandíbulas provistas de numerosos dientes cónicos, extremidades transformadas en aletas y una cola musculosa adaptada a la natación"
   }
 ]
 
