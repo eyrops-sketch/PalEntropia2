@@ -467,6 +467,10 @@ window.PALTAXON = {
   "007_06":{
   ta1:"Animalia > Chordata > Dinosauria > Saurischia > Sauropoda > Diplodocoidea > Diplodocidae > Apatosaurinae > Brontosaurus",
   ta2:"Dinosaurio. Saurisquio. Saurópodo. Diplodócido. Apatosaurino."
+},
+"007_07":{
+  ta1:"Animalia > Chordata > Reptilia > Squamata > Mosasauroidea > Mosasauridae > Mosasaurus",
+  ta2:"Diápsido. Escamoso. Mosasauroideo. Mosasáurido."
 }
   
 };
