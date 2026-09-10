@@ -81,7 +81,7 @@ window.PALVIDEO = {
     },
 
     "002_02":{
-        video:"https://youtube.com/shorts/JPJjVB7NXGQ?feature=share"
+        video:"https://youtube.com/shorts/hyz68fwO2oM?feature=share"
     },
 
     "002_03":{
