@@ -117,7 +117,7 @@ window.PALVIDEO = {
     },
 
     "002_11":{
-        video:"https://youtube.com/shorts/NFlytP-TBjI?feature=share"
+        video:"https://youtube.com/shorts/FkJu7wxZfB0?feature=share"
     },
 
     "002_12":{
