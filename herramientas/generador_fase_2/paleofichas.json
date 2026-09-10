@@ -580,6 +580,12 @@
     "nombre": "Mosasaurus",
     "dieta": "Carnívoro",
     "anatomia": "Reptil marino de gran tamaño, con cuerpo alargado y robusto, cráneo grande y alargado, mandíbulas provistas de numerosos dientes cónicos, extremidades transformadas en aletas y una cola musculosa adaptada a la natación"
+  },
+  {
+    "codigo": "007_08",
+    "nombre": "Ornithocheirus",
+    "dieta": "Piscívoro",
+    "anatomia": "Pterosaurio de gran tamaño, con cuerpo ligero, cuello alargado, alas membranosas de gran envergadura, pico largo y estrecho provisto de dientes y extremidades adaptadas al vuelo y a la captura de peces"
   }
 ]
 
