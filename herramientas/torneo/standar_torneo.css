@@ -636,4 +636,16 @@ body:not(.modo-torneo) .ocultar-en-individual {
     word-break: break-word;
 }
 
+/* --- BLINDAJE PARA EL CENTRO DE COMBATE --- */
+.centro-combate {
+    overflow: hidden;
+    word-break: break-word;
+}
+
+#turnoActual {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
 
