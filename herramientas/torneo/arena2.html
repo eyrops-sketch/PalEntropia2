@@ -54,7 +54,7 @@
                 <label class="opcion-control"><input type="radio" name="controlManual" value="2"><span>Combatiente 2</span></label>             </div>         
         </div>         
         <button id="botonPreparar" type="button" style="display: none;" aria-hidden="true">⚔️ Preparar combate</button>         
-        <button id="botonSerie" type="button" style="display: block;">🏆 Iniciar la serie</button>         
+        <button id="botonSerie" type="button" style="display: block;">🏆 Reiniciar la serie (un intento permitido)</button>         
         <div id="mensajeConfiguracion" class="mensaje">Cargando datos del torneo...</div>         
         <div id="informacionSerie" class="informacion-serie" style="display: none;">             
             <div id="tituloSerie">🏆 Serie</div>             
@@ -669,14 +669,26 @@ function limpiarRegistro() {
 } 
 
 function añadirRegistro(txt) { 
-    const reg = document.getElementById("registroCombate"), lin = document.createElement("div"); 
+    const reg = document.getElementById("registroCombate");
+    if (!reg) return;
+    
+    // Si es el mensaje inicial de bienvenida, limpiamos el texto de "vacio"
+    const vacio = reg.querySelector(".registro-vacio");
+    if (vacio) vacio.remove();
+
+    const lin = document.createElement("div"); 
     lin.className = "linea-registro"; 
     lin.textContent = txt; 
     reg.appendChild(lin); 
     reg.scrollTop = reg.scrollHeight; 
+    
+    // El centro SOLO muestra el número de turno, nunca los mensajes largos
     const turnoActual = document.getElementById("turnoActual");
-    if (turnoActual && combateActivo) turnoActual.textContent = txt;
-} 
+    if (turnoActual && combate && combate.turno) {
+        turnoActual.textContent = "Turno " + combate.turno;
+    }
+}
+
 
 function mostrarMensaje(txt) { 
     mensajeConfiguracion.textContent = txt; 
