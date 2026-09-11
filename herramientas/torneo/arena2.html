@@ -161,6 +161,7 @@
 <script src="standar.js"></script> 
 <script src="../generador_fase_2/buscaruta.js"></script> 
 <script src="loadimagen.js"></script>
+
 <script> 
 const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json"; 
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null; 
@@ -262,7 +263,7 @@ function limpiarTextoResultadoAnterior() {
     const iniciativa = document.getElementById("iniciativa");
     if (iniciativa) iniciativa.textContent = "—";
 }
- controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { controlManual = Number(ctrl.value); if (combateActivo) activarBotones(); })); 
+controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { controlManual = Number(ctrl.value); if (combateActivo) activarBotones(); })); 
 
 botonSerie.addEventListener("click", prepararSerie); 
 botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; }); 
@@ -330,6 +331,9 @@ async function iniciarPartidoSerie() {
         combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();         
         combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true; partidoRegistrado = false;         
         
+        const panelRes = document.getElementById("resultado");
+        if (panelRes) panelRes.classList.add("resultado-oculto");
+
         limpiarTextoResultadoAnterior();
         mostrarCombatientes(); 
         desactivarBotones(); 
@@ -358,8 +362,6 @@ function mostrarCombatientes() {
     mostrarStats(combatiente1, "c1"); mostrarStats(combatiente2, "c2");     
     mostrarEstado(combatiente1, "c1"); mostrarEstado(combatiente2, "c2");     
     actualizarInterfazSerie();     
-    document.getElementById("turnoActual").textContent = "Turno " + (combate.turno || "—");     
-    document.getElementById("iniciativa").textContent = combate.iniciativa || "—"; 
 } 
 
 function mostrarBarra(v, maxV, idT, idB) {     
@@ -393,7 +395,8 @@ function activarBotones() {
 function desactivarBotones() { 
     botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; 
     }
-  function interpretarRes(res, at, ob) {     
+
+ function interpretarRes(res, at, ob) {     
     if (!res) return;     
     if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) { res.dano = Math.round(res.dano * 0.5); añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%."); }     
     if (res.mensaje) añadirRegistro(res.mensaje);     
@@ -443,6 +446,8 @@ function ejecutarAccionJugador(cod) {
             combatiente1.defendiendo = combatiente2.defendiendo = false;         
             combate.turno++;         
             mostrarCombatientes();         
+            document.getElementById("turnoActual").textContent = "Turno " + (combate.turno || "—");
+            document.getElementById("iniciativa").textContent = combate.iniciativa || "—";
             activarBotones();
         }, 600);
 
@@ -467,6 +472,9 @@ function resolverTurnoInicialAutomaticoIA() {
         iniciativaIA = Math.random() < 0.5 ? iaEsCombatiente2 : !iaEsCombatiente2;
     }
 
+    document.getElementById("turnoActual").textContent = "Turno " + (combate.turno || "1");
+    document.getElementById("iniciativa").textContent = combate.iniciativa || (iniciativaIA ? "IA" : "Jugador");
+
     if (iniciativaIA) {
         desactivarBotones();
         añadirRegistro("⚡ La IA gana la iniciativa y ejecuta su primer movimiento automático...");
@@ -483,6 +491,7 @@ function resolverTurnoInicialAutomaticoIA() {
             }
             combate.turno++;
             mostrarCombatientes();
+            document.getElementById("turnoActual").textContent = "Turno " + combate.turno;
             activarBotones();
             añadirRegistro("🎮 Turno del jugador.");
         }, 800);
@@ -624,6 +633,9 @@ botonSerie.addEventListener("click", async () => {
 if (botonNuevoCombate) {     
     botonNuevoCombate.addEventListener("click", async () => {         
         if (serieActiva && !serieTerminada) {             
+            const panelRes = document.getElementById("resultado");
+            if (panelRes) panelRes.classList.add("resultado-oculto");
+
             await iniciarPartidoSerie();             
             desactivarBotones();             
             setTimeout(() => {                 
@@ -660,15 +672,42 @@ document.addEventListener("DOMContentLoaded", async function() {
                 codigo2.readOnly = true;                                  
                 const botonAjustesReglas = document.getElementById("botonAjustesReglas");                 
                 if (botonAjustesReglas) botonAjustesReglas.style.display = "flex";                 
+                
                 const comprobarFichas = setInterval(() => {                     
                     if (fichas.length > 0) {                         
                         clearInterval(comprobarFichas);                         
-                        if (typeof prepararSerie === "function") {                              
-                            prepararSerie().then(() => {                                 
-                                desactivarBotones();                                 
-                                setTimeout(() => {                                     
-                                    resolverTurnoInicialAutomaticoIA();                                 }, 500);                             });                          }                     }                 }, 100);             }         } catch (e) { console.error("Error al procesar modo torneo:", e); }     } 
+                        const reg = obtenerReglasTorneo();
+                        partidosSerie = Number(reg.partidosSerie) || 1;
+                        victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
+                        victorias1 = 0; victorias2 = 0; partidoActual = 1;
+                        
+                        const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();
+                        ficha1 = buscarFicha(v1); ficha2 = buscarFicha(v2);
+                        
+                        if (ficha1 && ficha2) {
+                            const configActiva = obtenerConfiguracionActiva();
+                            combatiente1 = crearCombatienteDesdeFicha(ficha1, configActiva, 1);
+                            combatiente2 = crearCombatienteDesdeFicha(ficha2, configActiva, 2);
+                            
+                            combatiente1.nombre = ficha1.j2 || ficha1.nombre || v1;
+                            combatiente2.nombre = ficha2.j2 || ficha2.nombre || v2;
+                            combatiente1.codigo = v1;
+                            combatiente2.codigo = v2;
+
+                            mostrarCombatientes();
+                            if (window.cargarImagenesCombatientesAsync) {
+                                window.cargarImagenesCombatientesAsync(v1, v2);
+                            }
+                        }
+                        bloquearTodoAlInicio();
+                    }                 
+                }, 100);             
+            }         } catch (e) { console.error("Error al procesar modo torneo:", e); }     } 
 }); 
 </script> 
 </body> 
 </html>
+
+
+
+    
