@@ -622,5 +622,18 @@ body:not(.modo-torneo) .ocultar-en-individual {
     transform: scale(1.08);
 }
 
+/* --- CORRECCIÓN PARA EL REGISTRO ABAJO Y A ANCHO COMPLETO --- */
+#arena {
+    max-width: 1200px;
+}
+
+#registro {
+    width: 100%;
+}
+
+.registro-combate {
+    max-height: 280px;
+    word-break: break-word;
+}
 
 
