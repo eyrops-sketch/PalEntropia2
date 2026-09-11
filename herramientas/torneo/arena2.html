@@ -161,7 +161,6 @@
 <script src="standar.js"></script> 
 <script src="../generador_fase_2/buscaruta.js"></script> 
 <script src="loadimagen.js"></script>
-
 <script> 
 const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json"; 
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null; 
@@ -249,23 +248,18 @@ function buscarFicha(codigo) {
 
 function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
 
-function bloquearTodoAlInicio() {
-    desactivarBotones();
-    if (botonSerie) botonSerie.disabled = false;
-    if (botonNuevoCombate) botonNuevoCombate.style.display = "none";
-}
-
 function limpiarTextoResultadoAnterior() {
     const panelRes = document.getElementById("resultado");
     if (panelRes) panelRes.classList.add("resultado-oculto");
+    
     const turnoActual = document.getElementById("turnoActual");
     if (turnoActual) turnoActual.textContent = "En combate!";
+    
     const iniciativa = document.getElementById("iniciativa");
     if (iniciativa) iniciativa.textContent = "—";
 }
 controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { controlManual = Number(ctrl.value); if (combateActivo) activarBotones(); })); 
 
-botonSerie.addEventListener("click", prepararSerie); 
 botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; }); 
 
 if (botonCerrarModal) botonCerrarModal.addEventListener("click", () => { modalModalidades.style.display = "none"; }); 
@@ -331,9 +325,6 @@ async function iniciarPartidoSerie() {
         combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();         
         combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true; partidoRegistrado = false;         
         
-        const panelRes = document.getElementById("resultado");
-        if (panelRes) panelRes.classList.add("resultado-oculto");
-
         limpiarTextoResultadoAnterior();
         mostrarCombatientes(); 
         desactivarBotones(); 
@@ -395,8 +386,7 @@ function activarBotones() {
 function desactivarBotones() { 
     botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; 
     }
-
- function interpretarRes(res, at, ob) {     
+function interpretarRes(res, at, ob) {     
     if (!res) return;     
     if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) { res.dano = Math.round(res.dano * 0.5); añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%."); }     
     if (res.mensaje) añadirRegistro(res.mensaje);     
@@ -657,7 +647,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     await cargarMaster();     
     actualizarInterfazModalidad();     
     actualizarInterfazSerie();     
-    bloquearTodoAlInicio();
+    
+    desactivarBotones();
+    if (botonSerie) botonSerie.disabled = false;
+    if (botonNuevoCombate) botonNuevoCombate.style.display = "none";
     
     const datosTorneoGuardado = localStorage.getItem("palentropia_combate_activo");     
     if (datosTorneoGuardado) {         
@@ -676,13 +669,9 @@ document.addEventListener("DOMContentLoaded", async function() {
                 const comprobarFichas = setInterval(() => {                     
                     if (fichas.length > 0) {                         
                         clearInterval(comprobarFichas);                         
-                        const reg = obtenerReglasTorneo();
-                        partidosSerie = Number(reg.partidosSerie) || 1;
-                        victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
-                        victorias1 = 0; victorias2 = 0; partidoActual = 1;
-                        
                         const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();
-                        ficha1 = buscarFicha(v1); ficha2 = buscarFicha(v2);
+                        ficha1 = buscarFicha(v1); 
+                        ficha2 = buscarFicha(v2);
                         
                         if (ficha1 && ficha2) {
                             const configActiva = obtenerConfiguracionActiva();
@@ -694,12 +683,34 @@ document.addEventListener("DOMContentLoaded", async function() {
                             combatiente1.codigo = v1;
                             combatiente2.codigo = v2;
 
-                            mostrarCombatientes();
+                            const reg = obtenerReglasTorneo();
+                            const nombreModoTexto = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";
+                            
+                            document.getElementById("c1Nombre").textContent = combatiente1.nombre;
+                            document.getElementById("c1Codigo").textContent = combatiente1.codigo;
+                            document.getElementById("c1Perfil").textContent = nombreModoTexto;
+                            document.getElementById("c2Nombre").textContent = combatiente2.nombre;
+                            document.getElementById("c2Codigo").textContent = combatiente2.codigo;
+                            document.getElementById("c2Perfil").textContent = nombreModoTexto;
+                            
+                            mostrarBarra(combatiente1.hp, combatiente1.hp_max, "c1VidaTexto", "c1VidaBarra");
+                            mostrarBarra(combatiente2.hp, combatiente2.hp_max, "c2VidaTexto", "c2VidaBarra");
+                            mostrarBarra(combatiente1.fatiga, combatiente1.fatiga_max, "c1FatigaTexto", "c1FatigaBarra");
+                            mostrarBarra(combatiente2.fatiga, combatiente2.fatiga_max, "c2FatigaTexto", "c2FatigaBarra");
+                            
+                            mostrarStats(combatiente1, "c1"); 
+                            mostrarStats(combatiente2, "c2");
+                            mostrarEstado(combatiente1, "c1"); 
+                            mostrarEstado(combatiente2, "c2");
+
                             if (window.cargarImagenesCombatientesAsync) {
                                 window.cargarImagenesCombatientesAsync(v1, v2);
                             }
                         }
-                        bloquearTodoAlInicio();
+                        
+                        desactivarBotones();
+                        if (botonSerie) botonSerie.disabled = false;
+                        mostrarMensaje("Combatientes listos. Elige tu control manual y pulsa 'Iniciar la serie'.");
                     }                 
                 }, 100);             
             }         } catch (e) { console.error("Error al procesar modo torneo:", e); }     } 
@@ -707,7 +718,5 @@ document.addEventListener("DOMContentLoaded", async function() {
 </script> 
 </body> 
 </html>
-
-
 
     
