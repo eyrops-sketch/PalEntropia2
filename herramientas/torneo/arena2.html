@@ -57,7 +57,7 @@
             <div id="serieFormato">—</div>             
             <div id="partidoSerie">—</div>         </div>     
     </section>
-     <section id="combatientes" class="zona-combatientes">         
+        <section id="combatientes" class="zona-combatientes">         
         <article id="combatiente1" class="tarjeta-combatiente">             
             <div class="cabecera-combatiente">                 
                 <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>                 
@@ -167,8 +167,7 @@
 <script src="standar.js"></script> 
 <script src="../generador_fase_2/buscaruta.js"></script> 
 <script src="loadimagen.js"></script>
-
- <script> 
+<script> 
 const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json"; 
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null; 
 let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false; 
@@ -255,13 +254,17 @@ function buscarFicha(codigo) {
 
 function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
 
+function bloquearTodoAlInicio() {
+    desactivarBotones();
+    if (botonSerie) botonSerie.disabled = false;
+    if (botonNuevoCombate) botonNuevoCombate.style.display = "none";
+}
+
 function limpiarTextoResultadoAnterior() {
     const panelRes = document.getElementById("resultado");
     if (panelRes) panelRes.classList.add("resultado-oculto");
-    
     const turnoActual = document.getElementById("turnoActual");
     if (turnoActual) turnoActual.textContent = "En combate!";
-    
     const iniciativa = document.getElementById("iniciativa");
     if (iniciativa) iniciativa.textContent = "—";
 }
@@ -294,12 +297,13 @@ function actualizarRolesVisuales() {
     }
 }
 
-controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
+ controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
     controlManual = Number(ctrl.value); 
     actualizarRolesVisuales();
     if (combateActivo) activarBotones(); 
 })); 
 
+botonSerie.addEventListener("click", prepararSerie); 
 botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; }); 
 
 if (botonCerrarModal) botonCerrarModal.addEventListener("click", () => { modalModalidades.style.display = "none"; }); 
@@ -345,7 +349,7 @@ async function aplicarConfiguracionAleatoriaSiEstaActivo() {
                     if (val === "true") val = true; else if (val === "false") val = false; else if (!isNaN(val)) val = Number(val);                     
                     configExterna[parametro] = val;                 }             }         }         
         const reglasActuales = obtenerReglasTorneo();         
-        reglasActuales.tipoCombate = modoAleatorio; reg.coeficientes = configExterna;         
+        reglasActuales.tipoCombate = modoAleatorio; reglasActuales.coeficientes = configExterna;         
         localStorage.setItem(CLAVE_REGLAS, JSON.stringify(reglasActuales));     } catch (err) { console.warn("Error al aplicar configuración aleatoria:", err); } 
 } 
 
@@ -394,6 +398,8 @@ function mostrarCombatientes() {
     mostrarStats(combatiente1, "c1"); mostrarStats(combatiente2, "c2");     
     mostrarEstado(combatiente1, "c1"); mostrarEstado(combatiente2, "c2");     
     actualizarInterfazSerie();     
+    document.getElementById("turnoActual").textContent = "Turno " + (combate.turno || "—");     
+    document.getElementById("iniciativa").textContent = combate.iniciativa || "—"; 
 } 
 
 function mostrarBarra(v, maxV, idT, idB) {     
@@ -426,7 +432,9 @@ function activarBotones() {
 
 function desactivarBotones() { 
     botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; 
-     }
+    }
+
+
 function interpretarRes(res, at, ob) {     
     if (!res) return;     
     if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) { res.dano = Math.round(res.dano * 0.5); añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%."); }     
@@ -477,8 +485,6 @@ function ejecutarAccionJugador(cod) {
             combatiente1.defendiendo = combatiente2.defendiendo = false;         
             combate.turno++;         
             mostrarCombatientes();         
-            document.getElementById("turnoActual").textContent = "Turno " + (combate.turno || "—");
-            document.getElementById("iniciativa").textContent = combate.iniciativa || "—";
             activarBotones();
         }, 600);
 
@@ -503,9 +509,6 @@ function resolverTurnoInicialAutomaticoIA() {
         iniciativaIA = Math.random() < 0.5 ? iaEsCombatiente2 : !iaEsCombatiente2;
     }
 
-    document.getElementById("turnoActual").textContent = "Turno " + (combate.turno || "1");
-    document.getElementById("iniciativa").textContent = combate.iniciativa || (iniciativaIA ? "IA" : "Jugador");
-
     if (iniciativaIA) {
         desactivarBotones();
         añadirRegistro("⚡ La IA gana la iniciativa y ejecuta su primer movimiento automático...");
@@ -522,7 +525,6 @@ function resolverTurnoInicialAutomaticoIA() {
             }
             combate.turno++;
             mostrarCombatientes();
-            document.getElementById("turnoActual").textContent = "Turno " + combate.turno;
             activarBotones();
             añadirRegistro("🎮 Turno del jugador.");
         }, 800);
@@ -664,9 +666,6 @@ botonSerie.addEventListener("click", async () => {
 if (botonNuevoCombate) {     
     botonNuevoCombate.addEventListener("click", async () => {         
         if (serieActiva && !serieTerminada) {             
-            const panelRes = document.getElementById("resultado");
-            if (panelRes) panelRes.classList.add("resultado-oculto");
-
             await iniciarPartidoSerie();             
             desactivarBotones();             
             setTimeout(() => {                 
@@ -681,18 +680,17 @@ if (botonVolverCruces) {
             const confirmarSalida = confirm("⚠️ La serie del torneo está en curso. Si vuelves a los cruces ahora, se interrumpirá el asalto actual. ¿Deseas continuar?");             
             if (!confirmarSalida) return;         }         
         window.location.href = "combates.html";     }); 
-} 
-
-document.addEventListener("DOMContentLoaded", async function() {     
+    }
+ document.addEventListener("DOMContentLoaded", async function() {     
     await cargarPaleofichas();     
     await cargarMaster();     
     actualizarInterfazModalidad();     
     actualizarInterfazSerie();     
+    bloquearTodoAlInicio();     
     
-    desactivarBotones();
-    if (botonSerie) botonSerie.disabled = false;
-    if (botonNuevoCombate) botonNuevoCombate.style.display = "none";
-    
+    // Inicializar los indicadores visuales al cargar
+    actualizarRolesVisuales();
+
     const datosTorneoGuardado = localStorage.getItem("palentropia_combate_activo");     
     if (datosTorneoGuardado) {         
         try {             
@@ -706,57 +704,14 @@ document.addEventListener("DOMContentLoaded", async function() {
                 codigo2.readOnly = true;                                  
                 const botonAjustesReglas = document.getElementById("botonAjustesReglas");                 
                 if (botonAjustesReglas) botonAjustesReglas.style.display = "flex";                 
-                
                 const comprobarFichas = setInterval(() => {                     
                     if (fichas.length > 0) {                         
                         clearInterval(comprobarFichas);                         
-                        const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();
-                        ficha1 = buscarFicha(v1); 
-                        ficha2 = buscarFicha(v2);
-                        
-                        if (ficha1 && ficha2) {
-                            const configActiva = obtenerConfiguracionActiva();
-                            combatiente1 = crearCombatienteDesdeFicha(ficha1, configActiva, 1);
-                            combatiente2 = crearCombatienteDesdeFicha(ficha2, configActiva, 2);
-                            
-                            combatiente1.nombre = ficha1.j2 || ficha1.nombre || v1;
-                            combatiente2.nombre = ficha2.j2 || ficha2.nombre || v2;
-                            combatiente1.codigo = v1;
-                            combatiente2.codigo = v2;
-
-                            const reg = obtenerReglasTorneo();
-                            const nombreModoTexto = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";
-                            
-                            document.getElementById("c1Nombre").textContent = combatiente1.nombre;
-                            document.getElementById("c1Codigo").textContent = combatiente1.codigo;
-                            document.getElementById("c1Perfil").textContent = nombreModoTexto;
-                            document.getElementById("c2Nombre").textContent = combatiente2.nombre;
-                            document.getElementById("c2Codigo").textContent = combatiente2.codigo;
-                            document.getElementById("c2Perfil").textContent = nombreModoTexto;
-                            
-                            actualizarRolesVisuales();
-                            mostrarBarra(combatiente1.hp, combatiente1.hp_max, "c1VidaTexto", "c1VidaBarra");
-                            mostrarBarra(combatiente2.hp, combatiente2.hp_max, "c2VidaTexto", "c2VidaBarra");
-                            mostrarBarra(combatiente1.fatiga, combatiente1.fatiga_max, "c1FatigaTexto", "c1FatigaBarra");
-                            mostrarBarra(combatiente2.fatiga, combatiente2.fatiga_max, "c2FatigaTexto", "c2FatigaBarra");
-                            
-                            mostrarStats(combatiente1, "c1"); 
-                            mostrarStats(combatiente2, "c2");
-                            mostrarEstado(combatiente1, "c1"); 
-                            mostrarEstado(combatiente2, "c2");
-
-                            if (window.cargarImagenesCombatientesAsync) {
-                                window.cargarImagenesCombatientesAsync(v1, v2);
-                            }
-                        }
-                        
-                        desactivarBotones();
-                        if (botonSerie) botonSerie.disabled = false;
-                        limpiarTextoResultadoAnterior();
-                        mostrarMensaje("Combatientes listos. Elige tu control manual y pulsa 'Iniciar la serie'.");
-                    }                 
-                }, 100);             
-            }         } catch (e) { console.error("Error al procesar modo torneo:", e); }     } 
+                        if (typeof prepararSerie === "function") {                              
+                            prepararSerie().then(() => {                                 
+                                desactivarBotones();                                 
+                                setTimeout(() => {                                     
+                                    resolverTurnoInicialAutomaticoIA();                                 }, 500);                             });                          }                     }                 }, 100);             }         } catch (e) { console.error("Error al procesar modo torneo:", e); }     } 
 }); 
 </script> 
 </body> 
