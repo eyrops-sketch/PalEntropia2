@@ -10,7 +10,7 @@ window.PALTAXON = {
 
 "001_01":{
   ta1:"Animalia > Chordata > Aves > Gastornithiformes",
-  ta2:"Ave. Neornite. Paleognato."
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Ave. Neornite. Paleognato."
 },
 
 "001_02":{
@@ -24,8 +24,8 @@ window.PALTAXON = {
 },
 
 "001_04":{
-  ta1:"Animalia > Chordata > Mammalia > Mesonychia",
-  ta2:"Mamífero. Mamífero placentario. Mesoniquio."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Mesonychia",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Mesoniquio."
 },
 
 "001_05":{
@@ -39,33 +39,33 @@ window.PALTAXON = {
 },
 
 "001_07":{
-  ta1:"Animalia > Chordata > Mammalia > Eulipotyphla",
-  ta2:"Mamífero. Mamífero placentario. Erinaceomorfo."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Eulipotyphla",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Erinaceomorfo."
 },
 
 "001_08":{
-  ta1:"Animalia > Chordata > Mammalia > Perissodactyla",
-  ta2:"Mamífero. Mamífero placentario. Perisodáctilo."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Perissodactyla",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Perisodáctilo."
 },
 
 "001_09":{
-  ta1:"Animalia > Chordata > Dinosauria > Theropoda > Avialae",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Theropoda > Avialae",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Avialano."
 },
 
 "001_10":{
-  ta1:"Animalia > Chordata > Mammalia > Rodentia",
-  ta2:"Mamífero. Mamífero placentario. Roedor."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Rodentia",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Roedor."
 },
 
 "001_11":{
-  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Ceratopsia",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Ceratopsia",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Ceratopsio."
 },
 
 "001_12":{
-  ta1:"Animalia > Chordata > Mammalia > Artiodactyla",
-  ta2:"Mamífero. Mamífero placentario. Artiodáctilo."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Artiodactyla",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Artiodáctilo."
 },
 
 "001_13":{
@@ -74,17 +74,17 @@ window.PALTAXON = {
 },
 
 "001_14":{
-  ta1:"Animalia > Chordata > Crocodylomorpha",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Crocodylomorpha",
   ta2:"Diápsido. Arcosaurio. Crocodilomorfo."
 },
 
 "001_15":{
-  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Thyreophora > Ankylosauria",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Thyreophora > Ankylosauria",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Tireóforo. Anquilosaurio."
 },
 
 "002_01":{
-  ta1:"Animalia > Chordata > Dinosauria > Theropoda",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Theropoda",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo."
 },
 
@@ -96,7 +96,7 @@ window.PALTAXON = {
 "002_03":{
   ta1:"Animalia > Chordata > Craniata",
   ta2:"Cordado. Craneado. Vertebrado basal."
- },   
+},
 
 "002_04":{
   ta1:"Animalia > Chordata > Vertebrata > Osteostraci > Thyestidae > Thyestes",
@@ -104,17 +104,17 @@ window.PALTAXON = {
 },
 
 "002_05":{
-  ta1:"Animalia > Chordata > Pterosauria",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Pterosauria",
   ta2:"Diápsido. Arcosaurio. Pterosaurio."
 },
 
 "002_06":{
-  ta1:"Animalia > Chordata > Mammalia > Proboscidea",
-  ta2:"Mamífero. Mamífero placentario. Proboscídeo."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Proboscidea",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Proboscídeo."
 },
 
 "002_07":{
-  ta1:"Animalia > Chordata > Mammaliaformes",
+  ta1:"Animalia > Chordata > Synapsida > Mammaliaformes",
   ta2:"Sinápsido. Mammaliaforme."
 },
 
@@ -129,22 +129,22 @@ window.PALTAXON = {
 },
 
 "002_10":{
-  ta1:"Animalia > Chordata > Archosauromorpha",
+  ta1:"Animalia > Chordata > Diapsida > Archosauromorpha",
   ta2:"Diápsido. Arcosauromorfo."
 },
 
 "002_11":{
-  ta1:"Animalia > Chordata > Dinosauria > Theropoda > Dromaeosauridae",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Theropoda > Dromaeosauridae",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Dromeosáurido."
 },
 
 "002_12":{
-  ta1:"Animalia > Chordata > Mammalia > Pantodonta",
-  ta2:"Mamífero. Mamífero placentario. Pantodonto."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Pantodonta",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Pantodonto."
 },
 
 "002_13":{
-  ta1:"Animalia > Chordata > Dinosauria > Sauropodomorpha",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Sauropodomorpha",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Sauropodomorfo."
 },
 
@@ -159,8 +159,8 @@ window.PALTAXON = {
 },
 
 "003_01":{
-  ta1:"Animalia > Chordata > Mammalia > Perissodactyla",
-  ta2:"Mamífero. Mamífero placentario. Perisodáctilo."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Perissodactyla",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Perisodáctilo."
 },
 
 "003_02":{
@@ -169,12 +169,12 @@ window.PALTAXON = {
 },
 
 "003_03":{
-  ta1:"Animalia > Chordata > Archosauria",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria",
   ta2:"Diápsido. Arcosaurio."
 },
 
 "003_04":{
-  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Hadrosauridae",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Hadrosauridae",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Hadrosáurido."
 },
 
@@ -189,13 +189,13 @@ window.PALTAXON = {
 },
 
 "003_07":{
-  ta1:"Animalia > Chordata > Pterosauria",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Pterosauria",
   ta2:"Diápsido. Arcosaurio. Pterosaurio."
 },
 
 "003_08":{
-  ta1:"Animalia > Chordata > Mammalia > Metatheria > Sparassodonta",
-  ta2:"Mamífero. Metaterio. Esparasodonte."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Metatheria > Sparassodonta",
+  ta2:"Sinápsido. Mamífero. Metaterio. Esparasodonte."
 },
 
 "003_09":{
@@ -219,8 +219,8 @@ window.PALTAXON = {
 },
 
 "003_13":{
-  ta1:"Animalia > Chordata > Mammalia > Pilosa",
-  ta2:"Mamífero. Mamífero placentario. Piloso."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Pilosa",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Piloso."
 },
 
 "003_14":{
@@ -229,8 +229,8 @@ window.PALTAXON = {
 },
 
 "003_15":{
-  ta1:"Animalia > Chordata > Mammalia > Hyaenodonta",
-  ta2:"Mamífero. Mamífero placentario. Hyaenodonto."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Hyaenodonta",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Hyaenodonto."
 },
 
 "004_01":{
@@ -249,8 +249,8 @@ window.PALTAXON = {
 },
 
 "004_04":{
-  ta1:"Animalia > Chordata > Testudines",
-  ta2:"Cordado. Vertebrado. Reptil. Quelonio."
+  ta1:"Animalia > Chordata > Diapsida > Testudines",
+  ta2:"Diápsido. Vertebrado. Reptil. Quelonio."
 },
 
 "004_05":{
@@ -259,7 +259,7 @@ window.PALTAXON = {
 },
 
 "004_06":{
-  ta1:"Animalia > Chordata > Dinosauria > Sauropodomorpha",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Sauropodomorpha",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Sauropodomorfo."
 },
 
@@ -294,20 +294,19 @@ window.PALTAXON = {
 },
 
 "004_13":{
-  ta1:"Animalia > Chordata > Pterosauria",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Pterosauria",
   ta2:"Diápsido. Arcosaurio. Pterosaurio."
 },
 
 "004_14":{
-  ta1:"Animalia > Chordata > Sauropterygia > Plesiosauria",
+  ta1:"Animalia > Chordata > Diapsida > Sauropterygia > Plesiosauria",
   ta2:"Diápsido. Sauropterigio. Plesiosaurio."
 },
 
 "004_15":{
-  ta1:"Animalia > Chordata > Mammalia > Marsupialia > Diprotodontia",
-  ta2:"Mamífero. Marsupial. Diprotodonto."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Marsupialia > Diprotodontia",
+  ta2:"Sinápsido. Mamífero. Marsupial. Diprotodonto."
 },
-
 
 "005_01":{
   ta1:"Animalia > Chordata > Synapsida > Therapsida > Anomodontia",
@@ -325,7 +324,7 @@ window.PALTAXON = {
 },
 
 "005_04":{
-  ta1:"Animalia > Chordata > Archosauria",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria",
   ta2:"Diápsido. Arcosaurio."
 },
 
@@ -340,18 +339,18 @@ window.PALTAXON = {
 },
 
 "005_07":{
-  ta1:"Animalia > Chordata > Dinosauria > Theropoda > Avialae",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Theropoda > Avialae",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Avialano."
 },
 
 "005_08":{
-  ta1:"Animalia > Chordata > Dinosauria > Theropoda > Ornithomimosauria",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Theropoda > Ornithomimosauria",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Ornitomimosaurio."
 },
 
 "005_09":{
-  ta1:"Animalia > Chordata > Mammalia > Dinocerata",
-  ta2:"Mamífero. Mamífero placentario. Dinocerato."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Dinocerata",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Dinocerato."
 },
 
 "005_10":{
@@ -370,8 +369,8 @@ window.PALTAXON = {
 },
 
 "005_13":{
-  ta1:"Animalia > Chordata > Mammalia > Meridiungulata > Astrapotheria",
-  ta2:"Mamífero. Mamífero placentario. Meridiungulado. Astrapoterio."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Meridiungulata > Astrapotheria",
+  ta2:"Sinápsido. Mamífero. Mamífero placentario. Meridiungulado. Astrapoterio."
 },
 
 "005_14":{
@@ -383,112 +382,119 @@ window.PALTAXON = {
   ta1:"Animalia > Chordata > Diapsida",
   ta2:"Diápsido."
 },
+
 "006_01":{
-  ta1:"Animalia > Chordata > Dinosauria > Theropoda > Tyrannosauridae",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Tyrannosauridae",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Tiranosáurido."
 },
 
 "006_02":{
-  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Ceratopsia > Chasmosauridae",
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Ceratopsia > Chasmosauridae",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Ceratopsio. Casmosáurido."
 },
+
 "006_03":{
-  ta1:"Animalia > Chordata > Sauropterygia > Nothosauroidea > Nothosauridae",
+  ta1:"Animalia > Chordata > Diapsida > Sauropterygia > Nothosauroidea > Nothosauridae",
   ta2:"Diápsido. Sauropterigio. Nothosauroideo. Notosáurido."
 },
- "006_04":{
-  ta1:"Animalia > Chordata > Reptilia > Pterosauria > Pterodactyloidea > Pteranodontidae",
-  ta2:"Diápsido. Pterosaurio. Pterodactiloideo. Pteranodóntido."
+
+"006_04":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Pterosauria > Pterodactyloidea > Pteranodontidae",
+  ta2:"Diápsido. Arcosaurio. Pterosaurio. Pterodactiloideo. Pteranodóntido."
 },
+
 "006_05":{
   ta1:"Animalia > Chordata > Synapsida > Therapsida > Gorgonopsia > Gorgonopsidae > Inostrancevia",
   ta2:"Sinápsido. Terápsido. Gorgonopsio. Gorgonópsido."
 },
+
 "006_06":{
-  ta1:"Animalia > Chordata > Mammalia > Perissodactyla > Litopterna > Macraucheniidae > Macrauchenia",
-  ta2:"Mamífero. Ungulado sudamericano. Litopterno. Macrauquénido."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Perissodactyla > Litopterna > Macraucheniidae > Macrauchenia",
+  ta2:"Sinápsido. Mamífero. Ungulado sudamericano. Litopterno. Macrauquénido."
 },
+
 "006_07":{
-  ta1:"Animalia > Chordata > Amphibia > Temnospondyli > Archegosauroidea > Archegosauridae > Prionosuchus",
-  ta2:"Tetrápodo. Temnospóndilo. Arquegosauroideo. Arquegosáurido."
+  ta1:"Animalia > Chordata > Tetrapoda > Temnospondyli > Archegosauroidea > Archegosauridae > Prionosuchus",
+  ta2:"Cordado. Vertebrado. Tetrápodo. Temnospóndilo. Arquegosauroideo. Arquegosáurido."
 },
+
 "006_08":{
-  ta1:"Animalia > Chordata > Ichthyosauria > Thunniformes > Temnodontosauridae > Temnodontosaurus",
+  ta1:"Animalia > Chordata > Diapsida > Ichthyosauria > Thunniformes > Temnodontosauridae > Temnodontosaurus",
   ta2:"Diápsido. Ictiosaurio. Ictiosaurio de gran tamaño. Temnodontosáurido."
 },
+
 "006_09":{
-  ta1:"Animalia > Chordata > Mammalia > Cetacea > Archaeoceti > Ambulocetidae > Ambulocetus",
-  ta2:"Mamífero. Cetáceo primitivo. Arqueoceto. Ambulocétido."
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Cetacea > Archaeoceti > Ambulocetidae > Ambulocetus",
+  ta2:"Sinápsido. Mamífero. Cetáceo primitivo. Arqueoceto. Ambulocétido."
 },
+
 "006_10":{
-  ta1:"Animalia > Chordata > Dinosauria > Saurischia > Sauropoda > Diplodocidae > Diplodocus",
-  ta2:"Dinosaurio. Saurisquio. Saurópodo. Diplodócido."
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Sauropoda > Diplodocidae > Diplodocus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Saurópodo. Diplodócido."
 },
+
 "006_11":{
-  ta1:"Animalia > Chordata > Dinosauria > Saurischia > Theropoda > Tetanurae > Chilesaurus",
-  ta2:"Dinosaurio. Saurisquio. Terópodo. Tetanuro."
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Tetanurae > Chilesaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Tetanuro."
 },
+
 "006_12":{
   ta1:"Animalia > Chordata > Actinopterygii > Pachycormiformes > Pachycormidae > Leedsichthys",
   ta2:"Pez óseo. Actinopterigio. Paquicórmido. Filtrador planctívoro."
 },
 "006_13":{
-  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Ornithopoda > Hadrosauridae > Lambeosaurinae > Parasaurolophus",
-  ta2:"Dinosaurio. Ornitisquio. Ornitópodo. Hadrosáurido lambeosaurino."
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Ornithopoda > Hadrosauridae > Lambeosaurinae > Parasaurolophus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Ornitópodo. Hadrosáurido lambeosaurino."
 },
+
 "006_14":{
-  ta1:"Animalia > Chordata > Reptilia > Crocodylomorpha > Sebecia > Sebecidae > Iberosuchus",
-  ta2:"Diápsido. Cocodrilomorfo. Sebécido. Cocodrilomorfo terrestre."
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Crocodylomorpha > Sebecia > Sebecidae > Iberosuchus",
+  ta2:"Diápsido. Arcosaurio. Cocodrilomorfo. Sebécido. Cocodrilomorfo terrestre."
 },
+
 "006_15":{
-  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Ornithopoda > Iguanodontidae > Iguanodon",
-  ta2:"Dinosaurio. Ornitisquio. Ornitópodo. Iguanodóntido."
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Ornithopoda > Iguanodontidae > Iguanodon",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Ornitópodo. Iguanodóntido."
 },
+
 "007_01":{
   ta1:"Animalia > Chordata > Synapsida > Caseasauria > Caseidae > Cotylorhynchus",
   ta2:"Sinápsido. Caseasaurio. Caseido. Herbívoro de gran tamaño."
 },
+
 "007_02":{
-  ta1:"Animalia > Chordata > Aves > Cariamiformes > Phorusrhacidae > Kelenken",
-  ta2:"Ave. Cariamiforme. Fororrácido. Ave del terror."
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Aves > Cariamiformes > Phorusrhacidae > Kelenken",
+  ta2:"Diápsido. Arcosaurio. Ave. Cariamiforme. Fororrácido. Ave del terror."
 },
+
 "007_03":{
-  ta1:"Animalia > Chordata > Dinosauria > Ornithischia > Thyreophora > Stegosauria > Stegosauridae > Stegosaurus",
-  ta2:"Dinosaurio. Ornitisquio. Tireóforo. Estegosáurido."
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Thyreophora > Stegosauria > Stegosauridae > Stegosaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Tireóforo. Estegosáurido."
 },
+
 "007_04":{
-  ta1:"Animalia > Chordata > Dinosauria > Saurischia > Theropoda > Tetanurae > Allosauroidea > Allosauridae > Allosaurus",
-  ta2:"Dinosaurio. Saurisquio. Terópodo. Alosáurido."
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Tetanurae > Allosauroidea > Allosauridae > Allosaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Alosáurido."
 },
-  "007_05":{
-  ta1:"Animalia > Chordata > Dinosauria > Saurischia > Theropoda > Spinosauridae > Spinosaurinae > Spinosaurus",
-  ta2:"Dinosaurio. Saurisquio. Terópodo. Espinosaurio. Espinosaurino."
+
+"007_05":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Spinosauridae > Spinosaurinae > Spinosaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Espinosaurio. Espinosaurino."
 },
-  "007_06":{
-  ta1:"Animalia > Chordata > Dinosauria > Saurischia > Sauropoda > Diplodocoidea > Diplodocidae > Apatosaurinae > Brontosaurus",
-  ta2:"Dinosaurio. Saurisquio. Saurópodo. Diplodócido. Apatosaurino."
+
+"007_06":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Sauropoda > Diplodocoidea > Diplodocidae > Apatosaurinae > Brontosaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Saurópodo. Diplodócido. Apatosaurino."
 },
+
 "007_07":{
-  ta1:"Animalia > Chordata > Reptilia > Squamata > Mosasauroidea > Mosasauridae > Mosasaurus",
+  ta1:"Animalia > Chordata > Diapsida > Squamata > Mosasauroidea > Mosasauridae > Mosasaurus",
   ta2:"Diápsido. Escamoso. Mosasauroideo. Mosasáurido."
 },
+
 "007_08":{
-  ta1:"Animalia > Chordata > Reptilia > Pterosauria > Pterodactyloidea > Ornithocheiridae > Ornithocheirus",
-  ta2:"Diápsido. Pterosaurio. Pterodactiloideo. Ornitoqueírido."
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Pterosauria > Pterodactyloidea > Ornithocheiridae > Ornithocheirus",
+  ta2:"Diápsido. Arcosaurio. Pterosaurio. Pterodactiloideo. Ornitoqueírido."
 }
-  
+
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
