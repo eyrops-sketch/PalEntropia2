@@ -668,26 +668,33 @@ function limpiarRegistro() {
     document.getElementById("registroCombate").innerHTML = ""; 
 } 
 
+    
 function añadirRegistro(txt) { 
     const reg = document.getElementById("registroCombate");
     if (!reg) return;
     
-    // Si es el mensaje inicial de bienvenida, limpiamos el texto de "vacio"
+    // Eliminar el mensaje de "combate no ha comenzado" si está presente
     const vacio = reg.querySelector(".registro-vacio");
-    if (vacio) vacio.remove();
+    if (vacio) {
+        vacio.remove();
+    }
 
+    // Crear y añadir la nueva línea de log al final
     const lin = document.createElement("div"); 
     lin.className = "linea-registro"; 
     lin.textContent = txt; 
     reg.appendChild(lin); 
+    
+    // Forzar el scroll hacia abajo para que el log actual sea visible de inmediato
     reg.scrollTop = reg.scrollHeight; 
     
-    // El centro SOLO muestra el número de turno, nunca los mensajes largos
+    // Mantener el centro únicamente con el número de turno limpio
     const turnoActual = document.getElementById("turnoActual");
     if (turnoActual && combate && combate.turno) {
         turnoActual.textContent = "Turno " + combate.turno;
     }
 }
+
 
 
 function mostrarMensaje(txt) { 
