@@ -142,30 +142,38 @@ function mostrarIdentificadorTorneo() {
     if (tituloBloque) tituloBloque.textContent = "🏆 Torneo " + criterio;
 }
 
+
+    
+    
 async function obtenerMapaNombresMaster() {
     const mapa = new Map();
     try {
-        const respuesta = await fetch("../generador_fase_2/master.csv");
+        const respuesta = await fetch("../generador_fase_2/paleofichas.json");
         if (!respuesta.ok) return mapa;
-        const textoMaster = await respuesta.text();
-        const lineas = textoMaster.split(/\r?\n/);
-        lineas.forEach(linea => {
-            if (!linea.trim()) return;
-            const columnas = linea.split(",");
-            if (columnas.length < 2) return;
-            const codigo = String(columnas[0] || "").trim().toUpperCase();
-            const nombre = String(columnas[1] || "").trim();
-            if (codigo && nombre && codigo !== "J1") {
-                mapa.set(codigo, nombre);
-            }
-        });
+        const data = await respuesta.json();
+        
+        if (Array.isArray(data)) {
+            data.forEach(ficha => {
+                const codigo = String(ficha.codigo || ficha.id || "").trim().toUpperCase();
+                const nombre = String(ficha.name || ficha.nombre || "").trim();
+                if (codigo && nombre) {
+                    mapa.set(codigo, nombre);
+                }
+            });
+        }
     } catch (e) {
-        console.warn("No se pudo cargar el mapa de nombres desde master.csv", e);
+        console.warn("No se pudo cargar el mapa de nombres desde paleofichas.json", e);
     }
     return mapa;
 }
 
-async function cargarParticipantesTorneo() {
+
+
+
+    
+    
+    
+    async function cargarParticipantesTorneo() {
     const lista = document.getElementById("listaParticipantes");
     if (!lista) return;
     lista.innerHTML = "";
