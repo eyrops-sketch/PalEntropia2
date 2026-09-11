@@ -142,6 +142,29 @@ function mostrarIdentificadorTorneo() {
     if (tituloBloque) tituloBloque.textContent = "🏆 Torneo " + criterio;
 }
 
+async function obtenerMapaNombresMaster() {
+    const mapa = new Map();
+    try {
+        const respuesta = await fetch("../generador_fase_2/master.csv");
+        if (!respuesta.ok) return mapa;
+        const textoMaster = await respuesta.text();
+        const lineas = textoMaster.split(/\r?\n/);
+        lineas.forEach(linea => {
+            if (!linea.trim()) return;
+            const columnas = linea.split(",");
+            if (columnas.length < 2) return;
+            const codigo = String(columnas[0] || "").trim().toUpperCase();
+            const nombre = String(columnas[1] || "").trim();
+            if (codigo && nombre && codigo !== "J1") {
+                mapa.set(codigo, nombre);
+            }
+        });
+    } catch (e) {
+        console.warn("No se pudo cargar el mapa de nombres desde master.csv", e);
+    }
+    return mapa;
+}
+
 async function cargarParticipantesTorneo() {
     const lista = document.getElementById("listaParticipantes");
     if (!lista) return;
@@ -157,14 +180,21 @@ async function cargarParticipantesTorneo() {
         lista.innerHTML = "<p>No hay participantes cargados.</p>";
         return;
     }
-    matrizJ1.forEach(j1 => {
+
+    const mapaNombres = await obtenerMapaNombresMaster();
+
+    matrizJ1.forEach(codigo => {
+        const codigoLimpio = String(codigo).trim().toUpperCase();
+        const nombreEspecie = mapaNombres.get(codigoLimpio) || "";
+
         const item = document.createElement("div");
         item.style.padding = "6px 0";
         item.style.borderBottom = "1px solid #30363d";
-        item.textContent = j1;
+        item.textContent = nombreEspecie ? `${codigo} - ${nombreEspecie}` : codigo;
         lista.appendChild(item);
     });
 }
+
 document.getElementById("botonParticipantes").addEventListener("click", function() {
     const panel = document.getElementById("panelParticipantes");
     if (panel.style.display === "none") {
