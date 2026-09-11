@@ -57,11 +57,14 @@
             <div id="serieFormato">—</div>             
             <div id="partidoSerie">—</div>         </div>     
     </section>
-        <section id="combatientes" class="zona-combatientes">         
+     <section id="combatientes" class="zona-combatientes">         
         <article id="combatiente1" class="tarjeta-combatiente">             
             <div class="cabecera-combatiente">                 
                 <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>                 
-                <div id="c1Perfil" class="perfil">—</div>             
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">                     
+                    <div id="c1Rol" style="font-size: 0.75rem; font-weight: bold; background: rgba(88, 166, 255, 0.15); color: #58a6ff; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(88, 166, 255, 0.3);">🎮 Jugador</div>                     
+                    <div id="c1Perfil" class="perfil">—</div>                 
+                </div>             
             </div>             
             <div class="contenedor-imagen-combatiente"><img id="c1Imagen" class="imagen-combatiente" src="" alt=""></div>             
             <div id="c1Victorias" class="victorias-serie">🏆 Victorias: 0</div>             
@@ -72,12 +75,15 @@
         </article>         
         <div class="centro-combate">             
             <div class="icono-vs">⚔️</div>             
-            <div id="turnoActual" class="turno">Turno —</div>             
+            <div id="turnoActual" class="turno">En combate!</div>             
             <div id="iniciativa" class="iniciativa">—</div>         </div>         
         <article id="combatiente2" class="tarjeta-combatiente">             
             <div class="cabecera-combatiente">                 
                 <div><div id="c2Nombre" class="nombre">—</div><div id="c2Codigo" class="codigo">—</div></div>                 
-                <div id="c2Perfil" class="perfil">—</div>             
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">                     
+                    <div id="c2Rol" style="font-size: 0.75rem; font-weight: bold; background: rgba(248, 81, 73, 0.15); color: #f85149; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(248, 81, 73, 0.3);">💻 CPU</div>                     
+                    <div id="c2Perfil" class="perfil">—</div>                 
+                </div>             
             </div>             
             <div class="contenedor-imagen-combatiente"><img id="c2Imagen" class="imagen-combatiente" src="" alt=""></div>             
             <div id="c2Victorias" class="victorias-serie">🏆 Victorias: 0</div>             
@@ -161,7 +167,8 @@
 <script src="standar.js"></script> 
 <script src="../generador_fase_2/buscaruta.js"></script> 
 <script src="loadimagen.js"></script>
-<script> 
+
+ <script> 
 const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json"; 
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null; 
 let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false; 
@@ -258,7 +265,40 @@ function limpiarTextoResultadoAnterior() {
     const iniciativa = document.getElementById("iniciativa");
     if (iniciativa) iniciativa.textContent = "—";
 }
-controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { controlManual = Number(ctrl.value); if (combateActivo) activarBotones(); })); 
+
+function actualizarRolesVisuales() {
+    const rol1 = document.getElementById("c1Rol");
+    const rol2 = document.getElementById("c2Rol");
+    if (!rol1 || !rol2) return;
+    
+    if (controlManual === 1) {
+        rol1.innerHTML = "🎮 Jugador";
+        rol1.style.background = "rgba(88, 166, 255, 0.15)";
+        rol1.style.color = "#58a6ff";
+        rol1.style.borderColor = "rgba(88, 166, 255, 0.3)";
+        
+        rol2.innerHTML = "💻 CPU";
+        rol2.style.background = "rgba(248, 81, 73, 0.15)";
+        rol2.style.color = "#f85149";
+        rol2.style.borderColor = "rgba(248, 81, 73, 0.3)";
+    } else {
+        rol1.innerHTML = "💻 CPU";
+        rol1.style.background = "rgba(248, 81, 73, 0.15)";
+        rol1.style.color = "#f85149";
+        rol1.style.borderColor = "rgba(248, 81, 73, 0.3)";
+        
+        rol2.innerHTML = "🎮 Jugador";
+        rol2.style.background = "rgba(88, 166, 255, 0.15)";
+        rol2.style.color = "#58a6ff";
+        rol2.style.borderColor = "rgba(88, 166, 255, 0.3)";
+    }
+}
+
+controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
+    controlManual = Number(ctrl.value); 
+    actualizarRolesVisuales();
+    if (combateActivo) activarBotones(); 
+})); 
 
 botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; }); 
 
@@ -305,7 +345,7 @@ async function aplicarConfiguracionAleatoriaSiEstaActivo() {
                     if (val === "true") val = true; else if (val === "false") val = false; else if (!isNaN(val)) val = Number(val);                     
                     configExterna[parametro] = val;                 }             }         }         
         const reglasActuales = obtenerReglasTorneo();         
-        reglasActuales.tipoCombate = modoAleatorio; reglasActuales.coeficientes = configExterna;         
+        reglasActuales.tipoCombate = modoAleatorio; reg.coeficientes = configExterna;         
         localStorage.setItem(CLAVE_REGLAS, JSON.stringify(reglasActuales));     } catch (err) { console.warn("Error al aplicar configuración aleatoria:", err); } 
 } 
 
@@ -346,6 +386,7 @@ function mostrarCombatientes() {
     document.getElementById("c2Nombre").textContent = combatiente2.nombre || "—";     
     document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";     
     document.getElementById("c2Perfil").textContent = nombreModoTexto;     
+    actualizarRolesVisuales();
     mostrarBarra(combatiente1.hp, combatiente1.hp_max, "c1VidaTexto", "c1VidaBarra");     
     mostrarBarra(combatiente2.hp, combatiente2.hp_max, "c2VidaTexto", "c2VidaBarra");     
     mostrarBarra(combatiente1.fatiga, combatiente1.fatiga_max, "c1FatigaTexto", "c1FatigaBarra");     
@@ -385,7 +426,7 @@ function activarBotones() {
 
 function desactivarBotones() { 
     botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; 
-    }
+     }
 function interpretarRes(res, at, ob) {     
     if (!res) return;     
     if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) { res.dano = Math.round(res.dano * 0.5); añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%."); }     
@@ -693,6 +734,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                             document.getElementById("c2Codigo").textContent = combatiente2.codigo;
                             document.getElementById("c2Perfil").textContent = nombreModoTexto;
                             
+                            actualizarRolesVisuales();
                             mostrarBarra(combatiente1.hp, combatiente1.hp_max, "c1VidaTexto", "c1VidaBarra");
                             mostrarBarra(combatiente2.hp, combatiente2.hp_max, "c2VidaTexto", "c2VidaBarra");
                             mostrarBarra(combatiente1.fatiga, combatiente1.fatiga_max, "c1FatigaTexto", "c1FatigaBarra");
@@ -710,6 +752,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                         
                         desactivarBotones();
                         if (botonSerie) botonSerie.disabled = false;
+                        limpiarTextoResultadoAnterior();
                         mostrarMensaje("Combatientes listos. Elige tu control manual y pulsa 'Iniciar la serie'.");
                     }                 
                 }, 100);             
@@ -718,5 +761,3 @@ document.addEventListener("DOMContentLoaded", async function() {
 </script> 
 </body> 
 </html>
-
-    
