@@ -219,9 +219,21 @@ function obtenerConfiguracionActiva() {
 
 function actualizarInterfazModalidad() {     
     const reg = obtenerReglasTorneo();     
-    const nombreModo = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";     
-    if (labelModalidadActual) labelModalidadActual.innerHTML = `📜 Modalidad actual: <strong>${nombreModo}</strong>`; 
-} 
+    const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
+    
+    let nombreModo = "Elegir configuración";
+    
+    if (esAleatorio) {
+        nombreModo = "Aleatorio";
+    } else if (reg.tipoCombate) {
+        nombreModo = reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ');
+    }
+    
+    if (labelModalidadActual) {
+        labelModalidadActual.innerHTML = `📜 Modalidad actual: <strong>${nombreModo}</strong>`; 
+    }
+}
+
 
 function actualizarInterfazSerie() {     
     const c1v = document.getElementById("c1Victorias"), c2v = document.getElementById("c2Victorias");     
