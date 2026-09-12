@@ -165,6 +165,66 @@ const REGLAS_TORNEO_DEFECTO = {
 };
 
 /* =====================================================
+   OBTENER REGLAS
+   ===================================================== */
+function obtenerReglasTorneo() {
+    const guardado = localStorage.getItem(CLAVE_REGLAS_TORNEO);
+    if (!guardado) {
+        return { ...REGLAS_TORNEO_DEFECTO };
+    }
+    try {
+        const reglas = JSON.parse(guardado);
+        return { ...REGLAS_TORNEO_DEFECTO, ...reglas };
+    }
+    catch (error) {
+        console.error("Reglas del torneo no válidas:", error);
+        return { ...REGLAS_TORNEO_DEFECTO };
+    }
+}
+
+/* =====================================================
+   CARGAR REGLAS EN LA INTERFAZ (DECLARADA ANTES)
+   ===================================================== */
+function cargarReglasEnInterfaz() {
+    const reglas = obtenerReglasTorneo();
+    const partidos = document.getElementById("partidosSerie");
+    const tipo = document.getElementById("tipoCombate");
+    
+    let valorPartidos = Number(reglas.partidosSerie);
+    if (!Number.isInteger(valorPartidos) || valorPartidos < 1 || valorPartidos % 2 === 0) {
+        valorPartidos = 1;
+    }
+    if (partidos) partidos.value = valorPartidos;
+    
+    if (tipo) {
+        const opcionExiste = Array.from(tipo.options).some(opcion => opcion.value === reglas.tipoCombate);
+        if (opcionExiste) {
+            tipo.value = reglas.tipoCombate;
+        } else {
+            tipo.value = "standard";
+        }
+    }
+
+    // Cargar estado del checkbox aleatorio general
+    const aleatorioGuardado = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
+    const aleatorioCheckInput = document.getElementById("modoAleatorioConfig");
+    if (aleatorioCheckInput) {
+        aleatorioCheckInput.checked = aleatorioGuardado;
+    }
+
+    // Cargar factor imprevisible y checkbox de la IA de forma estricta
+    const inputFactor = document.getElementById("factorImprevisibleIA");
+    if (inputFactor) {
+        inputFactor.value = reglas.factorImprevisible !== undefined ? reglas.factorImprevisible : 1.0;
+    }
+
+    const checkIa = document.getElementById("checkAleatorioIA");
+    if (checkIa) {
+        checkIa.checked = Boolean(reglas.iaAleatoria);
+    }
+}
+
+/* =====================================================
    CARGAR MODOS DESDE EL CSV
    ===================================================== */
 async function cargarModosDesdeCSV() {
@@ -190,25 +250,9 @@ async function cargarModosDesdeCSV() {
         }
     } catch (err) {
         console.warn("No se pudo leer el CSV en reglas.html, manteniendo opción por defecto.", err);
-    }
-    cargarReglasEnInterfaz();
-}
-
-/* =====================================================
-   OBTENER REGLAS
-   ===================================================== */
-function obtenerReglasTorneo() {
-    const guardado = localStorage.getItem(CLAVE_REGLAS_TORNEO);
-    if (!guardado) {
-        return { ...REGLAS_TORNEO_DEFECTO };
-    }
-    try {
-        const reglas = JSON.parse(guardado);
-        return { ...REGLAS_TORNEO_DEFECTO, ...reglas };
-    }
-    catch (error) {
-        console.error("Reglas del torneo no válidas:", error);
-        return { ...REGLAS_TORNEO_DEFECTO };
+    } finally {
+        // Garantizar siempre la carga de los valores guardados en la interfaz tras procesar el select
+        cargarReglasEnInterfaz();
     }
 }
 
@@ -219,13 +263,11 @@ async function guardarReglasTorneo() {
     const partidos = Number(document.getElementById("partidosSerie").value);
     const tipo = document.getElementById("tipoCombate").value;
     
-    // Guardar estado del checkbox aleatorio general
     const aleatorioCheck = document.getElementById("modoAleatorioConfig");
     if (aleatorioCheck) {
         localStorage.setItem(CLAVE_ALEATORIO_CONFIG, aleatorioCheck.checked ? "true" : "false");
     }
 
-    // Guardar factor imprevisible y check aleatorio de la IA
     const factorInput = document.getElementById("factorImprevisibleIA");
     const factorImprevisible = factorInput ? (parseFloat(factorInput.value) || 1.0) : 1.0;
 
@@ -307,46 +349,6 @@ function mostrarIdentificadorTorneo() {
     if (subtitulo) { subtitulo.textContent = "Reglas — " + criterio; }
     if (titulo) { titulo.textContent = "⚙️ Reglas del torneo — " + criterio; }
     if (descripcion) { descripcion.textContent = "Configuración del torneo — " + criterio; }
-}
-
-/* =====================================================
-   CARGAR REGLAS EN LA INTERFAZ
-   ===================================================== */
-function cargarReglasEnInterfaz() {
-    const reglas = obtenerReglasTorneo();
-    const partidos = document.getElementById("partidosSerie");
-    const tipo = document.getElementById("tipoCombate");
-    
-    let valorPartidos = Number(reglas.partidosSerie);
-    if (!Number.isInteger(valorPartidos) || valorPartidos < 1 || valorPartidos % 2 === 0) {
-        valorPartidos = 1;
-    }
-    partidos.value = valorPartidos;
-    
-    const opcionExiste = Array.from(tipo.options).some(opcion => opcion.value === reglas.tipoCombate);
-    if (opcionExiste) {
-        tipo.value = reglas.tipoCombate;
-    } else {
-        tipo.value = "standard";
-    }
-
-    // Cargar estado del checkbox aleatorio general
-    const aleatorioGuardado = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
-    const aleatorioCheckInput = document.getElementById("modoAleatorioConfig");
-    if (aleatorioCheckInput) {
-        aleatorioCheckInput.checked = aleatorioGuardado;
-    }
-
-    // Cargar factor imprevisible y checkbox de la IA
-    const inputFactor = document.getElementById("factorImprevisibleIA");
-    if (inputFactor) {
-        inputFactor.value = reglas.factorImprevisible !== undefined ? reglas.factorImprevisible : 1.0;
-    }
-
-    const checkIa = document.getElementById("checkAleatorioIA");
-    if (checkIa) {
-        checkIa.checked = Boolean(reglas.iaAleatoria);
-    }
 }
 
 /* =====================================================
