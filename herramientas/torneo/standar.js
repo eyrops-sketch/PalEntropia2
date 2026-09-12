@@ -178,7 +178,10 @@ window.PALARENA_STANDAR = (function() {
         if (codigoAccion === "A001") costeFatiga = config.coste_fatiga_A001;
         else if (codigoAccion === "A002") costeFatiga = config.coste_fatiga_A002;
         else if (codigoAccion === "A003") costeFatiga = config.coste_fatiga_A003;
-        else if (codigoAccion === "D001") {
+       
+        
+        
+                else if (codigoAccion === "D001") {
             if (atacante.usosDefensaConsecutivos === undefined) atacante.usosDefensaConsecutivos = 0;
             atacante.usosDefensaConsecutivos++;
 
@@ -193,8 +196,12 @@ window.PALARENA_STANDAR = (function() {
                 objetivo.fatiga = Math.min(config.fatiga_max || 100, fatigaActualRival + reposicionRival);
 
                 atacante.defendiendo = true;
+                
+                // 🛠️ IMPORTANTE: Reiniciamos el contador para evitar el bucle infinito de spam
+                atacante.usosDefensaConsecutivos = 0;
+
                 return {
-                    mensaje: `🛡️⚡ ¡${atacante.nombre} encadena su tercera defensa consecutiva con maestría absoluta! Reduce su propia fatiga un 40% y devuelve un 40% de resuello a ${objetivo.nombre}.`,
+                    mensaje: `🛡️⚡ ¡${atacante.nombre} ejecuta una defensa maestra absoluta! Reduce su propia fatiga un 40% y devuelve un 40% de resuello a ${objetivo.nombre}.`,
                     defensa: "maestra"
                 };
             } else if (atacante.usosDefensaConsecutivos === 2) {
@@ -202,8 +209,13 @@ window.PALARENA_STANDAR = (function() {
             } else {
                 costeFatiga = 5;
             }
-        }
+                }
+            
 
+
+
+
+            
         if (codigoAccion !== "D001") {
             atacante.usosDefensaConsecutivos = 0;
         }
