@@ -387,15 +387,31 @@ window.PALARENA_STANDAR = (function() {
         };
     }
 
-    function decidirAccion(atacante, objetivo) {
+
+
+
+
+    
+        function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
+        
+        // 1. Leer las nuevas propiedades de la IA desde la configuración global sincronizada
+        const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
+        const iaAleatoria = Boolean(config.iaAleatoria);
+
+        // 2. Si el check aleatorio está activo, la IA escoge de forma completamente caótica/estocástica ponderada por el factor
+        if (iaAleatoria) {
+            const accionesDisponibles = ["A001", "A001", "A002", "A003", "D001"];
+            const accionElegida = accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
+            if (accionElegida !== "A001") atacante.rachaBasicos = 0;
+            return accionElegida;
+        }
 
         if (atacante.estadoCaotico && atacante.estadoCaotico > 0) {
             atacante.estadoCaotico--;
-            if (Math.random() < 0.80) {
+            if (Math.random() < (0.80 * factorImprevisible)) {
                 const accionesDisponibles = ["A001", "A002", "A003", "D001"];
                 const accionAleatoria = accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
-                
                 if (accionAleatoria !== "A001") atacante.rachaBasicos = 0;
                 return accionAleatoria;
             }
@@ -404,30 +420,29 @@ window.PALARENA_STANDAR = (function() {
         const fatigaActual = Number(atacante.fatiga) || 0;
         const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
         const objetivoHpPorcentaje = (objetivo.hp / objetivo.hp_max) * 100;
-        const pesoAleatorio = Number(config.ia_peso_aleatorio) !== undefined && !isNaN(Number(config.ia_peso_aleatorio)) ? Number(config.ia_peso_aleatorio) : 0.40;
+        
+        // 3. Aplicar el factor imprevisible al peso aleatorio base de la IA (escalándolo con el coeficiente)
+        let pesoAleatorioBase = Number(config.ia_peso_aleatorio) !== undefined && !isNaN(Number(config.ia_peso_aleatorio)) ? Number(config.ia_peso_aleatorio) : 0.40;
+        const pesoAleatorio = Math.min(1.0, Math.max(0.0, pesoAleatorioBase * factorImprevisible));
 
         if (Math.random() < pesoAleatorio) {
             const accionesDisponibles = ["A001", "A003"];
             const costePotente = Number(config.coste_fatiga_A002) || 38;
             const fatigaMinPotente = Number(config.fatiga_minima_ataque_potente) || 65;
             const multiCrit = Number(config.multiplicador_critico) || 1.0;
-
             if (multiCrit > 1.0 && fatigaActual >= fatigaMinPotente && fatigaActual >= costePotente) {
                 accionesDisponibles.push("A002");
             }
-
             const costeDefensa = Number(config.coste_fatiga_D001) || 20;
             if (fatigaActual >= costeDefensa) {
                 accionesDisponibles.push("D001");
             }
-
             return accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
         }
 
         const costePotente = Number(config.coste_fatiga_A002) || 38;
         const fatigaMinPotente = Number(config.fatiga_minima_ataque_potente) || 65;
         const multiCrit = Number(config.multiplicador_critico) || 1.0;
-
         if (multiCrit > 1.0 && fatigaActual >= fatigaMinPotente && fatigaActual >= costePotente) {
             if (objetivoHpPorcentaje < 35 || hpPorcentaje > 60) {
                 return "A002";
@@ -440,13 +455,22 @@ window.PALARENA_STANDAR = (function() {
         }
 
         const costeTactico = Number(config.coste_fatiga_A003) || 10;
-        if (fatigaActual >= costeTactico && ((atacante.efectivos.tactica + (atacante.tacticaTemporal || 0)) > 40 || Math.random() < 0.50)) {
+        if (fatigaActual >= costeTactico && ((atacante.efectivos.tactica + (atacante.tacticaTemporal || 0)) > 40 || Math.random() < (0.50 * factorImprevisible))) {
             return "A003";
         }
 
         return "A001";
     }
-        function obtenerCombatiente(combate, codigo) {
+
+        
+    
+    
+    
+    
+    
+    
+    
+    function obtenerCombatiente(combate, codigo) {
         if (combate.combatiente1.codigo === codigo) return combate.combatiente1;
         if (combate.combatiente2.codigo === codigo) return combate.combatiente2;
         return null;
