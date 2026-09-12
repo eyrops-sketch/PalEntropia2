@@ -462,8 +462,9 @@ function mostrarEstado(c, pref) {
     const est = document.getElementById(pref + "Estado"); if (!est) return;     
     const m = []; if (c.derrotado) m.push("☠️ Derrotado"); if (c.defendiendo) m.push("🛡️ Defendiendo");     
     if (Array.isArray(c.efectos)) c.efectos.forEach(ef => { if (ef) { const nom = ef.nombre || ef.codigo || "Efecto", dur = ef.turnos !== undefined ? ef.turnos : ef.duracion; m.push(dur !== undefined && dur > 0 ? `✨ ${nom} (${dur})` : `✨ ${nom}`); } });     
-    est.textContent = m.length ? m.join(" · ") : "—";     
-} 
+    est.textContent = m.length ? m.join(" · ") : "En combate!";     
+}
+
 
 function activarBotones() {     
     const cm = controlManual === 1 ? combatiente1 : combatiente2, cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;     
