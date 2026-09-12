@@ -290,106 +290,84 @@ function mostrarCruce(cruce) {
             versus.style.cursor = "default";         }         
         participantes.appendChild(versus);         
         participantes.appendChild(crearParticipanteVisual(cruce.participante2, datosSeries));         
+       
         const botonSimular = document.createElement("button");
-        botonSimular.type = "button";
-        botonSimular.className = "botonSimularIndividual";
-        botonSimular.textContent = "⚡";
-        botonSimular.title = "Simular combate individualmente (Plan B)";
-        if (p1Valido && p2Valido) {
-            const codigo1 = typeof p1Real === "string" ? p1Real : p1Real.j1;
-            const codigo2 = typeof p2Real === "string" ? p2Real : p2Real.j1;
-            botonSimular.addEventListener("click", async function(e) {
-                e.stopPropagation();
-                try {
-                    let reglas = {};
-                    try { reglas = JSON.parse(localStorage.getItem("palentropia_reglas_torneo")) || {}; } catch(err) {}
-                    const partidosSerie = Number(reglas.partidosSerie) || 1;
-                    const vNec = Math.floor(partidosSerie / 2) + 1;
-                    const mapaNombres = await obtenerMapaNombres();
-                    const f1Base = typeof buscarFicha === "function" ? buscarFicha(codigo1) : null;
-                    const f2Base = typeof buscarFicha === "function" ? buscarFicha(codigo2) : null;
-                    const ficha1 = f1Base || { j1: codigo1, j2: mapaNombres.get(codigo1) || codigo1, nombre: mapaNombres.get(codigo1) || codigo1 };
-                    const ficha2 = f2Base || { j1: codigo2, j2: mapaNombres.get(codigo2) || codigo2, nombre: mapaNombres.get(codigo2) || codigo2 };
-                    let configActiva = ficha1;
-                    if (typeof obtenerConfiguracionActiva === "function") {
-                        const cfgTemp = obtenerConfiguracionActiva();
-                        if (cfgTemp) configActiva = cfgTemp;
-                    }
-                    if (typeof window.crearCombateEstandar !== "function" || typeof window.ejecutarTurnoEstandar !== "function") {
-                        alert("⚠️ El motor estándar de combate no está cargado.");
-                        return;
-                    }
-                    
-                    const combateSimulado = window.crearCombateEstandar(ficha1, ficha2, configActiva);
-                    let seguridadTurnos = 0;
-                    while (combateSimulado && combateSimulado.estado !== "finalizado" && seguridadTurnos < 100) {
-                        if (typeof window.ejecutarTurnoEstandar === "function") {
-                            window.ejecutarTurnoEstandar(combateSimulado);
-                        } else {
-                            combateSimulado.estado = "finalizado";
-                            combateSimulado.ganador = Math.random() < 0.5 ? codigo1 : codigo2;
-                        }
-                        seguridadTurnos++;
-                    }
+botonSimular.type = "button";
+botonSimular.className = "botonSimularIndividual";
+botonSimular.textContent = "⚡";
+botonSimular.title = "Simular serie automáticamente";
+if (p1Valido && p2Valido) {
+    const codigo1 = typeof p1Real === "string" ? p1Real : p1Real.j1;
+    const codigo2 = typeof p2Real === "string" ? p2Real : p2Real.j1;
+    botonSimular.addEventListener("click", async function(e) {
+        e.stopPropagation();
+        try {
+            let reglas = {};
+            try { reglas = JSON.parse(localStorage.getItem("palentropia_reglas_torneo")) || {}; } catch(err) {}
+            const partidosSerie = Number(reglas.partidosSerie) || 1;
+            const vNec = Math.floor(partidosSerie / 2) + 1;
+            const mapaNombres = await obtenerMapaNombres();
+            
+            const nombre1 = mapaNombres.get(codigo1) || codigo1;
+            const nombre2 = mapaNombres.get(codigo2) || codigo2;
 
-                    const ganadorCombateCodigo = combateSimulado ? combateSimulado.ganador : codigo1;
-                    const esP1GanadorReal = (ganadorCombateCodigo === codigo1);
-                    const aleatorioPerdedor = Math.floor(Math.random() * (vNec + 1));
-                    let victorias1 = 0, victorias2 = 0, ganadorSerieCodigo = "", ganadorSerieNombre = "";
-                    const nombre1 = ficha1.j2 || ficha1.nombre || codigo1;
-                    const nombre2 = ficha2.j2 || ficha2.nombre || codigo2;
-                    if (aleatorioPerdedor === vNec) {
-                        if (esP1GanadorReal) {
-                            victorias1 = vNec - 1;
-                            victorias2 = vNec;
-                            ganadorSerieCodigo = codigo2;
-                            ganadorSerieNombre = nombre2;
-                        } else {
-                            victorias1 = vNec;
-                            victorias2 = vNec - 1;
-                            ganadorSerieCodigo = codigo1;
-                            ganadorSerieNombre = nombre1;
-                        }
-                    } else {
-                        if (esP1GanadorReal) {
-                            victorias1 = vNec;
-                            victorias2 = aleatorioPerdedor;
-                            ganadorSerieCodigo = codigo1;
-                            ganadorSerieNombre = nombre1;
-                        } else {
-                            victorias1 = aleatorioPerdedor;
-                            victorias2 = vNec;
-                            ganadorSerieCodigo = codigo2;
-                            ganadorSerieNombre = nombre2;
-                        }
-                    }
-                    let resultadosSeries = {};
-                    try { resultadosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch(err) {}
-                    resultadosSeries[cruce.numero] = {
-                        ganadorCodigo: ganadorSerieCodigo,
-                        ganadorNombre: ganadorSerieNombre,
-                        victorias1: victorias1,
-                        victorias2: victorias2,
-                        combatiente1Codigo: codigo1,
-                        combatiente2Codigo: codigo2
-                    };
-                    localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(resultadosSeries));
-                    if (typeof iniciarCombates === "function") {
-                        iniciarCombates();
-                    } else {
-                        window.location.reload();
-                    }
-                } catch (err) {
-                    console.error("Error en simulación Plan B:", err);
-                    alert("❌ Ocurrió un error al simular el combate.");
-                }
-            });
-        } else {
-            botonSimular.disabled = true;
-            botonSimular.style.opacity = "0.35";
-            botonSimular.style.cursor = "default";
+            const ganaP1 = Math.random() < 0.5;
+            let victorias1 = 0;
+            let victorias2 = 0;
+            let ganadorSerieCodigo = "";
+            let ganadorSerieNombre = "";
+
+            const perdedorScore = Math.floor(Math.random() * vNec);
+
+            if (ganaP1) {
+                victorias1 = vNec;
+                victorias2 = perdedorScore;
+                ganadorSerieCodigo = codigo1;
+                ganadorSerieNombre = nombre1;
+            } else {
+                victorias1 = perdedorScore;
+                victorias2 = vNec;
+                ganadorSerieCodigo = codigo2;
+                ganadorSerieNombre = nombre2;
+            }
+
+            let resultadosSeries = {};
+            try { resultadosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch(err) {}
+            
+            resultadosSeries[cruce.numero] = {
+                ganadorCodigo: ganadorSerieCodigo,
+                ganadorNombre: ganadorSerieNombre,
+                victorias1: victorias1,
+                victorias2: victorias2,
+                combatiente1Codigo: codigo1,
+                combatiente2Codigo: codigo2
+            };
+            
+            localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(resultadosSeries));
+            if (typeof iniciarCombates === "function") {
+                iniciarCombates();
+            } else {
+                window.location.reload();
+            }
+        } catch (err) {
+            console.error("Error en simulación directa:", err);
+            alert("❌ Ocurrió un error al simular el combate.");
         }
-        tarjeta.appendChild(botonSimular);
+    });
+} else {
+    botonSimular.disabled = true;
+    botonSimular.style.opacity = "0.35";
+    botonSimular.style.cursor = "default";
+}
+tarjeta.appendChild(botonSimular);
+
+    
+    
+    
+    
+    
+    
+    
     }     
     tarjeta.appendChild(participantes);     
     return tarjeta; 
