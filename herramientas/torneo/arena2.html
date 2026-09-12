@@ -205,18 +205,65 @@ const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), 
 const labelModalidadActual = document.getElementById("labelModalidadActual"); 
 const controlesManual = document.querySelectorAll('input[name="controlManual"]'); 
 
+
+
+
+
+    
 function obtenerReglasTorneo() {     
     const g = localStorage.getItem(CLAVE_REGLAS);     
     if (!g) return { ...REGLAS_DEF };     
-    try { const r = JSON.parse(g); return { partidosSerie: Number(r.partidosSerie) || 1, tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal" }; } catch (e) { return { ...REGLAS_DEF }; } 
-} 
+
+    try { 
+        const r = JSON.parse(g); 
+
+        return { 
+            partidosSerie: Number(r.partidosSerie) || 1,
+            tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal",
+            factorImprevisible: r.factorImprevisible !== undefined
+                ? Number(r.factorImprevisible)
+                : 1.0,
+            iaAleatoria: r.iaAleatoria !== undefined
+                ? Boolean(r.iaAleatoria)
+                : false,
+            coeficientes: r.coeficientes || {}
+        }; 
+    } catch (e) { 
+        return { ...REGLAS_DEF }; 
+    } 
+}
+
+
+
+
+
+
+
+
 
 function obtenerConfiguracionActiva() {     
     const reg = obtenerReglasTorneo();     
     const modoActivo = reg.tipoCombate || "normal";     
-    return fichas.find(f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()) || fichas[0]; 
-} 
 
+    const configBase = fichas.find(
+        f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()
+    ) || fichas[0] || {};
+
+    return {
+        ...configBase,
+        factorImprevisible: reg.factorImprevisible,
+        iaAleatoria: reg.iaAleatoria
+    };
+}
+
+
+
+
+
+
+    
+
+    
 function actualizarInterfazModalidad() {     
     const reg = obtenerReglasTorneo();     
     const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
