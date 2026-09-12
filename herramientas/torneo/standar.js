@@ -301,12 +301,33 @@ window.PALARENA_STANDAR = (function() {
                 bonusAccion *= 1.15;
                 mensajeExtra += " con precisión milimétrica sobre la guardia rota";
             }
-        } else if (codigoAccion === "A002") {
+
+
+
+            
+                } else if (codigoAccion === "A002") {
             const multiCrit = Number(config.multiplicador_critico) || 1.0;
-            if (multiCrit > 1.0) {
+            const tacticaTotal = atacante.efectivos.tactica + (atacante.tacticaTemporal || 0);
+            const fatigaMinCrit = Number(config.fatiga_minima_critico) || 20;
+            
+            const probabilidadCritica = (Number(config.critico_base) || 10) + (tacticaTotal * (Number(config.critico_tactica) || 0.15));
+            const tieneEnergiaParaCritico = atacante.fatiga >= fatigaMinCrit;
+
+            if (multiCrit > 1.0 && tieneEnergiaParaCritico && Math.random() * 100 < probabilidadCritica) {
                 bonusAccion *= multiCrit;
                 critico = true;
+                mensajeExtra = " ¡Golpe crítico certero!";
+            } else {
+                bonusAccion *= 1.25; 
+                mensajeExtra = " (Ataque potente pesado)";
             }
+        }
+
+
+
+
+
+            
         } else if (codigoAccion === "A003") {
             const tacticaAtacante = atacante.efectivos.tactica + (atacante.tacticaTemporal || 0);
             const tacticaObjetivo = objetivo.efectivos.tactica + (objetivo.tacticaTemporal || 0);
