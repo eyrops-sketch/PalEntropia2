@@ -76,22 +76,47 @@ window.PALARENA_STANDAR = (function() {
         }
     });
 
+
+
+
     function calcularStatsEfectivos(ficha, config) {
-        const coefGeneral = Number(config.general) !== undefined && !isNaN(Number(config.general)) ? Number(config.general) : 1;
-        const baseAtq = Number(ficha.e1 !== undefined ? ficha.e1 : (ficha.e && ficha.e[0] !== undefined ? ficha.e[0] : 50)) || 50;
-        const baseDef = Number(ficha.e2 !== undefined ? ficha.e2 : (ficha.e && ficha.e[1] !== undefined ? ficha.e[1] : 50)) || 50;
-        const baseVel = Number(ficha.e3 !== undefined ? ficha.e3 : (ficha.e && ficha.e[2] !== undefined ? ficha.e[2] : 50)) || 50;
-        const baseRes = Number(ficha.e4 !== undefined ? ficha.e4 : (ficha.e && ficha.e[3] !== undefined ? ficha.e[3] : 50)) || 50;
-        const baseTac = Number(ficha.e5 !== undefined ? ficha.e5 : (ficha.e && ficha.e[4] !== undefined ? ficha.e[4] : 50)) || 50;
+    const coefGeneral = Number(config.general) !== undefined && !isNaN(Number(config.general)) ? Number(config.general) : 1;
+    
+    // Verificamos si la función global del calculador existe y la usamos:
+    if (window.PALARENA_STATS && typeof window.PALARENA_STATS.calcularFicha === "function") {
+        const statsCalculados = window.PALARENA_STATS.calcularFicha(ficha);
         return {
-            ataque: baseAtq * coefGeneral,
-            defensa: baseDef * coefGeneral,
-            velocidad: baseVel * coefGeneral,
-            resistencia: baseRes * coefGeneral,
-            tactica: baseTac * coefGeneral
+            ataque: statsCalculados.ataque * coefGeneral,
+            defensa: statsCalculados.defensa * coefGeneral,
+            velocidad: statsCalculados.velocidad * coefGeneral,
+            resistencia: statsCalculados.resistencia * coefGeneral,
+            tactica: statsCalculados.tactica * coefGeneral
         };
     }
 
+    // Fallback de seguridad por si no cargara el script externo:
+    const baseAtq = Number(ficha.e1) || 50;
+    const baseDef = Number(ficha.e2) || 50;
+    const baseVel = Number(ficha.e3) || 50;
+    const baseRes = Number(ficha.e4) || 50;
+    const baseTac = Number(ficha.e5) || 50;
+    return {
+        ataque: baseAtq * coefGeneral,
+        defensa: baseDef * coefGeneral,
+        velocidad: baseVel * coefGeneral,
+        resistencia: baseRes * coefGeneral,
+        tactica: baseTac * coefGeneral
+    };
+}
+
+
+
+
+
+
+
+
+    
     function crearCombatiente(ficha, configPersonalizada = null) {
         const config = configPersonalizada || configuracionGlobal;
         const efectivos = calcularStatsEfectivos(ficha, config);
