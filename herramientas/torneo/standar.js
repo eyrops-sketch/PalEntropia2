@@ -175,10 +175,13 @@ window.PALARENA_STANDAR = (function() {
             };
         }
 
-        if (codigoAccion === "A001") costeFatiga = config.coste_fatiga_A001;
-        else if (codigoAccion === "A002") costeFatiga = config.coste_fatiga_A002;
-        else if (codigoAccion === "A003") costeFatiga = config.coste_fatiga_A003;
-        else if (codigoAccion === "D001") {
+        if (codigoAccion === "A001") {
+            // El coste base se calcula dinámicamente abajo con el freno por racha
+        } else if (codigoAccion === "A002") {
+            costeFatiga = config.coste_fatiga_A002;
+        } else if (codigoAccion === "A003") {
+            costeFatiga = config.coste_fatiga_A003;
+        } else if (codigoAccion === "D001") {
             if (atacante.usosDefensaConsecutivos === undefined) atacante.usosDefensaConsecutivos = 0;
             atacante.usosDefensaConsecutivos++;
 
@@ -210,7 +213,9 @@ window.PALARENA_STANDAR = (function() {
             atacante.usosDefensaConsecutivos = 0;
         }
 
-        atacante.fatiga = Math.min(config.fatiga_max, Math.max(0, atacante.fatiga - costeFatiga));
+        if (codigoAccion !== "A001") {
+            atacante.fatiga = Math.min(config.fatiga_max, Math.max(0, atacante.fatiga - costeFatiga));
+        }
 
         if (codigoAccion === "D001") {
             if (objetivo.defendiendo) {
@@ -277,11 +282,16 @@ window.PALARENA_STANDAR = (function() {
 
         if (codigoAccion === "A001") {
             atacante.rachaBasicos = (atacante.rachaBasicos || 0) + 1;
+            
             let bonusCadena = 1.0 + (Math.min(atacante.rachaBasicos, 4) - 1) * 0.12;
             bonusAccion *= bonusCadena;
 
+            let costeExtraBasico = (atacante.rachaBasicos - 1) * 3;
+            costeFatiga = (config.coste_fatiga_A001 || 8) + costeExtraBasico;
+            atacante.fatiga = Math.min(config.fatiga_max, Math.max(0, atacante.fatiga - costeFatiga));
+
             if (atacante.rachaBasicos > 1) {
-                mensajeExtra = ` (Cadena de básicos x${atacante.rachaBasicos}, presión ofensiva desatada)`;
+                mensajeExtra = ` (Cadena de básicos x${atacante.rachaBasicos}, presión ofensiva)`;
             }
 
             if ((objetivo.fatiga / (config.fatiga_max || 100)) * 100 < 15) {
@@ -321,8 +331,6 @@ window.PALARENA_STANDAR = (function() {
                 mensajeExtra = `, perforando las líneas, arrebatándole ${reduccionTactica} puntos de táctica temporal y desestabilizando su juicio mental`;
             }
         }
-
-
                     danoBase *= bonusAccion;
 
         let defensaObjetivo = 0;
@@ -438,7 +446,6 @@ window.PALARENA_STANDAR = (function() {
 
         return "A001";
     }
-
         function obtenerCombatiente(combate, codigo) {
         if (combate.combatiente1.codigo === codigo) return combate.combatiente1;
         if (combate.combatiente2.codigo === codigo) return combate.combatiente2;
@@ -538,4 +545,3 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
-
