@@ -181,10 +181,26 @@ window.PALARENA_STANDAR = (function() {
         else if (codigoAccion === "D001") {
             if (atacante.usosDefensaConsecutivos === undefined) atacante.usosDefensaConsecutivos = 0;
             atacante.usosDefensaConsecutivos++;
+
             if (atacante.usosDefensaConsecutivos >= 3) {
                 costeFatiga = config.coste_fatiga_D001 || 20;
+                const fatigaActualAtacante = Number(atacante.fatiga) || 0;
+                const reduccionPropia = Math.round(fatigaActualAtacante * 0.40);
+                atacante.fatiga = Math.max(0, fatigaActualAtacante - reduccionPropia);
+
+                const fatigaActualRival = Number(objetivo.fatiga) || 0;
+                const reposicionRival = Math.round((config.fatiga_max || 100) * 0.40);
+                objetivo.fatiga = Math.min(config.fatiga_max || 100, fatigaActualRival + reposicionRival);
+
+                atacante.defendiendo = true;
+                return {
+                    mensaje: `🛡️⚡ ¡${atacante.nombre} encadena su tercera defensa consecutiva con maestría absoluta! Reduce su propia fatiga un 40% y devuelve un 40% de resuello a ${objetivo.nombre}.`,
+                    defensa: "maestra"
+                };
+            } else if (atacante.usosDefensaConsecutivos === 2) {
+                costeFatiga = 10;
             } else {
-                costeFatiga = -(config.coste_fatiga_D001 || 15);
+                costeFatiga = 5;
             }
         }
 
@@ -293,8 +309,7 @@ window.PALARENA_STANDAR = (function() {
                 mensajeExtra = `, perforando las líneas, arrebatándole ${reduccionTactica} puntos de táctica temporal y desestabilizando su juicio mental`;
             }
         }
-
-            danoBase *= bonusAccion;
+                danoBase *= bonusAccion;
 
         let defensaObjetivo = 0;
         let mensajeRuptura = "";
@@ -358,9 +373,7 @@ window.PALARENA_STANDAR = (function() {
             if (Math.random() < 0.80) {
                 const accionesDisponibles = ["A001", "A002", "A003", "D001"];
                 const accionAleatoria = accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
-                let recuperacionFatiga = Math.round(config.fatiga_max * 0.08);
-                atacante.fatiga = Math.max(0, atacante.fatiga - recuperacionFatiga);
-
+                
                 if (accionAleatoria !== "A001") atacante.rachaBasicos = 0;
                 return accionAleatoria;
             }
@@ -410,7 +423,7 @@ window.PALARENA_STANDAR = (function() {
         }
 
         return "A001";
-    }
+            }
         function obtenerCombatiente(combate, codigo) {
         if (combate.combatiente1.codigo === codigo) return combate.combatiente1;
         if (combate.combatiente2.codigo === codigo) return combate.combatiente2;
