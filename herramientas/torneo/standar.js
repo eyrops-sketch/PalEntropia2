@@ -56,13 +56,19 @@ window.PALARENA_STANDAR = (function() {
         if (guardado) {
             try {
                 const reglas = JSON.parse(guardado);
-                const coefs = reglas.coeficientes || reglas;
-                if (coefs && typeof coefs === "object") {
-                    configuracionGlobal = {
-                        ...configuracionGlobal,
-                        ...coefs
-                    };
+                const coefs = reglas.coeficientes || {};
+                const parametrosReglas = {};
+                if (reglas.factorImprevisible !== undefined) {
+                    parametrosReglas.factorImprevisible = Number(reglas.factorImprevisible);
                 }
+                if (reglas.iaAleatoria !== undefined) {
+                    parametrosReglas.iaAleatoria = Boolean(reglas.iaAleatoria);
+                }
+                configuracionGlobal = {
+                    ...configuracionGlobal,
+                    ...coefs,
+                    ...parametrosReglas
+                };
             } catch (e) {
                 console.warn("No se pudieron parsear los coeficientes del localStorage:", e);
             }
@@ -79,7 +85,6 @@ window.PALARENA_STANDAR = (function() {
 
     function calcularStatsEfectivos(ficha, config) {
         const coefGeneral = Number(config.general) !== undefined && !isNaN(Number(config.general)) ? Number(config.general) : 1;
-
         if (window.PALARENA_STATS && typeof window.PALARENA_STATS.calcularFicha === "function") {
             const statsCalculados = window.PALARENA_STATS.calcularFicha(ficha);
             return {
@@ -90,13 +95,11 @@ window.PALARENA_STANDAR = (function() {
                 tactica: statsCalculados.tactica * coefGeneral
             };
         }
-
         const baseAtq = Number(ficha.e1) || 50;
         const baseDef = Number(ficha.e2) || 50;
         const baseVel = Number(ficha.e3) || 50;
         const baseRes = Number(ficha.e4) || 50;
         const baseTac = Number(ficha.e5) || 50;
-
         return {
             ataque: baseAtq * coefGeneral,
             defensa: baseDef * coefGeneral,
@@ -110,7 +113,6 @@ window.PALARENA_STANDAR = (function() {
         const config = configPersonalizada || configuracionGlobal;
         const efectivos = calcularStatsEfectivos(ficha, config);
         const hpMax = config.hp_base * (efectivos.resistencia / 50);
-
         return {
             codigo: ficha.j1 || ficha.codigo || "Desconocido",
             nombre: ficha.j2 || ficha.nombre || "Sin nombre",
@@ -139,7 +141,6 @@ window.PALARENA_STANDAR = (function() {
         const config = configuracionGlobal;
         const c1 = crearCombatiente(ficha1, config);
         const c2 = crearCombatiente(ficha2, config);
-
         return {
             combatiente1: c1,
             combatiente2: c2,
@@ -160,11 +161,9 @@ window.PALARENA_STANDAR = (function() {
         function ejecutarAccion(atacante, objetivo, codigoAccion) {
         const config = configuracionGlobal;
         let costeFatiga = 0;
-
         if (codigoAccion !== "A001") {
             atacante.rachaBasicos = 0;
         }
-
         const fatigaCritica = (atacante.fatiga / (config.fatiga_max || 100)) * 100 < 15;
         if (fatigaCritica && codigoAccion === "A002") {
             atacante.fatiga = Math.max(0, atacante.fatiga - 15);
@@ -174,7 +173,6 @@ window.PALARENA_STANDAR = (function() {
                 critico: false
             };
         }
-
         if (codigoAccion === "A001") {
             // El coste base se calcula dinámicamente abajo con el freno por racha
         } else if (codigoAccion === "A002") {
@@ -184,20 +182,16 @@ window.PALARENA_STANDAR = (function() {
         } else if (codigoAccion === "D001") {
             if (atacante.usosDefensaConsecutivos === undefined) atacante.usosDefensaConsecutivos = 0;
             atacante.usosDefensaConsecutivos++;
-
             if (atacante.usosDefensaConsecutivos >= 3) {
                 costeFatiga = config.coste_fatiga_D001 || 20;
                 const fatigaActualAtacante = Number(atacante.fatiga) || 0;
                 const reduccionPropia = Math.round(fatigaActualAtacante * 0.40);
                 atacante.fatiga = Math.max(0, fatigaActualAtacante - reduccionPropia);
-
                 const fatigaActualRival = Number(objetivo.fatiga) || 0;
                 const reposicionRival = Math.round((config.fatiga_max || 100) * 0.40);
                 objetivo.fatiga = Math.min(config.fatiga_max || 100, fatigaActualRival + reposicionRival);
-
                 atacante.defendiendo = true;
                 atacante.usosDefensaConsecutivos = 0;
-
                 return {
                     mensaje: `🛡️⚡ ¡${atacante.nombre} ejecuta una defensa maestra absoluta! Reduce su propia fatiga un 40% y devuelve un 40% de resuello a ${objetivo.nombre}.`,
                     defensa: "maestra"
@@ -208,15 +202,12 @@ window.PALARENA_STANDAR = (function() {
                 costeFatiga = 5;
             }
         }
-
         if (codigoAccion !== "D001") {
             atacante.usosDefensaConsecutivos = 0;
         }
-
         if (codigoAccion !== "A001") {
             atacante.fatiga = Math.min(config.fatiga_max, Math.max(0, atacante.fatiga - costeFatiga));
         }
-
         if (codigoAccion === "D001") {
             if (objetivo.defendiendo) {
                 atacante.defendiendo = true;
@@ -227,7 +218,6 @@ window.PALARENA_STANDAR = (function() {
                 const puntuacionAtacante = tacticaAtacante * 0.7 + velocidadAtacante * 0.3;
                 const puntuacionObjetivo = tacticaObjetivo * 0.7 + velocidadObjetivo * 0.3;
                 let mensajeContradefensa = `🛡️🔄 ${atacante.nombre} y ${objetivo.nombre} se cruzan en una tensa contradefensa, tanteándose sin arriesgar.`;
-
                 if (puntuacionAtacante > puntuacionObjetivo) {
                     const penalizacion = Math.round((Number(objetivo.fatiga) || 0) * 0.15);
                     objetivo.fatiga = Math.max(0, (Number(objetivo.fatiga) || 0) - penalizacion);
@@ -242,21 +232,17 @@ window.PALARENA_STANDAR = (function() {
                     defensa: "contradefensa"
                 };
             }
-
             if (Math.random() < 0.35) {
                 atacante.posturaDefensiva = "contraTactico";
             } else {
                 atacante.posturaDefensiva = null;
             }
-
             const umbralError = Math.max(
                 Number(config.error_defensa_min) || 15,
                 (Number(config.error_defensa_base) || 45) - (atacante.efectivos.tactica * (Number(config.error_defensa_reduccion_tactica) || 0.02))
             );
-
             const tirada = Math.random() * 100;
             const defensaExitosa = tirada > umbralError;
-
             if (defensaExitosa) {
                 atacante.defendiendo = true;
                 const fatigaActualRival = Number(objetivo.fatiga) || 0;
@@ -274,26 +260,20 @@ window.PALARENA_STANDAR = (function() {
                 };
             }
         }
-
         let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
         let mensajeExtra = "";
         let bonusAccion = 1.0;
-
         if (codigoAccion === "A001") {
             atacante.rachaBasicos = (atacante.rachaBasicos || 0) + 1;
-            
             let bonusCadena = 1.0 + (Math.min(atacante.rachaBasicos, 4) - 1) * 0.12;
             bonusAccion *= bonusCadena;
-
             let costeExtraBasico = (atacante.rachaBasicos - 1) * 3;
             costeFatiga = (config.coste_fatiga_A001 || 8) + costeExtraBasico;
             atacante.fatiga = Math.min(config.fatiga_max, Math.max(0, atacante.fatiga - costeFatiga));
-
             if (atacante.rachaBasicos > 1) {
                 mensajeExtra = ` (Cadena de básicos x${atacante.rachaBasicos}, presión ofensiva)`;
             }
-
             if ((objetivo.fatiga / (config.fatiga_max || 100)) * 100 < 15) {
                 bonusAccion *= 1.25;
                 mensajeExtra += ", castigando con dureza su fatiga crítica";
@@ -305,10 +285,8 @@ window.PALARENA_STANDAR = (function() {
             const multiCrit = Number(config.multiplicador_critico) || 1.0;
             const tacticaTotal = atacante.efectivos.tactica + (atacante.tacticaTemporal || 0);
             const fatigaMinCrit = Number(config.fatiga_minima_critico) || 20;
-            
             const probabilidadCritica = (Number(config.critico_base) || 10) + (tacticaTotal * (Number(config.critico_tactica) || 0.15));
             const tieneEnergiaParaCritico = atacante.fatiga >= fatigaMinCrit;
-
             if (multiCrit > 1.0 && tieneEnergiaParaCritico && Math.random() * 100 < probabilidadCritica) {
                 bonusAccion *= multiCrit;
                 critico = true;
@@ -320,7 +298,6 @@ window.PALARENA_STANDAR = (function() {
         } else if (codigoAccion === "A003") {
             const tacticaAtacante = atacante.efectivos.tactica + (atacante.tacticaTemporal || 0);
             const tacticaObjetivo = objetivo.efectivos.tactica + (objetivo.tacticaTemporal || 0);
-
             if (objetivo.posturaDefensiva === "contraTactico" || tacticaObjetivo >= tacticaAtacante) {
                 mensajeExtra = `, pero ${objetivo.nombre} anticipa la maniobra y neutraliza el flanco intelectual`;
                 bonusAccion *= 0.70;
@@ -331,11 +308,9 @@ window.PALARENA_STANDAR = (function() {
                 mensajeExtra = `, perforando las líneas, arrebatándole ${reduccionTactica} puntos de táctica temporal y desestabilizando su juicio mental`;
             }
         }
-                    danoBase *= bonusAccion;
-
+        danoBase *= bonusAccion;
         let defensaObjetivo = 0;
         let mensajeRuptura = "";
-
         if (objetivo.defendiendo) {
             if (codigoAccion === "A002") {
                 const chanceContra = Math.random();
@@ -357,56 +332,37 @@ window.PALARENA_STANDAR = (function() {
         } else {
             defensaObjetivo = Number(objetivo.efectivos.defensa) || 0;
         }
-
         const divisorDefensa = Math.max(1, Number(config.defensa_divisor) || 200);
         const porcentajeDefensa = Math.max(
             0,
             Math.min(0.85, defensaObjetivo / (defensaObjetivo + divisorDefensa))
         );
-
         let danoReducido = danoBase * (1 - porcentajeDefensa);
         danoReducido = Math.max(1, danoReducido);
-
         const variacion = Number(config.variacion_dano) || 0.25;
         const factorAleatorio = 1 + (Math.random() * (variacion * 2) - variacion);
-
         let danoFinal = Math.max(1, Math.round(danoReducido * factorAleatorio));
-
         objetivo.hp = Math.max(0, objetivo.hp - danoFinal);
-
         if (objetivo.hp <= 0) {
             objetivo.derrotado = true;
         }
-
         const iconoAccion = codigoAccion === "A002" ? "⚡" : (codigoAccion === "A003" ? "🎯" : "⚔️");
-
         return {
             mensaje: `${iconoAccion} ${atacante.nombre} ejecuta ${codigoAccion} contra ${objetivo.nombre}${mensajeExtra}.${mensajeRuptura} Daño: ${danoFinal}`,
             dano: danoFinal,
             critico: critico
         };
-    }
-
-
-
-
-
-    
+        }
         function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
-        
-        // 1. Leer las nuevas propiedades de la IA desde la configuración global sincronizada
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
         const iaAleatoria = Boolean(config.iaAleatoria);
-
-        // 2. Si el check aleatorio está activo, la IA escoge de forma completamente caótica/estocástica ponderada por el factor
         if (iaAleatoria) {
             const accionesDisponibles = ["A001", "A001", "A002", "A003", "D001"];
             const accionElegida = accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
             if (accionElegida !== "A001") atacante.rachaBasicos = 0;
             return accionElegida;
         }
-
         if (atacante.estadoCaotico && atacante.estadoCaotico > 0) {
             atacante.estadoCaotico--;
             if (Math.random() < (0.80 * factorImprevisible)) {
@@ -416,15 +372,11 @@ window.PALARENA_STANDAR = (function() {
                 return accionAleatoria;
             }
         }
-
         const fatigaActual = Number(atacante.fatiga) || 0;
         const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
         const objetivoHpPorcentaje = (objetivo.hp / objetivo.hp_max) * 100;
-        
-        // 3. Aplicar el factor imprevisible al peso aleatorio base de la IA (escalándolo con el coeficiente)
         let pesoAleatorioBase = Number(config.ia_peso_aleatorio) !== undefined && !isNaN(Number(config.ia_peso_aleatorio)) ? Number(config.ia_peso_aleatorio) : 0.40;
         const pesoAleatorio = Math.min(1.0, Math.max(0.0, pesoAleatorioBase * factorImprevisible));
-
         if (Math.random() < pesoAleatorio) {
             const accionesDisponibles = ["A001", "A003"];
             const costePotente = Number(config.coste_fatiga_A002) || 38;
@@ -439,7 +391,6 @@ window.PALARENA_STANDAR = (function() {
             }
             return accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
         }
-
         const costePotente = Number(config.coste_fatiga_A002) || 38;
         const fatigaMinPotente = Number(config.fatiga_minima_ataque_potente) || 65;
         const multiCrit = Number(config.multiplicador_critico) || 1.0;
@@ -448,28 +399,17 @@ window.PALARENA_STANDAR = (function() {
                 return "A002";
             }
         }
-
         const costeDefensa = Number(config.coste_fatiga_D001) || 20;
         if (hpPorcentaje < 30 && fatigaActual > costeDefensa && !atacante.defendiendo) {
             return "D001";
         }
-
         const costeTactico = Number(config.coste_fatiga_A003) || 10;
         if (fatigaActual >= costeTactico && ((atacante.efectivos.tactica + (atacante.tacticaTemporal || 0)) > 40 || Math.random() < (0.50 * factorImprevisible))) {
             return "A003";
         }
-
         return "A001";
     }
 
-        
-    
-    
-    
-    
-    
-    
-    
     function obtenerCombatiente(combate, codigo) {
         if (combate.combatiente1.codigo === codigo) return combate.combatiente1;
         if (combate.combatiente2.codigo === codigo) return combate.combatiente2;
@@ -482,7 +422,6 @@ window.PALARENA_STANDAR = (function() {
         combate.estado = "en_curso";
         combate.historial = [];
         combate.ganador = null;
-
         if (combate.combatiente1) {
             combate.combatiente1.hp = combate.combatiente1.hp_max;
             combate.combatiente1.fatiga = configuracionGlobal.fatiga_inicial;
@@ -494,7 +433,6 @@ window.PALARENA_STANDAR = (function() {
             combate.combatiente1.estadoCaotico = 0;
             combate.combatiente1.posturaDefensiva = null;
         }
-
         if (combate.combatiente2) {
             combate.combatiente2.hp = combate.combatiente2.hp_max;
             combate.combatiente2.fatiga = configuracionGlobal.fatiga_inicial;
@@ -520,7 +458,6 @@ window.PALARENA_STANDAR = (function() {
         obtenerCombatiente,
         reiniciarSerieCombatientes
     };
-
 })();
 
 window.crearCombateEstandar = window.PALARENA_STANDAR.crearCombateEstandar;
@@ -530,40 +467,31 @@ window.ejecutarTurnoEstandar = function(combate) {
     if (!combate || combate.estado === "finalizado") return;
     const c1 = combate.combatiente1;
     const c2 = combate.combatiente2;
-
     const accion1 = window.PALARENA_STANDAR.decidirAccion(c1, c2);
     const res1 = window.PALARENA_STANDAR.ejecutarAccion(c1, c2, accion1);
     combate.historial.push({ tipo: "accion", atacante: c1.codigo, objetivo: c2.codigo, resultado: res1 });
-
     if (c2.derrotado) {
         combate.estado = "finalizado";
         combate.ganador = c1.codigo;
         return;
     }
-
     const accion2 = window.PALARENA_STANDAR.decidirAccion(c2, c1);
     const res2 = window.PALARENA_STANDAR.ejecutarAccion(c2, c1, accion2);
     combate.historial.push({ tipo: "accion", atacante: c2.codigo, objetivo: c1.codigo, resultado: res2 });
-
     if (c1.derrotado) {
         combate.estado = "finalizado";
         combate.ganador = c2.codigo;
         return;
     }
-
     window.PALARENA_STANDAR.regenerarFatiga(c1);
     window.PALARENA_STANDAR.regenerarFatiga(c2);
-
     c1.defendiendo = false;
     c2.defendiendo = false;
     c1.posturaDefensiva = null;
     c2.posturaDefensiva = null;
-
     if (c1.tacticaTemporal !== 0) c1.tacticaTemporal = Math.sign(c1.tacticaTemporal) * Math.max(0, Math.abs(c1.tacticaTemporal) - 2);
     if (c2.tacticaTemporal !== 0) c2.tacticaTemporal = Math.sign(c2.tacticaTemporal) * Math.max(0, Math.abs(c2.tacticaTemporal) - 2);
-
     combate.turno++;
-
     if (combate.turno > window.PALARENA_STANDAR.configuracion.max_turnos) {
         combate.estado = "finalizado";
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
