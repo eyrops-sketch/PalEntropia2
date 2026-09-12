@@ -178,10 +178,7 @@ window.PALARENA_STANDAR = (function() {
         if (codigoAccion === "A001") costeFatiga = config.coste_fatiga_A001;
         else if (codigoAccion === "A002") costeFatiga = config.coste_fatiga_A002;
         else if (codigoAccion === "A003") costeFatiga = config.coste_fatiga_A003;
-       
-        
-        
-                else if (codigoAccion === "D001") {
+        else if (codigoAccion === "D001") {
             if (atacante.usosDefensaConsecutivos === undefined) atacante.usosDefensaConsecutivos = 0;
             atacante.usosDefensaConsecutivos++;
 
@@ -196,8 +193,6 @@ window.PALARENA_STANDAR = (function() {
                 objetivo.fatiga = Math.min(config.fatiga_max || 100, fatigaActualRival + reposicionRival);
 
                 atacante.defendiendo = true;
-                
-                // 🛠️ IMPORTANTE: Reiniciamos el contador para evitar el bucle infinito de spam
                 atacante.usosDefensaConsecutivos = 0;
 
                 return {
@@ -209,13 +204,8 @@ window.PALARENA_STANDAR = (function() {
             } else {
                 costeFatiga = 5;
             }
-                }
-            
+        }
 
-
-
-
-            
         if (codigoAccion !== "D001") {
             atacante.usosDefensaConsecutivos = 0;
         }
@@ -301,11 +291,7 @@ window.PALARENA_STANDAR = (function() {
                 bonusAccion *= 1.15;
                 mensajeExtra += " con precisión milimétrica sobre la guardia rota";
             }
-
-
-
-            
-                } else if (codigoAccion === "A002") {
+        } else if (codigoAccion === "A002") {
             const multiCrit = Number(config.multiplicador_critico) || 1.0;
             const tacticaTotal = atacante.efectivos.tactica + (atacante.tacticaTemporal || 0);
             const fatigaMinCrit = Number(config.fatiga_minima_critico) || 20;
@@ -318,16 +304,9 @@ window.PALARENA_STANDAR = (function() {
                 critico = true;
                 mensajeExtra = " ¡Golpe crítico certero!";
             } else {
-                bonusAccion *= 1.25; 
+                bonusAccion *= 1.25;
                 mensajeExtra = " (Ataque potente pesado)";
             }
-        }
-
-
-
-
-
-            
         } else if (codigoAccion === "A003") {
             const tacticaAtacante = atacante.efectivos.tactica + (atacante.tacticaTemporal || 0);
             const tacticaObjetivo = objetivo.efectivos.tactica + (objetivo.tacticaTemporal || 0);
@@ -342,7 +321,9 @@ window.PALARENA_STANDAR = (function() {
                 mensajeExtra = `, perforando las líneas, arrebatándole ${reduccionTactica} puntos de táctica temporal y desestabilizando su juicio mental`;
             }
         }
-                danoBase *= bonusAccion;
+
+
+                    danoBase *= bonusAccion;
 
         let defensaObjetivo = 0;
         let mensajeRuptura = "";
@@ -456,7 +437,8 @@ window.PALARENA_STANDAR = (function() {
         }
 
         return "A001";
-            }
+    }
+
         function obtenerCombatiente(combate, codigo) {
         if (combate.combatiente1.codigo === codigo) return combate.combatiente1;
         if (combate.combatiente2.codigo === codigo) return combate.combatiente2;
@@ -556,3 +538,4 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
+
