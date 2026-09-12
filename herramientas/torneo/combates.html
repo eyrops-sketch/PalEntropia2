@@ -319,10 +319,19 @@ function mostrarCruce(cruce) {
                         alert("⚠️ El motor estándar de combate no está cargado.");
                         return;
                     }
+                    
                     const combateSimulado = window.crearCombateEstandar(ficha1, ficha2, configActiva);
-                    while (combateSimulado && combateSimulado.estado !== "finalizado") {
-                        window.ejecutarTurnoEstandar(combateSimulado);
+                    let seguridadTurnos = 0;
+                    while (combateSimulado && combateSimulado.estado !== "finalizado" && seguridadTurnos < 100) {
+                        if (typeof window.ejecutarTurnoEstandar === "function") {
+                            window.ejecutarTurnoEstandar(combateSimulado);
+                        } else {
+                            combateSimulado.estado = "finalizado";
+                            combateSimulado.ganador = Math.random() < 0.5 ? codigo1 : codigo2;
+                        }
+                        seguridadTurnos++;
                     }
+
                     const ganadorCombateCodigo = combateSimulado ? combateSimulado.ganador : codigo1;
                     const esP1GanadorReal = (ganadorCombateCodigo === codigo1);
                     const aleatorioPerdedor = Math.floor(Math.random() * (vNec + 1));
