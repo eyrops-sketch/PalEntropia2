@@ -580,3 +580,38 @@ select#tipoCombate option {
     accent-color: #63d9ff;
     cursor: pointer;
 }
+
+
+
+/* =====================================================
+   FACTOR IMPREVISIBLE DE LA IA (CAJA Y CHECKBOX)
+   ===================================================== */
+
+#factorImprevisibleIA {
+    display: block;
+    width: 130px;
+    margin: 0 auto;
+    padding: 12px 10px;
+    border: 1px solid #63d9ff;
+    border-radius: 9px;
+    background: #071018;
+    color: #e8fbff;
+    font-size: 21px;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+}
+
+#factorImprevisibleIA:focus {
+    border-color: #a5ecff;
+    box-shadow: 0 0 0 2px rgba(99, 217, 255, 0.18);
+}
+
+#checkAleatorioIA {
+    appearance: auto;
+    -webkit-appearance: checkbox;
+    width: 24px;
+    height: 24px;
+    accent-color: #63d9ff;
+    cursor: pointer;
+}
