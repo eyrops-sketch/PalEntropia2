@@ -76,7 +76,7 @@
             <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c1VidaTexto">— / —</span></div><div class="barra-vida"><div id="c1VidaBarra" class="vida-relleno"></div></div></div>             
             <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c1FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c1FatigaBarra" class="fatiga-relleno"></div></div></div>             
             <div id="c1Stats" class="stats"></div>             
-            <div id="c1Estado" class="estado">—</div>         
+            <div id="c1Estado" class="estado"></div>         
         </article>         
         <div class="centro-combate">             
             <div class="icono-vs">⚔️</div>             
@@ -95,7 +95,7 @@
             <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c2VidaTexto">— / —</span></div><div class="barra-vida"><div id="c2VidaBarra" class="vida-relleno"></div></div></div>             
             <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c2FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c2FatigaBarra" class="fatiga-relleno"></div></div></div>             
             <div id="c2Stats" class="stats"></div>             
-            <div id="c2Estado" class="estado">—</div>         
+            <div id="c2Estado" class="estado"></div>         
         </article>     
     </section>     
 
@@ -459,11 +459,26 @@ function mostrarStats(c, pref) {
 } 
 
 function mostrarEstado(c, pref) {     
-    const est = document.getElementById(pref + "Estado"); if (!est) return;     
-    const m = []; if (c.derrotado) m.push("☠️ Derrotado"); if (c.defendiendo) m.push("🛡️ Defendiendo");     
-    if (Array.isArray(c.efectos)) c.efectos.forEach(ef => { if (ef) { const nom = ef.nombre || ef.codigo || "Efecto", dur = ef.turnos !== undefined ? ef.turnos : ef.duracion; m.push(dur !== undefined && dur > 0 ? `✨ ${nom} (${dur})` : `✨ ${nom}`); } });     
-    est.textContent = m.length ? m.join(" · ") : "En combate!";     
+    const est = document.getElementById(pref + "Estado"); 
+    if (!est) return;     
+    
+    const m = []; 
+    if (c.derrotado) m.push("☠️ Derrotado"); 
+    if (c.defendiendo) m.push("🛡️ Defendiendo");     
+    
+    if (Array.isArray(c.efectos)) {
+        c.efectos.forEach(ef => { 
+            if (ef) { 
+                const nom = ef.nombre || ef.codigo || "Efecto", dur = ef.turnos !== undefined ? ef.turnos : ef.duracion; 
+                m.push(dur !== undefined && dur > 0 ? `✨ ${nom} (${dur})` : `✨ ${nom}`); 
+            } 
+        });     
+    }
+    
+    // Si hay estados o efectos los une, si no, escribe explícitamente "En combate!"
+    est.textContent = m.length > 0 ? m.join(" · ") : "En combate!";     
 }
+
 
 
 function activarBotones() {     
