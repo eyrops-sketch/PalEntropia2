@@ -101,6 +101,35 @@
                     aria-label="Activar modo aleatorio de configuración">
             </label>
         </div>
+
+        <!-- =============================================
+             FACTOR IMPREVISIBLE DE LA IA
+             ============================================= -->
+        <div class="bloqueTorneo">
+            <h3>
+                🤖 Factor Imprevisible de la IA
+            </h3>
+            <p>
+                Coeficiente de dispersión táctica y casilla para habilitar la variabilidad estocástica.
+            </p>
+            <div style="display: flex; gap: 15px; align-items: center; margin-top: 10px;">
+                <input
+                    id="factorImprevisibleIA"
+                    type="text"
+                    value="1.0"
+                    style="flex: 1; padding: 8px; background: #0d1117; color: #c9d1d9; border: 1px solid #30363d; border-radius: 6px;"
+                    aria-label="Factor imprevisible de la IA"
+                    placeholder="Ej: 1.0">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap; color: #c9d1d9;">
+                    <input
+                        id="checkAleatorioIA"
+                        type="checkbox"
+                        style="width: 20px; height: 20px; accent-color: #63d9ff; cursor: pointer;"
+                        aria-label="Activar aleatorio IA">
+                    Activar aleatorio
+                </label>
+            </div>
+        </div>
     </section>
 </main>
 <!-- =====================================================
@@ -130,7 +159,9 @@ const CLAVE_ALEATORIO_CONFIG = "palentropia_modo_aleatorio_config";
    ===================================================== */
 const REGLAS_TORNEO_DEFECTO = {
     partidosSerie: 1,
-    tipoCombate: "standard"
+    tipoCombate: "standard",
+    factorImprevisible: 1.0,
+    iaAleatoria: false
 };
 
 /* =====================================================
@@ -188,11 +219,18 @@ async function guardarReglasTorneo() {
     const partidos = Number(document.getElementById("partidosSerie").value);
     const tipo = document.getElementById("tipoCombate").value;
     
-    // Guardar estado del checkbox aleatorio
+    // Guardar estado del checkbox aleatorio general
     const aleatorioCheck = document.getElementById("modoAleatorioConfig");
     if (aleatorioCheck) {
         localStorage.setItem(CLAVE_ALEATORIO_CONFIG, aleatorioCheck.checked ? "true" : "false");
     }
+
+    // Guardar factor imprevisible y check aleatorio de la IA
+    const factorInput = document.getElementById("factorImprevisibleIA");
+    const factorImprevisible = factorInput ? (parseFloat(factorInput.value) || 1.0) : 1.0;
+
+    const checkIaAleatorio = document.getElementById("checkAleatorioIA");
+    const iaAleatoria = checkIaAleatorio ? checkIaAleatorio.checked : false;
 
     let configExterna = {};
     try {
@@ -224,11 +262,14 @@ async function guardarReglasTorneo() {
     } catch (err) {
         console.error("Error al extraer coeficientes al guardar reglas:", err);
     }
+    
     localStorage.setItem(
         CLAVE_REGLAS_TORNEO,
         JSON.stringify({
             partidosSerie: partidos,
             tipoCombate: tipo,
+            factorImprevisible: factorImprevisible,
+            iaAleatoria: iaAleatoria,
             coeficientes: configExterna
         })
     );
@@ -289,11 +330,22 @@ function cargarReglasEnInterfaz() {
         tipo.value = "standard";
     }
 
-    // Cargar estado del checkbox aleatorio
+    // Cargar estado del checkbox aleatorio general
     const aleatorioGuardado = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
     const aleatorioCheckInput = document.getElementById("modoAleatorioConfig");
     if (aleatorioCheckInput) {
         aleatorioCheckInput.checked = aleatorioGuardado;
+    }
+
+    // Cargar factor imprevisible y checkbox de la IA
+    const inputFactor = document.getElementById("factorImprevisibleIA");
+    if (inputFactor) {
+        inputFactor.value = reglas.factorImprevisible !== undefined ? reglas.factorImprevisible : 1.0;
+    }
+
+    const checkIa = document.getElementById("checkAleatorioIA");
+    if (checkIa) {
+        checkIa.checked = Boolean(reglas.iaAleatoria);
     }
 }
 
@@ -333,6 +385,20 @@ if (aleatorioInput) {
     });
 }
 
+const factorIaInput = document.getElementById("factorImprevisibleIA");
+if (factorIaInput) {
+    factorIaInput.addEventListener("input", async function() {
+        await guardarReglasTorneo();
+    });
+}
+
+const checkIaInput = document.getElementById("checkAleatorioIA");
+if (checkIaInput) {
+    checkIaInput.addEventListener("change", async function() {
+        await guardarReglasTorneo();
+    });
+}
+
 /* =====================================================
    BOTÓN MENÚ PRINCIPAL
    ===================================================== */
@@ -362,4 +428,3 @@ window.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
-
