@@ -295,7 +295,7 @@ function mostrarCruce(cruce) {
 botonSimular.type = "button";
 botonSimular.className = "botonSimularIndividual";
 botonSimular.textContent = "⚡";
-botonSimular.title = "Simular serie automáticamente";
+botonSimular.title = "Simular serie por boletos (11 estats)";
 if (p1Valido && p2Valido) {
     const codigo1 = typeof p1Real === "string" ? p1Real : p1Real.j1;
     const codigo2 = typeof p2Real === "string" ? p2Real : p2Real.j1;
@@ -308,28 +308,45 @@ if (p1Valido && p2Valido) {
             const vNec = Math.floor(partidosSerie / 2) + 1;
             const mapaNombres = await obtenerMapaNombres();
             
+            // Intentamos buscar las fichas completas para leer los 11 estats
+            const f1Base = typeof buscarFicha === "function" ? buscarFicha(codigo1) : null;
+            const f2Base = typeof buscarFicha === "function" ? buscarFicha(codigo2) : null;
+            const ficha1 = f1Base || { j1: codigo1 };
+            const ficha2 = f2Base || { j1: codigo2 };
+
             const nombre1 = mapaNombres.get(codigo1) || codigo1;
             const nombre2 = mapaNombres.get(codigo2) || codigo2;
 
-            const ganaP1 = Math.random() < 0.5;
+            // Contar boletos comparando los 11 estats (e1 a e11)
+            let boletos1 = 0;
+            let boletos2 = 0;
+            for (let i = 1; i <= 11; i++) {
+                const val1 = Number(ficha1["e" + i]) || 50;
+                const val2 = Number(ficha2["e" + i]) || 50;
+                if (val1 > val2) boletos1++;
+                else if (val2 > val1) boletos2++;
+                else { boletos1++; boletos2++; } // En empate reparte
+            }
+
+            // Si ambos tienen 0 por algún motivo extraño, igualamos a 1
+            if (boletos1 === 0 && boletos2 === 0) { boletos1 = 1; boletos2 = 1; }
+            const totalBoletos = boletos1 + boletos2;
+            const prob1 = boletos1 / totalBoletos;
+
             let victorias1 = 0;
             let victorias2 = 0;
-            let ganadorSerieCodigo = "";
-            let ganadorSerieNombre = "";
 
-            const perdedorScore = Math.floor(Math.random() * vNec);
-
-            if (ganaP1) {
-                victorias1 = vNec;
-                victorias2 = perdedorScore;
-                ganadorSerieCodigo = codigo1;
-                ganadorSerieNombre = nombre1;
-            } else {
-                victorias1 = perdedorScore;
-                victorias2 = vNec;
-                ganadorSerieCodigo = codigo2;
-                ganadorSerieNombre = nombre2;
+            // Simular partidos de la serie según la probabilidad ponderada por los boletos
+            while (victorias1 < vNec && victorias2 < vNec) {
+                if (Math.random() < prob1) {
+                    victorias1++;
+                } else {
+                    victorias2++;
+                }
             }
+
+            const ganadorSerieCodigo = victorias1 > victorias2 ? codigo1 : codigo2;
+            const ganadorSerieNombre = victorias1 > victorias2 ? nombre1 : nombre2;
 
             let resultadosSeries = {};
             try { resultadosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch(err) {}
@@ -350,8 +367,8 @@ if (p1Valido && p2Valido) {
                 window.location.reload();
             }
         } catch (err) {
-            console.error("Error en simulación directa:", err);
-            alert("❌ Ocurrió un error al simular el combate.");
+            console.error("Error en simulación por boletos:", err);
+            alert("❌ Ocurrió un error al simular por boletos.");
         }
     });
 } else {
@@ -360,6 +377,7 @@ if (p1Valido && p2Valido) {
     botonSimular.style.cursor = "default";
 }
 tarjeta.appendChild(botonSimular);
+
 
     
     
