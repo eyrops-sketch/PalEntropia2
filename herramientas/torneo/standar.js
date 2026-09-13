@@ -75,6 +75,8 @@ window.PALARENA_STANDAR = (function() {
         }
     }
 
+
+    
     sincronizarConfiguracionDesdeStorage();
 
     window.addEventListener("storage", function(evento) {
@@ -108,6 +110,8 @@ window.PALARENA_STANDAR = (function() {
         };
     }
 
+
+    
             function crearCombatiente(ficha, configPersonalizada = null) {
         const config = configPersonalizada || configuracionGlobal;
         const efectivos = calcularStatsEfectivos(ficha, config);
