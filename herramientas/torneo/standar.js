@@ -108,10 +108,13 @@ window.PALARENA_STANDAR = (function() {
         };
     }
 
-    function crearCombatiente(ficha, configPersonalizada = null) {
+        function crearCombatiente(ficha, configPersonalizada = null) {
         const config = configPersonalizada || configuracionGlobal;
         const efectivos = calcularStatsEfectivos(ficha, config);
-        const hpMax = config.hp_base * (efectivos.resistencia / 50); // HP base multiplicado por 10
+        
+        // Multiplicador absoluto x10 asegurado, ignorando si la ficha externa trae otro valor
+        const hpMax = (config.hp_base || 1000) * (efectivos.resistencia / 50);
+        
         return {
             codigo: ficha.j1 || ficha.codigo || "Desconocido",
             nombre: ficha.j2 || ficha.nombre || "Sin nombre",
@@ -135,6 +138,9 @@ window.PALARENA_STANDAR = (function() {
         };
     }
 
+
+
+    
     function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
         sincronizarConfiguracionDesdeStorage();
         if (configPersonalizada && typeof configPersonalizada === "object") {
