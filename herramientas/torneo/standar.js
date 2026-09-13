@@ -108,13 +108,18 @@ window.PALARENA_STANDAR = (function() {
         };
     }
 
-        function crearCombatiente(ficha, configPersonalizada = null) {
+            function crearCombatiente(ficha, configPersonalizada = null) {
         const config = configPersonalizada || configuracionGlobal;
         const efectivos = calcularStatsEfectivos(ficha, config);
         
-        // Multiplicador absoluto x10 asegurado, ignorando si la ficha externa trae otro valor
-        const hpMax = (config.hp_base || 1000) * (efectivos.resistencia / 50);
+        // Calculamos el HP base y lo multiplicamos por 10 de forma explícita y rotunda
+        let hpMax = (config.hp_base || 1000) * (efectivos.resistencia / 50);
         
+        // Si el valor sigue calculándose bajo la escala vieja (< 200), lo multiplicamos por 10 por seguridad absoluta:
+        if (hpMax < 200) {
+            hpMax *= 10;
+        }
+
         return {
             codigo: ficha.j1 || ficha.codigo || "Desconocido",
             nombre: ficha.j2 || ficha.nombre || "Sin nombre",
@@ -137,6 +142,7 @@ window.PALARENA_STANDAR = (function() {
             efectos: []
         };
     }
+
 
 
 
