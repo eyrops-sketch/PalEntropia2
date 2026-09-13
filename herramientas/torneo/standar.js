@@ -111,25 +111,59 @@ window.PALARENA_STANDAR = (function() {
     }
 
 
+
+
     
-                    function crearCombatiente(ficha, configPersonalizada = null) {
-        const config = configPersonalizada || configuracionGlobal;
+    
+                        function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
+        sincronizarConfiguracionDesdeStorage();
+        if (configPersonalizada && typeof configPersonalizada === "object") {
+            configuracionGlobal = { ...configuracionGlobal, ...configPersonalizada };
+        }
+        const config = configuracionGlobal;
+        
+        // Coeficiente aleatorio único y compartido para ambos combatientes
+        const multCompartido = Number((Math.random() * 9 + 1).toFixed(2));
+        
+        let c1 = crearCombatienteConCoeficiente(ficha1, config, multCompartido);
+        let c2 = crearCombatienteConCoeficiente(ficha2, config, multCompartido);
+        
+        const diferencia = Math.abs(c1.hp_max - c2.hp_max);
+        
+        if (diferencia >= 100) {
+            if (c1.hp_max > c2.hp_max) {
+                c2.hp_max = c1.hp_max + 100;
+                c2.hp = c2.hp_max;
+            } else {
+                c1.hp_max = c2.hp_max + 100;
+                c1.hp = c1.hp_max;
+            }
+        }
+        
+        return {
+            combatiente1: c1,
+            combatiente2: c2,
+            turno: 1,
+            estado: "en_curso",
+            historial: [],
+            ganador: null
+        };
+    }
+
+    function crearCombatienteConCoeficiente(ficha, config, multiplicadorCombate) {
         const efectivos = calcularStatsEfectivos(ficha, config);
+        let hpMax = (config.hp_base || 100) * multiplicadorCombate * (efectivos.resistencia / 50);
         
-        // Calculamos el HP base y lo multiplicamos por 10 de forma explícita y rotunda
-        let hpMax = (config.hp_base || 1000) * (efectivos.resistencia / 50);
-        
-        // Si el valor sigue calculándose bajo la escala vieja (< 200), lo multiplicamos por 10 por seguridad absoluta:
-        if (hpMax < 200) {
-            hpMax *= 10;
+        if (hpMax < 200 && multiplicadorCombate < 2.0) {
+            hpMax *= 2;
         }
 
         return {
             codigo: ficha.j1 || ficha.codigo || "Desconocido",
             nombre: ficha.j2 || ficha.nombre || "Sin nombre",
             perfil: ficha.perfil || "standard",
-            hp_max: hpMax,
-            hp: hpMax,
+            hp_max: Math.round(hpMax),
+            hp: Math.round(hpMax),
             fatiga_max: config.fatiga_max,
             fatiga: config.fatiga_inicial,
             efectivos: efectivos,
@@ -146,6 +180,13 @@ window.PALARENA_STANDAR = (function() {
             efectos: []
         };
     }
+
+    function crearCombatiente(ficha, configPersonalizada = null) {
+        const config = configPersonalizada || configuracionGlobal;
+        const multiplicadorDefault = Number((Math.random() * 9 + 1).toFixed(2));
+        return crearCombatienteConCoeficiente(ficha, config, multiplicadorDefault);
+    }
+
 
 
 
