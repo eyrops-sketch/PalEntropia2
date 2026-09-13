@@ -128,6 +128,9 @@ window.PALARENA_STANDAR = (function() {
             tacticaTemporal: 0,
             estadoCaotico: 0,
             posturaDefensiva: null,
+            turnosAturdido: 0,
+            turnosParalizado: 0,
+            turnosDesangrado: 0,
             efectos: []
         };
     }
@@ -157,8 +160,30 @@ window.PALARENA_STANDAR = (function() {
             combatiente.fatiga + config.fatiga_regeneracion_turno
         );
     }
+
         function ejecutarAccion(atacante, objetivo, codigoAccion) {
         const config = configuracionGlobal;
+
+        if (atacante.turnosParalizado > 0) {
+            atacante.turnosParalizado--;
+            const mensajeEstado = `⚡ ¡${atacante.nombre} está completamente paralizado y no puede mover un músculo este turno! (Quedan ${atacante.turnosParalizado} turnos)`;
+            return {
+                mensaje: mensajeEstado,
+                dano: 0,
+                critico: false
+            };
+        }
+
+        if (atacante.turnosAturdido > 0) {
+            atacante.turnosAturdido--;
+            const mensajeEstado = `💫 ¡${atacante.nombre} está aturdido y recupera el sentido con torpeza, perdiendo la iniciativa!`;
+            return {
+                mensaje: mensajeEstado,
+                dano: 0,
+                critico: false
+            };
+        }
+
         let costeFatiga = 0;
         if (codigoAccion !== "A001") {
             atacante.rachaBasicos = 0;
@@ -174,7 +199,7 @@ window.PALARENA_STANDAR = (function() {
         }
 
         if (codigoAccion === "A001") {
-            // Coste y bonus gestionados abajo
+            // Coste y bonus de básicos gestionados abajo
         } else if (codigoAccion === "A002") {
             costeFatiga = config.coste_fatiga_A002;
         } else if (codigoAccion === "A003") {
@@ -262,7 +287,8 @@ window.PALARENA_STANDAR = (function() {
                 };
             }
         }
-                    let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
+
+                 let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
         let mensajeExtra = "";
         let bonusAccion = 1.0;
@@ -294,6 +320,13 @@ window.PALARENA_STANDAR = (function() {
                 bonusAccion *= multiCrit;
                 critico = true;
                 mensajeExtra = " ¡Golpe crítico certero!";
+                if (Math.random() < 0.35) {
+                    objetivo.turnosAturdido = 1;
+                    mensajeExtra += " 💫 ¡El brutal impacto deja al rival aturdido por 1 turno!";
+                } else if (Math.random() < 0.20) {
+                    objetivo.turnosDesangrado = 3;
+                    mensajeExtra += " 🩸 ¡Desgarra la carne provocando una hemorragia severa (3 turnos)!";
+                }
             } else {
                 bonusAccion *= 1.25;
                 mensajeExtra = " (Ataque potente pesado)";
@@ -309,6 +342,10 @@ window.PALARENA_STANDAR = (function() {
                 objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - reduccionTactica;
                 objetivo.estadoCaotico = 1;
                 mensajeExtra = `, perforando las líneas, arrebatándole ${reduccionTactica} puntos de táctica temporal y desestabilizando su juicio mental`;
+                if (Math.random() < 0.25) {
+                    objetivo.turnosParalizado = 2;
+                    mensajeExtra += " ⚡ ¡Bloquea los nervios del rival paralizándolo por 2 turnos!";
+                }
             }
         }
 
@@ -381,6 +418,7 @@ window.PALARENA_STANDAR = (function() {
             critico: critico
         };
         }
+
         function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
@@ -468,6 +506,9 @@ window.PALARENA_STANDAR = (function() {
             combate.combatiente1.tacticaTemporal = 0;
             combate.combatiente1.estadoCaotico = 0;
             combate.combatiente1.posturaDefensiva = null;
+            combate.combatiente1.turnosAturdido = 0;
+            combate.combatiente1.turnosParalizado = 0;
+            combate.combatiente1.turnosDesangrado = 0;
         }
         if (combate.combatiente2) {
             combate.combatiente2.hp = combate.combatiente2.hp_max;
@@ -479,6 +520,9 @@ window.PALARENA_STANDAR = (function() {
             combate.combatiente2.tacticaTemporal = 0;
             combate.combatiente2.estadoCaotico = 0;
             combate.combatiente2.posturaDefensiva = null;
+            combate.combatiente2.turnosAturdido = 0;
+            combate.combatiente2.turnosParalizado = 0;
+            combate.combatiente2.turnosDesangrado = 0;
         }
     }
 
@@ -503,6 +547,35 @@ window.ejecutarTurnoEstandar = function(combate) {
     if (!combate || combate.estado === "finalizado") return;
     const c1 = combate.combatiente1;
     const c2 = combate.combatiente2;
+
+    [c1, c2].forEach(combatiente => {
+        if (combatiente.turnosDesangrado > 0 && !combatiente.derrotado) {
+            const perdidaHp = 5;
+            const perdidaFatiga = 4;
+            combatiente.hp = Math.max(0, combatiente.hp - perdidaHp);
+            combatiente.fatiga = Math.max(0, combatiente.fatiga - perdidaFatiga);
+            combatiente.turnosDesangrado--;
+
+            combate.historial.push({
+                tipo: "accion",
+                atacante: combatiente.codigo,
+                objetivo: combatiente.codigo,
+                resultado: {
+                    mensaje: `🩸 ¡${combatiente.nombre} sufre una hemorragia severa! Pierde ${perdidaHp} de HP y ${perdidaFatiga} de fatiga. (Quedan ${combatiente.turnosDesangrado} turnos).`,
+                    dano: perdidaHp,
+                    critico: false
+                }
+            });
+
+            if (combatiente.hp <= 0) {
+                combatiente.derrotado = true;
+                combate.estado = "finalizado";
+                combate.ganador = (combatiente === c1) ? c2.codigo : c1.codigo;
+            }
+        }
+    });
+
+    if (combate.estado === "finalizado") return;
 
     const accion1 = window.PALARENA_STANDAR.decidirAccion(c1, c2);
     const res1 = window.PALARENA_STANDAR.ejecutarAccion(c1, c2, accion1);
