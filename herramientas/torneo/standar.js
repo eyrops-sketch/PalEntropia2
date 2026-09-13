@@ -1,6 +1,6 @@
 window.PALARENA_STANDAR = (function() {
     let configuracionGlobal = {
-        hp_base: 100,
+        hp_base: 1000, // Multiplicado por 10 (antes 100) para combates largos y estratégicos
         bonificacion_dominante: 0.15,
         factor_imprevisible_min: 0.78,
         factor_imprevisible_max: 1.22,
@@ -30,7 +30,7 @@ window.PALARENA_STANDAR = (function() {
         coste_fatiga_A003: 10,
         coste_fatiga_D001: 20,
         fatiga_defensa_atacante: 15,
-        reduccion_defensa: 0.35,
+        reduccion_defensa: 0.55, // Mejorado para que defender compense de verdad
         error_defensa_base: 45,
         error_defensa_reduccion_inteligencia: 0.03,
         error_defensa_reduccion_tactica: 0.02,
@@ -44,7 +44,7 @@ window.PALARENA_STANDAR = (function() {
         dano_vida_25: 1.15,
         dano_vida_10: 1.25,
         dano_vida_critico: 1.35,
-        max_turnos: 100,
+        max_turnos: 150, // Ampliado para dar margen a los combates largos
         general: 1,
         escenariojug1: 1,
         escenariojug2: 1,
@@ -111,7 +111,7 @@ window.PALARENA_STANDAR = (function() {
     function crearCombatiente(ficha, configPersonalizada = null) {
         const config = configPersonalizada || configuracionGlobal;
         const efectivos = calcularStatsEfectivos(ficha, config);
-        const hpMax = config.hp_base * (efectivos.resistencia / 50);
+        const hpMax = config.hp_base * (efectivos.resistencia / 50); // HP base multiplicado por 10
         return {
             codigo: ficha.j1 || ficha.codigo || "Desconocido",
             nombre: ficha.j2 || ficha.nombre || "Sin nombre",
@@ -160,7 +160,6 @@ window.PALARENA_STANDAR = (function() {
             combatiente.fatiga + config.fatiga_regeneracion_turno
         );
     }
-
         function ejecutarAccion(atacante, objetivo, codigoAccion) {
         const config = configuracionGlobal;
 
@@ -199,7 +198,7 @@ window.PALARENA_STANDAR = (function() {
         }
 
         if (codigoAccion === "A001") {
-            // Coste y bonus de básicos gestionados abajo
+            // Coste y bonus de básicos
         } else if (codigoAccion === "A002") {
             costeFatiga = config.coste_fatiga_A002;
         } else if (codigoAccion === "A003") {
@@ -210,15 +209,15 @@ window.PALARENA_STANDAR = (function() {
             if (atacante.usosDefensaConsecutivos >= 3) {
                 costeFatiga = config.coste_fatiga_D001 || 20;
                 const fatigaActualAtacante = Number(atacante.fatiga) || 0;
-                const reduccionPropia = Math.round(fatigaActualAtacante * 0.40);
+                const reduccionPropia = Math.round(fatigaActualAtacante * 0.50);
                 atacante.fatiga = Math.max(0, fatigaActualAtacante - reduccionPropia);
                 const fatigaActualRival = Number(objetivo.fatiga) || 0;
-                const reposicionRival = Math.round((config.fatiga_max || 100) * 0.40);
+                const reposicionRival = Math.round((config.fatiga_max || 100) * 0.60);
                 objetivo.fatiga = Math.min(config.fatiga_max || 100, fatigaActualRival + reposicionRival);
                 atacante.defendiendo = true;
                 atacante.usosDefensaConsecutivos = 0;
                 return {
-                    mensaje: `🛡️⚡ ¡${atacante.nombre} ejecuta una defensa maestra absoluta! Reduce su propia fatiga un 40% y devuelve un 40% de resuello a ${objetivo.nombre}.`,
+                    mensaje: `🛡️⚡ ¡${atacante.nombre} ejecuta una defensa maestra absoluta! Reduce su propia fatiga un 50% y drena un 60% de resuello a ${objetivo.nombre}.`,
                     defensa: "maestra"
                 };
             } else if (atacante.usosDefensaConsecutivos === 2) {
@@ -246,11 +245,11 @@ window.PALARENA_STANDAR = (function() {
                 const puntuacionObjetivo = tacticaObjetivo * 0.7 + velocidadObjetivo * 0.3;
                 let mensajeContradefensa = `🛡️🔄 ${atacante.nombre} y ${objetivo.nombre} se cruzan en una tensa contradefensa, tanteándose sin arriesgar.`;
                 if (puntuacionAtacante > puntuacionObjetivo) {
-                    const penalizacion = Math.round((Number(objetivo.fatiga) || 0) * 0.15);
+                    const penalizacion = Math.round((Number(objetivo.fatiga) || 0) * 0.25);
                     objetivo.fatiga = Math.max(0, (Number(objetivo.fatiga) || 0) - penalizacion);
-                    mensajeContradefensa += ` ¡${atacante.nombre} impone su agilidad y lectura táctica, desgastando el resuello del rival!`;
+                    mensajeContradefensa += ` ¡${atacante.nombre} impone su agilidad y lectura táctica, castigando con fuerza el resuello del rival!`;
                 } else if (puntuacionObjetivo > puntuacionAtacante) {
-                    const penalizacionPropia = Math.round((Number(atacante.fatiga) || 0) * 0.15);
+                    const penalizacionPropia = Math.round((Number(atacante.fatiga) || 0) * 0.25);
                     atacante.fatiga = Math.max(0, (Number(atacante.fatiga) || 0) - penalizacionPropia);
                     mensajeContradefensa += ` ¡${objetivo.nombre} gana la iniciativa en el bloqueo mutuo!`;
                 }
@@ -273,10 +272,10 @@ window.PALARENA_STANDAR = (function() {
             if (defensaExitosa) {
                 atacante.defendiendo = true;
                 const fatigaActualRival = Number(objetivo.fatiga) || 0;
-                const penalizacionRival = Math.round(fatigaActualRival * 0.40);
+                const penalizacionRival = Math.round(fatigaActualRival * 0.60); // Drenaje fuerte independiente de la IA
                 objetivo.fatiga = Math.max(0, fatigaActualRival - penalizacionRival);
                 return {
-                    mensaje: `🛡️✨ ${atacante.nombre} planta una defensa impenetrable, bloqueando las líneas y drenando un 40% de fatiga a ${objetivo.nombre}.`,
+                    mensaje: `🛡️✨ ${atacante.nombre} planta un muro defensivo impenetrable, bloqueando los ataques y drenando un 60% de fatiga a ${objetivo.nombre}.`,
                     defensa: "acierto"
                 };
             } else {
@@ -288,7 +287,7 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-                 let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
+            let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
         let mensajeExtra = "";
         let bonusAccion = 1.0;
@@ -376,9 +375,9 @@ window.PALARENA_STANDAR = (function() {
                 const chanceContra = Math.random();
                 if (chanceContra < 0.45) {
                     const fatigaAtacanteActual = Number(atacante.fatiga) || 0;
-                    atacante.fatiga = Math.max(0, fatigaAtacanteActual - 20);
+                    atacante.fatiga = Math.max(0, fatigaAtacanteActual - 25);
                     return {
-                        mensaje: `💥⚠️ ¡${objetivo.nombre} anticipa el violento ataque potente de ${atacante.nombre}, esquivándolo con destreza y castigando su fatiga por la lentitud del fallo!`,
+                        mensaje: `💥⚠️ ¡${objetivo.nombre} anticipa con maestría el violento ataque potente de ${atacante.nombre}, esquivándolo con destreza y castigando duramente su fatiga!`,
                         dano: 0,
                         critico: false
                     };
@@ -417,8 +416,7 @@ window.PALARENA_STANDAR = (function() {
             dano: danoFinal,
             critico: critico
         };
-        }
-
+                    }
         function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
@@ -472,7 +470,7 @@ window.PALARENA_STANDAR = (function() {
         }
 
         const costeDefensa = Number(config.coste_fatiga_D001) || 20;
-        if (hpPorcentaje < 30 && fatigaActual > costeDefensa && !atacante.defendiendo) {
+        if (hpPorcentaje < 40 && fatigaActual > costeDefensa && !atacante.defendiendo) {
             return "D001";
         }
 
@@ -539,7 +537,6 @@ window.PALARENA_STANDAR = (function() {
         reiniciarSerieCombatientes
     };
 })();
-
 window.crearCombateEstandar = window.PALARENA_STANDAR.crearCombateEstandar;
 window.reiniciarSerieCombatientes = window.PALARENA_STANDAR.reiniciarSerieCombatientes;
 
@@ -550,7 +547,7 @@ window.ejecutarTurnoEstandar = function(combate) {
 
     [c1, c2].forEach(combatiente => {
         if (combatiente.turnosDesangrado > 0 && !combatiente.derrotado) {
-            const perdidaHp = 5;
+            const perdidaHp = 25; // Escalado al nuevo HP de los tanques
             const perdidaFatiga = 4;
             combatiente.hp = Math.max(0, combatiente.hp - perdidaHp);
             combatiente.fatiga = Math.max(0, combatiente.fatiga - perdidaFatiga);
