@@ -114,29 +114,58 @@ window.PALARENA_STANDAR = (function() {
 
 
     
-    
-                        function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
+    function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
         sincronizarConfiguracionDesdeStorage();
         if (configPersonalizada && typeof configPersonalizada === "object") {
             configuracionGlobal = { ...configuracionGlobal, ...configPersonalizada };
         }
         const config = configuracionGlobal;
         
-        // Coeficiente aleatorio único y compartido para ambos combatientes
         const multCompartido = Number((Math.random() * 9 + 1).toFixed(2));
         
-        let c1 = crearCombatienteConCoeficiente(ficha1, config, multCompartido);
-        let c2 = crearCombatienteConCoeficiente(ficha2, config, multCompartido);
+        const generarCombatienteConCoef = (ficha, mult) => {
+            const efectivos = calcularStatsEfectivos(ficha, config);
+            let hpMax = (config.hp_base || 1000) * mult * (efectivos.resistencia / 50);
+            
+            if (hpMax < 200 && mult < 2.0) {
+                hpMax *= 2;
+            }
+
+            return {
+                codigo: ficha.j1 || ficha.codigo || "Desconocido",
+                nombre: ficha.j2 || ficha.nombre || "Sin nombre",
+                perfil: ficha.perfil || "standard",
+                hp_max: Math.round(hpMax),
+                hp: Math.round(hpMax),
+                fatiga_max: config.fatiga_max,
+                fatiga: config.fatiga_inicial,
+                efectivos: efectivos,
+                defendiendo: false,
+                derrotado: false,
+                usosDefensaConsecutivos: 0,
+                rachaBasicos: 0,
+                tacticaTemporal: 0,
+                estadoCaotico: 0,
+                posturaDefensiva: null,
+                turnosAturdido: 0,
+                turnosParalizado: 0,
+                turnosDesangrado: 0,
+                efectos: []
+            };
+        };
+
+        let c1 = generarCombatienteConCoef(ficha1, multCompartido);
+        let c2 = generarCombatienteConCoef(ficha2, multCompartido);
         
         const diferencia = Math.abs(c1.hp_max - c2.hp_max);
         
         if (diferencia >= 100) {
-            if (c1.hp_max > c2.hp_max) {
-                c2.hp_max = c1.hp_max + 100;
-                c2.hp = c2.hp_max;
-            } else {
-                c1.hp_max = c2.hp_max + 100;
+            if (c1.hp_max < c2.hp_max) {
+                c1.hp_max = c2.hp_max - 50;
                 c1.hp = c1.hp_max;
+            } else {
+                c2.hp_max = c1.hp_max - 50;
+                c2.hp = c2.hp_max;
             }
         }
         
@@ -149,68 +178,16 @@ window.PALARENA_STANDAR = (function() {
             ganador: null
         };
     }
-
-    function crearCombatienteConCoeficiente(ficha, config, multiplicadorCombate) {
-        const efectivos = calcularStatsEfectivos(ficha, config);
-        let hpMax = (config.hp_base || 100) * multiplicadorCombate * (efectivos.resistencia / 50);
-        
-        if (hpMax < 200 && multiplicadorCombate < 2.0) {
-            hpMax *= 2;
-        }
-
-        return {
-            codigo: ficha.j1 || ficha.codigo || "Desconocido",
-            nombre: ficha.j2 || ficha.nombre || "Sin nombre",
-            perfil: ficha.perfil || "standard",
-            hp_max: Math.round(hpMax),
-            hp: Math.round(hpMax),
-            fatiga_max: config.fatiga_max,
-            fatiga: config.fatiga_inicial,
-            efectivos: efectivos,
-            defendiendo: false,
-            derrotado: false,
-            usosDefensaConsecutivos: 0,
-            rachaBasicos: 0,
-            tacticaTemporal: 0,
-            estadoCaotico: 0,
-            posturaDefensiva: null,
-            turnosAturdido: 0,
-            turnosParalizado: 0,
-            turnosDesangrado: 0,
-            efectos: []
-        };
-    }
-
-    function crearCombatiente(ficha, configPersonalizada = null) {
-        const config = configPersonalizada || configuracionGlobal;
-        const multiplicadorDefault = Number((Math.random() * 9 + 1).toFixed(2));
-        return crearCombatienteConCoeficiente(ficha, config, multiplicadorDefault);
-    }
-
-
+    
 
 
 
 
 
     
-    function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
-        sincronizarConfiguracionDesdeStorage();
-        if (configPersonalizada && typeof configPersonalizada === "object") {
-            configuracionGlobal = { ...configuracionGlobal, ...configPersonalizada };
-        }
-        const config = configuracionGlobal;
-        const c1 = crearCombatiente(ficha1, config);
-        const c2 = crearCombatiente(ficha2, config);
-        return {
-            combatiente1: c1,
-            combatiente2: c2,
-            turno: 1,
-            estado: "en_curso",
-            historial: [],
-            ganador: null
-        };
-    }
+
+    
+    
 
     function regenerarFatiga(combatiente) {
         const config = configuracionGlobal;
