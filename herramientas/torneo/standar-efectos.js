@@ -1,7 +1,7 @@
 /*
 ========================================================
 PALARENA
-standar-efectos.js v1.0
+standar-efectos.js v1.1
 PalEntropía
 
 Biblioteca de efectos
@@ -14,6 +14,7 @@ E004  Lentitud
 E005  Daño progresivo
 E006  Iniciativa
 E007  Potenciación de daño
+E008  Adaptación
 ========================================================
 */
 
@@ -125,6 +126,21 @@ window.PALARENA_STANDAR_EFECTOS = {
             tipo: "modificador",
 
             potencia: 15,
+
+            duracion: 2
+
+        },
+
+
+        E008: {
+
+            codigo: "E008",
+
+            nombre: "Adaptación",
+
+            tipo: "modificador",
+
+            potencia: 30,
 
             duracion: 2
 
@@ -240,3 +256,4 @@ window.obtenerEfectoEstandar =
 FIN STANDAR-EFECTOS
 ========================================================
 */
+
