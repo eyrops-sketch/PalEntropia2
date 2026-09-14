@@ -649,3 +649,17 @@ body:not(.modo-torneo) .ocultar-en-individual {
     max-width: 100%;
 }
 
+/* --- BOTÓN ADAPTACIÓN (A004) --- */
+.accion.adaptacion {
+    background: linear-gradient(180deg, #1f3a28 0%, #14251a 100%);
+    border-color: #2ea043;
+    color: #7ee787;
+}
+
+.accion.adaptacion:hover:not(:disabled) {
+    background: linear-gradient(180deg, #2ea043 0%, #1f3a28 100%);
+    border-color: #3fb950;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(46, 160, 67, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 12px rgba(46, 160, 67, 0.6);
+}
+
