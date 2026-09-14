@@ -531,6 +531,11 @@ window.PALTAXON = {
 "007_15":{
   ta1:"Animalia > Chordata > Diapsida > Sauropterygia > Plesiosauria > Pliosauroidea > Pliosauridae > Liopleurodon",
   ta2:"Diápsido. Sauropterigio. Plesiosaurio. Pliosauroideo. Pliosáurido."
+},
+  
+"008_01":{
+  ta1:"Animalia > Chordata > Tetrapoda > Acanthostegidae > Acanthostega",
+  ta2:"Tetrápodo. Acanthostégido."
 }
 };
 
