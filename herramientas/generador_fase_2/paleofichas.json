@@ -634,6 +634,12 @@
   "nombre": "Acanthostega",
   "dieta": "Carnívoro",
   "anatomia": "Tetrápodo acuático de cuerpo alargado, cráneo ancho, extremidades con ocho dedos, cola provista de una aleta y mandíbulas con numerosos dientes pequeños, adaptado principalmente a desplazarse y cazar en ambientes acuáticos"
+  },
+  {
+  "codigo": "008_02",
+  "nombre": "Ankylosaurus",
+  "dieta": "Herbívoro",
+  "anatomia": "Gran dinosaurio cuadrúpedo de cuerpo bajo y muy robusto, cubierto por placas y osteodermos, con cabeza ancha, pico córneo, extremidades fuertes y una pesada maza ósea en el extremo de la cola"
   }
 ]
 
