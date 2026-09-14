@@ -188,17 +188,19 @@ function obtenerReglasTorneo() {
     } catch (e) { return { ...REGLAS_DEF }; } 
 }
 
-function obtenerConfiguracionActiva() {     
-    const reg = obtenerReglasTorneo();     
-    const modoActivo = reg.tipoCombate || "normal";     
-    const configBase = fichas.find(f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()) || fichas[0] || {};
+
+    
+    function obtenerConfiguracionActiva() {
+    const reg = obtenerReglasTorneo();
     return {
-        ...configBase,
-        factorImprevisible: reg.factorImprevisible,
-        iaAleatoria: reg.iaAleatoria
+        tipoCombate: reg.tipoCombate || "normal",
+        ...(reg.coeficientes || {})
     };
 }
 
+
+
+    
 function actualizarInterfazModalidad() {     
     const reg = obtenerReglasTorneo();     
     const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
