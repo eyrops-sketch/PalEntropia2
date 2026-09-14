@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es"> 
 <head>     
     <meta charset="UTF-8">     
@@ -12,10 +12,7 @@
     <div class="subtitulo">Arena — Cuadro de Torneo</div> 
 </header> 
 
-
-
-
-    <main id="arena">     
+<main id="arena">     
     <section id="configuracion" class="panel">         
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">             
             <h2 style="margin: 0;">⚔️ Preparar combate</h2>             
@@ -105,6 +102,7 @@
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>             
             <button id="botonA002" class="accion" type="button" disabled>💥 Ataque potente</button>             
             <button id="botonA003" class="accion" type="button" disabled>🧠 Ataque táctico</button>             
+            <button id="botonA004" class="accion adaptacion" type="button" disabled>🧬 Adaptación</button>             
             <button id="botonD001" class="accion defensa" type="button" disabled>🛡️ Defender</button>         
         </div>         
         <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>     
@@ -124,14 +122,6 @@
     </section> 
 </main>
 
-
-
-
-
-
-
-
-    
 <div id="modalModalidades" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">     
     <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">         
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">             
@@ -139,33 +129,10 @@
             <button id="botonCerrarModal" type="button" style="background: transparent; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px 8px;">✕</button>         </div>         
         <div id="contenidoModalidades" style="margin: 0 0 20px 0; font-size: 0.9rem; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Normal:</strong> Experiencia equilibrada estándar con parámetros base.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Difícil:</strong> Menor vida base y mayor letalidad para duelos desafiantes.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Sin crítico:</strong> Combates tácticos puros sin multiplicador crítico.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Defensa aumentada:</strong> Defensas muy reforzadas que alargan los intercambios.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Desgaste extremo:</strong> Menor regeneración y alta exigencia de fatiga.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Frenesí mesozoico:</strong> Partidas ultrarrápidas con daños masivos.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Depredador al límite:</strong> Ofensivas letales con bonificaciones altas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Cataclismo carbonífero:</strong> Entorno caótico con altísima variabilidad de daño.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Acorazados cretácicos:</strong> Tanques masivos de alta resistencia y divisor defensivo extremo.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Instinto primigenio:</strong> Furia desatada con críticos hiperpotenciados.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Reflejos abismales:</strong> Duelos ágiles con esquivas constantes.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Balance ancestral:</strong> Coeficientes comprimidos para nivelar estadísticas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Furia desatada:</strong> Compensador agresivo para equilibrar Stats muy bajos.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Apex letal:</strong> Máximo nivel de riesgo y daño crítico desbocado.</div>         
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Muerte súbita:</strong> Duelos hiperletales de un solo acierto e iniciativa radical 50/50.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 1:</strong> Factor de penalización específico del 60% al rendimiento del primer combatiente.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 2:</strong> Factor de penalización específico del 60% al rendimiento del segundo combatiente.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Cataclismo sequía:</strong> Clima agobiante con multiplicador general de 0.75 y fatiga acelerada.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Cataclismo terremoto:</strong> Suelo inestable con multiplicador general de 0.50 y alta aleatoriedad.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Cataclismo volcán:</strong> Ambiente asfixiante con multiplicador general de 0.25 y letalidad masiva.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Cataclismo glaciación:</strong> Freno metabólico con multiplicador general de 0.60 y defensas extremas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Cataclismo diluvio:</strong> Terreno impracticable con multiplicador general de 0.70 y humedad asfixiante.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Cataclismo apocalipsis:</strong> Extinción masiva con multiplicador general de 0.20 y letalidad absoluta.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Duelo de titanes:</strong> Guerra de desgaste con el doble de vida base y defensas titánicas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Fiebre primigenia:</strong> Ofensiva total incansable con alta velocidad de ejecución.</div>         </div>         
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Difícil:</strong> Menor vida base y mayor letalidad para duelos desafiantes.</div>         </div>         
         <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">             
             <button id="botonCerrarModalBtn" type="button" style="background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cerrar</button>         </div>     </div> </div> 
+
 <div id="modalGuiaCombate" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">     
     <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">         
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">             
@@ -175,11 +142,12 @@
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">⚔️ Ataque básico (A001):</strong> Ofensiva estándar con baja fatiga y daño constante modulado por los Stats.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">💥 Ataque potente (A002):</strong> Ofensiva crítica de alto impacto que exige un umbral mínimo de fatiga.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">🧠 Ataque táctico (A003):</strong> Maniobra guiada por la estadística de Táctica para castigar huecos del rival.</div>             
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #2ea043;"><strong style="color: #f0f6fc;">🧬 Adaptación (A004):</strong> Maniobra evasiva que recupera fatiga y otorga alta probabilidad de esquivar, ideal para especies pequeñas.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">🛡️ Defender (D001):</strong> Mitiga drásticamente el daño y puede provocar contraataques o inversiones.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">▶️ Combate automático:</strong> Ejecuta los turnos mediante inteligencia artificial de combate.</div>         </div>         
         <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">             
             <button id="cierraGuiaBtn" type="button" style="background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Entendido</button>         </div>     </div> </div> 
-<script src="palarenastats.js"></script> 
+   <script src="palarenastats.js"></script> 
 <script src="standar-ataques.js"></script> 
 <script src="standar-efectos.js"></script> 
 <script src="standar.js"></script> 
@@ -198,57 +166,32 @@ const nombre1 = document.getElementById("nombre1"), nombre2 = document.getElemen
 const botonPreparar = document.getElementById("botonPreparar"), botonSerie = document.getElementById("botonSerie"); 
 const mensajeConfiguracion = document.getElementById("mensajeConfiguracion"), informacionSerie = document.getElementById("informacionSerie"); 
 const serieFormato = document.getElementById("serieFormato"), partidoSerie = document.getElementById("partidoSerie"); 
-const botonA001 = document.getElementById("botonA001"), botonA002 = document.getElementById("botonA002"), botonA003 = document.getElementById("botonA003"), botonD001 = document.getElementById("botonD001"), botonAuto = document.getElementById("botonAuto"); 
+const botonA001 = document.getElementById("botonA001"), botonA002 = document.getElementById("botonA002"), botonA003 = document.getElementById("botonA003"), botonA004 = document.getElementById("botonA004"), botonD001 = document.getElementById("botonD001"), botonAuto = document.getElementById("botonAuto"); 
 const botonNuevoCombate = document.getElementById("botonNuevoCombate"), botonVolverCruces = document.getElementById("botonVolverCruces"); 
 const botonInfoModalidades = document.getElementById("botonInfoModalidades"), modalModalidades = document.getElementById("modalModalidades"), botonCerrarModal = document.getElementById("botonCerrarModal"), botonCerrarModalBtn = document.getElementById("botonCerrarModalBtn"); 
 const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), modalGuiaCombate = document.getElementById("modalGuiaCombate"), cierraGuiaCruz = document.getElementById("cierraGuiaCruz"), cierraGuiaBtn = document.getElementById("cierraGuiaBtn"); 
 const labelModalidadActual = document.getElementById("labelModalidadActual"); 
 const controlesManual = document.querySelectorAll('input[name="controlManual"]'); 
 
-
-
-
-
-    
 function obtenerReglasTorneo() {     
     const g = localStorage.getItem(CLAVE_REGLAS);     
     if (!g) return { ...REGLAS_DEF };     
-
     try { 
         const r = JSON.parse(g); 
-
         return { 
             partidosSerie: Number(r.partidosSerie) || 1,
             tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal",
-            factorImprevisible: r.factorImprevisible !== undefined
-                ? Number(r.factorImprevisible)
-                : 1.0,
-            iaAleatoria: r.iaAleatoria !== undefined
-                ? Boolean(r.iaAleatoria)
-                : false,
+            factorImprevisible: r.factorImprevisible !== undefined ? Number(r.factorImprevisible) : 1.0,
+            iaAleatoria: r.iaAleatoria !== undefined ? Boolean(r.iaAleatoria) : false,
             coeficientes: r.coeficientes || {}
         }; 
-    } catch (e) { 
-        return { ...REGLAS_DEF }; 
-    } 
+    } catch (e) { return { ...REGLAS_DEF }; } 
 }
-
-
-
-
-
-
-
-
 
 function obtenerConfiguracionActiva() {     
     const reg = obtenerReglasTorneo();     
     const modoActivo = reg.tipoCombate || "normal";     
-
-    const configBase = fichas.find(
-        f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()
-    ) || fichas[0] || {};
-
+    const configBase = fichas.find(f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()) || fichas[0] || {};
     return {
         ...configBase,
         factorImprevisible: reg.factorImprevisible,
@@ -256,31 +199,19 @@ function obtenerConfiguracionActiva() {
     };
 }
 
-
-
-
-
-
-    
-
-    
 function actualizarInterfazModalidad() {     
     const reg = obtenerReglasTorneo();     
     const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
-    
     let nombreModo = "Elegir configuración";
-    
     if (esAleatorio) {
         nombreModo = "Aleatorio";
     } else if (reg.tipoCombate) {
         nombreModo = reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ');
     }
-    
     if (labelModalidadActual) {
         labelModalidadActual.innerHTML = `📜 Modalidad actual: <strong>${nombreModo}</strong>`; 
     }
 }
-
 
 function actualizarInterfazSerie() {     
     const c1v = document.getElementById("c1Victorias"), c2v = document.getElementById("c2Victorias");     
@@ -379,7 +310,7 @@ function actualizarRolesVisuales() {
     }
 }
 
- controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
+controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
     controlManual = Number(ctrl.value); 
     actualizarRolesVisuales();
     if (combateActivo) activarBotones(); 
@@ -521,25 +452,22 @@ function mostrarEstado(c, pref) {
             } 
         });     
     }
+    if (c.turnosAdaptacion && c.turnosAdaptacion > 0) m.push(`🧬 Adaptación (${c.turnosAdaptacion})`);
     
-    // Si hay estados o efectos los une, si no, escribe explícitamente "En combate!"
     est.textContent = m.length > 0 ? m.join(" · ") : "En combate!";     
 }
-
-
-
-function activarBotones() {     
+    function activarBotones() {     
     const cm = controlManual === 1 ? combatiente1 : combatiente2, cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;     
-    botonA001.disabled = false; botonA002.disabled = !pc || Number(cm.fatiga) < cfg.fatiga_minima_ataque_potente; botonA003.disabled = botonD001.disabled = botonAuto.disabled = false; 
+    botonA001.disabled = false; 
+    botonA002.disabled = !pc || Number(cm.fatiga) < cfg.fatiga_minima_ataque_potente; 
+    botonA003.disabled = botonA004.disabled = botonD001.disabled = botonAuto.disabled = false; 
 } 
 
 function desactivarBotones() { 
-    botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; 
-    }
+    botonA001.disabled = botonA002.disabled = botonA003.disabled = botonA004.disabled = botonD001.disabled = botonAuto.disabled = true; 
+}
 
-
-
- function interpretarRes(res, at, ob) {     
+function interpretarRes(res, at, ob) {     
     if (!res) return;     
     if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) { res.dano = Math.round(res.dano * 0.5); añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%."); }     
     if (res.mensaje) añadirRegistro(res.mensaje);     
@@ -552,8 +480,8 @@ function desactivarBotones() {
     if (res.defensa === "error") añadirRegistro("⚠️ ¡Error de defensa!");     
     if (res.fallo) añadirRegistro("❌ ¡El ataque falla!");     
     if (res.bloqueado_por_fatiga) añadirRegistro("😓 ¡Crítico bloqueado por fatiga!");     
-    if (res.esquiva) añadirRegistro("💨 ¡Ataque esquivado!");     
-    if (res.efecto) añadirRegistro(`✨ ${res.efecto.nombre} aplicado.`);     
+    if (res.esquiva) añadirRegistro("💨 ¡Ataque esquivado!"); 
+    if (res.efecto) añadirRegistro(`✨ ${res.efecto.nombre} aplicado.`); 
     if (res.registro) (Array.isArray(res.registro) ? res.registro : [res.registro]).forEach(m => añadirRegistro(m)); 
 } 
 
@@ -633,6 +561,7 @@ function resolverTurnoInicialAutomaticoIA() {
 botonA001.addEventListener("click", () => ejecutarAccionJugador("A001")); 
 botonA002.addEventListener("click", () => ejecutarAccionJugador("A002")); 
 botonA003.addEventListener("click", () => ejecutarAccionJugador("A003")); 
+botonA004.addEventListener("click", () => ejecutarAccionJugador("A004")); 
 botonD001.addEventListener("click", () => ejecutarAccionJugador("D001")); 
 
 botonAuto.addEventListener("click", () => {     
@@ -699,9 +628,7 @@ function registrarResSerie(gRes) {
     if (botonVolverCruces) botonVolverCruces.disabled = true;
 } 
 
-
-
- function mostrarResSerie(g) {     
+function mostrarResSerie(g) {     
     document.getElementById("resultadoIcono").textContent = "🏆";     
     document.getElementById("resultadoTitulo").textContent = "🏆 " + (g.nombre || "Ganador");     
     document.getElementById("resultadoTexto").textContent = `Vencedor absoluto de la eliminatoria: ${g.nombre} (${victorias1} - ${victorias2}).`;     
@@ -742,35 +669,28 @@ function mostrarResCombate(res) {
 function limpiarRegistro() { 
     document.getElementById("registroCombate").innerHTML = ""; 
 } 
-
     
 function añadirRegistro(txt) { 
     const reg = document.getElementById("registroCombate");
     if (!reg) return;
     
-    // Eliminar el mensaje de "combate no ha comenzado" si está presente
     const vacio = reg.querySelector(".registro-vacio");
     if (vacio) {
         vacio.remove();
     }
 
-    // Crear y añadir la nueva línea de log al final
     const lin = document.createElement("div"); 
     lin.className = "linea-registro"; 
     lin.textContent = txt; 
     reg.appendChild(lin); 
     
-    // Forzar el scroll hacia abajo para que el log actual sea visible de inmediato
     reg.scrollTop = reg.scrollHeight; 
     
-    // Mantener el centro únicamente con el número de turno limpio
     const turnoActual = document.getElementById("turnoActual");
     if (turnoActual && combate && combate.turno) {
         turnoActual.textContent = "Turno " + combate.turno;
     }
 }
-
-
 
 function mostrarMensaje(txt) { 
     mensajeConfiguracion.textContent = txt; 
@@ -845,3 +765,4 @@ document.addEventListener("DOMContentLoaded", async function() {
 </script> 
 </body> 
 </html>
+
