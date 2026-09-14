@@ -516,7 +516,7 @@ window.PALTAXON = {
   ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Ceratopsia > Ceratopsidae > Chasmosaurinae > Triceratops",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Ceratopsio. Ceratópsido. Chasmosaurino."
 
-};
+},
 
 "007_13":{
   ta1:"Animalia > Chordata > Placodermi > Arthrodira > Dunkleosteidae > Dunkleosteus",
