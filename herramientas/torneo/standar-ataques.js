@@ -1,7 +1,7 @@
 /*
 ========================================================
 PALARENA
-standar-ataques.js v1.0
+standar-ataques.js v1.1
 PalEntropía
 
 Biblioteca de ataques y acciones
@@ -12,6 +12,7 @@ ACCIONES
 A001  Ataque básico
 A002  Ataque potente
 A003  Ataque táctico
+A004  Adaptación
 D001  Defender
 ========================================================
 */
@@ -20,7 +21,7 @@ window.PALARENA_STANDAR_ATAQUES = {
 
 
     /* ==================================================
-       ATAQUES
+       ATAQUES Y ACCIONES
     ================================================== */
 
     datos: {
@@ -72,6 +73,23 @@ window.PALARENA_STANDAR_ATAQUES = {
             critico: true,
 
             efecto: "E00X"
+
+        },
+
+
+        A004: {
+
+            codigo: "A004",
+
+            nombre: "Adaptación",
+
+            tipo: "soporte",
+
+            potencia: 0,
+
+            critico: false,
+
+            efecto: "E008"
 
         },
 
