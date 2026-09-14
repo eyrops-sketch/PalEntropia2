@@ -495,6 +495,42 @@ window.PALTAXON = {
 "007_08":{
   ta1:"Animalia > Chordata > Diapsida > Archosauria > Pterosauria > Pterodactyloidea > Ornithocheiridae > Ornithocheirus",
   ta2:"Diápsido. Arcosaurio. Pterosaurio. Pterodactiloideo. Ornitoqueírido."
-}
+},
+
+"007_09":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Coelurosauria > Maniraptora > Therizinosauroidea > Therizinosauridae > Therizinosaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Celurosaurio. Maniraptorano. Tericinosaurio. Terizinosáurido."
+},
+
+"007_10":{
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Proboscidea > Elephantidae > Mammuthus",
+  ta2:"Sinápsido. Mamífero. Proboscídeo. Elefántido. Mamut."
+},
+
+"007_11":{
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Carnivora > Feliformia > Felidae > Machairodontinae > Smilodontini > Smilodon",
+  ta2:"Sinápsido. Mamífero. Carnívoro. Félido. Macairodontino. Smilodóntino. Felino de dientes de sable."
+},
+
+"007_12":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Ceratopsia > Ceratopsidae > Chasmosaurinae > Triceratops",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Ceratopsio. Ceratópsido. Chasmosaurino."
 
 };
+{
+"007_13":{
+  ta1:"Animalia > Chordata > Placodermi > Arthrodira > Dunkleosteidae > Dunkleosteus",
+  ta2:"Vertebrado. Placodermo. Artródiro. Dunkleósteido."
+},
+
+"007_14":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Pterosauria > Pterodactyloidea > Azhdarchoidea > Azhdarchidae > Quetzalcoatlus",
+  ta2:"Diápsido. Arcosaurio. Pterosaurio. Pterodactiloideo. Azhdárquido."
+},
+
+"007_15":{
+  ta1:"Animalia > Chordata > Diapsida > Sauropterygia > Plesiosauria > Pliosauroidea > Pliosauridae > Liopleurodon",
+  ta2:"Diápsido. Sauropterigio. Plesiosaurio. Pliosauroideo. Pliosáurido."
+}
+};
+
