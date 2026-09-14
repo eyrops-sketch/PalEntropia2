@@ -517,7 +517,7 @@ window.PALTAXON = {
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Ceratopsio. Ceratópsido. Chasmosaurino."
 
 };
-{
+
 "007_13":{
   ta1:"Animalia > Chordata > Placodermi > Arthrodira > Dunkleosteidae > Dunkleosteus",
   ta2:"Vertebrado. Placodermo. Artródiro. Dunkleósteido."
