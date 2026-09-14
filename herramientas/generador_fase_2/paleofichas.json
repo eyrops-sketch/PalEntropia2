@@ -586,6 +586,48 @@
     "nombre": "Ornithocheirus",
     "dieta": "Piscívoro",
     "anatomia": "Pterosaurio de gran tamaño, con cuerpo ligero, cuello alargado, alas membranosas de gran envergadura, pico largo y estrecho provisto de dientes y extremidades adaptadas al vuelo y a la captura de peces"
+  },
+  {
+    "codigo": "007_09",
+    "nombre": "Therizinosaurus",
+    "dieta": "Herbívoro",
+    "anatomia": "Gran dinosaurio terópodo de cuerpo voluminoso, cuello largo, cabeza pequeña, pico córneo y extremidades anteriores muy desarrolladas provistas de enormes garras curvadas"
+  },
+  {
+    "codigo": "007_10",
+    "nombre": "Mammuthus",
+    "dieta": "Herbívoro",
+    "anatomia": "Gran proboscídeo de cuerpo robusto, patas columnares, cabeza elevada, trompa prensil y largos colmillos curvados, con abundante pelaje en las especies adaptadas a climas fríos"
+  },
+  {
+    "codigo": "007_11",
+    "nombre": "Smilodon",
+    "dieta": "Carnívoro",
+    "anatomia": "Felino de cuerpo muy robusto, cuello y extremidades anteriores musculosas, cráneo ancho y grandes caninos superiores alargados y comprimidos"
+  },
+  {
+    "codigo": "007_12",
+    "nombre": "Triceratops",
+    "dieta": "Herbívoro",
+    "anatomia": "Gran dinosaurio cuadrúpedo de cuerpo robusto, pico córneo, cráneo enorme con tres cuernos y amplio collar óseo, adaptado a cortar y procesar vegetación"
+  },
+  {
+    "codigo": "007_13",
+    "nombre": "Dunkleosteus",
+    "dieta": "Carnívoro",
+    "anatomia": "Gran pez placodermo de cuerpo robusto, cabeza protegida por gruesas placas óseas, mandíbulas formadas por placas cortantes y potente región caudal adaptada a la natación"
+  },
+  {
+    "codigo": "007_14",
+    "nombre": "Quetzalcoatlus",
+    "dieta": "Carnívoro",
+    "anatomia": "Pterosaurio gigantesco de cuerpo ligero, cuello extremadamente largo, cabeza alargada con pico sin dientes, alas membranosas sostenidas por un cuarto dedo muy desarrollado y largas extremidades posteriores"
+  },
+  {
+    "codigo": "007_15",
+    "nombre": "Liopleurodon",
+    "dieta": "Carnívoro",
+    "anatomia": "Gran reptil marino de cuerpo fusiforme, cuello corto, cabeza enorme y alargada, mandíbulas con numerosos dientes cónicos y cuatro aletas robustas para una potente propulsión acuática"
   }
 ]
 
