@@ -1,11 +1,11 @@
 /*
 ========================================================
 PALARENA
-palarenastats.js v1.1
+palarenastats.js v1.2
 PalEntropía
 
 Conversión de los 11 stats de Paleoficha
-a 5 indicadores de combate.
+a 5 indicadores de combate y factor de adaptación.
 
 STATS BASE
 
@@ -28,6 +28,7 @@ Defensa
 Velocidad
 Resistencia
 Táctica
+Adaptación
 
 Todos los valores finales:
 0 - 100
@@ -237,7 +238,7 @@ window.PALARENA_STATS = {
 
 
     /* ==================================================
-       CALCULAR 5 INDICADORES
+       CALCULAR INDICADORES
     ================================================== */
 
     calcular(stats) {
@@ -323,6 +324,24 @@ window.PALARENA_STATS = {
             ) / 3;
 
 
+        /*
+        ----------------------------------------------
+        ADAPTACIÓN (NUEVO)
+        Tamaño inverso (e9) + Movilidad (e7) + Velocidad (e10) + Inteligencia (e11)
+        ----------------------------------------------
+        */
+
+        const factorTamañoInverso = 100 - stats.e9;
+
+        const adaptacion =
+            (
+                factorTamañoInverso +
+                stats.e7 +
+                stats.e10 +
+                stats.e11
+            ) / 4;
+
+
         return {
 
             ataque:
@@ -338,7 +357,10 @@ window.PALARENA_STATS = {
                 this.limitar(resistencia),
 
             tactica:
-                this.limitar(tactica)
+                this.limitar(tactica),
+
+            adaptacion:
+                this.limitar(adaptacion)
 
         };
 
@@ -374,3 +396,4 @@ window.PALARENA_STATS = {
 FIN PALARENA_STATS
 ========================================================
 */
+
