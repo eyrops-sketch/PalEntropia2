@@ -1,357 +1,215 @@
-<!DOCTYPE html> 
-<html lang="es"> 
-<head>     
-    <meta charset="UTF-8">     
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">     
-    <title>PalEntropía — Combate de Torneo</title>     
-    <link rel="stylesheet" href="standar_torneo.css"> 
-</head> 
-<body> 
-<header id="cabecera">     
-    <div class="titulo">⚔️ PalEntropía</div>     
-    <div class="subtitulo">Arena — Cuadro de Torneo</div> 
-</header> 
-
-
-
-
-    <main id="arena">     
-    <section id="configuracion" class="panel">         
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">             
-            <h2 style="margin: 0;">⚔️ Preparar combate</h2>             
-            <button id="botonAbrirGuiaCombate" type="button" class="boton-circular-ajustes" title="Guía de Acciones y Estadísticas" style="background: #21262d; border: 1px solid #30363d; color: #58a6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem;">ℹ️</button>         
-        </div>         
-        <div class="modalidad-info" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 4px;">             
-            <div id="labelModalidadActual">📜 Modalidad actual: <strong>Normal</strong></div>             
-            <div style="display: flex; gap: 8px; align-items: center;">                 
-                <button id="botonInfoModalidades" type="button" style="padding: 4px 10px; cursor: pointer;" title="Ver modalidades">ℹ️ Ver modalidades</button>                 
-                <a href="https://palentropia.es/herramientas/torneo/reglas.html" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>             
-            </div>         
-        </div>                 
-        <div class="entrada-combatiente">             
-            <div class="campo">                 
-                <label for="codigo1">🦖 Combatiente 1</label>                 
-                <div style="display: flex; gap: 5px; align-items: center;">                     
-                    <input type="text" id="codigo1" placeholder="Ej. 006_01" autocomplete="off" readonly style="flex: 1;">                     
-                    <button type="button" id="botonCambiar1" style="display: none; padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>                 
-                </div>                 
-                <div id="nombre1" class="nombre-combatiente">—</div>             
-            </div>             
-            <div class="vs">VS</div>             
-            <div class="campo">                 
-                <label for="codigo2">🦕 Combatiente 2</label>                 
-                <div style="display: flex; gap: 5px; align-items: center;">                     
-                    <input type="text" id="codigo2" placeholder="Ej. 001_02" autocomplete="off" readonly style="flex: 1;">                     
-                    <button type="button" id="botonCambiar2" style="display: none; padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>                 
-                </div>                 
-                <div id="nombre2" class="nombre-combatiente">—</div>             
-            </div>         
-        </div>         
-        <div id="controlManual" class="control-manual">             
-            <div class="control-manual-titulo">🎮 Control manual</div>             
-            <div class="control-manual-opciones">                 
-                <label class="opcion-control"><input type="radio" name="controlManual" value="1" checked><span>Combatiente 1</span></label>                 
-                <label class="opcion-control"><input type="radio" name="controlManual" value="2"><span>Combatiente 2</span></label>             </div>         
-        </div>         
-        <button id="botonPreparar" type="button" style="display: none;" aria-hidden="true">⚔️ Preparar combate</button>         
-        <button id="botonSerie" type="button" style="display: block;">🏆 Reiniciar la serie (un intento permitido)</button>         
-        <div id="mensajeConfiguracion" class="mensaje">Cargando datos del torneo...</div>         
-        <div id="informacionSerie" class="informacion-serie" style="display: none;">             
-            <div id="tituloSerie">🏆 Serie</div>             
-            <div id="serieFormato">—</div>             
-            <div id="partidoSerie">—</div>         </div>     
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PalEntropía — Combate estándar</title>
+    <link rel="stylesheet" href="standar.css">
+</head>
+<body>
+<header id="cabecera">
+    <div class="titulo">⚔️ PalEntropía</div>
+    <div class="subtitulo">Arena — Combate estándar</div>
+</header>
+<main id="arena">
+    <section id="configuracion" class="panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h2 style="margin: 0;">⚔️ Preparar combate</h2>
+            <button id="botonAbrirGuiaCombate" type="button" class="boton-circular-ajustes" title="Guía de Acciones y Estadísticas" style="background: #21262d; border: 1px solid #30363d; color: #58a6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem;">ℹ️</button>
+        </div>
+        <div class="modalidad-info" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 4px;">
+            <div id="labelModalidadActual">📜 Modalidad actual: <strong>Normal</strong></div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button id="botonInfoModalidades" type="button" style="padding: 4px 10px; cursor: pointer;" title="Ver modalidades">ℹ️ Ver modalidades</button>
+                <a href="https://palentropia.es/herramientas/torneo/reglas.html" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>
+            </div>
+        </div>
+        <div class="entrada-combatiente">
+            <div class="campo">
+                <label for="codigo1">🦖 Combatiente 1</label>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <input type="text" id="codigo1" placeholder="Ej. 006_01" autocomplete="off" readonly style="flex: 1;">
+                    <button type="button" id="botonCambiar1" style="padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>
+                </div>
+                <div id="nombre1" class="nombre-combatiente">—</div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="campo">
+                <label for="codigo2">🦕 Combatiente 2</label>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <input type="text" id="codigo2" placeholder="Ej. 001_02" autocomplete="off" readonly style="flex: 1;">
+                    <button type="button" id="botonCambiar2" style="padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>
+                </div>
+                <div id="nombre2" class="nombre-combatiente">—</div>
+            </div>
+        </div>
+        <div id="controlManual" class="control-manual">
+            <div class="control-manual-titulo">🎮 Control manual</div>
+            <div class="control-manual-opciones">
+                <label class="opcion-control"><input type="radio" name="controlManual" value="1" checked><span>Combatiente 1</span></label>
+                <label class="opcion-control"><input type="radio" name="controlManual" value="2"><span>Combatiente 2</span></label>
+            </div>
+        </div>
+        <button id="botonPreparar" type="button" style="display: none;" aria-hidden="true">⚔️ Preparar combate</button>
+        <button id="botonSerie" type="button" style="display: block;">🏆 Iniciar la serie</button>
+        <div id="mensajeConfiguracion" class="mensaje">Introduce los códigos J1 de las dos Paleofichas.</div>
+        <div id="informacionSerie" class="informacion-serie" style="display: none;">
+            <div id="tituloSerie">🏆 Serie</div>
+            <div id="serieFormato">—</div>
+            <div id="partidoSerie">—</div>
+        </div>
     </section>
-
-    <section id="combatientes" class="zona-combatientes">         
-        <article id="combatiente1" class="tarjeta-combatiente">             
-            <div class="cabecera-combatiente">                 
-                <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>                 
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">                     
-                    <div id="c1Rol" style="font-size: 0.75rem; font-weight: bold; background: rgba(88, 166, 255, 0.15); color: #58a6ff; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(88, 166, 255, 0.3);">🎮 Jugador</div>                     
-                    <div id="c1Perfil" class="perfil">—</div>                 
-                </div>             
-            </div>             
-            <div class="contenedor-imagen-combatiente"><img id="c1Imagen" class="imagen-combatiente" src="" alt=""></div>             
-            <div id="c1Victorias" class="victorias-serie">🏆 Victorias: 0</div>             
-            <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c1VidaTexto">— / —</span></div><div class="barra-vida"><div id="c1VidaBarra" class="vida-relleno"></div></div></div>             
-            <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c1FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c1FatigaBarra" class="fatiga-relleno"></div></div></div>             
-            <div id="c1Stats" class="stats"></div>             
-            <div id="c1Estado" class="estado"></div>         
-        </article>         
-        <div class="centro-combate">             
-            <div class="icono-vs">⚔️</div>             
-            <div id="turnoActual" class="turno">En combate!</div>             
-            <div id="iniciativa" class="iniciativa">—</div>         </div>         
-        <article id="combatiente2" class="tarjeta-combatiente">             
-            <div class="cabecera-combatiente">                 
-                <div><div id="c2Nombre" class="nombre">—</div><div id="c2Codigo" class="codigo">—</div></div>                 
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">                     
-                    <div id="c2Rol" style="font-size: 0.75rem; font-weight: bold; background: rgba(248, 81, 73, 0.15); color: #f85149; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(248, 81, 73, 0.3);">💻 CPU</div>                     
-                    <div id="c2Perfil" class="perfil">—</div>                 
-                </div>             
-            </div>             
-            <div class="contenedor-imagen-combatiente"><img id="c2Imagen" class="imagen-combatiente" src="" alt=""></div>             
-            <div id="c2Victorias" class="victorias-serie">🏆 Victorias: 0</div>             
-            <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c2VidaTexto">— / —</span></div><div class="barra-vida"><div id="c2VidaBarra" class="vida-relleno"></div></div></div>             
-            <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c2FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c2FatigaBarra" class="fatiga-relleno"></div></div></div>             
-            <div id="c2Stats" class="stats"></div>             
-            <div id="c2Estado" class="estado"></div>         
-        </article>     
-    </section>     
-
-    <section id="acciones" class="panel">         
-        <h2>🎯 Acciones</h2>         
-        <div class="botones-acciones">             
-            <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>             
-            <button id="botonA002" class="accion" type="button" disabled>💥 Ataque potente</button>             
-            <button id="botonA003" class="accion" type="button" disabled>🧠 Ataque táctico</button>             
-            <button id="botonD001" class="accion defensa" type="button" disabled>🛡️ Defender</button>         
-        </div>         
-        <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>     
-    </section>        
-
-    <section id="registro" class="panel">         
-        <h2>📜 Registro del combate</h2>         
-        <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>     
-    </section>     
-
-    <section id="resultado" class="panel resultado-oculto">         
-        <div id="resultadoIcono" class="resultado-icono">🏆</div>         
-        <h2 id="resultadoTitulo">—</h2>         
-        <div id="resultadoTexto">—</div>         
-        <button id="botonNuevoCombate" type="button" style="display: none;">▶️ Siguiente</button>         
-        <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>     
-    </section> 
+    
+    <section id="combatientes" class="zona-combatientes">
+        <article id="combatiente1" class="tarjeta-combatiente">
+            <div class="cabecera-combatiente">
+                <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                    <div id="c1Rol" style="font-size: 0.75rem; font-weight: bold; background: rgba(88, 166, 255, 0.15); color: #58a6ff; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(88, 166, 255, 0.3);">🎮 Jugador</div>
+                    <div id="c1Perfil" class="perfil">—</div>
+                </div>
+            </div>
+            <div class="contenedor-imagen-combatiente"><img id="c1Imagen" class="imagen-combatiente" src="" alt=""></div>
+            <div id="c1Victorias" class="victorias-serie">🏆 Victorias: 0</div>
+            <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c1VidaTexto">— / —</span></div><div class="barra-vida"><div id="c1VidaBarra" class="vida-relleno"></div></div></div>
+            <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c1FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c1FatigaBarra" class="fatiga-relleno"></div></div></div>
+            <div id="c1Stats" class="stats"></div>
+            <div id="c1Estado" class="estado">—</div>
+        </article>
+        <div class="centro-combate">
+            <div class="icono-vs">⚔️</div>
+            <div id="turnoActual" class="turno">Turno —</div>
+            <div id="iniciativa" class="iniciativa">—</div>
+        </div>
+        <article id="combatiente2" class="tarjeta-combatiente">
+            <div class="cabecera-combatiente">
+                <div><div id="c2Nombre" class="nombre">—</div><div id="c2Codigo" class="codigo">—</div></div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                    <div id="c2Rol" style="font-size: 0.75rem; font-weight: bold; background: rgba(248, 81, 73, 0.15); color: #f85149; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(248, 81, 73, 0.3);">💻 CPU</div>
+                    <div id="c2Perfil" class="perfil">—</div>
+                </div>
+            </div>
+            <div class="contenedor-imagen-combatiente"><img id="c2Imagen" class="imagen-combatiente" src="" alt=""></div>
+            <div id="c2Victorias" class="victorias-serie">🏆 Victorias: 0</div>
+            <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c2VidaTexto">— / —</span></div><div class="barra-vida"><div id="c2VidaBarra" class="vida-relleno"></div></div></div>
+            <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c2FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c2FatigaBarra" class="fatiga-relleno"></div></div></div>
+            <div id="c2Stats" class="stats"></div>
+            <div id="c2Estado" class="estado">—</div>
+        </article>
+    </section>
+    
+    <section id="acciones" class="panel">
+        <h2>🎯 Acciones</h2>
+        <div class="botones-acciones">
+            <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>
+            <button id="botonA002" class="accion" type="button" disabled>💥 Ataque potente</button>
+            <button id="botonA003" class="accion" type="button" disabled>🧠 Ataque táctico</button>
+            <button id="botonA004" class="accion adaptacion" type="button" disabled>🧬 Adaptación</button>
+            <button id="botonD001" class="accion defensa" type="button" disabled>🛡️ Defender</button>
+        </div>
+        <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>
+    </section>
+    
+    <section id="registro" class="panel">
+        <h2>📜 Registro del combate</h2>
+        <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
+    </section>
+    
+    <section id="resultado" class="panel resultado-oculto">
+        <div id="resultadoIcono" class="resultado-icono">🏆</div>
+        <h2 id="resultadoTitulo">—</h2>
+        <div id="resultadoTexto">—</div>
+        <button id="botonNuevoCombate" type="button">▶️ Siguiente</button>
+        <button id="botonVolverCruces" type="button" class="ocultar-en-individual">↩️ Volver a los cruces</button>
+    </section>
 </main>
 
+<div id="modalModalidades" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">
+            <h3 style="margin: 0; font-size: 1.15rem; color: #58a6ff;">📖 Guía de Modalidades de Juego</h3>
+            <button id="botonCerrarModal" type="button" style="background: transparent; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px 8px;">✕</button>
+        </div>
+        <div id="contenidoModalidades" style="margin: 0 0 20px 0; font-size: 0.9rem; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Normal:</strong> Experiencia equilibrada estándar con parámetros base.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Difícil:</strong> Menor vida base y mayor letalidad para duelos desafiantes.</div>
+            <!-- (Resto de modalidades) -->
+        </div>
+        <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">
+            <button id="botonCerrarModalBtn" type="button" style="background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cerrar</button>
+        </div>
+    </div>
+</div>
 
-
-
-
-
-
-
-    
-<div id="modalModalidades" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">     
-    <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">         
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">             
-            <h3 style="margin: 0; font-size: 1.15rem; color: #58a6ff;">📖 Guía de Modalidades de Juego</h3>             
-            <button id="botonCerrarModal" type="button" style="background: transparent; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px 8px;">✕</button>         </div>         
-        <div id="contenidoModalidades" style="margin: 0 0 20px 0; font-size: 0.9rem; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Normal:</strong> Experiencia equilibrada estándar con parámetros base.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Difícil:</strong> Menor vida base y mayor letalidad para duelos desafiantes.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Sin crítico:</strong> Combates tácticos puros sin multiplicador crítico.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Defensa aumentada:</strong> Defensas muy reforzadas que alargan los intercambios.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Desgaste extremo:</strong> Menor regeneración y alta exigencia de fatiga.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Frenesí mesozoico:</strong> Partidas ultrarrápidas con daños masivos.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Depredador al límite:</strong> Ofensivas letales con bonificaciones altas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Cataclismo carbonífero:</strong> Entorno caótico con altísima variabilidad de daño.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Acorazados cretácicos:</strong> Tanques masivos de alta resistencia y divisor defensivo extremo.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Instinto primigenio:</strong> Furia desatada con críticos hiperpotenciados.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Reflejos abismales:</strong> Duelos ágiles con esquivas constantes.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Balance ancestral:</strong> Coeficientes comprimidos para nivelar estadísticas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Furia desatada:</strong> Compensador agresivo para equilibrar Stats muy bajos.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Apex letal:</strong> Máximo nivel de riesgo y daño crítico desbocado.</div>         
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Muerte súbita:</strong> Duelos hiperletales de un solo acierto e iniciativa radical 50/50.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 1:</strong> Factor de penalización específico del 60% al rendimiento del primer combatiente.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 2:</strong> Factor de penalización específico del 60% al rendimiento del segundo combatiente.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Cataclismo sequía:</strong> Clima agobiante con multiplicador general de 0.75 y fatiga acelerada.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Cataclismo terremoto:</strong> Suelo inestable con multiplicador general de 0.50 y alta aleatoriedad.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Cataclismo volcán:</strong> Ambiente asfixiante con multiplicador general de 0.25 y letalidad masiva.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Cataclismo glaciación:</strong> Freno metabólico con multiplicador general de 0.60 y defensas extremas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Cataclismo diluvio:</strong> Terreno impracticable con multiplicador general de 0.70 y humedad asfixiante.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Cataclismo apocalipsis:</strong> Extinción masiva con multiplicador general de 0.20 y letalidad absoluta.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Duelo de titanes:</strong> Guerra de desgaste con el doble de vida base y defensas titánicas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Fiebre primigenia:</strong> Ofensiva total incansable con alta velocidad de ejecución.</div>         </div>         
-        <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">             
-            <button id="botonCerrarModalBtn" type="button" style="background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cerrar</button>         </div>     </div> </div> 
-<div id="modalGuiaCombate" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">     
-    <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">         
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">             
-            <h3 style="margin: 0; font-size: 1.15rem; color: #58a6ff;">⚔️ Dinámica de Combate y Stats</h3>             
-            <button id="cierraGuiaCruz" type="button" style="background: transparent; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px 8px;">✕</button>         </div>         
-        <div style="margin: 0 0 20px 0; font-size: 0.9rem; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">⚔️ Ataque básico (A001):</strong> Ofensiva estándar con baja fatiga y daño constante modulado por los Stats.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">💥 Ataque potente (A002):</strong> Ofensiva crítica de alto impacto que exige un umbral mínimo de fatiga.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">🧠 Ataque táctico (A003):</strong> Maniobra guiada por la estadística de Táctica para castigar huecos del rival.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">🛡️ Defender (D001):</strong> Mitiga drásticamente el daño y puede provocar contraataques o inversiones.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">▶️ Combate automático:</strong> Ejecuta los turnos mediante inteligencia artificial de combate.</div>         </div>         
-        <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">             
-            <button id="cierraGuiaBtn" type="button" style="background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Entendido</button>         </div>     </div> </div> 
-<script src="palarenastats.js"></script> 
-<script src="standar-ataques.js"></script> 
-<script src="standar-efectos.js"></script> 
-<script src="standar.js"></script> 
-<script src="../generador_fase_2/buscaruta.js"></script> 
+<div id="modalGuiaCombate" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">
+            <h3 style="margin: 0; font-size: 1.15rem; color: #58a6ff;">⚔️ Dinámica de Combate y Stats</h3>
+            <button id="cierraGuiaCruz" type="button" style="background: transparent; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px 8px;">✕</button>
+        </div>
+        <div style="margin: 0 0 20px 0; font-size: 0.9rem; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">⚔️ Ataque básico (A001):</strong> Ofensiva estándar con baja fatiga y daño constante modulado por los Stats.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">💥 Ataque potente (A002):</strong> Ofensiva crítica de alto impacto que exige un umbral mínimo de fatiga.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">🧠 Ataque táctico (A003):</strong> Maniobra guiada por la estadística de Táctica para castigar huecos del rival.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #2ea043;"><strong style="color: #f0f6fc;">🧬 Adaptación (A004):</strong> Maniobra evasiva que recupera fatiga y otorga alta probabilidad de esquivar, ideal para especies pequeñas.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">🛡️ Defender (D001):</strong> Mitiga drásticamente el daño y puede provocar contraataques o inversiones.</div>
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">▶️ Combate automático:</strong> Ejecuta los turnos mediante inteligencia artificial de combate.</div>
+        </div>
+        <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">
+            <button id="cierraGuiaBtn" type="button" style="background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Entendido</button>
+        </div>
+    </div>
+</div>
+<script src="palarenastats.js"></script>
+<script src="standar-ataques.js"></script>
+<script src="standar-efectos.js"></script>
+<script src="standar.js"></script>
+<script src="../generador_fase_2/buscaruta.js"></script>
 <script src="loadimagen.js"></script>
+<script>
+const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json";
+let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null;
+let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false;
+let partidosSerie = 1, victorias1 = 0, victorias2 = 0, partidoActual = 1, victoriasNecesarias = 1;
+const CLAVE_REGLAS = "palentropia_reglas_torneo", REGLAS_DEF = { partidosSerie: 1, tipoCombate: "normal" };
+const CLAVE_ALEATORIO_CONFIG = "palentropia_modo_aleatorio_config";
+const codigo1 = document.getElementById("codigo1"), codigo2 = document.getElementById("codigo2");
+const nombre1 = document.getElementById("nombre1"), nombre2 = document.getElementById("nombre2");
+const botonPreparar = document.getElementById("botonPreparar"), botonSerie = document.getElementById("botonSerie");
+const mensajeConfiguracion = document.getElementById("mensajeConfiguracion"), informacionSerie = document.getElementById("informacionSerie");
+const serieFormato = document.getElementById("serieFormato"), partidoSerie = document.getElementById("partidoSerie");
+const botonA001 = document.getElementById("botonA001"), botonA002 = document.getElementById("botonA002"), botonA003 = document.getElementById("botonA003"), botonA004 = document.getElementById("botonA004"), botonD001 = document.getElementById("botonD001"), botonAuto = document.getElementById("botonAuto");
+const botonNuevoCombate = document.getElementById("botonNuevoCombate"), botonVolverCruces = document.getElementById("botonVolverCruces");
+const botonInfoModalidades = document.getElementById("botonInfoModalidades"), modalModalidades = document.getElementById("modalModalidades"), botonCerrarModal = document.getElementById("botonCerrarModal"), botonCerrarModalBtn = document.getElementById("botonCerrarModalBtn");
+const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), modalGuiaCombate = document.getElementById("modalGuiaCombate"), cierraGuiaCruz = document.getElementById("cierraGuiaCruz"), cierraGuiaBtn = document.getElementById("cierraGuiaBtn");
+const labelModalidadActual = document.getElementById("labelModalidadActual");
+const controlesManual = document.querySelectorAll('input[name="controlManual"]');
+const botonCambiar1 = document.getElementById("botonCambiar1"), botonCambiar2 = document.getElementById("botonCambiar2");
 
-<script> 
-const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json"; 
-let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null; 
-let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false; 
-let partidosSerie = 1, victorias1 = 0, victorias2 = 0, partidoActual = 1, victoriasNecesarias = 1; 
-const CLAVE_REGLAS = "palentropia_reglas_torneo", REGLAS_DEF = { partidosSerie: 1, tipoCombate: "normal" }; 
-const CLAVE_ALEATORIO_CONFIG = "palentropia_modo_aleatorio_config"; 
-const codigo1 = document.getElementById("codigo1"), codigo2 = document.getElementById("codigo2"); 
-const nombre1 = document.getElementById("nombre1"), nombre2 = document.getElementById("nombre2"); 
-const botonPreparar = document.getElementById("botonPreparar"), botonSerie = document.getElementById("botonSerie"); 
-const mensajeConfiguracion = document.getElementById("mensajeConfiguracion"), informacionSerie = document.getElementById("informacionSerie"); 
-const serieFormato = document.getElementById("serieFormato"), partidoSerie = document.getElementById("partidoSerie"); 
-const botonA001 = document.getElementById("botonA001"), botonA002 = document.getElementById("botonA002"), botonA003 = document.getElementById("botonA003"), botonD001 = document.getElementById("botonD001"), botonAuto = document.getElementById("botonAuto"); 
-const botonNuevoCombate = document.getElementById("botonNuevoCombate"), botonVolverCruces = document.getElementById("botonVolverCruces"); 
-const botonInfoModalidades = document.getElementById("botonInfoModalidades"), modalModalidades = document.getElementById("modalModalidades"), botonCerrarModal = document.getElementById("botonCerrarModal"), botonCerrarModalBtn = document.getElementById("botonCerrarModalBtn"); 
-const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), modalGuiaCombate = document.getElementById("modalGuiaCombate"), cierraGuiaCruz = document.getElementById("cierraGuiaCruz"), cierraGuiaBtn = document.getElementById("cierraGuiaBtn"); 
-const labelModalidadActual = document.getElementById("labelModalidadActual"); 
-const controlesManual = document.querySelectorAll('input[name="controlManual"]'); 
-
-
-
-
-
-    
-function obtenerReglasTorneo() {     
-    const g = localStorage.getItem(CLAVE_REGLAS);     
-    if (!g) return { ...REGLAS_DEF };     
-
-    try { 
-        const r = JSON.parse(g); 
-
-        return { 
-            partidosSerie: Number(r.partidosSerie) || 1,
-            tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal",
-            factorImprevisible: r.factorImprevisible !== undefined
-                ? Number(r.factorImprevisible)
-                : 1.0,
-            iaAleatoria: r.iaAleatoria !== undefined
-                ? Boolean(r.iaAleatoria)
-                : false,
-            coeficientes: r.coeficientes || {}
-        }; 
-    } catch (e) { 
-        return { ...REGLAS_DEF }; 
-    } 
+function obtenerReglasTorneo() {
+    const g = localStorage.getItem(CLAVE_REGLAS);
+    if (!g) return { ...REGLAS_DEF };
+    try { const r = JSON.parse(g); return { partidosSerie: Number(r.partidosSerie) || 1, tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal" }; } catch (e) { return { ...REGLAS_DEF }; }
 }
 
-
-
-
-
-
-
-
-
-function obtenerConfiguracionActiva() {     
-    const reg = obtenerReglasTorneo();     
-    const modoActivo = reg.tipoCombate || "normal";     
-
-    const configBase = fichas.find(
-        f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()
-    ) || fichas[0] || {};
-
-    return {
-        ...configBase,
-        factorImprevisible: reg.factorImprevisible,
-        iaAleatoria: reg.iaAleatoria
-    };
+function obtenerConfiguracionActiva() {
+    const reg = obtenerReglasTorneo();
+    const modoActivo = reg.tipoCombate || "normal";
+    return fichas.find(f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()) || fichas[0];
 }
 
-
-
-
-
-
-    
-
-    
-function actualizarInterfazModalidad() {     
-    const reg = obtenerReglasTorneo();     
-    const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
-    
-    let nombreModo = "Elegir configuración";
-    
-    if (esAleatorio) {
-        nombreModo = "Aleatorio";
-    } else if (reg.tipoCombate) {
-        nombreModo = reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ');
-    }
-    
-    if (labelModalidadActual) {
-        labelModalidadActual.innerHTML = `📜 Modalidad actual: <strong>${nombreModo}</strong>`; 
-    }
+function actualizarInterfazModalidad() {
+    const reg = obtenerReglasTorneo();
+    const nombreModo = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";
+    if (labelModalidadActual) labelModalidadActual.innerHTML = `📜 Modalidad actual: <strong>${nombreModo}</strong>`;
 }
 
-
-function actualizarInterfazSerie() {     
-    const c1v = document.getElementById("c1Victorias"), c2v = document.getElementById("c2Victorias");     
-    if (c1v) c1v.textContent = "🏆 Victorias: " + victorias1;     
-    if (c2v) c2v.textContent = "🏆 Victorias: " + victorias2;     
-    if (!serieActiva) { informacionSerie.style.display = "none"; serieFormato.textContent = "—"; partidoSerie.textContent = "—"; return; }     
-    informacionSerie.style.display = ""; serieFormato.textContent = "Mejor de " + partidosSerie; partidoSerie.textContent = "Partido " + partidoActual + " / " + partidosSerie; 
-} 
-
-async function cargarPaleofichas() {     
-    try {         
-        const res = await fetch(RUTA_PALEOFICHAS); if (!res.ok) throw new Error();         
-        const datos = await res.json(); nombresPaleofichas = {};         
-        const proc = f => { if (f) { const c = f.j1 || f.codigo || "", n = f.j2 || f.nombre || ""; if (c) nombresPaleofichas[String(c).trim().toLowerCase()] = n; } };         
-        Array.isArray(datos) ? datos.forEach(proc) : (datos && Object.values(datos).forEach(proc));     
-    } catch (e) { nombresPaleofichas = {}; } 
-} 
-
-async function cargarMaster() {     
-    try {         
-        const res = await fetch(RUTA_MASTER); if (!res.ok) throw new Error();         
-        fichas = interpretarCSV(await res.text()); mensajeConfiguracion.textContent = "Combatientes del torneo cargados correctamente.";         
-        actualizarInterfazModalidad();     
-    } catch (e) { mensajeConfiguracion.textContent = "❌ Error al cargar master.csv."; } 
-} 
-
-function interpretarCSV(texto) {     
-    const lineas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);     
-    if (lineas.length < 2) return [];     
-    const cabecera = separarCSV(lineas[0]), resultado = [];     
-    for (let i = 1; i < lineas.length; i++) {         
-        const col = separarCSV(lineas[i]); if (!col.length) continue;         
-        let ficha = {}; cabecera.forEach((cab, j) => ficha[cab] = col[j] !== undefined ? col[j] : "");         
-        for (let n = 1; n <= 11; n++) if (ficha["e" + n]) ficha["e" + n] = Number(ficha["e" + n]);         
-        resultado.push(ficha);     }     
-    return resultado; 
-} 
-
-function separarCSV(linea) {     
-    const res = []; let act = "", com = false;     
-    for (let i = 0; i < linea.length; i++) { const c = linea[i]; if (c === '"') { com = !com; continue; } if (c === "," && !com) { res.push(act.trim()); act = ""; } else act += c; }     
-    res.push(act.trim()); return res; 
-} 
-
-function buscarFicha(codigo) {     
-    const buscado = String(codigo).trim().toLowerCase(), ficha = fichas.find(f => String(f.j1).trim().toLowerCase() === buscado);     
-    if (!ficha) return null; const fc = { ...ficha }; fc.j2 = nombresPaleofichas[buscado] || ficha.j2 || ficha.nombre || ""; fc.nombre = fc.j2; return fc; 
-} 
-
-function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
-
-function bloquearTodoAlInicio() {
-    desactivarBotones();
-    if (botonSerie) botonSerie.disabled = false;
-    if (botonNuevoCombate) { botonNuevoCombate.style.display = "none"; botonNuevoCombate.disabled = true; }
-    if (botonVolverCruces) botonVolverCruces.disabled = true;
-}
-
-function limpiarTextoResultadoAnterior() {
-    const panelRes = document.getElementById("resultado");
-    if (panelRes) panelRes.classList.add("resultado-oculto");
-    const resultadoIcono = document.getElementById("resultadoIcono");
-    if (resultadoIcono) resultadoIcono.textContent = "🏆";
-    const resultadoTitulo = document.getElementById("resultadoTitulo");
-    if (resultadoTitulo) resultadoTitulo.textContent = "—";
-    const resultadoTexto = document.getElementById("resultadoTexto");
-    if (resultadoTexto) resultadoTexto.textContent = "—";
-    const turnoActual = document.getElementById("turnoActual");
-    if (turnoActual) turnoActual.textContent = "En combate!";
-    const iniciativa = document.getElementById("iniciativa");
-    if (iniciativa) iniciativa.textContent = "—";
+function actualizarInterfazSerie() {
+    const c1v = document.getElementById("c1Victorias"), c2v = document.getElementById("c2Victorias");
+    if (c1v) c1v.textContent = "🏆 Victorias: " + victorias1;
+    if (c2v) c2v.textContent = "🏆 Victorias: " + victorias2;
+    if (!serieActiva) { informacionSerie.style.display = "none"; serieFormato.textContent = "—"; partidoSerie.textContent = "—"; return; }
+    informacionSerie.style.display = ""; serieFormato.textContent = "Mejor de " + partidosSerie; partidoSerie.textContent = "Partido " + partidoActual + " / " + partidosSerie;
 }
 
 function actualizarRolesVisuales() {
@@ -379,181 +237,271 @@ function actualizarRolesVisuales() {
     }
 }
 
- controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
+async function cargarPaleofichas() {
+    try {
+        const res = await fetch(RUTA_PALEOFICHAS); if (!res.ok) throw new Error();
+        const datos = await res.json(); nombresPaleofichas = {};
+        const proc = f => { if (f) { const c = f.j1 || f.codigo || "", n = f.j2 || f.nombre || ""; if (c) nombresPaleofichas[String(c).trim().toLowerCase()] = n; } };
+        Array.isArray(datos) ? datos.forEach(proc) : (datos && Object.values(datos).forEach(proc));
+    } catch (e) { nombresPaleofichas = {}; }
+}
+
+async function cargarMaster() {
+    try {
+        const res = await fetch(RUTA_MASTER); if (!res.ok) throw new Error();
+        fichas = interpretarCSV(await res.text()); mensajeConfiguracion.textContent = "Datos de Paleofichas cargados correctamente.";
+        actualizarInterfazModalidad();
+    } catch (e) { mensajeConfiguracion.textContent = "❌ Error al cargar master.csv."; }
+}
+
+function interpretarCSV(texto) {
+    const lineas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    if (lineas.length < 2) return [];
+    const cabecera = separarCSV(lineas[0]), resultado = [];
+    for (let i = 1; i < lineas.length; i++) {
+        const col = separarCSV(lineas[i]); if (!col.length) continue;
+        const ficha = {}; cabecera.forEach((cab, j) => ficha[cab] = col[j] !== undefined ? col[j] : "");
+        for (let n = 1; n <= 11; n++) if (ficha["e" + n]) ficha["e" + n] = Number(ficha["e" + n]);
+        resultado.push(ficha);
+    }
+    return resultado;
+}
+
+function separarCSV(linea) {
+    const res = []; let act = "", com = false;
+    for (let i = 0; i < linea.length; i++) { const c = linea[i]; if (c === '"') { com = !com; continue; } if (c === "," && !com) { res.push(act.trim()); act = ""; } else act += c; }
+    res.push(act.trim()); return res;
+}
+
+function buscarFicha(codigo) {
+    const buscado = String(codigo).trim().toLowerCase(), ficha = fichas.find(f => String(f.j1).trim().toLowerCase() === buscado);
+    if (!ficha) return null; const fc = { ...ficha }; fc.j2 = nombresPaleofichas[buscado] || ficha.j2 || ficha.nombre || ""; fc.nombre = fc.j2; return fc;
+}
+
+function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
+
+codigo1.addEventListener("input", () => {
+    actualizarNombre(codigo1, nombre1);
+    localStorage.setItem("palentropia_codigo1", codigo1.value);
+});
+codigo2.addEventListener("input", () => {
+    actualizarNombre(codigo2, nombre2);
+    localStorage.setItem("palentropia_codigo2", codigo2.value);
+});
+botonCambiar1.addEventListener("click", () => {
+    codigo1.readOnly = !codigo1.readOnly;
+    codigo1.focus();
+    mostrarMensaje(codigo1.readOnly ? "Combatiente 1 bloqueado." : "Introduce un nuevo código J1 para el Combatiente 1.");
+});
+botonCambiar2.addEventListener("click", () => {
+    codigo2.readOnly = !codigo2.readOnly;
+    codigo2.focus();
+    mostrarMensaje(codigo2.readOnly ? "Combatiente 2 bloqueado." : "Introduce un nuevo código J1 para el Combatiente 2.");
+});
+
+controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
     controlManual = Number(ctrl.value); 
     actualizarRolesVisuales();
     if (combateActivo) activarBotones(); 
-})); 
+}));
 
-botonSerie.addEventListener("click", prepararSerie); 
-botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; }); 
+botonPreparar.addEventListener("click", prepararCombate);
+botonSerie.addEventListener("click", prepararSerie);
+botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; });
+if (botonCerrarModal) botonCerrarModal.addEventListener("click", () => { modalModalidades.style.display = "none"; });
+if (botonCerrarModalBtn) botonCerrarModalBtn.addEventListener("click", () => { modalModalidades.style.display = "none"; });
 
-if (botonCerrarModal) botonCerrarModal.addEventListener("click", () => { modalModalidades.style.display = "none"; }); 
-if (botonCerrarModalBtn) botonCerrarModalBtn.addEventListener("click", () => { modalModalidades.style.display = "none"; }); 
-
-if (botonAbrirGuiaCombate && modalGuiaCombate) {     
-    botonAbrirGuiaCombate.addEventListener("click", () => { modalGuiaCombate.style.display = "flex"; });     
-    if (cierraGuiaCruz) cierraGuiaCruz.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; });     
-    if (cierraGuiaBtn) cierraGuiaBtn.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; }); 
-} 
-
-function validarYPrepararDatos() {     
-    const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();     
-    if (!v1 || !v2) { mostrarMensaje("Introduce los dos códigos J1."); return null; }     
-    if (v1.toLowerCase() === v2.toLowerCase()) { mostrarMensaje("Los dos combatientes deben ser diferentes."); return null; }     
-    ficha1 = buscarFicha(v1); ficha2 = buscarFicha(v2);     
-    if (!ficha1 || !ficha2) { mostrarMensaje("No se encuentran una o ambas Paleofichas."); return null; }     
-    return true; 
-} 
-
-async function aplicarConfiguracionAleatoriaSiEstaActivo() {     
-    const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";     
-    if (!esAleatorio) return;     
-    try {         
-        const respuesta = await fetch("config.csv");         
-        const texto = await respuesta.text();         
-        const lineas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);         
-        if (lineas.length < 2) return;         
-        const cabecera = lineas[0].split(",").map(c => c.trim());         
-        const modosDisponibles = [], filasModos = {};         
-        for (let i = 1; i < lineas.length; i++) {             
-            const valores = lineas[i].split(",").map(v => v.trim()), modo = valores[0];             
-            if (modo) { modosDisponibles.push(modo); filasModos[modo] = valores; }         
-        }         
-        if (modosDisponibles.length === 0) return;         
-        const modoAleatorio = modosDisponibles[Math.floor(Math.random() * modosDisponibles.length)];         
-        const valoresElegidos = filasModos[modoAleatorio];         
-        let configExterna = {};         
-        if (valoresElegidos) {             
-            for (let j = 1; j < cabecera.length; j++) {                 
-                const parametro = cabecera[j]; let val = valoresElegidos[j] !== undefined ? valoresElegidos[j] : "";                 
-                if (parametro && val !== "") {                     
-                    if (val === "true") val = true; else if (val === "false") val = false; else if (!isNaN(val)) val = Number(val);                     
-                    configExterna[parametro] = val;                 }             }         }         
-        const reglasActuales = obtenerReglasTorneo();         
-        reglasActuales.tipoCombate = modoAleatorio; reglasActuales.coeficientes = configExterna;         
-        localStorage.setItem(CLAVE_REGLAS, JSON.stringify(reglasActuales));     } catch (err) { console.warn("Error al aplicar configuración aleatoria:", err); } 
-} 
-
-async function prepararSerie() {     
-    if (!validarYPrepararDatos()) return;     
-    await aplicarConfiguracionAleatoriaSiEstaActivo();     
-    const reg = obtenerReglasTorneo(); partidosSerie = Number(reg.partidosSerie) || 1; victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;     
-    victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = true; serieTerminada = false; partidoRegistrado = false;     
-    await iniciarPartidoSerie(); 
-} 
-
-async function iniciarPartidoSerie() {     
-    if (!serieActiva || serieTerminada) return;     
-    if (botonNuevoCombate) { botonNuevoCombate.style.display = "none"; botonNuevoCombate.disabled = true; }
-    if (botonVolverCruces) botonVolverCruces.disabled = true;
-    try {         
-        await aplicarConfiguracionAleatoriaSiEstaActivo();         
-        const configActiva = obtenerConfiguracionActiva();         
-        combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();         
-        combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true; partidoRegistrado = false;         
-        limpiarTextoResultadoAnterior();
-        mostrarCombatientes(); 
-        desactivarBotones(); 
-        limpiarRegistro();         
-        if (window.cargarImagenesCombatientesAsync) window.cargarImagenesCombatientesAsync(combatiente1.codigo, combatiente2.codigo);         
-        añadirRegistro("🏆 Asalto del Torneo — Partido " + partidoActual + " / " + partidosSerie);         
-        añadirRegistro("⚔️ " + combatiente1.nombre + " (" + combatiente1.codigo + ") vs " + combatiente2.nombre + " (" + combatiente2.codigo + ")");         
-        mostrarMensaje("¡Asalto en curso!"); actualizarInterfazSerie();     
-    } catch (e) { combateActivo = false; mostrarMensaje("❌ Error al preparar el partido."); } 
-} 
-
-function mostrarCombatientes() {     
-    if (!combate || !combatiente1 || !combatiente2) return;     
-    const reg = obtenerReglasTorneo();     
-    const nombreModoTexto = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";     
-    document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";     
-    document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";     
-    document.getElementById("c1Perfil").textContent = nombreModoTexto;     
-    document.getElementById("c2Nombre").textContent = combatiente2.nombre || "—";     
-    document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";     
-    document.getElementById("c2Perfil").textContent = nombreModoTexto;     
-    actualizarRolesVisuales();
-    mostrarBarra(combatiente1.hp, combatiente1.hp_max, "c1VidaTexto", "c1VidaBarra");     
-    mostrarBarra(combatiente2.hp, combatiente2.hp_max, "c2VidaTexto", "c2VidaBarra");     
-    mostrarBarra(combatiente1.fatiga, combatiente1.fatiga_max, "c1FatigaTexto", "c1FatigaBarra");     
-    mostrarBarra(combatiente2.fatiga, combatiente2.fatiga_max, "c2FatigaTexto", "c2FatigaBarra");     
-    mostrarStats(combatiente1, "c1"); mostrarStats(combatiente2, "c2");     
-    mostrarEstado(combatiente1, "c1"); mostrarEstado(combatiente2, "c2");     
-    actualizarInterfazSerie();     
-    const registro = document.getElementById("registroCombate");
-    const turnoActual = document.getElementById("turnoActual");
-    if (turnoActual && (!registro || !registro.querySelector(".linea-registro"))) {
-        turnoActual.textContent = "En combate!";
-    }
-    document.getElementById("iniciativa").textContent = combate.iniciativa || "—"; 
-} 
-
-function mostrarBarra(v, maxV, idT, idB) {     
-    const act = Number(v), mx = Number(maxV) || 100, seg = Number.isFinite(act) ? Math.max(0, Math.min(mx, act)) : mx;     
-    const txt = document.getElementById(idT), bar = document.getElementById(idB);     
-    if (txt) txt.textContent = Math.round(seg) + " / " + Math.round(mx);     
-    if (bar) bar.style.width = Math.max(0, Math.min(100, (seg / mx) * 100)) + "%"; 
-} 
-
-function mostrarStats(c, pref) {     
-    const st = document.getElementById(pref + "Stats"); if (!st) return;     
-    const ef = c.efectivos || {};     
-    st.innerHTML = ["ataque", "defensa", "velocidad", "resistencia", "tactica"].map(k => {         
-        const ic = { ataque: "⚔️", defensa: "🛡️", velocidad: "⚡", resistencia: "❤️", tactica: "🧠" };         
-        const lb = { ataque: "Ataque", defensa: "Defensa", velocidad: "Velocidad", resistencia: "Resistencia", tactica: "Táctica" };         
-        return `<div>${ic[k]} ${lb[k]}: ${Number.isFinite(Number(ef[k])) ? Math.round(Number(ef[k])) : 0}</div>`;     }).join(""); 
-} 
-
-function mostrarEstado(c, pref) {     
-    const est = document.getElementById(pref + "Estado"); 
-    if (!est) return;     
-    
-    const m = []; 
-    if (c.derrotado) m.push("☠️ Derrotado"); 
-    if (c.defendiendo) m.push("🛡️ Defendiendo");     
-    
-    if (Array.isArray(c.efectos)) {
-        c.efectos.forEach(ef => { 
-            if (ef) { 
-                const nom = ef.nombre || ef.codigo || "Efecto", dur = ef.turnos !== undefined ? ef.turnos : ef.duracion; 
-                m.push(dur !== undefined && dur > 0 ? `✨ ${nom} (${dur})` : `✨ ${nom}`); 
-            } 
-        });     
-    }
-    
-    // Si hay estados o efectos los une, si no, escribe explícitamente "En combate!"
-    est.textContent = m.length > 0 ? m.join(" · ") : "En combate!";     
+if (botonAbrirGuiaCombate && modalGuiaCombate) {
+    botonAbrirGuiaCombate.addEventListener("click", () => { modalGuiaCombate.style.display = "flex"; });
+    if (cierraGuiaCruz) cierraGuiaCruz.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; });
+    if (cierraGuiaBtn) cierraGuiaBtn.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; });
 }
 
+function validarYPrepararDatos() {
+    const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();
+    if (!v1 || !v2) { mostrarMensaje("Introduce los dos códigos J1."); return null; }
+    if (v1.toLowerCase() === v2.toLowerCase()) { mostrarMensaje("Los dos combatientes deben ser diferentes."); return null; }
+    ficha1 = buscarFicha(v1); ficha2 = buscarFicha(v2);
+    if (!ficha1 || !ficha2) { mostrarMensaje("No se encuentran una o ambas Paleofichas."); return null; }
+    return true;
+}
 
+async function aplicarConfiguracionAleatoriaSiEstaActivo() {
+    const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
+    if (!esAleatorio) return;
 
-function activarBotones() {     
-    const cm = controlManual === 1 ? combatiente1 : combatiente2, cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;     
-    botonA001.disabled = false; botonA002.disabled = !pc || Number(cm.fatiga) < cfg.fatiga_minima_ataque_potente; botonA003.disabled = botonD001.disabled = botonAuto.disabled = false; 
-} 
+    try {
+        const respuesta = await fetch("config.csv");
+        const texto = await respuesta.text();
+        const lineas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        if (lineas.length < 2) return;
+
+        const cabecera = lineas[0].split(",").map(c => c.trim());
+        const modosDisponibles = [];
+        const filasModos = {};
+
+        for (let i = 1; i < lineas.length; i++) {
+            const valores = lineas[i].split(",").map(v => v.trim());
+            const modo = valores[0];
+            if (modo) {
+                modosDisponibles.push(modo);
+                filasModos[modo] = valores;
+            }
+        }
+
+        if (modosDisponibles.length === 0) return;
+
+        const modoAleatorio = modosDisponibles[Math.floor(Math.random() * modosDisponibles.length)];
+        const valoresElegidos = filasModos[modoAleatorio];
+        let configExterna = {};
+
+        if (valoresElegidos) {
+            for (let j = 1; j < cabecera.length; j++) {
+                const parametro = cabecera[j];
+                let val = valoresElegidos[j] !== undefined ? valoresElegidos[j] : "";
+                if (parametro && val !== "") {
+                    if (val === "true") val = true;
+                    else if (val === "false") val = false;
+                    else if (!isNaN(val)) val = Number(val);
+                    configExterna[parametro] = val;
+                }
+            }
+        }
+
+        const reglasActuales = obtenerReglasTorneo();
+        reglasActuales.tipoCombate = modoAleatorio;
+        reglasActuales.coeficientes = configExterna;
+
+        localStorage.setItem(CLAVE_REGLAS, JSON.stringify(reglasActuales));
+    } catch (err) {
+        console.warn("Error al aplicar la configuración aleatoria:", err);
+    }
+}
+
+async function prepararCombate() {
+    if (!validarYPrepararDatos()) return;
+    await aplicarConfiguracionAleatoriaSiEstaActivo();
+    const reg = obtenerReglasTorneo(); partidosSerie = Number(reg.partidosSerie) || 1; victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
+    victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = partidosSerie > 1; serieTerminada = false; partidoRegistrado = false; actualizarInterfazSerie();
+    try {
+        const configActiva = obtenerConfiguracionActiva();
+        combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();
+        combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true;
+        mostrarCombatientes(); desactivarBotones(); limpiarRegistro();
+        if (window.cargarImagenesCombatientesAsync) window.cargarImagenesCombatientesAsync(combatiente1.codigo, combatiente2.codigo);
+        if (partidosSerie > 1) añadirRegistro("🏆 Serie (Mejor de " + partidosSerie + ") — Partido 1 / " + partidosSerie);
+        añadirRegistro("⚔️ Combate preparado: " + combatiente1.nombre + " (" + combatiente1.codigo + ") vs " + combatiente2.nombre + " (" + combatiente2.codigo + ")");
+        mostrarMensaje("Combate preparado correctamente.");
+        setTimeout(() => { if (combateActivo) resolverTurnoInicialAutomaticoIA(); }, 500);
+    } catch (e) { mostrarMensaje("❌ Error al preparar el combate."); }
+}
+
+async function prepararSerie() {
+    if (!validarYPrepararDatos()) return;
+    await aplicarConfiguracionAleatoriaSiEstaActivo();
+    const reg = obtenerReglasTorneo();
+    partidosSerie = Number(reg.partidosSerie) || 1;
+    victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
+    victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = true; serieTerminada = false; partidoRegistrado = false;
+    document.getElementById("resultado").classList.add("resultado-oculto");
+    limpiarRegistro(); actualizarInterfazSerie();
+    actualizarInterfazModalidad();
+    iniciarPartidoSerie();
+}
+
+async function iniciarPartidoSerie() {
+    if (!serieActiva || serieTerminada) return;
+    try {
+        await aplicarConfiguracionAleatoriaSiEstaActivo();
+        const configActiva = obtenerConfiguracionActiva();
+        combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();
+        combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true; partidoRegistrado = false;
+        document.getElementById("resultado").classList.add("resultado-oculto");
+        mostrarCombatientes(); desactivarBotones(); limpiarRegistro();
+        if (window.cargarImagenesCombatientesAsync) window.cargarImagenesCombatientesAsync(combatiente1.codigo, combatiente2.codigo);
+        añadirRegistro("🏆 Serie — Partido " + partidoActual + " / " + partidosSerie);
+        añadirRegistro("⚔️ " + combatiente1.nombre + " (" + combatiente1.codigo + ") vs " + combatiente2.nombre + " (" + combatiente2.codigo + ")");
+        mostrarMensaje("Partido " + partidoActual + " preparado correctamente."); actualizarInterfazSerie();
+        setTimeout(() => { if (combateActivo) resolverTurnoInicialAutomaticoIA(); }, 500);
+    } catch (e) { combateActivo = false; mostrarMensaje("❌ Error al preparar el partido."); }
+}
+
+function mostrarCombatientes() {
+    if (!combate || !combatiente1 || !combatiente2) return;
+    const reg = obtenerReglasTorneo();
+    const nombreModoTexto = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";
+    document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";
+    document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";
+    document.getElementById("c1Perfil").textContent = nombreModoTexto;
+    document.getElementById("c2Nombre").textContent = combatiente2.nombre || "—";
+    document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";
+    document.getElementById("c2Perfil").textContent = nombreModoTexto;
+    actualizarRolesVisuales();
+    mostrarBarra(combatiente1.hp, combatiente1.hp_max, "c1VidaTexto", "c1VidaBarra");
+    mostrarBarra(combatiente2.hp, combatiente2.hp_max, "c2VidaTexto", "c2VidaBarra");
+    mostrarBarra(combatiente1.fatiga, combatiente1.fatiga_max, "c1FatigaTexto", "c1FatigaBarra");
+    mostrarBarra(combatiente2.fatiga, combatiente2.fatiga_max, "c2FatigaTexto", "c2FatigaBarra");
+    mostrarStats(combatiente1, "c1"); mostrarStats(combatiente2, "c2");
+    mostrarEstado(combatiente1, "c1"); mostrarEstado(combatiente2, "c2");
+    actualizarInterfazSerie();
+    document.getElementById("turnoActual").textContent = "Turno " + (combate.turno || "—");
+    document.getElementById("iniciativa").textContent = combate.iniciativa || (combatiente1.iniciativa !== undefined && combatiente2.iniciativa !== undefined ? combatiente1.iniciativa + " / " + combatiente2.iniciativa : "—");
+}
+
+function mostrarBarra(v, maxV, idT, idB) {
+    const act = Number(v), mx = Number(maxV) || 100, seg = Number.isFinite(act) ? Math.max(0, Math.min(mx, act)) : mx;
+    const txt = document.getElementById(idT), bar = document.getElementById(idB);
+    if (txt) txt.textContent = Math.round(seg) + " / " + Math.round(mx);
+    if (bar) bar.style.width = Math.max(0, Math.min(100, (seg / mx) * 100)) + "%";
+}
+
+function mostrarStats(c, pref) {
+    const st = document.getElementById(pref + "Stats"); if (!st) return;
+    const ef = c.efectivos || {};
+    st.innerHTML = ["ataque", "defensa", "velocidad", "resistencia", "tactica"].map(k => {
+        const ic = { ataque: "⚔️", defensa: "🛡️", velocidad: "⚡", resistencia: "❤️", tactica: "🧠" };
+        const lb = { ataque: "Ataque", defensa: "Defensa", velocidad: "Velocidad", resistencia: "Resistencia", tactica: "Táctica" };
+        return `<div>${ic[k]} ${lb[k]}: ${Number.isFinite(Number(ef[k])) ? Math.round(Number(ef[k])) : 0}</div>`;
+    }).join("");
+}
+
+function mostrarEstado(c, pref) {
+    const est = document.getElementById(pref + "Estado"); if (!est) return;
+    const m = []; if (c.derrotado) m.push("☠️ Derrotado"); if (c.defendiendo) m.push("🛡️ Defendiendo");
+    if (Array.isArray(c.efectos)) c.efectos.forEach(ef => { if (ef) { const nom = ef.nombre || ef.codigo || "Efecto", dur = ef.turnos !== undefined ? ef.turnos : ef.duracion; m.push(dur !== undefined && dur > 0 ? `✨ ${nom} (${dur})` : `✨ ${nom}`); } });
+    if (c.turnosAdaptacion && c.turnosAdaptacion > 0) m.push(`🧬 Adaptación (${c.turnosAdaptacion})`);
+    est.textContent = m.length ? m.join(" · ") : "—";
+}
+
+function activarBotones() {
+    const cm = controlManual === 1 ? combatiente1 : combatiente2, cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;
+    botonA001.disabled = false; 
+    botonA002.disabled = !pc || Number(cm.fatiga) < cfg.fatiga_minima_ataque_potente; 
+    botonA003.disabled = botonA004.disabled = botonD001.disabled = botonAuto.disabled = false;
+}
 
 function desactivarBotones() { 
-    botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; 
+    botonA001.disabled = botonA002.disabled = botonA003.disabled = botonA004.disabled = botonD001.disabled = botonAuto.disabled = true; 
+}
+
+function interpretarRes(res, at, ob) {
+    if (!res) return;
+    if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) {
+        res.dano = Math.round(res.dano * 0.5);
+        añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%.");
     }
-
-
-
- function interpretarRes(res, at, ob) {     
-    if (!res) return;     
-    if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) { res.dano = Math.round(res.dano * 0.5); añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%."); }     
-    if (res.mensaje) añadirRegistro(res.mensaje);     
-    if (res.dano !== undefined && res.dano > 0) añadirRegistro(`💥 ${at.nombre} causa ${res.dano} de daño a ${ob.nombre}.`);     
-    if (res.critico) añadirRegistro("💥 ¡Golpe crítico!");     
-    if (res.golpe_mortal) añadirRegistro("☠️ ¡GOLPE MORTAL!");     
-    if (res.inversion) añadirRegistro("🔄 ¡Inversión! La defensa provoca un contraataque.");     
-    if (res.contraataque) añadirRegistro("⚡ ¡Contraataque!");     
-    if (res.defensa === "acierto") añadirRegistro("🛡️ ¡Defensa acertada!");     
-    if (res.defensa === "error") añadirRegistro("⚠️ ¡Error de defensa!");     
-    if (res.fallo) añadirRegistro("❌ ¡El ataque falla!");     
-    if (res.bloqueado_por_fatiga) añadirRegistro("😓 ¡Crítico bloqueado por fatiga!");     
-    if (res.esquiva) añadirRegistro("💨 ¡Ataque esquivado!");     
-    if (res.efecto) añadirRegistro(`✨ ${res.efecto.nombre} aplicado.`);     
+    if (res.mensaje) añadirRegistro(res.mensaje);
+    if (res.dano !== undefined && res.dano > 0) añadirRegistro(`💥 ${at.nombre} causa ${res.dano} de daño a ${ob.nombre}.`);
+    if (res.critico) añadirRegistro("💥 ¡Golpe crítico!");
+    if (res.golpe_mortal) añadirRegistro("☠️ ¡GOLPE MORTAL!");
+    if (res.inversion) añadirRegistro("🔄 ¡Inversión! La defensa provoca un contraataque.");
+    if (res.contraataque) añadirRegistro("⚡ ¡Contraataque!");
+    if (res.defensa === "acierto") añadirRegistro("🛡️ ¡Defensa acertada!");
+    if (res.defensa === "error") añadirRegistro("⚠️ ¡Error de defensa!");
+    if (res.fallo) añadirRegistro("❌ ¡El ataque falla!");
+    if (res.bloqueado_por_fatiga) añadirRegistro("😓 ¡Crítico bloqueado por fatiga!");
+    if (res.esquiva) añadirRegistro("💨 ¡Ataque esquivado!"); 
+    if (res.efecto) añadirRegistro(`✨ ${res.efecto.nombre} aplicado.`); 
     if (res.registro) (Array.isArray(res.registro) ? res.registro : [res.registro]).forEach(m => añadirRegistro(m)); 
 } 
 
@@ -564,7 +512,8 @@ function ejecutarAccionJugador(cod) {
     if (cod === "A002" && (!pc || Number(at.fatiga) < cfg.fatiga_minima_ataque_potente)) {         
         añadirRegistro("😓 Ataque potente bloqueado: críticos no permitidos o fatiga insuficiente.");         
         activarBotones();         
-        return;     }     
+        return;     
+    }     
     try {         
         desactivarBotones();
         const rJ = window.PALARENA_STANDAR.ejecutarAccion(at, ob, cod);         
@@ -633,6 +582,7 @@ function resolverTurnoInicialAutomaticoIA() {
 botonA001.addEventListener("click", () => ejecutarAccionJugador("A001")); 
 botonA002.addEventListener("click", () => ejecutarAccionJugador("A002")); 
 botonA003.addEventListener("click", () => ejecutarAccionJugador("A003")); 
+botonA004.addEventListener("click", () => ejecutarAccionJugador("A004")); 
 botonD001.addEventListener("click", () => ejecutarAccionJugador("D001")); 
 
 botonAuto.addEventListener("click", () => {     
@@ -699,9 +649,7 @@ function registrarResSerie(gRes) {
     if (botonVolverCruces) botonVolverCruces.disabled = true;
 } 
 
-
-
- function mostrarResSerie(g) {     
+function mostrarResSerie(g) {     
     document.getElementById("resultadoIcono").textContent = "🏆";     
     document.getElementById("resultadoTitulo").textContent = "🏆 " + (g.nombre || "Ganador");     
     document.getElementById("resultadoTexto").textContent = `Vencedor absoluto de la eliminatoria: ${g.nombre} (${victorias1} - ${victorias2}).`;     
@@ -742,35 +690,22 @@ function mostrarResCombate(res) {
 function limpiarRegistro() { 
     document.getElementById("registroCombate").innerHTML = ""; 
 } 
-
     
 function añadirRegistro(txt) { 
     const reg = document.getElementById("registroCombate");
     if (!reg) return;
-    
-    // Eliminar el mensaje de "combate no ha comenzado" si está presente
     const vacio = reg.querySelector(".registro-vacio");
-    if (vacio) {
-        vacio.remove();
-    }
-
-    // Crear y añadir la nueva línea de log al final
+    if (vacio) vacio.remove();
     const lin = document.createElement("div"); 
     lin.className = "linea-registro"; 
     lin.textContent = txt; 
     reg.appendChild(lin); 
-    
-    // Forzar el scroll hacia abajo para que el log actual sea visible de inmediato
     reg.scrollTop = reg.scrollHeight; 
-    
-    // Mantener el centro únicamente con el número de turno limpio
     const turnoActual = document.getElementById("turnoActual");
     if (turnoActual && combate && combate.turno) {
         turnoActual.textContent = "Turno " + combate.turno;
     }
 }
-
-
 
 function mostrarMensaje(txt) { 
     mensajeConfiguracion.textContent = txt; 
@@ -845,3 +780,5 @@ document.addEventListener("DOMContentLoaded", async function() {
 </script> 
 </body> 
 </html>
+
+    
