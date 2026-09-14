@@ -536,6 +536,10 @@ window.PALTAXON = {
 "008_01":{
   ta1:"Animalia > Chordata > Tetrapoda > Acanthostegidae > Acanthostega",
   ta2:"Tetrápodo. Acanthostégido."
+},
+"008_02":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Thyreophora > Ankylosauria > Ankylosauridae > Ankylosaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Tireóforo. Anquilosaurio. Anquilosáurido."
 }
 };
 
