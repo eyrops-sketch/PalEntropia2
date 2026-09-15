@@ -22,7 +22,8 @@
             <div id="labelModalidadActual">📜 Modalidad actual: <strong>Normal</strong></div>             
             <div style="display: flex; gap: 8px; align-items: center;">                 
                 <button id="botonInfoModalidades" type="button" style="padding: 4px 10px; cursor: pointer;" title="Ver modalidades">ℹ️ Ver modalidades</button>                 
-                <a href="https://palentropia.es/herramientas/torneo/reglas.html" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>             
+                <!-- MODIFICADO: Llamada al visor iframe genérico para abrir las reglas -->
+                <a href="#" onclick="abrirIframeModal('https://palentropia.es/herramientas/torneo/reglas.html'); return false;" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>             
             </div>         
         </div>                 
         <div class="entrada-combatiente">             
@@ -58,7 +59,7 @@
             <div id="serieFormato">—</div>             
             <div id="partidoSerie">—</div>         </div>     
     </section>
-        <section id="combatientes" class="zona-combatientes">         
+            <section id="combatientes" class="zona-combatientes">         
         <article id="combatiente1" class="tarjeta-combatiente">             
             <div class="cabecera-combatiente">                 
                 <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>                 
@@ -67,7 +68,6 @@
                     <div id="c1Perfil" class="perfil">—</div>                 
                 </div>             
             </div>             
-            <!-- AÑADIDO: cursor pointer y title para indicar que es clicable -->
             <div class="contenedor-imagen-combatiente"><img id="c1Imagen" class="imagen-combatiente" src="" alt="" style="cursor: pointer;" title="Haz clic para ver la Paleoficha"></div>             
             <div id="c1Victorias" class="victorias-serie">🏆 Victorias: 0</div>             
             <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c1VidaTexto">— / —</span></div><div class="barra-vida"><div id="c1VidaBarra" class="vida-relleno"></div></div></div>             
@@ -87,7 +87,6 @@
                     <div id="c2Perfil" class="perfil">—</div>                 
                 </div>             
             </div>             
-            <!-- AÑADIDO: cursor pointer y title para indicar que es clicable -->
             <div class="contenedor-imagen-combatiente"><img id="c2Imagen" class="imagen-combatiente" src="" alt="" style="cursor: pointer;" title="Haz clic para ver la Paleoficha"></div>             
             <div id="c2Victorias" class="victorias-serie">🏆 Victorias: 0</div>             
             <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c2VidaTexto">— / —</span></div><div class="barra-vida"><div id="c2VidaBarra" class="vida-relleno"></div></div></div>             
@@ -121,11 +120,11 @@
         <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>     
     </section> 
 </main>
-<!-- AÑADIDO: Modal flotante para Paleofichas -->
-<div id="modal-paleoficha" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
+<!-- AÑADIDO: Modal flotante genérico para Iframes (Reglas y Paleofichas) -->
+<div id="modal-iframe" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
     <div style="background:#111; width:95%; max-width:900px; height:90vh; border-radius:8px; position:relative; overflow:hidden; display:flex; flex-direction:column; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);">
-        <button onclick="cerrarPaleofichaModal()" style="position:absolute; top:10px; right:15px; background:#e74c3c; color:#fff; border:none; border-radius:50%; width:35px; height:35px; font-size:20px; cursor:pointer; z-index:10000; display:flex; align-items:center; justify-content:center;" title="Cerrar">&times;</button>
-        <iframe id="iframe-paleoficha" src="" style="width:100%; height:100%; border:none; background:#fff;"></iframe>
+        <button onclick="cerrarIframeModal()" style="position:absolute; top:10px; right:15px; background:#e74c3c; color:#fff; border:none; border-radius:50%; width:35px; height:35px; font-size:20px; cursor:pointer; z-index:10000; display:flex; align-items:center; justify-content:center;" title="Cerrar">&times;</button>
+        <iframe id="iframe-contenido" src="" style="width:100%; height:100%; border:none; background:#fff;"></iframe>
     </div>
 </div>
 
@@ -329,7 +328,7 @@ function actualizarRolesVisuales() {
         rol2.style.color = "#58a6ff";
         rol2.style.borderColor = "rgba(88, 166, 255, 0.3)";
     }
-    }
+}
 
 controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
     controlManual = Number(ctrl.value); 
@@ -766,40 +765,38 @@ document.addEventListener("DOMContentLoaded", async function() {
                                     if (combateActivo) resolverTurnoInicialAutomaticoIA();                                 }, 500);                             });                          }                     }                 }, 100);             }         } catch (e) { console.error("Error al procesar modo torneo:", e); }     } 
 }); 
 
-// --- AÑADIDO: Lógica del Modal de Paleofichas ---
-function abrirPaleofichaModal(codigoCombatiente) {
-    if (!codigoCombatiente) return;
-    const modal = document.getElementById("modal-paleoficha");
-    const iframe = document.getElementById("iframe-paleoficha");
+// --- AÑADIDO: Lógica del Modal Iframe (Sirve para Paleofichas y Reglas) ---
+function abrirIframeModal(url) {
+    if (!url) return;
+    const modal = document.getElementById("modal-iframe");
+    const iframe = document.getElementById("iframe-contenido");
     if (modal && iframe) {
-        iframe.src = `https://palentropia.es/herramientas/generador_fase_2/generador_fase_2.html?codigo=${codigoCombatiente}`;
+        iframe.src = url;
         modal.style.display = "flex";
     }
 }
 
-function cerrarPaleofichaModal() {
-    const modal = document.getElementById("modal-paleoficha");
-    const iframe = document.getElementById("iframe-paleoficha");
+function cerrarIframeModal() {
+    const modal = document.getElementById("modal-iframe");
+    const iframe = document.getElementById("iframe-contenido");
     if (modal) modal.style.display = "none";
-    if (iframe) iframe.src = ""; // Limpia el iframe al cerrar para no sobrecargar
+    if (iframe) iframe.src = ""; // Limpia el iframe al cerrar para no sobrecargar la web
 }
 
-// Vinculamos el clic a las imágenes usando las variables globales combatiente1 y combatiente2
+// Vinculamos el clic a las imágenes para que usen el nuevo visor genérico
 document.getElementById("c1Imagen").addEventListener("click", () => {
     if (combatiente1 && combatiente1.codigo) {
-        abrirPaleofichaModal(combatiente1.codigo);
+        abrirIframeModal(`https://palentropia.es/herramientas/generador_fase_2/generador_fase_2.html?codigo=${combatiente1.codigo}`);
     }
 });
 
 document.getElementById("c2Imagen").addEventListener("click", () => {
     if (combatiente2 && combatiente2.codigo) {
-        abrirPaleofichaModal(combatiente2.codigo);
+        abrirIframeModal(`https://palentropia.es/herramientas/generador_fase_2/generador_fase_2.html?codigo=${combatiente2.codigo}`);
     }
 });
 </script> 
 </body> 
 </html>
 
-    
 
-    
