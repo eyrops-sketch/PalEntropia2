@@ -540,7 +540,16 @@ window.PALTAXON = {
 "008_02":{
   ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Thyreophora > Ankylosauria > Ankylosauridae > Ankylosaurus",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Tireóforo. Anquilosaurio. Anquilosáurido."
+},
+ "008_03":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Sauropoda > Macronaria > Brachiosauridae > Brachiosaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Saurópodo. Macronario. Braquiosáurido."
 }
 };
+
+
+
+
+
 
 
