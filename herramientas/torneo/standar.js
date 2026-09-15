@@ -127,8 +127,8 @@ window.PALARENA_STANDAR = (function() {
             fatiga_max: config.fatiga_max,
             fatiga: config.fatiga_inicial,
             efectivos: efectivos,
-            tamano: Number(ficha.e9) || 50,     // Guardamos el tamaño bruto para el contraataque
-            rangoTemporal: ficha.j3 || "",      // Guardamos el rango de tiempo
+            tamano: Number(ficha.e9) || 50,     // Tamaño para el contraataque
+            rangoTemporal: ficha.j3 || "",      // Rango de tiempo para rivalidad
             defendiendo: false,
             derrotado: false,
             usosDefensaConsecutivos: 0,
@@ -202,6 +202,8 @@ window.PALARENA_STANDAR = (function() {
             combatiente.fatiga + config.fatiga_regeneracion_turno
         );
     }
+
+
         function ejecutarAccion(atacante, objetivo, codigoAccion) {
         const config = configuracionGlobal;
 
@@ -262,13 +264,19 @@ window.PALARENA_STANDAR = (function() {
                 
                 let mensajeMaestra = `🛡️⚡ ¡${atacante.nombre} ejecuta una defensa maestra absoluta! Reduce su propia fatiga un 50% y drena un 60% de resuello a ${objetivo.nombre}.`;
                 
-                // --- CONTRAATAQUE TAMAÑO PEQUEÑO (DEFENSA MAESTRA) ---
-                if (atacante.tamano <= 30 && Math.random() < 0.25) {
+                // --- CONTRAATAQUE POTENCIADO TAMAÑO PEQUEÑO (DEFENSA MAESTRA) [50% éxito, 80% fatiga, 40% HP actual, 1 turno parálisis] ---
+                if (atacante.tamano <= 30 && Math.random() < 0.50) {
                     const fatigaRivalPost = Number(objetivo.fatiga) || 0;
-                    const reduccionExtra = Math.round(fatigaRivalPost * 0.40);
-                    objetivo.fatiga = Math.max(0, fatigaRivalPost - reduccionExtra);
-                    objetivo.hp = Math.max(0, objetivo.hp - 15);
-                    mensajeMaestra += ` 🦎 ¡Su ágil tamaño (<= 30) le permite lanzar un veloz contraataque! Drena un 40% adicional de fatiga y causa 15 de daño.`;
+                    const reduccionFatigaExtra = Math.round(fatigaRivalPost * 0.80);
+                    objetivo.fatiga = Math.max(0, fatigaRivalPost - reduccionFatigaExtra);
+                    
+                    const hpActualRival = Number(objetivo.hp) || 0;
+                    const danoHpProporcional = Math.max(1, Math.round(hpActualRival * 0.40));
+                    objetivo.hp = Math.max(0, hpActualRival - danoHpProporcional);
+                    
+                    objetivo.turnosParalizado = Math.max(objetivo.turnosParalizado, 1);
+
+                    mensajeMaestra += ` 🦎 ¡Contraataque escurridizo devastador (Tamaño <= 30)! Drena un 80% de la fatiga del rival, le arranca ${danoHpProporcional} de HP (40% de su salud actual) y lo deja paralizado 1 turno.`;
                     if (objetivo.hp <= 0) {
                         objetivo.derrotado = true;
                         mensajeMaestra += ` ☠️ ¡El contraataque ha sido letal!`;
@@ -336,14 +344,19 @@ window.PALARENA_STANDAR = (function() {
                 
                 let mensajeDefensa = `🛡️✨ ${atacante.nombre} planta un muro defensivo impenetrable, bloqueando los ataques y drenando un 60% de fatiga a ${objetivo.nombre}.`;
 
-                // --- CONTRAATAQUE TAMAÑO PEQUEÑO (DEFENSA NORMAL) ---
-                if (atacante.tamano <= 30 && Math.random() < 0.25) {
+                // --- CONTRAATAQUE POTENCIADO TAMAÑO PEQUEÑO (DEFENSA NORMAL) [50% éxito, 80% fatiga, 40% HP actual, 1 turno parálisis] ---
+                if (atacante.tamano <= 30 && Math.random() < 0.50) {
                     const fatigaRivalPost = Number(objetivo.fatiga) || 0;
-                    const reduccionExtra = Math.round(fatigaRivalPost * 0.40);
-                    objetivo.fatiga = Math.max(0, fatigaRivalPost - reduccionExtra);
+                    const reduccionFatigaExtra = Math.round(fatigaRivalPost * 0.80);
+                    objetivo.fatiga = Math.max(0, fatigaRivalPost - reduccionFatigaExtra);
                     
-                    objetivo.hp = Math.max(0, objetivo.hp - 15);
-                    mensajeDefensa += ` 🦎 ¡Aprovechando su tamaño escurridizo, se escabulle y lanza un mordisco rápido! Drena un 40% adicional de fatiga y causa 15 de daño directo.`;
+                    const hpActualRival = Number(objetivo.hp) || 0;
+                    const danoHpProporcional = Math.max(1, Math.round(hpActualRival * 0.40));
+                    objetivo.hp = Math.max(0, hpActualRival - danoHpProporcional);
+                    
+                    objetivo.turnosParalizado = Math.max(objetivo.turnosParalizado, 1);
+
+                    mensajeDefensa += ` 🦎 ¡Contraataque escurridizo certero (Tamaño <= 30)! Pasa entre las piernas del coloso, drenando un 80% de su fatiga, arrebatándole ${danoHpProporcional} de HP (40% de su salud actual) y paralizándolo 1 turno.`;
                     
                     if (objetivo.hp <= 0) {
                         objetivo.derrotado = true;
@@ -363,7 +376,8 @@ window.PALARENA_STANDAR = (function() {
                 };
             }
         }
-                    let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
+
+            let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
         let mensajeExtra = "";
         let bonusAccion = 1.0;
@@ -438,7 +452,8 @@ window.PALARENA_STANDAR = (function() {
                 }
             }
         }
-                    // --- MODO FRENESÍ (ÚLTIMO ALIENTO) ---
+
+        // --- MODO FRENESÍ (ÚLTIMO ALIENTO) ---
         if (atacante.hp < atacante.hp_max * 0.20 && codigoAccion !== "D001") {
             bonusAccion *= 1.35; // 35% de daño extra
             atacante.efectivos.defensa *= 0.60; // Penalización a su defensa
@@ -526,7 +541,7 @@ window.PALARENA_STANDAR = (function() {
             dano: danoFinal,
             critico: critico
         };
-        }
+    }
         function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
@@ -720,3 +735,6 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
+                
+            
+    
