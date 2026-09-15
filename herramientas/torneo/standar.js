@@ -202,8 +202,6 @@ window.PALARENA_STANDAR = (function() {
             combatiente.fatiga + config.fatiga_regeneracion_turno
         );
     }
-
-
         function ejecutarAccion(atacante, objetivo, codigoAccion) {
         const config = configuracionGlobal;
 
@@ -376,8 +374,7 @@ window.PALARENA_STANDAR = (function() {
                 };
             }
         }
-
-            let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
+                 let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
         let mensajeExtra = "";
         let bonusAccion = 1.0;
@@ -453,7 +450,20 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // --- MODO FRENESÍ (ÚLTIMO ALIENTO) ---
+        // --- INYECCIÓN DE HABILIDAD TAXONÓMICA ---
+        if (window.PALARENA_TAXON_COMBATE && (codigoAccion === "A001" || codigoAccion === "A002")) {
+            const rasgos = window.PALARENA_TAXON_COMBATE.obtenerRasgosTaxonomicos(atacante.codigo);
+            if (rasgos && typeof rasgos.aplicarEfecto === "function") {
+                if (Math.random() < 0.30) { // 30% de probabilidad por ataque
+                    const resultadoTaxon = rasgos.aplicarEfecto(atacante, objetivo);
+                    if (resultadoTaxon) {
+                        bonusAccion *= resultadoTaxon.extraDano;
+                        mensajeExtra += resultadoTaxon.mensajeTexto;
+                    }
+                }
+            }
+        }
+                    // --- MODO FRENESÍ (ÚLTIMO ALIENTO) ---
         if (atacante.hp < atacante.hp_max * 0.20 && codigoAccion !== "D001") {
             bonusAccion *= 1.35; // 35% de daño extra
             atacante.efectivos.defensa *= 0.60; // Penalización a su defensa
@@ -541,7 +551,7 @@ window.PALARENA_STANDAR = (function() {
             dano: danoFinal,
             critico: critico
         };
-    }
+        }
         function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
@@ -609,7 +619,7 @@ window.PALARENA_STANDAR = (function() {
 
     function obtenerCombatiente(combate, codigo) {
         if (combate.combatiente1.codigo === codigo) return combate.combatiente1;
-        if (combate.combatiente2.codigo === codigo) return combate.combatiente2;
+        if (combate.combatiente2.codigo === combate.combatiente2.codigo) return combate.combatiente2;
         return null;
     }
 
@@ -735,6 +745,4 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
-                
-            
-    
+        
