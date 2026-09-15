@@ -44,8 +44,8 @@
                 </div>                 
                 <div id="nombre2" class="nombre-combatiente">—</div>             
             </div>         
-        </div>         
-        <div id="controlManual" class="control-manual">             
+        </div>
+               <div id="controlManual" class="control-manual">             
             <div class="control-manual-titulo">🎮 Control manual</div>             
             <div class="control-manual-opciones">                 
                 <label class="opcion-control"><input type="radio" name="controlManual" value="1" checked><span>Combatiente 1</span></label>                 
@@ -74,8 +74,10 @@
             <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c1FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c1FatigaBarra" class="fatiga-relleno"></div></div></div>             
             <div id="c1Stats" class="stats"></div>             
             <div id="c1Estado" class="estado"></div>         
-        </article>         
-        <div class="centro-combate">             
+        </article>
+
+     
+              <div class="centro-combate">             
             <div class="icono-vs">⚔️</div>             
             <div id="turnoActual" class="turno">En combate!</div>             
             <div id="iniciativa" class="iniciativa">—</div>         </div>         
@@ -120,6 +122,7 @@
         <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>     
     </section> 
 </main>
+
 <!-- AÑADIDO: Modal flotante genérico para Iframes (Reglas y Paleofichas) -->
 <div id="modal-iframe" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
     <div style="background:#111; width:95%; max-width:900px; height:90vh; border-radius:8px; position:relative; overflow:hidden; display:flex; flex-direction:column; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);">
@@ -142,7 +145,7 @@
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Frenesí mesozoico:</strong> Partidas ultrarrápidas con daños masivos.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Depredador al límite:</strong> Ofensivas letales con bonificaciones altas.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Cataclismo carbonífero:</strong> Entorno caótico con altísima variabilidad de daño.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Acorazados cretácicos:</strong> Tanques masivos de alta resistencia y divisor defensivo extremo.</div>             
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Acorazados cretácicos:</strong> Tanques masivos de alta resistencia y divisor defensivo extremo.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Instinto primigenio:</strong> Furia desatada con críticos hiperpotenciados.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Reflejos abismales:</strong> Duelos ágiles con esquivas constantes.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Balance ancestral:</strong> Coeficientes comprimidos para nivelar estadísticas.</div>             
@@ -179,6 +182,9 @@
 <script src="palarenastats.js"></script> 
 <script src="standar-ataques.js"></script> 
 <script src="standar-efectos.js"></script> 
+<!-- AÑADIDO: Motor de Taxonomía -->
+<script src="../generador_fase_2/paltaxon.js"></script>
+<script src="taxon_combate.js"></script>
 <!-- Tu motor original, intacto -->
 <script src="standar.js"></script> 
 <script src="../generador_fase_2/buscaruta.js"></script> 
@@ -202,6 +208,7 @@ const botonInfoModalidades = document.getElementById("botonInfoModalidades"), mo
 const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), modalGuiaCombate = document.getElementById("modalGuiaCombate"), cierraGuiaCruz = document.getElementById("cierraGuiaCruz"), cierraGuiaBtn = document.getElementById("cierraGuiaBtn"); 
 const labelModalidadActual = document.getElementById("labelModalidadActual"); 
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
+
 
  function obtenerReglasTorneo() {     
     const g = localStorage.getItem(CLAVE_REGLAS);     
@@ -328,7 +335,7 @@ function actualizarRolesVisuales() {
         rol2.style.color = "#58a6ff";
         rol2.style.borderColor = "rgba(88, 166, 255, 0.3)";
     }
-}
+    }
 
 controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
     controlManual = Number(ctrl.value); 
@@ -537,7 +544,8 @@ function ejecutarAccionJugador(cod) {
     } 
 } 
 
- function resolverTurnoInicialAutomaticoIA() {
+
+     function resolverTurnoInicialAutomaticoIA() {
     const vel1 = Number(combatiente1.velocidad) || 50, vel2 = Number(combatiente2.velocidad) || 50;
     let iniciativaIA = false;
     const iaEsCombatiente2 = controlManual === 1; 
@@ -780,10 +788,9 @@ function cerrarIframeModal() {
     const modal = document.getElementById("modal-iframe");
     const iframe = document.getElementById("iframe-contenido");
     if (modal) modal.style.display = "none";
-    if (iframe) iframe.src = ""; // Limpia el iframe al cerrar para no sobrecargar la web
+    if (iframe) iframe.src = ""; 
 }
 
-// Vinculamos el clic a las imágenes para que usen el nuevo visor genérico
 document.getElementById("c1Imagen").addEventListener("click", () => {
     if (combatiente1 && combatiente1.codigo) {
         abrirIframeModal(`https://palentropia.es/herramientas/generador_fase_2/generador_fase_2.html?codigo=${combatiente1.codigo}`);
@@ -799,4 +806,17 @@ document.getElementById("c2Imagen").addEventListener("click", () => {
 </body> 
 </html>
 
+    
+    
 
+
+            
+    
+
+
+
+
+
+
+                
+                
