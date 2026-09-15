@@ -1,847 +1,615 @@
-<!DOCTYPE html> 
-<html lang="es"> 
-<head>     
-    <meta charset="UTF-8">     
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">     
-    <title>PalEntropía — Combate de Torneo</title>     
-    <link rel="stylesheet" href="standar_torneo.css"> 
-</head> 
-<body> 
-<header id="cabecera">     
-    <div class="titulo">⚔️ PalEntropía</div>     
-    <div class="subtitulo">Arena — Cuadro de Torneo</div> 
-</header> 
-
-
-
-
-    <main id="arena">     
-    <section id="configuracion" class="panel">         
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">             
-            <h2 style="margin: 0;">⚔️ Preparar combate</h2>             
-            <button id="botonAbrirGuiaCombate" type="button" class="boton-circular-ajustes" title="Guía de Acciones y Estadísticas" style="background: #21262d; border: 1px solid #30363d; color: #58a6ff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem;">ℹ️</button>         
-        </div>         
-        <div class="modalidad-info" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 4px;">             
-            <div id="labelModalidadActual">📜 Modalidad actual: <strong>Normal</strong></div>             
-            <div style="display: flex; gap: 8px; align-items: center;">                 
-                <button id="botonInfoModalidades" type="button" style="padding: 4px 10px; cursor: pointer;" title="Ver modalidades">ℹ️ Ver modalidades</button>                 
-                <a href="https://palentropia.es/herramientas/torneo/reglas.html" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>             
-            </div>         
-        </div>                 
-        <div class="entrada-combatiente">             
-            <div class="campo">                 
-                <label for="codigo1">🦖 Combatiente 1</label>                 
-                <div style="display: flex; gap: 5px; align-items: center;">                     
-                    <input type="text" id="codigo1" placeholder="Ej. 006_01" autocomplete="off" readonly style="flex: 1;">                     
-                    <button type="button" id="botonCambiar1" style="display: none; padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>                 
-                </div>                 
-                <div id="nombre1" class="nombre-combatiente">—</div>             
-            </div>             
-            <div class="vs">VS</div>             
-            <div class="campo">                 
-                <label for="codigo2">🦕 Combatiente 2</label>                 
-                <div style="display: flex; gap: 5px; align-items: center;">                     
-                    <input type="text" id="codigo2" placeholder="Ej. 001_02" autocomplete="off" readonly style="flex: 1;">                     
-                    <button type="button" id="botonCambiar2" style="display: none; padding: 4px 8px; cursor: pointer;" title="Cambiar combatiente">✏️</button>                 
-                </div>                 
-                <div id="nombre2" class="nombre-combatiente">—</div>             
-            </div>         
-        </div>         
-        <div id="controlManual" class="control-manual">             
-            <div class="control-manual-titulo">🎮 Control manual</div>             
-            <div class="control-manual-opciones">                 
-                <label class="opcion-control"><input type="radio" name="controlManual" value="1" checked><span>Combatiente 1</span></label>                 
-                <label class="opcion-control"><input type="radio" name="controlManual" value="2"><span>Combatiente 2</span></label>             </div>         
-        </div>         
-        <button id="botonPreparar" type="button" style="display: none;" aria-hidden="true">⚔️ Preparar combate</button>         
-        <button id="botonSerie" type="button" style="display: block;">🏆 Reiniciar la serie (un intento permitido)</button>         
-        <div id="mensajeConfiguracion" class="mensaje">Cargando datos del torneo...</div>         
-        <div id="informacionSerie" class="informacion-serie" style="display: none;">             
-            <div id="tituloSerie">🏆 Serie</div>             
-            <div id="serieFormato">—</div>             
-            <div id="partidoSerie">—</div>         </div>     
-    </section>
-
-    <section id="combatientes" class="zona-combatientes">         
-        <article id="combatiente1" class="tarjeta-combatiente">             
-            <div class="cabecera-combatiente">                 
-                <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>                 
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">                     
-                    <div id="c1Rol" style="font-size: 0.75rem; font-weight: bold; background: rgba(88, 166, 255, 0.15); color: #58a6ff; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(88, 166, 255, 0.3);">🎮 Jugador</div>                     
-                    <div id="c1Perfil" class="perfil">—</div>                 
-                </div>             
-            </div>             
-            <div class="contenedor-imagen-combatiente"><img id="c1Imagen" class="imagen-combatiente" src="" alt=""></div>             
-            <div id="c1Victorias" class="victorias-serie">🏆 Victorias: 0</div>             
-            <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c1VidaTexto">— / —</span></div><div class="barra-vida"><div id="c1VidaBarra" class="vida-relleno"></div></div></div>             
-            <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c1FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c1FatigaBarra" class="fatiga-relleno"></div></div></div>             
-            <div id="c1Stats" class="stats"></div>             
-            <div id="c1Estado" class="estado"></div>         
-        </article>         
-        <div class="centro-combate">             
-            <div class="icono-vs">⚔️</div>             
-            <div id="turnoActual" class="turno">En combate!</div>             
-            <div id="iniciativa" class="iniciativa">—</div>         </div>         
-        <article id="combatiente2" class="tarjeta-combatiente">             
-            <div class="cabecera-combatiente">                 
-                <div><div id="c2Nombre" class="nombre">—</div><div id="c2Codigo" class="codigo">—</div></div>                 
-                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">                     
-                    <div id="c2Rol" style="font-size: 0.75rem; font-weight: bold; background: rgba(248, 81, 73, 0.15); color: #f85149; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(248, 81, 73, 0.3);">💻 CPU</div>                     
-                    <div id="c2Perfil" class="perfil">—</div>                 
-                </div>             
-            </div>             
-            <div class="contenedor-imagen-combatiente"><img id="c2Imagen" class="imagen-combatiente" src="" alt=""></div>             
-            <div id="c2Victorias" class="victorias-serie">🏆 Victorias: 0</div>             
-            <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c2VidaTexto">— / —</span></div><div class="barra-vida"><div id="c2VidaBarra" class="vida-relleno"></div></div></div>             
-            <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c2FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c2FatigaBarra" class="fatiga-relleno"></div></div></div>             
-            <div id="c2Stats" class="stats"></div>             
-            <div id="c2Estado" class="estado"></div>         
-        </article>     
-    </section>     
-
-    <section id="acciones" class="panel">         
-        <h2>🎯 Acciones</h2>         
-        <div class="botones-acciones">             
-            <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>             
-            <button id="botonA002" class="accion" type="button" disabled>💥 Ataque potente</button>             
-            <button id="botonA003" class="accion" type="button" disabled>🧠 Ataque táctico</button>             
-            <button id="botonD001" class="accion defensa" type="button" disabled>🛡️ Defender</button>         
-        </div>         
-        <button id="botonAuto" class="boton-auto" type="button" disabled>▶️ Combate automático</button>     
-    </section>        
-
-    <section id="registro" class="panel">         
-        <h2>📜 Registro del combate</h2>         
-        <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>     
-    </section>     
-
-    <section id="resultado" class="panel resultado-oculto">         
-        <div id="resultadoIcono" class="resultado-icono">🏆</div>         
-        <h2 id="resultadoTitulo">—</h2>         
-        <div id="resultadoTexto">—</div>         
-        <button id="botonNuevoCombate" type="button" style="display: none;">▶️ Siguiente</button>         
-        <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>     
-    </section> 
-</main>
-
-
-
-
-
-
-
-
-    
-<div id="modalModalidades" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">     
-    <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">         
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">             
-            <h3 style="margin: 0; font-size: 1.15rem; color: #58a6ff;">📖 Guía de Modalidades de Juego</h3>             
-            <button id="botonCerrarModal" type="button" style="background: transparent; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px 8px;">✕</button>         </div>         
-        <div id="contenidoModalidades" style="margin: 0 0 20px 0; font-size: 0.9rem; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Normal:</strong> Experiencia equilibrada estándar con parámetros base.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Difícil:</strong> Menor vida base y mayor letalidad para duelos desafiantes.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Sin crítico:</strong> Combates tácticos puros sin multiplicador crítico.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Defensa aumentada:</strong> Defensas muy reforzadas que alargan los intercambios.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Desgaste extremo:</strong> Menor regeneración y alta exigencia de fatiga.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Frenesí mesozoico:</strong> Partidas ultrarrápidas con daños masivos.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Depredador al límite:</strong> Ofensivas letales con bonificaciones altas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Cataclismo carbonífero:</strong> Entorno caótico con altísima variabilidad de daño.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Acorazados cretácicos:</strong> Tanques masivos de alta resistencia y divisor defensivo extremo.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Instinto primigenio:</strong> Furia desatada con críticos hiperpotenciados.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Reflejos abismales:</strong> Duelos ágiles con esquivas constantes.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Balance ancestral:</strong> Coeficientes comprimidos para nivelar estadísticas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Furia desatada:</strong> Compensador agresivo para equilibrar Stats muy bajos.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Apex letal:</strong> Máximo nivel de riesgo y daño crítico desbocado.</div>         
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Eco del paleozoico:</strong> Entorno primigenio e imprevisible con alta variabilidad ambiental y desgaste táctico profundo.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Muerte súbita:</strong> Duelos hiperletales de un solo acierto e iniciativa radical 50/50.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 1:</strong> Factor de penalización específico del 60% al rendimiento del primer combatiente.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Hándicap combatiente 2:</strong> Factor de penalización específico del 60% al rendimiento del segundo combatiente.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Cataclismo sequía:</strong> Clima agobiante con multiplicador general de 0.75 y fatiga acelerada.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Cataclismo terremoto:</strong> Suelo inestable con multiplicador general de 0.50 y alta aleatoriedad.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Cataclismo volcán:</strong> Ambiente asfixiante con multiplicador general de 0.25 y letalidad masiva.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Cataclismo glaciación:</strong> Freno metabólico con multiplicador general de 0.60 y defensas extremas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Cataclismo diluvio:</strong> Terreno impracticable con multiplicador general de 0.70 y humedad asfixiante.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Cataclismo apocalipsis:</strong> Extinción masiva con multiplicador general de 0.20 y letalidad absoluta.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Duelo de titanes:</strong> Guerra de desgaste con el doble de vida base y defensas titánicas.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Fiebre primigenia:</strong> Ofensiva total incansable con alta velocidad de ejecución.</div>         </div>         
-        <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">             
-            <button id="botonCerrarModalBtn" type="button" style="background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cerrar</button>         </div>     </div> </div> 
-<div id="modalGuiaCombate" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">     
-    <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">         
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">             
-            <h3 style="margin: 0; font-size: 1.15rem; color: #58a6ff;">⚔️ Dinámica de Combate y Stats</h3>             
-            <button id="cierraGuiaCruz" type="button" style="background: transparent; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px 8px;">✕</button>         </div>         
-        <div style="margin: 0 0 20px 0; font-size: 0.9rem; line-height: 1.5; display: flex; flex-direction: column; gap: 12px;">             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">⚔️ Ataque básico (A001):</strong> Ofensiva estándar con baja fatiga y daño constante modulado por los Stats.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">💥 Ataque potente (A002):</strong> Ofensiva crítica de alto impacto que exige un umbral mínimo de fatiga.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">🧠 Ataque táctico (A003):</strong> Maniobra guiada por la estadística de Táctica para castigar huecos del rival.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">🛡️ Defender (D001):</strong> Mitiga drásticamente el daño y puede provocar contraataques o inversiones.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">▶️ Combate automático:</strong> Ejecuta los turnos mediante inteligencia artificial de combate.</div>         </div>         
-        <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">             
-            <button id="cierraGuiaBtn" type="button" style="background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Entendido</button>         </div>     </div> </div> 
-<script src="palarenastats.js"></script> 
-<script src="standar-ataques.js"></script> 
-<script src="standar-efectos.js"></script> 
-<script src="standar.js"></script> 
-<script src="../generador_fase_2/buscaruta.js"></script> 
-<script src="loadimagen.js"></script>
-
-<script> 
-const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json"; 
-let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null; 
-let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false; 
-let partidosSerie = 1, victorias1 = 0, victorias2 = 0, partidoActual = 1, victoriasNecesarias = 1; 
-const CLAVE_REGLAS = "palentropia_reglas_torneo", REGLAS_DEF = { partidosSerie: 1, tipoCombate: "normal" }; 
-const CLAVE_ALEATORIO_CONFIG = "palentropia_modo_aleatorio_config"; 
-const codigo1 = document.getElementById("codigo1"), codigo2 = document.getElementById("codigo2"); 
-const nombre1 = document.getElementById("nombre1"), nombre2 = document.getElementById("nombre2"); 
-const botonPreparar = document.getElementById("botonPreparar"), botonSerie = document.getElementById("botonSerie"); 
-const mensajeConfiguracion = document.getElementById("mensajeConfiguracion"), informacionSerie = document.getElementById("informacionSerie"); 
-const serieFormato = document.getElementById("serieFormato"), partidoSerie = document.getElementById("partidoSerie"); 
-const botonA001 = document.getElementById("botonA001"), botonA002 = document.getElementById("botonA002"), botonA003 = document.getElementById("botonA003"), botonD001 = document.getElementById("botonD001"), botonAuto = document.getElementById("botonAuto"); 
-const botonNuevoCombate = document.getElementById("botonNuevoCombate"), botonVolverCruces = document.getElementById("botonVolverCruces"); 
-const botonInfoModalidades = document.getElementById("botonInfoModalidades"), modalModalidades = document.getElementById("modalModalidades"), botonCerrarModal = document.getElementById("botonCerrarModal"), botonCerrarModalBtn = document.getElementById("botonCerrarModalBtn"); 
-const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), modalGuiaCombate = document.getElementById("modalGuiaCombate"), cierraGuiaCruz = document.getElementById("cierraGuiaCruz"), cierraGuiaBtn = document.getElementById("cierraGuiaBtn"); 
-const labelModalidadActual = document.getElementById("labelModalidadActual"); 
-const controlesManual = document.querySelectorAll('input[name="controlManual"]'); 
-
-
-
-
-
-    
-function obtenerReglasTorneo() {     
-    const g = localStorage.getItem(CLAVE_REGLAS);     
-    if (!g) return { ...REGLAS_DEF };     
-
-    try { 
-        const r = JSON.parse(g); 
-
-        return { 
-            partidosSerie: Number(r.partidosSerie) || 1,
-            tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal",
-            factorImprevisible: r.factorImprevisible !== undefined
-                ? Number(r.factorImprevisible)
-                : 1.0,
-            iaAleatoria: r.iaAleatoria !== undefined
-                ? Boolean(r.iaAleatoria)
-                : false,
-            coeficientes: r.coeficientes || {}
-        }; 
-    } catch (e) { 
-        return { ...REGLAS_DEF }; 
-    } 
-}
-
-
-
-
-
-
-
-
-
-function obtenerConfiguracionActiva() {     
-    const reg = obtenerReglasTorneo();     
-    const modoActivo = reg.tipoCombate || "normal";     
-
-    const configBase = fichas.find(
-        f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()
-    ) || fichas[0] || {};
-
-    return {
-        ...configBase,
-        factorImprevisible: reg.factorImprevisible,
-        iaAleatoria: reg.iaAleatoria
+window.PALARENA_STANDAR = (function() {
+    let configuracionGlobal = {
+        hp_base: 1000,
+        bonificacion_dominante: 0.15,
+        factor_imprevisible_min: 0.78,
+        factor_imprevisible_max: 1.22,
+        coeficiente_combate: 1.00,
+        coeficiente_combate_min: 0.50,
+        coeficiente_combate_max: 1.50,
+        iniciativa_velocidad: 0.70,
+        iniciativa_tactica: 0.30,
+        dano_base: 4,
+        dano_por_ataque: 0.10,
+        defensa_divisor: 200,
+        variacion_dano: 0.25,
+        multiplicador_critico: 2.50,
+        critico_base: 10,
+        critico_tactica: 0.15,
+        fatiga_minima_critico: 20,
+        esquiva_velocidad: 0.15,
+        fallo_base: 14,
+        fallo_reduccion_tactica: 0.03,
+        coste_ataque_potente_hp: 0.14,
+        fatiga_minima_ataque_potente: 65,
+        fatiga_max: 100,
+        fatiga_inicial: 100,
+        fatiga_regeneracion_turno: 6,
+        coste_fatiga_A001: 8,
+        coste_fatiga_A002: 38,
+        coste_fatiga_A003: 10,
+        coste_fatiga_D001: 20,
+        fatiga_defensa_atacante: 15,
+        reduccion_defensa: 0.55,
+        error_defensa_base: 45,
+        error_defensa_reduccion_inteligencia: 0.03,
+        error_defensa_reduccion_tactica: 0.02,
+        error_defensa_fatiga_umbral: 50,
+        error_defensa_fatiga_incremento: 0.20,
+        error_defensa_min: 15,
+        error_defensa_max: 65,
+        golpe_mortal: false,
+        dano_vida_75: 1.00,
+        dano_vida_50: 1.05,
+        dano_vida_25: 1.15,
+        dano_vida_10: 1.25,
+        dano_vida_critico: 1.35,
+        max_turnos: 150,
+        general: 1,
+        escenariojug1: 1,
+        escenariojug2: 1,
+        ia_peso_aleatorio: 0.40
     };
-}
 
-
-
-
-
-
-    
-
-    
-function actualizarInterfazModalidad() {     
-    const reg = obtenerReglasTorneo();     
-    const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
-    
-    let nombreModo = "Elegir configuración";
-    
-    if (esAleatorio) {
-        nombreModo = "Aleatorio";
-    } else if (reg.tipoCombate) {
-        nombreModo = reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ');
-    }
-    
-    if (labelModalidadActual) {
-        labelModalidadActual.innerHTML = `📜 Modalidad actual: <strong>${nombreModo}</strong>`; 
-    }
-}
-
-
-function actualizarInterfazSerie() {     
-    const c1v = document.getElementById("c1Victorias"), c2v = document.getElementById("c2Victorias");     
-    if (c1v) c1v.textContent = "🏆 Victorias: " + victorias1;     
-    if (c2v) c2v.textContent = "🏆 Victorias: " + victorias2;     
-    if (!serieActiva) { informacionSerie.style.display = "none"; serieFormato.textContent = "—"; partidoSerie.textContent = "—"; return; }     
-    informacionSerie.style.display = ""; serieFormato.textContent = "Mejor de " + partidosSerie; partidoSerie.textContent = "Partido " + partidoActual + " / " + partidosSerie; 
-} 
-
-async function cargarPaleofichas() {     
-    try {         
-        const res = await fetch(RUTA_PALEOFICHAS); if (!res.ok) throw new Error();         
-        const datos = await res.json(); nombresPaleofichas = {};         
-        const proc = f => { if (f) { const c = f.j1 || f.codigo || "", n = f.j2 || f.nombre || ""; if (c) nombresPaleofichas[String(c).trim().toLowerCase()] = n; } };         
-        Array.isArray(datos) ? datos.forEach(proc) : (datos && Object.values(datos).forEach(proc));     
-    } catch (e) { nombresPaleofichas = {}; } 
-} 
-
-async function cargarMaster() {     
-    try {         
-        const res = await fetch(RUTA_MASTER); if (!res.ok) throw new Error();         
-        fichas = interpretarCSV(await res.text()); mensajeConfiguracion.textContent = "Combatientes del torneo cargados correctamente.";         
-        actualizarInterfazModalidad();     
-    } catch (e) { mensajeConfiguracion.textContent = "❌ Error al cargar master.csv."; } 
-} 
-
-function interpretarCSV(texto) {     
-    const lineas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);     
-    if (lineas.length < 2) return [];     
-    const cabecera = separarCSV(lineas[0]), resultado = [];     
-    for (let i = 1; i < lineas.length; i++) {         
-        const col = separarCSV(lineas[i]); if (!col.length) continue;         
-        let ficha = {}; cabecera.forEach((cab, j) => ficha[cab] = col[j] !== undefined ? col[j] : "");         
-        for (let n = 1; n <= 11; n++) if (ficha["e" + n]) ficha["e" + n] = Number(ficha["e" + n]);         
-        resultado.push(ficha);     }     
-    return resultado; 
-} 
-
-function separarCSV(linea) {     
-    const res = []; let act = "", com = false;     
-    for (let i = 0; i < linea.length; i++) { const c = linea[i]; if (c === '"') { com = !com; continue; } if (c === "," && !com) { res.push(act.trim()); act = ""; } else act += c; }     
-    res.push(act.trim()); return res; 
-} 
-
-function buscarFicha(codigo) {     
-    const buscado = String(codigo).trim().toLowerCase(), ficha = fichas.find(f => String(f.j1).trim().toLowerCase() === buscado);     
-    if (!ficha) return null; const fc = { ...ficha }; fc.j2 = nombresPaleofichas[buscado] || ficha.j2 || ficha.nombre || ""; fc.nombre = fc.j2; return fc; 
-} 
-
-function actualizarNombre(input, el) { const f = buscarFicha(input.value); el.textContent = f ? (f.j2 || "Sin nombre") : "—"; }
-
-function bloquearTodoAlInicio() {
-    desactivarBotones();
-    if (botonSerie) botonSerie.disabled = false;
-    if (botonNuevoCombate) { botonNuevoCombate.style.display = "none"; botonNuevoCombate.disabled = true; }
-    if (botonVolverCruces) botonVolverCruces.disabled = true;
-}
-
-function limpiarTextoResultadoAnterior() {
-    const panelRes = document.getElementById("resultado");
-    if (panelRes) panelRes.classList.add("resultado-oculto");
-    const resultadoIcono = document.getElementById("resultadoIcono");
-    if (resultadoIcono) resultadoIcono.textContent = "🏆";
-    const resultadoTitulo = document.getElementById("resultadoTitulo");
-    if (resultadoTitulo) resultadoTitulo.textContent = "—";
-    const resultadoTexto = document.getElementById("resultadoTexto");
-    if (resultadoTexto) resultadoTexto.textContent = "—";
-    const turnoActual = document.getElementById("turnoActual");
-    if (turnoActual) turnoActual.textContent = "En combate!";
-    const iniciativa = document.getElementById("iniciativa");
-    if (iniciativa) iniciativa.textContent = "—";
-}
-
-function actualizarRolesVisuales() {
-    const rol1 = document.getElementById("c1Rol");
-    const rol2 = document.getElementById("c2Rol");
-    if (!rol1 || !rol2) return;
-    if (controlManual === 1) {
-        rol1.innerHTML = "🎮 Jugador";
-        rol1.style.background = "rgba(88, 166, 255, 0.15)";
-        rol1.style.color = "#58a6ff";
-        rol1.style.borderColor = "rgba(88, 166, 255, 0.3)";
-        rol2.innerHTML = "💻 CPU";
-        rol2.style.background = "rgba(248, 81, 73, 0.15)";
-        rol2.style.color = "#f85149";
-        rol2.style.borderColor = "rgba(248, 81, 73, 0.3)";
-    } else {
-        rol1.innerHTML = "💻 CPU";
-        rol1.style.background = "rgba(248, 81, 73, 0.15)";
-        rol1.style.color = "#f85149";
-        rol1.style.borderColor = "rgba(248, 81, 73, 0.3)";
-        rol2.innerHTML = "🎮 Jugador";
-        rol2.style.background = "rgba(88, 166, 255, 0.15)";
-        rol2.style.color = "#58a6ff";
-        rol2.style.borderColor = "rgba(88, 166, 255, 0.3)";
-    }
-}
-
- controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
-    controlManual = Number(ctrl.value); 
-    actualizarRolesVisuales();
-    if (combateActivo) activarBotones(); 
-})); 
-
-botonSerie.addEventListener("click", prepararSerie); 
-botonInfoModalidades.addEventListener("click", () => { modalModalidades.style.display = "flex"; }); 
-
-if (botonCerrarModal) botonCerrarModal.addEventListener("click", () => { modalModalidades.style.display = "none"; }); 
-if (botonCerrarModalBtn) botonCerrarModalBtn.addEventListener("click", () => { modalModalidades.style.display = "none"; }); 
-
-if (botonAbrirGuiaCombate && modalGuiaCombate) {     
-    botonAbrirGuiaCombate.addEventListener("click", () => { modalGuiaCombate.style.display = "flex"; });     
-    if (cierraGuiaCruz) cierraGuiaCruz.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; });     
-    if (cierraGuiaBtn) cierraGuiaBtn.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; }); 
-} 
-
-function validarYPrepararDatos() {     
-    const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();     
-    if (!v1 || !v2) { mostrarMensaje("Introduce los dos códigos J1."); return null; }     
-    if (v1.toLowerCase() === v2.toLowerCase()) { mostrarMensaje("Los dos combatientes deben ser diferentes."); return null; }     
-    ficha1 = buscarFicha(v1); ficha2 = buscarFicha(v2);     
-    if (!ficha1 || !ficha2) { mostrarMensaje("No se encuentran una o ambas Paleofichas."); return null; }     
-    return true; 
-} 
-
-async function aplicarConfiguracionAleatoriaSiEstaActivo() {     
-    const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";     
-    if (!esAleatorio) return;     
-    try {         
-        const respuesta = await fetch("config.csv");         
-        const texto = await respuesta.text();         
-        const lineas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);         
-        if (lineas.length < 2) return;         
-        const cabecera = lineas[0].split(",").map(c => c.trim());         
-        const modosDisponibles = [], filasModos = {};         
-        for (let i = 1; i < lineas.length; i++) {             
-            const valores = lineas[i].split(",").map(v => v.trim()), modo = valores[0];             
-            if (modo) { modosDisponibles.push(modo); filasModos[modo] = valores; }         
-        }         
-        if (modosDisponibles.length === 0) return;         
-        const modoAleatorio = modosDisponibles[Math.floor(Math.random() * modosDisponibles.length)];         
-        const valoresElegidos = filasModos[modoAleatorio];         
-        let configExterna = {};         
-        if (valoresElegidos) {             
-            for (let j = 1; j < cabecera.length; j++) {                 
-                const parametro = cabecera[j]; let val = valoresElegidos[j] !== undefined ? valoresElegidos[j] : "";                 
-                if (parametro && val !== "") {                     
-                    if (val === "true") val = true; else if (val === "false") val = false; else if (!isNaN(val)) val = Number(val);                     
-                    configExterna[parametro] = val;                 }             }         }         
-        const reglasActuales = obtenerReglasTorneo();         
-        reglasActuales.tipoCombate = modoAleatorio; reglasActuales.coeficientes = configExterna;         
-        localStorage.setItem(CLAVE_REGLAS, JSON.stringify(reglasActuales));     } catch (err) { console.warn("Error al aplicar configuración aleatoria:", err); } 
-} 
-
-async function prepararSerie() {     
-    if (!validarYPrepararDatos()) return;     
-    await aplicarConfiguracionAleatoriaSiEstaActivo();     
-    const reg = obtenerReglasTorneo(); partidosSerie = Number(reg.partidosSerie) || 1; victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;     
-    victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = true; serieTerminada = false; partidoRegistrado = false;     
-    await iniciarPartidoSerie(); 
-} 
-
-async function iniciarPartidoSerie() {     
-    if (!serieActiva || serieTerminada) return;     
-    if (botonNuevoCombate) { botonNuevoCombate.style.display = "none"; botonNuevoCombate.disabled = true; }
-    if (botonVolverCruces) botonVolverCruces.disabled = true;
-    try {         
-        await aplicarConfiguracionAleatoriaSiEstaActivo();         
-        const configActiva = obtenerConfiguracionActiva();         
-        combate = window.crearCombateEstandar(ficha1, ficha2, configActiva); if (!combate) throw new Error();         
-        combatiente1 = combate.combatiente1; combatiente2 = combate.combatiente2; combateActivo = true; partidoRegistrado = false;         
-        limpiarTextoResultadoAnterior();
-        mostrarCombatientes(); 
-        desactivarBotones(); 
-        limpiarRegistro();         
-        if (window.cargarImagenesCombatientesAsync) window.cargarImagenesCombatientesAsync(combatiente1.codigo, combatiente2.codigo);         
-        añadirRegistro("🏆 Asalto del Torneo — Partido " + partidoActual + " / " + partidosSerie);         
-        añadirRegistro("⚔️ " + combatiente1.nombre + " (" + combatiente1.codigo + ") vs " + combatiente2.nombre + " (" + combatiente2.codigo + ")");         
-        mostrarMensaje("¡Asalto en curso!"); actualizarInterfazSerie();     
-    } catch (e) { combateActivo = false; mostrarMensaje("❌ Error al preparar el partido."); } 
-} 
-
-function mostrarCombatientes() {     
-    if (!combate || !combatiente1 || !combatiente2) return;     
-    const reg = obtenerReglasTorneo();     
-    const nombreModoTexto = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";     
-    document.getElementById("c1Nombre").textContent = combatiente1.nombre || "—";     
-    document.getElementById("c1Codigo").textContent = combatiente1.codigo || "—";     
-    document.getElementById("c1Perfil").textContent = nombreModoTexto;     
-    document.getElementById("c2Nombre").textContent = combatiente2.nombre || "—";     
-    document.getElementById("c2Codigo").textContent = combatiente2.codigo || "—";     
-    document.getElementById("c2Perfil").textContent = nombreModoTexto;     
-    actualizarRolesVisuales();
-    mostrarBarra(combatiente1.hp, combatiente1.hp_max, "c1VidaTexto", "c1VidaBarra");     
-    mostrarBarra(combatiente2.hp, combatiente2.hp_max, "c2VidaTexto", "c2VidaBarra");     
-    mostrarBarra(combatiente1.fatiga, combatiente1.fatiga_max, "c1FatigaTexto", "c1FatigaBarra");     
-    mostrarBarra(combatiente2.fatiga, combatiente2.fatiga_max, "c2FatigaTexto", "c2FatigaBarra");     
-    mostrarStats(combatiente1, "c1"); mostrarStats(combatiente2, "c2");     
-    mostrarEstado(combatiente1, "c1"); mostrarEstado(combatiente2, "c2");     
-    actualizarInterfazSerie();     
-    const registro = document.getElementById("registroCombate");
-    const turnoActual = document.getElementById("turnoActual");
-    if (turnoActual && (!registro || !registro.querySelector(".linea-registro"))) {
-        turnoActual.textContent = "En combate!";
-    }
-    document.getElementById("iniciativa").textContent = combate.iniciativa || "—"; 
-} 
-
-function mostrarBarra(v, maxV, idT, idB) {     
-    const act = Number(v), mx = Number(maxV) || 100, seg = Number.isFinite(act) ? Math.max(0, Math.min(mx, act)) : mx;     
-    const txt = document.getElementById(idT), bar = document.getElementById(idB);     
-    if (txt) txt.textContent = Math.round(seg) + " / " + Math.round(mx);     
-    if (bar) bar.style.width = Math.max(0, Math.min(100, (seg / mx) * 100)) + "%"; 
-} 
-
-function mostrarStats(c, pref) {     
-    const st = document.getElementById(pref + "Stats"); if (!st) return;     
-    const ef = c.efectivos || {};     
-    st.innerHTML = ["ataque", "defensa", "velocidad", "resistencia", "tactica"].map(k => {         
-        const ic = { ataque: "⚔️", defensa: "🛡️", velocidad: "⚡", resistencia: "❤️", tactica: "🧠" };         
-        const lb = { ataque: "Ataque", defensa: "Defensa", velocidad: "Velocidad", resistencia: "Resistencia", tactica: "Táctica" };         
-        return `<div>${ic[k]} ${lb[k]}: ${Number.isFinite(Number(ef[k])) ? Math.round(Number(ef[k])) : 0}</div>`;     }).join(""); 
-} 
-
-function mostrarEstado(c, pref) {     
-    const est = document.getElementById(pref + "Estado"); 
-    if (!est) return;     
-    
-    const m = []; 
-    if (c.derrotado) m.push("☠️ Derrotado"); 
-    if (c.defendiendo) m.push("🛡️ Defendiendo");     
-    
-    if (Array.isArray(c.efectos)) {
-        c.efectos.forEach(ef => { 
-            if (ef) { 
-                const nom = ef.nombre || ef.codigo || "Efecto", dur = ef.turnos !== undefined ? ef.turnos : ef.duracion; 
-                m.push(dur !== undefined && dur > 0 ? `✨ ${nom} (${dur})` : `✨ ${nom}`); 
-            } 
-        });     
-    }
-    
-    // Si hay estados o efectos los une, si no, escribe explícitamente "En combate!"
-    est.textContent = m.length > 0 ? m.join(" · ") : "En combate!";     
-}
-
-
-
-function activarBotones() {     
-    const cm = controlManual === 1 ? combatiente1 : combatiente2, cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;     
-    botonA001.disabled = false; botonA002.disabled = !pc || Number(cm.fatiga) < cfg.fatiga_minima_ataque_potente; botonA003.disabled = botonD001.disabled = botonAuto.disabled = false; 
-} 
-
-function desactivarBotones() { 
-    botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; 
-    }
-
-
-
- function interpretarRes(res, at, ob) {     
-    if (!res) return;     
-    if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) { res.dano = Math.round(res.dano * 0.5); añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%."); }     
-    if (res.mensaje) añadirRegistro(res.mensaje);     
-    if (res.dano !== undefined && res.dano > 0) añadirRegistro(`💥 ${at.nombre} causa ${res.dano} de daño a ${ob.nombre}.`);     
-    if (res.critico) añadirRegistro("💥 ¡Golpe crítico!");     
-    if (res.golpe_mortal) añadirRegistro("☠️ ¡GOLPE MORTAL!");     
-    if (res.inversion) añadirRegistro("🔄 ¡Inversión! La defensa provoca un contraataque.");     
-    if (res.contraataque) añadirRegistro("⚡ ¡Contraataque!");     
-    if (res.defensa === "acierto") añadirRegistro("🛡️ ¡Defensa acertada!");     
-    if (res.defensa === "error") añadirRegistro("⚠️ ¡Error de defensa!");     
-    if (res.fallo) añadirRegistro("❌ ¡El ataque falla!");     
-    if (res.bloqueado_por_fatiga) añadirRegistro("😓 ¡Crítico bloqueado por fatiga!");     
-    if (res.esquiva) añadirRegistro("💨 ¡Ataque esquivado!");     
-    if (res.efecto) añadirRegistro(`✨ ${res.efecto.nombre} aplicado.`);     
-    if (res.registro) (Array.isArray(res.registro) ? res.registro : [res.registro]).forEach(m => añadirRegistro(m)); 
-} 
-
-function ejecutarAccionJugador(cod) {     
-    if (!combateActivo || !combate) return;     
-    const at = controlManual === 1 ? combatiente1 : combatiente2, ob = controlManual === 1 ? combatiente2 : combatiente1;     
-    const cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;     
-    if (cod === "A002" && (!pc || Number(at.fatiga) < cfg.fatiga_minima_ataque_potente)) {         
-        añadirRegistro("😓 Ataque potente bloqueado: críticos no permitidos o fatiga insuficiente.");         
-        activarBotones();         
-        return;     }     
-    try {         
-        desactivarBotones();
-        const rJ = window.PALARENA_STANDAR.ejecutarAccion(at, ob, cod);         
-        interpretarRes(rJ, at, ob);         
-        if (ob.derrotado) {             
-            finalizarInterfaz({ ganador: at });             
-            return;         
-        }         
-        setTimeout(() => {
-            const acIA = window.PALARENA_STANDAR.decidirAccion(ob, at);
-            const rIA = window.PALARENA_STANDAR.ejecutarAccion(ob, at, acIA);         
-            interpretarRes(rIA, ob, at);         
-            if (at.derrotado) {             
-                finalizarInterfaz({ ganador: ob });             
-                return;         
-            }         
-            if (typeof window.PALARENA_STANDAR.regenerarFatiga === "function") {             
-                window.PALARENA_STANDAR.regenerarFatiga(combatiente1);             
-                window.PALARENA_STANDAR.regenerarFatiga(combatiente2);         
-            }         
-            combatiente1.defendiendo = combatiente2.defendiendo = false;         
-            combate.turno++;         
-            mostrarCombatientes();         
-            activarBotones();
-        }, 600);
-    } catch (e) {         
-        añadirRegistro("❌ Error durante la acción.");
-        activarBotones();
-    } 
-} 
-
-function resolverTurnoInicialAutomaticoIA() {
-    const vel1 = Number(combatiente1.velocidad) || 50, vel2 = Number(combatiente2.velocidad) || 50;
-    let iniciativaIA = false;
-    const iaEsCombatiente2 = controlManual === 1; 
-    if (vel2 > vel1) {
-        iniciativaIA = iaEsCombatiente2;
-    } else if (vel1 > vel2) {
-        iniciativaIA = !iaEsCombatiente2;
-    } else {
-        iniciativaIA = Math.random() < 0.5 ? iaEsCombatiente2 : !iaEsCombatiente2;
-    }
-    if (iniciativaIA) {
-        desactivarBotones();
-        añadirRegistro("⚡ La IA gana la iniciativa y ejecuta su primer movimiento automático...");
-        setTimeout(() => {
-            const at = iaEsCombatiente2 ? combatiente2 : combatiente1, ob = iaEsCombatiente2 ? combatiente1 : combatiente2;
-            const acIA = window.PALARENA_STANDAR.decidirAccion(at, ob);
-            const rIA = window.PALARENA_STANDAR.ejecutarAccion(at, ob, acIA);
-            interpretarRes(rIA, at, ob);
-            if (ob.derrotado) {
-                finalizarInterfaz({ ganador: at });
-                return;
+    function sincronizarConfiguracionDesdeStorage() {
+        const guardado = localStorage.getItem("palentropia_reglas_torneo");
+        if (guardado) {
+            try {
+                const reglas = JSON.parse(guardado);
+                const coefs = reglas.coeficientes || {};
+                const parametrosReglas = {};
+                if (reglas.factorImprevisible !== undefined) {
+                    parametrosReglas.factorImprevisible = Number(reglas.factorImprevisible);
+                }
+                if (reglas.iaAleatoria !== undefined) {
+                    parametrosReglas.iaAleatoria = Boolean(reglas.iaAleatoria);
+                }
+                configuracionGlobal = {
+                    ...configuracionGlobal,
+                    ...coefs,
+                    ...parametrosReglas
+                };
+            } catch (e) {
+                console.warn("No se pudieron parsear los coeficientes del localStorage:", e);
             }
-            combate.turno++;
-            mostrarCombatientes();
-            activarBotones();
-            añadirRegistro("🎮 Turno del jugador.");
-        }, 800);
-    } else {
-        activarBotones();
-        añadirRegistro("🎮 ¡Ganas la iniciativa! Tu turno para actuar.");
-    }
-}
-
-botonA001.addEventListener("click", () => ejecutarAccionJugador("A001")); 
-botonA002.addEventListener("click", () => ejecutarAccionJugador("A002")); 
-botonA003.addEventListener("click", () => ejecutarAccionJugador("A003")); 
-botonD001.addEventListener("click", () => ejecutarAccionJugador("D001")); 
-
-botonAuto.addEventListener("click", () => {     
-    if (!combateActivo || !combate) return; 
-    desactivarBotones(); 
-    try {         
-        while (combate.estado !== "finalizado") { 
-            const len = combate.historial.length; 
-            window.ejecutarTurnoEstandar(combate); 
-            procesarTurnoAuto(combate.historial.slice(len)); 
-        }         
-        mostrarCombatientes();         
-        const ganadorFinal = mostrarResCombate({ ganador: combate.ganador });         
-        combateActivo = false; 
-        registrarResSerie(combate.ganador);     
-    } catch (e) { 
-        añadirRegistro("❌ Error durante el combate automático."); 
-        activarBotones(); 
-    } 
-}); 
-
-function procesarTurnoAuto(regs) {     
-    if (!Array.isArray(regs)) return;     
-    regs.forEach(reg => {         
-        if (!reg) return;         
-        if (reg.tipo === "efectos") { 
-            [reg.primero, reg.segundo].forEach(ra => { if (Array.isArray(ra)) ra.forEach(d => { if (d && d.mensaje) añadirRegistro(d.mensaje); }); }); 
-            return; 
-        }         
-        if (reg.tipo === "accion" && reg.resultado) {             
-            interpretarRes(reg.resultado, { nombre: reg.atacante === combatiente1.codigo ? combatiente1.nombre : combatiente2.nombre, fatiga: reg.atacante === combatiente1.codigo ? combatiente1.fatiga : combatiente2.fatiga }, { nombre: reg.objetivo === combatiente1.codigo ? combatiente1.nombre : combatiente2.nombre });         
-        }     });     
-    mostrarCombatientes(); 
-} 
-
-function finalizarInterfaz(res) { 
-    combateActivo = false; 
-    desactivarBotones(); 
-    mostrarResCombate(res); 
-    if (serieActiva && !partidoRegistrado) registrarResSerie(res && res.ganador); 
-} 
-
-function registrarResSerie(gRes) {     
-    if (!serieActiva || serieTerminada || partidoRegistrado) return;     
-    partidoRegistrado = true;     
-    let g = gRes ? (typeof gRes === "string" ? (gRes === combatiente1.codigo ? combatiente1 : combatiente2) : gRes) : null;     
-    if (g) { if (g.codigo === combatiente1.codigo) victorias1++; else if (g.codigo === combatiente2.codigo) victorias2++; }     
-    actualizarInterfazSerie();     
-    if (victorias1 >= victoriasNecesarias || victorias2 >= victoriasNecesarias) {         
-        serieTerminada = true; 
-        serieActiva = false;         
-        mostrarResSerie(victorias1 > victorias2 ? combatiente1 : combatiente2);         
-        if (botonNuevoCombate) { botonNuevoCombate.style.display = "none"; botonNuevoCombate.disabled = true; }         
-        if (botonVolverCruces) botonVolverCruces.disabled = false;
-        return;     }     
-    if (g) añadirRegistro(`🏆 ${g.nombre} gana el partido ${partidoActual}.`);     
-    añadirRegistro(`📊 Marcador: ${victorias1} - ${victorias2}`);     
-    partidoActual++;      
-    if (botonNuevoCombate) { 
-        botonNuevoCombate.style.display = "inline-block"; 
-        botonNuevoCombate.disabled = false;
-        botonNuevoCombate.textContent = "▶️ Siguiente"; 
-    }     
-    if (botonVolverCruces) botonVolverCruces.disabled = true;
-} 
-
-
-
- function mostrarResSerie(g) {     
-    document.getElementById("resultadoIcono").textContent = "🏆";     
-    document.getElementById("resultadoTitulo").textContent = "🏆 " + (g.nombre || "Ganador");     
-    document.getElementById("resultadoTexto").textContent = `Vencedor absoluto de la eliminatoria: ${g.nombre} (${victorias1} - ${victorias2}).`;     
-    document.getElementById("resultado").classList.remove("resultado-oculto");     
-    if (botonNuevoCombate) { botonNuevoCombate.style.display = "none"; botonNuevoCombate.disabled = true; }     
-    if (botonVolverCruces) botonVolverCruces.disabled = false;
-    mostrarCombatientes();     
-    const datosTorneo = localStorage.getItem("palentropia_combate_activo");     
-    if (datosTorneo && g) {         
-        try {             
-            const torneoInfo = JSON.parse(datosTorneo);             
-            if (torneoInfo && torneoInfo.modoTorneo === true) {                 
-                localStorage.setItem("palentropia_ultimo_ganador", JSON.stringify({                     
-                    combateNumero: torneoInfo.combateNumero,                     
-                    ganadorCodigo: g.codigo,                     
-                    ganadorNombre: g.nombre,                     
-                    victorias1: victorias1,                     
-                    victorias2: victorias2,                     
-                    combatiente1Codigo: combatiente1.codigo,                     
-                    combatiente2Codigo: combatiente2.codigo                 
-                }));             
-            }         } catch (e) { console.error("Error registrando ganador de torneo:", e); }     } 
-} 
-
-function mostrarResCombate(res) {     
-    if (!res) return;     
-    let g = res.ganador ? (typeof res.ganador === "string" ? window.PALARENA_STANDAR.obtenerCombatiente(combate, res.ganador) : res.ganador) : null;     
-    if (!g && combate) g = combate.ganador === combatiente1.codigo ? combatiente1 : (combate.ganador === combatiente2.codigo ? combatiente2 : null);          
-    document.getElementById("resultadoIcono").textContent = g ? "🏆" : "⚔️";     
-    document.getElementById("resultadoTitulo").textContent = g ? "🏆 " + (g.nombre || "Ganador") : "⚔️ Asalto terminado";     
-    document.getElementById("resultadoTexto").textContent = g ? `El vencedor del asalto es ${g.nombre} (${g.codigo}).` : "Se ha determinado el resultado.";     
-    document.getElementById("resultado").classList.remove("resultado-oculto");           
-    if (botonNuevoCombate) { botonNuevoCombate.style.display = "none"; botonNuevoCombate.disabled = true; }     
-    mostrarCombatientes();     
-    return g; 
-} 
-
-function limpiarRegistro() { 
-    document.getElementById("registroCombate").innerHTML = ""; 
-} 
-
-    
-function añadirRegistro(txt) { 
-    const reg = document.getElementById("registroCombate");
-    if (!reg) return;
-    
-    // Eliminar el mensaje de "combate no ha comenzado" si está presente
-    const vacio = reg.querySelector(".registro-vacio");
-    if (vacio) {
-        vacio.remove();
+        }
     }
 
-    // Crear y añadir la nueva línea de log al final
-    const lin = document.createElement("div"); 
-    lin.className = "linea-registro"; 
-    lin.textContent = txt; 
-    reg.appendChild(lin); 
-    
-    // Forzar el scroll hacia abajo para que el log actual sea visible de inmediato
-    reg.scrollTop = reg.scrollHeight; 
-    
-    // Mantener el centro únicamente con el número de turno limpio
-    const turnoActual = document.getElementById("turnoActual");
-    if (turnoActual && combate && combate.turno) {
-        turnoActual.textContent = "Turno " + combate.turno;
+    sincronizarConfiguracionDesdeStorage();
+
+    window.addEventListener("storage", function(evento) {
+        if (evento.key === "palentropia_reglas_torneo") {
+            sincronizarConfiguracionDesdeStorage();
+        }
+    });
+        function calcularStatsEfectivos(ficha, config) {
+        const coefGeneral = Number(config.general) !== undefined && !isNaN(Number(config.general)) ? Number(config.general) : 1;
+        if (window.PALARENA_STATS && typeof window.PALARENA_STATS.calcularFicha === "function") {
+            const statsCalculados = window.PALARENA_STATS.calcularFicha(ficha);
+            return {
+                ataque: statsCalculados.ataque * coefGeneral,
+                defensa: statsCalculados.defensa * coefGeneral,
+                velocidad: statsCalculados.velocidad * coefGeneral,
+                resistencia: statsCalculados.resistencia * coefGeneral,
+                tactica: statsCalculados.tactica * coefGeneral
+            };
+        }
+        const baseAtq = Number(ficha.e1) || 50;
+        const baseDef = Number(ficha.e2) || 50;
+        const baseVel = Number(ficha.e3) || 50;
+        const baseRes = Number(ficha.e4) || 50;
+        const baseTac = Number(ficha.e5) || 50;
+        return {
+            ataque: baseAtq * coefGeneral,
+            defensa: baseDef * coefGeneral,
+            velocidad: baseVel * coefGeneral,
+            resistencia: baseRes * coefGeneral,
+            tactica: baseTac * coefGeneral
+        };
     }
-}
 
+    function crearCombatiente(ficha, configPersonalizada = null) {
+        const config = configPersonalizada || configuracionGlobal;
+        const multCompartido = Number((Math.random() * 9 + 1).toFixed(2));
+        const efectivos = calcularStatsEfectivos(ficha, config);
+        let hpMax = (config.hp_base || 1000) * multCompartido * (efectivos.resistencia / 50);
+        
+        if (hpMax < 200 && multCompartido < 2.0) {
+            hpMax *= 2;
+        }
 
+        return {
+            codigo: ficha.j1 || ficha.codigo || "Desconocido",
+            nombre: ficha.j2 || ficha.nombre || "Sin nombre",
+            perfil: ficha.perfil || "standard",
+            hp_max: Math.round(hpMax),
+            hp: Math.round(hpMax),
+            fatiga_max: config.fatiga_max,
+            fatiga: config.fatiga_inicial,
+            efectivos: efectivos,
+            defendiendo: false,
+            derrotado: false,
+            usosDefensaConsecutivos: 0,
+            rachaBasicos: 0,
+            tacticaTemporal: 0,
+            estadoCaotico: 0,
+            posturaDefensiva: null,
+            turnosAturdido: 0,
+            turnosParalizado: 0,
+            turnosDesangrado: 0,
+            efectos: []
+        };
+    }
 
-function mostrarMensaje(txt) { 
-    mensajeConfiguracion.textContent = txt; 
-} 
+    function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
+        sincronizarConfiguracionDesdeStorage();
+        if (configPersonalizada && typeof configPersonalizada === "object") {
+            configuracionGlobal = { ...configuracionGlobal, ...configPersonalizada };
+        }
+        const config = configuracionGlobal;
+        
+        let c1 = crearCombatiente(ficha1, config);
+        let c2 = crearCombatiente(ficha2, config);
+        
+        const diferencia = Math.abs(c1.hp_max - c2.hp_max);
+        
+        if (diferencia >= 100) {
+            if (c1.hp_max < c2.hp_max) {
+                c1.hp_max = c2.hp_max - 50;
+                c1.hp = c1.hp_max;
+            } else {
+                c2.hp_max = c1.hp_max - 50;
+                c2.hp = c2.hp_max;
+            }
+        }
+        
+        return {
+            combatiente1: c1,
+            combatiente2: c2,
+            turno: 1,
+            estado: "en_curso",
+            historial: [],
+            ganador: null
+        };
+    }
 
-botonSerie.addEventListener("click", async () => {     
-    document.getElementById("configuracion").style.display = "none";     
-    document.getElementById("informacionSerie").style.display = "block";     
-    await prepararSerie();     
-    desactivarBotones();     
-    setTimeout(() => {         
-        if (combateActivo) resolverTurnoInicialAutomaticoIA();     
-    }, 500); 
-}); 
+    function regenerarFatiga(combatiente) {
+        const config = configuracionGlobal;
+        combatiente.fatiga = Math.min(
+            config.fatiga_max,
+            combatiente.fatiga + config.fatiga_regeneracion_turno
+        );
+    }
 
-if (botonNuevoCombate) {     
-    botonNuevoCombate.addEventListener("click", async () => {         
-        if (!serieActiva || serieTerminada || combateActivo) return;         
-        botonNuevoCombate.style.display = "none";
-        botonNuevoCombate.disabled = true;
-        if (botonVolverCruces) botonVolverCruces.disabled = true;
-        limpiarTextoResultadoAnterior();
-        limpiarRegistro();
-        combateActivo = false;
-        partidoRegistrado = false;
-        await iniciarPartidoSerie();         
-        if (!combateActivo) return;
-        desactivarBotones();             
-        setTimeout(() => {                 
-            if (combateActivo) resolverTurnoInicialAutomaticoIA();             
-        }, 500);             
-        return;     }); 
-} 
+        function ejecutarAccion(atacante, objetivo, codigoAccion) {
+        const config = configuracionGlobal;
 
-if (botonVolverCruces) {     
-    botonVolverCruces.addEventListener("click", () => {         
-        if (serieActiva && !serieTerminada) {             
-            const confirmarSalida = confirm("⚠️ La serie del torneo está en curso. Si vuelves a los cruces ahora, se interrumpirá el asalto actual. ¿Deseas continuar?");             
-            if (!confirmarSalida) return;         }         
-        window.location.href = "combates.html";     }); 
-} 
+        if (atacante.turnosParalizado > 0) {
+            atacante.turnosParalizado--;
+            const mensajeEstado = `⚡ ¡${atacante.nombre} está completamente paralizado y no puede mover un músculo este turno! (Quedan ${atacante.turnosParalizado} turnos)`;
+            return { mensaje: mensajeEstado, dano: 0, critico: false };
+        }
 
-document.addEventListener("DOMContentLoaded", async function() {     
-    await cargarPaleofichas();     
-    await cargarMaster();     
-    actualizarInterfazModalidad();     
-    actualizarInterfazSerie();     
-    bloquearTodoAlInicio();     
-    actualizarRolesVisuales();
-    const datosTorneoGuardado = localStorage.getItem("palentropia_combate_activo");     
-    if (datosTorneoGuardado) {         
-        try {             
-            const torneo = JSON.parse(datosTorneoGuardado);             
-            if (torneo && torneo.modoTorneo === true && torneo.combatiente1 && torneo.combatiente2) {                 
-                codigo1.value = torneo.combatiente1;                 
-                codigo2.value = torneo.combatiente2;                 
-                actualizarNombre(codigo1, nombre1);                 
-                actualizarNombre(codigo2, nombre2);                 
-                codigo1.readOnly = true;                 
-                codigo2.readOnly = true;                                  
-                const botonAjustesReglas = document.getElementById("botonAjustesReglas");                 
-                if (botonAjustesReglas) botonAjustesReglas.style.display = "flex";                 
-                const comprobarFichas = setInterval(() => {                     
-                    if (fichas.length > 0) {                         
-                        clearInterval(comprobarFichas);                         
-                        if (typeof prepararSerie === "function") {                              
-                            prepararSerie().then(() => {                                 
-                                desactivarBotones();                                 
-                                setTimeout(() => {                                     
-                                    if (combateActivo) resolverTurnoInicialAutomaticoIA();                                 }, 500);                             });                          }                     }                 }, 100);             }         } catch (e) { console.error("Error al procesar modo torneo:", e); }     } 
-}); 
-</script> 
-</body> 
-</html>
+        if (atacante.turnosAturdido > 0) {
+            atacante.turnosAturdido--;
+            const mensajeEstado = `💫 ¡${atacante.nombre} está aturdido y recupera el sentido con torpeza, perdiendo la iniciativa!`;
+            return { mensaje: mensajeEstado, dano: 0, critico: false };
+        }
+
+        let costeFatiga = 0;
+        if (codigoAccion !== "A001") {
+            atacante.rachaBasicos = 0;
+        }
+        const fatigaCritica = (atacante.fatiga / (config.fatiga_max || 100)) * 100 < 15;
+        if (fatigaCritica && codigoAccion === "A002") {
+            atacante.fatiga = Math.max(0, atacante.fatiga - 15);
+            return {
+                mensaje: `⚠️ ${atacante.nombre} está demasiado exhausto; el intento de ataque potente se desmorona por fatiga crítica.`,
+                dano: 0,
+                critico: false
+            };
+        }
+
+        if (codigoAccion === "A001") {
+            // Coste y bonus de básicos
+        } else if (codigoAccion === "A002") {
+            costeFatiga = config.coste_fatiga_A002;
+        } else if (codigoAccion === "A003") {
+            costeFatiga = config.coste_fatiga_A003;
+        } else if (codigoAccion === "D001") {
+            if (atacante.usosDefensaConsecutivos === undefined) atacante.usosDefensaConsecutivos = 0;
+            atacante.usosDefensaConsecutivos++;
+            if (atacante.usosDefensaConsecutivos >= 3) {
+                costeFatiga = config.coste_fatiga_D001 || 20;
+                const fatigaActualAtacante = Number(atacante.fatiga) || 0;
+                const reduccionPropia = Math.round(fatigaActualAtacante * 0.50);
+                atacante.fatiga = Math.max(0, fatigaActualAtacante - reduccionPropia);
+                const fatigaActualRival = Number(objetivo.fatiga) || 0;
+                const reposicionRival = Math.round((config.fatiga_max || 100) * 0.60);
+                objetivo.fatiga = Math.min(config.fatiga_max || 100, fatigaActualRival + reposicionRival);
+                atacante.defendiendo = true;
+                atacante.usosDefensaConsecutivos = 0;
+                return {
+                    mensaje: `🛡️⚡ ¡${atacante.nombre} ejecuta una defensa maestra absoluta! Reduce su propia fatiga un 50% y drena un 60% de resuello a ${objetivo.nombre}.`,
+                    defensa: "maestra"
+                };
+            } else if (atacante.usosDefensaConsecutivos === 2) {
+                costeFatiga = 10;
+            } else {
+                costeFatiga = 5;
+            }
+        }
+
+        if (codigoAccion !== "D001") {
+            atacante.usosDefensaConsecutivos = 0;
+        }
+        if (codigoAccion !== "A001") {
+            atacante.fatiga = Math.min(config.fatiga_max, Math.max(0, atacante.fatiga - costeFatiga));
+        }
+
+        if (codigoAccion === "D001") {
+            if (objetivo.defendiendo) {
+                atacante.defendiendo = true;
+                const tacticaAtacante = (atacante.efectivos.tactica + (atacante.tacticaTemporal || 0));
+                const tacticaObjetivo = (objetivo.efectivos.tactica + (objetivo.tacticaTemporal || 0));
+                const velocidadAtacante = atacante.efectivos.velocidad || 50;
+                const velocidadObjetivo = objetivo.efectivos.velocidad || 50;
+                const puntuacionAtacante = tacticaAtacante * 0.7 + velocidadAtacante * 0.3;
+                const puntuacionObjetivo = tacticaObjetivo * 0.7 + velocidadObjetivo * 0.3;
+                let mensajeContradefensa = `🛡️🔄 ${atacante.nombre} y ${objetivo.nombre} se cruzan en una tensa contradefensa, tanteándose sin arriesgar.`;
+                if (puntuacionAtacante > puntuacionObjetivo) {
+                    const penalizacion = Math.round((Number(objetivo.fatiga) || 0) * 0.25);
+                    objetivo.fatiga = Math.max(0, (Number(objetivo.fatiga) || 0) - penalizacion);
+                    mensajeContradefensa += ` ¡${atacante.nombre} impone su agilidad y lectura táctica, castigando con fuerza el resuello del rival!`;
+                } else if (puntuacionObjetivo > puntuacionAtacante) {
+                    const penalizacionPropia = Math.round((Number(atacante.fatiga) || 0) * 0.25);
+                    atacante.fatiga = Math.max(0, (Number(atacante.fatiga) || 0) - penalizacionPropia);
+                    mensajeContradefensa += ` ¡${objetivo.nombre} gana la iniciativa en el bloqueo mutuo!`;
+                }
+                return { mensaje: mensajeContradefensa, defensa: "contradefensa" };
+            }
+            if (Math.random() < 0.35) {
+                atacante.posturaDefensiva = "contraTactico";
+            } else {
+                atacante.posturaDefensiva = null;
+            }
+            const umbralError = Math.max(
+                Number(config.error_defensa_min) || 15,
+                (Number(config.error_defensa_base) || 45) - (atacante.efectivos.tactica * (Number(config.error_defensa_reduccion_tactica) || 0.02))
+            );
+            const tirada = Math.random() * 100;
+            const defensaExitosa = tirada > umbralError;
+            if (defensaExitosa) {
+                atacante.defendiendo = true;
+                const fatigaActualRival = Number(objetivo.fatiga) || 0;
+                const penalizacionRival = Math.round(fatigaActualRival * 0.60);
+                objetivo.fatiga = Math.max(0, fatigaActualRival - penalizacionRival);
+                return {
+                    mensaje: `🛡️✨ ${atacante.nombre} planta un muro defensivo impenetrable, bloqueando los ataques y drenando un 60% de fatiga a ${objetivo.nombre}.`,
+                    defensa: "acierto"
+                };
+            } else {
+                atacante.defendiendo = false;
+                return {
+                    mensaje: `❌ ${atacante.nombre} intenta adoptar una postura defensiva, pero calcula mal los tiempos y pierde el equilibrio.`,
+                    defensa: "fallo"
+                };
+            }
+        }
+
+                let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
+        let critico = false;
+        let mensajeExtra = "";
+        let bonusAccion = 1.0;
+
+        if (codigoAccion === "A001") {
+            atacante.rachaBasicos = (atacante.rachaBasicos || 0) + 1;
+            let bonusCadena = 1.0 + (Math.min(atacante.rachaBasicos, 4) - 1) * 0.12;
+            bonusAccion *= bonusCadena;
+            let costeExtraBasico = (atacante.rachaBasicos - 1) * 3;
+            costeFatiga = (config.coste_fatiga_A001 || 8) + costeExtraBasico;
+            atacante.fatiga = Math.min(config.fatiga_max, Math.max(0, atacante.fatiga - costeFatiga));
+            if (atacante.rachaBasicos > 1) {
+                mensajeExtra = ` (Cadena de básicos x${atacante.rachaBasicos}, presión ofensiva)`;
+            }
+            if ((objetivo.fatiga / (config.fatiga_max || 100)) * 100 < 15) {
+                bonusAccion *= 1.25;
+                mensajeExtra += ", castigando con dureza su fatiga crítica";
+            } else if (objetivo.estadoGuardia === "rota") {
+                bonusAccion *= 1.15;
+                mensajeExtra += " con precisión milimétrica sobre la guardia rota";
+            }
+        } else if (codigoAccion === "A002") {
+            const multiCrit = Number(config.multiplicador_critico) || 1.0;
+            const tacticaTotal = atacante.efectivos.tactica + (atacante.tacticaTemporal || 0);
+            const fatigaMinCrit = Number(config.fatiga_minima_critico) || 20;
+            const probabilidadCritica = (Number(config.critico_base) || 10) + (tacticaTotal * (Number(config.critico_tactica) || 0.15));
+            const tieneEnergiaParaCritico = atacante.fatiga >= fatigaMinCrit;
+            if (multiCrit > 1.0 && tieneEnergiaParaCritico && Math.random() * 100 < probabilidadCritica) {
+                bonusAccion *= multiCrit;
+                critico = true;
+                mensajeExtra = " ¡Golpe crítico certero!";
+                if (Math.random() < 0.35) {
+                    objetivo.turnosAturdido = 1;
+                    mensajeExtra += " 💫 ¡El brutal impacto deja al rival aturdido por 1 turno!";
+                } else if (Math.random() < 0.20) {
+                    objetivo.turnosDesangrado = 3;
+                    mensajeExtra += " 🩸 ¡Desgarra la carne provocando una hemorragia severa (3 turnos)!";
+                }
+            } else {
+                bonusAccion *= 1.25;
+                mensajeExtra = " (Ataque potente pesado)";
+            }
+        } else if (codigoAccion === "A003") {
+            const tacticaAtacante = atacante.efectivos.tactica + (atacante.tacticaTemporal || 0);
+            const tacticaObjetivo = objetivo.efectivos.tactica + (objetivo.tacticaTemporal || 0);
+            if (objetivo.posturaDefensiva === "contraTactico" || tacticaObjetivo >= tacticaAtacante) {
+                mensajeExtra = `, pero ${objetivo.nombre} anticipa la maniobra y neutraliza el flanco intelectual`;
+                bonusAccion *= 0.70;
+            } else {
+                let reduccionTactica = 10;
+                objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - reduccionTactica;
+                objetivo.estadoCaotico = 1;
+                mensajeExtra = `, perforando las líneas, arrebatándole ${reduccionTactica} puntos de táctica temporal y desestabilizando su juicio mental`;
+                if (Math.random() < 0.25) {
+                    objetivo.turnosParalizado = 2;
+                    mensajeExtra += " ⚡ ¡Bloquea los nervios del rival paralizándolo por 2 turnos!";
+                }
+            }
+        }
+
+        let baseAtq = atacante.efectivos.ataque;
+        let baseDef = objetivo.efectivos.defensa;
+        let factorImp = Number(config.factorImprevisible) || 1.0;
+
+        let tiradaErrorAtaque = Math.random() * 100;
+        let umbralErrorAtaque = (atacante.fatiga * 0.2) + (factorImp * 2);
+        if (tiradaErrorAtaque < umbralErrorAtaque) {
+            baseAtq *= 0.7;
+            mensajeExtra += ` ❌ ¡${atacante.nombre} calcula mal la distancia y su ataque pierde fuerza!`;
+        }
+
+        let tiradaErrorDefensa = Math.random() * 100;
+        let umbralErrorDefensa = (objetivo.fatiga * 0.2) + (factorImp * 2);
+        if (tiradaErrorDefensa < umbralErrorDefensa) {
+            baseDef *= 0.7;
+            mensajeExtra += ` ❌ ¡${objetivo.nombre} tropieza en su postura y su defensa flaquea!`;
+        }
+
+        danoBase *= bonusAccion;
+        let defensaObjetivo = 0;
+        let mensajeRuptura = "";
+
+        if (objetivo.defendiendo) {
+            if (codigoAccion === "A002") {
+                const chanceContra = Math.random();
+                if (chanceContra < 0.45) {
+                    const fatigaAtacanteActual = Number(atacante.fatiga) || 0;
+                    atacante.fatiga = Math.max(0, fatigaAtacanteActual - 25);
+                    return {
+                        mensaje: `💥⚠️ ¡${objetivo.nombre} anticipa con maestría el violento ataque potente de ${atacante.nombre}, esquivándolo con destreza y castigando duramente su fatiga!`,
+                        dano: 0,
+                        critico: false
+                    };
+                } else {
+                    objetivo.defendiendo = false;
+                    mensajeRuptura = ` 💥🔨 ¡El devastador ataque potente de ${atacante.nombre} pulveriza por completo la guardia de ${objetivo.nombre}!`;
+                }
+            } else {
+                defensaObjetivo = Number(baseDef) * (1 + Number(config.reduccion_defensa));
+            }
+        } else {
+            defensaObjetivo = Number(baseDef) || 0;
+        }
+
+        const divisorDefensa = Math.max(1, Number(config.defensa_divisor) || 200);
+        const porcentajeDefensa = Math.max(0, Math.min(0.85, defensaObjetivo / (defensaObjetivo + divisorDefensa)));
+        let danoReducido = (danoBase + (baseAtq * (1 - porcentajeDefensa)));
+
+        const fatigaRivalPorcentaje = (objetivo.fatiga / (config.fatiga_max || 100)) * 100;
+        if (fatigaRivalPorcentaje < 25) {
+            danoReducido *= 3.0;
+            mensajeExtra += " ⚡ ¡Fatiga crítica severa del rival! El daño se TRIPLICA";
+        } else if (fatigaRivalPorcentaje < 50) {
+            danoReducido *= 2.0;
+            mensajeExtra += " ⚠️ ¡Agotamiento profundo del rival! El daño se DUPLICA";
+        }
+
+        danoReducido = Math.max(1, danoReducido);
+        const variacion = Number(config.variacion_dano) || 0.25;
+        const factorAleatorio = 1 + (Math.random() * (variacion * 2) - variacion);
+        let danoFinal = Math.max(1, Math.round(danoReducido * factorAleatorio));
+        
+        objetivo.hp = Math.max(0, objetivo.hp - danoFinal);
+        if (objetivo.hp <= 0) {
+            objetivo.derrotado = true;
+        }
+
+        const iconoAccion = codigoAccion === "A002" ? "⚡" : (codigoAccion === "A003" ? "🎯" : "⚔️");
+        return {
+            mensaje: `${iconoAccion} ${atacante.nombre} ejecuta ${codigoAccion} contra ${objetivo.nombre}${mensajeExtra}.${mensajeRuptura} Daño: ${danoFinal}`,
+            dano: danoFinal,
+            critico: critico
+        };
+    }
+
+        function decidirAccion(atacante, objetivo) {
+        const config = configuracionGlobal;
+        const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
+        const iaAleatoria = Boolean(config.iaAleatoria);
+
+        if (iaAleatoria) {
+            const accionesDisponibles = ["A001", "A001", "A002", "A003", "D001"];
+            const accionElegida = accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
+            if (accionElegida !== "A001") atacante.rachaBasicos = 0;
+            return accionElegida;
+        }
+
+        if (atacante.estadoCaotico && atacante.estadoCaotico > 0) {
+            atacante.estadoCaotico--;
+            if (Math.random() < (0.80 * factorImprevisible)) {
+                const accionesDisponibles = ["A001", "A002", "A003", "D001"];
+                const accionAleatoria = accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
+                if (accionAleatoria !== "A001") atacante.rachaBasicos = 0;
+                return accionAleatoria;
+            }
+        }
+
+        const fatigaActual = Number(atacante.fatiga) || 0;
+        const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
+        const objetivoHpPorcentaje = (objetivo.hp / objetivo.hp_max) * 100;
+        let pesoAleatorioBase = Number(config.ia_peso_aleatorio) !== undefined && !isNaN(Number(config.ia_peso_aleatorio)) ? Number(config.ia_peso_aleatorio) : 0.40;
+        const pesoAleatorio = Math.min(1.0, Math.max(0.0, pesoAleatorioBase * factorImprevisible));
+
+        if (Math.random() < pesoAleatorio) {
+            const accionesDisponibles = ["A001", "A003"];
+            const costePotente = Number(config.coste_fatiga_A002) || 38;
+            const fatigaMinPotente = Number(config.fatiga_minima_ataque_potente) || 65;
+            const multiCrit = Number(config.multiplicador_critico) || 1.0;
+            if (multiCrit > 1.0 && fatigaActual >= fatigaMinPotente && fatigaActual >= costePotente) {
+                accionesDisponibles.push("A002");
+            }
+            const costeDefensa = Number(config.coste_fatiga_D001) || 20;
+            if (fatigaActual >= costeDefensa) {
+                accionesDisponibles.push("D001");
+            }
+            return accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
+        }
+
+        const costePotente = Number(config.coste_fatiga_A002) || 38;
+        const fatigaMinPotente = Number(config.fatiga_minima_ataque_potente) || 65;
+        const multiCrit = Number(config.multiplicador_critico) || 1.0;
+        if (multiCrit > 1.0 && fatigaActual >= fatigaMinPotente && fatigaActual >= costePotente) {
+            if (objetivoHpPorcentaje < 35 || hpPorcentaje > 60) {
+                return "A002";
+            }
+        }
+
+        const costeDefensa = Number(config.coste_fatiga_D001) || 20;
+        if (hpPorcentaje < 40 && fatigaActual > costeDefensa && !atacante.defendiendo) {
+            return "D001";
+        }
+
+        const costeTactico = Number(config.coste_fatiga_A003) || 10;
+        if (fatigaActual >= costeTactico && ((atacante.efectivos.tactica + (atacante.tacticaTemporal || 0)) > 40 || Math.random() < (0.50 * factorImprevisible))) {
+            return "A003";
+        }
+
+        return "A001";
+    }
+
+    function obtenerCombatiente(combate, codigo) {
+        if (combate.combatiente1.codigo === codigo) return combate.combatiente1;
+        if (combate.combatiente2.codigo === codigo) return combate.combatiente2;
+        return null;
+    }
+
+    function reiniciarSerieCombatientes(combate) {
+        if (!combate) return;
+        combate.turno = 1;
+        combate.estado = "en_curso";
+        combate.historial = [];
+        combate.ganador = null;
+        
+        [combate.combatiente1, combate.combatiente2].forEach(c => {
+            if (c) {
+                c.hp = c.hp_max;
+                c.fatiga = configuracionGlobal.fatiga_inicial;
+                c.derrotado = false;
+                c.defendiendo = false;
+                c.usosDefensaConsecutivos = 0;
+                c.rachaBasicos = 0;
+                c.tacticaTemporal = 0;
+                c.estadoCaotico = 0;
+                c.posturaDefensiva = null;
+                c.turnosAturdido = 0;
+                c.turnosParalizado = 0;
+                c.turnosDesangrado = 0;
+            }
+        });
+    }
+
+        return {
+        get configuracion() {
+            sincronizarConfiguracionDesdeStorage();
+            return configuracionGlobal;
+        },
+        crearCombateEstandar,
+        ejecutarAccion,
+        decidirAccion,
+        regenerarFatiga,
+        obtenerCombatiente,
+        reiniciarSerieCombatientes
+    };
+})();
+
+window.crearCombateEstandar = window.PALARENA_STANDAR.crearCombateEstandar;
+window.reiniciarSerieCombatientes = window.PALARENA_STANDAR.reiniciarSerieCombatientes;
+
+window.ejecutarTurnoEstandar = function(combate) {
+    if (!combate || combate.estado === "finalizado") return;
+    const c1 = combate.combatiente1;
+    const c2 = combate.combatiente2;
+
+    [c1, c2].forEach(combatiente => {
+        if (combatiente.turnosDesangrado > 0 && !combatiente.derrotado) {
+            const perdidaHp = 25;
+            const perdidaFatiga = 4;
+            combatiente.hp = Math.max(0, combatiente.hp - perdidaHp);
+            combatiente.fatiga = Math.max(0, combatiente.fatiga - perdidaFatiga);
+            combatiente.turnosDesangrado--;
+            combate.historial.push({
+                tipo: "accion",
+                atacante: combatiente.codigo,
+                objetivo: combatiente.codigo,
+                resultado: {
+                    mensaje: `🩸 ¡${combatiente.nombre} sufre una hemorragia severa! Pierde ${perdidaHp} de HP y ${perdidaFatiga} de fatiga. (Quedan ${combatiente.turnosDesangrado} turnos).`,
+                    dano: perdidaHp,
+                    critico: false
+                }
+            });
+            if (combatiente.hp <= 0) {
+                combatiente.derrotado = true;
+                combate.estado = "finalizado";
+                combate.ganador = (combatiente === c1) ? c2.codigo : c1.codigo;
+            }
+        }
+    });
+
+    if (combate.estado === "finalizado") return;
+
+    const accion1 = window.PALARENA_STANDAR.decidirAccion(c1, c2);
+    const res1 = window.PALARENA_STANDAR.ejecutarAccion(c1, c2, accion1);
+    combate.historial.push({ tipo: "accion", atacante: c1.codigo, objetivo: c2.codigo, resultado: res1 });
+    if (c2.derrotado) {
+        combate.estado = "finalizado";
+        combate.ganador = c1.codigo;
+        return;
+    }
+
+    const accion2 = window.PALARENA_STANDAR.decidirAccion(c2, c1);
+    const res2 = window.PALARENA_STANDAR.ejecutarAccion(c2, c1, accion2);
+    combate.historial.push({ tipo: "accion", atacante: c2.codigo, objetivo: c1.codigo, resultado: res2 });
+    if (c1.derrotado) {
+        combate.estado = "finalizado";
+        combate.ganador = c2.codigo;
+        return;
+    }
+
+    window.PALARENA_STANDAR.regenerarFatiga(c1);
+    window.PALARENA_STANDAR.regenerarFatiga(c2);
+    c1.defendiendo = false;
+    c2.defendiendo = false;
+    c1.posturaDefensiva = null;
+    c2.posturaDefensiva = null;
+
+    if (c1.tacticaTemporal !== 0) c1.tacticaTemporal = Math.sign(c1.tacticaTemporal) * Math.max(0, Math.abs(c1.tacticaTemporal) - 2);
+    if (c2.tacticaTemporal !== 0) c2.tacticaTemporal = Math.sign(c2.tacticaTemporal) * Math.max(0, Math.abs(c2.tacticaTemporal) - 2);
+
+    combate.turno++;
+    if (combate.turno > window.PALARENA_STANDAR.configuracion.max_turnos) {
+        combate.estado = "finalizado";
+        combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
+    }
+};
+                
