@@ -21,7 +21,8 @@
             <div id="labelModalidadActual">📜 Modalidad actual: <strong>Normal</strong></div>
             <div style="display: flex; gap: 8px; align-items: center;">
                 <button id="botonInfoModalidades" type="button" style="padding: 4px 10px; cursor: pointer;" title="Ver modalidades">ℹ️ Ver modalidades</button>
-                <a href="https://palentropia.es/herramientas/torneo/reglas.html" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>
+                <!-- MODIFICADO: Se cambia el enlace directo por la llamada al visor iframe para no salir de la arena -->
+                <a href="#" onclick="abrirIframeModal('https://palentropia.es/herramientas/torneo/reglas.html'); return false;" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>
             </div>
         </div>
         <div class="entrada-combatiente">
@@ -59,8 +60,7 @@
             <div id="partidoSerie">—</div>
         </div>
     </section>
-    
-    <section id="combatientes" class="zona-combatientes">
+       <section id="combatientes" class="zona-combatientes">
         <article id="combatiente1" class="tarjeta-combatiente">
             <div class="cabecera-combatiente">
                 <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>
@@ -69,7 +69,7 @@
                     <div id="c1Perfil" class="perfil">—</div>
                 </div>
             </div>
-            <div class="contenedor-imagen-combatiente"><img id="c1Imagen" class="imagen-combatiente" src="" alt=""></div>
+            <div class="contenedor-imagen-combatiente"><img id="c1Imagen" class="imagen-combatiente" src="" alt="" style="cursor: pointer;" title="Haz clic para ver la Paleoficha"></div>
             <div id="c1Victorias" class="victorias-serie">🏆 Victorias: 0</div>
             <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c1VidaTexto">— / —</span></div><div class="barra-vida"><div id="c1VidaBarra" class="vida-relleno"></div></div></div>
             <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c1FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c1FatigaBarra" class="fatiga-relleno"></div></div></div>
@@ -89,7 +89,7 @@
                     <div id="c2Perfil" class="perfil">—</div>
                 </div>
             </div>
-            <div class="contenedor-imagen-combatiente"><img id="c2Imagen" class="imagen-combatiente" src="" alt=""></div>
+            <div class="contenedor-imagen-combatiente"><img id="c2Imagen" class="imagen-combatiente" src="" alt="" style="cursor: pointer;" title="Haz clic para ver la Paleoficha"></div>
             <div id="c2Victorias" class="victorias-serie">🏆 Victorias: 0</div>
             <div class="vida"><div class="vida-texto"><span>❤️ Vida</span><span id="c2VidaTexto">— / —</span></div><div class="barra-vida"><div id="c2VidaBarra" class="vida-relleno"></div></div></div>
             <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c2FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c2FatigaBarra" class="fatiga-relleno"></div></div></div>
@@ -122,6 +122,14 @@
         <button id="botonVolverCruces" type="button" class="ocultar-en-individual">↩️ Volver a los cruces</button>
     </section>
 </main>
+
+<!-- AÑADIDO: Modal flotante genérico para Iframes (Reglas y Paleofichas) -->
+<div id="modal-iframe" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#111; width:95%; max-width:900px; height:90vh; border-radius:8px; position:relative; overflow:hidden; display:flex; flex-direction:column; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);">
+        <button onclick="cerrarIframeModal()" style="position:absolute; top:10px; right:15px; background:#e74c3c; color:#fff; border:none; border-radius:50%; width:35px; height:35px; font-size:20px; cursor:pointer; z-index:10000; display:flex; align-items:center; justify-content:center;" title="Cerrar">&times;</button>
+        <iframe id="iframe-contenido" src="" style="width:100%; height:100%; border:none; background:#fff;"></iframe>
+    </div>
+</div>
 
 <div id="modalModalidades" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">
     <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">
@@ -205,6 +213,7 @@ const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), 
 const labelModalidadActual = document.getElementById("labelModalidadActual");
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
 const botonCambiar1 = document.getElementById("botonCambiar1"), botonCambiar2 = document.getElementById("botonCambiar2");
+
 
 function obtenerReglasTorneo() {
     const g = localStorage.getItem(CLAVE_REGLAS);
@@ -335,8 +344,10 @@ if (botonAbrirGuiaCombate && modalGuiaCombate) {
     botonAbrirGuiaCombate.addEventListener("click", () => { modalGuiaCombate.style.display = "flex"; });
     if (cierraGuiaCruz) cierraGuiaCruz.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; });
     if (cierraGuiaBtn) cierraGuiaBtn.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; });
-}
-    function validarYPrepararDatos() {
+    }
+
+
+function validarYPrepararDatos() {
     const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();
     if (!v1 || !v2) { mostrarMensaje("Introduce los dos códigos J1."); return null; }
     if (v1.toLowerCase() === v2.toLowerCase()) { mostrarMensaje("Los dos combatientes deben ser diferentes."); return null; }
@@ -520,7 +531,9 @@ function interpretarRes(res, at, ob) {
     if (res.efecto) añadirRegistro(`✨ ${res.efecto.nombre} aplicado.`);
     if (res.registro) (Array.isArray(res.registro) ? res.registro : [res.registro]).forEach(m => añadirRegistro(m));
     }
-    function resolverTurnoInicialAutomaticoIA() {
+
+
+   function resolverTurnoInicialAutomaticoIA() {
     const vel1 = Number(combatiente1.velocidad) || 50, vel2 = Number(combatiente2.velocidad) || 50;
     let iniciativaIA = false;
     const iaEsCombatiente2 = controlManual === 1; 
@@ -683,7 +696,7 @@ botonNuevoCombate.addEventListener("click", () => {
 
 botonVolverCruces.addEventListener("click", () => { window.location.href = "index.html"; });
 
-  document.addEventListener("DOMContentLoaded", async function() {
+document.addEventListener("DOMContentLoaded", async function() {
     await cargarPaleofichas();
     await cargarMaster();
     actualizarInterfazModalidad();
@@ -826,6 +839,39 @@ botonVolverCruces.addEventListener("click", () => { window.location.href = "inde
         if (codigo2.value.trim()) actualizarNombre(codigo2, nombre2);
     }
 });
+
+// --- AÑADIDO: Lógica del Modal Iframe (Sirve para Paleofichas y Reglas) ---
+function abrirIframeModal(url) {
+    if (!url) return;
+    const modal = document.getElementById("modal-iframe");
+    const iframe = document.getElementById("iframe-contenido");
+    if (modal && iframe) {
+        iframe.src = url;
+        modal.style.display = "flex";
+    }
+}
+
+function cerrarIframeModal() {
+    const modal = document.getElementById("modal-iframe");
+    const iframe = document.getElementById("iframe-contenido");
+    if (modal) modal.style.display = "none";
+    if (iframe) iframe.src = ""; // Limpia el iframe al cerrar para no sobrecargar la web
+}
+
+// Vinculamos el clic a las imágenes para que usen el nuevo visor genérico
+document.getElementById("c1Imagen").addEventListener("click", () => {
+    if (combatiente1 && combatiente1.codigo) {
+        abrirIframeModal(`https://palentropia.es/herramientas/generador_fase_2/generador_fase_2.html?codigo=${combatiente1.codigo}`);
+    }
+});
+
+document.getElementById("c2Imagen").addEventListener("click", () => {
+    if (combatiente2 && combatiente2.codigo) {
+        abrirIframeModal(`https://palentropia.es/herramientas/generador_fase_2/generador_fase_2.html?codigo=${combatiente2.codigo}`);
+    }
+});
 </script>
 </body>
 </html>
+
+    
