@@ -640,6 +640,12 @@
   "nombre": "Ankylosaurus",
   "dieta": "Herbívoro",
   "anatomia": "Gran dinosaurio cuadrúpedo de cuerpo bajo y muy robusto, cubierto por placas y osteodermos, con cabeza ancha, pico córneo, extremidades fuertes y una pesada maza ósea en el extremo de la cola"
+  },
+  {
+  "codigo": "008_03",
+  "nombre": "Brachiosaurus",
+  "dieta": "Herbívoro",
+  "anatomia": "Gran dinosaurio saurópodo de cuello muy largo, cabeza pequeña, cuerpo voluminoso y extremidades anteriores excepcionalmente largas que le daban una postura inclinada hacia arriba, con una cola relativamente corta"
   }
 ]
 
