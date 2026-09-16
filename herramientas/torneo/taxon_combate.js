@@ -588,7 +588,10 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 15. Genérico (Mutación Latente - Ahora con variantes)
+
+
+
+        // 15. INCLASIFICABLES Y BASALES (Animales Enigmáticos)
         return {
             tipo: "general",
             nombreHabilidad: "Instinto Ancestral",
@@ -598,25 +601,73 @@ window.PALARENA_TAXON_COMBATE = {
 
                 if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
                     atacante.taxonUltimoUsado = true;
-                    const variante = Math.random();
-                    if (variante < 0.25) {
+                    
+                    // Ruleta rusa evolutiva de 14 opciones para los basales
+                    const variante = Math.floor(Math.random() * 14);
+                    
+                    if (variante === 0) {
                         objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 2);
                         objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 1);
                         extraDano += 0.25;
                         mensaje += ` 🐾🔥 ¡MUTACIÓN LATENTE - FURIA! (Aparición única) Un estallido inesperado de agresividad evolutiva aturde al rival y provoca desgarros severos.`;
-                    } else if (variante < 0.50) {
+                    } else if (variante === 1) {
                         atacante.efectivos.resistencia += 15;
                         atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.10));
                         mensaje += ` 🐾🧬 ¡MUTACIÓN LATENTE - RESILIENCIA! (Aparición única) Su biología se adapta al daño, subiendo su resistencia y curando un 10% de su salud.`;
-                    } else if (variante < 0.75) {
+                    } else if (variante === 2) {
                         objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 25;
                         objetivo.estadoCaotico = (objetivo.estadoCaotico || 0) + 1;
                         extraDano += 0.15;
                         mensaje += ` 🐾👀 ¡MUTACIÓN LATENTE - ILUSIÓN! (Aparición única) Un patrón en su piel confunde totalmente al enemigo, rompiendo su esquema táctico.`;
-                    } else {
+                    } else if (variante === 3) {
                         atacante.fatiga = atacante.fatiga_max;
                         atacante.efectivos.velocidad += 10;
-                        mensaje += ` 🐾⚡ ¡MUTACIÓN LATENTE - METABOLISMO RÁPIDO! (Aparición única) Recupera el 100% de su fatiga y experimenta un subidón de velocidad.`;
+                        mensaje += ` 🐾⚡ ¡METABOLISMO RÁPIDO! (Aparición única) Recupera el 100% de su fatiga y experimenta un subidón de velocidad.`;
+                    } else if (variante === 4) {
+                        extraDano += 0.40;
+                        objetivo.turnosParalizado = Math.max(objetivo.turnosParalizado || 0, 1);
+                        mensaje += ` 🐾🌀 ¡ANATOMÍA ENIGMÁTICA! (Aparición única) Un golpe asestado desde un ángulo biológicamente imposible paraliza al enemigo con daño crítico.`;
+                    } else if (variante === 5) {
+                        objetivo.fatiga = Math.max(0, objetivo.fatiga - 35);
+                        atacante.efectivos.tactica += 15;
+                        mensaje += ` 🐾🦎 ¡SEÑUELO EVOLUTIVO! (Aparición única) Finta con una parte de su cuerpo, agotando el resuello del rival (-35 de fatiga) y ganando gran ventaja táctica.`;
+                    } else if (variante === 6) {
+                        atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.20));
+                        atacante.turnosAturdido = 0;
+                        atacante.turnosParalizado = 0;
+                        atacante.turnosDesangrado = 0;
+                        mensaje += ` 🐾🩸 ¡VIGOR BASAL! (Aparición única) Su primitivo sistema inmunológico purga todos los estados alterados y regenera un 20% de salud de golpe.`;
+                    } else if (variante === 7) {
+                        objetivo.estadoGuardia = "rota";
+                        objetivo.estadoCaotico = (objetivo.estadoCaotico || 0) + 3;
+                        extraDano += 0.30;
+                        mensaje += ` 🐾💥 ¡GOLPE INCLASIFICABLE! (Aparición única) Un comportamiento errático y salvaje que pulveriza la guardia rival sumiéndolo en caos absoluto.`;
+                    } else if (variante === 8) {
+                        objetivo.fatiga = Math.max(0, objetivo.fatiga - 50);
+                        objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 15;
+                        mensaje += ` 🐾🤢 ¡SECRECIÓN REPULSIVA! (Aparición única) Libera compuestos químicos fétidos que hunden 50 puntos de fatiga del rival de golpe y nublan su mente.`;
+                    } else if (variante === 9) {
+                        extraDano += 0.45;
+                        atacante.efectivos.defensa = Math.max(1, atacante.efectivos.defensa - 10);
+                        mensaje += ` 🐾🌪️ ¡FEROCIDAD CIEGA! (Aparición única) Se lanza al ataque sin importarle su propia vida. El daño es colosal, pero su defensa base se reduce permanentemente.`;
+                    } else if (variante === 10) {
+                        extraDano += 0.20;
+                        atacante.efectivos.defensa += 10;
+                        atacante.efectivos.velocidad += 10;
+                        mensaje += ` 🐾🐍 ¡FLEXIBILIDAD EXTREMA! (Aparición única) Retuerce su cuerpo absorbiendo el impacto. Obtiene un bono permanente de +10 a Defensa y +10 a Velocidad.`;
+                    } else if (variante === 11) {
+                        atacante.fatiga = atacante.fatiga_max;
+                        atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.15));
+                        objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 1);
+                        mensaje += ` 🐾💤 ¡LETARGO ENGAÑOSO! (Aparición única) Simula colapsar, aturdiendo al rival por la sorpresa mientras recupera toda su fatiga y un 15% de vida.`;
+                    } else if (variante === 12) {
+                        objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 4);
+                        extraDano += 0.35;
+                        mensaje += ` 🐾🦷 ¡FAUCES DE LA ANTIGÜEDAD! (Aparición única) Una mordedura de un linaje extinto causa un desangrado masivo incontrolable (4 turnos).`;
+                    } else if (variante === 13) {
+                        objetivo.estadoCaotico = (objetivo.estadoCaotico || 0) + 4;
+                        objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 40;
+                        mensaje += ` 🐾🔊 ¡SOBRECARGA SENSORIAL! (Aparición única) Realiza un despliegue visual y sonoro incomprensible que sume al rival en caos total (+4) y arruina su táctica (-40).`;
                     }
                 }
                 return { extraDano, mensajeTexto: mensaje };
@@ -624,3 +675,5 @@ window.PALARENA_TAXON_COMBATE = {
         };
     }
 };
+
+        
