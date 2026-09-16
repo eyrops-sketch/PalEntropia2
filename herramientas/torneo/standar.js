@@ -61,15 +61,9 @@ window.PALARENA_STANDAR = (function() {
                 if (reglas.factorImprevisible !== undefined) {
                     parametrosReglas.factorImprevisible = Number(reglas.factorImprevisible);
                 }
-
-                
-
                 if (reglas.iaAleatoria !== undefined) {
                     parametrosReglas.iaAleatoria = String(reglas.iaAleatoria).trim().toLowerCase() === "true";
                 }
-
-                
-                
                 configuracionGlobal = {
                     ...configuracionGlobal,
                     ...coefs,
@@ -114,7 +108,9 @@ window.PALARENA_STANDAR = (function() {
             tactica: baseTac * coefGeneral
         };
     }
-        function crearCombatiente(ficha, configPersonalizada = null) {
+
+
+    function crearCombatiente(ficha, configPersonalizada = null) {
         const config = configPersonalizada || configuracionGlobal;
         const multCompartido = Number((Math.random() * 9 + 1).toFixed(2));
         const efectivos = calcularStatsEfectivos(ficha, config);
@@ -223,8 +219,9 @@ window.PALARENA_STANDAR = (function() {
             config.fatiga_max,
             combatiente.fatiga + config.fatiga_regeneracion_turno
         );
-    }
-        // --- MOTOR DE RASGOS EMERGENTES OFENSIVOS ---
+}
+
+    // --- MOTOR DE RASGOS EMERGENTES OFENSIVOS ---
     function evaluarRasgosEmergentes(atacante, objetivo, codigoAccion) {
         const stats = atacante.rawStats || {};
         const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
@@ -329,7 +326,8 @@ window.PALARENA_STANDAR = (function() {
         
         return { mensaje: mensajeDefensa, dano: danoFinalResultante };
     }
-        function ejecutarAccion(atacante, objetivo, codigoAccion) {
+
+    function ejecutarAccion(atacante, objetivo, codigoAccion) {
         const config = configuracionGlobal;
 
         if (atacante.turnosParalizado > 0) {
@@ -498,8 +496,8 @@ window.PALARENA_STANDAR = (function() {
                     defensa: "fallo"
                 };
             }
-        }
-                    let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
+                                                 }
+        let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
         let mensajeExtra = "";
         let bonusAccion = 1.0;
@@ -604,11 +602,7 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-
-
-
-
-                    let baseAtq = atacante.efectivos.ataque;
+        let baseAtq = atacante.efectivos.ataque;
         let baseDef = objetivo.efectivos.defensa;
         let factorImp = Number(config.factorImprevisible) || 1.0;
 
@@ -695,24 +689,14 @@ window.PALARENA_STANDAR = (function() {
             dano: danoFinal,
             critico: critico
         };
-    }
+}
+
 
     function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
         
-        
-        const iaAleatoria = String(config.iaAleatoria).trim().toLowerCase() === "true";
-
-
-
-        
-        if (iaAleatoria) {
-            const accionesDisponibles = ["A001", "A001", "A002", "A003", "D001"];
-            const accionElegida = accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
-            if (accionElegida !== "A001") atacante.rachaBasicos = 0;
-            return accionElegida;
-        }
+        // ELIMINADO EL BLOQUE INTRUSO DEL CAOS. La IA vuelve a ser inteligente por defecto.
 
         if (atacante.estadoCaotico && atacante.estadoCaotico > 0) {
             atacante.estadoCaotico--;
@@ -727,7 +711,10 @@ window.PALARENA_STANDAR = (function() {
         const fatigaActual = Number(atacante.fatiga) || 0;
         const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
         const objetivoHpPorcentaje = (objetivo.hp / objetivo.hp_max) * 100;
+        
         let pesoAleatorioBase = Number(config.ia_peso_aleatorio) !== undefined && !isNaN(Number(config.ia_peso_aleatorio)) ? Number(config.ia_peso_aleatorio) : 0.40;
+        
+        // AQUÍ ESTÁ LA MAGIA: Tu base de la caja (0.4) por el factor aleatorio de la modalidad.
         const pesoAleatorio = Math.min(1.0, Math.max(0.0, pesoAleatorioBase * factorImprevisible));
 
         if (Math.random() < pesoAleatorio) {
@@ -887,9 +874,6 @@ window.ejecutarTurnoEstandar = function(combate) {
     }
 };
 
-
-
-
-
-
     
+
+                           
