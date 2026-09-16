@@ -21,7 +21,6 @@
             <div id="labelModalidadActual">📜 Modalidad actual: <strong>Normal</strong></div>
             <div style="display: flex; gap: 8px; align-items: center;">
                 <button id="botonInfoModalidades" type="button" style="padding: 4px 10px; cursor: pointer;" title="Ver modalidades">ℹ️ Ver modalidades</button>
-                <!-- MODIFICADO: Se cambia el enlace directo por la llamada al visor iframe para no salir de la arena -->
                 <a href="#" onclick="abrirIframeModal('https://palentropia.es/herramientas/torneo/reglas.html'); return false;" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>
             </div>
         </div>
@@ -44,7 +43,7 @@
                 <div id="nombre2" class="nombre-combatiente">—</div>
             </div>
         </div>
-        <div id="controlManual" class="control-manual">
+                <div id="controlManual" class="control-manual">
             <div class="control-manual-titulo">🎮 Control manual</div>
             <div class="control-manual-opciones">
                 <label class="opcion-control"><input type="radio" name="controlManual" value="1" checked><span>Combatiente 1</span></label>
@@ -96,9 +95,8 @@
             <div id="c2Stats" class="stats"></div>
             <div id="c2Estado" class="estado">—</div>
         </article>
-    </section>
-    
-    <section id="acciones" class="panel">
+       </section>
+           <section id="acciones" class="panel">
         <h2>🎯 Acciones</h2>
         <div class="botones-acciones">
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>
@@ -110,7 +108,10 @@
     </section>
     
     <section id="registro" class="panel">
-        <h2>📜 Registro del combate</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h2 style="margin: 0;">📜 Registro del combate</h2>
+            <button id="botonCopiarLog" type="button" style="padding: 4px 8px; cursor: pointer; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; border-radius: 4px; font-size: 0.85rem;" title="Copiar registro al portapapeles">📋 Copiar</button>
+        </div>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
     
@@ -123,7 +124,6 @@
     </section>
 </main>
 
-<!-- AÑADIDO: Modal flotante genérico para Iframes (Reglas y Paleofichas) -->
 <div id="modal-iframe" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
     <div style="background:#111; width:95%; max-width:900px; height:90vh; border-radius:8px; position:relative; overflow:hidden; display:flex; flex-direction:column; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);">
         <button onclick="cerrarIframeModal()" style="position:absolute; top:10px; right:15px; background:#e74c3c; color:#fff; border:none; border-radius:50%; width:35px; height:35px; font-size:20px; cursor:pointer; z-index:10000; display:flex; align-items:center; justify-content:center;" title="Cerrar">&times;</button>
@@ -137,7 +137,7 @@
             <h3 style="margin: 0; font-size: 1.15rem; color: #58a6ff;">📖 Guía de Modalidades de Juego</h3>
             <button id="botonCerrarModal" type="button" style="background: transparent; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px 8px;">✕</button>
         </div>
-        <div id="contenidoModalidades" style="margin: 0 0 20px 0; font-size: 0.9rem; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
+           <div id="contenidoModalidades" style="margin: 0 0 20px 0; font-size: 0.9rem; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Normal:</strong> Experiencia equilibrada estándar con parámetros base.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Difícil:</strong> Menor vida base y mayor letalidad para duelos desafiantes.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Sin crítico:</strong> Combates tácticos puros sin multiplicador crítico.</div>
@@ -169,8 +169,7 @@
         </div>
     </div>
 </div>
-
-<div id="modalGuiaCombate" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">
+  <div id="modalGuiaCombate" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">
     <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">
             <h3 style="margin: 0; font-size: 1.15rem; color: #58a6ff;">⚔️ Dinámica de Combate y Stats</h3>
@@ -195,7 +194,6 @@
 <script src="../generador_fase_2/paltaxon.js"></script>
 <script src="taxon_combate.js"></script>
         
-    
 <script src="standar.js"></script>
 <script src="../generador_fase_2/buscaruta.js"></script>
 <script src="loadimagen.js"></script>
@@ -218,7 +216,6 @@ const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), 
 const labelModalidadActual = document.getElementById("labelModalidadActual");
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
 const botonCambiar1 = document.getElementById("botonCambiar1"), botonCambiar2 = document.getElementById("botonCambiar2");
-
 
 function obtenerReglasTorneo() {
     const g = localStorage.getItem(CLAVE_REGLAS);
@@ -271,7 +268,8 @@ function actualizarRolesVisuales() {
     }
 }
 
-async function cargarPaleofichas() {
+
+ async function cargarPaleofichas() {
     try {
         const res = await fetch(RUTA_PALEOFICHAS); if (!res.ok) throw new Error();
         const datos = await res.json(); nombresPaleofichas = {};
@@ -350,7 +348,6 @@ if (botonAbrirGuiaCombate && modalGuiaCombate) {
     if (cierraGuiaCruz) cierraGuiaCruz.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; });
     if (cierraGuiaBtn) cierraGuiaBtn.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; });
     }
-
 
 function validarYPrepararDatos() {
     const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();
@@ -442,7 +439,8 @@ async function prepararSerie() {
     limpiarRegistro(); actualizarInterfazSerie();
     actualizarInterfazModalidad();
     iniciarPartidoSerie();
-}
+    }
+
 
 async function iniciarPartidoSerie() {
     if (!serieActiva || serieTerminada) return;
@@ -537,7 +535,6 @@ function interpretarRes(res, at, ob) {
     if (res.registro) (Array.isArray(res.registro) ? res.registro : [res.registro]).forEach(m => añadirRegistro(m));
     }
 
-
    function resolverTurnoInicialAutomaticoIA() {
     const vel1 = Number(combatiente1.velocidad) || 50, vel2 = Number(combatiente2.velocidad) || 50;
     let iniciativaIA = false;
@@ -570,9 +567,9 @@ function interpretarRes(res, at, ob) {
         activarBotones();
         añadirRegistro("🎮 ¡Ganas la iniciativa! Tu turno para actuar.");
     }
-}
+   }
 
-function ejecutarAccionJugador(cod) {
+    function ejecutarAccionJugador(cod) {
     if (!combateActivo || !combate) return;
     const at = controlManual === 1 ? combatiente1 : combatiente2, ob = controlManual === 1 ? combatiente2 : combatiente1;
     const cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;
@@ -845,7 +842,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 });
 
-// --- AÑADIDO: Lógica del Modal Iframe (Sirve para Paleofichas y Reglas) ---
 function abrirIframeModal(url) {
     if (!url) return;
     const modal = document.getElementById("modal-iframe");
@@ -860,10 +856,9 @@ function cerrarIframeModal() {
     const modal = document.getElementById("modal-iframe");
     const iframe = document.getElementById("iframe-contenido");
     if (modal) modal.style.display = "none";
-    if (iframe) iframe.src = ""; // Limpia el iframe al cerrar para no sobrecargar la web
+    if (iframe) iframe.src = "";
 }
 
-// Vinculamos el clic a las imágenes para que usen el nuevo visor genérico
 document.getElementById("c1Imagen").addEventListener("click", () => {
     if (combatiente1 && combatiente1.codigo) {
         abrirIframeModal(`https://palentropia.es/herramientas/generador_fase_2/generador_fase_2.html?codigo=${combatiente1.codigo}`);
@@ -874,6 +869,76 @@ document.getElementById("c2Imagen").addEventListener("click", () => {
     if (combatiente2 && combatiente2.codigo) {
         abrirIframeModal(`https://palentropia.es/herramientas/generador_fase_2/generador_fase_2.html?codigo=${combatiente2.codigo}`);
     }
+});
+
+// --- LÓGICA DEL BOTÓN COPIAR CON CÁLCULO DE COEFICIENTE NETO ---
+document.getElementById("botonCopiarLog").addEventListener("click", () => {
+    if (!combatiente1 || !combatiente2) {
+        alert("No hay un combate en curso o finalizado para copiar.");
+        return;
+    }
+
+    let texto = "⚔️ PALENTROPÍA - REPORTE DE COMBATE ⚔️\n\n";
+    texto += `Enfrentamiento: ${combatiente1.nombre} (${combatiente1.codigo}) VS ${combatiente2.nombre} (${combatiente2.codigo})\n`;
+    
+    let modoVisual = document.getElementById("labelModalidadActual").textContent.replace("📜 Modalidad actual: ", "").trim();
+    const reglasGuardadas = localStorage.getItem("palentropia_reglas_torneo");
+    let modoRealStr = "Normal";
+    
+    if (reglasGuardadas) {
+        try {
+            const r = JSON.parse(reglasGuardadas);
+            if (r.tipoCombate) {
+                modoRealStr = r.tipoCombate.charAt(0).toUpperCase() + r.tipoCombate.slice(1).replace(/_/g, ' ');
+            }
+        } catch (e) {}
+    }
+
+    if (modoVisual.toLowerCase() === "aleatorio") {
+        texto += `Modalidad: Aleatorio (Configuración aplicada: ${modoRealStr})\n`;
+    } else {
+        texto += `Modalidad: ${modoRealStr}\n`;
+    }
+    
+    const cfg = (window.PALARENA_STANDAR && window.PALARENA_STANDAR.configuracion) ? window.PALARENA_STANDAR.configuracion : {};
+    const iaAleatoria = Boolean(cfg.iaAleatoria);
+    const baseIA = 0.40;
+    const factorImp = Number(cfg.factorImprevisible) !== undefined && !isNaN(Number(cfg.factorImprevisible)) ? Number(cfg.factorImprevisible) : 1.0;
+    const coeficienteNeto = Math.min(1.0, Math.max(0.0, baseIA * factorImp)).toFixed(2);
+    
+    let textoCaos = iaAleatoria ? " [Modo Caos / 100% Aleatorio]" : "";
+    texto += `Coeficiente Neto IA: ${coeficienteNeto}${textoCaos} (Base fija ${baseIA} × Factor de modalidad ${factorImp})\n\n`;
+
+    texto += `--- ESTADÍSTICAS FINALES (Al momento de copiar) ---\n`;
+    const statsC1 = combatiente1.efectivos || {};
+    texto += `▶ ${combatiente1.nombre}:\n`;
+    texto += `  Vida: ${Math.max(0, combatiente1.hp)} / ${combatiente1.hp_max} | Fatiga: ${combatiente1.fatiga} / ${combatiente1.fatiga_max}\n`;
+    texto += `  Atq: ${Math.round(statsC1.ataque||0)} | Def: ${Math.round(statsC1.defensa||0)} | Vel: ${Math.round(statsC1.velocidad||0)} | Res: ${Math.round(statsC1.resistencia||0)} | Tac: ${Math.round(statsC1.tactica||0)}\n\n`;
+
+    const statsC2 = combatiente2.efectivos || {};
+    texto += `▶ ${combatiente2.nombre}:\n`;
+    texto += `  Vida: ${Math.max(0, combatiente2.hp)} / ${combatiente2.hp_max} | Fatiga: ${combatiente2.fatiga} / ${combatiente2.fatiga_max}\n`;
+    texto += `  Atq: ${Math.round(statsC2.ataque||0)} | Def: ${Math.round(statsC2.defensa||0)} | Vel: ${Math.round(statsC2.velocidad||0)} | Res: ${Math.round(statsC2.resistencia||0)} | Tac: ${Math.round(statsC2.tactica||0)}\n\n`;
+
+    texto += `--- REGISTRO DE TURNOS ---\n`;
+    const lineas = document.querySelectorAll("#registroCombate .linea-registro");
+    if (lineas.length === 0) {
+        texto += "El combate todavía no ha comenzado o no hay registros.\n";
+    } else {
+        lineas.forEach(l => {
+            texto += l.textContent + "\n";
+        });
+    }
+
+    navigator.clipboard.writeText(texto).then(() => {
+        const btn = document.getElementById("botonCopiarLog");
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = "✅ Copiado";
+        setTimeout(() => btn.innerHTML = textoOriginal, 2000);
+    }).catch(err => {
+        console.error("Error al copiar: ", err);
+        alert("No se pudo copiar el registro al portapapeles.");
+    });
 });
 </script>
 </body>
