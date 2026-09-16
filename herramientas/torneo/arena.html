@@ -21,7 +21,6 @@
             <div id="labelModalidadActual">📜 Modalidad actual: <strong>Normal</strong></div>
             <div style="display: flex; gap: 8px; align-items: center;">
                 <button id="botonInfoModalidades" type="button" style="padding: 4px 10px; cursor: pointer;" title="Ver modalidades">ℹ️ Ver modalidades</button>
-                <!-- MODIFICADO: Se cambia el enlace directo por la llamada al visor iframe para no salir de la arena -->
                 <a href="#" onclick="abrirIframeModal('https://palentropia.es/herramientas/torneo/reglas.html'); return false;" id="botonAjustesReglas" class="boton-circular-ajustes" title="Ajustar reglas y modalidades">⚙️</a>
             </div>
         </div>
@@ -110,7 +109,10 @@
     </section>
     
     <section id="registro" class="panel">
-        <h2>📜 Registro del combate</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h2 style="margin: 0;">📜 Registro del combate</h2>
+            <button id="botonCopiarLog" type="button" style="padding: 4px 8px; cursor: pointer; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; border-radius: 4px; font-size: 0.85rem;" title="Copiar registro al portapapeles">📋 Copiar</button>
+        </div>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
     
@@ -123,7 +125,6 @@
     </section>
 </main>
 
-<!-- AÑADIDO: Modal flotante genérico para Iframes (Reglas y Paleofichas) -->
 <div id="modal-iframe" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
     <div style="background:#111; width:95%; max-width:900px; height:90vh; border-radius:8px; position:relative; overflow:hidden; display:flex; flex-direction:column; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);">
         <button onclick="cerrarIframeModal()" style="position:absolute; top:10px; right:15px; background:#e74c3c; color:#fff; border:none; border-radius:50%; width:35px; height:35px; font-size:20px; cursor:pointer; z-index:10000; display:flex; align-items:center; justify-content:center;" title="Cerrar">&times;</button>
@@ -180,7 +181,11 @@
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">⚔️ Ataque básico (A001):</strong> Ofensiva estándar con baja fatiga y daño constante modulado por los Stats.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">💥 Ataque potente (A002):</strong> Ofensiva crítica de alto impacto que exige un umbral mínimo de fatiga.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">🧠 Ataque táctico (A003):</strong> Maniobra guiada por la estadística de Táctica para castigar huecos del rival.</div>
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">🛡️ Defender (D001):</strong> Mitiga drásticamente el daño y puede provocar contraataques o inversiones.</div>
+
+
+
+
+ <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">🛡️ Defender (D001):</strong> Mitiga drásticamente el daño y puede provocar contraataques o inversiones.</div>
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">▶️ Combate automático:</strong> Ejecuta los turnos mediante inteligencia artificial de combate.</div>
         </div>
         <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">
@@ -223,19 +228,35 @@ const botonCambiar1 = document.getElementById("botonCambiar1"), botonCambiar2 = 
 function obtenerReglasTorneo() {
     const g = localStorage.getItem(CLAVE_REGLAS);
     if (!g) return { ...REGLAS_DEF };
-    try { const r = JSON.parse(g); return { partidosSerie: Number(r.partidosSerie) || 1, tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal" }; } catch (e) { return { ...REGLAS_DEF }; }
+    try { 
+        const r = JSON.parse(g); 
+        return { 
+            partidosSerie: Number(r.partidosSerie) || 1,
+            tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal",
+            factorImprevisible: r.factorImprevisible !== undefined ? Number(r.factorImprevisible) : 1.0,
+            iaAleatoria: r.iaAleatoria !== undefined ? Boolean(r.iaAleatoria) : false,
+            coeficientes: r.coeficientes || {}
+        }; 
+    } catch (e) { return { ...REGLAS_DEF }; }
 }
 
 function obtenerConfiguracionActiva() {
     const reg = obtenerReglasTorneo();
     const modoActivo = reg.tipoCombate || "normal";
-    return fichas.find(f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()) || fichas[0];
+    const configBase = fichas.find(f => String(f.conf).trim().toLowerCase() === modoActivo.toLowerCase()) || fichas[0] || {};
+    return { ...configBase, factorImprevisible: reg.factorImprevisible, iaAleatoria: reg.iaAleatoria };
 }
 
 function actualizarInterfazModalidad() {
     const reg = obtenerReglasTorneo();
-    const nombreModo = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";
-    if (labelModalidadActual) labelModalidadActual.innerHTML = `📜 Modalidad actual: <strong>${nombreModo}</strong>`;
+    const esAleatorio = localStorage.getItem(CLAVE_ALEATORIO_CONFIG) === "true";
+    let nombreModo = "Elegir configuración";
+    if (esAleatorio) { 
+        nombreModo = "Aleatorio"; 
+    } else if (reg.tipoCombate) { 
+        nombreModo = reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' '); 
+    }
+    if (labelModalidadActual) { labelModalidadActual.innerHTML = `📜 Modalidad actual: <strong>${nombreModo}</strong>`; }
 }
 
 function actualizarInterfazSerie() {
@@ -350,7 +371,6 @@ if (botonAbrirGuiaCombate && modalGuiaCombate) {
     if (cierraGuiaCruz) cierraGuiaCruz.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; });
     if (cierraGuiaBtn) cierraGuiaBtn.addEventListener("click", () => { modalGuiaCombate.style.display = "none"; });
     }
-
 
 function validarYPrepararDatos() {
     const v1 = codigo1.value.trim(), v2 = codigo2.value.trim();
@@ -538,7 +558,7 @@ function interpretarRes(res, at, ob) {
     }
 
 
-   function resolverTurnoInicialAutomaticoIA() {
+    function resolverTurnoInicialAutomaticoIA() {
     const vel1 = Number(combatiente1.velocidad) || 50, vel2 = Number(combatiente2.velocidad) || 50;
     let iniciativaIA = false;
     const iaEsCombatiente2 = controlManual === 1; 
@@ -756,8 +776,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         span2.textContent = "";
         labelC2.appendChild(span2);
     }
-    
-    function actualizarFocoYChecks(slot) {
+
+     function actualizarFocoYChecks(slot) {
         const check1 = document.getElementById("checkSlot1");
         const check2 = document.getElementById("checkSlot2");
         const tarjeta1 = document.getElementById("combatiente1");
@@ -845,7 +865,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 });
 
-// --- AÑADIDO: Lógica del Modal Iframe (Sirve para Paleofichas y Reglas) ---
 function abrirIframeModal(url) {
     if (!url) return;
     const modal = document.getElementById("modal-iframe");
@@ -860,10 +879,9 @@ function cerrarIframeModal() {
     const modal = document.getElementById("modal-iframe");
     const iframe = document.getElementById("iframe-contenido");
     if (modal) modal.style.display = "none";
-    if (iframe) iframe.src = ""; // Limpia el iframe al cerrar para no sobrecargar la web
+    if (iframe) iframe.src = ""; 
 }
 
-// Vinculamos el clic a las imágenes para que usen el nuevo visor genérico
 document.getElementById("c1Imagen").addEventListener("click", () => {
     if (combatiente1 && combatiente1.codigo) {
         abrirIframeModal(`https://palentropia.es/herramientas/generador_fase_2/generador_fase_2.html?codigo=${combatiente1.codigo}`);
@@ -875,8 +893,80 @@ document.getElementById("c2Imagen").addEventListener("click", () => {
         abrirIframeModal(`https://palentropia.es/herramientas/generador_fase_2/generador_fase_2.html?codigo=${combatiente2.codigo}`);
     }
 });
+
+// AÑADIDO: Lógica del botón de Copiar Historial de Turnos igual que en arena2.html
+document.getElementById("botonCopiarLog").addEventListener("click", () => {
+    if (!combatiente1 || !combatiente2) {
+        alert("No hay un combate en curso o finalizado para copiar.");
+        return;
+    }
+
+    let texto = "⚔️ PALENTROPÍA - REPORTE DE COMBATE ⚔️\n\n";
+    texto += `Enfrentamiento: ${combatiente1.nombre} (${combatiente1.codigo}) VS ${combatiente2.nombre} (${combatiente2.codigo})\n`;
+    
+    let modoVisual = document.getElementById("labelModalidadActual").textContent.replace("📜 Modalidad actual: ", "").trim();
+    const reglasGuardadas = localStorage.getItem("palentropia_reglas_torneo");
+    let modoRealStr = "Normal";
+    
+    if (reglasGuardadas) {
+        try {
+            const r = JSON.parse(reglasGuardadas);
+            if (r.tipoCombate) {
+                modoRealStr = r.tipoCombate.charAt(0).toUpperCase() + r.tipoCombate.slice(1).replace(/_/g, ' ');
+            }
+        } catch (e) {}
+    }
+
+    if (modoVisual.toLowerCase() === "aleatorio") {
+        texto += `Modalidad: Aleatorio (Configuración aplicada: ${modoRealStr})\n`;
+    } else {
+        texto += `Modalidad: ${modoRealStr}\n`;
+    }
+    
+    const cfg = (window.PALARENA_STANDAR && window.PALARENA_STANDAR.configuracion) ? window.PALARENA_STANDAR.configuracion : {};
+    const iaAleatoria = Boolean(cfg.iaAleatoria);
+    const baseIA = Number(cfg.ia_peso_aleatorio) !== undefined && !isNaN(Number(cfg.ia_peso_aleatorio)) ? Number(cfg.ia_peso_aleatorio) : 0.40;
+    const factorImp = Number(cfg.factorImprevisible) !== undefined && !isNaN(Number(cfg.factorImprevisible)) ? Number(cfg.factorImprevisible) : 1.0;
+    const pesoEfectivo = Math.min(1.0, Math.max(0.0, baseIA * factorImp)).toFixed(2);
+    
+    if (iaAleatoria) {
+        texto += `Comportamiento IA: 100% Aleatorio (Caos total)\n\n`;
+    } else {
+        texto += `Coeficiente IA (Imprevisibilidad): ${pesoEfectivo} (Base: ${baseIA} x Factor: ${factorImp})\n\n`;
+    }
+
+    texto += `--- ESTADÍSTICAS FINALES (Al momento de copiar) ---\n`;
+    const statsC1 = combatiente1.efectivos || {};
+    texto += `▶ ${combatiente1.nombre}:\n`;
+    texto += `  Vida: ${Math.max(0, combatiente1.hp)} / ${combatiente1.hp_max} | Fatiga: ${combatiente1.fatiga} / ${combatiente1.fatiga_max}\n`;
+    texto += `  Atq: ${Math.round(statsC1.ataque||0)} | Def: ${Math.round(statsC1.defensa||0)} | Vel: ${Math.round(statsC1.velocidad||0)} | Res: ${Math.round(statsC1.resistencia||0)} | Tac: ${Math.round(statsC1.tactica||0)}\n\n`;
+
+    const statsC2 = combatiente2.efectivos || {};
+    texto += `▶ ${combatiente2.nombre}:\n`;
+    texto += `  Vida: ${Math.max(0, combatiente2.hp)} / ${combatiente2.hp_max} | Fatiga: ${combatiente2.fatiga} / ${combatiente2.fatiga_max}\n`;
+    texto += `  Atq: ${Math.round(statsC2.ataque||0)} | Def: ${Math.round(statsC2.defensa||0)} | Vel: ${Math.round(statsC2.velocidad||0)} | Res: ${Math.round(statsC2.resistencia||0)} | Tac: ${Math.round(statsC2.tactica||0)}\n\n`;
+
+    texto += `--- REGISTRO DE TURNOS ---\n`;
+    const lineas = document.querySelectorAll("#registroCombate .linea-registro");
+    if (lineas.length === 0) {
+        texto += "El combate todavía no ha comenzado o no hay registros.\n";
+    } else {
+        lineas.forEach(l => {
+            texto += l.textContent + "\n";
+        });
+    }
+
+    navigator.clipboard.writeText(texto).then(() => {
+        const btn = document.getElementById("botonCopiarLog");
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = "✅ Copiado";
+        setTimeout(() => btn.innerHTML = textoOriginal, 2000);
+    }).catch(err => {
+        console.error("Error al copiar: ", err);
+        alert("No se pudo copiar el registro al portapapeles.");
+    });
+});
 </script>
 </body>
 </html>
-
     
