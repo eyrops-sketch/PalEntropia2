@@ -97,7 +97,8 @@
         </article>     
     </section>
 
-        <section id="acciones" class="panel">         
+
+    <section id="acciones" class="panel">         
         <h2>🎯 Acciones</h2>         
         <div class="botones-acciones">             
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>             
@@ -210,6 +211,7 @@ const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), 
 const labelModalidadActual = document.getElementById("labelModalidadActual"); 
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
 
+// --- CORREGIDO: Lectura estricta booleana para evitar falsos positivos de caos ---
 function obtenerReglasTorneo() {     
     const g = localStorage.getItem(CLAVE_REGLAS);     
     if (!g) return { ...REGLAS_DEF };     
@@ -219,7 +221,7 @@ function obtenerReglasTorneo() {
             partidosSerie: Number(r.partidosSerie) || 1,
             tipoCombate: r.tipoCombate || (r.coeficientes && r.coeficientes.conf) || "normal",
             factorImprevisible: r.factorImprevisible !== undefined ? Number(r.factorImprevisible) : 1.0,
-            iaAleatoria: r.iaAleatoria !== undefined ? Boolean(r.iaAleatoria) : false,
+            iaAleatoria: r.iaAleatoria !== undefined ? (String(r.iaAleatoria).trim().toLowerCase() === "true") : false,
             coeficientes: r.coeficientes || {}
         }; 
     } catch (e) { return { ...REGLAS_DEF }; } 
@@ -249,7 +251,8 @@ function actualizarInterfazSerie() {
 } 
 
 
-    async function cargarPaleofichas() {     
+
+ async function cargarPaleofichas() {     
     try {         
         const res = await fetch(RUTA_PALEOFICHAS); if (!res.ok) throw new Error();         
         const datos = await res.json(); nombresPaleofichas = {};         
@@ -336,7 +339,7 @@ function actualizarRolesVisuales() {
         rol2.style.color = "#58a6ff";
         rol2.style.borderColor = "rgba(88, 166, 255, 0.3)";
     }
-    }
+}
 
 
     controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
@@ -487,10 +490,10 @@ function activarBotones() {
 
 function desactivarBotones() { 
     botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; 
-    }
+        }
 
 
-    function interpretarRes(res, at, ob) {     
+  function interpretarRes(res, at, ob) {     
     if (!res) return;     
     if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) { res.dano = Math.round(res.dano * 0.5); añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%."); }     
     if (res.mensaje) añadirRegistro(res.mensaje);     
@@ -547,7 +550,7 @@ function ejecutarAccionJugador(cod) {
     } 
 } 
 
- function resolverTurnoInicialAutomaticoIA() {
+function resolverTurnoInicialAutomaticoIA() {
     const vel1 = Number(combatiente1.velocidad) || 50, vel2 = Number(combatiente2.velocidad) || 50;
     let iniciativaIA = false;
     const iaEsCombatiente2 = controlManual === 1; 
@@ -704,7 +707,7 @@ function añadirRegistro(txt) {
     reg.scrollTop = reg.scrollHeight; 
     const turnoActual = document.getElementById("turnoActual");
     if (turnoActual && combate && combate.turno) { turnoActual.textContent = "Turno " + combate.turno; }
-    }
+            }
 
 
     function mostrarMensaje(txt) { mensajeConfiguracion.textContent = txt; } 
@@ -805,8 +808,7 @@ document.getElementById("c2Imagen").addEventListener("click", () => {
     }
 });
 
-
-
+// --- CORREGIDO: Lógica del botón copiar con filtro estricto booleano para la IA ---
 document.getElementById("botonCopiarLog").addEventListener("click", () => {
     if (!combatiente1 || !combatiente2) {
         alert("No hay un combate en curso o finalizado para copiar.");
@@ -835,10 +837,9 @@ document.getElementById("botonCopiarLog").addEventListener("click", () => {
         texto += `Modalidad: ${modoRealStr}\n`;
     }
     
-    // --- CÁLCULO Y REFLEJO DIRECTO DEL COEFICIENTE NETO DE LA IA ---
     const cfg = (window.PALARENA_STANDAR && window.PALARENA_STANDAR.configuracion) ? window.PALARENA_STANDAR.configuracion : {};
-    const iaAleatoria = Boolean(cfg.iaAleatoria);
-    const baseIA = 0.40; // Base fija
+    const iaAleatoria = String(cfg.iaAleatoria).trim().toLowerCase() === "true";
+    const baseIA = 0.40;
     const factorImp = Number(cfg.factorImprevisible) !== undefined && !isNaN(Number(cfg.factorImprevisible)) ? Number(cfg.factorImprevisible) : 1.0;
     const coeficienteNeto = Math.min(1.0, Math.max(0.0, baseIA * factorImp)).toFixed(2);
     
@@ -876,25 +877,6 @@ document.getElementById("botonCopiarLog").addEventListener("click", () => {
         alert("No se pudo copiar el registro al portapapeles.");
     });
 });
-    
-
-
-
-    
-
-
-
-    
-
-
-
-
-
-    
-
-
-
-
 </script> 
 </body> 
 </html>
