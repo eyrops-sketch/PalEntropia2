@@ -127,7 +127,6 @@ window.PALARENA_STANDAR = (function() {
             fatiga_max: config.fatiga_max,
             fatiga: config.fatiga_inicial,
             efectivos: efectivos,
-            // Guardamos los valores base para evaluar los rasgos emergentes >= 70
             rawStats: {
                 e1: Number(ficha.e1) || 0,
                 e2: Number(ficha.e2) || 0,
@@ -139,7 +138,7 @@ window.PALARENA_STANDAR = (function() {
                 e8: Number(ficha.e8) || 0,
                 e9: Number(ficha.e9) || 0,
                 e10: Number(ficha.e10) || 0,
-                e11: Number(ficha.e11) || 0 // Reproducción
+                e11: Number(ficha.e11) || 0
             },
             tamano: Number(ficha.e9) || 50,     
             rangoTemporal: ficha.j3 || "",      
@@ -155,8 +154,11 @@ window.PALARENA_STANDAR = (function() {
             turnosDesangrado: 0,
             efectos: [],
             frenesiAnunciado: false,
-            // Control de un solo uso por combate para los rasgos emergentes
-            rasgoEmergenteUsado: false
+            rasgoEmergenteUsado: false,
+            // Nuevas banderas para rasgos modulares únicos
+            rasgoDistraccionUsado: false,
+            rasgoCamuflajeUsado: false,
+            rasgoQuirurgicoUsado: false
         };
     }
 
@@ -216,16 +218,14 @@ window.PALARENA_STANDAR = (function() {
             combatiente.fatiga + config.fatiga_regeneracion_turno
         );
     }
-
-       // --- MOTOR DE RASGOS EMERGENTES POR STATS >= 70 ---
+        // --- MOTOR DE RASGOS EMERGENTES OFENSIVOS ---
     function evaluarRasgosEmergentes(atacante, objetivo, codigoAccion) {
-        if (atacante.rasgoEmergenteUsado) return "";
         const stats = atacante.rawStats || {};
         const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
         
-        // 1. REPRODUCCIÓN >= 70 (Impulso Reproductivo / Supervivencia)
-        if (stats.e11 >= 70 && hpPorcentaje < 30) {
-            if (Math.random() < 0.25) { // 25% de probabilidad estricta
+        // 1. REPRODUCCIÓN >= 70 (Impulso Reproductivo)
+        if (stats.e11 >= 70 && hpPorcentaje < 30 && !atacante.rasgoEmergenteUsado) {
+            if (Math.random() < 0.25) { 
                 atacante.rasgoEmergenteUsado = true;
                 const fatigaRecuperada = 25;
                 const hpRecuperado = Math.round(atacante.hp_max * 0.15);
@@ -238,7 +238,7 @@ window.PALARENA_STANDAR = (function() {
         }
 
         // 2. ATAQUE >= 70 (Fuerza Explosiva)
-        if (stats.e1 >= 70 && (codigoAccion === "A001" || codigoAccion === "A002")) {
+        if (stats.e1 >= 70 && !atacante.rasgoEmergenteUsado && (codigoAccion === "A001" || codigoAccion === "A002")) {
             if (Math.random() < 0.25) {
                 atacante.rasgoEmergenteUsado = true;
                 const extraDanoExplosivo = Math.round((Number(atacante.efectivos.ataque) || 50) * 0.40);
@@ -247,8 +247,8 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // 3. TÁCTICA >= 70 (Mente Depredadora / Estratega)
-        if (stats.e5 >= 70 && codigoAccion === "A003") {
+        // 3. TÁCTICA >= 70 (Mente Depredadora)
+        if (stats.e5 >= 70 && !atacante.rasgoEmergenteUsado && codigoAccion === "A003") {
             if (Math.random() < 0.25) {
                 atacante.rasgoEmergenteUsado = true;
                 objetivo.estadoGuardia = "rota";
@@ -258,7 +258,7 @@ window.PALARENA_STANDAR = (function() {
         }
 
         // 4. VELOCIDAD >= 70 (Reflejos Abismales)
-        if (stats.e3 >= 70 && codigoAccion === "D001") {
+        if (stats.e3 >= 70 && !atacante.rasgoEmergenteUsado && codigoAccion === "D001") {
             if (Math.random() < 0.25) {
                 atacante.rasgoEmergenteUsado = true;
                 atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 30);
@@ -267,15 +267,61 @@ window.PALARENA_STANDAR = (function() {
         }
 
         // 5. RESISTENCIA >= 70 (Resiliencia Biológica)
-        if (stats.e4 >= 70 && atacante.fatiga < 30) {
+        if (stats.e4 >= 70 && !atacante.rasgoEmergenteUsado && atacante.fatiga < 30) {
             if (Math.random() < 0.25) {
                 atacante.rasgoEmergenteUsado = true;
                 atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 40);
-                return ` 🌍 ¡RESILIENCIA BIOLÓGICA! El cuerpo de ${atacante.nombre} ignora el colapso por fatiga y recupera 40 puntos de resuello de golpe, manteniéndose firme en la pelea.`;
+                return ` 🌍 ¡RESILIENCIA BIOLÓGICA! El cuerpo de ${atacante.nombre} ignora el colapso por fatiga y recupera 40 puntos de resuello de golpe.`;
+            }
+        }
+
+        // 6. NUEVO: VELOCIDAD + MOVILIDAD >= 135 (Ataque Quirúrgico)
+        const velMovSuma = (stats.e3 || 50) + (stats.e7 || 50);
+        if (velMovSuma >= 135 && !atacante.rasgoQuirurgicoUsado && (codigoAccion === "A001" || codigoAccion === "A002" || codigoAccion === "A003")) {
+            if (Math.random() < 0.20) { // 20% estricto
+                atacante.rasgoQuirurgicoUsado = true;
+                const danoQuirurgico = Math.round(objetivo.hp_max * 0.15); // Daño directo quirúrgico
+                objetivo.hp = Math.max(0, objetivo.hp - danoQuirurgico);
+                objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 3);
+                return ` 🔪 ¡ATAQUE QUIRÚRGICO! (Vel+Mov >= 135) Su extrema agilidad le permite flanquear a la retaguardia. Asesta un tajo de precisión arrebatando ${danoQuirurgico} HP extras y causando hemorragia severa (3 turnos).`;
             }
         }
 
         return "";
+    }
+
+    // --- MOTOR DE DEFENSAS EMERGENTES (TAMAÑO) ---
+    function evaluarDefensasEmergentes(atacante, objetivo, danoCalculado) {
+        let mensajeDefensa = "";
+        let danoFinalResultante = danoCalculado;
+        let danoEvadido = false;
+        
+        // 1. Diferencia de tamaño mayor a 40 (Maniobra de Distracción)
+        const difTamano = atacante.tamano - objetivo.tamano;
+        if (difTamano > 40 && !objetivo.rasgoDistraccionUsado) {
+            if (Math.random() < 0.25) {
+                objetivo.rasgoDistraccionUsado = true;
+                danoEvadido = true;
+                atacante.tacticaTemporal = (atacante.tacticaTemporal || 0) - 25;
+                mensajeDefensa += ` 🌫️ ¡MANIOBRA DE DISTRACCIÓN! (Diferencia de tamaño > 40) Aprovechando su menor envergadura por relatividad, ${objetivo.nombre} finta frente al gigante. ¡El ataque revienta contra el suelo, anulando el daño y hundiendo la táctica del atacante!`;
+            }
+        }
+
+        // 2. Tamaño absoluto <= 30 (Camuflaje / Resguardo)
+        if (objetivo.tamano <= 30 && !objetivo.rasgoCamuflajeUsado && !danoEvadido) {
+            if (Math.random() < 0.25) {
+                objetivo.rasgoCamuflajeUsado = true;
+                danoEvadido = true;
+                objetivo.fatiga = Math.min(objetivo.fatiga_max, objetivo.fatiga + 30);
+                mensajeDefensa += ` 🌿 ¡RESGUARDO TÁCTICO! (Tamaño <= 30) En el instante exacto del impacto, ${objetivo.nombre} desaparece y se escabulle en un lugar seguro del terreno. ¡Anula por completo el ataque y recupera 30 de fatiga desde las sombras!`;
+            }
+        }
+        
+        if (danoEvadido) {
+            danoFinalResultante = 0; // Se anula el daño para el log final
+        }
+        
+        return { mensaje: mensajeDefensa, dano: danoFinalResultante };
     }
         function ejecutarAccion(atacante, objetivo, codigoAccion) {
         const config = configuracionGlobal;
@@ -534,7 +580,7 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // --- APLICACIÓN DE RASGOS EMERGENTES (>= 70) ---
+        // --- APLICACIÓN DE RASGOS EMERGENTES OFENSIVOS ---
         const textoRasgoEmergente = evaluarRasgosEmergentes(atacante, objetivo, codigoAccion);
         if (textoRasgoEmergente) {
             mensajeExtra += textoRasgoEmergente;
@@ -551,6 +597,11 @@ window.PALARENA_STANDAR = (function() {
                 mensajeExtra += " (Furia activa)";
             }
         }
+
+
+
+
+
                     let baseAtq = atacante.efectivos.ataque;
         let baseDef = objetivo.efectivos.defensa;
         let factorImp = Number(config.factorImprevisible) || 1.0;
@@ -615,15 +666,26 @@ window.PALARENA_STANDAR = (function() {
         const variacion = Number(config.variacion_dano) || 0.25;
         const factorAleatorio = 1 + (Math.random() * (variacion * 2) - variacion);
         let danoFinal = Math.max(1, Math.round(danoReducido * factorAleatorio));
+
+        // --- APLICACIÓN DE DEFENSAS EMERGENTES (Tamaño) ---
+        const resultadoDefensa = evaluarDefensasEmergentes(atacante, objetivo, danoFinal);
+        if (resultadoDefensa.mensaje) {
+            mensajeExtra += resultadoDefensa.mensaje;
+            danoFinal = resultadoDefensa.dano; // Actualiza a 0 si evadió el daño
+        }
         
         objetivo.hp = Math.max(0, objetivo.hp - danoFinal);
         if (objetivo.hp <= 0) {
             objetivo.derrotado = true;
+        } else if (objetivo.hp > 0 && objetivo.derrotado) {
+            objetivo.derrotado = false; // Prevención si curó vida
         }
 
         const iconoAccion = codigoAccion === "A002" ? "⚡" : (codigoAccion === "A003" ? "🎯" : "⚔️");
+        const textoDano = danoFinal > 0 ? ` Daño: ${danoFinal}` : ""; // Para no imprimir "Daño: 0" de golpe seco si evadió
+        
         return {
-            mensaje: `${iconoAccion} ${atacante.nombre} ejecuta ${codigoAccion} contra ${objetivo.nombre}${mensajeExtra}.${mensajeRuptura} Daño: ${danoFinal}`,
+            mensaje: `${iconoAccion} ${atacante.nombre} ejecuta ${codigoAccion} contra ${objetivo.nombre}${mensajeExtra}.${mensajeRuptura}${textoDano}`,
             dano: danoFinal,
             critico: critico
         };
@@ -722,7 +784,10 @@ window.PALARENA_STANDAR = (function() {
                 c.turnosParalizado = 0;
                 c.turnosDesangrado = 0;
                 c.frenesiAnunciado = false;
-                c.rasgoEmergenteUsado = false; // Reinicio del rasgo
+                c.rasgoEmergenteUsado = false; 
+                c.rasgoDistraccionUsado = false;
+                c.rasgoCamuflajeUsado = false;
+                c.rasgoQuirurgicoUsado = false;
             }
         });
     }
@@ -810,4 +875,10 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
-            
+
+
+
+
+
+
+    
