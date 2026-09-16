@@ -58,7 +58,8 @@
             <div id="serieFormato">—</div>             
             <div id="partidoSerie">—</div>         </div>     
     </section>
-            <section id="combatientes" class="zona-combatientes">         
+    
+    <section id="combatientes" class="zona-combatientes">         
         <article id="combatiente1" class="tarjeta-combatiente">             
             <div class="cabecera-combatiente">                 
                 <div><div id="c1Nombre" class="nombre">—</div><div id="c1Codigo" class="codigo">—</div></div>                 
@@ -73,11 +74,12 @@
             <div class="fatiga"><div class="fatiga-texto"><span>🟢 Fatiga</span><span id="c1FatigaTexto">— / —</span></div><div class="barra-fatiga"><div id="c1FatigaBarra" class="fatiga-relleno"></div></div></div>             
             <div id="c1Stats" class="stats"></div>             
             <div id="c1Estado" class="estado"></div>         
-        </article>
-               <div class="centro-combate">             
+        </article>         
+        <div class="centro-combate">             
             <div class="icono-vs">⚔️</div>             
             <div id="turnoActual" class="turno">En combate!</div>             
-            <div id="iniciativa" class="iniciativa">—</div>         </div>         
+            <div id="iniciativa" class="iniciativa">—</div>         
+        </div>         
         <article id="combatiente2" class="tarjeta-combatiente">             
             <div class="cabecera-combatiente">                 
                 <div><div id="c2Nombre" class="nombre">—</div><div id="c2Codigo" class="codigo">—</div></div>                 
@@ -93,9 +95,9 @@
             <div id="c2Stats" class="stats"></div>             
             <div id="c2Estado" class="estado"></div>         
         </article>     
-    </section>     
+    </section>
 
-    <section id="acciones" class="panel">         
+        <section id="acciones" class="panel">         
         <h2>🎯 Acciones</h2>         
         <div class="botones-acciones">             
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>             
@@ -122,7 +124,7 @@
         <button id="botonVolverCruces" type="button">↩️ Volver a los cruces</button>     
     </section> 
 </main>
- <!-- Modal flotante genérico para Iframes (Reglas y Paleofichas) -->
+
 <div id="modal-iframe" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
     <div style="background:#111; width:95%; max-width:900px; height:90vh; border-radius:8px; position:relative; overflow:hidden; display:flex; flex-direction:column; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);">
         <button onclick="cerrarIframeModal()" style="position:absolute; top:10px; right:15px; background:#e74c3c; color:#fff; border:none; border-radius:50%; width:35px; height:35px; font-size:20px; cursor:pointer; z-index:10000; display:flex; align-items:center; justify-content:center;" title="Cerrar">&times;</button>
@@ -144,9 +146,8 @@
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Frenesí mesozoico:</strong> Partidas ultrarrápidas con daños masivos.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #f85149;"><strong style="color: #f0f6fc;">Depredador al límite:</strong> Ofensivas letales con bonificaciones altas.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #a371f7;"><strong style="color: #f0f6fc;">Cataclismo carbonífero:</strong> Entorno caótico con altísima variabilidad de daño.</div>             
-            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Acorazados cretácicos:</strong> Tanques masivos de alta resistencia y divisor defensivo extremo.</div>
-
-                        <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Instinto primigenio:</strong> Furia desatada con críticos hiperpotenciados.</div>             
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #3fb950;"><strong style="color: #f0f6fc;">Acorazados cretácicos:</strong> Tanques masivos de alta resistencia y divisor defensivo extremo.</div>             
+            <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Instinto primigenio:</strong> Furia desatada con críticos hiperpotenciados.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #58a6ff;"><strong style="color: #f0f6fc;">Reflejos abismales:</strong> Duelos ágiles con esquivas constantes.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #8b949e;"><strong style="color: #f0f6fc;">Balance ancestral:</strong> Coeficientes comprimidos para nivelar estadísticas.</div>             
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #d29922;"><strong style="color: #f0f6fc;">Furia desatada:</strong> Compensador agresivo para equilibrar Stats muy bajos.</div>             
@@ -165,7 +166,9 @@
             <div style="background: rgba(22, 27, 34, 0.6); padding: 10px 14px; border-radius: 6px; border-left: 3px solid #db6d28;"><strong style="color: #f0f6fc;">Fiebre primigenia:</strong> Ofensiva total incansable con alta velocidad de ejecución.</div>         </div>         
         <div style="text-align: right; border-top: 1px solid #30363d; padding-top: 14px;">             
             <button id="botonCerrarModalBtn" type="button" style="background: #21262d; color: #c9d1d9; border: 1px solid #30363d; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cerrar</button>         </div>     </div> </div> 
-<div id="modalGuiaCombate" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">     
+
+
+    <div id="modalGuiaCombate" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center;">     
     <div style="background: #161b22; color: #c9d1d9; padding: 24px 28px; border-radius: 12px; max-width: 650px; width: 90%; max-height: 82vh; overflow-y: auto; border: 1px solid #30363d; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);">         
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 16px;">             
             <h3 style="margin: 0; font-size: 1.15rem; color: #58a6ff;">⚔️ Dinámica de Combate y Stats</h3>             
@@ -207,7 +210,7 @@ const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), 
 const labelModalidadActual = document.getElementById("labelModalidadActual"); 
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
 
- function obtenerReglasTorneo() {     
+function obtenerReglasTorneo() {     
     const g = localStorage.getItem(CLAVE_REGLAS);     
     if (!g) return { ...REGLAS_DEF };     
     try { 
@@ -245,7 +248,8 @@ function actualizarInterfazSerie() {
     informacionSerie.style.display = ""; serieFormato.textContent = "Mejor de " + partidosSerie; partidoSerie.textContent = "Partido " + partidoActual + " / " + partidosSerie; 
 } 
 
-async function cargarPaleofichas() {     
+
+    async function cargarPaleofichas() {     
     try {         
         const res = await fetch(RUTA_PALEOFICHAS); if (!res.ok) throw new Error();         
         const datos = await res.json(); nombresPaleofichas = {};         
@@ -332,10 +336,10 @@ function actualizarRolesVisuales() {
         rol2.style.color = "#58a6ff";
         rol2.style.borderColor = "rgba(88, 166, 255, 0.3)";
     }
-}
+    }
 
 
-controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
+    controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
     controlManual = Number(ctrl.value); 
     actualizarRolesVisuales();
     if (combateActivo) activarBotones(); 
@@ -483,9 +487,10 @@ function activarBotones() {
 
 function desactivarBotones() { 
     botonA001.disabled = botonA002.disabled = botonA003.disabled = botonD001.disabled = botonAuto.disabled = true; 
-}
+    }
 
-function interpretarRes(res, at, ob) {     
+
+    function interpretarRes(res, at, ob) {     
     if (!res) return;     
     if (at && Number(at.fatiga) <= 0 && res.dano !== undefined && res.dano > 0) { res.dano = Math.round(res.dano * 0.5); añadirRegistro("⚠️ ¡Fatiga agotada! El daño se reduce un 50%."); }     
     if (res.mensaje) añadirRegistro(res.mensaje);     
@@ -503,7 +508,7 @@ function interpretarRes(res, at, ob) {
     if (res.registro) (Array.isArray(res.registro) ? res.registro : [res.registro]).forEach(m => añadirRegistro(m)); 
 } 
 
-    function ejecutarAccionJugador(cod) {     
+function ejecutarAccionJugador(cod) {     
     if (!combateActivo || !combate) return;     
     const at = controlManual === 1 ? combatiente1 : combatiente2, ob = controlManual === 1 ? combatiente2 : combatiente1;     
     const cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;     
@@ -699,9 +704,10 @@ function añadirRegistro(txt) {
     reg.scrollTop = reg.scrollHeight; 
     const turnoActual = document.getElementById("turnoActual");
     if (turnoActual && combate && combate.turno) { turnoActual.textContent = "Turno " + combate.turno; }
-}
+    }
 
-function mostrarMensaje(txt) { mensajeConfiguracion.textContent = txt; } 
+
+    function mostrarMensaje(txt) { mensajeConfiguracion.textContent = txt; } 
 
 botonSerie.addEventListener("click", async () => {     
     document.getElementById("configuracion").style.display = "none";     
@@ -808,11 +814,36 @@ document.getElementById("botonCopiarLog").addEventListener("click", () => {
     let texto = "⚔️ PALENTROPÍA - REPORTE DE COMBATE ⚔️\n\n";
     texto += `Enfrentamiento: ${combatiente1.nombre} (${combatiente1.codigo}) VS ${combatiente2.nombre} (${combatiente2.codigo})\n`;
     
-    let modoNombre = document.getElementById("labelModalidadActual").textContent.replace("📜 Modalidad actual: ", "").trim();
-    texto += `Modalidad: ${modoNombre}\n`;
+    let modoVisual = document.getElementById("labelModalidadActual").textContent.replace("📜 Modalidad actual: ", "").trim();
+    const reglasGuardadas = localStorage.getItem("palentropia_reglas_torneo");
+    let modoRealStr = "Normal";
     
-    const iaPeso = (window.PALARENA_STANDAR && window.PALARENA_STANDAR.configuracion) ? (window.PALARENA_STANDAR.configuracion.ia_peso_aleatorio || 0.40) : 0.40;
-    texto += `Coeficiente IA (Peso Aleatorio): ${iaPeso}\n\n`;
+    if (reglasGuardadas) {
+        try {
+            const r = JSON.parse(reglasGuardadas);
+            if (r.tipoCombate) {
+                modoRealStr = r.tipoCombate.charAt(0).toUpperCase() + r.tipoCombate.slice(1).replace(/_/g, ' ');
+            }
+        } catch (e) {}
+    }
+
+    if (modoVisual.toLowerCase() === "aleatorio") {
+        texto += `Modalidad: Aleatorio (Configuración aplicada: ${modoRealStr})\n`;
+    } else {
+        texto += `Modalidad: ${modoRealStr}\n`;
+    }
+    
+    const cfg = (window.PALARENA_STANDAR && window.PALARENA_STANDAR.configuracion) ? window.PALARENA_STANDAR.configuracion : {};
+    const iaAleatoria = Boolean(cfg.iaAleatoria);
+    const baseIA = Number(cfg.ia_peso_aleatorio) !== undefined && !isNaN(Number(cfg.ia_peso_aleatorio)) ? Number(cfg.ia_peso_aleatorio) : 0.40;
+    const factorImp = Number(cfg.factorImprevisible) !== undefined && !isNaN(Number(cfg.factorImprevisible)) ? Number(cfg.factorImprevisible) : 1.0;
+    const pesoEfectivo = Math.min(1.0, Math.max(0.0, baseIA * factorImp)).toFixed(2);
+    
+    if (iaAleatoria) {
+        texto += `Comportamiento IA: 100% Aleatorio (Caos total)\n\n`;
+    } else {
+        texto += `Coeficiente IA (Imprevisibilidad): ${pesoEfectivo} (Base: ${baseIA} x Factor: ${factorImp})\n\n`;
+    }
 
     texto += `--- ESTADÍSTICAS FINALES (Al momento de copiar) ---\n`;
     const statsC1 = combatiente1.efectivos || {};
@@ -848,6 +879,3 @@ document.getElementById("botonCopiarLog").addEventListener("click", () => {
 </script> 
 </body> 
 </html>
-
-
-    
