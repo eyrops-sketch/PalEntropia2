@@ -835,18 +835,15 @@ document.getElementById("botonCopiarLog").addEventListener("click", () => {
         texto += `Modalidad: ${modoRealStr}\n`;
     }
     
-    // --- CÁLCULO EXPLÍCITO DEL COEFICIENTE NETO DE LA IA ---
+    // --- CÁLCULO Y REFLEJO DIRECTO DEL COEFICIENTE NETO DE LA IA ---
     const cfg = (window.PALARENA_STANDAR && window.PALARENA_STANDAR.configuracion) ? window.PALARENA_STANDAR.configuracion : {};
     const iaAleatoria = Boolean(cfg.iaAleatoria);
     const baseIA = 0.40; // Base fija
     const factorImp = Number(cfg.factorImprevisible) !== undefined && !isNaN(Number(cfg.factorImprevisible)) ? Number(cfg.factorImprevisible) : 1.0;
     const coeficienteNeto = Math.min(1.0, Math.max(0.0, baseIA * factorImp)).toFixed(2);
     
-    if (iaAleatoria) {
-        texto += `Coeficiente Neto IA: 100% Aleatorio (Caos total)\n\n`;
-    } else {
-        texto += `Coeficiente Neto IA: ${coeficienteNeto} (Base fija ${baseIA} × Factor de modalidad ${factorImp})\n\n`;
-    }
+    let textoCaos = iaAleatoria ? " [Modo Caos / 100% Aleatorio]" : "";
+    texto += `Coeficiente Neto IA: ${coeficienteNeto}${textoCaos} (Base fija ${baseIA} × Factor de modalidad ${factorImp})\n\n`;
 
     texto += `--- ESTADÍSTICAS FINALES (Al momento de copiar) ---\n`;
     const statsC1 = combatiente1.efectivos || {};
@@ -879,6 +876,10 @@ document.getElementById("botonCopiarLog").addEventListener("click", () => {
         alert("No se pudo copiar el registro al portapapeles.");
     });
 });
+    
+
+
+
     
 
 
