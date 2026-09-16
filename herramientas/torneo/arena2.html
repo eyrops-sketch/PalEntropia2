@@ -805,6 +805,8 @@ document.getElementById("c2Imagen").addEventListener("click", () => {
     }
 });
 
+
+
 document.getElementById("botonCopiarLog").addEventListener("click", () => {
     if (!combatiente1 || !combatiente2) {
         alert("No hay un combate en curso o finalizado para copiar.");
@@ -833,16 +835,17 @@ document.getElementById("botonCopiarLog").addEventListener("click", () => {
         texto += `Modalidad: ${modoRealStr}\n`;
     }
     
+    // --- CÁLCULO EXPLÍCITO DEL COEFICIENTE NETO DE LA IA ---
     const cfg = (window.PALARENA_STANDAR && window.PALARENA_STANDAR.configuracion) ? window.PALARENA_STANDAR.configuracion : {};
     const iaAleatoria = Boolean(cfg.iaAleatoria);
-    const baseIA = Number(cfg.ia_peso_aleatorio) !== undefined && !isNaN(Number(cfg.ia_peso_aleatorio)) ? Number(cfg.ia_peso_aleatorio) : 0.40;
+    const baseIA = 0.40; // Base fija
     const factorImp = Number(cfg.factorImprevisible) !== undefined && !isNaN(Number(cfg.factorImprevisible)) ? Number(cfg.factorImprevisible) : 1.0;
-    const pesoEfectivo = Math.min(1.0, Math.max(0.0, baseIA * factorImp)).toFixed(2);
+    const coeficienteNeto = Math.min(1.0, Math.max(0.0, baseIA * factorImp)).toFixed(2);
     
     if (iaAleatoria) {
-        texto += `Comportamiento IA: 100% Aleatorio (Caos total)\n\n`;
+        texto += `Coeficiente Neto IA: 100% Aleatorio (Caos total)\n\n`;
     } else {
-        texto += `Coeficiente IA (Imprevisibilidad): ${pesoEfectivo} (Base: ${baseIA} x Factor: ${factorImp})\n\n`;
+        texto += `Coeficiente Neto IA: ${coeficienteNeto} (Base fija ${baseIA} × Factor de modalidad ${factorImp})\n\n`;
     }
 
     texto += `--- ESTADÍSTICAS FINALES (Al momento de copiar) ---\n`;
@@ -876,6 +879,21 @@ document.getElementById("botonCopiarLog").addEventListener("click", () => {
         alert("No se pudo copiar el registro al portapapeles.");
     });
 });
+    
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
 </script> 
 </body> 
 </html>
