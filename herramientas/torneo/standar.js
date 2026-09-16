@@ -127,8 +127,22 @@ window.PALARENA_STANDAR = (function() {
             fatiga_max: config.fatiga_max,
             fatiga: config.fatiga_inicial,
             efectivos: efectivos,
-            tamano: Number(ficha.e9) || 50,     // Tamaño para el contraataque
-            rangoTemporal: ficha.j3 || "",      // Rango de tiempo para rivalidad
+            // Guardamos los valores base para evaluar los rasgos emergentes >= 70
+            rawStats: {
+                e1: Number(ficha.e1) || 0,
+                e2: Number(ficha.e2) || 0,
+                e3: Number(ficha.e3) || 0,
+                e4: Number(ficha.e4) || 0,
+                e5: Number(ficha.e5) || 0,
+                e6: Number(ficha.e6) || 0,
+                e7: Number(ficha.e7) || 0,
+                e8: Number(ficha.e8) || 0,
+                e9: Number(ficha.e9) || 0,
+                e10: Number(ficha.e10) || 0,
+                e11: Number(ficha.e11) || 0 // Reproducción
+            },
+            tamano: Number(ficha.e9) || 50,     
+            rangoTemporal: ficha.j3 || "",      
             defendiendo: false,
             derrotado: false,
             usosDefensaConsecutivos: 0,
@@ -140,7 +154,9 @@ window.PALARENA_STANDAR = (function() {
             turnosParalizado: 0,
             turnosDesangrado: 0,
             efectos: [],
-            frenesiAnunciado: false
+            frenesiAnunciado: false,
+            // Control de un solo uso por combate para los rasgos emergentes
+            rasgoEmergenteUsado: false
         };
     }
 
@@ -166,7 +182,6 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // --- SISTEMA DE RIVALIDAD EVOLUTIVA ---
         function comprobarRivalidad(rango1, rango2) {
             if (!rango1 || !rango2) return false;
             const parseRango = (str) => {
@@ -183,7 +198,6 @@ window.PALARENA_STANDAR = (function() {
         const hayRivalidad = comprobarRivalidad(c1.rangoTemporal, c2.rangoTemporal);
         c1.rivalidadVigente = hayRivalidad;
         c2.rivalidadVigente = hayRivalidad;
-        // ---------------------------------------
         
         return {
             combatiente1: c1,
@@ -201,6 +215,67 @@ window.PALARENA_STANDAR = (function() {
             config.fatiga_max,
             combatiente.fatiga + config.fatiga_regeneracion_turno
         );
+    }
+
+       // --- MOTOR DE RASGOS EMERGENTES POR STATS >= 70 ---
+    function evaluarRasgosEmergentes(atacante, objetivo, codigoAccion) {
+        if (atacante.rasgoEmergenteUsado) return "";
+        const stats = atacante.rawStats || {};
+        const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
+        
+        // 1. REPRODUCCIÓN >= 70 (Impulso Reproductivo / Supervivencia)
+        if (stats.e11 >= 70 && hpPorcentaje < 30) {
+            if (Math.random() < 0.25) { // 25% de probabilidad estricta
+                atacante.rasgoEmergenteUsado = true;
+                const fatigaRecuperada = 25;
+                const hpRecuperado = Math.round(atacante.hp_max * 0.15);
+                atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + fatigaRecuperada);
+                atacante.hp = Math.min(atacante.hp_max, atacante.hp + hpRecuperado);
+                atacante.turnosParalizado = 0; 
+                atacante.turnosDesangrado = 0;
+                return ` 🧬 ¡IMPULSO VITAL! ${atacante.nombre} moviliza sus reservas evolutivas: purga sus estados alterados, recupera ${hpRecuperado} HP y ${fatigaRecuperada} de fatiga.`;
+            }
+        }
+
+        // 2. ATAQUE >= 70 (Fuerza Explosiva)
+        if (stats.e1 >= 70 && (codigoAccion === "A001" || codigoAccion === "A002")) {
+            if (Math.random() < 0.25) {
+                atacante.rasgoEmergenteUsado = true;
+                const extraDanoExplosivo = Math.round((Number(atacante.efectivos.ataque) || 50) * 0.40);
+                objetivo.hp = Math.max(0, objetivo.hp - extraDanoExplosivo);
+                return ` 🔥 ¡FUERZA EXPLOSIVA! La musculatura de ${atacante.nombre} desata una onda de choque secundaria, sumando ${extraDanoExplosivo} de daño directo extra.`;
+            }
+        }
+
+        // 3. TÁCTICA >= 70 (Mente Depredadora / Estratega)
+        if (stats.e5 >= 70 && codigoAccion === "A003") {
+            if (Math.random() < 0.25) {
+                atacante.rasgoEmergenteUsado = true;
+                objetivo.estadoGuardia = "rota";
+                objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 15;
+                return ` 🧠 ¡ESTRATEGA SUPREMO! ${atacante.nombre} lee a la perfección el lenguaje corporal del rival, rompiendo su guardia y hundiendo su capacidad táctica.`;
+            }
+        }
+
+        // 4. VELOCIDAD >= 70 (Reflejos Abismales)
+        if (stats.e3 >= 70 && codigoAccion === "D001") {
+            if (Math.random() < 0.25) {
+                atacante.rasgoEmergenteUsado = true;
+                atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 30);
+                return ` ⚡ ¡REFLEJOS ABISMALES! Su velocidad vertiginosa permite a ${atacante.nombre} eludir el esfuerzo de la defensa y recuperar 30 de fatiga en un parpadeo.`;
+            }
+        }
+
+        // 5. RESISTENCIA >= 70 (Resiliencia Biológica)
+        if (stats.e4 >= 70 && atacante.fatiga < 30) {
+            if (Math.random() < 0.25) {
+                atacante.rasgoEmergenteUsado = true;
+                atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 40);
+                return ` 🌍 ¡RESILIENCIA BIOLÓGICA! El cuerpo de ${atacante.nombre} ignora el colapso por fatiga y recupera 40 puntos de resuello de golpe, manteniéndose firme en la pelea.`;
+            }
+        }
+
+        return "";
     }
         function ejecutarAccion(atacante, objetivo, codigoAccion) {
         const config = configuracionGlobal;
@@ -262,7 +337,6 @@ window.PALARENA_STANDAR = (function() {
                 
                 let mensajeMaestra = `🛡️⚡ ¡${atacante.nombre} ejecuta una defensa maestra absoluta! Reduce su propia fatiga un 50% y drena un 60% de resuello a ${objetivo.nombre}.`;
                 
-                // --- CONTRAATAQUE POTENCIADO TAMAÑO PEQUEÑO (DEFENSA MAESTRA) [50% éxito, 80% fatiga, 40% HP actual, 1 turno parálisis] ---
                 if (atacante.tamano <= 30 && Math.random() < 0.50) {
                     const fatigaRivalPost = Number(objetivo.fatiga) || 0;
                     const reduccionFatigaExtra = Math.round(fatigaRivalPost * 0.80);
@@ -342,7 +416,6 @@ window.PALARENA_STANDAR = (function() {
                 
                 let mensajeDefensa = `🛡️✨ ${atacante.nombre} planta un muro defensivo impenetrable, bloqueando los ataques y drenando un 60% de fatiga a ${objetivo.nombre}.`;
 
-                // --- CONTRAATAQUE POTENCIADO TAMAÑO PEQUEÑO (DEFENSA NORMAL) [50% éxito, 80% fatiga, 40% HP actual, 1 turno parálisis] ---
                 if (atacante.tamano <= 30 && Math.random() < 0.50) {
                     const fatigaRivalPost = Number(objetivo.fatiga) || 0;
                     const reduccionFatigaExtra = Math.round(fatigaRivalPost * 0.80);
@@ -374,7 +447,7 @@ window.PALARENA_STANDAR = (function() {
                 };
             }
         }
-                 let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
+                    let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
         let mensajeExtra = "";
         let bonusAccion = 1.0;
@@ -402,9 +475,8 @@ window.PALARENA_STANDAR = (function() {
             const fatigaMinCrit = Number(config.fatiga_minima_critico) || 20;
             let probabilidadCritica = (Number(config.critico_base) || 10) + (tacticaTotal * (Number(config.critico_tactica) || 0.15));
             
-            // --- APLICACIÓN RIVALIDAD EVOLUTIVA (CRÍTICO) ---
             if (atacante.rivalidadVigente) {
-                probabilidadCritica += 5; // +5% prob crítico si vivieron en la misma era
+                probabilidadCritica += 5; 
             }
 
             const tieneEnergiaParaCritico = atacante.fatiga >= fatigaMinCrit;
@@ -433,10 +505,9 @@ window.PALARENA_STANDAR = (function() {
                 let reduccionTactica = 10;
                 let extraRivalidad = "";
                 
-                // --- APLICACIÓN RIVALIDAD EVOLUTIVA (TÁCTICA) ---
                 if (atacante.rivalidadVigente) {
                     reduccionTactica += 5;
-                    bonusAccion *= 1.15; // 15% más de daño base táctico
+                    bonusAccion *= 1.15; 
                     extraRivalidad = " 👁️ (Instinto ancestral activado)";
                 }
 
@@ -450,11 +521,10 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // --- INYECCIÓN DE HABILIDAD TAXONÓMICA ---
         if (window.PALARENA_TAXON_COMBATE && (codigoAccion === "A001" || codigoAccion === "A002")) {
             const rasgos = window.PALARENA_TAXON_COMBATE.obtenerRasgosTaxonomicos(atacante.codigo);
             if (rasgos && typeof rasgos.aplicarEfecto === "function") {
-                if (Math.random() < 0.30) { // 30% de probabilidad por ataque
+                if (Math.random() < 0.30) {
                     const resultadoTaxon = rasgos.aplicarEfecto(atacante, objetivo);
                     if (resultadoTaxon) {
                         bonusAccion *= resultadoTaxon.extraDano;
@@ -463,10 +533,17 @@ window.PALARENA_STANDAR = (function() {
                 }
             }
         }
-                    // --- MODO FRENESÍ (ÚLTIMO ALIENTO) ---
+
+        // --- APLICACIÓN DE RASGOS EMERGENTES (>= 70) ---
+        const textoRasgoEmergente = evaluarRasgosEmergentes(atacante, objetivo, codigoAccion);
+        if (textoRasgoEmergente) {
+            mensajeExtra += textoRasgoEmergente;
+        }
+
+        // --- MODO FRENESÍ (ÚLTIMO ALIENTO) ---
         if (atacante.hp < atacante.hp_max * 0.20 && codigoAccion !== "D001") {
-            bonusAccion *= 1.35; // 35% de daño extra
-            atacante.efectivos.defensa *= 0.60; // Penalización a su defensa
+            bonusAccion *= 1.35; 
+            atacante.efectivos.defensa *= 0.60; 
             if (!atacante.frenesiAnunciado) {
                 mensajeExtra += " 🔥 ¡FRENESÍ DE SUPERVIVENCIA! Desata un poder salvaje ignorando por completo su propia guardia.";
                 atacante.frenesiAnunciado = true;
@@ -474,8 +551,7 @@ window.PALARENA_STANDAR = (function() {
                 mensajeExtra += " (Furia activa)";
             }
         }
-
-        let baseAtq = atacante.efectivos.ataque;
+                    let baseAtq = atacante.efectivos.ataque;
         let baseDef = objetivo.efectivos.defensa;
         let factorImp = Number(config.factorImprevisible) || 1.0;
 
@@ -551,8 +627,9 @@ window.PALARENA_STANDAR = (function() {
             dano: danoFinal,
             critico: critico
         };
-        }
-        function decidirAccion(atacante, objetivo) {
+    }
+
+    function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
         const iaAleatoria = Boolean(config.iaAleatoria);
@@ -619,7 +696,7 @@ window.PALARENA_STANDAR = (function() {
 
     function obtenerCombatiente(combate, codigo) {
         if (combate.combatiente1.codigo === codigo) return combate.combatiente1;
-        if (combate.combatiente2.codigo === combate.combatiente2.codigo) return combate.combatiente2;
+        if (combate.combatiente2.codigo === codigo) return combate.combatiente2;
         return null;
     }
 
@@ -630,36 +707,24 @@ window.PALARENA_STANDAR = (function() {
         combate.historial = [];
         combate.ganador = null;
         
-        if (combate.combatiente1) {
-            combate.combatiente1.hp = combate.combatiente1.hp_max;
-            combate.combatiente1.fatiga = configuracionGlobal.fatiga_inicial;
-            combate.combatiente1.derrotado = false;
-            combate.combatiente1.defendiendo = false;
-            combate.combatiente1.usosDefensaConsecutivos = 0;
-            combate.combatiente1.rachaBasicos = 0;
-            combate.combatiente1.tacticaTemporal = 0;
-            combate.combatiente1.estadoCaotico = 0;
-            combate.combatiente1.posturaDefensiva = null;
-            combate.combatiente1.turnosAturdido = 0;
-            combate.combatiente1.turnosParalizado = 0;
-            combate.combatiente1.turnosDesangrado = 0;
-            combate.combatiente1.frenesiAnunciado = false;
-        }
-        if (combate.combatiente2) {
-            combate.combatiente2.hp = combate.combatiente2.hp_max;
-            combate.combatiente2.fatiga = configuracionGlobal.fatiga_inicial;
-            combate.combatiente2.derrotado = false;
-            combate.combatiente2.defendiendo = false;
-            combate.combatiente2.usosDefensaConsecutivos = 0;
-            combate.combatiente2.rachaBasicos = 0;
-            combate.combatiente2.tacticaTemporal = 0;
-            combate.combatiente2.estadoCaotico = 0;
-            combate.combatiente2.posturaDefensiva = null;
-            combate.combatiente2.turnosAturdido = 0;
-            combate.combatiente2.turnosParalizado = 0;
-            combate.combatiente2.turnosDesangrado = 0;
-            combate.combatiente2.frenesiAnunciado = false;
-        }
+        [combate.combatiente1, combate.combatiente2].forEach(c => {
+            if (c) {
+                c.hp = c.hp_max;
+                c.fatiga = configuracionGlobal.fatiga_inicial;
+                c.derrotado = false;
+                c.defendiendo = false;
+                c.usosDefensaConsecutivos = 0;
+                c.rachaBasicos = 0;
+                c.tacticaTemporal = 0;
+                c.estadoCaotico = 0;
+                c.posturaDefensiva = null;
+                c.turnosAturdido = 0;
+                c.turnosParalizado = 0;
+                c.turnosDesangrado = 0;
+                c.frenesiAnunciado = false;
+                c.rasgoEmergenteUsado = false; // Reinicio del rasgo
+            }
+        });
     }
 
     return {
@@ -745,4 +810,4 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
-        
+            
