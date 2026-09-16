@@ -61,9 +61,15 @@ window.PALARENA_STANDAR = (function() {
                 if (reglas.factorImprevisible !== undefined) {
                     parametrosReglas.factorImprevisible = Number(reglas.factorImprevisible);
                 }
+
+                
+
                 if (reglas.iaAleatoria !== undefined) {
-                    parametrosReglas.iaAleatoria = Boolean(reglas.iaAleatoria);
+                    parametrosReglas.iaAleatoria = String(reglas.iaAleatoria).trim().toLowerCase() === "true";
                 }
+
+                
+                
                 configuracionGlobal = {
                     ...configuracionGlobal,
                     ...coefs,
@@ -694,8 +700,13 @@ window.PALARENA_STANDAR = (function() {
     function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
-        const iaAleatoria = Boolean(config.iaAleatoria);
+        
+        
+        const iaAleatoria = String(config.iaAleatoria).trim().toLowerCase() === "true";
 
+
+
+        
         if (iaAleatoria) {
             const accionesDisponibles = ["A001", "A001", "A002", "A003", "D001"];
             const accionElegida = accionesDisponibles[Math.floor(Math.random() * accionesDisponibles.length)];
