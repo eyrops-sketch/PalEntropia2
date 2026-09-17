@@ -682,12 +682,18 @@ window.PALARENA_STANDAR = (function() {
             danoFinal = resultadoDefensa.dano; 
         }
 
-                // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL
+                        // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL (Ajustada)
         if (danoFinal > 0 && objetivo.tamano <= 30) {
-            // Si el ataque acierta a un animal muy pequeño, el daño base se MULTIPLICA X3
-            danoFinal = Math.round(danoFinal * 3.0);
-            mensajeExtra += " 🦴💥 ¡FRAGILIDAD ESTRUCTURAL! El impacto aplasta su anatomía ligera y sufre un daño crítico casi letal.";
+            if (codigoAccion === "A002") {
+                // Si es un ataque potente, lo destroza
+                danoFinal = Math.round(danoFinal * 2.0);
+                mensajeExtra += " 🦴💥 ¡FRAGILIDAD ESTRUCTURAL! El brutal ataque potente aplasta su anatomía ligera (Daño x2).";
+            } else {
+                // Ataques básicos o tácticos le duelen más, pero no lo vaporizan de un golpe
+                danoFinal = Math.round(danoFinal * 1.35);
+            }
         }
+
             
 
             
