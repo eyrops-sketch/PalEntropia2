@@ -560,7 +560,13 @@ window.PALTAXON = {
 "008_07":{
   ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Marginocephalia > Pachycephalosauria > Pachycephalosauridae > Pachycephalosaurus",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Marginocefálico. Paquicefalosaurio. Paquicefalosáurido."
+},
+"008_08":{
+  ta1:"Animalia > Chordata > Synapsida > Therapsida > Dinocephalia > Estemmenosuchidae > Estemmenosuchus",
+  ta2:"Sinápsido. Terápsido. Dinocefaliano. Estemmenosúquido."
 }
+
+  
 };
 
 
