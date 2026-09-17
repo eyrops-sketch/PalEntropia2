@@ -670,6 +670,12 @@
   "nombre": "Pachycephalosaurus",
   "dieta": "Omnívoro",
   "anatomia": "Dinosaurio bípedo de cuerpo compacto, con extremidades posteriores robustas, brazos cortos, cola rígida y un cráneo característico con una gruesa cúpula ósea en la parte superior, acompañado de pequeñas protuberancias alrededor de la región posterior del cráneo"
+  },
+  {
+  "codigo": "008_08",
+  "nombre": "Estemmenosuchus",
+  "dieta": "Herbívoro",
+  "anatomia": "Gran terápsido de cuerpo robusto y patas fuertes, con cráneo voluminoso provisto de llamativas protuberancias óseas y dientes adaptados principalmente a una dieta vegetal"
   }
 ]
 
