@@ -231,7 +231,68 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-                // 7. ORNITÓPODOS
+                
+        
+          // X. MARGINOCEFÁLICOS (Paquicefalosaurios y afines)
+        if (cadenaTaxonomica.includes("Pachycephalosauria") || cadenaTaxonomica.includes("Marginocephalia")) {
+            return {
+                tipo: "marginocefalo",
+                nombreHabilidad: "Ariete Biológico",
+                aplicarEfecto(atacante, objetivo) {
+                    let extraDano = 1.05;
+                    let mensaje = ` 🐾 ¡${atacante.nombre} despliega la fuerza brutal de su bóveda craneal!`;
+
+                    if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
+                        atacante.taxonUltimoUsado = true;
+                        
+                        // Ruleta ampliada a 6 mecánicas exclusivas para los cabezas de cúpula
+                        const variante = Math.floor(Math.random() * 6);
+                        
+                        if (variante === 0) {
+                            objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 2);
+                            extraDano += 0.30;
+                            mensaje += ` 💥 ¡CRÁNEO DE DOMO! Un testarazo macizo a máxima inercia que ignora el dolor y deja al rival severamente aturdido (2 turnos).`;
+                        } else if (variante === 1) {
+                            objetivo.estadoGuardia = "rota";
+                            objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 20;
+                            extraDano += 0.15;
+                            mensaje += ` 🛡️🔨 ¡EMBESTIDA ROMPESCUDOS! El impacto pulveriza la guardia rival y fractura su esquema táctico (-20 Táctica).`;
+                        } else if (variante === 2) {
+                            atacante.efectivos.defensa += 15;
+                            atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 20);
+                            mensaje += ` 🦴 ¡TESTARUDEZ EVOLUTIVA! Interpone su cráneo ultradenso como escudo. Absorbe la tensión, gana +15 Defensa permanente y recupera 20 de Fatiga.`;
+                        } else if (variante === 3) {
+                            extraDano += 0.45;
+                            atacante.efectivos.tactica = Math.max(1, atacante.efectivos.tactica - 10);
+                            mensaje += ` ☄️ ¡CARGA CIEGA! Se lanza como un proyectil vivo y macizo. El daño físico es colosal, pero sufre una ligera desorientación por el choque (-10 Táctica).`;
+                        } else if (variante === 4) {
+                            objetivo.fatiga = Math.max(0, objetivo.fatiga - 25);
+                            atacante.efectivos.ataque += 10;
+                            extraDano += 0.15;
+                            mensaje += ` 👑 ¡DOMINIO TERRITORIAL! Exhibe su potencia con un empuje intimidatorio. Drena 25 de fatiga al rival y gana +10 de Ataque permanente por pura adrenalina.`;
+                        } else {
+                            atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.10));
+                            objetivo.efectivos.velocidad = Math.max(1, objetivo.efectivos.velocidad - 15);
+                            mensaje += ` 💥 ¡ESTRUCTURA AMORTIGUADORA! Su anatomía cervical disipa la tensión del combate. Regenera un 10% de HP mientras el violento choque frena en seco al rival (-15 Vel).`;
+                        }
+                    }
+                    return { extraDano, mensajeTexto: mensaje };
+                }
+            };
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        // 7. ORNITÓPODOS
         if (textoTaxonomia.includes("ornithischia") || textoTaxonomia.includes("hadrosauridae") || textoTaxonomia.includes("ornitópodo")) {
             return {
                 tipo: "ornitopodo",
@@ -591,53 +652,7 @@ window.PALARENA_TAXON_COMBATE = {
 
 
 
-                // X. MARGINOCEFÁLICOS (Paquicefalosaurios y afines)
-        if (cadenaTaxonomica.includes("Pachycephalosauria") || cadenaTaxonomica.includes("Marginocephalia")) {
-            return {
-                tipo: "marginocefalo",
-                nombreHabilidad: "Ariete Biológico",
-                aplicarEfecto(atacante, objetivo) {
-                    let extraDano = 1.05;
-                    let mensaje = ` 🐾 ¡${atacante.nombre} despliega la fuerza brutal de su bóveda craneal!`;
-
-                    if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
-                        atacante.taxonUltimoUsado = true;
-                        
-                        // Ruleta ampliada a 6 mecánicas exclusivas para los cabezas de cúpula
-                        const variante = Math.floor(Math.random() * 6);
-                        
-                        if (variante === 0) {
-                            objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 2);
-                            extraDano += 0.30;
-                            mensaje += ` 💥 ¡CRÁNEO DE DOMO! Un testarazo macizo a máxima inercia que ignora el dolor y deja al rival severamente aturdido (2 turnos).`;
-                        } else if (variante === 1) {
-                            objetivo.estadoGuardia = "rota";
-                            objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 20;
-                            extraDano += 0.15;
-                            mensaje += ` 🛡️🔨 ¡EMBESTIDA ROMPESCUDOS! El impacto pulveriza la guardia rival y fractura su esquema táctico (-20 Táctica).`;
-                        } else if (variante === 2) {
-                            atacante.efectivos.defensa += 15;
-                            atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 20);
-                            mensaje += ` 🦴 ¡TESTARUDEZ EVOLUTIVA! Interpone su cráneo ultradenso como escudo. Absorbe la tensión, gana +15 Defensa permanente y recupera 20 de Fatiga.`;
-                        } else if (variante === 3) {
-                            extraDano += 0.45;
-                            atacante.efectivos.tactica = Math.max(1, atacante.efectivos.tactica - 10);
-                            mensaje += ` ☄️ ¡CARGA CIEGA! Se lanza como un proyectil vivo y macizo. El daño físico es colosal, pero sufre una ligera desorientación por el choque (-10 Táctica).`;
-                        } else if (variante === 4) {
-                            objetivo.fatiga = Math.max(0, objetivo.fatiga - 25);
-                            atacante.efectivos.ataque += 10;
-                            extraDano += 0.15;
-                            mensaje += ` 👑 ¡DOMINIO TERRITORIAL! Exhibe su potencia con un empuje intimidatorio. Drena 25 de fatiga al rival y gana +10 de Ataque permanente por pura adrenalina.`;
-                        } else {
-                            atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.10));
-                            objetivo.efectivos.velocidad = Math.max(1, objetivo.efectivos.velocidad - 15);
-                            mensaje += ` 💥 ¡ESTRUCTURA AMORTIGUADORA! Su anatomía cervical disipa la tensión del combate. Regenera un 10% de HP mientras el violento choque frena en seco al rival (-15 Vel).`;
-                        }
-                    }
-                    return { extraDano, mensajeTexto: mensaje };
-                }
-            };
-        }
+              
         
 
 
