@@ -233,8 +233,8 @@ window.PALARENA_TAXON_COMBATE = {
         }
                 
         
-          // X. MARGINOCEFÁLICOS (Paquicefalosaurios y afines)
-        if (cadenaTaxonomica.includes("Pachycephalosauria") || cadenaTaxonomica.includes("Marginocephalia")) {
+                  // 7.0 MARGINOCEFÁLICOS (Paquicefalosaurios y afines)
+        if (textoTaxonomia.includes("pachycephalosauria") || textoTaxonomia.includes("marginocephalia")) {
             return {
                 tipo: "marginocefalo",
                 nombreHabilidad: "Ariete Biológico",
@@ -245,7 +245,6 @@ window.PALARENA_TAXON_COMBATE = {
                     if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
                         atacante.taxonUltimoUsado = true;
                         
-                        // Ruleta ampliada a 6 mecánicas exclusivas para los cabezas de cúpula
                         const variante = Math.floor(Math.random() * 6);
                         
                         if (variante === 0) {
@@ -280,6 +279,7 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
+
         
         
         
@@ -292,7 +292,7 @@ window.PALARENA_TAXON_COMBATE = {
         
         
         
-        // 7. ORNITÓPODOS
+        // 7.1 ORNITÓPODOS
         if (textoTaxonomia.includes("ornithischia") || textoTaxonomia.includes("hadrosauridae") || textoTaxonomia.includes("ornitópodo")) {
             return {
                 tipo: "ornitopodo",
