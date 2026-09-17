@@ -683,29 +683,52 @@ window.PALARENA_STANDAR = (function() {
         }
        
             
-            // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL (Escalonada y Pérdida de Inercia)
+                    // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL Y RETROCESO FÍSICO
         if (danoFinal > 0) {
-            if (objetivo.tamano <= 30) {
-                // Micro-dinosaurios (ej. Buitreraptor)
-                if (codigoAccion === "A002") {
-                    danoFinal = Math.round(danoFinal * 2.5);
-                    objetivo.fatiga = Math.max(0, objetivo.fatiga - 20);
-                    mensajeExtra += " 🦴💥 ¡FRAGILIDAD EXTREMA! El impacto lo hace volar por la arena. Sufre daño masivo (x2.5) y pierde el aliento (-20 Fatiga).";
+            
+            // 1. PENALIZACIÓN DEFENSIVA (Cuando el animal ligero recibe el golpe)
+            if (objetivo.tamano <= 50) {
+                if (objetivo.tamano <= 30) {
+                    if (codigoAccion === "A002") {
+                        danoFinal = Math.round(danoFinal * 2.5);
+                        objetivo.fatiga = Math.max(0, objetivo.fatiga - 20);
+                        mensajeExtra += " 🦴💥 ¡FRAGILIDAD EXTREMA! El impacto lo hace volar por la arena. Sufre daño masivo (x2.5) y pierde el aliento (-20 Fatiga).";
+                    } else {
+                        danoFinal = Math.round(danoFinal * 1.50);
+                    }
                 } else {
-                    danoFinal = Math.round(danoFinal * 1.50);
+                    if (codigoAccion === "A002") {
+                        danoFinal = Math.round(danoFinal * 1.75);
+                        objetivo.fatiga = Math.max(0, objetivo.fatiga - 15);
+                        mensajeExtra += " 🦴💥 ¡COMPLEXIÓN LIGERA! El choque sacude su estructura ósea (Daño x1.75) y le roba 15 de fatiga por el violento empuje.";
+                    } else {
+                        danoFinal = Math.round(danoFinal * 1.25);
+                        objetivo.fatiga = Math.max(0, objetivo.fatiga - 5);
+                    }
                 }
-            } else if (objetivo.tamano <= 50) {
-                // Pesos pluma (ej. Coelophysis)
+            }
+
+            // 2. PENALIZACIÓN OFENSIVA: RETROCESO (Cuando el animal ligero ataca a un tanque)
+            if (atacante.tamano <= 50 && (objetivo.tamano - atacante.tamano >= 20 || objetivo.efectivos.defensa >= 80)) {
+                let recoilDano = Math.round(danoFinal * 0.20);
+                let recoilFatiga = 8;
+                
                 if (codigoAccion === "A002") {
-                    danoFinal = Math.round(danoFinal * 1.75);
-                    objetivo.fatiga = Math.max(0, objetivo.fatiga - 15);
-                    mensajeExtra += " 🦴💥 ¡COMPLEXIÓN LIGERA! El choque sacude su estructura ósea (Daño x1.75) y le roba 15 de fatiga por el violento empuje.";
+                    recoilDano = Math.round(danoFinal * 0.35); // Se hace muchísimo más daño a sí mismo si ataca fuerte
+                    recoilFatiga = 15;
+                    mensajeExtra += ` 💥📉 ¡RETROCESO SEVERO! Al asestar un golpe brutal contra un objetivo acorazado, su propia estructura ligera se resquebraja (Autolesión: -${recoilDano} HP y -${recoilFatiga} fatiga).`;
                 } else {
-                    danoFinal = Math.round(danoFinal * 1.25);
-                    objetivo.fatiga = Math.max(0, objetivo.fatiga - 5);
+                    mensajeExtra += ` 💥📉 ¡REBOTE ÓSEO! Golpear la masa de ${objetivo.nombre} le pasa factura a su frágil anatomía (Retroceso: -${recoilDano} HP y -${recoilFatiga} fatiga).`;
+                }
+
+                atacante.hp = Math.max(0, atacante.hp - recoilDano);
+                atacante.fatiga = Math.max(0, atacante.fatiga - recoilFatiga);
+                if (atacante.hp <= 0) {
+                    atacante.derrotado = true;
                 }
             }
         }
+
 
 
 
