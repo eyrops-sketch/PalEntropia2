@@ -658,6 +658,12 @@
   "nombre": "Coelophysis",
   "dieta": "Carnívoro",
   "anatomia": "Dinosaurio terópodo pequeño y esbelto, con cráneo estrecho, mandíbulas provistas de dientes afilados, cuello alargado, brazos cortos y ligeros, largas extremidades posteriores y una cola larga que ayudaba a mantener el equilibrio durante la carrera"
+  },
+  {
+  "codigo": "008_06",
+  "nombre": "Lystrosaurus",
+  "dieta": "Herbívoro",
+  "anatomia": "Terápsido herbívoro de cuerpo compacto y robusto, cráneo corto, hocico relativamente ancho, pico córneo y un par de colmillos superiores, con extremidades fuertes adaptadas a sostener un cuerpo pesado"
   }
 ]
 
