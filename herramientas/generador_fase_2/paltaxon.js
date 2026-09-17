@@ -552,6 +552,10 @@ window.PALTAXON = {
 "008_05":{
   ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Coelophysoidea > Coelophysidae > Coelophysis",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Celofisoideo. Celofísido."
+},
+"008_06":{
+  ta1:"Animalia > Chordata > Synapsida > Therapsida > Anomodontia > Dicynodontia > Lystrosauridae > Lystrosaurus",
+  ta2:"Sinápsido. Terápsido. Anomodonto. Dicinodonto. Lystrosáurido."
 }
 };
 
