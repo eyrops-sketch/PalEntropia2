@@ -646,6 +646,12 @@
   "nombre": "Brachiosaurus",
   "dieta": "Herbívoro",
   "anatomia": "Gran dinosaurio saurópodo de cuello muy largo, cabeza pequeña, cuerpo voluminoso y extremidades anteriores excepcionalmente largas que le daban una postura inclinada hacia arriba, con una cola relativamente corta"
+  },
+  {
+  "codigo": "008_04",
+  "nombre": "Cameroceras",
+  "dieta": "Carnívoro",
+  "anatomia": "Cefalópodo marino de gran tamaño, con una concha externa cónica y alargada dividida en cámaras, cuerpo blando protegido en la abertura y tentáculos empleados para capturar presas"
   }
 ]
 
