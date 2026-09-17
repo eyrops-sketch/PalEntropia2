@@ -89,8 +89,7 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-
-        // 3. TERÓPODOS Y SUPERDEPREDADORES
+                // 3. TERÓPODOS Y SUPERDEPREDADORES
         if (textoTaxonomia.includes("theropoda") || textoTaxonomia.includes("terópodo")) {
             return {
                 tipo: "teropodo",
@@ -124,7 +123,8 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-                // 4. SAURÓPODOS / CUELLOS LARGOS
+        
+        // 4. SAURÓPODOS / CUELLOS LARGOS
         if (textoTaxonomia.includes("sauropoda") || textoTaxonomia.includes("sauropodomorpha") || textoTaxonomia.includes("saurópodo")) {
             return {
                 tipo: "sauropodo",
@@ -160,8 +160,7 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-
-        // 5. TIREÓFOROS
+                // 5. TIREÓFOROS
         if (textoTaxonomia.includes("thyreophora") || textoTaxonomia.includes("ankylosauria") || textoTaxonomia.includes("stegosauria") || textoTaxonomia.includes("tireóforo")) {
             return {
                 tipo: "tireoforo",
@@ -231,7 +230,53 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-                // 7. ORNITÓPODOS
+                // 7. MARGINOCEFÁLICOS (Paquicefalosaurios y afines)
+        if (cadenaTaxonomica.includes("Pachycephalosauria") || cadenaTaxonomica.includes("Marginocephalia")) {
+            return {
+                tipo: "marginocefalo",
+                nombreHabilidad: "Ariete Biológico",
+                aplicarEfecto(atacante, objetivo) {
+                    let extraDano = 1.05;
+                    let mensaje = ` 🐾 ¡${atacante.nombre} despliega la fuerza brutal de su bóveda craneal!`;
+
+                    if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
+                        atacante.taxonUltimoUsado = true;
+                        const variante = Math.floor(Math.random() * 6);
+                        
+                        if (variante === 0) {
+                            objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 2);
+                            extraDano += 0.30;
+                            mensaje += ` 💥 ¡CRÁNEO DE DOMO! Un testarazo macizo a máxima inercia que ignora el dolor y deja al rival severamente aturdido (2 turnos).`;
+                        } else if (variante === 1) {
+                            objetivo.estadoGuardia = "rota";
+                            objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 20;
+                            extraDano += 0.15;
+                            mensaje += ` 🛡️🔨 ¡EMBESTIDA ROMPESCUDOS! El impacto pulveriza la guardia rival y fractura su esquema táctico (-20 Táctica).`;
+                        } else if (variante === 2) {
+                            atacante.efectivos.defensa += 15;
+                            atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 20);
+                            mensaje += ` 🦴 ¡TESTARUDEZ EVOLUTIVA! Interpone su cráneo ultradenso como escudo. Absorbe la tensión, gana +15 Defensa permanente y recupera 20 de Fatiga.`;
+                        } else if (variante === 3) {
+                            extraDano += 0.45;
+                            atacante.efectivos.tactica = Math.max(1, atacante.efectivos.tactica - 10);
+                            mensaje += ` ☄️ ¡CARGA CIEGA! Se lanza como un proyectil vivo y macizo. El daño físico es colosal, pero sufre una ligera desorientación por el choque (-10 Táctica).`;
+                        } else if (variante === 4) {
+                            objetivo.fatiga = Math.max(0, objetivo.fatiga - 25);
+                            atacante.efectivos.ataque += 10;
+                            extraDano += 0.15;
+                            mensaje += ` 👑 ¡DOMINIO TERRITORIAL! Exhibe su potencia con un empuje intimidatorio. Drena 25 de fatiga al rival y gana +10 de Ataque permanente por pura adrenalina.`;
+                        } else {
+                            atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.10));
+                            objetivo.efectivos.velocidad = Math.max(1, objetivo.efectivos.velocidad - 15);
+                            mensaje += ` 💥 ¡ESTRUCTURA AMORTIGUADORA! Su anatomía cervical disipa la tensión del combate. Regenera un 10% de HP mientras el violento choque frena en seco al rival (-15 Vel).`;
+                        }
+                    }
+                    return { extraDano, mensajeTexto: mensaje };
+                }
+            };
+        }
+
+        // 8. ORNITÓPODOS Y HADROSÁURIDOS
         if (textoTaxonomia.includes("ornithischia") || textoTaxonomia.includes("hadrosauridae") || textoTaxonomia.includes("ornitópodo")) {
             return {
                 tipo: "ornitopodo",
@@ -267,8 +312,7 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-
-        // 8. COCODRILOMORFOS
+                // 9. COCODRILOMORFOS
         if (textoTaxonomia.includes("crocodylomorpha") || textoTaxonomia.includes("cocodrilomorfo")) {
             return {
                 tipo: "cocodrilomorfo",
@@ -303,7 +347,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 9. SINÁPSIDOS Y MAMÍFEROS
+        // 10. SINÁPSIDOS Y MAMÍFEROS
         if (textoTaxonomia.includes("synapsida") || textoTaxonomia.includes("sinápsido") || textoTaxonomia.includes("mammalia")) {
             
             // Dientes de sable / Gorgonópsidos
@@ -410,7 +454,7 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-                // 10. REPTILES MARINOS
+                // 11. REPTILES MARINOS
         if (textoTaxonomia.includes("ichthyosauria") || textoTaxonomia.includes("sauropterygia") || textoTaxonomia.includes("mosasauroidea")) {
             return {
                 tipo: "marino",
@@ -447,7 +491,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 11. TEMNOSPÓNDILOS Y ANFIBIOS
+        // 12. TEMNOSPÓNDILOS Y ANFIBIOS
         if (textoTaxonomia.includes("temnospondyli") || textoTaxonomia.includes("lissamphibia") || textoTaxonomia.includes("nectridea") || textoTaxonomia.includes("anfibio")) {
             return {
                 tipo: "temnospondyli",
@@ -483,7 +527,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 12. PLACODERMOS Y CONDRICTIOS
+        // 13. PLACODERMOS Y CONDRICTIOS
         if (textoTaxonomia.includes("placodermi") || textoTaxonomia.includes("chondrichthyes") || textoTaxonomia.includes("actinopterygii")) {
             return {
                 tipo: "pez_armado",
@@ -516,8 +560,7 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-
-        // 13. ARTRÓPODOS
+                // 14. ARTRÓPODOS
         if (textoTaxonomia.includes("arthropoda") || textoTaxonomia.includes("trilobita") || textoTaxonomia.includes("radiodonta") || textoTaxonomia.includes("lobopodia")) {
             return {
                 tipo: "artropodo",
@@ -552,7 +595,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 14. MOLUSCOS Y CEFALÓPODOS
+        // 15. MOLUSCOS Y CEFALÓPODOS
         if (textoTaxonomia.includes("mollusca") || textoTaxonomia.includes("cephalopoda") || textoTaxonomia.includes("nectocaridida")) {
             return {
                 tipo: "cefalopodo",
@@ -588,67 +631,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-
-
-
-                // X. MARGINOCEFÁLICOS (Paquicefalosaurios y afines)
-        if (cadenaTaxonomica.includes("Pachycephalosauria") || cadenaTaxonomica.includes("Marginocephalia")) {
-            return {
-                tipo: "marginocefalo",
-                nombreHabilidad: "Ariete Biológico",
-                aplicarEfecto(atacante, objetivo) {
-                    let extraDano = 1.05;
-                    let mensaje = ` 🐾 ¡${atacante.nombre} despliega la fuerza brutal de su bóveda craneal!`;
-
-                    if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
-                        atacante.taxonUltimoUsado = true;
-                        
-                        // Ruleta ampliada a 6 mecánicas exclusivas para los cabezas de cúpula
-                        const variante = Math.floor(Math.random() * 6);
-                        
-                        if (variante === 0) {
-                            objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 2);
-                            extraDano += 0.30;
-                            mensaje += ` 💥 ¡CRÁNEO DE DOMO! Un testarazo macizo a máxima inercia que ignora el dolor y deja al rival severamente aturdido (2 turnos).`;
-                        } else if (variante === 1) {
-                            objetivo.estadoGuardia = "rota";
-                            objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 20;
-                            extraDano += 0.15;
-                            mensaje += ` 🛡️🔨 ¡EMBESTIDA ROMPESCUDOS! El impacto pulveriza la guardia rival y fractura su esquema táctico (-20 Táctica).`;
-                        } else if (variante === 2) {
-                            atacante.efectivos.defensa += 15;
-                            atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 20);
-                            mensaje += ` 🦴 ¡TESTARUDEZ EVOLUTIVA! Interpone su cráneo ultradenso como escudo. Absorbe la tensión, gana +15 Defensa permanente y recupera 20 de Fatiga.`;
-                        } else if (variante === 3) {
-                            extraDano += 0.45;
-                            atacante.efectivos.tactica = Math.max(1, atacante.efectivos.tactica - 10);
-                            mensaje += ` ☄️ ¡CARGA CIEGA! Se lanza como un proyectil vivo y macizo. El daño físico es colosal, pero sufre una ligera desorientación por el choque (-10 Táctica).`;
-                        } else if (variante === 4) {
-                            objetivo.fatiga = Math.max(0, objetivo.fatiga - 25);
-                            atacante.efectivos.ataque += 10;
-                            extraDano += 0.15;
-                            mensaje += ` 👑 ¡DOMINIO TERRITORIAL! Exhibe su potencia con un empuje intimidatorio. Drena 25 de fatiga al rival y gana +10 de Ataque permanente por pura adrenalina.`;
-                        } else {
-                            atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.10));
-                            objetivo.efectivos.velocidad = Math.max(1, objetivo.efectivos.velocidad - 15);
-                            mensaje += ` 💥 ¡ESTRUCTURA AMORTIGUADORA! Su anatomía cervical disipa la tensión del combate. Regenera un 10% de HP mientras el violento choque frena en seco al rival (-15 Vel).`;
-                        }
-                    }
-                    return { extraDano, mensajeTexto: mensaje };
-                }
-            };
-        }
-        
-
-
-
-
-
-
-        
-
-
-        // 15. INCLASIFICABLES Y BASALES (Animales Enigmáticos)
+        // 16. INCLASIFICABLES Y BASALES (Animales Enigmáticos)
         return {
             tipo: "general",
             nombreHabilidad: "Instinto Ancestral",
@@ -659,7 +642,6 @@ window.PALARENA_TAXON_COMBATE = {
                 if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
                     atacante.taxonUltimoUsado = true;
                     
-                    // Ruleta rusa evolutiva de 14 opciones para los basales
                     const variante = Math.floor(Math.random() * 14);
                     
                     if (variante === 0) {
@@ -732,5 +714,3 @@ window.PALARENA_TAXON_COMBATE = {
         };
     }
 };
-
-        
