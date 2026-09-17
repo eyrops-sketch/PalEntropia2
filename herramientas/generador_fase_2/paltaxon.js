@@ -556,6 +556,10 @@ window.PALTAXON = {
 "008_06":{
   ta1:"Animalia > Chordata > Synapsida > Therapsida > Anomodontia > Dicynodontia > Lystrosauridae > Lystrosaurus",
   ta2:"Sinápsido. Terápsido. Anomodonto. Dicinodonto. Lystrosáurido."
+},
+"008_07":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Marginocephalia > Pachycephalosauria > Pachycephalosauridae > Pachycephalosaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Marginocefálico. Paquicefalosaurio. Paquicefalosáurido."
 }
 };
 
