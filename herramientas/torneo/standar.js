@@ -682,17 +682,27 @@ window.PALARENA_STANDAR = (function() {
             danoFinal = resultadoDefensa.dano; 
         }
 
-                        // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL (Ajustada)
-        if (danoFinal > 0 && objetivo.tamano <= 30) {
-            if (codigoAccion === "A002") {
-                // Si es un ataque potente, lo destroza
-                danoFinal = Math.round(danoFinal * 2.0);
-                mensajeExtra += " 🦴💥 ¡FRAGILIDAD ESTRUCTURAL! El brutal ataque potente aplasta su anatomía ligera (Daño x2).";
-            } else {
-                // Ataques básicos o tácticos le duelen más, pero no lo vaporizan de un golpe
-                danoFinal = Math.round(danoFinal * 1.35);
+         // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL (Escalonada)
+        if (danoFinal > 0) {
+            if (objetivo.tamano <= 30) {
+                // Micro-dinosaurios (ej. Buitreraptor)
+                if (codigoAccion === "A002") {
+                    danoFinal = Math.round(danoFinal * 2.0);
+                    mensajeExtra += " 🦴💥 ¡FRAGILIDAD ESTRUCTURAL EXTREMA! El brutal ataque potente aplasta su anatomía ligera (Daño x2).";
+                } else {
+                    danoFinal = Math.round(danoFinal * 1.35);
+                }
+            } else if (objetivo.tamano <= 50) {
+                // Dinosaurios pequeños-ligeros (ej. Coelophysis)
+                if (codigoAccion === "A002") {
+                    danoFinal = Math.round(danoFinal * 1.50);
+                    mensajeExtra += " 🦴💥 ¡COMPLEXIÓN LIGERA! El ataque potente hace estragos en su estructura ósea (Daño x1.5).";
+                } else {
+                    danoFinal = Math.round(danoFinal * 1.15); // Un 15% extra de daño en golpes normales
+                }
             }
         }
+
 
             
 
