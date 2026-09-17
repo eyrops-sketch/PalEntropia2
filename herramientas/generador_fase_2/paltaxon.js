@@ -548,6 +548,10 @@ window.PALTAXON = {
 "008_04":{
   ta1:"Animalia > Mollusca > Cephalopoda > Nautiloidea > Endoceratoidea > Endoceratidae > Cameroceras",
   ta2:"Molusco. Cefalópodo. Nautiloideo. Endoceratoideo. Endocerátido."
+},
+"008_05":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Coelophysoidea > Coelophysidae > Coelophysis",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Celofisoideo. Celofísido."
 }
 };
 
