@@ -544,8 +544,20 @@ window.PALTAXON = {
  "008_03":{
   ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Sauropoda > Macronaria > Brachiosauridae > Brachiosaurus",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Saurópodo. Macronario. Braquiosáurido."
+},
+"008_04":{
+  ta1:"Animalia > Mollusca > Cephalopoda > Nautiloidea > Endoceratoidea > Endoceratidae > Cameroceras",
+  ta2:"Molusco. Cefalópodo. Nautiloideo. Endoceratoideo. Endocerátido."
 }
 };
+
+
+
+
+
+
+
+
 
 
 
