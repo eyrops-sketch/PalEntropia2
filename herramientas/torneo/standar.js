@@ -681,27 +681,32 @@ window.PALARENA_STANDAR = (function() {
             mensajeExtra += resultadoDefensa.mensaje;
             danoFinal = resultadoDefensa.dano; 
         }
-
-         // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL (Escalonada)
+       
+            
+            // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL (Escalonada y Pérdida de Inercia)
         if (danoFinal > 0) {
             if (objetivo.tamano <= 30) {
                 // Micro-dinosaurios (ej. Buitreraptor)
                 if (codigoAccion === "A002") {
-                    danoFinal = Math.round(danoFinal * 2.0);
-                    mensajeExtra += " 🦴💥 ¡FRAGILIDAD ESTRUCTURAL EXTREMA! El brutal ataque potente aplasta su anatomía ligera (Daño x2).";
+                    danoFinal = Math.round(danoFinal * 2.5);
+                    objetivo.fatiga = Math.max(0, objetivo.fatiga - 20);
+                    mensajeExtra += " 🦴💥 ¡FRAGILIDAD EXTREMA! El impacto lo hace volar por la arena. Sufre daño masivo (x2.5) y pierde el aliento (-20 Fatiga).";
                 } else {
-                    danoFinal = Math.round(danoFinal * 1.35);
+                    danoFinal = Math.round(danoFinal * 1.50);
                 }
             } else if (objetivo.tamano <= 50) {
-                // Dinosaurios pequeños-ligeros (ej. Coelophysis)
+                // Pesos pluma (ej. Coelophysis)
                 if (codigoAccion === "A002") {
-                    danoFinal = Math.round(danoFinal * 1.50);
-                    mensajeExtra += " 🦴💥 ¡COMPLEXIÓN LIGERA! El ataque potente hace estragos en su estructura ósea (Daño x1.5).";
+                    danoFinal = Math.round(danoFinal * 1.75);
+                    objetivo.fatiga = Math.max(0, objetivo.fatiga - 15);
+                    mensajeExtra += " 🦴💥 ¡COMPLEXIÓN LIGERA! El choque sacude su estructura ósea (Daño x1.75) y le roba 15 de fatiga por el violento empuje.";
                 } else {
-                    danoFinal = Math.round(danoFinal * 1.15); // Un 15% extra de daño en golpes normales
+                    danoFinal = Math.round(danoFinal * 1.25);
+                    objetivo.fatiga = Math.max(0, objetivo.fatiga - 5);
                 }
             }
         }
+
 
 
             
