@@ -108,9 +108,7 @@ window.PALARENA_STANDAR = (function() {
             tactica: baseTac * coefGeneral
         };
     }
-
-
-    function crearCombatiente(ficha, configPersonalizada = null) {
+        function crearCombatiente(ficha, configPersonalizada = null) {
         const config = configPersonalizada || configuracionGlobal;
         const multCompartido = Number((Math.random() * 9 + 1).toFixed(2));
         const efectivos = calcularStatsEfectivos(ficha, config);
@@ -157,7 +155,6 @@ window.PALARENA_STANDAR = (function() {
             efectos: [],
             frenesiAnunciado: false,
             rasgoEmergenteUsado: false,
-            // Nuevas banderas para rasgos modulares únicos
             rasgoDistraccionUsado: false,
             rasgoCamuflajeUsado: false,
             rasgoQuirurgicoUsado: false
@@ -219,9 +216,12 @@ window.PALARENA_STANDAR = (function() {
             config.fatiga_max,
             combatiente.fatiga + config.fatiga_regeneracion_turno
         );
-}
-
-    // --- MOTOR DE RASGOS EMERGENTES OFENSIVOS ---
+        // Reseteo del candado de sinergias para permitir una nueva por turno
+        if (combatiente.sinergias) {
+            combatiente.sinergias.actuoEsteTurno = false;
+        }
+    }
+        // --- MOTOR DE RASGOS EMERGENTES OFENSIVOS ---
     function evaluarRasgosEmergentes(atacante, objetivo, codigoAccion) {
         const stats = atacante.rawStats || {};
         const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
@@ -281,9 +281,9 @@ window.PALARENA_STANDAR = (function() {
         // 6. NUEVO: VELOCIDAD + MOVILIDAD >= 135 (Ataque Quirúrgico)
         const velMovSuma = (stats.e3 || 50) + (stats.e7 || 50);
         if (velMovSuma >= 135 && !atacante.rasgoQuirurgicoUsado && (codigoAccion === "A001" || codigoAccion === "A002" || codigoAccion === "A003")) {
-            if (Math.random() < 0.20) { // 20% estricto
+            if (Math.random() < 0.20) { 
                 atacante.rasgoQuirurgicoUsado = true;
-                const danoQuirurgico = Math.round(objetivo.hp_max * 0.15); // Daño directo quirúrgico
+                const danoQuirurgico = Math.round(objetivo.hp_max * 0.15); 
                 objetivo.hp = Math.max(0, objetivo.hp - danoQuirurgico);
                 objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 3);
                 return ` 🔪 ¡ATAQUE QUIRÚRGICO! (Vel+Mov >= 135) Su extrema agilidad le permite flanquear a la retaguardia. Asesta un tajo de precisión arrebatando ${danoQuirurgico} HP extras y causando hemorragia severa (3 turnos).`;
@@ -321,36 +321,21 @@ window.PALARENA_STANDAR = (function() {
         }
         
         if (danoEvadido) {
-            danoFinalResultante = 0; // Se anula el daño para el log final
+            danoFinalResultante = 0; 
         }
         
         return { mensaje: mensajeDefensa, dano: danoFinalResultante };
     }
-
-
-
-
         function ejecutarAccion(atacante, objetivo, codigoAccion) {
         const config = configuracionGlobal;
 
         // ---> GANCHO DE ANOMALÍAS ESTADÍSTICAS <---
         if (codigoAccion === "A001" || codigoAccion === "A002" || codigoAccion === "A003") {
             let resultadoAnomalia = { dano: 0, fatiga: 0, mensaje: "", registro: [] };
-            if (comprobarAnomaliaEstadistica(atacante, objetivo, resultadoAnomalia)) {
-                return resultadoAnomalia; // Corta aquí y devuelve la anomalía
+            if (typeof comprobarAnomaliaEstadistica === "function" && comprobarAnomaliaEstadistica(atacante, objetivo, resultadoAnomalia)) {
+                return resultadoAnomalia; 
             }
         }
-        // -----------------------------------------
-        
-        // ... aquí sigue tu código normal (switch, variables, etc.)
-
-
-      
-        
-        
-        
-        
-        
         
         if (atacante.turnosParalizado > 0) {
             atacante.turnosParalizado--;
@@ -518,8 +503,8 @@ window.PALARENA_STANDAR = (function() {
                     defensa: "fallo"
                 };
             }
-                                                 }
-        let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
+                    }
+                    let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
         let mensajeExtra = "";
         let bonusAccion = 1.0;
@@ -544,7 +529,7 @@ window.PALARENA_STANDAR = (function() {
         } else if (codigoAccion === "A002") {
             const multiCrit = Number(config.multiplicador_critico) || 1.0;
             const tacticaTotal = atacante.efectivos.tactica + (atacante.tacticaTemporal || 0);
-            const fatigaMinCrit = Number(config.fatiga_minima_critico) || 20;
+            const fatigaMinCrit = Number(config.fatiga_minima_ataque_potente) || 20;
             let probabilidadCritica = (Number(config.critico_base) || 10) + (tacticaTotal * (Number(config.critico_tactica) || 0.15));
             
             if (atacante.rivalidadVigente) {
@@ -689,37 +674,48 @@ window.PALARENA_STANDAR = (function() {
         const factorAleatorio = 1 + (Math.random() * (variacion * 2) - variacion);
         let danoFinal = Math.max(1, Math.round(danoReducido * factorAleatorio));
 
-        // --- APLICACIÓN DE DEFENSAS EMERGENTES (Tamaño) ---
+
+            // --- APLICACIÓN DE DEFENSAS EMERGENTES (Tamaño) ---
         const resultadoDefensa = evaluarDefensasEmergentes(atacante, objetivo, danoFinal);
         if (resultadoDefensa.mensaje) {
             mensajeExtra += resultadoDefensa.mensaje;
-            danoFinal = resultadoDefensa.dano; // Actualiza a 0 si evadió el daño
+            danoFinal = resultadoDefensa.dano; 
         }
         
-        objetivo.hp = Math.max(0, objetivo.hp - danoFinal);
-        if (objetivo.hp <= 0) {
-            objetivo.derrotado = true;
-        } else if (objetivo.hp > 0 && objetivo.derrotado) {
-            objetivo.derrotado = false; // Prevención si curó vida
-        }
-
         const iconoAccion = codigoAccion === "A002" ? "⚡" : (codigoAccion === "A003" ? "🎯" : "⚔️");
-        const textoDano = danoFinal > 0 ? ` Daño: ${danoFinal}` : ""; // Para no imprimir "Daño: 0" de golpe seco si evadió
+        const textoDano = danoFinal > 0 ? ` Daño: ${danoFinal}` : ""; 
         
-        return {
+        let resultadoFinal = {
             mensaje: `${iconoAccion} ${atacante.nombre} ejecuta ${codigoAccion} contra ${objetivo.nombre}${mensajeExtra}.${mensajeRuptura}${textoDano}`,
             dano: danoFinal,
             critico: critico
         };
-}
 
+        // ---> GANCHO DE SINERGIAS OFENSIVAS ANTES DEL DAÑO <---
+        if (typeof evaluarSinergiasStats === "function") {
+            evaluarSinergiasStats(atacante, objetivo, resultadoFinal, "atacante");
+        }
+
+        objetivo.hp = Math.max(0, objetivo.hp - (resultadoFinal.dano || 0));
+        
+        if (objetivo.hp <= 0) {
+            objetivo.derrotado = true;
+        } else if (objetivo.hp > 0 && objetivo.derrotado) {
+            objetivo.derrotado = false; 
+        }
+
+        // ---> GANCHO DE SINERGIAS DEFENSIVAS COMO RESPUESTA <---
+        if (typeof evaluarSinergiasStats === "function") {
+            evaluarSinergiasStats(objetivo, atacante, resultadoFinal, "defensor");
+        }
+        
+        return resultadoFinal;
+    }
 
     function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
         
-        // ELIMINADO EL BLOQUE INTRUSO DEL CAOS. La IA vuelve a ser inteligente por defecto.
-
         if (atacante.estadoCaotico && atacante.estadoCaotico > 0) {
             atacante.estadoCaotico--;
             if (Math.random() < (0.80 * factorImprevisible)) {
@@ -735,8 +731,6 @@ window.PALARENA_STANDAR = (function() {
         const objetivoHpPorcentaje = (objetivo.hp / objetivo.hp_max) * 100;
         
         let pesoAleatorioBase = Number(config.ia_peso_aleatorio) !== undefined && !isNaN(Number(config.ia_peso_aleatorio)) ? Number(config.ia_peso_aleatorio) : 0.40;
-        
-        // AQUÍ ESTÁ LA MAGIA: Tu base de la caja (0.4) por el factor aleatorio de la modalidad.
         const pesoAleatorio = Math.min(1.0, Math.max(0.0, pesoAleatorioBase * factorImprevisible));
 
         if (Math.random() < pesoAleatorio) {
@@ -808,6 +802,12 @@ window.PALARENA_STANDAR = (function() {
                 c.rasgoDistraccionUsado = false;
                 c.rasgoCamuflajeUsado = false;
                 c.rasgoQuirurgicoUsado = false;
+                if (c.sinergias) {
+                    c.sinergias.exitoReproductivo = false;
+                    c.sinergias.supervivenciaMulti = false;
+                    c.sinergias.reservaMetabolica = 0;
+                    c.sinergias.actuoEsteTurno = false;
+                }
             }
         });
     }
@@ -895,11 +895,7 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
-
-
-
-// ---> PEGAR AL FINAL DEL ARCHIVO STANDAR.JS <---
-function comprobarAnomaliaEstadistica(atacante, defensor, resultado) {
+ function comprobarAnomaliaEstadistica(atacante, defensor, resultado) {
     if (atacante.anomalia_usada || Math.random() > 0.10) return false;
     
     atacante.anomalia_usada = true;
@@ -925,7 +921,6 @@ function comprobarAnomaliaEstadistica(atacante, defensor, resultado) {
             break;
         case 3: 
             resultado.dano = Math.round(statsA.defensa * 1.8);
-            // CORRECCIÓN: Usamos tu sistema nativo de variables en lugar de una función inventada
             defensor.turnosAturdido = Math.max(defensor.turnosAturdido || 0, 1);
             resultado.registro = `🛡️ Golpe Estructural: ¡Usa su propio peso defensivo como arma y aturde al rival!`;
             break;
@@ -980,3 +975,147 @@ function comprobarAnomaliaEstadistica(atacante, defensor, resultado) {
     }
     return true; 
 }
+
+// =========================================================================
+// MÓDULO DE SINERGIAS DE STATS (Comportamientos Emergentes)
+// =========================================================================
+
+function agregarRegistroSinergia(resultado, texto) {
+    if (!resultado.registro) {
+        resultado.registro = texto;
+    } else if (Array.isArray(resultado.registro)) {
+        resultado.registro.push(texto);
+    } else {
+        resultado.registro = [resultado.registro, texto];
+    }
+}
+
+function evaluarSinergiasStats(sujeto, rival, resultado, rol) {
+    if (!sujeto.sinergias) {
+        sujeto.sinergias = {
+            exitoReproductivo: false,
+            supervivenciaMulti: false,
+            reservaMetabolica: 0,
+            actuoEsteTurno: false
+        };
+    }
+
+    if (sujeto.sinergias.actuoEsteTurno) return;
+
+    const st = sujeto.efectivos || {};
+    const atq = st.ataque || 50, def = st.defensa || 50, vel = st.velocidad || 50;
+    const res = st.resistencia || 50, tac = st.tactica || 50;
+    const rep = sujeto.rawStats ? (sujeto.rawStats.e7 || 50) : 50;
+    
+    const hpPct = sujeto.hp / sujeto.hp_max;
+    const fatigaPct = sujeto.fatiga / sujeto.fatiga_max;
+    let activada = false;
+
+    // ==========================================
+    // ROL OFENSIVO (Cuando el sujeto ataca)
+    // ==========================================
+    if (rol === "atacante") {
+        const rivalFatigaPct = rival.fatiga / rival.fatiga_max;
+
+        if (!activada && (atq + res + rep >= 170) && hpPct > 0.4 && fatigaPct < 0.25 && Math.random() < 0.20) {
+            resultado.dano = Math.round((resultado.dano || 0) * 1.3);
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 15);
+            agregarRegistroSinergia(resultado, `🦖 ¡IMPULSO VITAL! Convierte sus reservas fisiológicas en un último impulso ofensivo (+30% Daño) y recupera 15 Fatiga.`);
+            activada = true;
+        }
+        
+        if (!activada && (res + tac + vel >= 180) && (rival.hp / rival.hp_max) < 0.3 && Math.random() < 0.15) {
+            st.tactica += 10; st.velocidad += 5;
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 15);
+            agregarRegistroSinergia(resultado, `🌍 ¡PLASTICIDAD ECOLÓGICA EXTREMA! Adapta inmediatamente su comportamiento ante un rival crítico (+10 Tac, +5 Vel, +15 Fatiga).`);
+            activada = true;
+        }
+
+        if (!activada && (atq + tac >= 120) && (rivalFatigaPct < 0.2 || rival.turnosAturdido > 0) && Math.random() < 0.25) {
+            const extra = Math.round(atq * 0.35);
+            resultado.dano = (resultado.dano || 0) + extra;
+            agregarRegistroSinergia(resultado, `🎯 ¡PRECISIÓN OPORTUNISTA! Detecta una abertura vital en el rival y asesta ${extra} de daño extra.`);
+            activada = true;
+        }
+
+        if (!activada && (res + rep >= 120) && fatigaPct < 0.3 && sujeto.sinergias.reservaMetabolica < 2 && Math.random() < 0.30) {
+            sujeto.sinergias.reservaMetabolica++;
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 30);
+            agregarRegistroSinergia(resultado, `🔥 ¡RESERVA METABÓLICA! Moviliza sus reservas internas de supervivencia (+30 Fatiga).`);
+            activada = true;
+        }
+
+        if (!activada && (res + tac >= 120) && Math.random() < 0.15) {
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 10);
+            st.tactica += 5; 
+            agregarRegistroSinergia(resultado, `🌱 ¡PLASTICIDAD ECOLÓGICA! Modifica su estrategia adaptándose al entorno (+5 Tac, +10 Fatiga).`);
+            activada = true;
+        }
+    }
+
+    // ==========================================
+    // ROL DEFENSIVO (Cuando el sujeto recibe daño)
+    // ==========================================
+    if (rol === "defensor") {
+        const danoEntrante = resultado.dano || 0;
+
+        if (!activada && (res + def + rep >= 170) && hpPct < 0.25 && !sujeto.sinergias.supervivenciaMulti) {
+            sujeto.sinergias.supervivenciaMulti = true;
+            const cura = Math.round(sujeto.hp_max * 0.20);
+            sujeto.hp = Math.min(sujeto.hp_max, sujeto.hp + cura);
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 25);
+            if (sujeto.turnosHemorragia) sujeto.turnosHemorragia = 0;
+            if (sujeto.turnosAturdido) sujeto.turnosAturdido = 0;
+            agregarRegistroSinergia(resultado, `🧬 ¡SUPERVIVENCIA MULTIFACTORIAL! Reacción biológica límite (+${cura} HP, +25 Fatiga, purga de estados).`);
+            activada = true;
+        }
+
+        if (!activada && (vel + tac + res >= 170) && danoEntrante > 0 && (sujeto.hp - danoEntrante) < (sujeto.hp_max * 0.20) && Math.random() < 0.25) {
+            resultado.dano = Math.round(danoEntrante * 0.4);
+            st.velocidad += 10;
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 20);
+            agregarRegistroSinergia(resultado, `⚡ ¡RESPUESTA DE EMERGENCIA! Al borde del colapso, mitiga daño un 60% (+10 Vel, +20 Fatiga).`);
+            activada = true;
+        }
+
+        if (!activada && (rep + res >= 110) && hpPct < 0.20 && !sujeto.sinergias.exitoReproductivo) {
+            sujeto.sinergias.exitoReproductivo = true;
+            const cura = Math.round(sujeto.hp_max * 0.15);
+            sujeto.hp = Math.min(sujeto.hp_max, sujeto.hp + cura);
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 15);
+            agregarRegistroSinergia(resultado, `🧬 ¡ÉXITO REPRODUCTIVO! Respuesta biológica extrema (+${cura} HP, +15 Fatiga).`);
+            activada = true;
+        }
+
+        if (!activada && (vel + res >= 120) && danoEntrante > (sujeto.hp_max * 0.20) && Math.random() < 0.20) {
+            resultado.dano = 0;
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 10);
+            agregarRegistroSinergia(resultado, `🏃 ¡ESCAPE REACTIVO! Reflejos instantáneos le permiten evadir el impacto completo (+10 Fatiga).`);
+            activada = true;
+        }
+
+        if (!activada && (def + vel >= 120) && danoEntrante > 0 && Math.random() < 0.25) {
+            resultado.dano = Math.round(danoEntrante * 0.75);
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 10);
+            agregarRegistroSinergia(resultado, `🦴 ¡COMPENSACIÓN MORFOLÓGICA! Combina protección y movilidad mitigando el impacto un 25% (+10 Fatiga).`);
+            activada = true;
+        }
+
+        if (!activada && (rep + vel >= 110) && hpPct < 0.30 && Math.random() < 0.20) {
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 15);
+            st.velocidad += 5;
+            sujeto.hp = Math.min(sujeto.hp_max, sujeto.hp + Math.round(sujeto.hp_max * 0.05));
+            agregarRegistroSinergia(resultado, `🧬 ¡VITALIDAD REPRODUCTIVA! Moviliza recursos de emergencia (+5% HP, +5 Vel, +15 Fatiga).`);
+            activada = true;
+        }
+
+        if (!activada && (tac + vel >= 120) && danoEntrante > 0 && Math.random() < 0.20) {
+            st.velocidad += 5;
+            sujeto.fatiga = Math.min(sujeto.fatiga_max, sujeto.fatiga + 10);
+            agregarRegistroSinergia(resultado, `🧠 ¡APRENDIZAJE ADAPTATIVO! Analiza el ataque rival y optimiza su respuesta (+5 Vel, +10 Fatiga).`);
+            activada = true;
+        }
+    }
+
+    if (activada) sujeto.sinergias.actuoEsteTurno = true;
+    }
