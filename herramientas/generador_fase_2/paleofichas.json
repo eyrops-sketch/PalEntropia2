@@ -664,6 +664,12 @@
   "nombre": "Lystrosaurus",
   "dieta": "Herbívoro",
   "anatomia": "Terápsido herbívoro de cuerpo compacto y robusto, cráneo corto, hocico relativamente ancho, pico córneo y un par de colmillos superiores, con extremidades fuertes adaptadas a sostener un cuerpo pesado"
+  },
+  {
+  "codigo": "008_07",
+  "nombre": "Pachycephalosaurus",
+  "dieta": "Omnívoro",
+  "anatomia": "Dinosaurio bípedo de cuerpo compacto, con extremidades posteriores robustas, brazos cortos, cola rígida y un cráneo característico con una gruesa cúpula ósea en la parte superior, acompañado de pequeñas protuberancias alrededor de la región posterior del cráneo"
   }
 ]
 
