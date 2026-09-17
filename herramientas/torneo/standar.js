@@ -925,26 +925,30 @@ function comprobarAnomaliaEstadistica(atacante, defensor, resultado) {
             break;
         case 3: 
             resultado.dano = Math.round(statsA.defensa * 1.8);
-            window.PALARENA_STANDAR.aplicarEfecto(defensor, "aturdimiento", 1);
+            // CORRECCIÓN: Usamos tu sistema nativo de variables en lugar de una función inventada
+            defensor.turnosAturdido = Math.max(defensor.turnosAturdido || 0, 1);
             resultado.registro = `🛡️ Golpe Estructural: ¡Usa su propio peso defensivo como arma y aturde al rival!`;
             break;
-        case 4: 
+        case 4: {
             const drenoFatiga = Math.round((statsA.ataque + statsA.tactica) / 2);
             defensor.fatiga = Math.max(0, defensor.fatiga - drenoFatiga);
             resultado.dano = 0; 
             resultado.registro = `😤 Presión Asfixiante: Intimida brutalmente y drena ${drenoFatiga} puntos de fatiga.`;
             break;
-        case 5: 
+        }
+        case 5: {
             const bonoDef = Math.round(statsA.resistencia * 0.5);
             statsA.defensa += bonoDef;
             atacante.hp = Math.min(atacante.hp_max, atacante.hp + (atacante.hp_max * 0.1));
             resultado.registro = `🧬 Metabolismo Blindado: Endurece su coraza permanentemente (+${bonoDef} Def) y cura un 10% de HP.`;
             break;
-        case 6: 
+        }
+        case 6: {
             const fatigaPerdida = atacante.fatiga_max - atacante.fatiga;
             atacante.hp = Math.min(atacante.hp_max, atacante.hp + fatigaPerdida);
             resultado.registro = `🩸 Resiliencia Adaptativa: ¡Convierte su agotamiento en vitalidad y recupera ${fatigaPerdida} HP!`;
             break;
+        }
         case 7: 
             if (statsA.tactica > statsD.tactica) {
                 statsD.ataque = Math.round(statsD.ataque * 0.7);
@@ -959,31 +963,20 @@ function comprobarAnomaliaEstadistica(atacante, defensor, resultado) {
             atacante.defendiendo = true; 
             resultado.registro = `⚡ Reflejo Perfecto: ¡Activa defensa instantánea y lanza un contragolpe fulminante!`;
             break;
-        case 9: 
+        case 9: {
             const costeHp = Math.round(atacante.hp * 0.15);
             atacante.hp -= costeHp;
             resultado.dano = Math.round(statsA.velocidad * 2.2);
             resultado.registro = `🚀 Embestida Inercial: ¡Sacrifica ${costeHp} HP para arrojarse a velocidad letal!`;
             break;
-        case 10: 
+        }
+        case 10: {
             const arrayStats = [statsA.ataque, statsA.defensa, statsA.velocidad, statsA.resistencia, statsA.tactica].sort((a,b) => b - a);
             resultado.dano = Math.round((arrayStats[0] + arrayStats[1] + arrayStats[2]) * 1.1);
             atacante.fatiga = 0; 
             resultado.registro = `💥 SOBRECARGA EVOLUTIVA 💥: ¡Un golpe apocalíptico de ${resultado.dano} combinando sus 3 mejores atributos, pero queda agotado (Fatiga 0)!`;
             break;
+        }
     }
     return true; 
 }
-
-
-
-
-
-
-
-
-
-
-
- 
-            
