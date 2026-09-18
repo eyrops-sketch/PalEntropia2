@@ -676,7 +676,52 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-                // 17. INCLASIFICABLES Y BASALES (Animales Enigmáticos)
+
+
+
+               // 17. XENARTROS Y MEGAFAUNA ACORAZADA (Perezosos terrestres, Gliptodontes)
+        if (textoTaxonomia.includes("xenarthra") || textoTaxonomia.includes("pilosa") || textoTaxonomia.includes("cingulata") || textoTaxonomia.includes("megatherium") || textoTaxonomia.includes("glyptodon") || textoTaxonomia.includes("doedicurus") || textoTaxonomia.includes("perezoso") || textoTaxonomia.includes("armadillo")) {
+            return {
+                tipo: "xenartro",
+                nombreHabilidad: "Poderío Xenartro",
+                aplicarEfecto(atacante, objetivo) {
+                    let extraDano = 1.15;
+                    atacante.efectivos.defensa += 5;
+                    let mensaje = ` 🦥 ¡${atacante.nombre} hace valer su masa colosal y sus formidables defensas naturales para castigar al rival!`;
+
+                    if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
+                        atacante.taxonUltimoUsado = true;
+                        const variante = Math.random();
+                        if (variante < 0.25) {
+                            objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 3);
+                            objetivo.estadoGuardia = "rota";
+                            extraDano += 0.35;
+                            mensaje += ` 🦥🩸 ¡GARRAS DE GUADAÑA! (Aparición única) Un zarpazo masivo con sus enormes garras excavadoras destroza la guardia y causa un desangrado profundo (3 turnos).`;
+                        } else if (variante < 0.50) {
+                            objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 2);
+                            extraDano += 0.25;
+                            mensaje += ` 🦥💥 ¡GOLPE DE MASA! (Aparición única) Ya sea con una maza caudal o dejándose caer con todo su peso, aplasta al enemigo dejándolo severamente aturdido por 2 turnos.`;
+                        } else if (variante < 0.75) {
+                            atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.15));
+                            atacante.efectivos.resistencia += 20;
+                            mensaje += ` 🛡️🦴 ¡CORAZA DÉRMICA! (Aparición única) Su piel reforzada con osteodermos o caparazón absorbe el castigo, curando un 15% de vida y subiendo su resistencia.`;
+                        } else {
+                            atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 50);
+                            objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 15;
+                            mensaje += ` 🦥💤 ¡METABOLISMO DE AHORRO! (Aparición única) Su lenta biología basal le permite recuperar 50 de fatiga de golpe, frustrando los intentos del rival por agotarlo.`;
+                        }
+                    }
+                    return { extraDano, mensajeTexto: mensaje };
+                }
+            };
+        }
+     
+
+     
+     
+     
+     
+        // 18. INCLASIFICABLES Y BASALES (Animales Enigmáticos)
         return {
             tipo: "general",
             nombreHabilidad: "Instinto Ancestral",
