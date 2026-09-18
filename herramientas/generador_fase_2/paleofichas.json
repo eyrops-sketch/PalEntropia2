@@ -676,6 +676,12 @@
   "nombre": "Estemmenosuchus",
   "dieta": "Herbívoro",
   "anatomia": "Gran terápsido de cuerpo robusto y patas fuertes, con cráneo voluminoso provisto de llamativas protuberancias óseas y dientes adaptados principalmente a una dieta vegetal"
+  },
+  {
+  "codigo": "008_09",
+  "nombre": "Ornithomimus",
+  "dieta": "Omnívoro",
+  "anatomia": "Dinosaurio terópodo de cuerpo ligero y aspecto corredor, con cuello largo, cabeza pequeña y desdentada, pico córneo, brazos relativamente largos con manos de tres dedos y extremidades posteriores largas adaptadas a la carrera"
   }
 ]
 
