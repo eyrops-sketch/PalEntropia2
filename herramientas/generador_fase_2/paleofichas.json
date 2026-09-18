@@ -682,6 +682,12 @@
   "nombre": "Ornithomimus",
   "dieta": "Omnívoro",
   "anatomia": "Dinosaurio terópodo de cuerpo ligero y aspecto corredor, con cuello largo, cabeza pequeña y desdentada, pico córneo, brazos relativamente largos con manos de tres dedos y extremidades posteriores largas adaptadas a la carrera"
+  },
+  {
+  "codigo": "008_10",
+  "nombre": "Glyptodon",
+  "dieta": "Herbívoro",
+  "anatomia": "Gran mamífero xenartro de cuerpo bajo y extremadamente robusto, cubierto por una pesada coraza de osteodermos fusionados, con cabeza protegida por placas óseas, patas cortas y fuertes y una cola robusta"
   }
 ]
 
