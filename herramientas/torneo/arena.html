@@ -95,9 +95,8 @@
             <div id="c2Stats" class="stats"></div>
             <div id="c2Estado" class="estado">—</div>
         </article>
-    </section>
-    
-    <section id="acciones" class="panel">
+        </section>
+           <section id="acciones" class="panel">
         <h2>🎯 Acciones</h2>
         <div class="botones-acciones">
             <button id="botonA001" class="accion" type="button" disabled>⚔️ Ataque básico</button>
@@ -115,7 +114,7 @@
         </div>
         <div id="registroCombate" class="registro-combate"><div class="registro-vacio">El combate todavía no ha comenzado.</div></div>
     </section>
-        <section id="resultado" class="panel resultado-oculto">
+    <section id="resultado" class="panel resultado-oculto">
         <div id="resultadoIcono" class="resultado-icono">🏆</div>
         <h2 id="resultadoTitulo">—</h2>
         <div id="resultadoTexto">—</div>
@@ -197,6 +196,7 @@
 <script src="../generador_fase_2/buscaruta.js"></script>
 <script src="loadimagen.js"></script>
 <script>
+
 const RUTA_MASTER = "../generador_fase_2/master.csv", RUTA_PALEOFICHAS = "../generador_fase_2/paleofichas.json";
 let fichas = [], nombresPaleofichas = {}, ficha1 = null, ficha2 = null, combate = null, combatiente1 = null, combatiente2 = null;
 let combateActivo = false, controlManual = 1, serieActiva = false, serieTerminada = false, partidoRegistrado = false;
@@ -215,6 +215,13 @@ const botonAbrirGuiaCombate = document.getElementById("botonAbrirGuiaCombate"), 
 const labelModalidadActual = document.getElementById("labelModalidadActual");
 const controlesManual = document.querySelectorAll('input[name="controlManual"]');
 const botonCambiar1 = document.getElementById("botonCambiar1"), botonCambiar2 = document.getElementById("botonCambiar2");
+
+function resetPanelResultado() {
+    document.getElementById("resultadoIcono").textContent = "⚔️";
+    document.getElementById("resultadoTitulo").textContent = "En combate";
+    document.getElementById("resultadoTexto").textContent = "El enfrentamiento está en curso...";
+    document.getElementById("resultado").classList.add("resultado-oculto");
+}
 
 function obtenerReglasTorneo() {
     const g = localStorage.getItem(CLAVE_REGLAS);
@@ -331,7 +338,8 @@ codigo2.addEventListener("input", () => { actualizarNombre(codigo2, nombre2); lo
 botonCambiar1.addEventListener("click", () => { codigo1.readOnly = !codigo1.readOnly; codigo1.focus(); mostrarMensaje(codigo1.readOnly ? "Combatiente 1 bloqueado." : "Introduce un nuevo código J1 para el Combatiente 1."); });
 botonCambiar2.addEventListener("click", () => { codigo2.readOnly = !codigo2.readOnly; codigo2.focus(); mostrarMensaje(codigo2.readOnly ? "Combatiente 2 bloqueado." : "Introduce un nuevo código J1 para el Combatiente 2."); });
 
-controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
+
+ controlesManual.forEach(ctrl => ctrl.addEventListener("change", () => { 
     controlManual = Number(ctrl.value); 
     actualizarRolesVisuales();
     if (combateActivo) activarBotones(); 
@@ -413,6 +421,7 @@ async function prepararCombate() {
     const reg = obtenerReglasTorneo(); partidosSerie = Number(reg.partidosSerie) || 1; victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
     victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = partidosSerie > 1; serieTerminada = false; partidoRegistrado = false; actualizarInterfazSerie();
     try {
+        resetPanelResultado();
         botonNuevoCombate.style.display = "none";
         botonNuevoCombate.disabled = true;
         
@@ -436,7 +445,7 @@ async function prepararSerie() {
     victoriasNecesarias = Math.floor(partidosSerie / 2) + 1;
     victorias1 = 0; victorias2 = 0; partidoActual = 1; serieActiva = true; serieTerminada = false; partidoRegistrado = false;
     
-    document.getElementById("resultado").classList.add("resultado-oculto");
+    resetPanelResultado();
     botonNuevoCombate.style.display = "none";
     botonNuevoCombate.disabled = true;
     
@@ -448,7 +457,7 @@ async function prepararSerie() {
 async function iniciarPartidoSerie() {
     if (!serieActiva || serieTerminada) return;
     
-    document.getElementById("resultado").classList.add("resultado-oculto");
+    resetPanelResultado();
     botonNuevoCombate.style.display = "none";
     botonNuevoCombate.disabled = true;
     
@@ -465,10 +474,9 @@ async function iniciarPartidoSerie() {
         mostrarMensaje("Partido " + partidoActual + " preparado correctamente."); actualizarInterfazSerie();
         setTimeout(() => { if (combateActivo) resolverTurnoInicialAutomaticoIA(); }, 500);
     } catch (e) { combateActivo = false; mostrarMensaje("❌ Error al preparar el partido."); }
-}
+    }
 
-
-function mostrarCombatientes() {
+    function mostrarCombatientes() {
     if (!combate || !combatiente1 || !combatiente2) return;
     const reg = obtenerReglasTorneo();
     const nombreModoTexto = reg.tipoCombate ? reg.tipoCombate.charAt(0).toUpperCase() + reg.tipoCombate.slice(1).replace(/_/g, ' ') : "Normal";
@@ -576,9 +584,10 @@ function resolverTurnoInicialAutomaticoIA() {
         activarBotones();
         añadirRegistro("🎮 ¡Ganas la iniciativa! Tu turno para actuar.");
     }
-    }
+}
 
-    function ejecutarAccionJugador(cod) {
+
+     function ejecutarAccionJugador(cod) {
     if (!combateActivo || !combate) return;
     const at = controlManual === 1 ? combatiente1 : combatiente2, ob = controlManual === 1 ? combatiente2 : combatiente1;
     const cfg = window.PALARENA_STANDAR.configuracion, pc = Number(cfg.multiplicador_critico) > 1.0;
@@ -652,7 +661,13 @@ function procesarTurnoAuto(regs) {
     mostrarCombatientes();
 }
 
-function finalizarInterfaz(res) { combateActivo = false; desactivarBotones(); mostrarResCombate(res); if (serieActiva && !partidoRegistrado) registrarResSerie(res && res.ganador); }
+
+
+
+
+
+
+ function finalizarInterfaz(res) { combateActivo = false; desactivarBotones(); mostrarResCombate(res); if (serieActiva && !partidoRegistrado) registrarResSerie(res && res.ganador); }
 
 function registrarResSerie(gRes) {
     if (!serieActiva || serieTerminada || partidoRegistrado) return;
@@ -712,19 +727,22 @@ function limpiarRegistro() { document.getElementById("registroCombate").innerHTM
 function añadirRegistro(txt) { const reg = document.getElementById("registroCombate"), lin = document.createElement("div"); lin.className = "linea-registro"; lin.textContent = txt; reg.appendChild(lin); reg.scrollTop = reg.scrollHeight; }
 function mostrarMensaje(txt) { mensajeConfiguracion.textContent = txt; }
 
-
-
 botonNuevoCombate.addEventListener("click", () => {
     // Escudo: si el combate sigue activo, ignorar el clic por completo
     if (combateActivo) return;
     
     if (serieActiva && !serieTerminada) {
-        // Candado activo de inmediato al pedir el siguiente asalto
+        // Candado activo y reinicio visual para el combate en curso
+        resetPanelResultado();
         botonNuevoCombate.style.display = "none";
         botonNuevoCombate.disabled = true;
         iniciarPartidoSerie();
         return;
     }
+    
+    document.getElementById("resultadoIcono").textContent = "🏁";
+    document.getElementById("resultadoTitulo").textContent = "Serie finalizada";
+    document.getElementById("resultadoTexto").textContent = "Vuelve a los cruces para continuar.";
     document.getElementById("resultado").classList.add("resultado-oculto");
     mostrarMensaje("Serie finalizada. Vuelve a los cruces para el siguiente emparejamiento.");
 });
@@ -979,8 +997,6 @@ document.getElementById("botonCopiarLog").addEventListener("click", () => {
 </body>
 </html>
 
+
     
-
-
-
     
