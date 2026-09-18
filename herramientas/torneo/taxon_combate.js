@@ -1,4 +1,4 @@
-/*
+ /*
 ========================================================
 PALARENA — TAXÓN COMBATE v4.0 (Estados Secundarios Únicos y Ampliados)
 PalEntropía
@@ -89,8 +89,45 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
+        
 
-        // 3. TERÓPODOS Y SUPERDEPREDADORES
+
+
+                // 3. ORNITOMIMOSAURIOS (Ornitomimos)
+        if (textoTaxonomia.includes("ornithomimosauria") || textoTaxonomia.includes("ornithomimidae") || textoTaxonomia.includes("ornithomimus") || textoTaxonomia.includes("gallimimus") || textoTaxonomia.includes("struthiomimus") || textoTaxonomia.includes("deinocheirus") || textoTaxonomia.includes("pelecanimimus") || textoTaxonomia.includes("garudimimus") || textoTaxonomia.includes("harpymimus") || textoTaxonomia.includes("ansermimus") || textoTaxonomia.includes("ornitomimo")) {
+            return {
+                tipo: "ornitomimo",
+                nombreHabilidad: "Hostigamiento Veloz",
+                aplicarEfecto(atacante, objetivo) {
+                    let extraDano = 1.10;
+                    atacante.efectivos.velocidad += 5;
+                    let mensaje = ` 💨 ¡${atacante.nombre} despliega su asombrosa velocidad aviana, hostigando con una rápida ráfaga de patadas y golpes de pico!`;
+
+                    if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
+                        atacante.taxonUltimoUsado = true;
+                        const variante = Math.random();
+                        if (variante < 0.25) {
+                            extraDano += 0.35;
+                            objetivo.estadoGuardia = "rota";
+                            mensaje += ` 🌪️💥 ¡PATADA VOLADORA! (Aparición única) Aprovecha su aceleración máxima y lanza una patada letal que rompe la guardia rival.`;
+                        } else if (variante < 0.50) {
+                            objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 20;
+                            objetivo.estadoCaotico = (objetivo.estadoCaotico || 0) + 1;
+                            mensaje += ` 🧠💨 ¡CARRERA ERRÁTICA! (Aparición única) Corre en círculos mareando a ${objetivo.nombre}, reduciendo su táctica y sumiéndolo en caos.`;
+                        } else if (variante < 0.75) {
+                            atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 30);
+                            mensaje += ` 🪶 ¡EVASIÓN PERFECTA! (Aparición única) Sus formidables reflejos le permiten evadir el esfuerzo físico, recuperando 30 de fatiga.`;
+                        } else {
+                            objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 1);
+                            mensaje += ` 🎯 ¡GOLPE DE PICO! (Aparición única) Finta con su largo cuello y asesta un golpe aturdidor en un punto ciego (aturdido 1 turno).`;
+                        }
+                    }
+                    return { extraDano, mensajeTexto: mensaje };
+                }
+            };
+        }
+
+        // 4. TERÓPODOS Y SUPERDEPREDADORES
         if (textoTaxonomia.includes("theropoda") || textoTaxonomia.includes("terópodo")) {
             return {
                 tipo: "teropodo",
@@ -124,7 +161,8 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-                // 4. SAURÓPODOS / CUELLOS LARGOS
+
+        // 5. SAURÓPODOS / CUELLOS LARGOS
         if (textoTaxonomia.includes("sauropoda") || textoTaxonomia.includes("sauropodomorpha") || textoTaxonomia.includes("saurópodo")) {
             return {
                 tipo: "sauropodo",
@@ -161,7 +199,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 5. TIREÓFOROS
+            // 6. TIREÓFOROS
         if (textoTaxonomia.includes("thyreophora") || textoTaxonomia.includes("ankylosauria") || textoTaxonomia.includes("stegosauria") || textoTaxonomia.includes("tireóforo")) {
             return {
                 tipo: "tireoforo",
@@ -197,7 +235,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 6. CERATÓPSIDOS
+        // 7. CERATÓPSIDOS
         if (textoTaxonomia.includes("ceratopsia") || textoTaxonomia.includes("ceratopsidae") || textoTaxonomia.includes("ceratopsio")) {
             return {
                 tipo: "ceratopsido",
@@ -232,8 +270,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
                 
-        
-                  // 7.0 MARGINOCEFÁLICOS (Paquicefalosaurios y afines)
+        // 8. MARGINOCEFÁLICOS (Paquicefalosaurios y afines)
         if (textoTaxonomia.includes("pachycephalosauria") || textoTaxonomia.includes("marginocephalia")) {
             return {
                 tipo: "marginocefalo",
@@ -279,20 +316,7 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        // 7.1 ORNITÓPODOS
+                // 9. ORNITÓPODOS
         if (textoTaxonomia.includes("ornithischia") || textoTaxonomia.includes("hadrosauridae") || textoTaxonomia.includes("ornitópodo")) {
             return {
                 tipo: "ornitopodo",
@@ -329,7 +353,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 8. COCODRILOMORFOS
+        // 10. COCODRILOMORFOS
         if (textoTaxonomia.includes("crocodylomorpha") || textoTaxonomia.includes("cocodrilomorfo")) {
             return {
                 tipo: "cocodrilomorfo",
@@ -364,7 +388,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 9. SINÁPSIDOS Y MAMÍFEROS
+        // 11. SINÁPSIDOS Y MAMÍFEROS
         if (textoTaxonomia.includes("synapsida") || textoTaxonomia.includes("sinápsido") || textoTaxonomia.includes("mammalia")) {
             
             // Dientes de sable / Gorgonópsidos
@@ -437,7 +461,9 @@ window.PALARENA_TAXON_COMBATE = {
                     }
                 };
             }
-            // Sinápsidos generales
+
+
+                    // Sinápsidos generales
             return {
                 tipo: "sinapsido_general",
                 nombreHabilidad: "Astucia de Sinápsido",
@@ -471,7 +497,8 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-                // 10. REPTILES MARINOS
+
+        // 12. REPTILES MARINOS
         if (textoTaxonomia.includes("ichthyosauria") || textoTaxonomia.includes("sauropterygia") || textoTaxonomia.includes("mosasauroidea")) {
             return {
                 tipo: "marino",
@@ -508,7 +535,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 11. TEMNOSPÓNDILOS Y ANFIBIOS
+        // 13. TEMNOSPÓNDILOS Y ANFIBIOS
         if (textoTaxonomia.includes("temnospondyli") || textoTaxonomia.includes("lissamphibia") || textoTaxonomia.includes("nectridea") || textoTaxonomia.includes("anfibio")) {
             return {
                 tipo: "temnospondyli",
@@ -544,7 +571,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 12. PLACODERMOS Y CONDRICTIOS
+        // 14. PLACODERMOS Y CONDRICTIOS
         if (textoTaxonomia.includes("placodermi") || textoTaxonomia.includes("chondrichthyes") || textoTaxonomia.includes("actinopterygii")) {
             return {
                 tipo: "pez_armado",
@@ -578,7 +605,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 13. ARTRÓPODOS
+        // 15. ARTRÓPODOS
         if (textoTaxonomia.includes("arthropoda") || textoTaxonomia.includes("trilobita") || textoTaxonomia.includes("radiodonta") || textoTaxonomia.includes("lobopodia")) {
             return {
                 tipo: "artropodo",
@@ -613,7 +640,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 14. MOLUSCOS Y CEFALÓPODOS
+        // 16. MOLUSCOS Y CEFALÓPODOS
         if (textoTaxonomia.includes("mollusca") || textoTaxonomia.includes("cephalopoda") || textoTaxonomia.includes("nectocaridida")) {
             return {
                 tipo: "cefalopodo",
@@ -649,21 +676,7 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-
-
-
-              
-        
-
-
-
-
-
-
-        
-
-
-        // 15. INCLASIFICABLES Y BASALES (Animales Enigmáticos)
+                // 17. INCLASIFICABLES Y BASALES (Animales Enigmáticos)
         return {
             tipo: "general",
             nombreHabilidad: "Instinto Ancestral",
@@ -747,5 +760,3 @@ window.PALARENA_TAXON_COMBATE = {
         };
     }
 };
-
-        
