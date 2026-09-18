@@ -356,9 +356,16 @@ window.PALVIDEO = {
     },
     "006_13":{
     video:"https://youtube.com/shorts/WUXhyo2i7WM?feature=share"
+    },
+    "006_14":{
+    video:"https://youtube.com/shorts/DeXiv6DnvWo?feature=share"
     }
 
 };
+
+
+
+
 
 
 
