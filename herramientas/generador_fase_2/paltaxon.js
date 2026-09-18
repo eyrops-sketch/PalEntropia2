@@ -564,6 +564,10 @@ window.PALTAXON = {
 "008_08":{
   ta1:"Animalia > Chordata > Synapsida > Therapsida > Dinocephalia > Estemmenosuchidae > Estemmenosuchus",
   ta2:"Sinápsido. Terápsido. Dinocefaliano. Estemmenosúquido."
+},
+"008_09":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Coelurosauria > Ornithomimosauria > Ornithomimidae > Ornithomimus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Celurosaurio. Ornitomimosaurio. Ornitomímido."
 }
 
   
