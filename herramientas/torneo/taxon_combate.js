@@ -388,11 +388,90 @@ window.PALARENA_TAXON_COMBATE = {
             };
         }
 
-        // 11. SINÁPSIDOS Y MAMÍFEROS
+
+
+
+
+
+
+
+
+        // 11. SINÁPSIDOS Y MAMÍFEROS (Bloque Completo y Variado)
         if (textoTaxonomia.includes("synapsida") || textoTaxonomia.includes("sinápsido") || textoTaxonomia.includes("mammalia")) {
             
-            // Dientes de sable / Gorgonópsidos
-            if (textoTaxonomia.includes("smilodon") || textoTaxonomia.includes("machairodontinae") || textoTaxonomia.includes("gorgonopsia")) {
+            // 11.1. XENARTROS Y MEGAFAUNA ACORAZADA (Perezosos terrestres, Gliptodontes)
+            if (textoTaxonomia.includes("xenarthra") || textoTaxonomia.includes("pilosa") || textoTaxonomia.includes("cingulata") || textoTaxonomia.includes("megatherium") || textoTaxonomia.includes("glyptodon") || textoTaxonomia.includes("doedicurus") || textoTaxonomia.includes("perezoso") || textoTaxonomia.includes("armadillo")) {
+                return {
+                    tipo: "xenartro",
+                    nombreHabilidad: "Poderío Xenartro",
+                    aplicarEfecto(atacante, objetivo) {
+                        let extraDano = 1.15;
+                        atacante.efectivos.defensa += 5;
+                        let mensaje = ` 🦥 ¡${atacante.nombre} hace valer su masa colosal y sus formidables defensas naturales para castigar al rival!`;
+
+                        if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
+                            atacante.taxonUltimoUsado = true;
+                            const variante = Math.random();
+                            if (variante < 0.25) {
+                                objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 3);
+                                objetivo.estadoGuardia = "rota";
+                                extraDano += 0.35;
+                                mensaje += ` 🦥🩸 ¡GARRAS DE GUADAÑA! (Aparición única) Un zarpazo masivo que destroza la guardia y causa un desangrado profundo (3 turnos).`;
+                            } else if (variante < 0.50) {
+                                objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 2);
+                                extraDano += 0.25;
+                                mensaje += ` 🦥💥 ¡GOLPE DE MASA! (Aparición única) Aplasta al enemigo dejándolo severamente aturdido por 2 turnos.`;
+                            } else if (variante < 0.75) {
+                                atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.15));
+                                atacante.efectivos.resistencia += 20;
+                                mensaje += ` 🛡️🦴 ¡CORAZA DÉRMICA! (Aparición única) Su piel reforzada absorbe el castigo, curando un 15% de vida y subiendo su resistencia.`;
+                            } else {
+                                atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 50);
+                                objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 15;
+                                mensaje += ` 🦥💤 ¡METABOLISMO DE AHORRO! (Aparición única) Recupera 50 de fatiga de golpe, frustrando los intentos de agotarle.`;
+                            }
+                        }
+                        return { extraDano, mensajeTexto: mensaje };
+                    }
+                };
+            }
+
+            // 11.2. GIGANTES SUPERPESADOS (Indricotherium / Paraceratherium / Titanotheres)
+            if (textoTaxonomia.includes("indricotherium") || textoTaxonomia.includes("paraceratherium") || textoTaxonomia.includes("brontotheriidae") || textoTaxonomia.includes("embolotherium")) {
+                return {
+                    tipo: "gigante_superpesado",
+                    nombreHabilidad: "Tonelería Titánica",
+                    aplicarEfecto(atacante, objetivo) {
+                        let extraDano = 1.35;
+                        objetivo.estadoGuardia = "rota";
+                        let mensaje = ` 🦣🏔️ ¡${atacante.nombre} despliega una mole colosal de toneladas, aplastando cualquier intento de resistencia con su pura inercia!`;
+
+                        if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
+                            atacante.taxonUltimoUsado = true;
+                            const variante = Math.random();
+                            if (variante < 0.25) {
+                                objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 2);
+                                extraDano += 0.40;
+                                mensaje += ` ⛰️💥 ¡PISOTÓN SÍSMICO SUPREMO! (Aparición única) El suelo tiembla bajo su peso, rompiendo la guardia y aturdiendo al rival 2 turnos.`;
+                            } else if (variante < 0.50) {
+                                atacante.efectivos.defensa += 15;
+                                extraDano += 0.25;
+                                mensaje += ` 🛡️🐘 ¡MASA IMPENETRABLE! (Aparición única) Su inmensa altura y volumen anulan los ataques frontales, elevando su defensa de forma permanente.`;
+                            } else if (variante < 0.75) {
+                                objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 35;
+                                mensaje += ` 🌳👁️ ¡BARRIDO DE COPA! (Aparición única) Un impacto devastador a altura descomunal que arruina la táctica del rival (-35).`;
+                            } else {
+                                atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.15));
+                                mensaje += ` 🍃💪 ¡VIGOR VEGETARIANO! (Aparición única) Su descomunal reserva vital le regenera un 15% de salud al canalizar su energía.`;
+                            }
+                        }
+                        return { extraDano, mensajeTexto: mensaje };
+                    }
+                };
+            }
+
+            // 11.3. DIENTES DE SABLE Y GORGONÓPSIDOS (Depredadores de colmillo letal)
+            if (textoTaxonomia.includes("smilodon") || textoTaxonomia.includes("machairodontinae") || textoTaxonomia.includes("gorgonopsia") || textoTaxonomia.includes("thylacosmilus")) {
                 return {
                     tipo: "sable",
                     nombreHabilidad: "Colmillos Perforantes",
@@ -426,15 +505,16 @@ window.PALARENA_TAXON_COMBATE = {
                     }
                 };
             }
-            // Gigantes herbívoros (Mamuts, Dinocerata)
-            if (textoTaxonomia.includes("proboscidea") || textoTaxonomia.includes("mammuthus") || textoTaxonomia.includes("dinocerata") || textoTaxonomia.includes("pantodonta")) {
+            
+            // 11.4. PROBOSCÍDEOS Y RINOCERONTES LANUDOS (Gigantes de la tundra / Tonelaje pesado)
+            if (textoTaxonomia.includes("proboscidea") || textoTaxonomia.includes("mammuthus") || textoTaxonomia.includes("rhinoceros") || textoTaxonomia.includes("coelodonta") || textoTaxonomia.includes("elasmotherium") || textoTaxonomia.includes("dinocerata") || textoTaxonomia.includes("pantodonta")) {
                 return {
-                    tipo: "proboscideo",
-                    nombreHabilidad: "Carga de Gigante",
+                    tipo: "proboscideo_rinoceronte",
+                    nombreHabilidad: "Carga Acorazada",
                     aplicarEfecto(atacante, objetivo) {
                         let extraDano = 1.25;
                         objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 1);
-                        let mensaje = ` 🐘 ¡${atacante.nombre} embiste con todo su tonelaje mamaliano, aplastando y aturdiendo al oponente!`;
+                        let mensaje = ` 🦣🦏 ¡${atacante.nombre} embiste con todo su peso e impulso frontal, sacudiendo los cimientos del combate!`;
 
                         if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
                             atacante.taxonUltimoUsado = true;
@@ -443,18 +523,19 @@ window.PALARENA_TAXON_COMBATE = {
                                 objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 2);
                                 objetivo.estadoGuardia = "rota";
                                 extraDano += 0.35;
-                                mensaje += ` 🐘💥 ¡EMBESTIDA COLOSAL! (Aparición única) Una carga imparable que hace volar por los aires la defensa enemiga, dejándolo aturdido 2 turnos.`;
+                                mensaje += ` 🦣💥 ¡IMPACTO DE TUNDRA! (Aparición única) Una carga imparable que destroza la defensa y aturde al rival 2 turnos.`;
                             } else if (variante < 0.50) {
                                 objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 3);
                                 extraDano += 0.20;
-                                mensaje += ` 🐘🩸 ¡CORNADA PERFORANTE! (Aparición única) Usa sus impresionantes defensas de marfil para ensartar al enemigo (hemorragia 3 turnos).`;
+                                mensaje += ` 🦏🩸 ¡CORNAZO FRONTAL! (Aparición única) Perfora con cuernos o defensas de marfil, causando hemorragia severa (3 turnos).`;
                             } else if (variante < 0.75) {
                                 atacante.efectivos.resistencia += 15;
-                                mensaje += ` 🐘💪 ¡PIEL GRUESA! (Aparición única) Soporta el castigo como un muro de carne, aumentando su resistencia base.`;
+                                atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.10));
+                                mensaje += ` 🦣🛡️ ¡CAPA DE GRASA Y PELAJE! (Aparición única) Soporta el castigo como un tanque natural, ganando resistencia y curando un 10% de salud.`;
                             } else {
-                                objetivo.fatiga = Math.max(0, objetivo.fatiga - 25);
+                                objetivo.fatiga = Math.max(0, objetivo.fatiga - 30);
                                 objetivo.estadoCaotico = (objetivo.estadoCaotico || 0) + 1;
-                                mensaje += ` 🐘📢 ¡BRAMIDO ENSORDECEDOR! (Aparición única) Un sonido abrumador drena la voluntad del rival y lo sume en caos.`;
+                                mensaje += ` 🦏📢 ¡BRAMIDO SÍSMICO! (Aparición única) Un sonido atronador drena 30 de fatiga al rival y siembra el caos.`;
                             }
                         }
                         return { extraDano, mensajeTexto: mensaje };
@@ -462,8 +543,144 @@ window.PALARENA_TAXON_COMBATE = {
                 };
             }
 
+            // 11.5. CARNÍVOROS ROBUSTOS (Osos caverneros, Hienas gigantes / Borophagus)
+            if (textoTaxonomia.includes("ursidae") || textoTaxonomia.includes("hyaenodon") || textoTaxonomia.includes("amphicyon") || textoTaxonomia.includes("hyaenidae") || textoTaxonomia.includes("speloeus")) {
+                return {
+                    tipo: "carnivoro_robusto",
+                    nombreHabilidad: "Ferocidad Brutal",
+                    aplicarEfecto(atacante, objetivo) {
+                        let extraDano = 1.20;
+                        atacante.efectivos.ataque += 5;
+                        let mensaje = ` 🐻 ¡${atacante.nombre} desata una furia implacable, golpeando con fuerza desmedida y saña depredadora!`;
 
-                    // Sinápsidos generales
+                        if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
+                            atacante.taxonUltimoUsado = true;
+                            const variante = Math.random();
+                            if (variante < 0.25) {
+                                objetivo.estadoGuardia = "rota";
+                                extraDano += 0.40;
+                                mensaje += ` 🐻🔨 ¡ZARPAZO DE OSO! (Aparición única) Un golpe devastador que pulveriza la guardia enemiga.`;
+                            } else if (variante < 0.50) {
+                                objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 3);
+                                extraDano += 0.25;
+                                mensaje += ` 🐺🦷 ¡MANDÍBULA TRITURADORA! (Aparición única) Diseñada para romper huesos, provoca hemorragia interna de 3 turnos.`;
+                            } else if (variante < 0.75) {
+                                atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.12));
+                                mensaje += ` 🍖🩸 ¡ADRENALINA DE CAZA! (Aparición única) El frenesí del combate estimula su recuperación, sanando un 12% de HP.`;
+                            } else {
+                                objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 25;
+                                mensaje += ` 🐻👁️ ¡INTIMIDACIÓN FEROZ! (Aparición única) Su imponente planta desconcierta al rival y hunde su táctica temporal.`;
+                            }
+                        }
+                        return { extraDano, mensajeTexto: mensaje };
+                    }
+                };
+            }
+
+            // 11.6. ROEDORES GIGANTES Y MAMÍFEROS PEQUEÑOS / BASALES (Castoroides, Priacodon, Multituberculados)
+            if (textoTaxonomia.includes("castoroides") || textoTaxonomia.includes("rodentia") || textoTaxonomia.includes("multituberculata") || textoTaxonomia.includes("triconodonta") || textoTaxonomia.includes("priacodon") || textoTaxonomia.includes("roedor")) {
+                return {
+                    tipo: "roedor_pequeno",
+                    nombreHabilidad: "Incisivos Letales y Agilidad",
+                    aplicarEfecto(atacante, objetivo) {
+                        let extraDano = 1.08;
+                        atacante.efectivos.velocidad += 8;
+                        let mensaje = ` 🦫🐀 ¡${atacante.nombre} aprovecha su tamaño compacto o sus formidables incisivos para esquivar y morder con precisión quirúrgica!`;
+
+                        if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
+                            atacante.taxonUltimoUsado = true;
+                            const variante = Math.random();
+                            if (variante < 0.25) {
+                                objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 2);
+                                extraDano += 0.30;
+                                mensaje += ` 🦫🦷 ¡MORDISCO DE CINCEL! (Aparición única) Sus potentes incisivos abiertos se hunden en puntos vitales causando hemorragia (2 turnos).`;
+                            } else if (variante < 0.50) {
+                                objetivo.fatiga = Math.max(0, objetivo.fatiga - 30);
+                                mensaje += ` 🐀💨 ¡CORRETEO RÁPIDO! (Aparición única) Se desliza entre las patas del rival, esquivando el castigo y drenando 30 de fatiga al oponente.`;
+                            } else if (variante < 0.75) {
+                                atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 30);
+                                mensaje += ` 🌿✨ ¡INSTINTO DE MADRIGUERA! (Aparición única) Encuentra un respiro inmediato, recuperando 30 de fatiga.`;
+                            } else {
+                                objetivo.estadoCaotico = (objetivo.estadoCaotico || 0) + 2;
+                                extraDano += 0.20;
+                                mensaje += ` 🌰💥 ¡ATAQUE FURIOSO SORPRESA! (Aparición única) Salta por sorpresa descolocando al rival y sumiéndole en estado caótico (+2).`;
+                            }
+                        }
+                        return { extraDano, mensajeTexto: mensaje };
+                    }
+                };
+            }
+
+            // 11.7. ERINACEOMORFOS Y GIGANTES INSECTÍVOROS / CARNÍVOROS (Deinogalerix)
+            if (textoTaxonomia.includes("deinogalerix") || textoTaxonomia.includes("erinaceidae") || textoTaxonomia.includes("galericinae")) {
+                return {
+                    tipo: "deinogalerix",
+                    nombreHabilidad: "Mordisco de Rata Gigante",
+                    aplicarEfecto(atacante, objetivo) {
+                        let extraDano = 1.20;
+                        objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 2);
+                        let mensaje = ` 🦔💀 ¡${atacante.nombre} propina un mordisco seco y profundo con sus afilados colmillos adaptados, provocando hemorragia (2 turnos)!`;
+
+                        if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
+                            atacante.taxonUltimoUsado = true;
+                            const variante = Math.random();
+                            if (variante < 0.25) {
+                                objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 1);
+                                extraDano += 0.30;
+                                mensaje += ` 🦷💥 ¡ESTOCADA DE HOCICO! (Aparición única) Lanza su largo cráneo hacia delante como una lanza, aturdiendo al rival.`;
+                            } else if (variante < 0.50) {
+                                atacante.efectivos.velocidad += 10;
+                                mensaje += ` 🏃💨 ¡AGILIDAD INSULAR! (Aparición única) Se desplaza con rapidez oportunista, subiendo su velocidad permanente.`;
+                            } else if (variante < 0.75) {
+                                atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.12));
+                                mensaje += ` 🍖🩸 ¡FRENESÍ OPORTUNISTA! (Aparición única) Devora jirones de energía recuperando un 12% de salud.`;
+                            } else {
+                                objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 20;
+                                mensaje += ` 👁️⚠️ ¡ACECHO SILENCIOSO! (Aparición única) Descoloca la estrategia del rival hundiendo su táctica.`;
+                            }
+                        }
+                        return { extraDano, mensajeTexto: mensaje };
+                    }
+                };
+            }
+
+            
+                       
+           // 11.8. MARSUPIALES GIGANTES Y UNGULADOS ÁGILES (Tylopoda, Equidae primitivos, Diprotodon)
+            if (textoTaxonomia.includes("marsupialia") || textoTaxonomia.includes("diprotodontidae") || textoTaxonomia.includes("macropodidae") || textoTaxonomia.includes("camelidae") || textoTaxonomia.includes("equidae") || textoTaxonomia.includes("ungulate")) {
+                return {
+                    tipo: "ungulado_marsupial",
+                    nombreHabilidad: "Zancada y Resistencia",
+                    aplicarEfecto(atacante, objetivo) {
+                        let extraDano = 1.12;
+                        atacante.efectivos.velocidad += 5;
+                        let mensaje = ` 🦘🐎 ¡${atacante.nombre} emplea una movilidad dinámica y golpes de agilidad defensiva!`;
+
+                        if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
+                            atacante.taxonUltimoUsado = true;
+                            const variante = Math.random();
+                            if (variante < 0.25) {
+                                extraDano += 0.30;
+                                objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 1);
+                                mensaje += ` 🦘💥 ¡PATADA TRASERA! (Aparición única) Suelta un arisco reverso con sus extremidades posteriores, aturdiendo al rival.`;
+                            } else if (variante < 0.50) {
+                                atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 35);
+                                mensaje += ` 🐎💨 ¡ESCAPADA VELOZ! (Aparición única) Gana distancia de forma magistral y recupera 35 de fatiga.`;
+                            } else if (variante < 0.75) {
+                                objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 20;
+                                objetivo.estadoCaotico = (objetivo.estadoCaotico || 0) + 1;
+                                mensaje += ` 🦌🌀 ¡CURVA ELUSIVA! (Aparición única) Descoloca por completo la estrategia del oponente.`;
+                            } else {
+                                atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.10));
+                                mensaje += ` 🌿✨ ¡RESILIENCIA DE ESTEPA! (Aparición única) Su instinto de herbívoro curtido en la intemperie le cura un 10% de salud.`;
+                            }
+                        }
+                        return { extraDano, mensajeTexto: mensaje };
+                    }
+                };
+            }
+            
+            // 11.9. SINÁPSIDOS GENERALES (Comodín genérico para mamíferos/sinápsidos restantes)
             return {
                 tipo: "sinapsido_general",
                 nombreHabilidad: "Astucia de Sinápsido",
@@ -497,7 +714,18 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
+     
 
+     
+
+
+
+
+
+
+
+
+     
         // 12. REPTILES MARINOS
         if (textoTaxonomia.includes("ichthyosauria") || textoTaxonomia.includes("sauropterygia") || textoTaxonomia.includes("mosasauroidea")) {
             return {
