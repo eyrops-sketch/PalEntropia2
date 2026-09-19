@@ -667,7 +667,13 @@ window.PALARENA_STANDAR = (function() {
             mensajeExtra += resultadoDefensa.mensaje;
             danoFinal = resultadoDefensa.dano; 
         }
-                // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL Y RETROCESO FÍSICO
+
+
+
+
+
+
+        // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL Y RETROCESO FÍSICO
         if (danoFinal > 0) {
             
             // 1. PENALIZACIÓN DEFENSIVA (Se aleatoriza el riesgo óseo al 50%)
@@ -712,9 +718,10 @@ window.PALARENA_STANDAR = (function() {
                 }
             }
 
-            // 3. NUEVO: HÁNDICAP POR DIFERENCIA DE MEDIAS GENERALES
+            // 3. NUEVO: HÁNDICAP POR DIFERENCIA DE MEDIAS GENERALES (Castigando al fuerte)
             if (!atacante.penalizacionMediaAplicada && Math.random() < 0.35) {
-                const difMedia = objetivo.mediaGeneral - atacante.mediaGeneral; // Hándicap solo si el rival es superior en stats
+                // Ahora el hándicap salta si el ATACANTE es estadísticamente muy superior al objetivo
+                const difMedia = atacante.mediaGeneral - objetivo.mediaGeneral; 
                 
                 if (difMedia >= 15) {
                     atacante.penalizacionMediaAplicada = true; // Solo salta una vez por combate
@@ -723,16 +730,16 @@ window.PALARENA_STANDAR = (function() {
                         const penalizacionHp = Math.round(atacante.hp_max * 0.15);
                         atacante.hp = Math.max(0, atacante.hp - penalizacionHp);
                         atacante.efectivos.ataque = Math.round(atacante.efectivos.ataque * 0.85);
-                        mensajeExtra += ` 🦠 ¡PENALIZACIÓN POR ENFERMEDAD! La abismal superioridad de stats del rival revela una debilidad latente en ${atacante.nombre} (-${penalizacionHp} HP, merma de ataque).`;
+                        mensajeExtra += ` 🦠 ¡PENALIZACIÓN POR ENFERMEDAD! El metabolismo de superdepredador de ${atacante.nombre} revela una falla genética o vírica latente (-${penalizacionHp} HP, merma de ataque).`;
                     } else if (difMedia >= 25 && difMedia < 30) {
                         atacante.fatiga = Math.max(0, atacante.fatiga - 25);
                         atacante.efectivos.tactica = Math.round(atacante.efectivos.tactica * 0.80);
-                        mensajeExtra += ` 🦖 ¡LUCHA TERRITORIAL! Ante un espécimen de mayor dominancia, surge la competencia y la intimidación (-25 Fatiga, merma táctica).`;
+                        mensajeExtra += ` 🦖 ¡LUCHA TERRITORIAL PREVIA! Como espécimen dominante, ${atacante.nombre} acusa el desgaste de defender su territorio ante otros colosos (-25 Fatiga, merma táctica).`;
                     } else if (difMedia >= 15 && difMedia < 25) {
                         const penalizacionHp = Math.round(atacante.hp_max * 0.08);
                         atacante.hp = Math.max(0, atacante.hp - penalizacionHp);
                         atacante.efectivos.velocidad = Math.round(atacante.efectivos.velocidad * 0.90);
-                        mensajeExtra += ` 🩹 ¡PEQUEÑA LESIÓN MUSCULAR! El sobreesfuerzo por cerrar el hándicap le pasa factura a ${atacante.nombre} (-${penalizacionHp} HP, merma de velocidad).`;
+                        mensajeExtra += ` 🩹 ¡PEQUEÑA LESIÓN MUSCULAR! El coloso hace un mal gesto al subestimar y tratar de aplastar a su rival inferior, sufriendo un tirón (-${penalizacionHp} HP, merma de velocidad).`;
                     }
 
                     if (atacante.hp <= 0) {
@@ -768,7 +775,30 @@ window.PALARENA_STANDAR = (function() {
         }
         
         return resultadoFinal;
-                }
+    }
+    
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
         function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
