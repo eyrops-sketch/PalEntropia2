@@ -572,7 +572,11 @@ window.PALTAXON = {
 "008_10":{
   ta1:"Animalia > Chordata > Synapsida > Mammalia > Xenarthra > Cingulata > Glyptodontidae > Glyptodon",
   ta2:"Sinápsido. Mamífero. Xenartro. Cingulado. Gliptodóntido."
-} 
+},
+"008_11":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Coelurosauria > Maniraptora > Paraves > Dromaeosauridae > Dromaeosaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Celurosaurio. Maniraptorano. Paraviano. Dromeosáurido."
+}
   
 
   
