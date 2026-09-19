@@ -694,8 +694,41 @@
   "nombre": "Dromaeosaurus",
   "dieta": "Carnívoro",
   "anatomia": "Pequeño dinosaurio terópodo de cuerpo ágil, cráneo relativamente robusto, mandíbulas con dientes aserrados, brazos con manos de tres dedos y extremidades posteriores largas con una gran garra curva en el segundo dedo"
-  }
+  },
+  {
+    "codigo": "008_12",
+    "nombre": "Dimorphodon",
+    "dieta": "Carnívoro",
+    "anatomia": "Pequeño pterosaurio de cuerpo compacto, cabeza grande con hocico corto y profundo, mandíbulas con dientes de diferentes tamaños, alas membranosas y extremidades adaptadas tanto al vuelo como al desplazamiento terrestre"
+},
+{
+    "codigo": "008_13",
+    "nombre": "Plesiosaurus",
+    "dieta": "Carnívoro",
+    "anatomia": "Reptil marino de cuerpo compacto, cuello muy largo, cabeza pequeña, cuatro grandes aletas y mandíbulas provistas de numerosos dientes afilados para capturar peces y otros animales acuáticos"
+},
+{
+    "codigo": "008_14",
+    "nombre": "Oviraptor",
+    "dieta": "Omnívoro",
+    "anatomia": "Pequeño dinosaurio terópodo de cuerpo ligero, cuello relativamente largo, cráneo corto y profundo con pico córneo, brazos con manos de tres dedos y extremidades posteriores adaptadas a la carrera"
+},
+{
+    "codigo": "008_15",
+    "nombre": "Coelodonta",
+    "dieta": "Herbívoro",
+    "anatomia": "Gran rinoceronte prehistórico de cuerpo robusto, patas fuertes, cabeza alargada con un gran cuerno nasal y otro menor en la región frontal, adaptado al pastoreo y a ambientes fríos"
+}
 ]
+
+
+
+
+
+
+
+
+
 
 
 
