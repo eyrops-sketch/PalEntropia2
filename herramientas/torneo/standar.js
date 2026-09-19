@@ -82,8 +82,7 @@ window.PALARENA_STANDAR = (function() {
             sincronizarConfiguracionDesdeStorage();
         }
     });
-
-    function calcularStatsEfectivos(ficha, config) {
+        function calcularStatsEfectivos(ficha, config) {
         const coefGeneral = Number(config.general) !== undefined && !isNaN(Number(config.general)) ? Number(config.general) : 1;
         if (window.PALARENA_STATS && typeof window.PALARENA_STATS.calcularFicha === "function") {
             const statsCalculados = window.PALARENA_STATS.calcularFicha(ficha);
@@ -108,7 +107,8 @@ window.PALARENA_STANDAR = (function() {
             tactica: baseTac * coefGeneral
         };
     }
-        function crearCombatiente(ficha, configPersonalizada = null) {
+
+    function crearCombatiente(ficha, configPersonalizada = null) {
         const config = configPersonalizada || configuracionGlobal;
         const multCompartido = Number((Math.random() * 9 + 1).toFixed(2));
         const efectivos = calcularStatsEfectivos(ficha, config);
@@ -117,6 +117,22 @@ window.PALARENA_STANDAR = (function() {
         if (hpMax < 200 && multCompartido < 2.0) {
             hpMax *= 2;
         }
+
+        const rawStats = {
+            e1: Number(ficha.e1) || 0,
+            e2: Number(ficha.e2) || 0,
+            e3: Number(ficha.e3) || 0,
+            e4: Number(ficha.e4) || 0,
+            e5: Number(ficha.e5) || 0,
+            e6: Number(ficha.e6) || 0,
+            e7: Number(ficha.e7) || 0,
+            e8: Number(ficha.e8) || 0,
+            e9: Number(ficha.e9) || 0,
+            e10: Number(ficha.e10) || 0,
+            e11: Number(ficha.e11) || 0
+        };
+
+        const mediaG = (rawStats.e1 + rawStats.e2 + rawStats.e3 + rawStats.e4 + rawStats.e5 + rawStats.e6 + rawStats.e7 + rawStats.e8 + rawStats.e9 + rawStats.e10 + rawStats.e11) / 11;
 
         return {
             codigo: ficha.j1 || ficha.codigo || "Desconocido",
@@ -127,19 +143,9 @@ window.PALARENA_STANDAR = (function() {
             fatiga_max: config.fatiga_max,
             fatiga: config.fatiga_inicial,
             efectivos: efectivos,
-            rawStats: {
-                e1: Number(ficha.e1) || 0,
-                e2: Number(ficha.e2) || 0,
-                e3: Number(ficha.e3) || 0,
-                e4: Number(ficha.e4) || 0,
-                e5: Number(ficha.e5) || 0,
-                e6: Number(ficha.e6) || 0,
-                e7: Number(ficha.e7) || 0,
-                e8: Number(ficha.e8) || 0,
-                e9: Number(ficha.e9) || 0,
-                e10: Number(ficha.e10) || 0,
-                e11: Number(ficha.e11) || 0
-            },
+            rawStats: rawStats,
+            mediaGeneral: mediaG,
+            penalizacionMediaAplicada: false,
             tamano: Number(ficha.e9) || 50,     
             rangoTemporal: ficha.j3 || "",      
             defendiendo: false,
@@ -160,8 +166,7 @@ window.PALARENA_STANDAR = (function() {
             rasgoQuirurgicoUsado: false
         };
     }
-
-    function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
+        function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
         sincronizarConfiguracionDesdeStorage();
         if (configPersonalizada && typeof configPersonalizada === "object") {
             configuracionGlobal = { ...configuracionGlobal, ...configPersonalizada };
@@ -216,17 +221,15 @@ window.PALARENA_STANDAR = (function() {
             config.fatiga_max,
             combatiente.fatiga + config.fatiga_regeneracion_turno
         );
-        // Reseteo del candado de sinergias para permitir una nueva por turno
         if (combatiente.sinergias) {
             combatiente.sinergias.actuoEsteTurno = false;
         }
     }
-        // --- MOTOR DE RASGOS EMERGENTES OFENSIVOS ---
+
     function evaluarRasgosEmergentes(atacante, objetivo, codigoAccion) {
         const stats = atacante.rawStats || {};
         const hpPorcentaje = (atacante.hp / atacante.hp_max) * 100;
         
-        // 1. REPRODUCCIÓN >= 70 (Impulso Reproductivo)
         if (stats.e11 >= 70 && hpPorcentaje < 30 && !atacante.rasgoEmergenteUsado) {
             if (Math.random() < 0.25) { 
                 atacante.rasgoEmergenteUsado = true;
@@ -240,7 +243,6 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // 2. ATAQUE >= 70 (Fuerza Explosiva)
         if (stats.e1 >= 70 && !atacante.rasgoEmergenteUsado && (codigoAccion === "A001" || codigoAccion === "A002")) {
             if (Math.random() < 0.25) {
                 atacante.rasgoEmergenteUsado = true;
@@ -250,7 +252,6 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // 3. TÁCTICA >= 70 (Mente Depredadora)
         if (stats.e5 >= 70 && !atacante.rasgoEmergenteUsado && codigoAccion === "A003") {
             if (Math.random() < 0.25) {
                 atacante.rasgoEmergenteUsado = true;
@@ -260,7 +261,6 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // 4. VELOCIDAD >= 70 (Reflejos Abismales)
         if (stats.e3 >= 70 && !atacante.rasgoEmergenteUsado && codigoAccion === "D001") {
             if (Math.random() < 0.25) {
                 atacante.rasgoEmergenteUsado = true;
@@ -269,7 +269,6 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // 5. RESISTENCIA >= 70 (Resiliencia Biológica)
         if (stats.e4 >= 70 && !atacante.rasgoEmergenteUsado && atacante.fatiga < 30) {
             if (Math.random() < 0.25) {
                 atacante.rasgoEmergenteUsado = true;
@@ -278,7 +277,6 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // 6. NUEVO: VELOCIDAD + MOVILIDAD >= 135 (Ataque Quirúrgico)
         const velMovSuma = (stats.e3 || 50) + (stats.e7 || 50);
         if (velMovSuma >= 135 && !atacante.rasgoQuirurgicoUsado && (codigoAccion === "A001" || codigoAccion === "A002" || codigoAccion === "A003")) {
             if (Math.random() < 0.20) { 
@@ -292,14 +290,11 @@ window.PALARENA_STANDAR = (function() {
 
         return "";
     }
-
-    // --- MOTOR DE DEFENSAS EMERGENTES (TAMAÑO) ---
-    function evaluarDefensasEmergentes(atacante, objetivo, danoCalculado) {
+        function evaluarDefensasEmergentes(atacante, objetivo, danoCalculado) {
         let mensajeDefensa = "";
         let danoFinalResultante = danoCalculado;
         let danoEvadido = false;
         
-        // 1. Diferencia de tamaño mayor a 40 (Maniobra de Distracción)
         const difTamano = atacante.tamano - objetivo.tamano;
         if (difTamano > 40 && !objetivo.rasgoDistraccionUsado) {
             if (Math.random() < 0.25) {
@@ -310,7 +305,6 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // 2. Tamaño absoluto <= 30 (Camuflaje / Resguardo)
         if (objetivo.tamano <= 30 && !objetivo.rasgoCamuflajeUsado && !danoEvadido) {
             if (Math.random() < 0.25) {
                 objetivo.rasgoCamuflajeUsado = true;
@@ -326,10 +320,10 @@ window.PALARENA_STANDAR = (function() {
         
         return { mensaje: mensajeDefensa, dano: danoFinalResultante };
     }
-        function ejecutarAccion(atacante, objetivo, codigoAccion) {
+
+    function ejecutarAccion(atacante, objetivo, codigoAccion) {
         const config = configuracionGlobal;
 
-        // ---> GANCHO DE ANOMALÍAS ESTADÍSTICAS <---
         if (codigoAccion === "A001" || codigoAccion === "A002" || codigoAccion === "A003") {
             let resultadoAnomalia = { dano: 0, fatiga: 0, mensaje: "", registro: [] };
             if (typeof comprobarAnomaliaEstadistica === "function" && comprobarAnomaliaEstadistica(atacante, objetivo, resultadoAnomalia)) {
@@ -370,8 +364,7 @@ window.PALARENA_STANDAR = (function() {
                 critico: false
             };
         }
-
-        if (codigoAccion === "A001") {
+                if (codigoAccion === "A001") {
             // Se calcula más abajo
         } else if (codigoAccion === "A002") {
             costeFatiga = config.coste_fatiga_A002;
@@ -503,8 +496,8 @@ window.PALARENA_STANDAR = (function() {
                     defensa: "fallo"
                 };
             }
-                    }
-                    let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
+        }
+                let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
         let mensajeExtra = "";
         let bonusAccion = 1.0;
@@ -591,13 +584,11 @@ window.PALARENA_STANDAR = (function() {
             }
         }
 
-        // --- APLICACIÓN DE RASGOS EMERGENTES OFENSIVOS ---
         const textoRasgoEmergente = evaluarRasgosEmergentes(atacante, objetivo, codigoAccion);
         if (textoRasgoEmergente) {
             mensajeExtra += textoRasgoEmergente;
         }
 
-        // --- MODO FRENESÍ (ÚLTIMO ALIENTO) ---
         if (atacante.hp < atacante.hp_max * 0.20 && codigoAccion !== "D001") {
             bonusAccion *= 1.35; 
             atacante.efectivos.defensa *= 0.60; 
@@ -654,10 +645,7 @@ window.PALARENA_STANDAR = (function() {
         }
 
         const divisorDefensa = Math.max(1, Number(config.defensa_divisor) || 200);
-        const porcentajeDefensa = Math.max(
-            0,
-            Math.min(0.85, defensaObjetivo / (defensaObjetivo + divisorDefensa))
-        );
+        const porcentajeDefensa = Math.max(0, Math.min(0.85, defensaObjetivo / (defensaObjetivo + divisorDefensa)));
         let danoReducido = (danoBase + (baseAtq * (1 - porcentajeDefensa)));
 
         const fatigaRivalPorcentaje = (objetivo.fatiga / (config.fatiga_max || 100)) * 100;
@@ -674,20 +662,16 @@ window.PALARENA_STANDAR = (function() {
         const factorAleatorio = 1 + (Math.random() * (variacion * 2) - variacion);
         let danoFinal = Math.max(1, Math.round(danoReducido * factorAleatorio));
 
-
-            // --- APLICACIÓN DE DEFENSAS EMERGENTES (Tamaño) ---
         const resultadoDefensa = evaluarDefensasEmergentes(atacante, objetivo, danoFinal);
         if (resultadoDefensa.mensaje) {
             mensajeExtra += resultadoDefensa.mensaje;
             danoFinal = resultadoDefensa.dano; 
         }
-       
-            
-                    // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL Y RETROCESO FÍSICO
+                // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL Y RETROCESO FÍSICO
         if (danoFinal > 0) {
             
-            // 1. PENALIZACIÓN DEFENSIVA (Cuando el animal ligero recibe el golpe)
-            if (objetivo.tamano <= 50) {
+            // 1. PENALIZACIÓN DEFENSIVA (Se aleatoriza el riesgo óseo al 50%)
+            if (objetivo.tamano <= 50 && Math.random() < 0.50) {
                 if (objetivo.tamano <= 30) {
                     if (codigoAccion === "A002") {
                         danoFinal = Math.round(danoFinal * 2.5);
@@ -708,13 +692,13 @@ window.PALARENA_STANDAR = (function() {
                 }
             }
 
-            // 2. PENALIZACIÓN OFENSIVA: RETROCESO (Cuando el animal ligero ataca a un tanque)
-            if (atacante.tamano <= 50 && (objetivo.tamano - atacante.tamano >= 20 || objetivo.efectivos.defensa >= 80)) {
+            // 2. PENALIZACIÓN OFENSIVA: RETROCESO (Se aleatoriza el riesgo óseo al 50%)
+            if (atacante.tamano <= 50 && (objetivo.tamano - atacante.tamano >= 20 || objetivo.efectivos.defensa >= 80) && Math.random() < 0.50) {
                 let recoilDano = Math.round(danoFinal * 0.20);
                 let recoilFatiga = 8;
                 
                 if (codigoAccion === "A002") {
-                    recoilDano = Math.round(danoFinal * 0.35); // Se hace muchísimo más daño a sí mismo si ataca fuerte
+                    recoilDano = Math.round(danoFinal * 0.35); 
                     recoilFatiga = 15;
                     mensajeExtra += ` 💥📉 ¡RETROCESO SEVERO! Al asestar un golpe brutal contra un objetivo acorazado, su propia estructura ligera se resquebraja (Autolesión: -${recoilDano} HP y -${recoilFatiga} fatiga).`;
                 } else {
@@ -727,14 +711,37 @@ window.PALARENA_STANDAR = (function() {
                     atacante.derrotado = true;
                 }
             }
+
+            // 3. NUEVO: HÁNDICAP POR DIFERENCIA DE MEDIAS GENERALES
+            if (!atacante.penalizacionMediaAplicada && Math.random() < 0.35) {
+                const difMedia = objetivo.mediaGeneral - atacante.mediaGeneral; // Hándicap solo si el rival es superior en stats
+                
+                if (difMedia >= 15) {
+                    atacante.penalizacionMediaAplicada = true; // Solo salta una vez por combate
+                    
+                    if (difMedia >= 30) {
+                        const penalizacionHp = Math.round(atacante.hp_max * 0.15);
+                        atacante.hp = Math.max(0, atacante.hp - penalizacionHp);
+                        atacante.efectivos.ataque = Math.round(atacante.efectivos.ataque * 0.85);
+                        mensajeExtra += ` 🦠 ¡PENALIZACIÓN POR ENFERMEDAD! La abismal superioridad de stats del rival revela una debilidad latente en ${atacante.nombre} (-${penalizacionHp} HP, merma de ataque).`;
+                    } else if (difMedia >= 25 && difMedia < 30) {
+                        atacante.fatiga = Math.max(0, atacante.fatiga - 25);
+                        atacante.efectivos.tactica = Math.round(atacante.efectivos.tactica * 0.80);
+                        mensajeExtra += ` 🦖 ¡LUCHA TERRITORIAL! Ante un espécimen de mayor dominancia, surge la competencia y la intimidación (-25 Fatiga, merma táctica).`;
+                    } else if (difMedia >= 15 && difMedia < 25) {
+                        const penalizacionHp = Math.round(atacante.hp_max * 0.08);
+                        atacante.hp = Math.max(0, atacante.hp - penalizacionHp);
+                        atacante.efectivos.velocidad = Math.round(atacante.efectivos.velocidad * 0.90);
+                        mensajeExtra += ` 🩹 ¡PEQUEÑA LESIÓN MUSCULAR! El sobreesfuerzo por cerrar el hándicap le pasa factura a ${atacante.nombre} (-${penalizacionHp} HP, merma de velocidad).`;
+                    }
+
+                    if (atacante.hp <= 0) {
+                        atacante.derrotado = true;
+                    }
+                }
+            }
         }
 
-
-
-
-            
-
-            
         const iconoAccion = codigoAccion === "A002" ? "⚡" : (codigoAccion === "A003" ? "🎯" : "⚔️");
         const textoDano = danoFinal > 0 ? ` Daño: ${danoFinal}` : ""; 
         
@@ -744,7 +751,6 @@ window.PALARENA_STANDAR = (function() {
             critico: critico
         };
 
-        // ---> GANCHO DE SINERGIAS OFENSIVAS ANTES DEL DAÑO <---
         if (typeof evaluarSinergiasStats === "function") {
             evaluarSinergiasStats(atacante, objetivo, resultadoFinal, "atacante");
         }
@@ -757,15 +763,13 @@ window.PALARENA_STANDAR = (function() {
             objetivo.derrotado = false; 
         }
 
-        // ---> GANCHO DE SINERGIAS DEFENSIVAS COMO RESPUESTA <---
         if (typeof evaluarSinergiasStats === "function") {
             evaluarSinergiasStats(objetivo, atacante, resultadoFinal, "defensor");
         }
         
         return resultadoFinal;
-    }
-
-    function decidirAccion(atacante, objetivo) {
+                }
+        function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
         
@@ -855,6 +859,7 @@ window.PALARENA_STANDAR = (function() {
                 c.rasgoDistraccionUsado = false;
                 c.rasgoCamuflajeUsado = false;
                 c.rasgoQuirurgicoUsado = false;
+                c.penalizacionMediaAplicada = false;
                 if (c.sinergias) {
                     c.sinergias.exitoReproductivo = false;
                     c.sinergias.supervivenciaMulti = false;
@@ -878,7 +883,6 @@ window.PALARENA_STANDAR = (function() {
         reiniciarSerieCombatientes
     };
 })();
-
 window.crearCombateEstandar = window.PALARENA_STANDAR.crearCombateEstandar;
 window.reiniciarSerieCombatientes = window.PALARENA_STANDAR.reiniciarSerieCombatientes;
 
@@ -948,7 +952,8 @@ window.ejecutarTurnoEstandar = function(combate) {
         combate.ganador = c1.hp >= c2.hp ? c1.codigo : c2.codigo;
     }
 };
- function comprobarAnomaliaEstadistica(atacante, defensor, resultado) {
+
+function comprobarAnomaliaEstadistica(atacante, defensor, resultado) {
     if (atacante.anomalia_usada || Math.random() > 0.10) return false;
     
     atacante.anomalia_usada = true;
@@ -1029,10 +1034,6 @@ window.ejecutarTurnoEstandar = function(combate) {
     return true; 
 }
 
-// =========================================================================
-// MÓDULO DE SINERGIAS DE STATS (Comportamientos Emergentes)
-// =========================================================================
-
 function agregarRegistroSinergia(resultado, texto) {
     if (!resultado.registro) {
         resultado.registro = texto;
@@ -1064,9 +1065,6 @@ function evaluarSinergiasStats(sujeto, rival, resultado, rol) {
     const fatigaPct = sujeto.fatiga / sujeto.fatiga_max;
     let activada = false;
 
-    // ==========================================
-    // ROL OFENSIVO (Cuando el sujeto ataca)
-    // ==========================================
     if (rol === "atacante") {
         const rivalFatigaPct = rival.fatiga / rival.fatiga_max;
 
@@ -1106,9 +1104,6 @@ function evaluarSinergiasStats(sujeto, rival, resultado, rol) {
         }
     }
 
-    // ==========================================
-    // ROL DEFENSIVO (Cuando el sujeto recibe daño)
-    // ==========================================
     if (rol === "defensor") {
         const danoEntrante = resultado.dano || 0;
 
@@ -1171,4 +1166,4 @@ function evaluarSinergiasStats(sujeto, rival, resultado, rol) {
     }
 
     if (activada) sujeto.sinergias.actuoEsteTurno = true;
-    }
+}
