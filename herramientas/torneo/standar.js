@@ -82,7 +82,9 @@ window.PALARENA_STANDAR = (function() {
             sincronizarConfiguracionDesdeStorage();
         }
     });
-        function calcularStatsEfectivos(ficha, config) {
+
+
+    function calcularStatsEfectivos(ficha, config) {
         const coefGeneral = Number(config.general) !== undefined && !isNaN(Number(config.general)) ? Number(config.general) : 1;
         if (window.PALARENA_STATS && typeof window.PALARENA_STATS.calcularFicha === "function") {
             const statsCalculados = window.PALARENA_STATS.calcularFicha(ficha);
@@ -166,7 +168,9 @@ window.PALARENA_STANDAR = (function() {
             rasgoQuirurgicoUsado: false
         };
     }
-        function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
+
+
+    function crearCombateEstandar(ficha1, ficha2, configPersonalizada = null) {
         sincronizarConfiguracionDesdeStorage();
         if (configPersonalizada && typeof configPersonalizada === "object") {
             configuracionGlobal = { ...configuracionGlobal, ...configPersonalizada };
@@ -290,7 +294,10 @@ window.PALARENA_STANDAR = (function() {
 
         return "";
     }
-        function evaluarDefensasEmergentes(atacante, objetivo, danoCalculado) {
+
+
+
+    function evaluarDefensasEmergentes(atacante, objetivo, danoCalculado) {
         let mensajeDefensa = "";
         let danoFinalResultante = danoCalculado;
         let danoEvadido = false;
@@ -364,7 +371,9 @@ window.PALARENA_STANDAR = (function() {
                 critico: false
             };
         }
-                if (codigoAccion === "A001") {
+
+
+        if (codigoAccion === "A001") {
             // Se calcula más abajo
         } else if (codigoAccion === "A002") {
             costeFatiga = config.coste_fatiga_A002;
@@ -497,7 +506,9 @@ window.PALARENA_STANDAR = (function() {
                 };
             }
         }
-                let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
+
+
+           let danoBase = Number(config.dano_base) + (atacante.efectivos.ataque * Number(config.dano_por_ataque));
         let critico = false;
         let mensajeExtra = "";
         let bonusAccion = 1.0;
@@ -669,10 +680,6 @@ window.PALARENA_STANDAR = (function() {
         }
 
 
-
-
-
-
         // 🦴 REGLA DE CAÑÓN DE CRISTAL: FRAGILIDAD ESTRUCTURAL Y RETROCESO FÍSICO
         if (danoFinal > 0) {
             
@@ -706,7 +713,7 @@ window.PALARENA_STANDAR = (function() {
                 if (codigoAccion === "A002") {
                     recoilDano = Math.round(danoFinal * 0.35); 
                     recoilFatiga = 15;
-                    mensajeExtra += ` 💥📉 ¡RETROCESO SEVERO! Al asestar un golpe brutal contra un objetivo acorazado, su propia estructura ligera se resquebraja (Autolesión: -${recoilDano} HP y -${recoilFatiga} fatiga).`;
+                    mensajeExtra += ` 💥📉 ¡RETROCESO SEVERO! Al asestar un golpe brutal contra un objetivo mucho más poderoso, su propia estructura ligera se resquebraja (Autolesión: -${recoilDano} HP y -${recoilFatiga} fatiga).`;
                 } else {
                     mensajeExtra += ` 💥📉 ¡REBOTE ÓSEO! Golpear la masa de ${objetivo.nombre} le pasa factura a su frágil anatomía (Retroceso: -${recoilDano} HP y -${recoilFatiga} fatiga).`;
                 }
@@ -723,19 +730,19 @@ window.PALARENA_STANDAR = (function() {
                 // Ahora el hándicap salta si el ATACANTE es estadísticamente muy superior al objetivo
                 const difMedia = atacante.mediaGeneral - objetivo.mediaGeneral; 
                 
-                if (difMedia >= 15) {
+                if (difMedia >= 10) {
                     atacante.penalizacionMediaAplicada = true; // Solo salta una vez por combate
                     
-                    if (difMedia >= 30) {
+                    if (difMedia >= 15) {
                         const penalizacionHp = Math.round(atacante.hp_max * 0.15);
                         atacante.hp = Math.max(0, atacante.hp - penalizacionHp);
                         atacante.efectivos.ataque = Math.round(atacante.efectivos.ataque * 0.85);
                         mensajeExtra += ` 🦠 ¡PENALIZACIÓN POR ENFERMEDAD! El metabolismo de superdepredador de ${atacante.nombre} revela una falla genética o vírica latente (-${penalizacionHp} HP, merma de ataque).`;
-                    } else if (difMedia >= 25 && difMedia < 30) {
+                    } else if (difMedia >= 12 && difMedia < 15) {
                         atacante.fatiga = Math.max(0, atacante.fatiga - 25);
                         atacante.efectivos.tactica = Math.round(atacante.efectivos.tactica * 0.80);
                         mensajeExtra += ` 🦖 ¡LUCHA TERRITORIAL PREVIA! Como espécimen dominante, ${atacante.nombre} acusa el desgaste de defender su territorio ante otros colosos (-25 Fatiga, merma táctica).`;
-                    } else if (difMedia >= 15 && difMedia < 25) {
+                    } else if (difMedia >= 10 && difMedia < 12) {
                         const penalizacionHp = Math.round(atacante.hp_max * 0.08);
                         atacante.hp = Math.max(0, atacante.hp - penalizacionHp);
                         atacante.efectivos.velocidad = Math.round(atacante.efectivos.velocidad * 0.90);
@@ -777,28 +784,7 @@ window.PALARENA_STANDAR = (function() {
         return resultadoFinal;
     }
     
-        
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
         function decidirAccion(atacante, objetivo) {
         const config = configuracionGlobal;
         const factorImprevisible = Number(config.factorImprevisible) !== undefined && !isNaN(Number(config.factorImprevisible)) ? Number(config.factorImprevisible) : 1.0;
@@ -913,6 +899,7 @@ window.PALARENA_STANDAR = (function() {
         reiniciarSerieCombatientes
     };
 })();
+
 window.crearCombateEstandar = window.PALARENA_STANDAR.crearCombateEstandar;
 window.reiniciarSerieCombatientes = window.PALARENA_STANDAR.reiniciarSerieCombatientes;
 
@@ -1197,3 +1184,51 @@ function evaluarSinergiasStats(sujeto, rival, resultado, rol) {
 
     if (activada) sujeto.sinergias.actuoEsteTurno = true;
 }
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+
+
+        
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+    
+                           
