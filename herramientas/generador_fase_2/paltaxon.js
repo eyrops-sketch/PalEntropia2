@@ -576,6 +576,22 @@ window.PALTAXON = {
 "008_11":{
   ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Coelurosauria > Maniraptora > Paraves > Dromaeosauridae > Dromaeosaurus",
   ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Celurosaurio. Maniraptorano. Paraviano. Dromeosáurido."
+},
+"008_12":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Pterosauria > Rhamphorhynchoidea > Dimorphodontidae > Dimorphodon",
+  ta2:"Diápsido. Arcosaurio. Pterosaurio. Ranforrincoideo. Dimorfodóntido."
+},
+"008_13":{
+  ta1:"Animalia > Chordata > Diapsida > Sauropterygia > Plesiosauria > Plesiosauroidea > Plesiosauridae > Plesiosaurus",
+  ta2:"Diápsido. Sauropterigio. Plesiosaurio. Plesiosauroideo. Plesiosáurido."
+},
+"008_14":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Saurischia > Theropoda > Coelurosauria > Maniraptora > Oviraptorosauria > Oviraptoridae > Oviraptor",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Saurisquio. Terópodo. Celurosaurio. Maniraptorano. Oviraptorosaurio. Oviraptórido."
+},
+"008_15":{
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Perissodactyla > Rhinocerotidae > Coelodonta",
+  ta2:"Sinápsido. Mamífero. Perisodáctilo. Rinocerótido. Rinoceronte lanudo."
 }
   
 
