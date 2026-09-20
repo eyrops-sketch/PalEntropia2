@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="combates.css">     
     <script src="../generador_fase_2/buscaruta.js"></script>     
     <script src="loadimagen.js"></script>     
-    <script src="palarenastats.js"></script>     
+    <script src="palarenastats.js"></script>
+    <script src="../generador_fase_2/paltaxon.js"></script>
+    <script src="taxon_combate.js"></script>
     <script src="standar-ataques.js"></script>     
     <script src="standar-efectos.js"></script>     
     <script src="standar.js"></script> 
@@ -29,14 +31,59 @@
 <section id="volver">     
     <a href="index.html" id="botonVolver"> ← Volver al índice del torneo </a> 
 </section> 
+
 <script> 
 window.TORNEO_COMBATES = []; 
 const CLAVE_TORNEO_EMPAREJAMIENTOS = "palentropia_emparejamientos_torneo"; 
 const CLAVE_RESULTADOS_SERIES = "palentropia_resultados_series"; 
 const CLAVE_ENTRADA_TORNEO = "palentropia_entrada_torneo"; 
 const CLAVE_PALMARES = "palentropia_palmares_historico"; 
+// --- FUNCIONES DE SOPORTE PARA SIMULACIÓN EN SEGUNDO PLANO ---
+let fichasGlobales = [];
 
-function obtenerCriterioTorneo() {     
+async function cargarMasterParaSimulacion() {
+    if(fichasGlobales.length > 0) return true;
+    try {
+        const res = await fetch("../generador_fase_2/master.csv");
+        if (!res.ok) throw new Error();
+        const texto = await res.text();
+        const lineas = texto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        if (lineas.length < 2) return false;
+        const cabecera = separarCSV(lineas[0]);
+        for (let i = 1; i < lineas.length; i++) {
+            const col = separarCSV(lineas[i]);
+            if (!col.length) continue;
+            let ficha = {};
+            cabecera.forEach((cab, j) => ficha[cab] = col[j] !== undefined ? col[j] : "");
+            for (let n = 1; n <= 11; n++) if (ficha["e" + n]) ficha["e" + n] = Number(ficha["e" + n]);
+            fichasGlobales.push(ficha);
+        }
+        return true;
+    } catch (e) {
+        console.error("Error cargando master.csv para simulación automática", e);
+        return false;
+    }
+}
+
+function separarCSV(linea) {
+    const res = []; let act = "", com = false;
+    for (let i = 0; i < linea.length; i++) { const c = linea[i]; if (c === '"') { com = !com; continue; } if (c === "," && !com) { res.push(act.trim()); act = ""; } else act += c; }
+    res.push(act.trim()); return res;
+}
+
+function obtenerConfiguracionTorneo() {
+    let reglas = {};
+    try { reglas = JSON.parse(localStorage.getItem("palentropia_reglas_torneo")) || {}; } catch(e) {}
+    let coefs = reglas.coeficientes || {};
+    return {
+        factorImprevisible: reglas.factorImprevisible !== undefined ? Number(reglas.factorImprevisible) : 1.0,
+        iaAleatoria: reglas.iaAleatoria || false,
+        ...coefs
+    };
+}
+// -------------------------------------------------------------
+
+ function obtenerCriterioTorneo() {     
     const criterio = localStorage.getItem("palentropia_criterio_torneo");     
     return String(criterio || "").trim(); 
 } 
@@ -200,6 +247,7 @@ function filtrarRondasPorEntrada(rondas) {
         return index !== -1 ? rondas.slice(index) : rondas;     
     } catch (e) { return rondas; } 
 }
+
 function obtenerTextoParticipante(participante) {     
     if (participante && typeof participante === "object" && participante.j1) {         
         return participante.j2 ? participante.j2 + " (" + participante.j1 + ")" : participante.j1;     }     
@@ -248,6 +296,7 @@ function mostrarCruce(cruce) {
     participantes.className = "participantesCombate";     
     const p1Real = resolverParticipanteReal(cruce.participante1, datosSeries);     
     const p2Real = resolverParticipanteReal(cruce.participante2, datosSeries);     
+    
     if (resCombate) {         
         const p1Codigo = typeof p1Real === "object" ? p1Real.j1 : p1Real;         
         const p2Codigo = typeof p2Real === "object" ? p2Real.j1 : p2Real;         
@@ -273,9 +322,10 @@ function mostrarCruce(cruce) {
         versus.type = "button";         
         versus.className = "versusCombate";         
         versus.textContent = "⚔️";         
-        versus.title = "Lanzar combate en la Arena";         
+        versus.title = "Lanzar combate manual en la Arena";         
         const p1Valido = p1Real && (typeof p1Real === "string" || p1Real.j1);         
         const p2Valido = p2Real && (typeof p2Real === "string" || p2Real.j1);         
+        
         if (p1Valido && p2Valido) {             
             const codigo1 = typeof p1Real === "string" ? p1Real : p1Real.j1;             
             const codigo2 = typeof p2Real === "string" ? p2Real : p2Real.j1;             
@@ -287,123 +337,173 @@ function mostrarCruce(cruce) {
         } else {             
             versus.disabled = true;             
             versus.style.opacity = "0.35";             
-            versus.style.cursor = "default";         }         
+            versus.style.cursor = "default";         
+        }         
         participantes.appendChild(versus);         
         participantes.appendChild(crearParticipanteVisual(cruce.participante2, datosSeries));         
        
+        // BOTÓN DE SIMULACIÓN AUTOMÁTICA MEJORADO (Motor IA Completo)
         const botonSimular = document.createElement("button");
-botonSimular.type = "button";
-botonSimular.className = "botonSimularIndividual";
-botonSimular.textContent = "⚡";
-botonSimular.title = "Simular serie por boletos (11 estats)";
-if (p1Valido && p2Valido) {
-    const codigo1 = typeof p1Real === "string" ? p1Real : p1Real.j1;
-    const codigo2 = typeof p2Real === "string" ? p2Real : p2Real.j1;
-    botonSimular.addEventListener("click", async function(e) {
-        e.stopPropagation();
-        try {
-            let reglas = {};
-            try { reglas = JSON.parse(localStorage.getItem("palentropia_reglas_torneo")) || {}; } catch(err) {}
-            const partidosSerie = Number(reglas.partidosSerie) || 1;
-            const vNec = Math.floor(partidosSerie / 2) + 1;
-            const mapaNombres = await obtenerMapaNombres();
+        botonSimular.type = "button";
+        botonSimular.className = "botonSimularIndividual";
+        botonSimular.textContent = "⚡";
+        botonSimular.title = "Simular serie automáticamente mediante IA y descargar registro";
+        
+        if (p1Valido && p2Valido) {
+            const codigo1 = typeof p1Real === "string" ? p1Real : p1Real.j1;
+            const codigo2 = typeof p2Real === "string" ? p2Real : p2Real.j1;
             
-            // Intentamos buscar las fichas completas para leer los 11 estats
-            const f1Base = typeof buscarFicha === "function" ? buscarFicha(codigo1) : null;
-            const f2Base = typeof buscarFicha === "function" ? buscarFicha(codigo2) : null;
-            const ficha1 = f1Base || { j1: codigo1 };
-            const ficha2 = f2Base || { j1: codigo2 };
+            botonSimular.addEventListener("click", async function(e) {
+                e.stopPropagation();
+                try {
+                    botonSimular.disabled = true;
+                    botonSimular.textContent = "⏳";
+                    
+                    let reglas = {};
+                    try { reglas = JSON.parse(localStorage.getItem("palentropia_reglas_torneo")) || {}; } catch(err) {}
+                    const partidosSerie = Number(reglas.partidosSerie) || 1;
+                    const vNec = Math.floor(partidosSerie / 2) + 1;
+                    const mapaNombres = await obtenerMapaNombres();
+                    
+                    // Cargar el Master para tener los stats y rasgos completos en la simulación
+                    const exitoCarga = await cargarMasterParaSimulacion();
+                    if (!exitoCarga) throw new Error("No se pudo cargar el archivo maestro para la simulación.");
 
-            const nombre1 = mapaNombres.get(codigo1) || codigo1;
-            const nombre2 = mapaNombres.get(codigo2) || codigo2;
+                    // Encontrar fichas completas
+                    const ficha1 = fichasGlobales.find(f => String(f.j1).toLowerCase() === codigo1.toLowerCase()) || { j1: codigo1, e1: 50, e2: 50, e3: 50, e4: 50, e5: 50 };
+                    const ficha2 = fichasGlobales.find(f => String(f.j1).toLowerCase() === codigo2.toLowerCase()) || { j1: codigo2, e1: 50, e2: 50, e3: 50, e4: 50, e5: 50 };
+                    
+                    ficha1.nombre = mapaNombres.get(codigo1) || codigo1;
+                    ficha2.nombre = mapaNombres.get(codigo2) || codigo2;
+                    ficha1.codigo = codigo1;
+                    ficha2.codigo = codigo2;
 
-            // Contar boletos comparando los 11 estats (e1 a e11)
-            let boletos1 = 0;
-            let boletos2 = 0;
-            for (let i = 1; i <= 11; i++) {
-                const val1 = Number(ficha1["e" + i]) || 50;
-                const val2 = Number(ficha2["e" + i]) || 50;
-                if (val1 > val2) boletos1++;
-                else if (val2 > val1) boletos2++;
-                else { boletos1++; boletos2++; } // En empate reparte
-            }
+                    let logSerie = `⚔️ REPORTE DE SERIE AUTOMÁTICA (MOTOR IA) ⚔️\n`;
+                    logSerie += `Combate: ${cruce.numero}\n`;
+                    logSerie += `Enfrentamiento: ${ficha1.nombre} (${codigo1}) VS ${ficha2.nombre} (${codigo2})\n`;
+                    logSerie += `Formato: Al mejor de ${partidosSerie} partidos.\n`;
+                    logSerie += `Fecha: ${new Date().toLocaleString("es-ES")}\n\n`;
 
-            // Si ambos tienen 0 por algún motivo extraño, igualamos a 1
-            if (boletos1 === 0 && boletos2 === 0) { boletos1 = 1; boletos2 = 1; }
-            const totalBoletos = boletos1 + boletos2;
-            const prob1 = boletos1 / totalBoletos;
+                    let victorias1 = 0;
+                    let victorias2 = 0;
+                    const configTorneo = obtenerConfiguracionTorneo();
 
-            let victorias1 = 0;
-            let victorias2 = 0;
+                    // Bucle de partidos de la serie
+                    for (let partido = 1; victorias1 < vNec && victorias2 < vNec; partido++) {
+                        logSerie += `========================================\n`;
+                        logSerie += `--- PARTIDO ${partido} ---\n`;
+                        logSerie += `========================================\n\n`;
+                        
+                        // Crear combate usando el motor de arena oficial
+                        let combateSimulacion = window.PALARENA_STANDAR.crearCombateEstandar(ficha1, ficha2, configTorneo);
+                        let limitadorSeguridad = configTorneo.max_turnos || 150;
+                        
+                        // Bucle de turnos del combate actual
+                        while (combateSimulacion.estado !== "finalizado" && combateSimulacion.turno <= limitadorSeguridad) {
+                            let lenHistorial = combateSimulacion.historial.length;
+                            
+                            // Ejecutar turno
+                            window.ejecutarTurnoEstandar(combateSimulacion);
+                            
+                            let nuevosLogs = combateSimulacion.historial.slice(lenHistorial);
+                            
+                            // Evitar bucles infinitos si no hay acción
+                            if(nuevosLogs.length === 0 && combateSimulacion.estado !== "finalizado") {
+                                 combateSimulacion.estado = "finalizado";
+                                 combateSimulacion.ganador = combateSimulacion.combatiente1.hp >= combateSimulacion.combatiente2.hp ? combateSimulacion.combatiente1.codigo : combateSimulacion.combatiente2.codigo;
+                            }
 
-            // Simular partidos de la serie según la probabilidad ponderada por los boletos
-            while (victorias1 < vNec && victorias2 < vNec) {
-                if (Math.random() < prob1) {
-                    victorias1++;
-                } else {
-                    victorias2++;
+                            // Extraer logs para el archivo
+                            nuevosLogs.forEach(reg => {
+                                if (reg && reg.tipo === "accion" && reg.resultado) {
+                                    if (reg.resultado.mensaje) logSerie += `[Turno ${combateSimulacion.turno - 1}] ` + reg.resultado.mensaje + "\n";
+                                    if (reg.resultado.registro) {
+                                        let r = reg.resultado.registro;
+                                        if(Array.isArray(r)) r.forEach(m => logSerie += `   ` + m + "\n");
+                                        else logSerie += `   ` + r + "\n";
+                                    }
+                                } else if (reg && reg.tipo === "efectos") {
+                                    [reg.primero, reg.segundo].forEach(ra => { 
+                                        if (Array.isArray(ra)) ra.forEach(d => { if (d && d.mensaje) logSerie += `[Efecto] ` + d.mensaje + "\n"; }); 
+                                    });
+                                }
+                            });
+                        }
+
+                        // Resolver ganadores por tiempo si es necesario
+                        if(!combateSimulacion.ganador) {
+                             combateSimulacion.ganador = combateSimulacion.combatiente1.hp >= combateSimulacion.combatiente2.hp ? combateSimulacion.combatiente1.codigo : combateSimulacion.combatiente2.codigo;
+                        }
+
+                        // Añadir victoria
+                        const codigoGanadorPartido = combateSimulacion.ganador;
+                        const nombreGanadorPartido = (codigoGanadorPartido === codigo1) ? ficha1.nombre : ficha2.nombre;
+                        
+                        if (codigoGanadorPartido === codigo1) victorias1++; else victorias2++;
+                        
+                        logSerie += `\n🏆 FIN DEL PARTIDO ${partido}. Ganador: ${nombreGanadorPartido}\n`;
+                        logSerie += `📊 Marcador temporal: ${ficha1.nombre} [${victorias1}] - [${victorias2}] ${ficha2.nombre}\n\n`;
+                    }
+
+                    const nombreGanadorFinal = victorias1 > victorias2 ? ficha1.nombre : ficha2.nombre;
+                    const codigoGanadorFinal = victorias1 > victorias2 ? codigo1 : codigo2;
+                    
+                    logSerie += `========================================\n`;
+                    logSerie += `🏆 GANADOR DE LA SERIE: ${nombreGanadorFinal} (${codigoGanadorFinal})\n`;
+                    logSerie += `========================================\n`;
+
+                    // Guardar resultado en el localstorage del torneo
+                    let resultadosSeries = {};
+                    try { resultadosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch(err) {}
+                    
+                    resultadosSeries[cruce.numero] = {
+                        ganadorCodigo: codigoGanadorFinal,
+                        ganadorNombre: nombreGanadorFinal,
+                        victorias1: victorias1,
+                        victorias2: victorias2,
+                        combatiente1Codigo: codigo1,
+                        combatiente2Codigo: codigo2
+                    };
+                    
+                    localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(resultadosSeries));
+                    
+                    // DESCARGAR EL ARCHIVO TXT
+                    const blob = new Blob([logSerie], { type: "text/plain;charset=utf-8" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `Torneo_${cruce.numero}_${codigo1}_vs_${codigo2}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    // Recargar pantalla
+                    if (typeof iniciarCombates === "function") {
+                        iniciarCombates();
+                    } else {
+                        window.location.reload();
+                    }
+                } catch (err) {
+                    console.error("Error en simulación inteligente:", err);
+                    alert("❌ Ocurrió un error al simular por IA.");
+                    botonSimular.disabled = false;
+                    botonSimular.textContent = "⚡";
                 }
-            }
-
-            const ganadorSerieCodigo = victorias1 > victorias2 ? codigo1 : codigo2;
-            const ganadorSerieNombre = victorias1 > victorias2 ? nombre1 : nombre2;
-
-            let resultadosSeries = {};
-            try { resultadosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch(err) {}
-            
-            resultadosSeries[cruce.numero] = {
-                ganadorCodigo: ganadorSerieCodigo,
-                ganadorNombre: ganadorSerieNombre,
-                victorias1: victorias1,
-                victorias2: victorias2,
-                combatiente1Codigo: codigo1,
-                combatiente2Codigo: codigo2
-            };
-            
-            localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(resultadosSeries));
-            if (typeof iniciarCombates === "function") {
-                iniciarCombates();
-            } else {
-                window.location.reload();
-            }
-        } catch (err) {
-            console.error("Error en simulación por boletos:", err);
-            alert("❌ Ocurrió un error al simular por boletos.");
+            });
+        } else {
+            botonSimular.disabled = true;
+            botonSimular.style.opacity = "0.35";
+            botonSimular.style.cursor = "default";
         }
-    });
-} else {
-    botonSimular.disabled = true;
-    botonSimular.style.opacity = "0.35";
-    botonSimular.style.cursor = "default";
-}
-tarjeta.appendChild(botonSimular);
-
-
-    
-    
-    
-    
-    
-    
-    
+        tarjeta.appendChild(botonSimular);
     }     
     tarjeta.appendChild(participantes);     
     return tarjeta; 
 }
 
-
-
-
-    
-
-
-
-
 function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
     try {
-        /* =====================================================
-           CARGAR HISTÓRICO
-           ===================================================== */
         let historico = [];
         try {
             historico = JSON.parse(localStorage.getItem(CLAVE_PALMARES) || "[]");
@@ -412,17 +512,11 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
             historico = [];
         }
 
-        /* =====================================================
-           DATOS GENERALES DEL TORNEO
-           ===================================================== */
         const criterio = obtenerCriterioTorneo();
         const nombreTorneo = transformarCriterioTorneo(criterio) || "Torneo General";
         const matrizParticipantes = obtenerParticipantes();
         const totalParticipantes = matrizParticipantes.length;
 
-        /* =====================================================
-           PUNTOS
-           ===================================================== */
         const puntosCampeon = totalParticipantes;
         
         const mitad = totalParticipantes / 2;
@@ -436,26 +530,13 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
             if (puntosSemifinalista <= 0 && cuartaparte >= 1) puntosSemifinalista = 2;
         }
 
-        /* =====================================================
-           VARIABLES
-           ===================================================== */
         let nombreSubcampeon = "Desconocido";
         let codigoSubcampeon = "";
         let listaSemifinalistas = [];
-
-        /* =====================================================
-           RESULTADOS DE LOS COMBATES
-           ===================================================== */
         let datosSeries = {};
-        try {
-            datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}");
-        } catch (e) {
-            datosSeries = {};
-        }
+        
+        try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
 
-        /* =====================================================
-           RECUPERAR LAS RONDAS COMPLETAS
-           ===================================================== */
         let rondasCompletas = null;
         const emparejamientosGuardados = localStorage.getItem(CLAVE_TORNEO_EMPAREJAMIENTOS);
         if (emparejamientosGuardados) {
@@ -473,16 +554,10 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
             rondasCompletas = Array.isArray(window.TORNEO_COMBATES) ? window.TORNEO_COMBATES : [];
         }
 
-        /* =====================================================
-           NORMALIZAR CÓDIGO
-           ===================================================== */
         function normalizarCodigo(codigo) {
             return String(codigo || "").trim().toUpperCase();
         }
 
-        /* =====================================================
-           OBTENER INFORMACIÓN REAL DEL PARTICIPANTE
-           ===================================================== */
         function obtenerInfoParticipante(participanteRef) {
             const real = resolverParticipanteReal(participanteRef, datosSeries);
             let codigo = "";
@@ -496,15 +571,9 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
                 nombre = codigo;
             }
 
-            return {
-                codigo: normalizarCodigo(codigo),
-                nombre: String(nombre || "").trim()
-            };
+            return { codigo: normalizarCodigo(codigo), nombre: String(nombre || "").trim() };
         }
 
-        /* =====================================================
-           IDENTIFICAR GRAN FINAL
-           ===================================================== */
         let cruceFinal = null;
         if (rondasCompletas.length > 0) {
             let rondaFinal = rondasCompletas.find(function(ronda) {
@@ -528,9 +597,6 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
             }
         }
 
-        /* =====================================================
-           OBTENER SUBCAMPEÓN
-           ===================================================== */
         if (cruceFinal) {
             const numeroFinal = cruceFinal.numero !== undefined ? cruceFinal.numero : cruceFinal.id;
             const resFinal = datosSeries[numeroFinal];
@@ -549,11 +615,7 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
                 }
             }
         }
-
-        /* =====================================================
-           IDENTIFICAR SEMIFINALISTAS
-           ===================================================== */
-        if (totalParticipantes >= 8 && puntosSemifinalista > 0) {
+                if (totalParticipantes >= 8 && puntosSemifinalista > 0) {
             let rondaSemifinales = rondasCompletas.find(function(ronda) {
                 if (!ronda) return false;
                 const nombre = String(ronda.nombre || "").trim().toLowerCase();
@@ -598,9 +660,7 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
                     } else if (ganadorCodigo === p2.codigo) {
                         perdedorCodigo = p1.codigo;
                         perdedorNombre = resCruce.combatiente1Nombre || p1.nombre || p1.codigo;
-                    } else {
-                        return;
-                    }
+                    } else { return; }
 
                     const campeonNormalizado = normalizarCodigo(codigoCampeon);
                     const subcampeonNormalizado = normalizarCodigo(codigoSubcampeon);
@@ -624,92 +684,42 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
             }
         }
 
-        /* =====================================================
-           FECHA Y HORA
-           ===================================================== */
         const ahora = new Date();
         const fechaHora = ahora.toLocaleString("es-ES", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
+            day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit"
         });
 
-        /* =====================================================
-           REGISTRAR TORNEO EN PALMARÉS
-           ===================================================== */
         historico.push({
             torneo: nombreTorneo,
             fechaHora: fechaHora,
-            campeon: {
-                codigo: normalizarCodigo(codigoCampeon),
-                nombre: String(nombreCampeon || "").trim(),
-                puntos: puntosCampeon
-            },
-            subcampeon: {
-                codigo: codigoSubcampeon,
-                nombre: nombreSubcampeon,
-                puntos: puntosSubcampeon
-            },
+            campeon: { codigo: normalizarCodigo(codigoCampeon), nombre: String(nombreCampeon || "").trim(), puntos: puntosCampeon },
+            subcampeon: { codigo: codigoSubcampeon, nombre: nombreSubcampeon, puntos: puntosSubcampeon },
             semifinalistas: listaSemifinalistas,
             victorias1: datosFinales ? datosFinales.victorias1 : undefined,
             victorias2: datosFinales ? datosFinales.victorias2 : undefined,
             timestamp: Date.now()
         });
 
-        /* =====================================================
-           GUARDAR PALMARÉS
-           ===================================================== */
         localStorage.setItem(CLAVE_PALMARES, JSON.stringify(historico));
 
-        /* =====================================================
-           LIMPIAR DATOS DEL TORNEO
-           ===================================================== */
         localStorage.removeItem(CLAVE_TORNEO_EMPAREJAMIENTOS);
         localStorage.removeItem(CLAVE_RESULTADOS_SERIES);
         localStorage.removeItem(CLAVE_ENTRADA_TORNEO);
         localStorage.removeItem("palentropia_matriz_combatientes");
 
-        /* =====================================================
-           MENSAJE FINAL
-           ===================================================== */
         alert(
             "🏆 ¡Torneo registrado! Campeón: " + puntosCampeon +
             " pts | Subcampeón: " + puntosSubcampeon + " pts" +
             (puntosSemifinalista > 0 ? " | Semifinalistas: " + puntosSemifinalista + " pts" : "") + "."
         );
 
-        /* =====================================================
-           VOLVER AL ÍNDICE
-           ===================================================== */
         window.location.href = "index.html";
 
     } catch (e) {
         console.error("Error registrando el palmarés:", e);
         alert("❌ Ocurrió un error al registrar el palmarés.");
     }
-                        }
-    
-    
-
-
-
-    
-
-
-    
-
-    
-
-
-        
-
-
-
-
-
-
+}
 
 function descargarPalmaresJSON() {
     try {
@@ -747,6 +757,13 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
         console.error("Error al registrar en palmarés:", e);
     }
 }
+
+
+
+
+
+
+
     function mostrarRondas(rondas) {     
     const contenedor = document.getElementById("contenedorRondas");     
     contenedor.innerHTML = "";     
@@ -778,15 +795,15 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
                     <div style="font-size: 24px; font-weight: bold; color: #58a6ff; margin-bottom: 6px;">${nombreCampeon}</div>                       
                     <div style="font-size: 14px; color: #8b949e; margin-bottom: 20px;">Código: ${codigoCampeon} — Marcador de la Final: ${resFinal.victorias1} - ${resFinal.victorias2}</div>                       
                     <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">                           
-                        <button id="botonPaleofichaCampeon" type="button" style="padding: 10px 16px; background: #238636; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">                               📖 Ver Paleoficha                           </button>                           
-                        <button id="botonAnadirPalmares" type="button" style="padding: 10px 16px; background: #d4af37; color: #111; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">                               📜 Añadir al Palmarés                           </button>
-                        <button id="botonDescargarPalmares" type="button" style="padding: 10px 16px; background: #1f6feb; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">                               📥 Descargar Palmarés                           </button>
-                        <button id="botonRegresarTorneo" type="button" style="padding: 10px 16px; background: #30363d; color: #c9d1d9; border: 1px solid #484f58; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">                               ← Volver a fases                           </button>                       
+                        <button id="botonPaleofichaCampeon" type="button" style="padding: 10px 16px; background: #238636; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">📖 Ver Paleoficha</button>                           
+                        <button id="botonAnadirPalmares" type="button" style="padding: 10px 16px; background: #d4af37; color: #111; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">📜 Añadir al Palmarés</button>
+                        <button id="botonDescargarPalmares" type="button" style="padding: 10px 16px; background: #1f6feb; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">📥 Descargar Palmarés</button>
+                        <button id="botonRegresarTorneo" type="button" style="padding: 10px 16px; background: #30363d; color: #c9d1d9; border: 1px solid #484f58; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">← Volver a fases</button>                       
                     </div>                   
                 `;                   
                 contenedor.appendChild(bannerCampeon);
 
-                            setTimeout(async () => {                     
+                setTimeout(async () => {                     
                     const imgElement = document.getElementById("imagenCampeonOficial");                     
                     if (imgElement) {                         
                         const extensiones = [".png", ".jpg", ".jpeg", ".webp"];                             
@@ -882,8 +899,9 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
         ronda.cruces.forEach(cruce => { lista.appendChild(mostrarCruce(cruce)); });           
         bloque.appendChild(lista);           
         contenedor.appendChild(bloque);       }); 
-    }
-    function mismosParticipantes(pGuardados, pActuales) {     
+}
+
+function mismosParticipantes(pGuardados, pActuales) {     
     if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;     
     for (let i = 0; i < pActuales.length; i++) {         
         if (String(pGuardados[i]) !== String(pActuales[i])) return false;     }     
