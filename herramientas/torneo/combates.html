@@ -281,10 +281,19 @@ function resolverParticipanteReal(p, datosSeries) {
         return { j1: datosSeries[p.combate].ganadorCodigo, j2: datosSeries[p.combate].ganadorNombre };     }     
     return p; 
 }
+
+    
+    
+    
+    
+    
+    
 function mostrarCruce(cruce) {     
     const tarjeta = document.createElement("div");     
     tarjeta.className = "cruceCombate";     
     tarjeta.dataset.combateId = cruce.numero;     
+    tarjeta.style.position = "relative"; // Añadido para poder anclar el checkbox en la esquina
+
     const numero = document.createElement("div");     
     numero.className = "numeroCombate";     
     numero.textContent = "Combate " + cruce.numero;     
@@ -342,16 +351,35 @@ function mostrarCruce(cruce) {
         participantes.appendChild(versus);         
         participantes.appendChild(crearParticipanteVisual(cruce.participante2, datosSeries));         
        
-        // BOTÓN DE SIMULACIÓN AUTOMÁTICA MEJORADO (Motor IA Completo)
         const botonSimular = document.createElement("button");
         botonSimular.type = "button";
         botonSimular.className = "botonSimularIndividual";
         botonSimular.textContent = "⚡";
-        botonSimular.title = "Simular serie automáticamente mediante IA y descargar registro";
+        botonSimular.title = "Simular serie automáticamente mediante IA";
         
         if (p1Valido && p2Valido) {
             const codigo1 = typeof p1Real === "string" ? p1Real : p1Real.j1;
             const codigo2 = typeof p2Real === "string" ? p2Real : p2Real.j1;
+
+            // --- CHECKBOX DE INFORME OPCIONAL EN ESQUINA INFERIOR DERECHA ---
+            const divCheckInf = document.createElement("div");
+            divCheckInf.style.cssText = "position: absolute; bottom: 4px; right: 6px; font-size: 11px; color: #8b949e; display: flex; align-items: center; gap: 4px; z-index: 10;";
+            
+            const checkInf = document.createElement("input");
+            checkInf.type = "checkbox";
+            checkInf.id = "check_inf_" + cruce.numero;
+            checkInf.style.cssText = "margin: 0; width: 12px; height: 12px; cursor: pointer; accent-color: #58a6ff;";
+            
+            const labelInf = document.createElement("label");
+            labelInf.htmlFor = checkInf.id;
+            labelInf.textContent = "Inf.";
+            labelInf.title = "Marcar para descargar el informe .txt al simular";
+            labelInf.style.cursor = "pointer";
+            
+            divCheckInf.appendChild(checkInf);
+            divCheckInf.appendChild(labelInf);
+            tarjeta.appendChild(divCheckInf);
+            // ----------------------------------------------------------------
             
             botonSimular.addEventListener("click", async function(e) {
                 e.stopPropagation();
@@ -365,11 +393,9 @@ function mostrarCruce(cruce) {
                     const vNec = Math.floor(partidosSerie / 2) + 1;
                     const mapaNombres = await obtenerMapaNombres();
                     
-                    // Cargar el Master para tener los stats y rasgos completos en la simulación
                     const exitoCarga = await cargarMasterParaSimulacion();
                     if (!exitoCarga) throw new Error("No se pudo cargar el archivo maestro para la simulación.");
 
-                    // Encontrar fichas completas
                     const ficha1 = fichasGlobales.find(f => String(f.j1).toLowerCase() === codigo1.toLowerCase()) || { j1: codigo1, e1: 50, e2: 50, e3: 50, e4: 50, e5: 50 };
                     const ficha2 = fichasGlobales.find(f => String(f.j1).toLowerCase() === codigo2.toLowerCase()) || { j1: codigo2, e1: 50, e2: 50, e3: 50, e4: 50, e5: 50 };
                     
@@ -388,32 +414,24 @@ function mostrarCruce(cruce) {
                     let victorias2 = 0;
                     const configTorneo = obtenerConfiguracionTorneo();
 
-                    // Bucle de partidos de la serie
                     for (let partido = 1; victorias1 < vNec && victorias2 < vNec; partido++) {
                         logSerie += `========================================\n`;
                         logSerie += `--- PARTIDO ${partido} ---\n`;
                         logSerie += `========================================\n\n`;
                         
-                        // Crear combate usando el motor de arena oficial
                         let combateSimulacion = window.PALARENA_STANDAR.crearCombateEstandar(ficha1, ficha2, configTorneo);
                         let limitadorSeguridad = configTorneo.max_turnos || 150;
                         
-                        // Bucle de turnos del combate actual
                         while (combateSimulacion.estado !== "finalizado" && combateSimulacion.turno <= limitadorSeguridad) {
                             let lenHistorial = combateSimulacion.historial.length;
-                            
-                            // Ejecutar turno
                             window.ejecutarTurnoEstandar(combateSimulacion);
-                            
                             let nuevosLogs = combateSimulacion.historial.slice(lenHistorial);
                             
-                            // Evitar bucles infinitos si no hay acción
                             if(nuevosLogs.length === 0 && combateSimulacion.estado !== "finalizado") {
                                  combateSimulacion.estado = "finalizado";
                                  combateSimulacion.ganador = combateSimulacion.combatiente1.hp >= combateSimulacion.combatiente2.hp ? combateSimulacion.combatiente1.codigo : combateSimulacion.combatiente2.codigo;
                             }
 
-                            // Extraer logs para el archivo
                             nuevosLogs.forEach(reg => {
                                 if (reg && reg.tipo === "accion" && reg.resultado) {
                                     if (reg.resultado.mensaje) logSerie += `[Turno ${combateSimulacion.turno - 1}] ` + reg.resultado.mensaje + "\n";
@@ -430,12 +448,10 @@ function mostrarCruce(cruce) {
                             });
                         }
 
-                        // Resolver ganadores por tiempo si es necesario
                         if(!combateSimulacion.ganador) {
                              combateSimulacion.ganador = combateSimulacion.combatiente1.hp >= combateSimulacion.combatiente2.hp ? combateSimulacion.combatiente1.codigo : combateSimulacion.combatiente2.codigo;
                         }
 
-                        // Añadir victoria
                         const codigoGanadorPartido = combateSimulacion.ganador;
                         const nombreGanadorPartido = (codigoGanadorPartido === codigo1) ? ficha1.nombre : ficha2.nombre;
                         
@@ -452,7 +468,6 @@ function mostrarCruce(cruce) {
                     logSerie += `🏆 GANADOR DE LA SERIE: ${nombreGanadorFinal} (${codigoGanadorFinal})\n`;
                     logSerie += `========================================\n`;
 
-                    // Guardar resultado en el localstorage del torneo
                     let resultadosSeries = {};
                     try { resultadosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch(err) {}
                     
@@ -467,18 +482,19 @@ function mostrarCruce(cruce) {
                     
                     localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(resultadosSeries));
                     
-                    // DESCARGAR EL ARCHIVO TXT
-                    const blob = new Blob([logSerie], { type: "text/plain;charset=utf-8" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `Torneo_${cruce.numero}_${codigo1}_vs_${codigo2}.txt`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
+                    // --- SOLO DESCARGAR EL ARCHIVO SI EL CHECKBOX ESTÁ MARCADO ---
+                    if (checkInf.checked) {
+                        const blob = new Blob([logSerie], { type: "text/plain;charset=utf-8" });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `Torneo_${cruce.numero}_${codigo1}_vs_${codigo2}.txt`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }
 
-                    // Recargar pantalla
                     if (typeof iniciarCombates === "function") {
                         iniciarCombates();
                     } else {
@@ -501,8 +517,19 @@ function mostrarCruce(cruce) {
     tarjeta.appendChild(participantes);     
     return tarjeta; 
 }
-
-function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
+    
+    
+    
+    
+    
+    
+    
+   
+    
+    
+    
+    
+    function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
     try {
         let historico = [];
         try {
