@@ -718,8 +718,16 @@
     "nombre": "Coelodonta",
     "dieta": "Herbívoro",
     "anatomia": "Gran rinoceronte prehistórico de cuerpo robusto, patas fuertes, cabeza alargada con un gran cuerno nasal y otro menor en la región frontal, adaptado al pastoreo y a ambientes fríos"
-}
+},
+{
+  "codigo": "009_01",
+  "nombre": "Corythosaurus",
+  "dieta": "Herbívoro",
+  "anatomia": "Dinosaurio hadrosáurido de gran tamaño y cuerpo robusto, cuadrúpedo facultativo, con pico córneo, numerosas baterías dentales y una característica cresta hueca en forma de casco sobre el cráneo, utilizada para la emisión de sonidos"
+}  
 ]
+
+
 
 
 
