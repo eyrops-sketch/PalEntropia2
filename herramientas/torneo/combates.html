@@ -65,6 +65,7 @@ async function cargarMasterParaSimulacion() {
     }
 }
 
+
 function separarCSV(linea) {
     const res = []; let act = "", com = false;
     for (let i = 0; i < linea.length; i++) { const c = linea[i]; if (c === '"') { com = !com; continue; } if (c === "," && !com) { res.push(act.trim()); act = ""; } else act += c; }
@@ -172,6 +173,7 @@ function crearCruces(participantes, numeroInicio = 1) {
             cruces.push({ numero: numeroInicio + cruces.length, participante1: participante1, participante2: participante2, ganador: null });         }     }     
     return cruces; 
 }
+
 function generarTorneo(participantes) {     
     const cantidad = participantes.length;     
     const rondas = [];     
@@ -282,12 +284,7 @@ function resolverParticipanteReal(p, datosSeries) {
     return p; 
 }
 
-    
-    
-    
-    
-    
-    
+
 function mostrarCruce(cruce) {     
     const tarjeta = document.createElement("div");     
     tarjeta.className = "cruceCombate";     
@@ -353,7 +350,7 @@ function mostrarCruce(cruce) {
        
         const botonSimular = document.createElement("button");
         botonSimular.type = "button";
-        botonSimular.className = "botonSimularIndividual";
+        botonSimular.className = "botonSimularIndividual botonLanzarSimulacion"; // Añadida clase para localizar el botón fácilmente
         botonSimular.textContent = "⚡";
         botonSimular.title = "Simular serie automáticamente mediante IA";
         
@@ -361,13 +358,13 @@ function mostrarCruce(cruce) {
             const codigo1 = typeof p1Real === "string" ? p1Real : p1Real.j1;
             const codigo2 = typeof p2Real === "string" ? p2Real : p2Real.j1;
 
-            // --- CHECKBOX DE INFORME OPCIONAL EN ESQUINA INFERIOR DERECHA ---
             const divCheckInf = document.createElement("div");
             divCheckInf.style.cssText = "position: absolute; bottom: 4px; right: 6px; font-size: 11px; color: #8b949e; display: flex; align-items: center; gap: 4px; z-index: 10;";
             
             const checkInf = document.createElement("input");
             checkInf.type = "checkbox";
             checkInf.id = "check_inf_" + cruce.numero;
+            checkInf.className = "checkInformeOpcional"; // Clase para encontrarlo al simular todo
             checkInf.style.cssText = "margin: 0; width: 12px; height: 12px; cursor: pointer; accent-color: #58a6ff;";
             
             const labelInf = document.createElement("label");
@@ -379,7 +376,6 @@ function mostrarCruce(cruce) {
             divCheckInf.appendChild(checkInf);
             divCheckInf.appendChild(labelInf);
             tarjeta.appendChild(divCheckInf);
-            // ----------------------------------------------------------------
             
             botonSimular.addEventListener("click", async function(e) {
                 e.stopPropagation();
@@ -482,7 +478,6 @@ function mostrarCruce(cruce) {
                     
                     localStorage.setItem(CLAVE_RESULTADOS_SERIES, JSON.stringify(resultadosSeries));
                     
-                    // --- SOLO DESCARGAR EL ARCHIVO SI EL CHECKBOX ESTÁ MARCADO ---
                     if (checkInf.checked) {
                         const blob = new Blob([logSerie], { type: "text/plain;charset=utf-8" });
                         const url = URL.createObjectURL(blob);
@@ -516,20 +511,10 @@ function mostrarCruce(cruce) {
     }     
     tarjeta.appendChild(participantes);     
     return tarjeta; 
-}
-    
-    
-    
-    
-    
-    
-    
-   
-    
-    
-    
-    
-    function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
+                            }
+
+
+function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
     try {
         let historico = [];
         try {
@@ -642,7 +627,9 @@ function mostrarCruce(cruce) {
                 }
             }
         }
-                if (totalParticipantes >= 8 && puntosSemifinalista > 0) {
+
+
+            if (totalParticipantes >= 8 && puntosSemifinalista > 0) {
             let rondaSemifinales = rondasCompletas.find(function(ronda) {
                 if (!ronda) return false;
                 const nombre = String(ronda.nombre || "").trim().toLowerCase();
@@ -786,12 +773,7 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
 }
 
 
-
-
-
-
-
-    function mostrarRondas(rondas) {     
+function mostrarRondas(rondas) {     
     const contenedor = document.getElementById("contenedorRondas");     
     contenedor.innerHTML = "";     
     const guardadoEntrada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);       
@@ -903,12 +885,69 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
                 avisoPendiente.style.cssText = "text-align: center; padding: 24px; color: #8b949e; background: #161b22; border-radius: 8px; margin-bottom: 20px;";                   
                 avisoPendiente.textContent = "🏆 La Gran Final aún no se ha disputado. ¡Juega el último combate para coronar al campeón!";                   
                 contenedor.appendChild(avisoPendiente);               }           }       }       
+
+
+
     rondas.forEach(ronda => {           
         const bloque = document.createElement("section");           
         bloque.className = "rondaTorneo";           
+        
+        // --- CABECERA DE LA RONDA CON BOTÓN DE SIMULACIÓN MASIVA ---
+        const cabeceraRonda = document.createElement("div");
+        cabeceraRonda.style.cssText = "display: flex; justify-content: space-between; align-items: center;";
+        
         const titulo = document.createElement("h2");           
         titulo.textContent = ronda.nombre;           
-        bloque.appendChild(titulo);           
+        titulo.style.margin = "0";
+        cabeceraRonda.appendChild(titulo);           
+        
+        // Comprobar si hay combates pendientes en esta ronda que tengan ambos participantes decididos
+        let datosSeries = {};
+        try { datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}"); } catch (e) {}
+        
+        const combatesPendientes = ronda.cruces.filter(c => {
+            const resCombate = datosSeries[c.numero];
+            if (resCombate) return false; // Ya jugado
+            const p1Real = resolverParticipanteReal(c.participante1, datosSeries);
+            const p2Real = resolverParticipanteReal(c.participante2, datosSeries);
+            const p1Valido = p1Real && (typeof p1Real === "string" || p1Real.j1);
+            const p2Valido = p2Real && (typeof p2Real === "string" || p2Real.j1);
+            return p1Valido && p2Valido; // Listos para jugar
+        });
+
+        if (combatesPendientes.length > 0 && !esVistaCampeon) {
+            const botonSimularRonda = document.createElement("button");
+            botonSimularRonda.textContent = "⚡ Simular restantes";
+            botonSimularRonda.title = "Simular todos los combates pendientes de esta ronda";
+            botonSimularRonda.style.cssText = "padding: 6px 12px; font-size: 14px; background: #238636; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;";
+            
+            botonSimularRonda.addEventListener("click", function() {
+                if(confirm("¿Estás seguro de que quieres simular todos los combates activos de esta ronda?\nSe simularán en cadena.\nNOTA: Se descargarán los informes de aquellos combates que tengan la casilla 'Inf.' marcada.")) {
+                    botonSimularRonda.disabled = true;
+                    botonSimularRonda.textContent = "⏳ Simulando...";
+                    
+                    // Buscar todos los botones de simulación individual activos de esta ronda y hacerles click
+                    let simulacionesLanzadas = 0;
+                    const tarjetasRonda = bloque.querySelectorAll('.cruceCombate:not(.combateFinalizado)');
+                    
+                    tarjetasRonda.forEach(tarjeta => {
+                        const btn = tarjeta.querySelector('.botonLanzarSimulacion');
+                        if (btn && !btn.disabled) {
+                            simulacionesLanzadas++;
+                            // Usamos setTimeout para no bloquear el navegador si son muchos
+                            setTimeout(() => {
+                                btn.click();
+                            }, simulacionesLanzadas * 300);
+                        }
+                    });
+                }
+            });
+            cabeceraRonda.appendChild(botonSimularRonda);
+        }
+        
+        bloque.appendChild(cabeceraRonda);
+        // -----------------------------------------------------------
+
         if (ronda.reservas && ronda.reservas.length) {               
             const reservas = document.createElement("div");               
             reservas.className = "pasanDirectamente";               
@@ -1023,3 +1062,10 @@ document.addEventListener("DOMContentLoaded", function() {
 </script> 
 </body> 
 </html>
+
+
+
+
+
+    
+
