@@ -592,7 +592,11 @@ window.PALTAXON = {
 "008_15":{
   ta1:"Animalia > Chordata > Synapsida > Mammalia > Perissodactyla > Rhinocerotidae > Coelodonta",
   ta2:"Sinápsido. Mamífero. Perisodáctilo. Rinocerótido. Rinoceronte lanudo."
-}
+},
+"009_01":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Dinosauria > Ornithischia > Ornithopoda > Iguanodontia > Hadrosauridae > Lambeosaurinae > Corythosaurus",
+  ta2:"Diápsido. Arcosaurio. Dinosaurio. Ornitisquio. Ornitópodo. Iguanodontio. Hadrosáurido. Lambeosaurino."
+}  
   
 
   
