@@ -16,10 +16,19 @@
 </head> 
 <body> 
 <button id="botonMenuPrincipal" type="button" title="Volver al menú principal" aria-label="Volver al menú principal"> 🏠 </button> 
-<header id="cabecera">     
+<header id="cabecera" style="position: relative;">     
     <h1>PalEntropía</h1>     
     <div id="subtitulo">Combates</div> 
+    <button id="botonReglasModal" type="button" title="Reglas del Torneo" aria-label="Reglas del Torneo" style="position: absolute; top: 15px; right: 15px; width: 36px; height: 36px; border-radius: 50%; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">⚙️</button>
 </header> 
+
+<div id="modalReglas" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="position: relative; width: 90%; max-width: 800px; height: 85vh; background: #0d1117; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; box-shadow: 0 16px 32px rgba(0,0,0,0.6);">
+        <button id="cerrarModalReglas" type="button" style="position: absolute; top: 10px; right: 15px; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-size: 16px; padding: 6px 12px; border-radius: 6px; cursor: pointer; z-index: 10;">✕ Cerrar</button>
+        <iframe src="reglas.html" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+</div>
+
 <main id="combates">     
     <section id="cabeceraCombates" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">         
         <h2 id="tituloTorneo" style="margin: 0;">⚔️ Torneo</h2>         
@@ -35,8 +44,7 @@
 </main> 
 <section id="volver">     
     <a href="index.html" id="botonVolver"> ← Volver al índice del torneo </a> 
-</section> 
-
+</section>
 <script> 
 window.TORNEO_COMBATES = []; 
 const CLAVE_TORNEO_EMPAREJAMIENTOS = "palentropia_emparejamientos_torneo"; 
@@ -67,7 +75,6 @@ async function cargarMasterParaSimulacion() {
     } catch (e) { return false; }
 }
 
-
 function separarCSV(linea) {
     const res = []; let act = "", com = false;
     for (let i = 0; i < linea.length; i++) { const c = linea[i]; if (c === '"') { com = !com; continue; } if (c === "," && !com) { res.push(act.trim()); act = ""; } else act += c; }
@@ -85,6 +92,7 @@ function obtenerConfiguracionTorneo() {
         ...coefs
     };
 }
+
 
 function obtenerCriterioTorneo() {     
     const criterio = localStorage.getItem("palentropia_criterio_torneo");     
@@ -142,7 +150,8 @@ function crearParticipantesDatos(matrizJ1, mapaNombres) {
         if (!j1) return;         
         participantes.push({ j1: j1, j2: mapaNombres.get(j1) || "" });     });     
     return participantes; 
-} 
+}
+
 
 function barajar(matriz) {     
     const resultado = [...matriz];     
@@ -208,8 +217,7 @@ function generarTorneo(participantes) {
         numeroCombateGlobal += crucesActuales.length;     
     }     
 
-
-        while (crucesActuales.length > 1) {         
+    while (crucesActuales.length > 1) {         
         const participantesRonda = crucesActuales.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));         
         crucesActuales = crearCruces(participantesRonda, numeroCombateGlobal);         
         let nombreRonda = "Eliminatorias";         
@@ -229,9 +237,9 @@ function generarTorneo(participantes) {
         numeroCombateGlobal += crucesActuales.length;     
     }     
     return rondas; 
-} 
+}
 
-function filtrarRondasPorEntrada(rondas) {     
+ function filtrarRondasPorEntrada(rondas) {     
     const guardado = localStorage.getItem(CLAVE_ENTRADA_TORNEO);     
     if (!guardado) return rondas;     
     try {         
@@ -351,8 +359,7 @@ function mostrarCruce(cruce) {
         participantes.appendChild(versus);         
         participantes.appendChild(crearParticipanteVisual(cruce.participante2, datosSeries));         
 
-
-            const botonSimular = document.createElement("button");
+        const botonSimular = document.createElement("button");
         botonSimular.type = "button";
         botonSimular.className = "botonSimularIndividual botonLanzarSimulacion";
         botonSimular.textContent = "⚡";
@@ -401,7 +408,7 @@ function mostrarCruce(cruce) {
                     
                     ficha1.nombre = mapaNombres.get(codigo1) || codigo1;
                     ficha2.nombre = mapaNombres.get(codigo2) || codigo2;
-                    ficha1.j2 = ficha1.nombre; // Forzamos el nombre real para los logs internos del motor
+                    ficha1.j2 = ficha1.nombre; 
                     ficha2.j2 = ficha2.nombre;
                     ficha1.codigo = codigo1;
                     ficha2.codigo = codigo2;
@@ -419,9 +426,7 @@ function mostrarCruce(cruce) {
                     let victorias1 = 0;
                     let victorias2 = 0;
 
-
-
-                       for (let partido = 1; victorias1 < vNec && victorias2 < vNec; partido++) {
+                    for (let partido = 1; victorias1 < vNec && victorias2 < vNec; partido++) {
                         logSerie += `========================================\n`;
                         logSerie += `--- PARTIDO ${partido} ---\n`;
                         logSerie += `========================================\n\n`;
@@ -537,8 +542,7 @@ function mostrarCruce(cruce) {
     return tarjeta; 
 }
 
-
-function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
+ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
     try {
         let historico = [];
         try {
@@ -554,7 +558,6 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
         const totalParticipantes = matrizParticipantes.length;
 
         const puntosCampeon = totalParticipantes;
-        
         const mitad = totalParticipantes / 2;
         let puntosSubcampeon = Math.floor(mitad / 2) * 2;
         if (puntosSubcampeon <= 0 && mitad >= 1) puntosSubcampeon = 2;
@@ -714,8 +717,7 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
     }
 }
 
-
- function descargarPalmaresJSON() {
+function descargarPalmaresJSON() {
     try {
         const historico = localStorage.getItem(CLAVE_PALMARES) || "[]";
         const blob = new Blob([historico], { type: "application/json" });
@@ -741,7 +743,7 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
     } catch (e) {}
 }
 
-function mostrarRondas(rondas) {     
+    function mostrarRondas(rondas) {     
     const contenedor = document.getElementById("contenedorRondas");     
     contenedor.innerHTML = "";     
     const guardadoEntrada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);       
@@ -816,7 +818,7 @@ function mostrarRondas(rondas) {
                 avisoPendiente.textContent = "🏆 La Gran Final aún no se ha disputado. ¡Juega el último combate para coronar al campeón!";                   
                 contenedor.appendChild(avisoPendiente);               }           }       }       
 
-            rondas.forEach(ronda => {           
+    rondas.forEach(ronda => {           
         const bloque = document.createElement("section");           
         bloque.className = "rondaTorneo";           
         
@@ -884,10 +886,9 @@ function mostrarRondas(rondas) {
         ronda.cruces.forEach(cruce => { lista.appendChild(mostrarCruce(cruce)); });           
         bloque.appendChild(lista);           
         contenedor.appendChild(bloque);       }); 
-                }
+    }
 
-
-function mismosParticipantes(pGuardados, pActuales) {     
+    function mismosParticipantes(pGuardados, pActuales) {     
     if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;     
     for (let i = 0; i < pActuales.length; i++) {         
         if (String(pGuardados[i]) !== String(pActuales[i])) return false;     }     
@@ -969,11 +970,26 @@ async function iniciarCombates(forzarNuevo = false) {
     const informacion = calcularRondaPrevia(participantes.length);     
     mostrarEstadoTorneo(participantes, informacion, fueGenerado);     
     mostrarRondas(rondas); 
-} 
+}
 
-document.addEventListener("DOMContentLoaded", function() {     
+    document.addEventListener("DOMContentLoaded", function() {     
     const botonMenu = document.getElementById("botonMenuPrincipal");     
     if (botonMenu) { botonMenu.addEventListener("click", function() { window.location.href = "index.html"; }); }     
+    
+    const botonReglasModal = document.getElementById("botonReglasModal");
+    const modalReglas = document.getElementById("modalReglas");
+    const cerrarModalReglas = document.getElementById("cerrarModalReglas");
+    
+    if (botonReglasModal && modalReglas) {
+        botonReglasModal.addEventListener("click", () => { modalReglas.style.display = "flex"; });
+    }
+    if (cerrarModalReglas && modalReglas) {
+        cerrarModalReglas.addEventListener("click", () => { modalReglas.style.display = "none"; });
+    }
+    if (modalReglas) {
+        modalReglas.addEventListener("click", (e) => { if (e.target === modalReglas) modalReglas.style.display = "none"; });
+    }
+
     const botonRehacer = document.getElementById("botonRehacerEmparejamientos");     
     if (botonRehacer) {         
         botonRehacer.addEventListener("click", async function() {             
@@ -995,8 +1011,10 @@ document.addEventListener("DOMContentLoaded", function() {
             let datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}");
 
             let huboCambios = true;
-            while (huboCambios) {
+            let iteracionesSeguridad = 0;
+            while (huboCambios && iteracionesSeguridad < 20) {
                 huboCambios = false;
+                iteracionesSeguridad++;
                 for (let r = 0; r < window.TORNEO_COMBATES.length; r++) {
                     const ronda = window.TORNEO_COMBATES[r];
                     
