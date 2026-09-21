@@ -16,27 +16,18 @@
 </head> 
 <body> 
 <button id="botonMenuPrincipal" type="button" title="Volver al menú principal" aria-label="Volver al menú principal"> 🏠 </button> 
-<header id="cabecera" style="position: relative;">     
+<header id="cabecera">     
     <h1>PalEntropía</h1>     
     <div id="subtitulo">Combates</div> 
-    <button id="botonReglasModal" type="button" title="Reglas del Torneo" aria-label="Reglas del Torneo" style="position: absolute; top: 15px; right: 15px; width: 36px; height: 36px; border-radius: 50%; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">⚙️</button>
 </header> 
-
-<div id="modalReglas" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="position: relative; width: 90%; max-width: 800px; height: 85vh; background: #0d1117; border: 1px solid #30363d; border-radius: 12px; overflow: hidden; box-shadow: 0 16px 32px rgba(0,0,0,0.6);">
-        <button id="cerrarModalReglas" type="button" style="position: absolute; top: 10px; right: 15px; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-size: 16px; padding: 6px 12px; border-radius: 6px; cursor: pointer; z-index: 10;">✕ Cerrar</button>
-        <iframe src="reglas.html" style="width: 100%; height: 100%; border: none;"></iframe>
-    </div>
-</div>
-
 <main id="combates">     
-    <section id="cabeceraCombates" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">         
+    <section id="cabeceraCombates" style="display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative;">         
+        <button id="botonOpcionesTorneo" title="Abrir Reglas y Opciones" type="button" style="position: absolute; top: 0; right: 10px; border-radius: 50%; width: 32px; height: 32px; font-size: 18px; display: flex; align-items: center; justify-content: center; background: #30363d; color: white; border: 1px solid #484f58; cursor: pointer; padding: 0; z-index: 5;">⚙️</button>
         <h2 id="tituloTorneo" style="margin: 0;">⚔️ Torneo</h2>         
         <p id="estadoCombates" style="margin: 0;">Preparando emparejamientos...</p>         
         
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; width: 100%; max-width: 300px;">
             <button id="botonRehacerEmparejamientos" type="button" style="width: 100%; padding: 8px 16px;"> 🔄 Rehacer emparejamientos </button>
-            <button id="botonSimularHastaCuartos" type="button" style="display: none; width: 100%; padding: 8px 16px; background: #2ea043; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">⚡ Simular hasta Cuartos</button>
             <button id="botonSimularCampeonato" type="button" style="width: 100%; padding: 8px 16px; background: #8957e5; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">⚡ Simular TODO el torneo</button>     
         </div>
     </section>     
@@ -44,7 +35,19 @@
 </main> 
 <section id="volver">     
     <a href="index.html" id="botonVolver"> ← Volver al índice del torneo </a> 
-</section>
+</section> 
+
+<!-- Modal para reglas -->
+<div id="modalReglasTorneo" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(3px);">
+    <div style="background: #0d1117; width: 90%; max-width: 800px; height: 85%; border: 1px solid #30363d; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.9); position: relative;">
+        <div style="padding: 12px 16px; background: #161b22; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d;">
+            <h3 style="margin: 0; color: #c9d1d9; font-size: 18px;">⚙️ Reglas y Configuración</h3>
+            <button id="botonCerrarModalReglas" title="Cerrar" type="button" style="border-radius: 50%; width: 32px; height: 32px; font-size: 16px; display: flex; align-items: center; justify-content: center; background: #da3633; color: white; border: none; cursor: pointer; padding: 0;">✖</button>
+        </div>
+        <iframe src="herramientas/torneo/reglas.html" style="flex-grow: 1; border: none; width: 100%; height: 100%; background: #0d1117;"></iframe>
+    </div>
+</div>
+
 <script> 
 window.TORNEO_COMBATES = []; 
 const CLAVE_TORNEO_EMPAREJAMIENTOS = "palentropia_emparejamientos_torneo"; 
@@ -82,6 +85,7 @@ function separarCSV(linea) {
 }
 
 function obtenerConfiguracionTorneo() {
+    
     let reglas = {};
     try { reglas = JSON.parse(localStorage.getItem("palentropia_reglas_torneo")) || {}; } catch(e) {}
     let coefs = reglas.coeficientes || {};
@@ -92,6 +96,7 @@ function obtenerConfiguracionTorneo() {
         ...coefs
     };
 }
+
 function obtenerCriterioTorneo() {     
     const criterio = localStorage.getItem("palentropia_criterio_torneo");     
     return String(criterio || "").trim(); 
@@ -148,7 +153,7 @@ function crearParticipantesDatos(matrizJ1, mapaNombres) {
         if (!j1) return;         
         participantes.push({ j1: j1, j2: mapaNombres.get(j1) || "" });     });     
     return participantes; 
-}
+} 
 
 function barajar(matriz) {     
     const resultado = [...matriz];     
@@ -171,6 +176,7 @@ function calcularRondaPrevia(cantidad) {
     const sobrantes = cantidad - cuadro;     
     return { cuadro: cuadro, sobrantes: sobrantes, combates: sobrantes }; 
 } 
+
 
 function crearCruces(participantes, numeroInicio = 1) {     
     const cruces = [];     
@@ -234,7 +240,8 @@ function generarTorneo(participantes) {
         numeroCombateGlobal += crucesActuales.length;     
     }     
     return rondas; 
-}
+} 
+
 
 function filtrarRondasPorEntrada(rondas) {     
     const guardado = localStorage.getItem(CLAVE_ENTRADA_TORNEO);     
@@ -292,6 +299,8 @@ function resolverParticipanteReal(p, datosSeries) {
         return { j1: datosSeries[p.combate].ganadorCodigo, j2: datosSeries[p.combate].ganadorNombre };     }     
     return p; 
 }
+
+
 function mostrarCruce(cruce) {     
     const tarjeta = document.createElement("div");     
     tarjeta.className = "cruceCombate";     
@@ -355,7 +364,8 @@ function mostrarCruce(cruce) {
         participantes.appendChild(versus);         
         participantes.appendChild(crearParticipanteVisual(cruce.participante2, datosSeries));         
 
-        const botonSimular = document.createElement("button");
+
+               const botonSimular = document.createElement("button");
         botonSimular.type = "button";
         botonSimular.className = "botonSimularIndividual botonLanzarSimulacion";
         botonSimular.textContent = "⚡";
@@ -422,7 +432,8 @@ function mostrarCruce(cruce) {
                     let victorias1 = 0;
                     let victorias2 = 0;
 
-                    for (let partido = 1; victorias1 < vNec && victorias2 < vNec; partido++) {
+
+                          for (let partido = 1; victorias1 < vNec && victorias2 < vNec; partido++) {
                         logSerie += `========================================\n`;
                         logSerie += `--- PARTIDO ${partido} ---\n`;
                         logSerie += `========================================\n\n`;
@@ -480,8 +491,11 @@ function mostrarCruce(cruce) {
                         
                         logSerie += `\n🏆 FIN DEL PARTIDO ${partido}. Ganador: ${nombreGanadorPartido}\n`;
                         logSerie += `📊 Marcador temporal: ${ficha1.nombre} [${victorias1}] - [${victorias2}] ${ficha2.nombre}\n\n`;
-                    }
+                          }
 
+
+
+        
                     const nombreGanadorFinal = victorias1 > victorias2 ? ficha1.nombre : ficha2.nombre;
                     const codigoGanadorFinal = victorias1 > victorias2 ? codigo1 : codigo2;
                     
@@ -537,6 +551,7 @@ function mostrarCruce(cruce) {
     tarjeta.appendChild(participantes);     
     return tarjeta; 
 }
+
 function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
     try {
         let historico = [];
@@ -553,6 +568,7 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
         const totalParticipantes = matrizParticipantes.length;
 
         const puntosCampeon = totalParticipantes;
+        
         const mitad = totalParticipantes / 2;
         let puntosSubcampeon = Math.floor(mitad / 2) * 2;
         if (puntosSubcampeon <= 0 && mitad >= 1) puntosSubcampeon = 2;
@@ -600,7 +616,10 @@ function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
             return { codigo: normalizarCodigo(codigo), nombre: String(nombre || "").trim() };
         }
 
-        let cruceFinal = null;
+
+
+
+             let cruceFinal = null;
         if (rondasCompletas.length > 0) {
             let rondaFinal = rondasCompletas.find(function(ronda) {
                 if (!ronda) return false;
@@ -736,8 +755,9 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
             localStorage.setItem(CLAVE_PALMARES, JSON.stringify(historico));
         }
     } catch (e) {}
-                }
-   function mostrarRondas(rondas) {     
+}
+
+function mostrarRondas(rondas) {     
     const contenedor = document.getElementById("contenedorRondas");     
     contenedor.innerHTML = "";     
     const guardadoEntrada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);       
@@ -812,7 +832,8 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
                 avisoPendiente.textContent = "🏆 La Gran Final aún no se ha disputado. ¡Juega el último combate para coronar al campeón!";                   
                 contenedor.appendChild(avisoPendiente);               }           }       }       
 
-    rondas.forEach(ronda => {           
+
+        rondas.forEach(ronda => {           
         const bloque = document.createElement("section");           
         bloque.className = "rondaTorneo";           
         
@@ -880,8 +901,9 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
         ronda.cruces.forEach(cruce => { lista.appendChild(mostrarCruce(cruce)); });           
         bloque.appendChild(lista);           
         contenedor.appendChild(bloque);       }); 
-                           }
-    function mismosParticipantes(pGuardados, pActuales) {     
+}
+
+function mismosParticipantes(pGuardados, pActuales) {     
     if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;     
     for (let i = 0; i < pActuales.length; i++) {         
         if (String(pGuardados[i]) !== String(pActuales[i])) return false;     }     
@@ -913,15 +935,6 @@ function mostrarEstadoTorneo(participantes, informacion, fueGenerado) {
         estado.textContent = participantes.length + " participantes · " + informacion.combates + " combates de ronda previa · " + informacion.cuadro + " participantes en el cuadro principal.";     } else {         
         estado.textContent = participantes.length + " participantes · cuadro de " + informacion.cuadro + ".";     }     
     estado.textContent += fueGenerado ? " Emparejamientos fijados." : " Emparejamientos guardados."; 
-    
-    const btnSimCuartos = document.getElementById("botonSimularHastaCuartos");
-    if (btnSimCuartos) {
-        if (participantes.length >= 8) {
-            btnSimCuartos.style.display = "block";
-        } else {
-            btnSimCuartos.style.display = "none";
-        }
-    }
 } 
 
 async function iniciarCombates(forzarNuevo = false) {     
@@ -963,25 +976,11 @@ async function iniciarCombates(forzarNuevo = false) {
     const informacion = calcularRondaPrevia(participantes.length);     
     mostrarEstadoTorneo(participantes, informacion, fueGenerado);     
     mostrarRondas(rondas); 
-}
+} 
+
 document.addEventListener("DOMContentLoaded", function() {     
     const botonMenu = document.getElementById("botonMenuPrincipal");     
     if (botonMenu) { botonMenu.addEventListener("click", function() { window.location.href = "index.html"; }); }     
-    
-    const botonReglasModal = document.getElementById("botonReglasModal");
-    const modalReglas = document.getElementById("modalReglas");
-    const cerrarModalReglas = document.getElementById("cerrarModalReglas");
-    
-    if (botonReglasModal && modalReglas) {
-        botonReglasModal.addEventListener("click", () => { modalReglas.style.display = "flex"; });
-    }
-    if (cerrarModalReglas && modalReglas) {
-        cerrarModalReglas.addEventListener("click", () => { modalReglas.style.display = "none"; });
-    }
-    if (modalReglas) {
-        modalReglas.addEventListener("click", (e) => { if (e.target === modalReglas) modalReglas.style.display = "none"; });
-    }
-
     const botonRehacer = document.getElementById("botonRehacerEmparejamientos");     
     if (botonRehacer) {         
         botonRehacer.addEventListener("click", async function() {             
@@ -991,21 +990,20 @@ document.addEventListener("DOMContentLoaded", function() {
             try { localStorage.removeItem(CLAVE_RESULTADOS_SERIES); await iniciarCombates(true); } catch (error) {}             
             botonRehacer.disabled = false;         });     }
 
-    async function ejecutarSimulacionGlobal(hastaCuartos = false) {
+    const btnAbrirModal = document.getElementById("botonOpcionesTorneo");
+    const modalReglas = document.getElementById("modalReglasTorneo");
+    const btnCerrarModal = document.getElementById("botonCerrarModalReglas");
+
+    if (btnAbrirModal && modalReglas && btnCerrarModal) {
+        btnAbrirModal.addEventListener("click", () => { modalReglas.style.display = "flex"; });
+        btnCerrarModal.addEventListener("click", () => { modalReglas.style.display = "none"; });
+    }
+
+    async function ejecutarSimulacionGlobal() {
         try {
             const exitoCarga = await cargarMasterParaSimulacion();
             if (!exitoCarga) throw new Error("No master");
             const mapaNombres = await obtenerMapaNombres();
-            const matrizJ1 = obtenerParticipantes();
-            const participantes = crearParticipantesDatos(matrizJ1, mapaNombres);
-            
-            // Usar siempre las rondas completas sin filtrar para que la cadena de ganadores previa funcione siempre
-            let rondasCompletas = obtenerEmparejamientosGuardados(participantes);
-            if (!rondasCompletas) {
-                rondasCompletas = generarTorneo(participantes);
-                guardarEmparejamientos(participantes, rondasCompletas);
-            }
-
             let reglas = JSON.parse(localStorage.getItem("palentropia_reglas_torneo")) || {};
             const configTorneo = obtenerConfiguracionTorneo();
             const partidosSerie = Number(reglas.partidosSerie) || 1;
@@ -1013,20 +1011,10 @@ document.addEventListener("DOMContentLoaded", function() {
             let datosSeries = JSON.parse(localStorage.getItem(CLAVE_RESULTADOS_SERIES) || "{}");
 
             let huboCambios = true;
-            let iteracionesSeguridad = 0;
-            while (huboCambios && iteracionesSeguridad < 30) {
+            while (huboCambios) {
                 huboCambios = false;
-                iteracionesSeguridad++;
-                for (let r = 0; r < rondasCompletas.length; r++) {
-                    const ronda = rondasCompletas[r];
-                    
-                    if (hastaCuartos) {
-                        const nombreRonda = (ronda.nombre || "").toLowerCase();
-                        if (nombreRonda.includes("semifinal") || nombreRonda.includes("final")) {
-                            continue;
-                        }
-                    }
-
+                for (let r = 0; r < window.TORNEO_COMBATES.length; r++) {
+                    const ronda = window.TORNEO_COMBATES[r];
                     for (let c = 0; c < ronda.cruces.length; c++) {
                         const cruce = ronda.cruces[c];
                         if (datosSeries[cruce.numero]) continue;
@@ -1086,32 +1074,12 @@ document.addEventListener("DOMContentLoaded", function() {
             if (!confirm("¿Deseas simular TODO EL CAMPEONATO automáticamente hasta la Gran Final?\n(Se calculará al instante en bloque y NO se descargarán informes).")) return;
             btnSimTodos.disabled = true;
             btnSimTodos.textContent = "⏳ Calculando...";
-            const btnCuartos = document.getElementById("botonSimularHastaCuartos");
-            if (btnCuartos) btnCuartos.disabled = true;
             
-            await ejecutarSimulacionGlobal(false);
+            await ejecutarSimulacionGlobal();
             
             if(btnSimTodos) {
                 btnSimTodos.disabled = false;
                 btnSimTodos.textContent = "⚡ Simular TODO el torneo";
-            }
-        });
-    }
-
-    const btnSimCuartos = document.getElementById("botonSimularHastaCuartos");
-    if (btnSimCuartos) {
-        btnSimCuartos.addEventListener("click", async function() {
-            if (!confirm("¿Deseas simular automáticamente todas las rondas PREVIAS hasta dejar listos los Cuartos de Final (o Semifinales)?\nLas rondas finales quedarán pendientes para que las juegues.")) return;
-            btnSimCuartos.disabled = true;
-            btnSimCuartos.textContent = "⏳ Calculando...";
-            const btnTodos = document.getElementById("botonSimularCampeonato");
-            if (btnTodos) btnTodos.disabled = true;
-            
-            await ejecutarSimulacionGlobal(true);
-            
-            if(btnSimCuartos) {
-                btnSimCuartos.disabled = false;
-                btnSimCuartos.textContent = "⚡ Simular hasta Cuartos";
             }
         });
     }
@@ -1121,3 +1089,12 @@ document.addEventListener("DOMContentLoaded", function() {
 </script> 
 </body> 
 </html>
+
+
+
+
+
+
+
+
+    
