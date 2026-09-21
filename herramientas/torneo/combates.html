@@ -92,8 +92,6 @@ function obtenerConfiguracionTorneo() {
         ...coefs
     };
 }
-
-
 function obtenerCriterioTorneo() {     
     const criterio = localStorage.getItem("palentropia_criterio_torneo");     
     return String(criterio || "").trim(); 
@@ -151,7 +149,6 @@ function crearParticipantesDatos(matrizJ1, mapaNombres) {
         participantes.push({ j1: j1, j2: mapaNombres.get(j1) || "" });     });     
     return participantes; 
 }
-
 
 function barajar(matriz) {     
     const resultado = [...matriz];     
@@ -239,7 +236,7 @@ function generarTorneo(participantes) {
     return rondas; 
 }
 
- function filtrarRondasPorEntrada(rondas) {     
+function filtrarRondasPorEntrada(rondas) {     
     const guardado = localStorage.getItem(CLAVE_ENTRADA_TORNEO);     
     if (!guardado) return rondas;     
     try {         
@@ -295,7 +292,6 @@ function resolverParticipanteReal(p, datosSeries) {
         return { j1: datosSeries[p.combate].ganadorCodigo, j2: datosSeries[p.combate].ganadorNombre };     }     
     return p; 
 }
-
 function mostrarCruce(cruce) {     
     const tarjeta = document.createElement("div");     
     tarjeta.className = "cruceCombate";     
@@ -541,8 +537,7 @@ function mostrarCruce(cruce) {
     tarjeta.appendChild(participantes);     
     return tarjeta; 
 }
-
- function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
+function guardarYRegistrarPalmares(codigoCampeon, nombreCampeon, datosFinales) {
     try {
         let historico = [];
         try {
@@ -741,9 +736,8 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
             localStorage.setItem(CLAVE_PALMARES, JSON.stringify(historico));
         }
     } catch (e) {}
-}
-
-    function mostrarRondas(rondas) {     
+                }
+   function mostrarRondas(rondas) {     
     const contenedor = document.getElementById("contenedorRondas");     
     contenedor.innerHTML = "";     
     const guardadoEntrada = localStorage.getItem(CLAVE_ENTRADA_TORNEO);       
@@ -886,8 +880,7 @@ function registrarPalmaresCampeon(codigo, nombre, datosFinal) {
         ronda.cruces.forEach(cruce => { lista.appendChild(mostrarCruce(cruce)); });           
         bloque.appendChild(lista);           
         contenedor.appendChild(bloque);       }); 
-    }
-
+                           }
     function mismosParticipantes(pGuardados, pActuales) {     
     if (!Array.isArray(pGuardados) || !Array.isArray(pActuales) || pGuardados.length !== pActuales.length) return false;     
     for (let i = 0; i < pActuales.length; i++) {         
@@ -971,8 +964,7 @@ async function iniciarCombates(forzarNuevo = false) {
     mostrarEstadoTorneo(participantes, informacion, fueGenerado);     
     mostrarRondas(rondas); 
 }
-
-    document.addEventListener("DOMContentLoaded", function() {     
+document.addEventListener("DOMContentLoaded", function() {     
     const botonMenu = document.getElementById("botonMenuPrincipal");     
     if (botonMenu) { botonMenu.addEventListener("click", function() { window.location.href = "index.html"; }); }     
     
@@ -1004,6 +996,16 @@ async function iniciarCombates(forzarNuevo = false) {
             const exitoCarga = await cargarMasterParaSimulacion();
             if (!exitoCarga) throw new Error("No master");
             const mapaNombres = await obtenerMapaNombres();
+            const matrizJ1 = obtenerParticipantes();
+            const participantes = crearParticipantesDatos(matrizJ1, mapaNombres);
+            
+            // Usar siempre las rondas completas sin filtrar para que la cadena de ganadores previa funcione siempre
+            let rondasCompletas = obtenerEmparejamientosGuardados(participantes);
+            if (!rondasCompletas) {
+                rondasCompletas = generarTorneo(participantes);
+                guardarEmparejamientos(participantes, rondasCompletas);
+            }
+
             let reglas = JSON.parse(localStorage.getItem("palentropia_reglas_torneo")) || {};
             const configTorneo = obtenerConfiguracionTorneo();
             const partidosSerie = Number(reglas.partidosSerie) || 1;
@@ -1012,11 +1014,11 @@ async function iniciarCombates(forzarNuevo = false) {
 
             let huboCambios = true;
             let iteracionesSeguridad = 0;
-            while (huboCambios && iteracionesSeguridad < 20) {
+            while (huboCambios && iteracionesSeguridad < 30) {
                 huboCambios = false;
                 iteracionesSeguridad++;
-                for (let r = 0; r < window.TORNEO_COMBATES.length; r++) {
-                    const ronda = window.TORNEO_COMBATES[r];
+                for (let r = 0; r < rondasCompletas.length; r++) {
+                    const ronda = rondasCompletas[r];
                     
                     if (hastaCuartos) {
                         const nombreRonda = (ronda.nombre || "").toLowerCase();
