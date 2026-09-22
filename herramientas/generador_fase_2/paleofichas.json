@@ -724,6 +724,12 @@
   "nombre": "Corythosaurus",
   "dieta": "Herbívoro",
   "anatomia": "Dinosaurio hadrosáurido de gran tamaño y cuerpo robusto, cuadrúpedo facultativo, con pico córneo, numerosas baterías dentales y una característica cresta hueca en forma de casco sobre el cráneo, utilizada para la emisión de sonidos"
+},
+{
+  "codigo": "009_02",
+  "nombre": "Ophiacodon",
+  "dieta": "Carnívoro",
+  "anatomia": "Sinápsido de cuerpo alargado y relativamente bajo, con cráneo largo y estrecho, mandíbulas provistas de numerosos dientes afilados, extremidades cortas y una cola larga, adaptado a desplazarse por ambientes terrestres y próximos al agua"
 }  
 ]
 
