@@ -730,7 +730,13 @@
   "nombre": "Ophiacodon",
   "dieta": "Carnívoro",
   "anatomia": "Sinápsido de cuerpo alargado y relativamente bajo, con cráneo largo y estrecho, mandíbulas provistas de numerosos dientes afilados, extremidades cortas y una cola larga, adaptado a desplazarse por ambientes terrestres y próximos al agua"
-}  
+},
+{
+  "codigo": "009_03",
+  "nombre": "Eudimorphodon",
+  "dieta": "Carnívoro",
+  "anatomia": "Pequeño pterosaurio de cuerpo ligero, cabeza relativamente grande, hocico alargado con numerosos dientes de formas diferentes, alas membranosas sostenidas por un largo cuarto dedo y cola larga terminada en una expansión membranosa"
+}
 ]
 
 
