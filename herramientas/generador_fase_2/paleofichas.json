@@ -736,6 +736,12 @@
   "nombre": "Eudimorphodon",
   "dieta": "Carnívoro",
   "anatomia": "Pequeño pterosaurio de cuerpo ligero, cabeza relativamente grande, hocico alargado con numerosos dientes de formas diferentes, alas membranosas sostenidas por un largo cuarto dedo y cola larga terminada en una expansión membranosa"
+},
+{
+  "codigo": "009_04",
+  "nombre": "Didelphodon",
+  "dieta": "Omnívoro",
+  "anatomia": "Mamífero metaterio de cuerpo compacto y robusto, con cráneo corto y profundo, mandíbulas muy fuertes, grandes dientes posteriores adaptados a triturar y extremidades relativamente cortas, con una dentición especializada para una dieta variada"
 }
 ]
 
