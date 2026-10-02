@@ -604,6 +604,10 @@ window.PALTAXON = {
 "009_03":{
   ta1:"Animalia > Chordata > Diapsida > Archosauria > Pterosauria > Eopterosauria > Eudimorphodontidae > Eudimorphodon",
   ta2:"Diápsido. Arcosaurio. Pterosaurio. Eopterosaurio. Eudimorfodóntido."
+},
+"009_04":{
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Metatheria > Didelphimorphia > Stagodontidae > Didelphodon",
+  ta2:"Sinápsido. Mamífero. Metaterio. Didelfimorfo. Estagodóntido."
 }
   
 
