@@ -742,6 +742,12 @@
   "nombre": "Didelphodon",
   "dieta": "Omnívoro",
   "anatomia": "Mamífero metaterio de cuerpo compacto y robusto, con cráneo corto y profundo, mandíbulas muy fuertes, grandes dientes posteriores adaptados a triturar y extremidades relativamente cortas, con una dentición especializada para una dieta variada"
+},
+{
+  "codigo": "009_05",
+  "nombre": "Hylonomus",
+  "dieta": "Carnívoro",
+  "anatomia": "Pequeño reptil de cuerpo alargado y ligero, con cabeza pequeña, mandíbulas provistas de numerosos dientes afilados, extremidades cortas con dedos bien desarrollados y una larga cola, adaptado a desplazarse entre la vegetación de ambientes forestales"
 }
 ]
 
