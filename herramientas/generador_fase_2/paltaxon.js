@@ -612,11 +612,18 @@ window.PALTAXON = {
 "009_05":{
   ta1:"Animalia > Chordata > Amniota > Reptilia > Captorhinomorpha > Hylonomidae > Hylonomus",
   ta2:"Amniota. Reptil. Captorinomorfo. Hylonómido."
+},
+"009_06":{
+  ta1:"Animalia > Chordata > Tetrapoda > Temnospondyli > Dissorophoidea > Dissorophidae > Platyhystrix",
+  ta2:"Tetrápodo. Temnospóndilo. Dissorofóideo. Dissorófido."
 }
   
 
   
 };
+
+
+
 
 
 
