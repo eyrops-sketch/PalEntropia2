@@ -754,6 +754,12 @@
   "nombre": "Platyhystrix",
   "dieta": "Carnívoro",
   "anatomia": "Pequeño temnospóndilo de cuerpo bajo y compacto, cabeza ancha y aplanada, extremidades cortas y una característica vela dorsal formada por largas espinas vertebrales, probablemente relacionada con la regulación térmica"
+},
+{
+  "codigo": "009_07",
+  "nombre": "Elginerpeton",
+  "dieta": "Carnívoro",
+  "anatomia": "Tetrápodo primitivo de cuerpo alargado, conocido por restos fragmentarios de las extremidades y la cintura pélvica, con rasgos intermedios entre los primeros tetrápodos y los vertebrados terrestres posteriores"
 }
 ]
 
