@@ -215,10 +215,16 @@ function generarTorneo(participantes) {
         const marcadoresGanadores = crucesPrevia.map(c => ({ tipo: "ganador_combate", combate: c.numero, etiqueta: "Ganador combate " + c.numero }));         
         const participantesCuadroPrincipal = barajar([...marcadoresGanadores, ...pasanDirectamente]);         
         crucesActuales = crearCruces(participantesCuadroPrincipal, numeroCombateGlobal);         
+       
+        
+        
         let nombreCuadroPrincipal = "Cuadro principal";         
-        if (crucesActuales.length === 32) nombreCuadroPrincipal = "Treintaidosavos de final";         
+        if (crucesActuales.length === 64) nombreCuadroPrincipal = "Sesenta y cuatroavos de final";
+        else if (crucesActuales.length === 32) nombreCuadroPrincipal = "Treintaidosavos de final";         
         else if (crucesActuales.length === 16) nombreCuadroPrincipal = "Dieciseisavos de final";         
         else if (crucesActuales.length === 8) nombreCuadroPrincipal = "Octavos de final";         
+
+        
         rondas.push({ nombre: nombreCuadroPrincipal, tipo: "principal", participantes: participantesCuadroPrincipal, reservas: [], cruces: crucesActuales });         
         numeroCombateGlobal += crucesActuales.length;     
     }     
@@ -256,6 +262,7 @@ function filtrarRondasPorEntrada(rondas) {
         if (faseId === "previa") return rondas;         
         if (faseId === "principal") return rondas.filter(r => r.tipo !== "previa");         
         const mapFases = {             
+            "64avos": "Sesenta y cuatroavos de final",
             "32avos": "Treintaidosavos de final",             
             "16avos": "Dieciseisavos de final",             
             "octavos": "Octavos de final",             
@@ -268,6 +275,7 @@ function filtrarRondasPorEntrada(rondas) {
         return index !== -1 ? rondas.slice(index) : rondas;     
     } catch (e) { return rondas; } 
 }
+
 
 function obtenerTextoParticipante(participante) {     
     if (participante && typeof participante === "object" && participante.j1) {         
