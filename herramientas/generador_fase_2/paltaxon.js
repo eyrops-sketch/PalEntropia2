@@ -616,6 +616,10 @@ window.PALTAXON = {
 "009_06":{
   ta1:"Animalia > Chordata > Tetrapoda > Temnospondyli > Dissorophoidea > Dissorophidae > Platyhystrix",
   ta2:"Tetrápodo. Temnospóndilo. Dissorofóideo. Dissorófido."
+},
+"009_07":{
+  ta1:"Animalia > Chordata > Tetrapoda > Elginerpetontidae > Elginerpeton",
+  ta2:"Tetrápodo. Elginerpetóntido."
 }
   
 
