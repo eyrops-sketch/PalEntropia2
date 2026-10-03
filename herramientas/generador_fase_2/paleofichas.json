@@ -760,6 +760,12 @@
   "nombre": "Elginerpeton",
   "dieta": "Carnívoro",
   "anatomia": "Tetrápodo primitivo de cuerpo alargado, conocido por restos fragmentarios de las extremidades y la cintura pélvica, con rasgos intermedios entre los primeros tetrápodos y los vertebrados terrestres posteriores"
+},
+{
+  "codigo": "009_08",
+  "nombre": "Scarrittia",
+  "dieta": "Herbívoro",
+  "anatomia": "Gran mamífero notoungulado de cuerpo robusto y patas fuertes, con cuello corto, cabeza relativamente grande y dentición adaptada al consumo de vegetación, semejante en aspecto general a un rinoceronte pero sin parentesco directo"
 }
 ]
 
