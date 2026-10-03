@@ -608,6 +608,10 @@ window.PALTAXON = {
 "009_04":{
   ta1:"Animalia > Chordata > Synapsida > Mammalia > Metatheria > Didelphimorphia > Stagodontidae > Didelphodon",
   ta2:"Sinápsido. Mamífero. Metaterio. Didelfimorfo. Estagodóntido."
+},
+"009_05":{
+  ta1:"Animalia > Chordata > Amniota > Reptilia > Captorhinomorpha > Hylonomidae > Hylonomus",
+  ta2:"Amniota. Reptil. Captorinomorfo. Hylonómido."
 }
   
 
