@@ -620,6 +620,10 @@ window.PALTAXON = {
 "009_07":{
   ta1:"Animalia > Chordata > Tetrapoda > Elginerpetontidae > Elginerpeton",
   ta2:"Tetrápodo. Elginerpetóntido."
+},
+"009_08":{
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Notoungulata > Toxodonta > Scarrittiidae > Scarrittia",
+  ta2:"Sinápsido. Mamífero. Notoungulado. Toxodonto. Scarritíido."
 }
   
 
