@@ -190,23 +190,20 @@ function calcularCuadroPrincipal(numeroParticipantes) {
 /* =====================================================
    OBTENER NOMBRE DE LA FASE
    ===================================================== */
-
 function obtenerNombreFase(numeroParticipantes) {
-
     const nombres = {
         2: "Final",
         4: "Semifinales",
         8: "Cuartos",
         16: "Octavos",
         32: "16 avos",
-        64: "32 avos"
+        64: "32 avos",
+        128: "64 avos"
     };
-
     return (
         nombres[numeroParticipantes] ||
         "Cuadro principal"
     );
-
 }
 
 
@@ -313,24 +310,22 @@ function obtenerFasesDisponibles() {
 /* =====================================================
    IDENTIFICADOR DE FASE
    ===================================================== */
-
 function obtenerIdFase(numeroParticipantes) {
-
     const ids = {
         2: "final",
         4: "semifinales",
         8: "cuartos",
         16: "octavos",
         32: "16avos",
-        64: "32avos"
+        64: "32avos",
+        128: "64avos"
     };
-
     return (
         ids[numeroParticipantes] ||
         "principal"
     );
-
 }
+
 
 
 /* =====================================================
