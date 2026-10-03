@@ -226,18 +226,19 @@ function existeRondaPrevia(numeroParticipantes) {
 }
 
 
+
+
+
+
+
+
+      
 /* =====================================================
    OBTENER FASES DISPONIBLES
    ===================================================== */
-
 function obtenerFasesDisponibles() {
-
-    const participantes =
-        obtenerParticipantes();
-
-    const numero =
-        participantes.length;
-
+    const participantes = obtenerParticipantes();
+    const numero = participantes.length;
     const fases = [];
 
     fases.push({
@@ -246,11 +247,7 @@ function obtenerFasesDisponibles() {
         descripcion: "Mostrar el ganador del torneo."
     });
 
-    if (
-        existeRondaPrevia(
-            numero
-        )
-    ) {
+    if (existeRondaPrevia(numero)) {
         fases.push({
             id: "previa",
             nombre: "⚔️ Ronda previa",
@@ -258,55 +255,35 @@ function obtenerFasesDisponibles() {
         });
     }
 
-    if (
-        numero >= 2
-    ) {
-        const cuadro =
-            calcularCuadroPrincipal(
-                numero
-            );
+    if (numero >= 2) {
+        const cuadro = calcularCuadroPrincipal(numero);
 
-        fases.push({
-            id: "principal",
-            nombre: "🏟️ Cuadro principal",
-            descripcion: "Comenzar desde la primera ronda del cuadro."
-        });
+        let participantesRonda = cuadro;
 
-        let participantesRonda =
-            cuadro;
-
-        while (
-            participantesRonda >= 2
-        ) {
+        while (participantesRonda >= 2) {
             fases.push({
-                id:
-                    obtenerIdFase(
-                        participantesRonda
-                    ),
-                nombre:
-                    obtenerNombreFase(
-                        participantesRonda
-                    ),
-                descripcion:
-                    "Entrar directamente en " +
-                    obtenerNombreFase(
-                        participantesRonda
-                    ) +
-                    "."
+                id: obtenerIdFase(participantesRonda),
+                nombre: obtenerNombreFase(participantesRonda),
+                descripcion: "Entrar directamente en " + obtenerNombreFase(participantesRonda) + "."
             });
-
-            participantesRonda =
-                participantesRonda /
-                2;
+            participantesRonda = participantesRonda / 2;
         }
-
     }
-
     return fases;
-
 }
 
 
+
+
+
+
+
+
+
+
+
+
+      
 /* =====================================================
    IDENTIFICADOR DE FASE
    ===================================================== */
