@@ -748,8 +748,18 @@
   "nombre": "Hylonomus",
   "dieta": "Carnívoro",
   "anatomia": "Pequeño reptil de cuerpo alargado y ligero, con cabeza pequeña, mandíbulas provistas de numerosos dientes afilados, extremidades cortas con dedos bien desarrollados y una larga cola, adaptado a desplazarse entre la vegetación de ambientes forestales"
+},
+{
+  "codigo": "009_06",
+  "nombre": "Platyhystrix",
+  "dieta": "Carnívoro",
+  "anatomia": "Pequeño temnospóndilo de cuerpo bajo y compacto, cabeza ancha y aplanada, extremidades cortas y una característica vela dorsal formada por largas espinas vertebrales, probablemente relacionada con la regulación térmica"
 }
 ]
+
+
+
+
 
 
 
