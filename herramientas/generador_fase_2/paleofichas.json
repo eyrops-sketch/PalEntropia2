@@ -772,6 +772,12 @@
   "nombre": "Steropodon",
   "dieta": "Carnívoro",
   "anatomia": "Mamífero monotremo primitivo de cuerpo pequeño y compacto, con hocico alargado y estrecho, dentición adaptada a una dieta carnívora y rasgos esqueléticos propios de los primeros mamíferos con características monotremas"
+},
+{
+  "codigo": "009_10",
+  "nombre": "Ornithosuchus",
+  "dieta": "Carnívoro",
+  "anatomia": "Arcosaurio de cuerpo alargado y relativamente ligero, con cráneo grande y robusto, mandíbulas provistas de dientes afilados, extremidades posteriores largas y una cola larga, capaz de desplazarse principalmente sobre las patas traseras"
 }
 ]
 
