@@ -766,6 +766,12 @@
   "nombre": "Scarrittia",
   "dieta": "Herbívoro",
   "anatomia": "Gran mamífero notoungulado de cuerpo robusto y patas fuertes, con cuello corto, cabeza relativamente grande y dentición adaptada al consumo de vegetación, semejante en aspecto general a un rinoceronte pero sin parentesco directo"
+},
+{
+  "codigo": "009_09",
+  "nombre": "Steropodon",
+  "dieta": "Carnívoro",
+  "anatomia": "Mamífero monotremo primitivo de cuerpo pequeño y compacto, con hocico alargado y estrecho, dentición adaptada a una dieta carnívora y rasgos esqueléticos propios de los primeros mamíferos con características monotremas"
 }
 ]
 
