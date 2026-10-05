@@ -628,7 +628,12 @@ window.PALTAXON = {
 "009_09":{
   ta1:"Animalia > Chordata > Synapsida > Mammalia > Monotremata > Steropodontidae > Steropodon",
   ta2:"Sinápsido. Mamífero. Monotremo. Estereopodóntido."
+},
+"009_10":{
+  ta1:"Animalia > Chordata > Diapsida > Archosauria > Pseudosuchia > Ornithosuchidae > Ornithosuchus",
+  ta2:"Diápsido. Arcosaurio. Pseudosuquio. Ornitosúquido."
 }
+
   
 
   
