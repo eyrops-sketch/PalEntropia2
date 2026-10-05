@@ -624,11 +624,18 @@ window.PALTAXON = {
 "009_08":{
   ta1:"Animalia > Chordata > Synapsida > Mammalia > Notoungulata > Toxodonta > Scarrittiidae > Scarrittia",
   ta2:"Sinápsido. Mamífero. Notoungulado. Toxodonto. Scarritíido."
+},
+"009_09":{
+  ta1:"Animalia > Chordata > Synapsida > Mammalia > Monotremata > Steropodontidae > Steropodon",
+  ta2:"Sinápsido. Mamífero. Monotremo. Estereopodóntido."
 }
   
 
   
 };
+
+
+
 
 
 
