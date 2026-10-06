@@ -3,7 +3,7 @@
 PALARENA — TAXÓN COMBATE v4.2 (Estados Secundarios y Atributos)
 PalEntropía
 Asignación de habilidades base y Estados Biológicos Extremos (25%)
-NUEVO: Integración de Habilidades Menores (15% prob) escaladas por atributos (Velocidad, Táctica, Resistencia, etc.)
+NUEVO: Integración de Habilidades Menores (15% prob) y Ventaja por Diferencia de Tamaño (33% prob)
 Equilibrado para motor HVMD-ΔE. Terópodos y Tireóforos conservadores.
 ========================================================
 */
@@ -28,16 +28,16 @@ window.PALARENA_TAXON_COMBATE = {
                 aplicarEfecto(atacante, objetivo) {
                     let fatigaDrenada = 12;
                     let extraDano = 1.15;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.fatiga = Math.max(0, objetivo.fatiga - fatigaDrenada);
                     let mensaje = ` 🦅 ¡${atacante.nombre} desciende en un vertiginoso Picado Aéreo desde las alturas, desestabilizando y drenando ${fatigaDrenada} de fatiga al rival!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.velocidad > 45 && rMenor < 0.25) { extraDano += 0.08; atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 6); mensaje += ` ⚡ (Zancada fugaz aerea: +8% daño y recupera 6 fatiga)`; }
                         else if (rMenor < 0.40) { atacante.efectivos.velocidad += 5; mensaje += ` 💨 (Viento de cola: +5 Velocidad)`; }
                         else if (rMenor < 0.70) { objetivo.fatiga = Math.max(0, objetivo.fatiga - 8); extraDano += 0.05; mensaje += ` 🦅 (Hostigamiento aéreo: +5% daño, -8 fatiga rival)`; }
-                        else { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 10); mensaje += ` 🌤️ (Planeo breve: +10 Fatiga)`; }
+                        else { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 10); mensaje += ` 🌤️️ (Planeo breve: +10 Fatiga)`; }
                     }
 
                     if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
@@ -60,6 +60,13 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 👁️ ¡ATAQUE A LOS OJOS! (Aparición única) Un picotazo dirigido al rostro hunde la táctica del rival (-25).`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        extraDano += 0.04;
+                        objetivo.fatiga = Math.max(0, objetivo.fatiga - 4);
+                        mensaje += ` ⚖️ (Hostigamiento en punto ciego: sobrevuela fuera de alcance masivo, +4% daño y -4 fatiga rival)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
@@ -72,10 +79,10 @@ window.PALARENA_TAXON_COMBATE = {
                 nombreHabilidad: "Hachazo Titánico",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.25;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 2);
                     let mensaje = ` 🦅⚔️ ¡${atacante.nombre} embiste con su robusto pico, provocando una hemorragia severa (2 turnos) con letal precisión aviana!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.ataque > 45 && rMenor < 0.25) { extraDano += 0.10; mensaje += ` 💥 (Impacto de ariete: +10% daño por fuerza bruta)`; }
@@ -104,21 +111,27 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 📢 ¡GRAZNIDO ESTREMECEDOR! (Aparición única) Un sonido agudo y primitivo confunde al rival (caos +2).`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        extraDano += 0.05;
+                        mensaje += ` ⚖ (Picotazo a las articulaciones: aprovecha su menor perfil para dañar zonas bajas, +5% daño)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
-          // 3. ORNITOMIMOSAURIOS (Ornitomimos)
+                // 3. ORNITOMIMOSAURIOS
         if (textoTaxonomia.includes("ornithomimosauria") || textoTaxonomia.includes("ornithomimidae") || textoTaxonomia.includes("ornithomimus") || textoTaxonomia.includes("gallimimus") || textoTaxonomia.includes("struthiomimus") || textoTaxonomia.includes("deinocheirus") || textoTaxonomia.includes("pelecanimimus") || textoTaxonomia.includes("garudimimus") || textoTaxonomia.includes("harpymimus") || textoTaxonomia.includes("ansermimus") || textoTaxonomia.includes("ornitomimo")) {
             return {
                 tipo: "ornitomimo",
                 nombreHabilidad: "Hostigamiento Veloz",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.10;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     atacante.efectivos.velocidad += 5;
                     let mensaje = ` 💨 ¡${atacante.nombre} despliega su asombrosa velocidad aviana, hostigando con una rápida ráfaga de patadas y golpes de pico!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.velocidad > 45 && rMenor < 0.25) { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 10); atacante.efectivos.velocidad += 5; mensaje += ` ⚡ (Rebufo ágil: +10 Fatiga y +5 Velocidad)`; }
@@ -146,22 +159,29 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🎯 ¡GOLPE DE PICO! (Aparición única) Finta con su largo cuello y asesta un golpe aturdidor en un punto ciego (aturdido 1 turno).`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 6);
+                        objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 5;
+                        mensaje += ` ⚖️ (Finta escurridiza: corre bajo la guardia del gigante, recupera 6 Fatiga y -5 Táctica rival)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
 
-        // 4. TERÓPODOS Y SUPERDEPREDADORES (MANTENIDO CONSERVADOR POR BALANCE DE DROMEOSÁURIDOS)
+        // 4. TERÓPODOS
         if (textoTaxonomia.includes("theropoda") || textoTaxonomia.includes("terópodo")) {
             return {
                 tipo: "teropodo",
                 nombreHabilidad: "Fuerza Depredadora",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.30;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.estadoGuardia = "rota";
                     let mensaje = ` 🦖 ¡${atacante.nombre} asesta una mordedura masiva de superdepredador, fracturando la guardia del rival por completo!`;
 
-                    // 🔹 Habilidades Menores (15% prob) - Sin escalado OP
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (rMenor < 0.33) { extraDano += 0.05; objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 1); mensaje += ` 🦷 (Mordisco de desgaste: +5% daño, sangrado 1 turno)`; }
@@ -189,11 +209,18 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🦖💥 ¡CABEZAZO BRUTAL! (Aparición única) Usa su masivo cráneo como ariete, destrozando la táctica del enemigo.`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        extraDano += 0.06;
+                        objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 1);
+                        mensaje += ` ⚖️ (Desgarre de tendón: ataque quirúrgico a las extremidades del coloso, +6% daño y sangrado 1 turno)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
-                 // 5. SAURÓPODOS / CUELLOS LARGOS
+                // 5. SAURÓPODOS / CUELLOS LARGOS
         if (textoTaxonomia.includes("sauropoda") || textoTaxonomia.includes("sauropodomorpha") || textoTaxonomia.includes("saurópodo")) {
             return {
                 tipo: "sauropodo",
@@ -201,13 +228,13 @@ window.PALARENA_TAXON_COMBATE = {
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.20;
                     let fatigaExtra = 20;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.fatiga = Math.max(0, objetivo.fatiga - fatigaExtra);
                     let mensaje = ` 🦕 ¡${atacante.nombre} sacude el suelo con su colosal masa, desestabilizando al rival y drenando ${fatigaExtra} de fatiga!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
-                        if (atacante.efectivos.resistencia > 50 && rMenor < 0.25) { extraDano -= 0.05; atacante.hp = Math.min(atacante.hp_max, atacante.hp + 20); mensaje += ` 🛡️️ (Mitigación subcutánea: absorbe leve daño y recupera 20 HP)`; }
+                        if (atacante.efectivos.resistencia > 50 && rMenor < 0.25) { extraDano -= 0.05; atacante.hp = Math.min(atacante.hp_max, atacante.hp + 20); mensaje += ` 🛡 (Mitigación subcutánea: absorbe leve daño y recupera 20 HP)`; }
                         else if (rMenor < 0.40) { objetivo.fatiga = Math.max(0, objetivo.fatiga - 10); mensaje += ` 🌋 (Temblor menor: -10 Fatiga rival)`; }
                         else if (rMenor < 0.70) { atacante.efectivos.defensa += 5; mensaje += ` 🛡️ (Piel gruesa: +5 Defensa)`; }
                         else { atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.03)); mensaje += ` 🌿 (Ramoneo rápido: +3% HP)`; }
@@ -224,31 +251,39 @@ window.PALARENA_TAXON_COMBATE = {
                         } else if (variante < 0.50) {
                             extraDano += 0.45;
                             objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 1);
-                            mensaje += ` 🦕🌪️️ ¡LATIGAZO DE COLA! (Aparición única) La cola rompe la barrera del sonido asestando un golpe devastador que aturde al rival.`;
+                            mensaje += ` 🦕🌪 ¡LATIGAZO DE COLA! (Aparición única) La cola rompe la barrera del sonido asestando un golpe devastador que aturde al rival.`;
                         } else if (variante < 0.75) {
                             atacante.efectivos.defensa += 15;
-                            mensaje += ` ⛰️ ¡POSTURA INAMOVIBLE! (Aparición única) Se planta firmemente como una montaña, aumentando su defensa permanentemente.`;
+                            mensaje += ` ⛰️️ ¡POSTURA INAMOVIBLE! (Aparición única) Se planta firmemente como una montaña, aumentando su defensa permanentemente.`;
                         } else {
                             objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 20;
                             objetivo.fatiga = Math.max(0, objetivo.fatiga - 15);
                             mensaje += ` 🦕🦶 ¡PISOTÓN DEVASTADOR! (Aparición única) Aplasta el terreno adyacente, intimidando al rival y mermando sus reservas.`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        atacante.efectivos.velocidad += 3;
+                        objetivo.fatiga = Math.max(0, objetivo.fatiga - 5);
+                        mensaje += ` ⚖️ (Maniobra evasiva inesperada: escurre su masa menor del impacto directo, +3 Vel y -5 Fatiga rival)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
-                // 6. TIREÓFOROS (MANTENIDO CONSERVADOR POR BALANCE DE ANKYLOSAURUS)
+
+        // 6. TIREÓFOROS
         if (textoTaxonomia.includes("thyreophora") || textoTaxonomia.includes("ankylosauria") || textoTaxonomia.includes("stegosauria") || textoTaxonomia.includes("tireóforo")) {
             return {
                 tipo: "tireoforo",
                 nombreHabilidad: "Contundencia acorazada",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.10;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     atacante.efectivos.defensa += 5;
                     let mensaje = ` 🛡️ ¡${atacante.nombre} aprovecha sus placas y osteodermos para devolver el castigo con su pesada armadura natural!`;
 
-                    // 🔹 Habilidades Menores (15% prob) - Sin escalado OP
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (rMenor < 0.33) { extraDano += 0.05; mensaje += ` ⚔️ (Roce de púas: +5% daño)`; }
@@ -277,23 +312,28 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 💥 ¡GOLPE CONTUNDENTE! (Aparición única) Un choque frontal entumece los músculos del enemigo (paralizado 1 turno).`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        extraDano += 0.03;
+                        atacante.efectivos.defensa += 3;
+                        mensaje += ` ⚖️ (Golpe bajo acorazado: impacta en los tobillos del gigante parapetándose, +3% daño y +3 Defensa)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
-
-
-         // 7. CERATÓPSIDOS
+                // 7. CERATÓPSIDOS
         if (textoTaxonomia.includes("ceratopsia") || textoTaxonomia.includes("ceratopsidae") || textoTaxonomia.includes("ceratopsio")) {
             return {
                 tipo: "ceratopsido",
                 nombreHabilidad: "Carga de Cornudos",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.25;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 1);
                     let mensaje = ` 🦏 ¡${atacante.nombre} embiste de frente con su impresionante cornamenta, dejando aturdido al rival por 1 turno!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.defensa > 50 && rMenor < 0.25) { atacante.efectivos.defensa += 8; mensaje += ` 🛡️ (Postura anclada: +8 Defensa temporal)`; }
@@ -322,20 +362,28 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🦏🔥 ¡FURIA DE REBAÑO! (Aparición única) La adrenalina de sentirse amenazado restaura 40 de fatiga al instante.`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        extraDano += 0.04;
+                        objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 6;
+                        mensaje += ` ⚖️ (Embestida al tobillo: desequilibra la postura del gigante, +4% daño y -6 Táctica rival)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
-                // 8. MARGINOCEFÁLICOS (Paquicefalosaurios y afines)
+
+        // 8. MARGINOCEFÁLICOS
         if (textoTaxonomia.includes("pachycephalosauria") || textoTaxonomia.includes("marginocephalia")) {
             return {
                 tipo: "marginocefalo",
                 nombreHabilidad: "Ariete Biológico",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.05;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     let mensaje = ` 🐾 ¡${atacante.nombre} despliega la fuerza brutal de su bóveda craneal!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.ataque > 45 && rMenor < 0.25) { extraDano += 0.12; objetivo.fatiga = Math.max(0, objetivo.fatiga - 5); mensaje += ` 💥 (Impacto de ariete: +12% daño, -5 fatiga rival)`; }
@@ -376,23 +424,28 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 💥 ¡ESTRUCTURA AMORTIGUADORA! Su anatomía cervical disipa la tensión del combate. Regenera un 10% de HP mientras el violento choque frena en seco al rival (-15 Vel).`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        extraDano += 0.05;
+                        objetivo.fatiga = Math.max(0, objetivo.fatiga - 4);
+                        mensaje += ` ⚖️ (Testarazo a la rodilla: golpe seco que hace temblar al coloso, +5% daño y -4 Fatiga rival)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
-
-
-         // 9. ORNITÓPODOS
+                // 9. ORNITÓPODOS
         if (textoTaxonomia.includes("ornithischia") || textoTaxonomia.includes("hadrosauridae") || textoTaxonomia.includes("ornitópodo")) {
             return {
                 tipo: "ornitopodo",
                 nombreHabilidad: "Maniobra evasiva",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.10;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 10);
                     let mensaje = ` 🦌 ¡${atacante.nombre} usa su agilidad de herbívoro gregario para ganar distancia y recuperar 10 de fatiga en plena refriega!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.velocidad > 45 && rMenor < 0.25) { extraDano += 0.08; atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 8); mensaje += ` ⚡ (Zancada fugaz: +8% daño y evade desgastando menos)`; }
@@ -423,6 +476,12 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🌿 ¡ALERTA DE PRESA! (Aparición única) Limpia sus propios estados alterados y recupera energía extra impulsado por la supervivencia.`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 8);
+                        mensaje += ` ⚖️ (Evasión bajo el vientre: usa su tamaño para rodear ágilmente al enemigo, recupera 8 de Fatiga)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
@@ -435,10 +494,10 @@ window.PALARENA_TAXON_COMBATE = {
                 nombreHabilidad: "Agarre Mortal",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.20;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.turnosParalizado = Math.max(objetivo.turnosParalizado || 0, 1);
                     let mensaje = ` 🐊 ¡${atacante.nombre} muerde y retuerce sus fauces en un Agarre Mortal, inmovilizando al rival por 1 turno!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.tactica > 45 && rMenor < 0.25) { objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 8; atacante.efectivos.tactica += 5; mensaje += ` 🧠 (Cálculo milimétrico: gana +5 Táctica, roba -8 Táctica rival)`; }
@@ -467,25 +526,31 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🐊💥 ¡COLAZO FLUVIAL! (Aparición única) Impacta con la fuerza de un tronco, aturdiendo al enemigo por 2 turnos.`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        extraDano += 0.05;
+                        objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 5;
+                        mensaje += ` ⚖️ (Mordisco al tendón de Aquiles: ataque rasante impredecible, +5% daño y -5 Táctica rival)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
-
-         // 11. SINÁPSIDOS Y MAMÍFEROS (Bloque Completo y Variado)
+               // 11. SINÁPSIDOS Y MAMÍFEROS
         if (textoTaxonomia.includes("synapsida") || textoTaxonomia.includes("sinápsido") || textoTaxonomia.includes("mammalia")) {
             
-            // 11.1. XENARTROS Y MEGAFAUNA ACORAZADA (Perezosos terrestres, Gliptodontes)
+            // 11.1. XENARTROS Y MEGAFAUNA ACORAZADA
             if (textoTaxonomia.includes("xenarthra") || textoTaxonomia.includes("pilosa") || textoTaxonomia.includes("cingulata") || textoTaxonomia.includes("megatherium") || textoTaxonomia.includes("glyptodon") || textoTaxonomia.includes("doedicurus") || textoTaxonomia.includes("perezoso") || textoTaxonomia.includes("armadillo")) {
                 return {
                     tipo: "xenartro",
                     nombreHabilidad: "Poderío Xenartro",
                     aplicarEfecto(atacante, objetivo) {
                         let extraDano = 1.15;
+                        const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                         atacante.efectivos.defensa += 5;
                         let mensaje = ` 🦥 ¡${atacante.nombre} hace valer su masa colosal y sus formidables defensas naturales para castigar al rival!`;
 
-                        // 🔹 Habilidades Menores (15% prob)
                         if (Math.random() < 0.15) {
                             const rMenor = Math.random();
                             if (atacante.efectivos.resistencia > 50 && rMenor < 0.25) { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 15); mensaje += ` 💨 (Respiración profunda: recupera 15 de fatiga por resistencia)`; }
@@ -516,22 +581,28 @@ window.PALARENA_TAXON_COMBATE = {
                                 mensaje += ` 🦥💤 ¡METABOLISMO DE AHORRO! (Aparición única) Recupera 50 de fatiga de golpe, frustrando los intentos de agotarle.`;
                             }
                         }
+
+                        if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                            atacante.efectivos.defensa += 4;
+                            mensaje += ` ⚖️ (Ocultamiento en el relieve: su pequeño perfil le protege de ataques amplios, +4 Defensa)`;
+                        }
+
                         return { extraDano, mensajeTexto: mensaje };
                     }
                 };
             }
 
-            // 11.2. GIGANTES SUPERPESADOS (Indricotherium / Paraceratherium / Titanotheres)
+            // 11.2. GIGANTES SUPERPESADOS
             if (textoTaxonomia.includes("indricotherium") || textoTaxonomia.includes("paraceratherium") || textoTaxonomia.includes("brontotheriidae") || textoTaxonomia.includes("embolotherium")) {
                 return {
                     tipo: "gigante_superpesado",
                     nombreHabilidad: "Tonelería Titánica",
                     aplicarEfecto(atacante, objetivo) {
                         let extraDano = 1.35;
+                        const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                         objetivo.estadoGuardia = "rota";
                         let mensaje = ` 🦣🏔️ ¡${atacante.nombre} despliega una mole colosal de toneladas, aplastando cualquier intento de resistencia con su pura inercia!`;
 
-                        // 🔹 Habilidades Menores (15% prob)
                         if (Math.random() < 0.15) {
                             const rMenor = Math.random();
                             if (atacante.efectivos.defensa > 50 && rMenor < 0.25) { atacante.efectivos.defensa += 8; mensaje += ` 🛡️ (Postura anclada: +8 Defensa temporal frente a empuje)`; }
@@ -559,22 +630,28 @@ window.PALARENA_TAXON_COMBATE = {
                                 mensaje += ` 🍃💪 ¡VIGOR VEGETARIANO! (Aparición única) Su descomunal reserva vital le regenera un 15% de salud al canalizar su energía.`;
                             }
                         }
+
+                        if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                            objetivo.fatiga = Math.max(0, objetivo.fatiga - 6);
+                            mensaje += ` ⚖️️ (Pisotón de cría escurridiza: molesta la zancada del rival mayor mermando su inercia, -6 Fatiga rival)`;
+                        }
+
                         return { extraDano, mensajeTexto: mensaje };
                     }
                 };
             }
 
-            // 11.3. DIENTES DE SABLE Y GORGONÓPSIDOS (Depredadores de colmillo letal)
+            // 11.3. DIENTES DE SABLE Y GORGONÓPSIDOS
             if (textoTaxonomia.includes("smilodon") || textoTaxonomia.includes("machairodontinae") || textoTaxonomia.includes("gorgonopsia") || textoTaxonomia.includes("thylacosmilus")) {
                 return {
                     tipo: "sable",
                     nombreHabilidad: "Colmillos Perforantes",
                     aplicarEfecto(atacante, objetivo) {
                         let extraDano = 1.25;
+                        const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                         objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 2);
                         let mensaje = ` 🐅 ¡${atacante.nombre} clava sus imponentes colmillos curvos, provocando hemorragia profunda (2 turnos)!`;
                         
-                        // 🔹 Habilidades Menores (15% prob)
                         if (Math.random() < 0.15) {
                             const rMenor = Math.random();
                             if (atacante.efectivos.velocidad > 45 && rMenor < 0.25) { extraDano += 0.10; atacante.efectivos.velocidad += 5; mensaje += ` ⚡ (Zancada fugaz letal: +10% daño y +5 Vel)`; }
@@ -604,21 +681,27 @@ window.PALARENA_TAXON_COMBATE = {
                                 mensaje += ` 🐅🔪 ¡CORTES REPETIDOS! (Aparición única) Desgarra múltiples veces en un solo movimiento (hemorragia 4 turnos).`;
                             }
                         }
+
+                        if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                            extraDano += 0.06;
+                            mensaje += ` ⚖️ (Corte trepador: usa el cuerpo del gigante como apoyo para apuñalar, +6% daño)`;
+                        }
+
                         return { extraDano, mensajeTexto: mensaje };
                     }
                 };
             }
-                            // 11.4. PROBOSCÍDEOS Y RINOCERONTES LANUDOS (Gigantes de la tundra / Tonelaje pesado)
+                        // 11.4. PROBOSCÍDEOS Y RINOCERONTES LANUDOS
             if (textoTaxonomia.includes("proboscidea") || textoTaxonomia.includes("mammuthus") || textoTaxonomia.includes("rhinoceros") || textoTaxonomia.includes("coelodonta") || textoTaxonomia.includes("elasmotherium") || textoTaxonomia.includes("dinocerata") || textoTaxonomia.includes("pantodonta")) {
                 return {
                     tipo: "proboscideo_rinoceronte",
                     nombreHabilidad: "Carga Acorazada",
                     aplicarEfecto(atacante, objetivo) {
                         let extraDano = 1.25;
+                        const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                         objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 1);
                         let mensaje = ` 🦣🦏 ¡${atacante.nombre} embiste con todo su peso e impulso frontal, sacudiendo los cimientos del combate!`;
 
-                        // 🔹 Habilidades Menores (15% prob)
                         if (Math.random() < 0.15) {
                             const rMenor = Math.random();
                             if (atacante.efectivos.resistencia > 50 && rMenor < 0.25) { extraDano -= 0.05; atacante.hp = Math.min(atacante.hp_max, atacante.hp + 20); mensaje += ` 🛡️ (Mitigación subcutánea: absorbe leve daño y recupera 20 HP)`; }
@@ -649,22 +732,29 @@ window.PALARENA_TAXON_COMBATE = {
                                 mensaje += ` 🦏📢 ¡BRAMIDO SÍSMICO! (Aparición única) Un sonido atronador drena 30 de fatiga al rival y siembra el caos.`;
                             }
                         }
+
+                        if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                            extraDano += 0.04;
+                            atacante.efectivos.defensa += 2;
+                            mensaje += ` ⚖️ (Embestida baja: golpea los puntos de apoyo del gigante y se parapeta, +4% daño y +2 Defensa)`;
+                        }
+
                         return { extraDano, mensajeTexto: mensaje };
                     }
                 };
             }
 
-            // 11.5. CARNÍVOROS ROBUSTOS (Osos caverneros, Hienas gigantes / Borophagus)
+            // 11.5. CARNÍVOROS ROBUSTOS
             if (textoTaxonomia.includes("ursidae") || textoTaxonomia.includes("hyaenodon") || textoTaxonomia.includes("amphicyon") || textoTaxonomia.includes("hyaenidae") || textoTaxonomia.includes("speloeus")) {
                 return {
                     tipo: "carnivoro_robusto",
                     nombreHabilidad: "Ferocidad Brutal",
                     aplicarEfecto(atacante, objetivo) {
                         let extraDano = 1.20;
+                        const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                         atacante.efectivos.ataque += 5;
                         let mensaje = ` 🐻 ¡${atacante.nombre} desata una furia implacable, golpeando con fuerza desmedida y saña depredadora!`;
 
-                        // 🔹 Habilidades Menores (15% prob)
                         if (Math.random() < 0.15) {
                             const rMenor = Math.random();
                             if (atacante.efectivos.ataque > 45 && rMenor < 0.25) { extraDano += 0.12; mensaje += ` 💥 (Impacto de ariete: +12% daño extra por fuerza muscular)`; }
@@ -692,22 +782,29 @@ window.PALARENA_TAXON_COMBATE = {
                                 mensaje += ` 🐻👁️ ¡INTIMIDACIÓN FEROZ! (Aparición única) Su imponente planta desconcierta al rival y hunde su táctica temporal.`;
                             }
                         }
+
+                        if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                            extraDano += 0.05;
+                            objetivo.fatiga = Math.max(0, objetivo.fatiga - 5);
+                            mensaje += ` ⚖️ (Frenesí a las patas: muerde incesantemente la base del gigante, +5% daño y -5 Fatiga rival)`;
+                        }
+
                         return { extraDano, mensajeTexto: mensaje };
                     }
                 };
             }
 
-            // 11.6. ROEDORES GIGANTES Y MAMÍFEROS PEQUEÑOS / BASALES
+            // 11.6. ROEDORES GIGANTES Y MAMÍFEROS PEQUEÑOS
             if (textoTaxonomia.includes("castoroides") || textoTaxonomia.includes("rodentia") || textoTaxonomia.includes("multituberculata") || textoTaxonomia.includes("triconodonta") || textoTaxonomia.includes("priacodon") || textoTaxonomia.includes("roedor")) {
                 return {
                     tipo: "roedor_pequeno",
                     nombreHabilidad: "Incisivos Letales y Agilidad",
                     aplicarEfecto(atacante, objetivo) {
                         let extraDano = 1.08;
+                        const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                         atacante.efectivos.velocidad += 8;
                         let mensaje = ` 🦫🐀 ¡${atacante.nombre} aprovecha su tamaño compacto o sus formidables incisivos para esquivar y morder con precisión quirúrgica!`;
 
-                        // 🔹 Habilidades Menores (15% prob)
                         if (Math.random() < 0.15) {
                             const rMenor = Math.random();
                             if (atacante.efectivos.velocidad > 40 && rMenor < 0.25) { extraDano += 0.08; atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 10); mensaje += ` ⚡ (Zancada fugaz: +8% daño y evade +10 fatiga)`; }
@@ -735,23 +832,28 @@ window.PALARENA_TAXON_COMBATE = {
                                 mensaje += ` 🌰💥 ¡ATAQUE FURIOSO SORPRESA! (Aparición única) Salta por sorpresa descolocando al rival y sumiéndole en estado caótico (+2).`;
                             }
                         }
+
+                        if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                            atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 8);
+                            extraDano += 0.04;
+                            mensaje += ` ⚖️ (Correteo evasivo: esquiva los torpes pisotones y roe extremidades, +8 Fatiga y +4% daño)`;
+                        }
+
                         return { extraDano, mensajeTexto: mensaje };
                     }
                 };
-                        }
-
-
-                            // 11.7. ERINACEOMORFOS Y GIGANTES INSECTÍVOROS (Deinogalerix)
+            }
+                        // 11.7. ERINACEOMORFOS Y GIGANTES INSECTÍVOROS
             if (textoTaxonomia.includes("deinogalerix") || textoTaxonomia.includes("erinaceidae") || textoTaxonomia.includes("galericinae")) {
                 return {
                     tipo: "deinogalerix",
                     nombreHabilidad: "Mordisco de Rata Gigante",
                     aplicarEfecto(atacante, objetivo) {
                         let extraDano = 1.20;
+                        const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                         objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 2);
                         let mensaje = ` 🦔💀 ¡${atacante.nombre} propina un mordisco seco y profundo con sus afilados colmillos adaptados, provocando hemorragia (2 turnos)!`;
 
-                        // 🔹 Habilidades Menores (15% prob)
                         if (Math.random() < 0.15) {
                             const rMenor = Math.random();
                             if (atacante.efectivos.tactica > 45 && rMenor < 0.25) { objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 10; mensaje += ` 🧠 (Finta sutil: drena 10 de táctica al rival)`; }
@@ -778,6 +880,13 @@ window.PALARENA_TAXON_COMBATE = {
                                 mensaje += ` 👁️⚠️ ¡ACECHO SILENCIOSO! (Aparición única) Descoloca la estrategia del rival hundiendo su táctica.`;
                             }
                         }
+
+                        if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                            atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 8);
+                            extraDano += 0.04;
+                            mensaje += ` ⚖️ (Correteo evasivo: esquiva los torpes pisotones y roe extremidades, +8 Fatiga y +4% daño)`;
+                        }
+
                         return { extraDano, mensajeTexto: mensaje };
                     }
                 };
@@ -790,10 +899,10 @@ window.PALARENA_TAXON_COMBATE = {
                     nombreHabilidad: "Zancada y Resistencia",
                     aplicarEfecto(atacante, objetivo) {
                         let extraDano = 1.12;
+                        const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                         atacante.efectivos.velocidad += 5;
                         let mensaje = ` 🦘🐎 ¡${atacante.nombre} emplea una movilidad dinámica y golpes de agilidad defensiva!`;
 
-                        // 🔹 Habilidades Menores (15% prob)
                         if (Math.random() < 0.15) {
                             const rMenor = Math.random();
                             if (atacante.efectivos.velocidad > 45 && rMenor < 0.25) { extraDano += 0.10; atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 5); mensaje += ` ⚡ (Zancada fugaz: +10% daño y recupera 5 fatiga)`; }
@@ -821,21 +930,28 @@ window.PALARENA_TAXON_COMBATE = {
                                 mensaje += ` 🌿✨ ¡RESILIENCIA DE ESTEPA! (Aparición única) Su instinto de herbívoro curtido en la intemperie le cura un 10% de salud.`;
                             }
                         }
+
+                        if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                            atacante.efectivos.velocidad += 4;
+                            atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 6);
+                            mensaje += ` ⚖️ (Zigzag impredecible: el coloso no puede seguir sus movimientos bruscos, +4 Vel y recupera 6 Fatiga)`;
+                        }
+
                         return { extraDano, mensajeTexto: mensaje };
                     }
                 };
             }
             
-            // 11.9. SINÁPSIDOS GENERALES (Dimetrodon, Terápsidos, etc.)
+            // 11.9. SINÁPSIDOS GENERALES
             return {
                 tipo: "sinapsido_general",
                 nombreHabilidad: "Astucia de Sinápsido",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.12;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 10;
                     let mensaje = ` 🧠 ¡${atacante.nombre} aplica su avanzado intelecto evolutivo, confundiendo y desestabilizando la táctica temporal del rival!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.tactica > 45 && rMenor < 0.25) { atacante.efectivos.tactica += 8; mensaje += ` 🧠 (Cálculo milimétrico: +8 Táctica para bloquear mejor)`; }
@@ -865,11 +981,18 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🧠🎯 ¡ATAQUE A NERVIOS! (Aparición única) Un mordisco calculado en los tendones paraliza al enemigo 1 turno.`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 8;
+                        extraDano += 0.03;
+                        mensaje += ` ⚖️ (Astucia de David: confunde al oponente inmenso manteniéndose en sus ángulos muertos, -8 Táctica rival y +3% daño)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
-                 // 12. REPTILES MARINOS
+                // 12. REPTILES MARINOS
         if (textoTaxonomia.includes("ichthyosauria") || textoTaxonomia.includes("sauropterygia") || textoTaxonomia.includes("mosasauroidea")) {
             return {
                 tipo: "marino",
@@ -877,10 +1000,10 @@ window.PALARENA_TAXON_COMBATE = {
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.18;
                     let fatigaDrenada = 15;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.fatiga = Math.max(0, objetivo.fatiga - fatigaDrenada);
                     let mensaje = ` 🌊 ¡${atacante.nombre} efectúa un devastador rebufo hidrodinámico, restando ${fatigaDrenada} de fatiga al rival!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.velocidad > 45 && rMenor < 0.25) { extraDano += 0.10; atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 10); mensaje += ` ⚡ (Zancada fugaz abisal: +10% daño y recupera 10 fatiga)`; }
@@ -910,22 +1033,29 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🌊🌀 ¡TORBELLINO! (Aparición única) Nada en círculos desorientando al rival antes de atacar (táctica baja, caos).`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        atacante.efectivos.velocidad += 5;
+                        extraDano += 0.03;
+                        mensaje += ` ⚖️ (Deslizamiento fluido: usa su menor resistencia al medio para ataques fugaces, +5 Vel y +3% daño)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
 
-        // 13. TEMNOSPÓNDILOS Y ANFIBIOS (Eryops, etc.)
+        // 13. TEMNOSPÓNDILOS Y ANFIBIOS
         if (textoTaxonomia.includes("temnospondyli") || textoTaxonomia.includes("lissamphibia") || textoTaxonomia.includes("nectridea") || textoTaxonomia.includes("anfibio")) {
             return {
                 tipo: "temnospondyli",
                 nombreHabilidad: "Trampa de Pantano",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.10;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.fatiga = Math.max(0, objetivo.fatiga - 15);
                     let mensaje = ` 🐸 ¡${atacante.nombre} arrastra al rival hacia el sustrato cenagoso, succionando un 15% de su resuello vital!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.resistencia > 45 && rMenor < 0.25) { atacante.hp = Math.min(atacante.hp_max, atacante.hp + 15); mensaje += ` 🛡️ (Mitigación subcutánea: absorbe humedad y recupera 15 HP)`; }
@@ -955,6 +1085,13 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🐸🌿 ¡CAMUFLAJE LODO! (Aparición única) Se funde con el cieno, anulando la táctica del enemigo y blindando su defensa.`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        atacante.efectivos.velocidad += 5;
+                        extraDano += 0.03;
+                        mensaje += ` ⚖️ (Deslizamiento fluido: usa su menor resistencia al medio para ataques fugaces, +5 Vel y +3% daño)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
@@ -967,10 +1104,10 @@ window.PALARENA_TAXON_COMBATE = {
                 nombreHabilidad: "Mordida Abisal / Cizalla",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.25;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.estadoGuardia = "rota";
                     let mensaje = ` 🦈 ¡${atacante.nombre} cierra de golpe sus terroríficas mandíbulas marinas, seccionando la defensa del rival!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.ataque > 50 && rMenor < 0.25) { extraDano += 0.12; mensaje += ` 💥 (Impacto de ariete abisal: +12% daño por fuerza bruta)`; }
@@ -998,21 +1135,28 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🦈⚡ ¡LÍNEA LATERAL! (Aparición única) Detecta el movimiento exacto del enemigo, anticipándose para paralizarlo con un golpe certero.`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        atacante.efectivos.velocidad += 5;
+                        extraDano += 0.03;
+                        mensaje += ` ⚖️ (Deslizamiento fluido: usa su menor resistencia al medio para ataques fugaces, +5 Vel y +3% daño)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
-                 // 15. ARTRÓPODOS
+                // 15. ARTRÓPODOS
         if (textoTaxonomia.includes("arthropoda") || textoTaxonomia.includes("trilobita") || textoTaxonomia.includes("radiodonta") || textoTaxonomia.includes("lobopodia")) {
             return {
                 tipo: "artropodo",
                 nombreHabilidad: "Presa Invertebrada",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.15;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     objetivo.turnosParalizado = Math.max(objetivo.turnosParalizado || 0, 1);
                     let mensaje = ` 🦂 ¡${atacante.nombre} atrapa puntos vulnerables con sus apéndices quitinosos, paralizando al rival por 1 turno!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.defensa > 45 && rMenor < 0.25) { atacante.efectivos.defensa += 8; mensaje += ` 🛡️ (Postura anclada: endurece caparazón +8 Defensa temporal)`; }
@@ -1041,6 +1185,13 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🦂🔄 ¡METABOLISMO INSECTOIDE! (Aparición única) Su fisiología exótica ignora el ácido láctico, recuperando 40 de fatiga de inmediato.`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        extraDano += 0.05;
+                        objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 5;
+                        mensaje += ` ⚖️ (Inyección focalizada: ataca nervios expuestos o ciega a la enorme presa, +5% daño y -5 Táctica rival)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
@@ -1053,10 +1204,10 @@ window.PALARENA_TAXON_COMBATE = {
                 nombreHabilidad: "Chorro Evasivo",
                 aplicarEfecto(atacante, objetivo) {
                     let extraDano = 1.08;
+                    const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                     atacante.efectivos.velocidad += 5;
                     let mensaje = ` 🦑 ¡${atacante.nombre} expulsa un repentino chorro evasivo, desorientando el contraataque enemigo!`;
 
-                    // 🔹 Habilidades Menores (15% prob)
                     if (Math.random() < 0.15) {
                         const rMenor = Math.random();
                         if (atacante.efectivos.tactica > 45 && rMenor < 0.25) { objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 12; mensaje += ` 🧠 (Cálculo milimétrico: drena 12 de táctica al rival en la confusión)`; }
@@ -1086,20 +1237,27 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🦑🧠 ¡MENTE ALIENÍGENA! (Aparición única) Procesa el entorno de manera hiperacelerada, potenciando permanentemente su táctica en el combate.`;
                         }
                     }
+
+                    if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                        extraDano += 0.05;
+                        objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 5;
+                        mensaje += ` ⚖️ (Inyección focalizada: ataca nervios expuestos o ciega a la enorme presa, +5% daño y -5 Táctica rival)`;
+                    }
+
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
         }
 
-        // 18. INCLASIFICABLES Y BASALES (Animales Enigmáticos)
+        // 18. INCLASIFICABLES Y BASALES
         return {
             tipo: "general",
             nombreHabilidad: "Instinto Ancestral",
             aplicarEfecto(atacante, objetivo) {
                 let extraDano = 1.05;
+                const ratioTamano = (objetivo.peso || 100) / (atacante.peso || 100);
                 let mensaje = ` 🐾 ¡${atacante.nombre} desata la inusual furia evolutiva de su linaje primitivo!`;
 
-                // 🔹 Habilidades Menores (15% prob)
                 if (Math.random() < 0.15) {
                     const rMenor = Math.random();
                     if (atacante.efectivos.resistencia > 45 && rMenor < 0.25) { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 15); mensaje += ` 💨 (Respiración profunda: purga 15 fatiga acumulada)`; }
@@ -1182,13 +1340,15 @@ window.PALARENA_TAXON_COMBATE = {
                         mensaje += ` 🐾🔊 ¡SOBRECARGA SENSORIAL! (Aparición única) Realiza un despliegue visual y sonoro incomprensible que sume al rival en caos total (+4) y arruina su táctica (-40).`;
                     }
                 }
+
+                if (ratioTamano > 2.5 && Math.random() < 0.33) {
+                    atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 5);
+                    extraDano += 0.05;
+                    mensaje += ` ⚖️ (Anomalía diminuta: saca provecho biológico del caos de escalas, +5% daño y recupera 5 Fatiga)`;
+                }
+
                 return { extraDano, mensajeTexto: mensaje };
             }
         };
     }
 };
-                                                             
-
-
-
-    
