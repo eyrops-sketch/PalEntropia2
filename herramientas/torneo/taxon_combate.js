@@ -4,6 +4,7 @@ PALARENA — TAXÓN COMBATE v4.2 (Estados Secundarios y Atributos)
 PalEntropía
 Asignación de habilidades base y Estados Biológicos Extremos (25%)
 NUEVO: Integración de Habilidades Menores (15% prob) y Ventaja por Diferencia de Tamaño (33% prob)
+NUEVO: Micro-ayudas complementarias (33%) excluyendo acorazados/colosos.
 Equilibrado para motor HVMD-ΔE. Terópodos y Tireóforos conservadores.
 ========================================================
 */
@@ -37,7 +38,7 @@ window.PALARENA_TAXON_COMBATE = {
                         if (atacante.efectivos.velocidad > 45 && rMenor < 0.25) { extraDano += 0.08; atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 6); mensaje += ` ⚡ (Zancada fugaz aerea: +8% daño y recupera 6 fatiga)`; }
                         else if (rMenor < 0.40) { atacante.efectivos.velocidad += 5; mensaje += ` 💨 (Viento de cola: +5 Velocidad)`; }
                         else if (rMenor < 0.70) { objetivo.fatiga = Math.max(0, objetivo.fatiga - 8); extraDano += 0.05; mensaje += ` 🦅 (Hostigamiento aéreo: +5% daño, -8 fatiga rival)`; }
-                        else { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 10); mensaje += ` 🌤️️ (Planeo breve: +10 Fatiga)`; }
+                        else { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 10); mensaje += ` 🌤 (Planeo breve: +10 Fatiga)`; }
                     }
 
                     if (!atacante.taxonUltimoUsado && Math.random() < 0.25) {
@@ -59,6 +60,13 @@ window.PALARENA_TAXON_COMBATE = {
                             extraDano += 0.15;
                             mensaje += ` 👁️ ¡ATAQUE A LOS OJOS! (Aparición única) Un picotazo dirigido al rostro hunde la táctica del rival (-25).`;
                         }
+                    }
+
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.03; mensaje += ` 🔸 (Picotazo rápido: +3% daño)`; }
+                        else if (micro < 0.66) { atacante.efectivos.tactica += 2; mensaje += ` 🔸 (Agudeza visual: +2 Táctica)`; }
+                        else { atacante.efectivos.velocidad += 3; mensaje += ` 🔸 (Vuelo rasante: +3 Vel)`; }
                     }
 
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
@@ -112,6 +120,13 @@ window.PALARENA_TAXON_COMBATE = {
                         }
                     }
 
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.04; mensaje += ` 🔸 (Golpe de espolón: +4% daño)`; }
+                        else if (micro < 0.66) { atacante.efectivos.velocidad += 4; mensaje += ` 🔸 (Zancada firme: +4 Vel)`; }
+                        else { objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 4; mensaje += ` 🔸 (Grito agudo: -4 Táctica rival)`; }
+                    }
+
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
                         extraDano += 0.05;
                         mensaje += ` ⚖ (Picotazo a las articulaciones: aprovecha su menor perfil para dañar zonas bajas, +5% daño)`;
@@ -121,7 +136,7 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-                // 3. ORNITOMIMOSAURIOS
+               // 3. ORNITOMIMOSAURIOS
         if (textoTaxonomia.includes("ornithomimosauria") || textoTaxonomia.includes("ornithomimidae") || textoTaxonomia.includes("ornithomimus") || textoTaxonomia.includes("gallimimus") || textoTaxonomia.includes("struthiomimus") || textoTaxonomia.includes("deinocheirus") || textoTaxonomia.includes("pelecanimimus") || textoTaxonomia.includes("garudimimus") || textoTaxonomia.includes("harpymimus") || textoTaxonomia.includes("ansermimus") || textoTaxonomia.includes("ornitomimo")) {
             return {
                 tipo: "ornitomimo",
@@ -158,6 +173,13 @@ window.PALARENA_TAXON_COMBATE = {
                             objetivo.turnosAturdido = Math.max(objetivo.turnosAturdido || 0, 1);
                             mensaje += ` 🎯 ¡GOLPE DE PICO! (Aparición única) Finta con su largo cuello y asesta un golpe aturdidor en un punto ciego (aturdido 1 turno).`;
                         }
+                    }
+
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.03; mensaje += ` 🔸 (Patada menor: +3% daño)`; }
+                        else if (micro < 0.66) { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 4); mensaje += ` 🔸 (Finta rápida: recupera 4 Fatiga)`; }
+                        else { atacante.efectivos.velocidad += 3; mensaje += ` 🔸 (Movimiento errático: +3 Vel)`; }
                     }
 
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
@@ -210,6 +232,13 @@ window.PALARENA_TAXON_COMBATE = {
                         }
                     }
 
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.04; mensaje += ` 🔸 (Mordisco de pinzamiento: +4% daño)`; }
+                        else if (micro < 0.66) { objetivo.fatiga = Math.max(0, objetivo.fatiga - 5); mensaje += ` 🔸 (Gruñido territorial: -5 Fatiga rival)`; }
+                        else { objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 4; mensaje += ` 🔸 (Postura amenazante: -4 Táctica rival)`; }
+                    }
+
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
                         extraDano += 0.06;
                         objetivo.turnosDesangrado = Math.max(objetivo.turnosDesangrado || 0, 1);
@@ -254,7 +283,7 @@ window.PALARENA_TAXON_COMBATE = {
                             mensaje += ` 🦕🌪 ¡LATIGAZO DE COLA! (Aparición única) La cola rompe la barrera del sonido asestando un golpe devastador que aturde al rival.`;
                         } else if (variante < 0.75) {
                             atacante.efectivos.defensa += 15;
-                            mensaje += ` ⛰️️ ¡POSTURA INAMOVIBLE! (Aparición única) Se planta firmemente como una montaña, aumentando su defensa permanentemente.`;
+                            mensaje += ` ⛰ ¡POSTURA INAMOVIBLE! (Aparición única) Se planta firmemente como una montaña, aumentando su defensa permanentemente.`;
                         } else {
                             objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 20;
                             objetivo.fatiga = Math.max(0, objetivo.fatiga - 15);
@@ -425,6 +454,13 @@ window.PALARENA_TAXON_COMBATE = {
                         }
                     }
 
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.04; mensaje += ` 🔸 (Cabezazo menor: +4% daño)`; }
+                        else if (micro < 0.66) { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 5); mensaje += ` 🔸 (Inercia de carga: recupera 5 Fatiga)`; }
+                        else { atacante.efectivos.defensa += 3; mensaje += ` 🔸 (Posicionamiento firme: +3 Defensa)`; }
+                    }
+
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
                         extraDano += 0.05;
                         objetivo.fatiga = Math.max(0, objetivo.fatiga - 4);
@@ -477,6 +513,13 @@ window.PALARENA_TAXON_COMBATE = {
                         }
                     }
 
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { atacante.efectivos.tactica += 4; mensaje += ` 🔸 (Alerta temprana: +4 Táctica)`; }
+                        else if (micro < 0.66) { atacante.efectivos.defensa += 3; mensaje += ` 🔸 (Coletazo defensivo: +3 Defensa)`; }
+                        else { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 5); mensaje += ` 🔸 (Trote breve: recupera 5 Fatiga)`; }
+                    }
+
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
                         atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 8);
                         mensaje += ` ⚖️ (Evasión bajo el vientre: usa su tamaño para rodear ágilmente al enemigo, recupera 8 de Fatiga)`;
@@ -527,6 +570,13 @@ window.PALARENA_TAXON_COMBATE = {
                         }
                     }
 
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.04; mensaje += ` 🔸 (Chasquido sorpresivo: +4% daño)`; }
+                        else if (micro < 0.66) { objetivo.fatiga = Math.max(0, objetivo.fatiga - 5); mensaje += ` 🔸 (Agarre firme: -5 Fatiga rival)`; }
+                        else { atacante.efectivos.defensa += 3; mensaje += ` 🔸 (Piel escamosa: +3 Defensa)`; }
+                    }
+
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
                         extraDano += 0.05;
                         objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 5;
@@ -537,7 +587,7 @@ window.PALARENA_TAXON_COMBATE = {
                 }
             };
         }
-               // 11. SINÁPSIDOS Y MAMÍFEROS
+                       // 11. SINÁPSIDOS Y MAMÍFEROS
         if (textoTaxonomia.includes("synapsida") || textoTaxonomia.includes("sinápsido") || textoTaxonomia.includes("mammalia")) {
             
             // 11.1. XENARTROS Y MEGAFAUNA ACORAZADA
@@ -580,6 +630,13 @@ window.PALARENA_TAXON_COMBATE = {
                                 objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 15;
                                 mensaje += ` 🦥💤 ¡METABOLISMO DE AHORRO! (Aparición única) Recupera 50 de fatiga de golpe, frustrando los intentos de agotarle.`;
                             }
+                        }
+
+                        if (Math.random() < 0.33) {
+                            const micro = Math.random();
+                            if (micro < 0.33) { extraDano += 0.03; mensaje += ` 🔸 (Zarpazo obstinado: +3% daño)`; }
+                            else if (micro < 0.66) { atacante.efectivos.defensa += 4; mensaje += ` 🔸 (Piel dura: +4 Defensa)`; }
+                            else { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 5); mensaje += ` 🔸 (Respiración pausada: recupera 5 Fatiga)`; }
                         }
 
                         if (ratioTamano > 2.5 && Math.random() < 0.33) {
@@ -631,9 +688,16 @@ window.PALARENA_TAXON_COMBATE = {
                             }
                         }
 
+                        if (Math.random() < 0.33) {
+                            const micro = Math.random();
+                            if (micro < 0.33) { objetivo.fatiga = Math.max(0, objetivo.fatiga - 5); mensaje += ` 🔸 (Empujón de masa: -5 Fatiga rival)`; }
+                            else if (micro < 0.66) { atacante.efectivos.defensa += 3; mensaje += ` 🔸 (Piel gruesa: +3 Defensa)`; }
+                            else { objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 4; mensaje += ` 🔸 (Pisotón intimidatorio: -4 Táctica rival)`; }
+                        }
+
                         if (ratioTamano > 2.5 && Math.random() < 0.33) {
                             objetivo.fatiga = Math.max(0, objetivo.fatiga - 6);
-                            mensaje += ` ⚖️️ (Pisotón de cría escurridiza: molesta la zancada del rival mayor mermando su inercia, -6 Fatiga rival)`;
+                            mensaje += ` ⚖ (Pisotón de cría escurridiza: molesta la zancada del rival mayor mermando su inercia, -6 Fatiga rival)`;
                         }
 
                         return { extraDano, mensajeTexto: mensaje };
@@ -682,6 +746,13 @@ window.PALARENA_TAXON_COMBATE = {
                             }
                         }
 
+                        if (Math.random() < 0.33) {
+                            const micro = Math.random();
+                            if (micro < 0.33) { extraDano += 0.04; mensaje += ` 🔸 (Rasguño afilado: +4% daño)`; }
+                            else if (micro < 0.66) { atacante.efectivos.tactica += 3; mensaje += ` 🔸 (Agazaparse: +3 Táctica)`; }
+                            else { atacante.efectivos.velocidad += 3; mensaje += ` 🔸 (Salto corto: +3 Vel)`; }
+                        }
+
                         if (ratioTamano > 2.5 && Math.random() < 0.33) {
                             extraDano += 0.06;
                             mensaje += ` ⚖️ (Corte trepador: usa el cuerpo del gigante como apoyo para apuñalar, +6% daño)`;
@@ -690,8 +761,8 @@ window.PALARENA_TAXON_COMBATE = {
                         return { extraDano, mensajeTexto: mensaje };
                     }
                 };
-            }
-                        // 11.4. PROBOSCÍDEOS Y RINOCERONTES LANUDOS
+                                }
+                                    // 11.4. PROBOSCÍDEOS Y RINOCERONTES LANUDOS
             if (textoTaxonomia.includes("proboscidea") || textoTaxonomia.includes("mammuthus") || textoTaxonomia.includes("rhinoceros") || textoTaxonomia.includes("coelodonta") || textoTaxonomia.includes("elasmotherium") || textoTaxonomia.includes("dinocerata") || textoTaxonomia.includes("pantodonta")) {
                 return {
                     tipo: "proboscideo_rinoceronte",
@@ -731,6 +802,13 @@ window.PALARENA_TAXON_COMBATE = {
                                 objetivo.estadoCaotico = (objetivo.estadoCaotico || 0) + 1;
                                 mensaje += ` 🦏📢 ¡BRAMIDO SÍSMICO! (Aparición única) Un sonido atronador drena 30 de fatiga al rival y siembra el caos.`;
                             }
+                        }
+
+                        if (Math.random() < 0.33) {
+                            const micro = Math.random();
+                            if (micro < 0.33) { extraDano += 0.03; mensaje += ` 🔸 (Inercia de masa: +3% daño)`; }
+                            else if (micro < 0.66) { objetivo.fatiga = Math.max(0, objetivo.fatiga - 5); mensaje += ` 🔸 (Empuje frontal: -5 Fatiga rival)`; }
+                            else { objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 4; mensaje += ` 🔸 (Golpe de trompa/cuerno: -4 Táctica rival)`; }
                         }
 
                         if (ratioTamano > 2.5 && Math.random() < 0.33) {
@@ -783,6 +861,13 @@ window.PALARENA_TAXON_COMBATE = {
                             }
                         }
 
+                        if (Math.random() < 0.33) {
+                            const micro = Math.random();
+                            if (micro < 0.33) { extraDano += 0.04; mensaje += ` 🔸 (Zarpazo fuerte: +4% daño)`; }
+                            else if (micro < 0.66) { objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 4; mensaje += ` 🔸 (Gruñido bajo: -4 Táctica rival)`; }
+                            else { atacante.efectivos.defensa += 3; mensaje += ` 🔸 (Musculatura tensa: +3 Defensa)`; }
+                        }
+
                         if (ratioTamano > 2.5 && Math.random() < 0.33) {
                             extraDano += 0.05;
                             objetivo.fatiga = Math.max(0, objetivo.fatiga - 5);
@@ -833,6 +918,13 @@ window.PALARENA_TAXON_COMBATE = {
                             }
                         }
 
+                        if (Math.random() < 0.33) {
+                            const micro = Math.random();
+                            if (micro < 0.33) { extraDano += 0.03; mensaje += ` 🔸 (Roer rápido: +3% daño)`; }
+                            else if (micro < 0.66) { atacante.efectivos.velocidad += 4; mensaje += ` 🔸 (Correteo ágil: +4 Vel)`; }
+                            else { atacante.efectivos.tactica += 4; mensaje += ` 🔸 (Ocultamiento rápido: +4 Táctica)`; }
+                        }
+
                         if (ratioTamano > 2.5 && Math.random() < 0.33) {
                             atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 8);
                             extraDano += 0.04;
@@ -842,8 +934,8 @@ window.PALARENA_TAXON_COMBATE = {
                         return { extraDano, mensajeTexto: mensaje };
                     }
                 };
-            }
-                        // 11.7. ERINACEOMORFOS Y GIGANTES INSECTÍVOROS
+                        }
+                                    // 11.7. ERINACEOMORFOS Y GIGANTES INSECTÍVOROS
             if (textoTaxonomia.includes("deinogalerix") || textoTaxonomia.includes("erinaceidae") || textoTaxonomia.includes("galericinae")) {
                 return {
                     tipo: "deinogalerix",
@@ -879,6 +971,13 @@ window.PALARENA_TAXON_COMBATE = {
                                 objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 20;
                                 mensaje += ` 👁️⚠️ ¡ACECHO SILENCIOSO! (Aparición única) Descoloca la estrategia del rival hundiendo su táctica.`;
                             }
+                        }
+
+                        if (Math.random() < 0.33) {
+                            const micro = Math.random();
+                            if (micro < 0.33) { extraDano += 0.04; mensaje += ` 🔸 (Mordisco persistente: +4% daño)`; }
+                            else if (micro < 0.66) { atacante.efectivos.tactica += 4; mensaje += ` 🔸 (Olfato agudo: +4 Táctica)`; }
+                            else { atacante.efectivos.velocidad += 3; mensaje += ` 🔸 (Reflejo insular: +3 Vel)`; }
                         }
 
                         if (ratioTamano > 2.5 && Math.random() < 0.33) {
@@ -929,6 +1028,13 @@ window.PALARENA_TAXON_COMBATE = {
                                 atacante.hp = Math.min(atacante.hp_max, atacante.hp + Math.round(atacante.hp_max * 0.10));
                                 mensaje += ` 🌿✨ ¡RESILIENCIA DE ESTEPA! (Aparición única) Su instinto de herbívoro curtido en la intemperie le cura un 10% de salud.`;
                             }
+                        }
+
+                        if (Math.random() < 0.33) {
+                            const micro = Math.random();
+                            if (micro < 0.33) { extraDano += 0.03; mensaje += ` 🔸 (Coz menor: +3% daño)`; }
+                            else if (micro < 0.66) { atacante.efectivos.velocidad += 3; mensaje += ` 🔸 (Salto evasivo: +3 Vel)`; }
+                            else { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 5); mensaje += ` 🔸 (Pastoreo fugaz: recupera 5 Fatiga)`; }
                         }
 
                         if (ratioTamano > 2.5 && Math.random() < 0.33) {
@@ -982,6 +1088,13 @@ window.PALARENA_TAXON_COMBATE = {
                         }
                     }
 
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.03; mensaje += ` 🔸 (Mordisco primitivo: +3% daño)`; }
+                        else if (micro < 0.66) { atacante.efectivos.tactica += 3; mensaje += ` 🔸 (Finta astuta: +3 Táctica)`; }
+                        else { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 4); mensaje += ` 🔸 (Termorregulación breve: recupera 4 Fatiga)`; }
+                    }
+
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
                         objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 8;
                         extraDano += 0.03;
@@ -991,8 +1104,8 @@ window.PALARENA_TAXON_COMBATE = {
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
-        }
-                // 12. REPTILES MARINOS
+                    }
+                       // 12. REPTILES MARINOS
         if (textoTaxonomia.includes("ichthyosauria") || textoTaxonomia.includes("sauropterygia") || textoTaxonomia.includes("mosasauroidea")) {
             return {
                 tipo: "marino",
@@ -1032,6 +1145,13 @@ window.PALARENA_TAXON_COMBATE = {
                             objetivo.estadoCaotico = (objetivo.estadoCaotico || 0) + 1;
                             mensaje += ` 🌊🌀 ¡TORBELLINO! (Aparición única) Nada en círculos desorientando al rival antes de atacar (táctica baja, caos).`;
                         }
+                    }
+
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.04; mensaje += ` 🔸 (Mordisco cónico: +4% daño)`; }
+                        else if (micro < 0.66) { atacante.efectivos.velocidad += 3; mensaje += ` 🔸 (Aleteo veloz: +3 Vel)`; }
+                        else { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 5); mensaje += ` 🔸 (Rebufo menor: recupera 5 Fatiga)`; }
                     }
 
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
@@ -1086,6 +1206,13 @@ window.PALARENA_TAXON_COMBATE = {
                         }
                     }
 
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.03; mensaje += ` 🔸 (Mordida de emboscada: +3% daño)`; }
+                        else if (micro < 0.66) { atacante.efectivos.defensa += 4; mensaje += ` 🔸 (Camuflaje lodo: +4 Defensa)`; }
+                        else { objetivo.fatiga = Math.max(0, objetivo.fatiga - 5); mensaje += ` 🔸 (Piel tóxica: -5 Fatiga rival)`; }
+                    }
+
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
                         atacante.efectivos.velocidad += 5;
                         extraDano += 0.03;
@@ -1136,6 +1263,13 @@ window.PALARENA_TAXON_COMBATE = {
                         }
                     }
 
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.04; mensaje += ` 🔸 (Placa cortante: +4% daño)`; }
+                        else if (micro < 0.66) { atacante.efectivos.defensa += 4; mensaje += ` 🔸 (Coraza menor: +4 Defensa)`; }
+                        else { objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 4; mensaje += ` 🔸 (Coletazo de agua: -4 Táctica rival)`; }
+                    }
+
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
                         atacante.efectivos.velocidad += 5;
                         extraDano += 0.03;
@@ -1145,8 +1279,8 @@ window.PALARENA_TAXON_COMBATE = {
                     return { extraDano, mensajeTexto: mensaje };
                 }
             };
-        }
-                // 15. ARTRÓPODOS
+                            }
+                        // 15. ARTRÓPODOS
         if (textoTaxonomia.includes("arthropoda") || textoTaxonomia.includes("trilobita") || textoTaxonomia.includes("radiodonta") || textoTaxonomia.includes("lobopodia")) {
             return {
                 tipo: "artropodo",
@@ -1184,6 +1318,13 @@ window.PALARENA_TAXON_COMBATE = {
                             atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 40);
                             mensaje += ` 🦂🔄 ¡METABOLISMO INSECTOIDE! (Aparición única) Su fisiología exótica ignora el ácido láctico, recuperando 40 de fatiga de inmediato.`;
                         }
+                    }
+
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.03; mensaje += ` 🔸 (Pinzamiento: +3% daño)`; }
+                        else if (micro < 0.66) { atacante.efectivos.defensa += 4; mensaje += ` 🔸 (Quitina dura: +4 Defensa)`; }
+                        else { objetivo.fatiga = Math.max(0, objetivo.fatiga - 4); mensaje += ` 🔸 (Inyección menor: -4 Fatiga rival)`; }
                     }
 
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
@@ -1236,6 +1377,13 @@ window.PALARENA_TAXON_COMBATE = {
                             atacante.efectivos.tactica += 15;
                             mensaje += ` 🦑🧠 ¡MENTE ALIENÍGENA! (Aparición única) Procesa el entorno de manera hiperacelerada, potenciando permanentemente su táctica en el combate.`;
                         }
+                    }
+
+                    if (Math.random() < 0.33) {
+                        const micro = Math.random();
+                        if (micro < 0.33) { extraDano += 0.03; mensaje += ` 🔸 (Latigazo de tentáculo: +3% daño)`; }
+                        else if (micro < 0.66) { atacante.efectivos.velocidad += 4; mensaje += ` 🔸 (Propulsión breve: +4 Vel)`; }
+                        else { objetivo.tacticaTemporal = (objetivo.tacticaTemporal || 0) - 4; mensaje += ` 🔸 (Tinta disuasoria: -4 Táctica rival)`; }
                     }
 
                     if (ratioTamano > 2.5 && Math.random() < 0.33) {
@@ -1341,6 +1489,13 @@ window.PALARENA_TAXON_COMBATE = {
                     }
                 }
 
+                if (Math.random() < 0.33) {
+                    const micro = Math.random();
+                    if (micro < 0.33) { extraDano += 0.04; mensaje += ` 🔸 (Furia ancestral: +4% daño)`; }
+                    else if (micro < 0.66) { atacante.efectivos.tactica += 3; mensaje += ` 🔸 (Instinto extraño: +3 Táctica)`; }
+                    else { atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 4); mensaje += ` 🔸 (Adaptación espontánea: recupera 4 Fatiga)`; }
+                }
+
                 if (ratioTamano > 2.5 && Math.random() < 0.33) {
                     atacante.fatiga = Math.min(atacante.fatiga_max, atacante.fatiga + 5);
                     extraDano += 0.05;
@@ -1352,3 +1507,4 @@ window.PALARENA_TAXON_COMBATE = {
         };
     }
 };
+                            
