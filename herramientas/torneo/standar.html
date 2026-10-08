@@ -696,53 +696,83 @@
         }
 
         function ejecutarAccionJugador(codigo){
-                if(!combateActivo || !combate){ return; }
+        if(!combateActivo || !combate){ return; }
 
-                const atacanteJugador = controlManual === 1 ? combatiente1 : combatiente2;
-                const objetivoJugador = controlManual === 1 ? combatiente2 : combatiente1;
-                const config = window.PALARENA_STANDAR.configuracion;
-                const permiteCritico = Number(config.multiplicador_critico) > 1.0;
+        const atacante = controlManual === 1 ? combatiente1 : combatiente2;
+        const objetivo = controlManual === 1 ? combatiente2 : combatiente1;
+        const config = window.PALARENA_STANDAR.configuracion || { multiplicador_critico: 1.5, fatiga_minima_ataque_potente: 20 };
+        const permiteCritico = Number(config.multiplicador_critico) > 1.0;
 
-                if(codigo === "A002" && (!permiteCritico || Number(atacanteJugador.fatiga) < config.fatiga_minima_ataque_potente)){
-                        añadirRegistro("😓 Ataque potente bloqueado: críticos no permitidos o fatiga insuficiente.");
-                        activarBotones();
-                        return;
-                }
-
-                try{
-                        const resultadoJugador = window.PALARENA_STANDAR.ejecutarAccion(atacanteJugador, objetivoJugador, codigo);
-                        procesarResultado(resultadoJugador, atacanteJugador, objetivoJugador);
-
-                        if(objetivoJugador.derrotado){
-                                finalizarInterfaz({ ganador: atacanteJugador });
-                                return;
-                        }
-
-                        const accionIA = window.PALARENA_STANDAR.decidirAccion(objetivoJugador, atacanteJugador);
-                        const resultadoIA = window.PALARENA_STANDAR.ejecutarAccion(objetivoJugador, atacanteJugador, accionIA);
-                        procesarResultado(resultadoIA, objetivoJugador, atacanteJugador);
-
-                        if(atacanteJugador.derrotado){
-                                finalizarInterfaz({ ganador: objetivoJugador });
-                                return;
-                        }
-
-                        if(typeof window.PALARENA_STANDAR.regenerarFatiga === "function"){
-                                window.PALARENA_STANDAR.regenerarFatiga(combatiente1);
-                                window.PALARENA_STANDAR.regenerarFatiga(combatiente2);
-                        }
-
-                        combatiente1.defendiendo = false;
-                        combatiente2.defendiendo = false;
-                        combate.turno++;
-                        mostrarCombatientes();
-                        activarBotones();
-
-                }catch(error){
-                        console.error(error);
-                        añadirRegistro("❌ Error durante la acción.");
-                }
+        // 1. Bloqueo de seguridad exclusivo para A002 (Ataque Potente)
+        if(codigo === "A002" && (!permiteCritico || Number(atacante.fatiga) < config.fatiga_minima_ataque_potente)){
+                añadirRegistro("😓 Ataque potente bloqueado: críticos no permitidos o fatiga insuficiente."); 
+                activarBotones(); 
+                return;
         }
+
+        try {
+                // 2. INTERCEPTOR DE COMBOS DINÁMICOS PARA TODOS LOS BOTONES
+                let fatigaObj = Number(objetivo.fatiga);
+                let fatigaMaxObj = Number(objetivo.fatiga_max) || 100;
+                let velAt = Number((atacante.efectivos || {}).velocidad) || 0;
+                let velOb = Number((objetivo.efectivos || {}).velocidad) || 0;
+
+                // --- Evaluación de A001 (Ataque Básico) ---
+                if (codigo === "A001" && fatigaObj <= (fatigaMaxObj * 0.35) && velAt >= velOb) {
+                        añadirRegistro("⚡ [Presión Ofensiva] ¡" + atacante.nombre + " aprovecha el agotamiento rival y encadena un impacto adicional!");
+                        let comboAdicional = window.PALARENA_STANDAR.ejecutarAccion(atacante, objetivo, "A001");
+                        procesarResultado(comboAdicional, atacante, objetivo);
+                }
+                
+                // --- Evaluación de A002 (Ataque Potente) ---
+                if (codigo === "A002" && Number(atacante.fatiga) <= 30) {
+                        añadirRegistro("🔥 [Frenesí] Desata un poder salvaje ignorando por completo su propia guardia, asumiendo un riesgo altísimo.");
+                }
+
+                // --- Evaluación de A003 (Ataque Táctico) ---
+                if (codigo === "A003" && atacante.perfil === "tactico" && fatigaObj > (fatigaMaxObj * 0.6)) {
+                        añadirRegistro("👁️ [Desarme Psicológico] ¡Encuentra el punto ciego! Ejecuta una maniobra de distracción antes de golpear.");
+                }
+
+                // --- Evaluación de D001 (Defensa) ---
+                if (codigo === "D001" && velAt > velOb + 15) {
+                        añadirRegistro("🌿 [Resguardo Táctico] Calcula los tiempos a la perfección gracias a su agilidad, preparando un muro impenetrable.");
+                }
+
+                if(objetivo.derrotado){ finalizarInterfaz({ ganador: atacante }); return; }
+
+                // 3. Ejecución normal de la acción que has pulsado
+                const resultadoJugador = window.PALARENA_STANDAR.ejecutarAccion(atacante, objetivo, codigo);
+                procesarResultado(resultadoJugador, atacante, objetivo);
+                
+                if(objetivo.derrotado){ finalizarInterfaz({ ganador: atacante }); return; }
+
+                // 4. Turno de respuesta de la IA
+                const accionIA = window.PALARENA_STANDAR.decidirAccion(objetivo, atacante);
+                const resultadoIA = window.PALARENA_STANDAR.ejecutarAccion(objetivo, atacante, accionIA);
+                procesarResultado(resultadoIA, objetivo, atacante);
+
+                if(atacante.derrotado){ finalizarInterfaz({ ganador: objetivo }); return; }
+
+                // 5. Mantenimiento del turno
+                if(typeof window.PALARENA_STANDAR.regenerarFatiga === "function"){
+                        window.PALARENA_STANDAR.regenerarFatiga(combatiente1); 
+                        window.PALARENA_STANDAR.regenerarFatiga(combatiente2);
+                }
+
+                combatiente1.defendiendo = false; 
+                combatiente2.defendiendo = false; 
+                combate.turno++;
+                
+                mostrarCombatientes(); 
+                activarBotones();
+                
+        } catch(error) {
+                console.error(error); 
+                añadirRegistro("❌ Error durante la acción.");
+        }
+}
+
 
         function procesarResultado(resultado, atacante, objetivo){
                 if(!resultado){ return; }
